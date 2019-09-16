@@ -51,22 +51,23 @@
 
 #include "itkImage.h"
 
-template < typename ImageType >
+template <typename ImageType>
 void
-ChopImageBelowLowerBound( typename ImageType::Pointer         inputVolume,
-                          const typename ImageType::PixelType BackgroundFillValue, const double PhysicalLowerBound )
+ChopImageBelowLowerBound(typename ImageType::Pointer         inputVolume,
+                         const typename ImageType::PixelType BackgroundFillValue,
+                         const double                        PhysicalLowerBound)
 {
   // And now, we are going to chop out everything inferior to
   // PhysicalLowerBound:
-  using IteratorType = typename itk::ImageRegionIterator< ImageType >;
-  IteratorType                  ItPixel( inputVolume, inputVolume->GetLargestPossibleRegion() );
+  using IteratorType = typename itk::ImageRegionIterator<ImageType>;
+  IteratorType                  ItPixel(inputVolume, inputVolume->GetLargestPossibleRegion());
   typename ImageType::PointType PixelPhysicalPoint;
-  while ( !ItPixel.IsAtEnd() )
+  while (!ItPixel.IsAtEnd())
   {
-    inputVolume->TransformIndexToPhysicalPoint( ItPixel.GetIndex(), PixelPhysicalPoint );
-    if ( PixelPhysicalPoint[2] < PhysicalLowerBound )
+    inputVolume->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
+    if (PixelPhysicalPoint[2] < PhysicalLowerBound)
     {
-      ItPixel.Set( BackgroundFillValue );
+      ItPixel.Set(BackgroundFillValue);
     }
     ++ItPixel;
   }

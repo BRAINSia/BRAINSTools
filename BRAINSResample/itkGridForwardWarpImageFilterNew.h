@@ -69,23 +69,23 @@ namespace itk
  * http://hdl.handle.net/1926/510
  *
  */
-template < typename TDisplacementField, typename TOutputImage >
-class GridForwardWarpImageFilterNew : public ImageToImageFilter< TDisplacementField, TOutputImage >
+template <typename TDisplacementField, typename TOutputImage>
+class GridForwardWarpImageFilterNew : public ImageToImageFilter<TDisplacementField, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( GridForwardWarpImageFilterNew );
+  ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
 
   /** Standard class type alias. */
   using Self = GridForwardWarpImageFilterNew;
-  using Superclass = ImageToImageFilter< TDisplacementField, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TDisplacementField, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( GridForwardWarpImageFilterNew, ImageToImageFilter );
+  itkTypeMacro(GridForwardWarpImageFilterNew, ImageToImageFilter);
 
   /** Typedef to describe the output image region type. */
   using OutputImageRegionType = typename TOutputImage::RegionType;
@@ -108,14 +108,14 @@ public:
   using DisplacementType = typename DisplacementFieldType::PixelType;
 
   /** Set the background value */
-  itkSetMacro( BackgroundValue, PixelType );
+  itkSetMacro(BackgroundValue, PixelType);
   /** Get the background value */
-  itkGetConstMacro( BackgroundValue, PixelType );
+  itkGetConstMacro(BackgroundValue, PixelType);
 
   /** Set the foreground value */
-  itkSetMacro( ForegroundValue, PixelType );
+  itkSetMacro(ForegroundValue, PixelType);
   /** Get the foreground value */
-  itkGetConstMacro( ForegroundValue, PixelType );
+  itkGetConstMacro(ForegroundValue, PixelType);
 
   /** Set the spacing for the grids value, a spacing of 0 indicates that
    * displacements in that direction should be set to zero (thus keeping the
@@ -128,16 +128,16 @@ public:
    * For example, if you want only Z-dir warped lines in a 2D X-dir view, then
    * set grid spacing to 0,-8,8.
    */
-  using GridSpacingType = FixedArray< int, ImageDimension >;
-  itkSetMacro( GridPixelSpacing, GridSpacingType );
+  using GridSpacingType = FixedArray<int, ImageDimension>;
+  itkSetMacro(GridPixelSpacing, GridSpacingType);
   /** Get the foreground value */
-  itkGetConstMacro( GridPixelSpacing, GridSpacingType );
+  itkGetConstMacro(GridPixelSpacing, GridSpacingType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( SameDimensionCheck, (Concept::SameDimension< ImageDimension, DisplacementFieldDimension >));
-  itkConceptMacro( DeformationFieldHasNumericTraitsCheck,
-                   (Concept::HasNumericTraits< typename TDisplacementField::PixelType::ValueType >));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, DisplacementFieldDimension>));
+  itkConceptMacro(DeformationFieldHasNumericTraitsCheck,
+                  (Concept::HasNumericTraits<typename TDisplacementField::PixelType::ValueType>));
   /** End concept checking */
 #endif
 protected:
@@ -145,7 +145,7 @@ protected:
   ~GridForwardWarpImageFilterNew() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /**
    * GenerateData()

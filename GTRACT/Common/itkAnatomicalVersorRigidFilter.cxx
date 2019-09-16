@@ -75,20 +75,20 @@ AnatomicalVersorRigidFilter::Update()
   TransformType::Pointer transform = TransformType::New();
 
   /*** Set up the Registration ***/
-  metric->SetNumberOfSpatialSamples( m_NumberOfSpatialSamples );
-  registration->SetMetric( metric );
-  registration->SetOptimizer( optimizer );
-  registration->SetInterpolator( interpolator );
-  registration->SetTransform( transform );
+  metric->SetNumberOfSpatialSamples(m_NumberOfSpatialSamples);
+  registration->SetMetric(metric);
+  registration->SetOptimizer(optimizer);
+  registration->SetInterpolator(interpolator);
+  registration->SetTransform(transform);
 
-  registration->SetFixedImage( m_FixedImage );
-  registration->SetMovingImage( m_MovingImage );
-  registration->SetFixedImageRegion( m_FixedImage->GetBufferedRegion() );
+  registration->SetFixedImage(m_FixedImage);
+  registration->SetMovingImage(m_MovingImage);
+  registration->SetFixedImageRegion(m_FixedImage->GetBufferedRegion());
 
   TransformInitializerTypePointer initializer = TransformInitializerType::New();
-  initializer->SetTransform( transform );
-  initializer->SetFixedImage( m_FixedImage );
-  initializer->SetMovingImage( m_MovingImage );
+  initializer->SetTransform(transform);
+  initializer->SetFixedImage(m_FixedImage);
+  initializer->SetMovingImage(m_MovingImage);
   initializer->MomentsOn();
   initializer->InitializeTransform();
 
@@ -107,13 +107,13 @@ AnatomicalVersorRigidFilter::Update()
   const double     inRadians = pi / 180.0;
   const double     angle = m_InitialRotationAngle * inRadians;
 
-  rotation.Set( axis, angle );
-  transform->SetRotation( rotation );
-  registration->SetInitialTransformParameters( transform->GetParameters() );
+  rotation.Set(axis, angle);
+  transform->SetRotation(rotation);
+  registration->SetInitialTransformParameters(transform->GetParameters());
 
   const double translationScale = 1.0 / m_TranslationScale;
 
-  OptimizerScalesType optimizerScales( transform->GetNumberOfParameters() );
+  OptimizerScalesType optimizerScales(transform->GetNumberOfParameters());
 
   optimizerScales[0] = 1.0;
   optimizerScales[1] = 1.0;
@@ -121,14 +121,14 @@ AnatomicalVersorRigidFilter::Update()
   optimizerScales[3] = translationScale;
   optimizerScales[4] = translationScale;
   optimizerScales[5] = translationScale;
-  optimizer->SetScales( optimizerScales );
+  optimizer->SetScales(optimizerScales);
 
-  optimizer->SetMaximumStepLength( m_MaximumStepLength );
-  optimizer->SetMinimumStepLength( m_MinimumStepLength );
+  optimizer->SetMaximumStepLength(m_MaximumStepLength);
+  optimizer->SetMinimumStepLength(m_MinimumStepLength);
 
-  optimizer->SetRelaxationFactor( m_RelaxationFactor );
+  optimizer->SetRelaxationFactor(m_RelaxationFactor);
 
-  optimizer->SetNumberOfIterations( m_NumberOfIterations );
+  optimizer->SetNumberOfIterations(m_NumberOfIterations);
 
   std::cout << "Before Rigid Registration, center: " << transform->GetCenter() << ", offset: " << transform->GetOffset()
             << "." << std::endl;
@@ -137,7 +137,7 @@ AnatomicalVersorRigidFilter::Update()
   {
     registration->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -166,7 +166,7 @@ AnatomicalVersorRigidFilter::Update()
   std::cout << " Iterations    = " << numberOfIterations << std::endl;
   std::cout << " Metric value  = " << bestValue << std::endl;
 
-  if ( numberOfIterations == static_cast< unsigned int >( m_NumberOfIterations ) )
+  if (numberOfIterations == static_cast<unsigned int>(m_NumberOfIterations))
   {
     std::cout << std::endl
               << std::endl
@@ -175,7 +175,7 @@ AnatomicalVersorRigidFilter::Update()
               << std::endl;
   }
 
-  transform->SetParameters( finalParameters );
+  transform->SetParameters(finalParameters);
 
   std::cout << "After Rigid Registration, center: " << transform->GetCenter() << ", offset: " << transform->GetOffset()
             << "." << std::endl;
@@ -187,7 +187,7 @@ AnatomicalVersorRigidFilter::Update()
   std::cout << "Offset = " << std::endl << offset << std::endl;
 
   m_Output = TransformType::New();
-  m_Output->SetCenter( transform->GetCenter() );
-  m_Output->SetParameters( transform->GetParameters() );
+  m_Output->SetCenter(transform->GetCenter());
+  m_Output->SetParameters(transform->GetParameters());
 }
 } // end namespace itk

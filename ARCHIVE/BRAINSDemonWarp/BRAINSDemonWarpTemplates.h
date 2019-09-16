@@ -49,7 +49,7 @@
 #include "itkFastSymmetricForcesDemonsRegistrationFunction.h"
 
 #include "itkIO.h"
-#if defined( USE_DebugImageViewer )
+#if defined(USE_DebugImageViewer)
 #  include "DebugImageViewerClient.h"
 extern DebugImageViewerClient DebugImageDisplaySender;
 #endif
@@ -62,79 +62,79 @@ extern DebugImageViewerClient DebugImageDisplaySender;
 #include "itkImageMaskSpatialObject.h"
 
 extern void
-PrintDataTypeStrings( void );
+PrintDataTypeStrings(void);
 
 extern int
-CompareNoCase( const std::string & s, const std::string & s2 );
+CompareNoCase(const std::string & s, const std::string & s2);
 
 extern int
-BRAINSResample( int argc, char * argv[] );
+BRAINSResample(int argc, char * argv[]);
 
 extern void
-ProcessOutputType_uchar( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_short( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_ushort( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_int( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_uint( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_float( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-ProcessOutputType_double( struct BRAINSDemonWarpAppParameters & command );
+ProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_uchar( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_uchar(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_short( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_short(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_ushort( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_ushort(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_int( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_int(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_uint( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_float( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_float(struct BRAINSDemonWarpAppParameters & command);
 
 extern void
-VectorProcessOutputType_double( struct BRAINSDemonWarpAppParameters & command );
+VectorProcessOutputType_double(struct BRAINSDemonWarpAppParameters & command);
 
 struct BRAINSDemonWarpAppParameters
 {
-  std::string     movingVolume;
-  std::string     fixedVolume;
-  std::string     outputVolume;
-  std::string     outputDisplacementFieldVolume;
-  std::string     inputPixelType;
-  std::string     outputPixelType;
-  std::string     outputDisplacementFieldPrefix;
-  std::string     outputCheckerboardVolume;
-  std::string     registrationFilterType;
-  itk::Index< 3 > checkerboardPatternSubdivisions;
-  bool            outputNormalized;
-  bool            outputDebug;
-  std::string     maskProcessingMode;
-  std::string     fixedBinaryVolume;
-  std::string     movingBinaryVolume;
-  int             lowerThresholdForBOBF;
-  int             upperThresholdForBOBF;
-  int             backgroundFillValue;
-  itk::Index< 3 > seedForBOBF;
-  itk::Index< 3 > neighborhoodForBOBF;
-  itk::Size< 3 >  medianFilterSize;
+  std::string   movingVolume;
+  std::string   fixedVolume;
+  std::string   outputVolume;
+  std::string   outputDisplacementFieldVolume;
+  std::string   inputPixelType;
+  std::string   outputPixelType;
+  std::string   outputDisplacementFieldPrefix;
+  std::string   outputCheckerboardVolume;
+  std::string   registrationFilterType;
+  itk::Index<3> checkerboardPatternSubdivisions;
+  bool          outputNormalized;
+  bool          outputDebug;
+  std::string   maskProcessingMode;
+  std::string   fixedBinaryVolume;
+  std::string   movingBinaryVolume;
+  int           lowerThresholdForBOBF;
+  int           upperThresholdForBOBF;
+  int           backgroundFillValue;
+  itk::Index<3> seedForBOBF;
+  itk::Index<3> neighborhoodForBOBF;
+  itk::Size<3>  medianFilterSize;
   /*/Not yet implemented
     bool forceCoronalZeroOrigin;
     std::string movingLandmarks;
@@ -161,10 +161,10 @@ struct BRAINSDemonWarpAppParameters
   bool histogramMatch;
 
   /** ShrinkFactors type. */
-  using ShrinkFactorsType = itk::FixedArray< unsigned int, 3 >;
+  using ShrinkFactorsType = itk::FixedArray<unsigned int, 3>;
 
   /** IterationArray type. */
-  using IterationsArrayType = itk::Array< unsigned int >;
+  using IterationsArrayType = itk::Array<unsigned int>;
   unsigned long       numberOfHistogramLevels;
   unsigned long       numberOfMatchPoints;
   unsigned short      numberOfLevels;
@@ -172,65 +172,65 @@ struct BRAINSDemonWarpAppParameters
   ShrinkFactorsType   theFixedImageShrinkFactors;
   IterationsArrayType numberOfIterations;
   // VECTORPARAMS
-  std::vector< std::string > vectorMovingVolume;
-  std::vector< std::string > vectorFixedVolume;
-  bool                       makeBOBF;
-  using WeightFactorsType = itk::Array< float >;
+  std::vector<std::string> vectorMovingVolume;
+  std::vector<std::string> vectorFixedVolume;
+  bool                     makeBOBF;
+  using WeightFactorsType = itk::Array<float>;
   WeightFactorsType weightFactors;
   std::string       interpolationMode;
 };
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template < typename InPixelType, typename OutPixelType >
+template <typename InPixelType, typename OutPixelType>
 void
-ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
+ThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
 
-  using ImageType = itk::Image< InPixelType, dims >;
-  using TRealImage = itk::Image< float, dims >;
-  using OutputImageType = itk::Image< OutPixelType, dims >;
-  using TDisplacementField = itk::Image< itk::Vector< float, dims >, dims >;
+  using ImageType = itk::Image<InPixelType, dims>;
+  using TRealImage = itk::Image<float, dims>;
+  using OutputImageType = itk::Image<OutPixelType, dims>;
+  using TDisplacementField = itk::Image<itk::Vector<float, dims>, dims>;
 
   using MaskPixelType = unsigned char;
-  using MaskImageType = itk::Image< MaskPixelType, dims >;
-  using CastImageFilter = itk::CastImageFilter< TRealImage, MaskImageType >;
+  using MaskImageType = itk::Image<MaskPixelType, dims>;
+  using CastImageFilter = itk::CastImageFilter<TRealImage, MaskImageType>;
 
-  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject< dims >;
+  using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<dims>;
 
   //
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
 
-  typedef typename itk::BRAINSDemonWarp< ImageType, TRealImage, OutputImageType > AppType;
-  typename AppType::Pointer                                                       app = AppType::New();
+  typedef typename itk::BRAINSDemonWarp<ImageType, TRealImage, OutputImageType> AppType;
+  typename AppType::Pointer                                                     app = AppType::New();
 
   // Set up the diffeomorphic demons filter with mask
 
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     std::cout << command.registrationFilterType << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
   }
 
-  typename CommandIterationUpdate< float, 3 >::Pointer observer;
-  if ( command.outputDebug )
+  typename CommandIterationUpdate<float, 3>::Pointer observer;
+  if (command.outputDebug)
   {
-    observer = CommandIterationUpdate< float, 3 >::New();
+    observer = CommandIterationUpdate<float, 3>::New();
   }
   {
     // Set up the demons filter
     using BaseRegistrationFilterType =
-      typename itk::PDEDeformableRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+      typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
     // BaseRegistrationFilterType::Pointer filter =
     //   BaseRegistrationFilterType::New();
     typename BaseRegistrationFilterType::Pointer filter;
 
-    if ( command.registrationFilterType == "Demons" )
+    if (command.registrationFilterType == "Demons")
     {
       using ActualRegistrationFilterType =
-        typename itk::DemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::DemonsRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
       ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
       // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
@@ -242,23 +242,23 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
       // actualfilter->SetUseMovingImageGradient(true);
       filter = actualfilter;
     }
-    else if ( command.registrationFilterType == "Diffeomorphic" )
+    else if (command.registrationFilterType == "Diffeomorphic")
     {
       using ActualRegistrationFilterType =
-        typename itk::DiffeomorphicDemonsRegistrationWithMaskFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::DiffeomorphicDemonsRegistrationWithMaskFilter<TRealImage, TRealImage, TDisplacementField>;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
 
       using GradientType = typename ActualRegistrationFilterType::GradientType;
-      actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
-      actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
+      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
+      actualfilter->SetUseGradientType(static_cast<GradientType>(command.gradientType));
       // It would be preferable that this would be part of the "Application"
       // INFO:  Move this bit of data into the application portion.
-      if ( command.maskProcessingMode == "ROIAUTO" )
+      if (command.maskProcessingMode == "ROIAUTO")
       {
-        if ( ( command.fixedBinaryVolume != "" ) || ( command.movingBinaryVolume != "" ) )
+        if ((command.fixedBinaryVolume != "") || (command.movingBinaryVolume != ""))
         {
-          itkGenericExceptionMacro( << "ERROR:  Can not specify mask file names when ROIAUTO "
-                                    << "is used for the maskProcessingMode" )
+          itkGenericExceptionMacro(<< "ERROR:  Can not specify mask file names when ROIAUTO "
+                                   << "is used for the maskProcessingMode")
         }
         std::cout << "Diffeomorphic with autogenerated Mask!!!!!!!" << std::endl;
         typename TRealImage::Pointer movingBinaryVolumeImage;
@@ -267,83 +267,83 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
         constexpr int                closingSize = 7;
         // using LargeIntegerImage = itk::Image<signed long, dims>;
 
-        typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage< TRealImage >( command.fixedVolume.c_str() );
+        typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage<TRealImage>(command.fixedVolume.c_str());
         //       fixedBinaryVolumeImage =
         // FindLargestForgroundFilledMask<TRealImage>(
         //       fixedVolume,
         //       otsuPercentileThreshold,
         //       closingSize);
-        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter< TRealImage >;
+        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TRealImage>;
         LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
-        LFF->SetInput( fixedVolume );
-        LFF->SetOtsuPercentileThreshold( otsuPercentileThreshold );
-        LFF->SetClosingSize( closingSize );
+        LFF->SetInput(fixedVolume);
+        LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
+        LFF->SetClosingSize(closingSize);
         LFF->Update();
         fixedBinaryVolumeImage = LFF->GetOutput();
 
         typename CastImageFilter::Pointer castFixedMaskImage = CastImageFilter::New();
-        castFixedMaskImage->SetInput( fixedBinaryVolumeImage );
+        castFixedMaskImage->SetInput(fixedBinaryVolumeImage);
         castFixedMaskImage->Update();
 
         typename MaskImageType::Pointer fm = castFixedMaskImage->GetOutput();
-        DebugOutput( MaskImageType, fm );
+        DebugOutput(MaskImageType, fm);
 
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer fixedMask = ImageMaskSpatialObjectType::New();
-        fixedMask->SetImage( castFixedMaskImage->GetOutput() );
+        fixedMask->SetImage(castFixedMaskImage->GetOutput());
         fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
-        typename TRealImage::Pointer movingVolume = itkUtil::ReadImage< TRealImage >( command.movingVolume.c_str() );
-        LFF->SetInput( movingVolume );
-        LFF->SetOtsuPercentileThreshold( otsuPercentileThreshold );
-        LFF->SetClosingSize( closingSize );
+        typename TRealImage::Pointer movingVolume = itkUtil::ReadImage<TRealImage>(command.movingVolume.c_str());
+        LFF->SetInput(movingVolume);
+        LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
+        LFF->SetClosingSize(closingSize);
         LFF->Update();
         movingBinaryVolumeImage = LFF->GetOutput();
 
         typename CastImageFilter::Pointer castMovingMaskImage = CastImageFilter::New();
-        castMovingMaskImage->SetInput( movingBinaryVolumeImage );
+        castMovingMaskImage->SetInput(movingBinaryVolumeImage);
         castMovingMaskImage->Update();
         typename MaskImageType::Pointer mm = castMovingMaskImage->GetOutput();
-        DebugOutput( MaskImageType, mm );
+        DebugOutput(MaskImageType, mm);
 
         // convert mask image to mask
         typename ImageMaskSpatialObjectType::Pointer movingMask = ImageMaskSpatialObjectType::New();
-        movingMask->SetImage( castMovingMaskImage->GetOutput() );
+        movingMask->SetImage(castMovingMaskImage->GetOutput());
         movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
-        actualfilter->SetFixedImageMask( dynamic_cast< SpatialObjectType * >( fixedMask.GetPointer() ) );
-        actualfilter->SetMovingImageMask( dynamic_cast< SpatialObjectType * >( movingMask.GetPointer() ) );
+        actualfilter->SetFixedImageMask(dynamic_cast<SpatialObjectType *>(fixedMask.GetPointer()));
+        actualfilter->SetMovingImageMask(dynamic_cast<SpatialObjectType *>(movingMask.GetPointer()));
       }
-      else if ( command.maskProcessingMode == "ROI" )
+      else if (command.maskProcessingMode == "ROI")
       {
-        if ( ( command.fixedBinaryVolume == "" ) || ( command.movingBinaryVolume == "" ) )
+        if ((command.fixedBinaryVolume == "") || (command.movingBinaryVolume == ""))
         {
-          itkGenericExceptionMacro( << "ERROR:  Must specify mask file names"
-                                       " when ROI is used for the maskProcessingMode" );
+          itkGenericExceptionMacro(<< "ERROR:  Must specify mask file names"
+                                      " when ROI is used for the maskProcessingMode");
         }
         std::cout << "Diffeomorphic with Mask!!!!!!!" << std::endl;
-        typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage< TRealImage >( command.fixedVolume.c_str() );
-        typename TRealImage::Pointer movingVolume = itkUtil::ReadImage< TRealImage >( command.movingVolume.c_str() );
+        typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage<TRealImage>(command.fixedVolume.c_str());
+        typename TRealImage::Pointer movingVolume = itkUtil::ReadImage<TRealImage>(command.movingVolume.c_str());
 
         SpatialObjectType::Pointer fixedMask =
-          ReadImageMask< SpatialObjectType, dims >( command.fixedBinaryVolume, fixedVolume );
+          ReadImageMask<SpatialObjectType, dims>(command.fixedBinaryVolume, fixedVolume);
         SpatialObjectType::Pointer movingMask =
-          ReadImageMask< SpatialObjectType, dims >( command.movingBinaryVolume, movingVolume );
-        actualfilter->SetFixedImageMask( fixedMask );
-        actualfilter->SetMovingImageMask( movingMask );
+          ReadImageMask<SpatialObjectType, dims>(command.movingBinaryVolume, movingVolume);
+        actualfilter->SetFixedImageMask(fixedMask);
+        actualfilter->SetMovingImageMask(movingMask);
       }
       filter = actualfilter;
     }
-    else if ( command.registrationFilterType == "FastSymmetricForces" )
+    else if (command.registrationFilterType == "FastSymmetricForces")
     {
       // s <- s + u (ITK basic implementation)
       using ActualRegistrationFilterType =
-        typename itk::FastSymmetricForcesDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::FastSymmetricForcesDemonsRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
       // INFO:  Review this value setting.
-      actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
-      actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
+      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
+      actualfilter->SetUseGradientType(static_cast<GradientType>(command.gradientType));
       filter = actualfilter;
     }
     /*
@@ -372,38 +372,38 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
     // INFO:  Review this value setting with Insight Journal Diffeomorphic
     // implementation.
-    if ( command.smoothDisplacementFieldSigma > 0.1 )
+    if (command.smoothDisplacementFieldSigma > 0.1)
     {
-      if ( command.outputDebug )
+      if (command.outputDebug)
       {
         std::cout << " Smoothing is on ....." << std::endl;
       }
       filter->SmoothDisplacementFieldOn();
-      filter->SetStandardDeviations( command.smoothDisplacementFieldSigma );
+      filter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
     }
     else
     {
       filter->SmoothDisplacementFieldOff();
     }
-    if ( command.smoothingUp > 0.1 )
+    if (command.smoothingUp > 0.1)
     {
-      if ( command.outputDebug )
+      if (command.outputDebug)
       {
         std::cout << " Smoothing at update....." << std::endl;
       }
       filter->SmoothUpdateFieldOn();
-      filter->SetUpdateFieldStandardDeviations( command.smoothingUp );
+      filter->SetUpdateFieldStandardDeviations(command.smoothingUp);
     }
     else
     {
       filter->SmoothUpdateFieldOff();
     }
-    if ( command.outputDebug )
+    if (command.outputDebug)
     {
-      filter->AddObserver( itk::IterationEvent(), observer );
+      filter->AddObserver(itk::IterationEvent(), observer);
     }
 
-    app->SetRegistrationFilter( filter );
+    app->SetRegistrationFilter(filter);
   }
   /*NOT YET IMPLEMENTED
     if ( command.fixedLandmarks != "none"
@@ -419,116 +419,116 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
       }
       }
       */
-  if ( command.initializeWithDisplacementField != "" )
+  if (command.initializeWithDisplacementField != "")
   {
-    app->SetInitialDisplacementFieldFilename( command.initializeWithDisplacementField.c_str() );
+    app->SetInitialDisplacementFieldFilename(command.initializeWithDisplacementField.c_str());
   }
-  if ( command.initializeWithTransform != "" )
+  if (command.initializeWithTransform != "")
   {
-    app->SetInitialTransformFilename( command.initializeWithTransform.c_str() );
+    app->SetInitialTransformFilename(command.initializeWithTransform.c_str());
   }
 
-  app->SetTheMovingImageFilename( command.movingVolume.c_str() );
-  app->SetTheFixedImageFilename( command.fixedVolume.c_str() );
-  if ( command.outputDebug )
+  app->SetTheMovingImageFilename(command.movingVolume.c_str());
+  app->SetTheFixedImageFilename(command.fixedVolume.c_str());
+  if (command.outputDebug)
   {
-    typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage< TRealImage >( command.fixedVolume.c_str() );
-    typename TRealImage::Pointer movingVolume = itkUtil::ReadImage< TRealImage >( command.movingVolume.c_str() );
-    observer->SetMovingImage( movingVolume );
-    observer->SetFixedImage( fixedVolume );
+    typename TRealImage::Pointer fixedVolume = itkUtil::ReadImage<TRealImage>(command.fixedVolume.c_str());
+    typename TRealImage::Pointer movingVolume = itkUtil::ReadImage<TRealImage>(command.movingVolume.c_str());
+    observer->SetMovingImage(movingVolume);
+    observer->SetFixedImage(fixedVolume);
   }
-  app->SetWarpedImageName( command.outputVolume.c_str() );
-  app->SetMedianFilterSize( command.medianFilterSize );
+  app->SetWarpedImageName(command.outputVolume.c_str());
+  app->SetMedianFilterSize(command.medianFilterSize);
 
   // Set the other optional arguments if specified by the user.
-  if ( command.outputDisplacementFieldPrefix != "" )
+  if (command.outputDisplacementFieldPrefix != "")
   {
-    app->SetDisplacementBaseName( command.outputDisplacementFieldPrefix.c_str() );
+    app->SetDisplacementBaseName(command.outputDisplacementFieldPrefix.c_str());
   }
-  if ( command.outputDisplacementFieldVolume != "" )
+  if (command.outputDisplacementFieldVolume != "")
   {
-    app->SetDisplacementFieldOutputName( command.outputDisplacementFieldVolume.c_str() );
-  }
-
-  if ( command.outputCheckerboardVolume != "" )
-  {
-    app->SetCheckerBoardFilename( command.outputCheckerboardVolume.c_str() );
-    unsigned int array[3] = { static_cast< unsigned int >( command.checkerboardPatternSubdivisions[0] ),
-                              static_cast< unsigned int >( command.checkerboardPatternSubdivisions[1] ),
-                              static_cast< unsigned int >( command.checkerboardPatternSubdivisions[2] ) };
-    app->SetCheckerBoardPattern( array );
+    app->SetDisplacementFieldOutputName(command.outputDisplacementFieldVolume.c_str());
   }
 
-  if ( command.outputNormalized )
+  if (command.outputCheckerboardVolume != "")
+  {
+    app->SetCheckerBoardFilename(command.outputCheckerboardVolume.c_str());
+    unsigned int array[3] = { static_cast<unsigned int>(command.checkerboardPatternSubdivisions[0]),
+                              static_cast<unsigned int>(command.checkerboardPatternSubdivisions[1]),
+                              static_cast<unsigned int>(command.checkerboardPatternSubdivisions[2]) };
+    app->SetCheckerBoardPattern(array);
+  }
+
+  if (command.outputNormalized)
   {
     std::string normalize = "ON"; // INFO:  SetOutNormalized should be a
                                   // boolean
                                   // not a string.
-    app->SetOutNormalized( normalize.c_str() );
+    app->SetOutNormalized(normalize.c_str());
   }
 
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     bool debug = true;
-    app->SetOutDebug( debug ); // INFO:  SetOutDebug should be a boolean not a
-                               // string.
+    app->SetOutDebug(debug); // INFO:  SetOutDebug should be a boolean not a
+                             // string.
   }
 
-  app->SetTheMovingImageShrinkFactors( command.theMovingImageShrinkFactors );
-  app->SetTheFixedImageShrinkFactors( command.theFixedImageShrinkFactors );
+  app->SetTheMovingImageShrinkFactors(command.theMovingImageShrinkFactors);
+  app->SetTheFixedImageShrinkFactors(command.theFixedImageShrinkFactors);
 
-  app->SetUseHistogramMatching( command.histogramMatch );
-  if ( app->GetUseHistogramMatching() )
+  app->SetUseHistogramMatching(command.histogramMatch);
+  if (app->GetUseHistogramMatching())
   {
-    if ( command.outputDebug )
+    if (command.outputDebug)
     {
       std::cout << " Use Histogram Matching....." << std::endl;
     }
-    app->SetNumberOfHistogramLevels( command.numberOfHistogramLevels );
-    app->SetNumberOfMatchPoints( command.numberOfMatchPoints );
+    app->SetNumberOfHistogramLevels(command.numberOfHistogramLevels);
+    app->SetNumberOfMatchPoints(command.numberOfMatchPoints);
   }
 
-  app->SetNumberOfLevels( command.numberOfLevels );
-  app->SetNumberOfIterations( command.numberOfIterations );
-  app->SetInterpolationMode( command.interpolationMode );
+  app->SetNumberOfLevels(command.numberOfLevels);
+  app->SetNumberOfIterations(command.numberOfIterations);
+  app->SetInterpolationMode(command.interpolationMode);
 
-  if ( ( command.maskProcessingMode == "NOMASK" ) &&
-       ( ( command.fixedBinaryVolume != "" ) || ( command.movingBinaryVolume != "" ) ) )
+  if ((command.maskProcessingMode == "NOMASK") &&
+      ((command.fixedBinaryVolume != "") || (command.movingBinaryVolume != "")))
   {
-    itkGenericExceptionMacro( << "ERROR:  Can not specify mask file names when "
-                              << "the default of NOMASK is used for the maskProcessingMode" );
+    itkGenericExceptionMacro(<< "ERROR:  Can not specify mask file names when "
+                             << "the default of NOMASK is used for the maskProcessingMode");
   }
   // If making BOBF option is specified Initialize its parameters
-  if ( command.maskProcessingMode == "BOBF" )
+  if (command.maskProcessingMode == "BOBF")
   {
-    if ( ( command.fixedBinaryVolume == "" ) || ( command.movingBinaryVolume == "" ) )
+    if ((command.fixedBinaryVolume == "") || (command.movingBinaryVolume == ""))
     {
-      itkGenericExceptionMacro( << "Error: If BOBF option is set for maskProcessingMode"
-                                << " then the fixed mask name and moving mask file "
-                                << "name should be specified" );
+      itkGenericExceptionMacro(<< "Error: If BOBF option is set for maskProcessingMode"
+                               << " then the fixed mask name and moving mask file "
+                               << "name should be specified");
     }
 
-    app->SetFixedBinaryVolume( command.fixedBinaryVolume.c_str() );
-    app->SetMovingBinaryVolume( command.movingBinaryVolume.c_str() );
-    app->SetLower( command.lowerThresholdForBOBF );
-    app->SetUpper( command.upperThresholdForBOBF );
+    app->SetFixedBinaryVolume(command.fixedBinaryVolume.c_str());
+    app->SetMovingBinaryVolume(command.movingBinaryVolume.c_str());
+    app->SetLower(command.lowerThresholdForBOBF);
+    app->SetUpper(command.upperThresholdForBOBF);
     typename ImageType::SizeType radius;
     radius[0] = command.neighborhoodForBOBF[0]; // Radius along X
     radius[1] = command.neighborhoodForBOBF[1]; // Radius along Y
     radius[2] = command.neighborhoodForBOBF[2]; // Radius along Z
-    app->SetRadius( radius );
+    app->SetRadius(radius);
     typename ImageType::IndexType seed;
     seed[0] = command.seedForBOBF[0]; // Seed in X dimension;
     seed[1] = command.seedForBOBF[1]; // Seed in Y dimension;
     seed[2] = command.seedForBOBF[2]; // Seed in Z dimension;
-    app->SetSeed( seed );
+    app->SetSeed(seed);
   }
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     std::cout << "Setting Default PixelValue: " << command.backgroundFillValue << "." << std::endl;
   }
-  app->SetDefaultPixelValue( command.backgroundFillValue );
-  if ( command.outputDebug )
+  app->SetDefaultPixelValue(command.backgroundFillValue);
+  if (command.outputDebug)
   {
     std::cout << "Running Thirion Registration" << std::endl;
   }
@@ -536,13 +536,13 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
   {
     app->Execute();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__ << std::endl;
   }
@@ -552,51 +552,51 @@ ThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template < typename InPixelType, typename OutPixelType >
+template <typename InPixelType, typename OutPixelType>
 void
-ProcessAppType( const struct BRAINSDemonWarpAppParameters & command )
+ProcessAppType(const struct BRAINSDemonWarpAppParameters & command)
 {
-  ThirionFunction< InPixelType, OutPixelType >( command );
+  ThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template < typename PixelType >
+template <typename PixelType>
 void
-ProcessOutputType( struct BRAINSDemonWarpAppParameters & command )
+ProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
 {
-  if ( command.outputPixelType != "" )
+  if (command.outputPixelType != "")
   {
     // process the string for the data type
-    if ( CompareNoCase( command.outputPixelType, std::string( "uchar" ) ) == 0 )
+    if (CompareNoCase(command.outputPixelType, std::string("uchar")) == 0)
     {
-      ProcessAppType< PixelType, unsigned char >( command );
+      ProcessAppType<PixelType, unsigned char>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "short" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("short")) == 0)
     {
-      ProcessAppType< PixelType, short >( command );
+      ProcessAppType<PixelType, short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "ushort" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("ushort")) == 0)
     {
-      ProcessAppType< PixelType, unsigned short >( command );
+      ProcessAppType<PixelType, unsigned short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "int" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("int")) == 0)
     {
-      ProcessAppType< PixelType, int >( command );
+      ProcessAppType<PixelType, int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "float" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("float")) == 0)
     {
-      ProcessAppType< PixelType, float >( command );
+      ProcessAppType<PixelType, float>(command);
     }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-    else if ( CompareNoCase( command.outputPixelType, std::string( "uint" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("uint")) == 0)
     {
-      ProcessAppType< PixelType, unsigned int >( command );
+      ProcessAppType<PixelType, unsigned int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "double" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("double")) == 0)
     {
-      ProcessAppType< PixelType, double >( command );
+      ProcessAppType<PixelType, double>(command);
     }
 #endif
     else
@@ -608,46 +608,46 @@ ProcessOutputType( struct BRAINSDemonWarpAppParameters & command )
   }
   else
   {
-    ProcessAppType< PixelType, float >( command );
+    ProcessAppType<PixelType, float>(command);
   }
 }
 
-template < typename InPixelType, typename OutPixelType >
+template <typename InPixelType, typename OutPixelType>
 void
-VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
+VectorThirionFunction(const struct BRAINSDemonWarpAppParameters & command)
 {
   constexpr int dims = 3;
 
-  using ImageType = itk::Image< InPixelType, dims >;
-  using TRealImage = itk::Image< float, dims >;
-  using TVectorImage = itk::VectorImage< float, dims >;
-  using OutputImageType = itk::Image< OutPixelType, dims >;
-  using TDisplacementField = itk::Image< itk::Vector< float, dims >, dims >;
+  using ImageType = itk::Image<InPixelType, dims>;
+  using TRealImage = itk::Image<float, dims>;
+  using TVectorImage = itk::VectorImage<float, dims>;
+  using OutputImageType = itk::Image<OutPixelType, dims>;
+  using TDisplacementField = itk::Image<itk::Vector<float, dims>, dims>;
   //
   // If optional landmark files given, will use landmark registration to
   // generate
   // a deformation field to prime the thirion demons registration.
 
-  typedef typename itk::VBRAINSDemonWarp< ImageType, TRealImage, OutputImageType > AppType;
-  typename AppType::Pointer                                                        app = AppType::New();
+  typedef typename itk::VBRAINSDemonWarp<ImageType, TRealImage, OutputImageType> AppType;
+  typename AppType::Pointer                                                      app = AppType::New();
 
   // Set up the demons filter
   using BaseRegistrationFilterType =
-    typename itk::PDEDeformableRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+    typename itk::PDEDeformableRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
   // BaseRegistrationFilterType::Pointer filter =
   //   BaseRegistrationFilterType::New();
   typename BaseRegistrationFilterType::Pointer filter;
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     std::cout << command.registrationFilterType << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
   }
 
-  if ( command.registrationFilterType == "Demons" )
+  if (command.registrationFilterType == "Demons")
   {
-    if ( command.vectorMovingVolume.size() == 1 )
+    if (command.vectorMovingVolume.size() == 1)
     {
       using ActualRegistrationFilterType =
-        typename itk::DemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::DemonsRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
       ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
       filter = actualfilter;
     }
@@ -658,78 +658,78 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
     }
   }
 
-  else if ( command.registrationFilterType == "Diffeomorphic" )
+  else if (command.registrationFilterType == "Diffeomorphic")
   {
     //    std::cout << "Use Diffeomorphic Registration" << std::endl;
-    if ( command.vectorMovingVolume.size() == 1 )
+    if (command.vectorMovingVolume.size() == 1)
     {
       using ActualRegistrationFilterType =
-        typename itk::DiffeomorphicDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::DiffeomorphicDemonsRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
       // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
-      actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
-      actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
+      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
+      actualfilter->SetUseGradientType(static_cast<GradientType>(command.gradientType));
       filter = actualfilter;
     }
     else
     {
       using ActualRegistrationFilterType =
-        typename itk::VectorDiffeomorphicDemonsRegistrationFilter< TVectorImage, TVectorImage, TDisplacementField >;
+        typename itk::VectorDiffeomorphicDemonsRegistrationFilter<TVectorImage, TVectorImage, TDisplacementField>;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer VDDfilter = ActualRegistrationFilterType::New();
       // INFO:  Review this value setting with Insight Journal Diffeomorphic
       // implementation.
-      VDDfilter->SetMaximumUpdateStepLength( command.maxStepLength );
-      VDDfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
-      if ( command.smoothDisplacementFieldSigma > 0.1 )
+      VDDfilter->SetMaximumUpdateStepLength(command.maxStepLength);
+      VDDfilter->SetUseGradientType(static_cast<GradientType>(command.gradientType));
+      if (command.smoothDisplacementFieldSigma > 0.1)
       {
-        if ( command.outputDebug )
+        if (command.outputDebug)
         {
           std::cout << " Smoothing is on ....." << std::endl;
         }
         VDDfilter->SmoothDisplacementFieldOn();
-        VDDfilter->SetStandardDeviations( command.smoothDisplacementFieldSigma );
+        VDDfilter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
       }
       else
       {
         VDDfilter->SmoothDisplacementFieldOff();
       }
-      if ( command.smoothingUp > 0.1 )
+      if (command.smoothingUp > 0.1)
       {
-        if ( command.outputDebug )
+        if (command.outputDebug)
         {
           std::cout << " Smoothing at update....." << std::endl;
         }
         VDDfilter->SmoothUpdateFieldOn();
-        VDDfilter->SetUpdateFieldStandardDeviations( command.smoothingUp );
+        VDDfilter->SetUpdateFieldStandardDeviations(command.smoothingUp);
       }
       else
       {
         VDDfilter->SmoothUpdateFieldOff();
       }
-      if ( command.outputDebug )
+      if (command.outputDebug)
       {
-        typename VCommandIterationUpdate< float, 3 >::Pointer observer = VCommandIterationUpdate< float, 3 >::New();
-        VDDfilter->AddObserver( itk::IterationEvent(), observer );
+        typename VCommandIterationUpdate<float, 3>::Pointer observer = VCommandIterationUpdate<float, 3>::New();
+        VDDfilter->AddObserver(itk::IterationEvent(), observer);
       }
 
-      app->SetVectorRegistrationFilter( VDDfilter );
+      app->SetVectorRegistrationFilter(VDDfilter);
     }
   }
-  else if ( command.registrationFilterType == "FastSymmetricForces" )
+  else if (command.registrationFilterType == "FastSymmetricForces")
   {
     // s <- s + u (ITK basic implementation)
-    if ( command.vectorMovingVolume.size() == 1 )
+    if (command.vectorMovingVolume.size() == 1)
     {
       using ActualRegistrationFilterType =
-        typename itk::FastSymmetricForcesDemonsRegistrationFilter< TRealImage, TRealImage, TDisplacementField >;
+        typename itk::FastSymmetricForcesDemonsRegistrationFilter<TRealImage, TRealImage, TDisplacementField>;
       using GradientType = typename ActualRegistrationFilterType::GradientType;
       typename ActualRegistrationFilterType::Pointer actualfilter = ActualRegistrationFilterType::New();
       // INFO:  Review this value setting.
-      actualfilter->SetMaximumUpdateStepLength( command.maxStepLength );
-      actualfilter->SetUseGradientType( static_cast< GradientType >( command.gradientType ) );
+      actualfilter->SetMaximumUpdateStepLength(command.maxStepLength);
+      actualfilter->SetUseGradientType(static_cast<GradientType>(command.gradientType));
       filter = actualfilter;
     }
     else
@@ -747,41 +747,41 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
   // INFO:  Review this value setting with Insight Journal Diffeomorphic
   // implementation.
-  if ( command.vectorMovingVolume.size() == 1 )
+  if (command.vectorMovingVolume.size() == 1)
   {
-    if ( command.smoothDisplacementFieldSigma > 0.1 )
+    if (command.smoothDisplacementFieldSigma > 0.1)
     {
-      if ( command.outputDebug )
+      if (command.outputDebug)
       {
         std::cout << " Smoothing is on ....." << std::endl;
       }
       filter->SmoothDisplacementFieldOn();
-      filter->SetStandardDeviations( command.smoothDisplacementFieldSigma );
+      filter->SetStandardDeviations(command.smoothDisplacementFieldSigma);
     }
     else
     {
       filter->SmoothDisplacementFieldOff();
     }
-    if ( command.smoothingUp > 0.1 )
+    if (command.smoothingUp > 0.1)
     {
-      if ( command.outputDebug )
+      if (command.outputDebug)
       {
         std::cout << " Smoothing at update....." << std::endl;
       }
       filter->SmoothUpdateFieldOn();
-      filter->SetUpdateFieldStandardDeviations( command.smoothingUp );
+      filter->SetUpdateFieldStandardDeviations(command.smoothingUp);
     }
     else
     {
       filter->SmoothUpdateFieldOff();
     }
-    if ( command.outputDebug )
+    if (command.outputDebug)
     {
-      typename VCommandIterationUpdate< float, 3 >::Pointer observer = VCommandIterationUpdate< float, 3 >::New();
-      filter->AddObserver( itk::IterationEvent(), observer );
+      typename VCommandIterationUpdate<float, 3>::Pointer observer = VCommandIterationUpdate<float, 3>::New();
+      filter->AddObserver(itk::IterationEvent(), observer);
     }
 
-    app->SetRegistrationFilter( filter );
+    app->SetRegistrationFilter(filter);
   }
 
   /* NOT YET IMPLEMENTED
@@ -799,109 +799,109 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
     }
    app->SetForceCoronalZeroOrigin (command.forceCoronalZeroOrigin);
 */
-  if ( command.initializeWithDisplacementField != "" )
+  if (command.initializeWithDisplacementField != "")
   {
-    app->SetInitialDisplacementFieldFilename( command.initializeWithDisplacementField.c_str() );
+    app->SetInitialDisplacementFieldFilename(command.initializeWithDisplacementField.c_str());
   }
-  if ( command.initializeWithTransform != "" )
+  if (command.initializeWithTransform != "")
   {
-    app->SetInitialTransformFilename( command.initializeWithTransform.c_str() );
+    app->SetInitialTransformFilename(command.initializeWithTransform.c_str());
   }
 
-  std::vector< std::string > fixedImageNames = command.vectorFixedVolume;
-  std::vector< std::string > movingImageNames = command.vectorMovingVolume;
+  std::vector<std::string> fixedImageNames = command.vectorFixedVolume;
+  std::vector<std::string> movingImageNames = command.vectorMovingVolume;
 
-  app->SetTheFixedImageFilename( fixedImageNames );
-  app->SetTheMovingImageFilename( movingImageNames );
-  app->SetWarpedImageName( command.outputVolume.c_str() );
-  app->SetInterpolationMode( command.interpolationMode );
-  app->SetMedianFilterSize( command.medianFilterSize );
+  app->SetTheFixedImageFilename(fixedImageNames);
+  app->SetTheMovingImageFilename(movingImageNames);
+  app->SetWarpedImageName(command.outputVolume.c_str());
+  app->SetInterpolationMode(command.interpolationMode);
+  app->SetMedianFilterSize(command.medianFilterSize);
 
   // Set the other optional arguments if specified by the user.
-  if ( command.outputDisplacementFieldPrefix != "" )
+  if (command.outputDisplacementFieldPrefix != "")
   {
-    app->SetDisplacementBaseName( command.outputDisplacementFieldPrefix.c_str() );
+    app->SetDisplacementBaseName(command.outputDisplacementFieldPrefix.c_str());
   }
-  if ( command.outputDisplacementFieldVolume != "" )
+  if (command.outputDisplacementFieldVolume != "")
   {
-    app->SetDisplacementFieldOutputName( command.outputDisplacementFieldVolume.c_str() );
-  }
-
-  if ( command.outputCheckerboardVolume != "" )
-  {
-    app->SetCheckerBoardFilename( command.outputCheckerboardVolume.c_str() );
-    unsigned int array[3] = { static_cast< unsigned int >( command.checkerboardPatternSubdivisions[0] ),
-                              static_cast< unsigned int >( command.checkerboardPatternSubdivisions[1] ),
-                              static_cast< unsigned int >( command.checkerboardPatternSubdivisions[2] ) };
-    app->SetCheckerBoardPattern( array );
+    app->SetDisplacementFieldOutputName(command.outputDisplacementFieldVolume.c_str());
   }
 
-  if ( command.outputNormalized )
+  if (command.outputCheckerboardVolume != "")
+  {
+    app->SetCheckerBoardFilename(command.outputCheckerboardVolume.c_str());
+    unsigned int array[3] = { static_cast<unsigned int>(command.checkerboardPatternSubdivisions[0]),
+                              static_cast<unsigned int>(command.checkerboardPatternSubdivisions[1]),
+                              static_cast<unsigned int>(command.checkerboardPatternSubdivisions[2]) };
+    app->SetCheckerBoardPattern(array);
+  }
+
+  if (command.outputNormalized)
   {
     std::string normalize = "ON"; // INFO:  SetOutNormalized should be a
                                   // boolean
                                   // not a string.
-    app->SetOutNormalized( normalize.c_str() );
+    app->SetOutNormalized(normalize.c_str());
   }
 
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     bool debug = true;
-    app->SetOutDebug( debug ); // INFO:  SetOutDebug should be a boolean not a
-                               // string.
+    app->SetOutDebug(debug); // INFO:  SetOutDebug should be a boolean not a
+                             // string.
   }
 
-  app->SetTheMovingImageShrinkFactors( command.theMovingImageShrinkFactors );
-  app->SetTheFixedImageShrinkFactors( command.theFixedImageShrinkFactors );
+  app->SetTheMovingImageShrinkFactors(command.theMovingImageShrinkFactors);
+  app->SetTheFixedImageShrinkFactors(command.theFixedImageShrinkFactors);
 
-  app->SetUseHistogramMatching( command.histogramMatch );
-  if ( app->GetUseHistogramMatching() )
+  app->SetUseHistogramMatching(command.histogramMatch);
+  if (app->GetUseHistogramMatching())
   {
-    if ( command.outputDebug )
+    if (command.outputDebug)
     {
       std::cout << " Use Histogram Matching....." << std::endl;
     }
-    app->SetNumberOfHistogramLevels( command.numberOfHistogramLevels );
-    app->SetNumberOfMatchPoints( command.numberOfMatchPoints );
+    app->SetNumberOfHistogramLevels(command.numberOfHistogramLevels);
+    app->SetNumberOfMatchPoints(command.numberOfMatchPoints);
   }
 
-  app->SetNumberOfLevels( command.numberOfLevels );
-  app->SetNumberOfIterations( command.numberOfIterations );
-  app->SetInterpolationMode( command.interpolationMode );
+  app->SetNumberOfLevels(command.numberOfLevels);
+  app->SetNumberOfIterations(command.numberOfIterations);
+  app->SetInterpolationMode(command.interpolationMode);
 
-  app->SetWeightFactors( command.weightFactors );
+  app->SetWeightFactors(command.weightFactors);
 
   // If making BOBF option is specified Initialize its parameters
-  if ( command.makeBOBF )
+  if (command.makeBOBF)
   {
-    if ( ( command.fixedBinaryVolume == "" ) || ( command.movingBinaryVolume == "" ) )
+    if ((command.fixedBinaryVolume == "") || (command.movingBinaryVolume == ""))
     {
       std::cout
         << "Error: If BOBF option is set then the fixed mask name and moving mask file name should be specified. \n";
       throw;
     }
 
-    app->SetFixedBinaryVolume( command.fixedBinaryVolume.c_str() );
-    app->SetMovingBinaryVolume( command.movingBinaryVolume.c_str() );
-    app->SetLower( command.lowerThresholdForBOBF );
-    app->SetUpper( command.upperThresholdForBOBF );
+    app->SetFixedBinaryVolume(command.fixedBinaryVolume.c_str());
+    app->SetMovingBinaryVolume(command.movingBinaryVolume.c_str());
+    app->SetLower(command.lowerThresholdForBOBF);
+    app->SetUpper(command.upperThresholdForBOBF);
     typename ImageType::SizeType radius;
     radius[0] = command.neighborhoodForBOBF[0]; // Radius along X
     radius[1] = command.neighborhoodForBOBF[1]; // Radius along Y
     radius[2] = command.neighborhoodForBOBF[2]; // Radius along Z
-    app->SetRadius( radius );
+    app->SetRadius(radius);
     typename ImageType::IndexType seed;
     seed[0] = command.seedForBOBF[0]; // Seed in X dimension;
     seed[1] = command.seedForBOBF[1]; // Seed in Y dimension;
     seed[2] = command.seedForBOBF[2]; // Seed in Z dimension;
-    app->SetSeed( seed );
+    app->SetSeed(seed);
   }
-  if ( command.outputDebug )
+  if (command.outputDebug)
   {
     std::cout << "Setting Default PixelValue: " << command.backgroundFillValue << "." << std::endl;
   }
-  app->SetDefaultPixelValue( command.backgroundFillValue );
-  if ( command.outputDebug )
+  app->SetDefaultPixelValue(command.backgroundFillValue);
+  if (command.outputDebug)
   {
     std::cout << "Running Thirion Registration" << std::endl;
   }
@@ -909,13 +909,13 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
   {
     app->Execute();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     throw;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Caught a non-ITK exception " << __FILE__ << " " << __LINE__ << std::endl;
   }
@@ -925,51 +925,51 @@ VectorThirionFunction( const struct BRAINSDemonWarpAppParameters & command )
 
 // This function calls the Thirion registration filter setting all the
 // parameters.
-template < typename InPixelType, typename OutPixelType >
+template <typename InPixelType, typename OutPixelType>
 void
-VectorProcessAppType( const struct BRAINSDemonWarpAppParameters & command )
+VectorProcessAppType(const struct BRAINSDemonWarpAppParameters & command)
 {
-  VectorThirionFunction< InPixelType, OutPixelType >( command );
+  VectorThirionFunction<InPixelType, OutPixelType>(command);
 }
 
 // This function processes the output data type.
-template < typename PixelType >
+template <typename PixelType>
 void
-VectorProcssOutputType( struct BRAINSDemonWarpAppParameters & command )
+VectorProcssOutputType(struct BRAINSDemonWarpAppParameters & command)
 {
-  if ( command.outputPixelType != "" )
+  if (command.outputPixelType != "")
   {
     // process the string for the data type
-    if ( CompareNoCase( command.outputPixelType, std::string( "uchar" ) ) == 0 )
+    if (CompareNoCase(command.outputPixelType, std::string("uchar")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned char >( command );
+      VectorProcessAppType<PixelType, unsigned char>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "short" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("short")) == 0)
     {
-      VectorProcessAppType< PixelType, short >( command );
+      VectorProcessAppType<PixelType, short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "ushort" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("ushort")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned short >( command );
+      VectorProcessAppType<PixelType, unsigned short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "int" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("int")) == 0)
     {
-      VectorProcessAppType< PixelType, int >( command );
+      VectorProcessAppType<PixelType, int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "float" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("float")) == 0)
     {
-      VectorProcessAppType< PixelType, float >( command );
+      VectorProcessAppType<PixelType, float>(command);
     }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-    else if ( CompareNoCase( command.outputPixelType, std::string( "uint" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("uint")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned int >( command );
+      VectorProcessAppType<PixelType, unsigned int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "double" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("double")) == 0)
     {
-      VectorProcessAppType< PixelType, double >( command );
+      VectorProcessAppType<PixelType, double>(command);
     }
 #endif
     else
@@ -981,48 +981,48 @@ VectorProcssOutputType( struct BRAINSDemonWarpAppParameters & command )
   }
   else
   {
-    VectorProcessAppType< PixelType, float >( command );
+    VectorProcessAppType<PixelType, float>(command);
   }
 }
 
 // This function processes the output data type.
-template < typename PixelType >
+template <typename PixelType>
 void
-VectorProcessOutputType( struct BRAINSDemonWarpAppParameters & command )
+VectorProcessOutputType(struct BRAINSDemonWarpAppParameters & command)
 {
-  if ( command.outputPixelType != "" )
+  if (command.outputPixelType != "")
   {
     // process the string for the data type
-    if ( CompareNoCase( command.outputPixelType, std::string( "uchar" ) ) == 0 )
+    if (CompareNoCase(command.outputPixelType, std::string("uchar")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned char >( command );
+      VectorProcessAppType<PixelType, unsigned char>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "short" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("short")) == 0)
     {
-      VectorProcessAppType< PixelType, short >( command );
+      VectorProcessAppType<PixelType, short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "ushort" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("ushort")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned short >( command );
+      VectorProcessAppType<PixelType, unsigned short>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "int" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("int")) == 0)
     {
-      VectorProcessAppType< PixelType, int >( command );
+      VectorProcessAppType<PixelType, int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "float" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("float")) == 0)
     {
-      VectorProcessAppType< PixelType, float >( command );
+      VectorProcessAppType<PixelType, float>(command);
     }
 #ifdef _USE_UNCOMMON_TYPES // This is commented out because it causes too many
                            // segments in one object file for the intel
                            // compiler
-    else if ( CompareNoCase( command.outputPixelType, std::string( "uint" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("uint")) == 0)
     {
-      VectorProcessAppType< PixelType, unsigned int >( command );
+      VectorProcessAppType<PixelType, unsigned int>(command);
     }
-    else if ( CompareNoCase( command.outputPixelType, std::string( "double" ) ) == 0 )
+    else if (CompareNoCase(command.outputPixelType, std::string("double")) == 0)
     {
-      VectorProcessAppType< PixelType, double >( command );
+      VectorProcessAppType<PixelType, double>(command);
     }
 #endif
     else
@@ -1034,7 +1034,7 @@ VectorProcessOutputType( struct BRAINSDemonWarpAppParameters & command )
   }
   else
   {
-    VectorProcessAppType< PixelType, float >( command );
+    VectorProcessAppType<PixelType, float>(command);
   }
 }
 

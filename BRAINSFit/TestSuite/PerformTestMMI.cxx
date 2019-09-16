@@ -30,9 +30,9 @@
 #include "itkTransformFileReader.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
-  if ( argc < 3 )
+  if (argc < 3)
   {
     std::cerr << "Missing Parameters " << std::endl;
     std::cerr << "Usage: " << argv[0];
@@ -45,40 +45,40 @@ main( int argc, char * argv[] )
 
   constexpr unsigned int Dimension = 3;
   using PixelType = float;
-  using FixedImageType = itk::Image< PixelType, Dimension >;
-  using MovingImageType = itk::Image< PixelType, Dimension >;
+  using FixedImageType = itk::Image<PixelType, Dimension>;
+  using MovingImageType = itk::Image<PixelType, Dimension>;
 
-  using FixedImageReaderType = itk::ImageFileReader< FixedImageType >;
+  using FixedImageReaderType = itk::ImageFileReader<FixedImageType>;
   FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
-  fixedReader->SetFileName( argv[1] );
+  fixedReader->SetFileName(argv[1]);
   FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
-  using MovingImageReaderType = itk::ImageFileReader< MovingImageType >;
+  using MovingImageReaderType = itk::ImageFileReader<MovingImageType>;
   MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
-  movingReader->SetFileName( argv[2] );
+  movingReader->SetFileName(argv[2]);
   MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
-  using TransformType = itk::BSplineTransform< double, Dimension >;
+  using TransformType = itk::BSplineTransform<double, Dimension>;
   TransformType::Pointer transform = TransformType::New();
 
-  if ( argc > 3 )
+  if (argc > 3)
   {
     std::cout << "Read transform file from the disk ..." << std::endl;
     itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
-    transReader->SetFileName( argv[3] );
+    transReader->SetFileName(argv[3]);
     try
     {
       transReader->Update();
     }
-    catch ( itk::ExceptionObject & e )
+    catch (itk::ExceptionObject & e)
     {
       std::cerr << "Exception caught!" << std::endl;
       std::cerr << e << std::endl;
       return EXIT_FAILURE;
     }
-    transform = dynamic_cast< TransformType * >( transReader->GetTransformList()->begin()->GetPointer() );
+    transform = dynamic_cast<TransformType *>(transReader->GetTransformList()->begin()->GetPointer());
   }
   else
   {
@@ -86,35 +86,35 @@ main( int argc, char * argv[] )
     transform->SetIdentity();
   }
 
-  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4< FixedImageType, MovingImageType >;
+  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
   MIMetricType::Pointer metric = MIMetricType::New();
 
-  metric->SetVirtualDomainFromImage( fixedImage );
-  metric->SetFixedImage( fixedImage );
-  metric->SetMovingImage( movingImage );
-  metric->SetMovingTransform( transform );
+  metric->SetVirtualDomainFromImage(fixedImage);
+  metric->SetFixedImage(fixedImage);
+  metric->SetMovingImage(movingImage);
+  metric->SetMovingTransform(transform);
 
   unsigned int NoHistBins = 50;
-  if ( argc > 4 )
+  if (argc > 4)
   {
-    NoHistBins = std::stoi( argv[4] );
+    NoHistBins = std::stoi(argv[4]);
   }
 
-  metric->SetNumberOfHistogramBins( NoHistBins );
+  metric->SetNumberOfHistogramBins(NoHistBins);
 
-  metric->SetUseFixedImageGradientFilter( false );
-  metric->SetUseMovingImageGradientFilter( false );
+  metric->SetUseFixedImageGradientFilter(false);
+  metric->SetUseMovingImageGradientFilter(false);
 
   //  REGULAR sampling
   std::cout << "Use regular sampling ..." << std::endl;
   unsigned long NoOfSamples = 14000;
-  if ( argc > 5 )
+  if (argc > 5)
   {
-    NoOfSamples = std::stoi( argv[5] );
+    NoOfSamples = std::stoi(argv[5]);
   }
 
   const unsigned long numberOfAllSamples = fixedImage->GetBufferedRegion().GetNumberOfPixels();
-  const double        samplingPercentage = static_cast< double >( NoOfSamples ) / numberOfAllSamples;
+  const double        samplingPercentage = static_cast<double>(NoOfSamples) / numberOfAllSamples;
   std::cout << "numberOfAllSamples: " << numberOfAllSamples << std::endl;
   std::cout << "Sampling percentage: " << samplingPercentage << std::endl;
 
@@ -124,36 +124,36 @@ main( int argc, char * argv[] )
   using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;
 
-  const unsigned long sampleCount = static_cast< unsigned long >( std::ceil( 1.0 / samplingPercentage ) );
+  const unsigned long sampleCount = static_cast<unsigned long>(std::ceil(1.0 / samplingPercentage));
   std::cout << "sample count: " << sampleCount << std::endl;
-  unsigned long                                            count = sampleCount;
-  itk::ImageRegionConstIteratorWithIndex< FixedImageType > It( fixedImage, fixedImage->GetBufferedRegion() );
-  for ( It.GoToBegin(); !It.IsAtEnd(); ++It )
+  unsigned long                                          count = sampleCount;
+  itk::ImageRegionConstIteratorWithIndex<FixedImageType> It(fixedImage, fixedImage->GetBufferedRegion());
+  for (It.GoToBegin(); !It.IsAtEnd(); ++It)
   {
-    if ( count == sampleCount )
+    if (count == sampleCount)
     {
       count = 0; // Reset counter
       SamplePointType point;
-      fixedImage->TransformIndexToPhysicalPoint( It.GetIndex(), point );
-      samplePointSet->SetPoint( index, point );
+      fixedImage->TransformIndexToPhysicalPoint(It.GetIndex(), point);
+      samplePointSet->SetPoint(index, point);
       ++index;
     }
     ++count;
   }
 
-  metric->SetFixedSampledPointSet( samplePointSet );
-  metric->SetUseSampledPointSet( true );
+  metric->SetFixedSampledPointSet(samplePointSet);
+  metric->SetUseSampledPointSet(true);
   ////////////////////////
 
   metric->Initialize();
 
   MIMetricType::MeasureType    measure;
-  MIMetricType::DerivativeType derivative( metric->GetTransform()->GetNumberOfParameters() );
+  MIMetricType::DerivativeType derivative(metric->GetTransform()->GetNumberOfParameters());
   try
   {
-    metric->GetValueAndDerivative( measure, derivative );
+    metric->GetValueAndDerivative(measure, derivative);
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << err << std::endl;

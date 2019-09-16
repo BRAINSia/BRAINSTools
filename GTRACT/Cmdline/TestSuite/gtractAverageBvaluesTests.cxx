@@ -23,7 +23,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( gtractAverageBvaluesTest );
+  REGISTER_TEST(gtractAverageBvaluesTest);
 }
 
 #undef main

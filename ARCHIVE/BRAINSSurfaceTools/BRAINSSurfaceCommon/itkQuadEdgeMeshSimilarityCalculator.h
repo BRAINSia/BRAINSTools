@@ -45,22 +45,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh1, typename TInputMesh2 = TInputMesh1 >
-class QuadEdgeMeshSimilarityCalculator : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh1, TInputMesh2 >
+template <typename TInputMesh1, typename TInputMesh2 = TInputMesh1>
+class QuadEdgeMeshSimilarityCalculator : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshSimilarityCalculator );
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshSimilarityCalculator);
 
   using Self = QuadEdgeMeshSimilarityCalculator;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh1, TInputMesh2 >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh1, TInputMesh2>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( QuadEdgeMeshSimilarityCalculator, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(QuadEdgeMeshSimilarityCalculator, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType1 = TInputMesh1;
   using InputPointType1 = typename InputMeshType1::PointType;
@@ -92,32 +92,32 @@ public:
   using CellsContainerConstIterator2 = typename CellsContainer2::ConstIterator;
   using PointIdIterator2 = typename CellTraits2::PointIdIterator;
 
-  using TriangleType = TriangleHelper< InputPointType1 >;
+  using TriangleType = TriangleHelper<InputPointType1>;
   using AreaType = typename TriangleType::CoordRepType;
 
   /** Set/Get the mesh1 that has the labels. */
   void
-  SetInputMesh1( const InputMeshType1 * mesh1 );
+  SetInputMesh1(const InputMeshType1 * mesh1);
 
   const InputMeshType1 *
-  GetInputMesh1( void ) const;
+  GetInputMesh1(void) const;
 
   /** Set/Get the mesh2 that has the labels. */
   void
-  SetInputMesh2( const InputMeshType2 * mesh2 );
+  SetInputMesh2(const InputMeshType2 * mesh2);
 
   const InputMeshType2 *
-  GetInputMesh2( void ) const;
+  GetInputMesh2(void) const;
 
   /** Set the label value we want to calculate. */
-  itkSetMacro( LabelValue, InputPixelType1 );
+  itkSetMacro(LabelValue, InputPixelType1);
   /** Get the label value it is calculating. */
-  itkGetMacro( LabelValue, InputPixelType1 );
+  itkGetMacro(LabelValue, InputPixelType1);
 
   /** Get the calculated Dice Value. */
-  itkGetMacro( Dice, double );
+  itkGetMacro(Dice, double);
   /** Get the calculated Jaccard Value. */
-  itkGetMacro( Jaccard, double );
+  itkGetMacro(Jaccard, double);
 
   void
   Compute();

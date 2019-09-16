@@ -64,36 +64,36 @@ namespace itk
 /** \class DtiGuidedTrackingFilter
  */
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 class DtiGuidedTrackingFilter
-  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
+  : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DtiGuidedTrackingFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
 
   /** Standard class type alias. */
   using Self = DtiGuidedTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   typedef vtkPolyData * GuideFiberType;
 
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( DtiGuidedTrackingFilter, itk::DtiTrackingFilterBase );
+  itkTypeMacro(DtiGuidedTrackingFilter, itk::DtiTrackingFilterBase);
 
-  itkSetMacro( CurvatureThreshold, double );
-  itkGetMacro( CurvatureThreshold, double );
-  itkSetMacro( GuidedCurvatureThreshold, double );
-  itkGetMacro( GuidedCurvatureThreshold, double );
-  itkSetMacro( MaximumGuideDistance, double );
-  itkGetMacro( MaximumGuideDistance, double );
+  itkSetMacro(CurvatureThreshold, double);
+  itkGetMacro(CurvatureThreshold, double);
+  itkSetMacro(GuidedCurvatureThreshold, double);
+  itkGetMacro(GuidedCurvatureThreshold, double);
+  itkSetMacro(MaximumGuideDistance, double);
+  itkGetMacro(MaximumGuideDistance, double);
 
   // void InitializeSeeds();
-  void SetGuideFiber( GuideFiberType );
+  void SetGuideFiber(GuideFiberType);
 
   void
   Update();
@@ -104,7 +104,7 @@ protected:
 
 private:
   bool
-  GuideDirection( typename Self::ContinuousIndexType, GuideFiberType, const float, TVector & );
+  GuideDirection(typename Self::ContinuousIndexType, GuideFiberType, const float, TVector &);
 
   GuideFiberType m_GuideFiber;
   double         m_CurvatureThreshold;

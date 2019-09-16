@@ -59,8 +59,8 @@
 
 namespace itk
 {
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiTrackingFilterBase()
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiTrackingFilterBase()
 {
   m_UseTend = false;
   m_UseLoopDetection = true;
@@ -78,105 +78,115 @@ DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >:
   pi = 3.14159265358979323846;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::ContinuousIndexToMM(
-  typename Self::ContinuousIndexType & index, PointType & p )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::ContinuousIndexToMM(
+  typename Self::ContinuousIndexType & index,
+  PointType &                          p)
 {
-  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint( index, p );
+  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index, p);
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::MMToContinuousIndex(
-  PointType & p, typename Self::ContinuousIndexType & index )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::MMToContinuousIndex(
+  PointType &                          p,
+  typename Self::ContinuousIndexType & index)
 {
-  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex( p, index );
+  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p, index);
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::MMToContinuousIndex(
-  double * pt, typename Self::ContinuousIndexType & index )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::MMToContinuousIndex(
+  double *                             pt,
+  typename Self::ContinuousIndexType & index)
 {
   PointType p;
   p[0] = pt[0];
   p[1] = pt[1];
   p[2] = pt[2];
 
-  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex( p, index );
+  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p, index);
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::StepIndexInPointSpace(
-  typename Self::ContinuousIndexType & newIndex, typename Self::ContinuousIndexType & oldIndex, TVector & vec )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::StepIndexInPointSpace(
+  typename Self::ContinuousIndexType & newIndex,
+  typename Self::ContinuousIndexType & oldIndex,
+  TVector &                            vec)
 {
   PointType oldpt, newpt;
 
-  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint( oldIndex, oldpt );
+  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(oldIndex, oldpt);
   // std::cerr << "Converted " << oldIndex << " to " << oldpt << std::endl;
   // Calculate the new point
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     newpt[i] = oldpt[i] + vec[i] * this->m_StepSize;
   }
 
-  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex( newpt, newIndex );
+  this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(newpt, newIndex);
   // std::cerr << "Converted " << newpt << " to " << newIndex << std::endl;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::StepIndex(
-  typename Self::ContinuousIndexType & newIndex, typename Self::ContinuousIndexType & oldIndex, TVector & vec )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::StepIndex(
+  typename Self::ContinuousIndexType & newIndex,
+  typename Self::ContinuousIndexType & oldIndex,
+  TVector &                            vec)
 {
   typename Self::AnisotropyImageType::SpacingType spacing = this->m_AnisotropyImage->GetSpacing();
   // Calculate the new index
-  for ( int i = 0; i < 3; i++ )
+  for (int i = 0; i < 3; i++)
   {
     newIndex[i] = oldIndex[i] + vec[i] * this->m_StepSize / spacing[i];
   }
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::ApplyTensorDeflection(
-  TVector & vin, TMatrix & fullTensorPixel, TVector & e2, TVector & vout )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::ApplyTensorDeflection(
+  TVector & vin,
+  TMatrix & fullTensorPixel,
+  TVector & e2,
+  TVector & vout)
 {
-  TVector deflection( 3 );
+  TVector deflection(3);
   deflection = fullTensorPixel * vin;
 
   deflection.normalize();
 
-  vout = e2 * this->m_TendF + ( vin * ( 1 - this->m_TendG ) + deflection * this->m_TendG ) * ( 1 - this->m_TendF );
+  vout = e2 * this->m_TendF + (vin * (1 - this->m_TendG) + deflection * this->m_TendG) * (1 - this->m_TendF);
   vout.normalize();
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
-typename DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::DtiFiberType
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::GetOutput()
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
+typename DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiFiberType
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::GetOutput()
 {
   return m_Output;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 bool
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::IsLoop( vtkPoints * fiber,
-                                                                                         double      tolerance )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::IsLoop(vtkPoints * fiber,
+                                                                                      double      tolerance)
 {
   double p1[3], p2[3];
 
   const double tol2 = tolerance * tolerance;
   const int    numPts = fiber->GetNumberOfPoints();
 
-  fiber->GetPoint( numPts - 1, p1 );
-  for ( int i = numPts - 2; i >= 0; i-- )
+  fiber->GetPoint(numPts - 1, p1);
+  for (int i = numPts - 2; i >= 0; i--)
   {
-    fiber->GetPoint( i, p2 );
-    const double distance = ( p1[0] - p2[0] ) * ( p1[0] - p2[0] ) + ( p1[1] - p2[1] ) * ( p1[1] - p2[1] ) +
-                            ( p1[2] - p2[2] ) * ( p1[2] - p2[2] );
-    if ( distance < tol2 )
+    fiber->GetPoint(i, p2);
+    const double distance =
+      (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]) + (p1[2] - p2[2]) * (p1[2] - p2[2]);
+    if (distance < tol2)
     {
       return true;
     }
@@ -184,9 +194,9 @@ DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >:
   return false;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::InitializeSeeds()
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::InitializeSeeds()
 {
   // ////////////////////////////////////////////////////////////////////////
   // Initialize the seed points
@@ -194,38 +204,38 @@ DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >:
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  using ConstMaskIteratorType = itk::ImageRegionConstIterator< MaskImageType >;
-  ConstMaskIteratorType maskIt( m_StartingRegion, m_StartingRegion->GetLargestPossibleRegion() );
+  using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
+  ConstMaskIteratorType maskIt(m_StartingRegion, m_StartingRegion->GetLargestPossibleRegion());
 
   int count = 0;
   int maskcount = 0;
-  for ( maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt )
+  for (maskIt.GoToBegin(); !maskIt.IsAtEnd(); ++maskIt)
   {
     typename Self::ContinuousIndexType        seed;
     typename ConstMaskIteratorType::IndexType pos = maskIt.GetIndex();
     seed[0] = pos[0];
     seed[1] = pos[1];
     seed[2] = pos[2];
-    const float ai = m_ScalarIP->EvaluateAtContinuousIndex( seed );
+    const float ai = m_ScalarIP->EvaluateAtContinuousIndex(seed);
     // const float roi = m_StartIP->EvaluateAtContinuousIndex(seed);
-    if ( maskIt.Get() )
+    if (maskIt.Get())
     {
       maskcount++;
-      if ( ai >= m_SeedThreshold )
+      if (ai >= m_SeedThreshold)
       {
         EigenValuesArrayType                eigenValues;
         EigenVectorsMatrixType              eigenVectors;
-        typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex( seed );
-        tensorPixel.ComputeEigenAnalysis( eigenValues, eigenVectors );
-        TVector direction( 3 );
+        typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(seed);
+        tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
+        TVector direction(3);
         direction[0] = eigenVectors[2][0];
         direction[1] = eigenVectors[2][1];
         direction[2] = eigenVectors[2][2];
-        m_Seeds.push_back( seed );
-        m_TrackingDirections.push_back( direction );
+        m_Seeds.push_back(seed);
+        m_TrackingDirections.push_back(direction);
         direction *= -1;
-        m_Seeds.push_back( seed );
-        m_TrackingDirections.push_back( direction );
+        m_Seeds.push_back(seed);
+        m_TrackingDirections.push_back(direction);
         count++;
       }
     }
@@ -234,33 +244,34 @@ DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >:
   std::cerr << "Number of Seeds: " << count << std::endl;
 }
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void
-DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >::AddFiberToOutput(
-  vtkPoints * currentFiber, vtkFloatArray * fiberTensors )
+DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::AddFiberToOutput(
+  vtkPoints *     currentFiber,
+  vtkFloatArray * fiberTensors)
 {
   // std::cerr << "NumPts " << currentFiber->GetNumberOfPoints() << ".  ";
 
   vtkCellArray * line = vtkCellArray::New();
 
-  line->InsertNextCell( currentFiber->GetNumberOfPoints() );
-  for ( int i = 0; i < currentFiber->GetNumberOfPoints(); i++ )
+  line->InsertNextCell(currentFiber->GetNumberOfPoints());
+  for (int i = 0; i < currentFiber->GetNumberOfPoints(); i++)
   {
-    line->InsertCellPoint( i );
+    line->InsertCellPoint(i);
   }
   vtkPolyData * data = vtkPolyData::New();
-  data->SetPoints( currentFiber );
-  data->SetLines( line );
+  data->SetPoints(currentFiber);
+  data->SetLines(line);
   // data->GetPointData()->SetScalars(fiberAnisotropy);
-  data->GetPointData()->SetTensors( fiberTensors );
+  data->GetPointData()->SetTensors(fiberTensors);
 
   vtkAppendPolyData * append = vtkAppendPolyData::New();
-#if ( VTK_MAJOR_VERSION < 6 )
-  append->AddInput( this->m_Output );
-  append->AddInput( data );
+#if (VTK_MAJOR_VERSION < 6)
+  append->AddInput(this->m_Output);
+  append->AddInput(data);
 #else
-  append->AddInputData( this->m_Output );
-  append->AddInputData( data );
+  append->AddInputData(this->m_Output);
+  append->AddInputData(data);
 #endif
   append->Update();
   // need to erase the old m_Output

@@ -24,7 +24,7 @@ sdfasdfa
   // templates once.
 
   int
-  main( int argc, char * argv[] )
+  main(int argc, char * argv[])
 {
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
@@ -35,5 +35,5 @@ sdfasdfa
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
   std::cout << "DEPRECATED:" << argv[0] << std::endl;
 
-  return BRAINSResamplePrimary( argc, argv );
+  return BRAINSResamplePrimary(argc, argv);
 }

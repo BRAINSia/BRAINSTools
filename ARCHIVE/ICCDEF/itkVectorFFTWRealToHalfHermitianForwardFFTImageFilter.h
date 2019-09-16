@@ -32,7 +32,7 @@
 #include <complex>
 #include "itkVector.h"
 
-#if defined( ITK_USE_FFTWF ) || defined( ITK_USE_FFTWD )
+#if defined(ITK_USE_FFTWF) || defined(ITK_USE_FFTWD)
 #  include "fftw3.h"
 #endif
 
@@ -44,28 +44,28 @@ namespace itk
  * \ingroup
  */
 
-template < typename TPixel, unsigned int VDimension = 3 >
+template <typename TPixel, unsigned int VDimension = 3>
 class VectorFFTWRealToHalfHermitianForwardFFTImageFilter
-  : public ImageToImageFilter< Image< TPixel, VDimension >,
-                               Image< Vector< std::complex< typename TPixel::ValueType >, 3 >, VDimension > >
+  : public ImageToImageFilter<Image<TPixel, VDimension>,
+                              Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( VectorFFTWRealToHalfHermitianForwardFFTImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorFFTWRealToHalfHermitianForwardFFTImageFilter);
 
   /** Standard class type alias. */
-  using TInputImageType = Image< TPixel, VDimension >;
-  using TOutputImageType = Image< Vector< std::complex< typename TPixel::ValueType >, 3 >, VDimension >;
+  using TInputImageType = Image<TPixel, VDimension>;
+  using TOutputImageType = Image<Vector<std::complex<typename TPixel::ValueType>, 3>, VDimension>;
 
   using Self = VectorFFTWRealToHalfHermitianForwardFFTImageFilter;
-  using Superclass = ImageToImageFilter< TInputImageType, TOutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImageType, TOutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VectorFFTWRealToHalfHermitianForwardFFTImageFilter, ImageToImageFilter );
+  itkTypeMacro(VectorFFTWRealToHalfHermitianForwardFFTImageFilter, ImageToImageFilter);
   /** Image type type alias support. */
   using ImageType = TInputImageType;
   using ImageSizeType = typename ImageType::SizeType;
@@ -76,7 +76,7 @@ public:
   GenerateInputRequestedRegion() override;
 
   void
-  EnlargeOutputRequestedRegion( DataObject * output ) override;
+  EnlargeOutputRequestedRegion(DataObject * output) override;
 
   //
   // these should be defined in every FFT filter class
@@ -85,17 +85,17 @@ public:
 
 protected:
   VectorFFTWRealToHalfHermitianForwardFFTImageFilter()
-    : m_PlanComputed( false )
-    , m_LastImageSize( 0 )
-    , m_InputBuffer( nullptr )
-    , m_OutputBuffer( nullptr )
+    : m_PlanComputed(false)
+    , m_LastImageSize(0)
+    , m_InputBuffer(nullptr)
+    , m_OutputBuffer(nullptr)
   {}
 
   ~VectorFFTWRealToHalfHermitianForwardFFTImageFilter() override
   {
-    if ( m_PlanComputed )
+    if (m_PlanComputed)
     {
-      fftwf_destroy_plan( this->m_Plan );
+      fftwf_destroy_plan(this->m_Plan);
       delete[] this->m_InputBuffer;
       delete[] this->m_OutputBuffer;
     }

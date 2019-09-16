@@ -44,7 +44,7 @@
 
 class landmarksDataSet
   : // public PointMapType
-    public std::map< std::string, itk::Point< double, 3 > >
+    public std::map<std::string, itk::Point<double, 3>>
 {
 private:
   typedef enum
@@ -55,84 +55,83 @@ private:
   } err_flags;
 
 public:
-  using PointType = itk::Point< double, 3 >;
-  using Superclass = std::map< std::string, PointType >;
+  using PointType = itk::Point<double, 3>;
+  using Superclass = std::map<std::string, PointType>;
 
   landmarksDataSet() {}
 
   // Constructor for use by
   // landmarksConstellationTrainingDefinitionIO::ReadFile(const std::string)
   //
-  landmarksDataSet( const std::string & TrainingImageFilename, const std::string & LandmarksFilename )
+  landmarksDataSet(const std::string & TrainingImageFilename, const std::string & LandmarksFilename)
   {
-    this->SetImageFilename( TrainingImageFilename );
-    this->SetLandmarkFilename( LandmarksFilename );
+    this->SetImageFilename(TrainingImageFilename);
+    this->SetLandmarkFilename(LandmarksFilename);
 
-    std::ifstream singleLandmarkFile( LandmarksFilename.c_str() );
-    if ( !singleLandmarkFile.is_open() )
+    std::ifstream singleLandmarkFile(LandmarksFilename.c_str());
+    if (!singleLandmarkFile.is_open())
     {
-      itkGenericExceptionMacro( << "Input model file cannot open! :" << LandmarksFilename );
+      itkGenericExceptionMacro(<< "Input model file cannot open! :" << LandmarksFilename);
     }
     landmarksDataSet::PointType tempPoint;
     char                        linebuf[300];
 
     // Read in RP, AC, PC, VN4, and LE, RE, and other "new" landmarks
-    while ( singleLandmarkFile.getline( linebuf, 300 ) )
+    while (singleLandmarkFile.getline(linebuf, 300))
     {
       // skip comment lines and newlines
-      while ( linebuf[0] == '#' || linebuf[0] == '\0' )
+      while (linebuf[0] == '#' || linebuf[0] == '\0')
       {
-        singleLandmarkFile.getline( linebuf, 300 );
+        singleLandmarkFile.getline(linebuf, 300);
       }
 
-      std::string            CSVs( linebuf );
-      std::string::size_type posA = CSVs.find( ',' );
-      if ( posA == std::string::npos )
+      std::string            CSVs(linebuf);
+      std::string::size_type posA = CSVs.find(',');
+      if (posA == std::string::npos)
       {
         throw landmarksDataSet::shortLine;
       }
-      std::string            PointName( CSVs.substr( 0, posA - 0 ) );
+      std::string            PointName(CSVs.substr(0, posA - 0));
       std::string::size_type posB = 0;
-      for ( unsigned int j = 0; j < 3; ++j ) // Image Dimension = 3
+      for (unsigned int j = 0; j < 3; ++j) // Image Dimension = 3
       {
-        posB = CSVs.find( ',', posA + 1 );
-        if ( posB == std::string::npos )
+        posB = CSVs.find(',', posA + 1);
+        if (posB == std::string::npos)
         {
           throw landmarksDataSet::shortLine;
         }
-        std::string datum = CSVs.substr( posA + 1, posB - ( posA + 1 ) );
-        tempPoint[j] = std::stod( datum.c_str() );
+        std::string datum = CSVs.substr(posA + 1, posB - (posA + 1));
+        tempPoint[j] = std::stod(datum.c_str());
         posA = posB;
       }
       // NOTE:  RAS is was slicer requires, but ITK is internall LPS, so we need
       // to negate the first two landmark points
       tempPoint[0] *= -1;
       tempPoint[1] *= -1;
-      this->SetNamedPoint( PointName, tempPoint );
+      this->SetNamedPoint(PointName, tempPoint);
     }
 
     // RP, AC, PC, VN4, LE and RE are six "must-have" landmarks
-    if ( ( this->find( "RP" ) == this->end() ) || ( this->find( "AC" ) == this->end() ) ||
-         ( this->find( "PC" ) == this->end() ) || ( this->find( "VN4" ) == this->end() ) ||
-         ( this->find( "LE" ) == this->end() ) || ( this->find( "RE" ) == this->end() ) )
+    if ((this->find("RP") == this->end()) || (this->find("AC") == this->end()) || (this->find("PC") == this->end()) ||
+        (this->find("VN4") == this->end()) || (this->find("LE") == this->end()) || (this->find("RE") == this->end()))
     {
-      itkGenericExceptionMacro( << "Essential landmarks are missing!"
-                                << "Make sure the RP (MPJ), AC, PC, 4VN (4th ventricle notch), "
-                                << "LE (left eye centers), and RE (right eye centers) are all defined." );
+      itkGenericExceptionMacro(<< "Essential landmarks are missing!"
+                               << "Make sure the RP (MPJ), AC, PC, 4VN (4th ventricle notch), "
+                               << "LE (left eye centers), and RE (right eye centers) are all defined.");
     }
 
     singleLandmarkFile.close();
   }
 
   PointType
-  GetNamedPoint( const std::string & NamedPoint ) const
+  GetNamedPoint(const std::string & NamedPoint) const
   {
-    landmarksDataSet::const_iterator it = this->find( NamedPoint );
+    landmarksDataSet::const_iterator it = this->find(NamedPoint);
 
     //
     // originally, no check at all for missing points.  Next best thing,
     // throw an exception
-    if ( it == this->end() )
+    if (it == this->end())
     {
       throw;
     }
@@ -140,31 +139,31 @@ public:
   }
 
   void
-  SetNamedPoint( const std::string & NamedPoint, const PointType & NewPoint )
+  SetNamedPoint(const std::string & NamedPoint, const PointType & NewPoint)
   {
-    ( *this )[NamedPoint] = NewPoint;
+    (*this)[NamedPoint] = NewPoint;
   }
 
   void
-  SetImageFilename( const std::string & NewImageFilename )
+  SetImageFilename(const std::string & NewImageFilename)
   {
     m_ImageFilename = NewImageFilename;
   }
 
   std::string
-  GetImageFilename( void ) const
+  GetImageFilename(void) const
   {
     return m_ImageFilename;
   }
 
   void
-  SetLandmarkFilename( const std::string & NewImageFilename )
+  SetLandmarkFilename(const std::string & NewImageFilename)
   {
     m_LandmarkFilename = NewImageFilename;
   }
 
   std::string
-  GetLandmarkFilename( void ) const
+  GetLandmarkFilename(void) const
   {
     return m_LandmarkFilename;
   }
@@ -175,14 +174,14 @@ private:
 };
 
 inline std::ostream &
-operator<<( std::ostream & os, const landmarksDataSet & ds )
+operator<<(std::ostream & os, const landmarksDataSet & ds)
 {
-  os << ds.GetImageFilename() << " " << ds.GetNamedPoint( "RP" ) << std::endl
-     << ds.GetNamedPoint( "AC" ) << std::endl
-     << ds.GetNamedPoint( "PC" ) << std::endl
-     << ds.GetNamedPoint( "VN4" ) << std::endl
-     << ds.GetNamedPoint( "LE" ) << std::endl
-     << ds.GetNamedPoint( "RE" ) << std::endl
+  os << ds.GetImageFilename() << " " << ds.GetNamedPoint("RP") << std::endl
+     << ds.GetNamedPoint("AC") << std::endl
+     << ds.GetNamedPoint("PC") << std::endl
+     << ds.GetNamedPoint("VN4") << std::endl
+     << ds.GetNamedPoint("LE") << std::endl
+     << ds.GetNamedPoint("RE") << std::endl
      << std::endl;
   return os;
 }

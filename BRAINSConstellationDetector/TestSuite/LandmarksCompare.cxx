@@ -24,18 +24,18 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   // inputLandmarkFile2 can contain several baselines, and this program is modified
   // to work with different baselines
-  std::vector< std::string > inputLandmarkFile2Names;
+  std::vector<std::string> inputLandmarkFile2Names;
   inputLandmarkFile2Names = inputLandmarkFile2;
 
   const unsigned int numBaselines = inputLandmarkFile2Names.size(); // The number of landmark baseline files
-  if ( numBaselines == 0 )
+  if (numBaselines == 0)
   {
     std::cerr << "ERROR: No input baseline file is defined!" << std::endl;
     return EXIT_FAILURE;
@@ -43,48 +43,48 @@ main( int argc, char * argv[] )
 
   bool testIterationIsPassed = false;
 
-  for ( unsigned int l = 0; l < numBaselines; ++l )
+  for (unsigned int l = 0; l < numBaselines; ++l)
   {
     std::cout << "\nCompare the input landmark file with the baseline files number: " << l + 1 << std::endl;
 
     // load corresponding landmarks in EMSP aligned space from file if possible
-    const LandmarksMapType       landmarks1 = ReadSlicer3toITKLmk( inputLandmarkFile1 );
-    const LandmarksMapType       landmarks2 = ReadSlicer3toITKLmk( inputLandmarkFile2Names[l] );
-    const LandmarksWeightMapType weight_values = ReadLandmarkWeights( weights );
+    const LandmarksMapType       landmarks1 = ReadSlicer3toITKLmk(inputLandmarkFile1);
+    const LandmarksMapType       landmarks2 = ReadSlicer3toITKLmk(inputLandmarkFile2Names[l]);
+    const LandmarksWeightMapType weight_values = ReadLandmarkWeights(weights);
 
-    if ( landmarks1.empty() )
+    if (landmarks1.empty())
     {
       std::cout << "ERROR: " << inputLandmarkFile1 << " is empty" << std::endl;
       return EXIT_FAILURE;
     }
-    if ( landmarks2.empty() )
+    if (landmarks2.empty())
     {
       std::cout << "ERROR: " << inputLandmarkFile2Names[l] << " is empty" << std::endl;
       return EXIT_FAILURE;
     }
-    if ( landmarks1.size() != landmarks2.size() )
+    if (landmarks1.size() != landmarks2.size())
     {
       std::cout << "ERROR: number of landmarks differ." << std::endl;
       return EXIT_FAILURE;
     }
-    if ( weight_values.empty() )
+    if (weight_values.empty())
     {
       std::cout << "ERROR: Missing weights" << std::endl;
       return EXIT_FAILURE;
     }
     LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
     bool                             allSame = true;
-    while ( lmk1iter != landmarks1.end() )
+    while (lmk1iter != landmarks1.end())
     {
-      const LandmarksMapType::const_iterator       lmk2iter = landmarks2.find( lmk1iter->first );
-      const LandmarksWeightMapType::const_iterator wtsiter = weight_values.find( lmk1iter->first );
-      const double lmk_tolerance = ( wtsiter == weight_values.end() ) ? 5.0 : wtsiter->second;
-      if ( wtsiter == weight_values.end() )
+      const LandmarksMapType::const_iterator       lmk2iter = landmarks2.find(lmk1iter->first);
+      const LandmarksWeightMapType::const_iterator wtsiter = weight_values.find(lmk1iter->first);
+      const double lmk_tolerance = (wtsiter == weight_values.end()) ? 5.0 : wtsiter->second;
+      if (wtsiter == weight_values.end())
       {
         std::cout << "Missing weight in file for landmark: " << lmk1iter->first << std::endl;
       }
 
-      if ( lmk2iter == landmarks2.end() )
+      if (lmk2iter == landmarks2.end())
       {
         std::cout << "Missing landmark in second file: " << lmk1iter->first << std::endl;
         allSame = false;
@@ -93,9 +93,9 @@ main( int argc, char * argv[] )
       else
       {
         bool         thisLmkOK = true;
-        const double error_term = lmk1iter->second.EuclideanDistanceTo( lmk2iter->second );
+        const double error_term = lmk1iter->second.EuclideanDistanceTo(lmk2iter->second);
 
-        if ( error_term > lmk_tolerance && error_term > tolerance )
+        if (error_term > lmk_tolerance && error_term > tolerance)
         {
           std::cout << "FAILED: lmk " << lmk1iter->first << "\t\t differ    ||" << lmk1iter->second << " - "
                     << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
@@ -103,7 +103,7 @@ main( int argc, char * argv[] )
           allSame = false;
           thisLmkOK = false;
         }
-        if ( thisLmkOK )
+        if (thisLmkOK)
         {
           std::cout << "  PASSED: lmk " << lmk1iter->first << "\t\t are same ||" << lmk1iter->second << " - "
                     << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
@@ -112,7 +112,7 @@ main( int argc, char * argv[] )
       }
       ++lmk1iter;
     }
-    if ( allSame )
+    if (allSame)
     {
       std::cout << "The input landmark file is identical to the baseline file: " << l + 1 << "!" << std::endl;
       testIterationIsPassed = true;
@@ -125,7 +125,7 @@ main( int argc, char * argv[] )
     }
   }
 
-  if ( testIterationIsPassed )
+  if (testIterationIsPassed)
   {
     return EXIT_SUCCESS;
   }

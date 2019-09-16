@@ -10,30 +10,31 @@
 
 // public utility interface for file convert
 std::string
-detectOuputVolumeType( const std::string & outputVolume );
+detectOuputVolumeType(const std::string & outputVolume);
 
 bool
-convertInputVolumeVectorToNrrdOrNifti( const std::string &                targetType,
-                                       const std::vector< std::string > & inputVolumeVector,
-                                       std::vector< std::string > &       targetVolumeVector );
+convertInputVolumeVectorToNrrdOrNifti(const std::string &              targetType,
+                                      const std::vector<std::string> & inputVolumeVector,
+                                      std::vector<std::string> &       targetVolumeVector);
 
 bool
-convertInputVolumeToNrrdOrNifti( const std::string & targetType, const std::string & inputVolume,
-                                 std::string & targetVolume );
+convertInputVolumeToNrrdOrNifti(const std::string & targetType,
+                                const std::string & inputVolume,
+                                std::string &       targetVolume);
 
 
 class DWIConvert
 {
 public:
   DWIConvert();
-  DWIConvert( std::string inputVolume, std::string outputVolume = "" );
+  DWIConvert(std::string inputVolume, std::string outputVolume = "");
   ~DWIConvert();
 
   int
   read();
 
   int
-  write( const std::string & outputVolume );
+  write(const std::string & outputVolume);
   int
   write();
 
@@ -48,98 +49,100 @@ public:
 
   // currently supported file types: { ".nii", ".nii.gz", ".nhdr", ".nrrd"}
   void
-  SetInputFileName( std::string inputFilePath );
+  SetInputFileName(std::string inputFilePath);
   void
-  SetOutputFileName( std::string outputFilePath );
+  SetOutputFileName(std::string outputFilePath);
 
   const std::string &
   getInputVolume() const;
 
   void
-  setInputVolume( const std::string & inputVolume );
+  setInputVolume(const std::string & inputVolume);
 
   const std::string &
   getInputDicomDirectory() const;
 
   void
-  setInputDicomDirectory( const std::string & inputDicomDirectory );
+  setInputDicomDirectory(const std::string & inputDicomDirectory);
 
   const std::string &
   getInputBValues() const;
 
   void
-  setInputBValues( const std::string & inputBValues );
+  setInputBValues(const std::string & inputBValues);
 
   const std::string &
   getInputBVectors() const;
 
   void
-  setInputBVectors( const std::string & inputBVectors );
+  setInputBVectors(const std::string & inputBVectors);
 
   const std::string &
   getGradientVectorFile() const;
 
   void
-  setGradientVectorFile( const std::string & gradientVectorFile );
+  setGradientVectorFile(const std::string & gradientVectorFile);
 
   double
   getSmallGradientThreshold() const;
 
   void
-  setSmallGradientThreshold( double smallGradientThreshold );
+  setSmallGradientThreshold(double smallGradientThreshold);
 
   bool
   isfMRIOutput() const;
 
   void
-  setfMRIOutput( bool fMRIOutput );
+  setfMRIOutput(bool fMRIOutput);
 
   bool
   isAllowLossyConversion() const;
 
   void
-  setAllowLossyConversion( bool allowLossyConversion );
+  setAllowLossyConversion(bool allowLossyConversion);
 
   bool
   isUseIdentityMeasurementFrame() const;
 
   void
-  setUseIdentityMeasurementFrame( bool useIdentityMeasurementFrame );
+  setUseIdentityMeasurementFrame(bool useIdentityMeasurementFrame);
 
   bool
   isUseBMatrixGradientDirections() const;
 
   void
-  setUseBMatrixGradientDirections( bool useBMatrixGradientDirections );
+  setUseBMatrixGradientDirections(bool useBMatrixGradientDirections);
 
   const std::string &
   getOutputVolume() const;
 
   void
-  setOutputVolume( const std::string & outputVolume );
+  setOutputVolume(const std::string & outputVolume);
 
   const std::string &
   getOutputDirectory() const;
 
   void
-  setOutputDirectory( const std::string & outputDirectory );
+  setOutputDirectory(const std::string & outputDirectory);
 
   const std::string &
   getOutputBValues() const;
 
   void
-  setOutputBValues( const std::string & outputBValues );
+  setOutputBValues(const std::string & outputBValues);
 
   const std::string &
   getOutputBVectors() const;
 
   void
-  setOutputBVectors( const std::string & outputBVectors );
+  setOutputBVectors(const std::string & outputBVectors);
 
 private:
   DWIConverter *
-  CreateDicomConverter( const std::string inputDicomDirectory, const bool useBMatrixGradientDirections,
-                        const double smallGradientThreshold, const bool allowLossyConversion );
+  CreateDicomConverter(const std::string inputDicomDirectory,
+                       const bool        useBMatrixGradientDirections,
+                       const double      smallGradientThreshold,
+                       const bool        allowLossyConversion);
 
   std::string m_inputFileType;
   std::string m_outputFileType;

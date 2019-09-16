@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined( _MSC_VER )
-#  pragma warning( disable : 4786 )
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
 #endif
 
 #ifdef __BORLANDC__
@@ -33,7 +33,7 @@
 #include "CombineLabelToMaskCLP.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -43,35 +43,35 @@ main( int argc, char * argv[] )
 
   constexpr unsigned char Dim = 3;
 
-  using InputImageType = itk::Image< InputPixelType, Dim >;
-  using OutputImageType = itk::Image< OutputPixelType, Dim >;
+  using InputImageType = itk::Image<InputPixelType, Dim>;
+  using OutputImageType = itk::Image<OutputPixelType, Dim>;
 
-  using FilterType = itk::BinaryThresholdImageFilter< InputImageType, OutputImageType >;
+  using FilterType = itk::BinaryThresholdImageFilter<InputImageType, OutputImageType>;
 
-  using ReaderType = itk::ImageFileReader< InputImageType >;
-  using WriterType = itk::ImageFileWriter< OutputImageType >;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   ReaderType::Pointer reader = ReaderType::New();
   FilterType::Pointer filter = FilterType::New();
 
   WriterType::Pointer writer = WriterType::New();
-  writer->SetInput( filter->GetOutput() );
-  reader->SetFileName( inputVolume );
+  writer->SetInput(filter->GetOutput());
+  reader->SetFileName(inputVolume);
 
-  filter->SetInput( reader->GetOutput() );
+  filter->SetInput(reader->GetOutput());
 
-  filter->SetOutsideValue( outsideValue );
-  filter->SetInsideValue( insideValue );
+  filter->SetOutsideValue(outsideValue);
+  filter->SetInsideValue(insideValue);
 
-  filter->SetLowerThreshold( lowerThreshold );
-  if ( upperThreshold > 0 )
+  filter->SetLowerThreshold(lowerThreshold);
+  if (upperThreshold > 0)
   {
-    filter->SetUpperThreshold( upperThreshold );
+    filter->SetUpperThreshold(upperThreshold);
   }
 
   filter->Update();
 
-  writer->SetFileName( outputVolume );
+  writer->SetFileName(outputVolume);
   writer->Update();
 
   return EXIT_SUCCESS;

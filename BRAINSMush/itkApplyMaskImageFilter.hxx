@@ -25,63 +25,63 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TOutputImage >
-ApplyMaskImageFilter< TInputImage, TOutputImage >::ApplyMaskImageFilter()
+template <typename TInputImage, typename TOutputImage>
+ApplyMaskImageFilter<TInputImage, TOutputImage>::ApplyMaskImageFilter()
 {
-  this->SetNumberOfRequiredInputs( 2 );
+  this->SetNumberOfRequiredInputs(2);
 
   m_InvertMask = false;
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-ApplyMaskImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+ApplyMaskImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "InvertMask: ";
   os << m_InvertMask << std::endl;
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-ApplyMaskImageFilter< TInputImage, TOutputImage >::SetMaskImage( const InputImageType * reference )
+ApplyMaskImageFilter<TInputImage, TOutputImage>::SetMaskImage(const InputImageType * reference)
 {
-  this->ProcessObject::SetNthInput( 1, const_cast< InputImageType * >( reference ) );
+  this->ProcessObject::SetNthInput(1, const_cast<InputImageType *>(reference));
 }
 
-template < typename TInputImage, typename TOutputImage >
-const typename ApplyMaskImageFilter< TInputImage, TOutputImage >::InputImageType *
-ApplyMaskImageFilter< TInputImage, TOutputImage >::GetMaskImage()
+template <typename TInputImage, typename TOutputImage>
+const typename ApplyMaskImageFilter<TInputImage, TOutputImage>::InputImageType *
+ApplyMaskImageFilter<TInputImage, TOutputImage>::GetMaskImage()
 {
-  if ( this->GetNumberOfInputs() < 2 )
+  if (this->GetNumberOfInputs() < 2)
   {
     return NULL;
   }
 
-  return dynamic_cast< TInputImage * >( this->ProcessObject::GetInput( 1 ) );
+  return dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-ApplyMaskImageFilter< TInputImage, TOutputImage >::GenerateData()
+ApplyMaskImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   this->AllocateOutputs();
 
   // get the input and output pointers
-  InputImageConstPointer inputImage = this->GetInput( 0 );
-  InputImageConstPointer maskImage = this->GetInput( 1 );
+  InputImageConstPointer inputImage = this->GetInput(0);
+  InputImageConstPointer maskImage = this->GetInput(1);
   OutputImagePointer     outputVolume = this->GetOutput();
 
   // mask the image
-  using InputConstIterator = ImageRegionConstIterator< InputImageType >;
-  using OutputIterator = ImageRegionIterator< OutputImageType >;
+  using InputConstIterator = ImageRegionConstIterator<InputImageType>;
+  using OutputIterator = ImageRegionIterator<OutputImageType>;
 
-  InputConstIterator itImage( inputImage, inputImage->GetRequestedRegion() );
+  InputConstIterator itImage(inputImage, inputImage->GetRequestedRegion());
 
-  InputConstIterator itMask( maskImage, maskImage->GetRequestedRegion() );
+  InputConstIterator itMask(maskImage, maskImage->GetRequestedRegion());
 
-  OutputIterator itOut( outputVolume, outputVolume->GetRequestedRegion() );
+  OutputIterator itOut(outputVolume, outputVolume->GetRequestedRegion());
 
   // support progress methods/callbacks
   unsigned long updateVisits = 0;
@@ -89,7 +89,7 @@ ApplyMaskImageFilter< TInputImage, TOutputImage >::GenerateData()
 
   totalPixels = inputImage->GetRequestedRegion().GetNumberOfPixels();
   updateVisits = totalPixels / 10;
-  if ( updateVisits < 1 )
+  if (updateVisits < 1)
   {
     updateVisits = 1;
   }
@@ -97,33 +97,33 @@ ApplyMaskImageFilter< TInputImage, TOutputImage >::GenerateData()
   itImage.GoToBegin();
   itMask.GoToBegin();
   unsigned long i = 0;
-  for ( itOut.GoToBegin(); !itOut.IsAtEnd(); ++itOut )
+  for (itOut.GoToBegin(); !itOut.IsAtEnd(); ++itOut)
   {
-    if ( !( i % updateVisits ) )
+    if (!(i % updateVisits))
     {
-      this->UpdateProgress( (float)i / (float)totalPixels );
+      this->UpdateProgress((float)i / (float)totalPixels);
     }
 
-    if ( !m_InvertMask )
+    if (!m_InvertMask)
     {
-      if ( itMask.Get() != 0 )
+      if (itMask.Get() != 0)
       {
-        itOut.Set( static_cast< OutputPixelType >( itImage.Get() ) );
+        itOut.Set(static_cast<OutputPixelType>(itImage.Get()));
       }
       else
       {
-        itOut.Set( static_cast< OutputPixelType >( 0 ) );
+        itOut.Set(static_cast<OutputPixelType>(0));
       }
     }
     else
     {
-      if ( itMask.Get() != 0 )
+      if (itMask.Get() != 0)
       {
-        itOut.Set( static_cast< OutputPixelType >( 0 ) );
+        itOut.Set(static_cast<OutputPixelType>(0));
       }
       else
       {
-        itOut.Set( static_cast< OutputPixelType >( itImage.Get() ) );
+        itOut.Set(static_cast<OutputPixelType>(itImage.Get()));
       }
     }
     i++;

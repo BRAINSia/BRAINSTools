@@ -30,9 +30,9 @@
 
 #include "BRAINSCommonLib.h"
 
-template < typename TImage >
+template <typename TImage>
 void
-printImageStats( const TImage * image )
+printImageStats(const TImage * image)
 {
   typename TImage::RegionType region = image->GetLargestPossibleRegion();
   std::cout << "size[" << region.GetSize()[0] << "," << region.GetSize()[1] << "," << region.GetSize()[2]
@@ -42,66 +42,66 @@ printImageStats( const TImage * image )
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if ( inputCompositeT1Volume == "" )
+  if (inputCompositeT1Volume == "")
   {
     std::cerr << "Missing required Composite T1 Volume "
               << "use --inputCompositeT1Volume flag to specify" << std::endl;
     return 1;
   }
-  if ( inputLabelVolume.size() <= 0 )
+  if (inputLabelVolume.size() <= 0)
   {
     std::cerr << "Missing input label volumes "
               << "use --inputLabelVolume <name> to add a label volume" << std::endl;
     return 1;
   }
 
-  if ( inputTransform.size() > 0 && ( inputLabelVolume.size() != inputTransform.size() ) )
+  if (inputTransform.size() > 0 && (inputLabelVolume.size() != inputTransform.size()))
   {
     std::cerr << "Transform list should have same number of" << std::endl
               << "members as as the input label volumes list" << std::endl;
     return 1;
   }
 
-  if ( outputMultiSTAPLE == "" )
+  if (outputMultiSTAPLE == "")
   {
     std::cerr << "Missing outputMultiSTAPLE image file name" << std::endl;
     return 1;
   }
 
-  using USImageType = itk::Image< unsigned short, 3 >;
+  using USImageType = itk::Image<unsigned short, 3>;
 
-  using ImageList = std::vector< USImageType::Pointer >;
+  using ImageList = std::vector<USImageType::Pointer>;
   ImageList inputLabelVolumes;
-  for ( std::vector< std::string >::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end(); ++it )
+  for (std::vector<std::string>::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end(); ++it)
   {
     USImageType::Pointer labelVolume;
-    std::cout << "Reading " << ( *it ) << std::endl;
+    std::cout << "Reading " << (*it) << std::endl;
     try
     {
-      labelVolume = itkUtil::ReadImage< USImageType >( ( *it ) );
+      labelVolume = itkUtil::ReadImage<USImageType>((*it));
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << std::endl;
       return 1;
     }
-    inputLabelVolumes.push_back( labelVolume );
+    inputLabelVolumes.push_back(labelVolume);
   }
 
   ImageList transformedLabelVolumes;
 
   // resample all input label images into a common space defined by
   // the input Composite volume.
-  if ( skipResampling )
+  if (skipResampling)
   {
-    for ( ImageList::const_iterator it = inputLabelVolumes.begin(); it != inputLabelVolumes.end(); ++it )
+    for (ImageList::const_iterator it = inputLabelVolumes.begin(); it != inputLabelVolumes.end(); ++it)
     {
-      transformedLabelVolumes.push_back( ( *it ) );
+      transformedLabelVolumes.push_back((*it));
     }
   }
   else
@@ -110,139 +110,138 @@ main( int argc, char * argv[] )
     try
     {
       std::cout << "Reading Composite Volume " << inputCompositeT1Volume << std::endl;
-      compositeVolume = itkUtil::ReadImage< USImageType >( inputCompositeT1Volume );
+      compositeVolume = itkUtil::ReadImage<USImageType>(inputCompositeT1Volume);
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << std::endl;
       return 1;
     }
-    printImageStats< USImageType >( compositeVolume );
+    printImageStats<USImageType>(compositeVolume);
 
-    using TransformListType = std::vector< itk::TransformFileReader::TransformPointer >;
+    using TransformListType = std::vector<itk::TransformFileReader::TransformPointer>;
 
     TransformListType inputTransforms;
 
-    if ( inputTransform.size() > 0 )
+    if (inputTransform.size() > 0)
     {
-      for ( std::vector< std::string >::const_iterator it = inputTransform.begin(); it != inputTransform.end(); ++it )
+      for (std::vector<std::string>::const_iterator it = inputTransform.begin(); it != inputTransform.end(); ++it)
       {
         itk::TransformFileReader::TransformPointer curTransform;
 
         itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();
-        std::cout << "Reading " << ( *it ) << std::endl;
-        reader->SetFileName( ( *it ) );
+        std::cout << "Reading " << (*it) << std::endl;
+        reader->SetFileName((*it));
         try
         {
           reader->Update();
         }
-        catch ( itk::ExceptionObject & err )
+        catch (itk::ExceptionObject & err)
         {
           std::cerr << err << std::endl;
           return 1;
         }
         curTransform = reader->GetTransformList()->front();
-        inputTransforms.push_back( curTransform );
+        inputTransforms.push_back(curTransform);
       }
     }
     else
     {
       std::cout << "No transforms specified, using Identity" << std::endl;
       // fake it with identity transforms
-      using IDTransformType = itk::IdentityTransform< double, 3 >;
+      using IDTransformType = itk::IdentityTransform<double, 3>;
 
       IDTransformType::Pointer                   idXfrm = IDTransformType::New();
       itk::TransformFileReader::TransformPointer baseXfrm = idXfrm.GetPointer();
-      for ( std::vector< std::string >::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end();
-            ++it )
+      for (std::vector<std::string>::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end(); ++it)
       {
-        inputTransforms.push_back( baseXfrm );
+        inputTransforms.push_back(baseXfrm);
       }
     }
     // set up interpolator function
     // NOTE see ANTS/Examples/make_interpolator_snip.tmp line 113 --
     // the sigma defaults to the image spacing apparently, but the
     // sigma can also be specified on the command line.
-    using ucharLess = std::less< itk::NumericTraits< unsigned char >::RealType >;
-    using InterpolationFunctionType = itk::LabelImageGaussianInterpolateImageFunction< USImageType, double, ucharLess >;
+    using ucharLess = std::less<itk::NumericTraits<unsigned char>::RealType>;
+    using InterpolationFunctionType = itk::LabelImageGaussianInterpolateImageFunction<USImageType, double, ucharLess>;
     InterpolationFunctionType::Pointer interpolateFunc = InterpolationFunctionType::New();
     double                             sigma[3];
     USImageType::SpacingType           spacing = compositeVolume->GetSpacing();
-    for ( unsigned i = 0; i < 3; ++i )
+    for (unsigned i = 0; i < 3; ++i)
     {
       sigma[i] = spacing[i];
     }
-    interpolateFunc->SetParameters( sigma, 4.0 );
+    interpolateFunc->SetParameters(sigma, 4.0);
 
-    std::vector< std::string >::const_iterator nameIt = inputLabelVolume.begin();
-    TransformListType::const_iterator          xfrmIt = inputTransforms.begin();
-    for ( ImageList::const_iterator it = inputLabelVolumes.begin(); it != inputLabelVolumes.end();
-          ++it, ++xfrmIt, ++nameIt )
+    std::vector<std::string>::const_iterator nameIt = inputLabelVolume.begin();
+    TransformListType::const_iterator        xfrmIt = inputTransforms.begin();
+    for (ImageList::const_iterator it = inputLabelVolumes.begin(); it != inputLabelVolumes.end();
+         ++it, ++xfrmIt, ++nameIt)
     {
-      USImageType::Pointer current = ( *it );
+      USImageType::Pointer current = (*it);
 
-      itk::TransformFileReader::TransformPointer curTransformBase = ( *xfrmIt );
+      itk::TransformFileReader::TransformPointer curTransformBase = (*xfrmIt);
 
-      using ResampleFilterType = itk::ResampleImageFilter< USImageType, USImageType, double >;
+      using ResampleFilterType = itk::ResampleImageFilter<USImageType, USImageType, double>;
 
-      std::cout << "Resampling " << ( *nameIt ) << std::flush;
+      std::cout << "Resampling " << (*nameIt) << std::flush;
 
       const ResampleFilterType::TransformType * curTransform =
-        dynamic_cast< const ResampleFilterType::TransformType * >( curTransformBase.GetPointer() );
-      if ( curTransform == nullptr )
+        dynamic_cast<const ResampleFilterType::TransformType *>(curTransformBase.GetPointer());
+      if (curTransform == nullptr)
       {
         std::cerr << "Invalid transform " << curTransformBase << std::endl;
-        exit( 1 );
+        exit(1);
       }
       ResampleFilterType::Pointer resampler = ResampleFilterType::New();
       try
       {
-        resampler->SetInput( current );
-        resampler->SetUseReferenceImage( true );
-        resampler->SetReferenceImage( compositeVolume );
-        resampler->SetInterpolator( interpolateFunc );
-        resampler->SetTransform( curTransform );
+        resampler->SetInput(current);
+        resampler->SetUseReferenceImage(true);
+        resampler->SetReferenceImage(compositeVolume);
+        resampler->SetInterpolator(interpolateFunc);
+        resampler->SetTransform(curTransform);
         resampler->Update();
       }
-      catch ( itk::ExceptionObject & err )
+      catch (itk::ExceptionObject & err)
       {
         std::cerr << err << std::endl;
         return 1;
       }
       std::cout << " done." << std::endl;
-      if ( resampledVolumePrefix != "" )
+      if (resampledVolumePrefix != "")
       {
-        std::string namePart( itksys::SystemTools::GetFilenameName( ( *nameIt ) ) );
+        std::string namePart(itksys::SystemTools::GetFilenameName((*nameIt)));
         std::string resampledName = resampledVolumePrefix;
         resampledName += namePart;
         std::cerr << "Writing " << resampledName << std::flush;
         try
         {
-          itkUtil::WriteImage< USImageType >( resampler->GetOutput(), resampledName );
+          itkUtil::WriteImage<USImageType>(resampler->GetOutput(), resampledName);
         }
-        catch ( itk::ExceptionObject & err )
+        catch (itk::ExceptionObject & err)
         {
           std::cerr << err << std::endl;
           return 1;
         }
         std::cerr << " ... done." << std::endl;
       }
-      printImageStats< USImageType >( resampler->GetOutput() );
-      transformedLabelVolumes.push_back( resampler->GetOutput() );
+      printImageStats<USImageType>(resampler->GetOutput());
+      transformedLabelVolumes.push_back(resampler->GetOutput());
     }
   }
 
-  using STAPLEFilterType = itk::MultiLabelSTAPLEImageFilter< USImageType, USImageType >;
+  using STAPLEFilterType = itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType>;
   STAPLEFilterType::Pointer STAPLEFilter = STAPLEFilterType::New();
-  STAPLEFilter->SetNumberOfWorkUnits( 1 );
+  STAPLEFilter->SetNumberOfWorkUnits(1);
 
-  if ( labelForUndecidedPixels != -1 )
+  if (labelForUndecidedPixels != -1)
   {
-    STAPLEFilter->SetLabelForUndecidedPixels( labelForUndecidedPixels );
+    STAPLEFilter->SetLabelForUndecidedPixels(labelForUndecidedPixels);
   }
-  for ( ImageList::const_iterator it = transformedLabelVolumes.begin(); it != transformedLabelVolumes.end(); ++it )
+  for (ImageList::const_iterator it = transformedLabelVolumes.begin(); it != transformedLabelVolumes.end(); ++it)
   {
-    STAPLEFilter->PushBackInput( ( *it ) );
+    STAPLEFilter->PushBackInput((*it));
   }
 
   std::cout << "Running MultiLabel Staple filter " << std::flush;
@@ -250,7 +249,7 @@ main( int argc, char * argv[] )
   {
     STAPLEFilter->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << err << std::endl;
     return 1;
@@ -262,29 +261,29 @@ main( int argc, char * argv[] )
   try
   {
     std::cout << "Writing " << outputMultiSTAPLE << std::endl;
-    itkUtil::WriteImage< USImageType >( output, outputMultiSTAPLE );
+    itkUtil::WriteImage<USImageType>(output, outputMultiSTAPLE);
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << err << std::endl;
     return 1;
   }
 
-  if ( outputConfusionMatrix != "" )
+  if (outputConfusionMatrix != "")
   {
     std::cout << "Writing " << outputConfusionMatrix << std::endl;
-    std::ofstream out( outputConfusionMatrix.c_str() );
-    if ( !out.good() )
+    std::ofstream out(outputConfusionMatrix.c_str());
+    if (!out.good())
     {
       std::cerr << "Can't write Matlab confusion matrix file " << outputConfusionMatrix << std::endl;
       return 1;
     }
-    for ( unsigned int i = 0; i < transformedLabelVolumes.size(); ++i )
+    for (unsigned int i = 0; i < transformedLabelVolumes.size(); ++i)
     {
       std::stringstream name;
       name << "confusionMat" << i;
-      STAPLEFilterType::ConfusionMatrixType confusionMat = STAPLEFilter->GetConfusionMatrix( i );
-      vnl_matlab_write( out, confusionMat.data_array(), confusionMat.rows(), confusionMat.cols(), name.str().c_str() );
+      STAPLEFilterType::ConfusionMatrixType confusionMat = STAPLEFilter->GetConfusionMatrix(i);
+      vnl_matlab_write(out, confusionMat.data_array(), confusionMat.rows(), confusionMat.cols(), name.str().c_str());
     }
     out.close();
   }

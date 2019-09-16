@@ -61,39 +61,39 @@ namespace itk
 /** \class DtiGraphSearchTrackingFilter
  */
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 class DtiGraphSearchTrackingFilter
-  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
+  : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DtiGraphSearchTrackingFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGraphSearchTrackingFilter);
 
   /** Standard class type alias. */
   using Self = DtiGraphSearchTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using RandomGeneratorType = itk::Statistics::MersenneTwisterRandomVariateGenerator;
   using RandomGeneratorPointer = RandomGeneratorType::Pointer;
 
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( DtiGraphSearchTrackingFilter, itk::DtiTrackingFilterBase );
+  itkTypeMacro(DtiGraphSearchTrackingFilter, itk::DtiTrackingFilterBase);
 
-  itkSetMacro( AnisotropyBranchingValue, float );
-  itkSetMacro( RandomSeed, int );
-  itkSetMacro( MaximumBranches, unsigned int );
-  itkSetMacro( UseRandomWalk, bool );
+  itkSetMacro(AnisotropyBranchingValue, float);
+  itkSetMacro(RandomSeed, int);
+  itkSetMacro(MaximumBranches, unsigned int);
+  itkSetMacro(UseRandomWalk, bool);
 
-  itkSetMacro( RandomWalkAngle, double );
-  itkGetMacro( RandomWalkAngle, double );
-  itkSetMacro( CurvatureBranchAngle, double );
-  itkGetMacro( CurvatureBranchAngle, double );
+  itkSetMacro(RandomWalkAngle, double);
+  itkGetMacro(RandomWalkAngle, double);
+  itkSetMacro(CurvatureBranchAngle, double);
+  itkGetMacro(CurvatureBranchAngle, double);
 
-  typename itk::Point< double, 3 >
+  typename itk::Point<double, 3>
   InitializeCenterOfMask();
 
   void

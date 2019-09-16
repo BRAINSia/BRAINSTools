@@ -67,8 +67,8 @@ namespace itk
  *
  * \ingroup GradientFilters
  */
-template < typename TInputImage, typename TOutputImage >
-class HammerTissueAttributeVectorImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class HammerTissueAttributeVectorImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Extract dimension from input image. */
@@ -88,19 +88,19 @@ public:
   using InputRegionType = typename InputImageType::RegionType;
 
   /** types for neighborhood iterator */
-  using NeighborhoodIteratorType = ConstNeighborhoodIterator< InputImageType >;
+  using NeighborhoodIteratorType = ConstNeighborhoodIterator<InputImageType>;
   using NeighborOffsetType = typename NeighborhoodIteratorType::OffsetType;
 
   /** Standard class type alias. */
-  using Superclass = ImageToImageFilter< InputImageType, OutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( HammerTissueAttributeVectorImageFilter, ImageToImageFilter );
+  itkTypeMacro(HammerTissueAttributeVectorImageFilter, ImageToImageFilter);
 
   /** Image type alias support. */
   using InputPixelType = typename InputImageType::PixelType;
@@ -112,7 +112,7 @@ public:
   void
   SetUseImageSpacingOn()
   {
-    this->SetUseImageSpacing( true );
+    this->SetUseImageSpacing(true);
   }
 
   /** Ignore the image spacing. Use this option if you want derivatives in
@@ -120,7 +120,7 @@ public:
   void
   SetUseImageSpacingOff()
   {
-    this->SetUseImageSpacing( false );
+    this->SetUseImageSpacing(false);
   }
 
   /** HammerTissueAttributeVectorImageFilter needs a larger input requested region than
@@ -130,34 +130,34 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
   virtual void
-  GenerateInputRequestedRegion() throw( InvalidRequestedRegionError );
+  GenerateInputRequestedRegion() throw(InvalidRequestedRegionError);
 
   /** Set/Get whether or not the filter will use the spacing of the input
     image in its calculations */
-  itkSetMacro( UseImageSpacing, bool );
-  itkGetMacro( UseImageSpacing, bool );
+  itkSetMacro(UseImageSpacing, bool);
+  itkGetMacro(UseImageSpacing, bool);
 
   /** Set/Get macroes for class member varibles */
-  itkSetMacro( Scale, float );
-  itkGetMacro( Scale, float );
+  itkSetMacro(Scale, float);
+  itkGetMacro(Scale, float);
 
-  itkSetMacro( Strength, unsigned char );
-  itkGetMacro( Strength, unsigned char );
+  itkSetMacro(Strength, unsigned char);
+  itkGetMacro(Strength, unsigned char);
 
-  itkSetMacro( GMValue, unsigned char );
-  itkGetMacro( GMValue, unsigned char );
+  itkSetMacro(GMValue, unsigned char);
+  itkGetMacro(GMValue, unsigned char);
 
-  itkSetMacro( WMValue, unsigned char );
-  itkGetMacro( WMValue, unsigned char );
+  itkSetMacro(WMValue, unsigned char);
+  itkGetMacro(WMValue, unsigned char);
 
-  itkSetMacro( CSFValue, unsigned char );
-  itkGetMacro( CSFValue, unsigned char );
+  itkSetMacro(CSFValue, unsigned char);
+  itkGetMacro(CSFValue, unsigned char);
 
-  itkSetMacro( VNValue, unsigned char );
-  itkGetMacro( VNValue, unsigned char );
+  itkSetMacro(VNValue, unsigned char);
+  itkGetMacro(VNValue, unsigned char);
 
-  itkSetMacro( BGValue, unsigned char );
-  itkGetMacro( BGValue, unsigned char );
+  itkSetMacro(BGValue, unsigned char);
+  itkGetMacro(BGValue, unsigned char);
 
   /** The UseImageDirection flag determines whether image derivatives are
    * computed with respect to the image grid or with respect to the physical
@@ -170,15 +170,15 @@ public:
    * The default value of this flag is the same as the CMAKE option
    * ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE (i.e ON by default when ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is ON,
    * and  OFF by default when ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is OFF).*/
-  itkSetMacro( UseImageDirection, bool );
-  itkGetMacro( UseImageDirection, bool );
-  itkBooleanMacro( UseImageDirection );
+  itkSetMacro(UseImageDirection, bool);
+  itkGetMacro(UseImageDirection, bool);
+  itkBooleanMacro(UseImageDirection);
 
 protected:
   HammerTissueAttributeVectorImageFilter();
   virtual ~HammerTissueAttributeVectorImageFilter();
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   /** HammerTissueAttributeVectorImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
@@ -194,10 +194,10 @@ protected:
   GenerateData();
 
 private:
-  HammerTissueAttributeVectorImageFilter( const Self & ); // purposely not
-                                                          // implemented
+  HammerTissueAttributeVectorImageFilter(const Self &); // purposely not
+                                                        // implemented
   void
-  operator=( const Self & ); // purposely not
+  operator=(const Self &); // purposely not
 
   // implemented
 
@@ -205,7 +205,7 @@ private:
   CreateN1Neighbor();
 
   void
-  CreateFeatureNeighbor( int Radius );
+  CreateFeatureNeighbor(int Radius);
 
   bool m_UseImageSpacing;
 
@@ -233,10 +233,10 @@ private:
   static const unsigned char m_GMVNEDGE = 100;
   static const unsigned char m_GMCSFBGEDGE = 120;
 
-  std::vector< NeighborOffsetType > m_FeatureNeighborhood;
-  std::vector< InputIndexType >     m_N1Neighborhood;
+  std::vector<NeighborOffsetType> m_FeatureNeighborhood;
+  std::vector<InputIndexType>     m_N1Neighborhood;
   // indices in the spherical neighborhood
-  std::vector< NeighborOffsetType > m_OffsetInSphericalNeighborhood;
+  std::vector<NeighborOffsetType> m_OffsetInSphericalNeighborhood;
 };
 } // end namespace itk
 

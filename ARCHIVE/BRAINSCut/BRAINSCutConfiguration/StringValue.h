@@ -23,32 +23,32 @@
 #include <iostream>
 #include "itkMacro.h" //Needed for override
 
-class StringValue : public XMLContents< const std::string >
+class StringValue : public XMLContents<const std::string>
 {
 public:
-  using SuperClass = XMLContents< const std::string >;
+  using SuperClass = XMLContents<const std::string>;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== StringValue ===!" << this->m_Value << "!" << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== StringValue ===!" << this->m_Value << "!" << std::endl;
     return indent + 2;
   }
 
   using ReturnType = const std::string;
-  StringValue( ReturnType & name, ReturnType & value )
-    : XMLContents< ReturnType >( name )
-    , m_Value( value )
+  StringValue(ReturnType & name, ReturnType & value)
+    : XMLContents<ReturnType>(name)
+    , m_Value(value)
   {}
 
   ReturnType
-  GetValue( void ) const override
+  GetValue(void) const override
   {
     return this->m_Value;
   }
 
   void
-  SetValue( ReturnType & s )
+  SetValue(ReturnType & s)
   {
     this->m_Value = s;
   }
@@ -62,7 +62,7 @@ public:
   {
     bool returnvalue = true;
 
-    if ( this->m_Value == "" )
+    if (this->m_Value == "")
     {
       std::cerr << "Empty string value for " << this->GetName() << std::endl;
       returnvalue = false;

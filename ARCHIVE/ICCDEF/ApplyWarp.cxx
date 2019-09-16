@@ -42,15 +42,15 @@ INFO:  NEED TO COMMENT WHAT THIS PROGRAM IS TO BE USED FOR
 #include "GenericTransformImage.h"
 
 // A filter to debug the min/max values
-template < typename TImage >
+template <typename TImage>
 void
-PrintImageMinAndMax( TImage * inputImage )
+PrintImageMinAndMax(TImage * inputImage)
 {
   //  typename TImage::PixelType resultMaximum:
   //  typename TImage::PixelType resultMinimum;
-  using StatisticsFilterType = typename itk::StatisticsImageFilter< TImage >;
+  using StatisticsFilterType = typename itk::StatisticsImageFilter<TImage>;
   typename StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
-  statsFilter->SetInput( inputImage );
+  statsFilter->SetInput(inputImage);
   statsFilter->Update();
   //  resultMaximum = statsFilter->GetMaximum();
   //  resultMinimum = statsFilter->GetMinimum();
@@ -59,17 +59,17 @@ PrintImageMinAndMax( TImage * inputImage )
 }
 
 int
-ApplyWarp( int argc, char * argv[] )
+ApplyWarp(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  const bool useTransform = ( warpTransform.size() > 0 );
+  const bool useTransform = (warpTransform.size() > 0);
   {
-    const bool useDisplacementField = ( deformationVolume.size() > 0 );
+    const bool useDisplacementField = (deformationVolume.size() > 0);
     const bool debug = true;
 
-    if ( debug )
+    if (debug)
     {
       std::cout << "=====================================================" << std::endl;
       std::cout << "Input Volume:      " << inputVolume << std::endl;
@@ -79,115 +79,115 @@ ApplyWarp( int argc, char * argv[] )
       std::cout << "Orientation to RAI:" << orientationRAI << std::endl;
       std::cout << "Interpolation:     " << interpolationMode << std::endl;
       std::cout << "Background Value:  " << defaultValue << std::endl;
-      if ( useDisplacementField )
+      if (useDisplacementField)
       {
         std::cout << "Warp by Deformation Volume: " << deformationVolume << std::endl;
       }
-      if ( useTransform )
+      if (useTransform)
       {
         std::cout << "Warp By Transform: " << warpTransform << std::endl;
       }
       std::cout << "=====================================================" << std::endl;
     }
 
-    if ( useTransformMode.size() > 0 )
+    if (useTransformMode.size() > 0)
     {
       std::cout << "Scripting 'code rot' note:  The useTransformMode parameter will be ignored.  Now ApplyWarp infers "
                    "the warpTransform type from the contents of the .mat file."
                 << std::endl;
     }
 
-    if ( useTransform == useDisplacementField )
+    if (useTransform == useDisplacementField)
     {
       std::cout
         << "Choose one of the two possibilities, a BRAINSFit transform --or-- a high-dimensional deformation field."
         << std::endl;
-      exit( 1 );
+      exit(1);
     }
   }
 
-  using ImageType = itk::Image< float, 3 >;
-  using RefImageType = itk::Image< float, 3 >;
+  using ImageType = itk::Image<float, 3>;
+  using RefImageType = itk::Image<float, 3>;
   ImageType::Pointer PrincipalOperandImage; // One name for the image to be warped.
   {
 
-    if ( orientationRAI )
+    if (orientationRAI)
     {
-      PrincipalOperandImage = itkUtil::ReadImage< ImageType >( inputVolume );
-      PrincipalOperandImage = itkUtil::OrientImage< ImageType >(
-        PrincipalOperandImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+      PrincipalOperandImage = itkUtil::ReadImage<ImageType>(inputVolume);
+      PrincipalOperandImage =
+        itkUtil::OrientImage<ImageType>(PrincipalOperandImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
     }
     else
     {
-      PrincipalOperandImage = itkUtil::ReadImage< ImageType >( inputVolume );
+      PrincipalOperandImage = itkUtil::ReadImage<ImageType>(inputVolume);
     }
   }
 
   // Read ReferenceVolume and DeformationVolume
 
   using VectorComponentType = float;
-  using VectorPixelType = itk::Vector< VectorComponentType, 3 >;
-  using DisplacementFieldType = itk::Image< VectorPixelType, 3 >;
+  using VectorPixelType = itk::Vector<VectorComponentType, 3>;
+  using DisplacementFieldType = itk::Image<VectorPixelType, 3>;
 
   // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
   DisplacementFieldType::Pointer DisplacementField;
   RefImageType::Pointer          ReferenceImage;
 
-  if ( useTransform )
+  if (useTransform)
   {
 
-    if ( referenceVolume.size() > 0 )
+    if (referenceVolume.size() > 0)
     {
-      if ( orientationRAI )
+      if (orientationRAI)
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( referenceVolume );
-        ReferenceImage = itkUtil::OrientImage< RefImageType >(
-          ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(referenceVolume);
+        ReferenceImage =
+          itkUtil::OrientImage<RefImageType>(ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
       }
       else
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( referenceVolume );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(referenceVolume);
       }
     }
     else
     {
       std::cout << "Alert:  missing Reference Volume defaulted to: " << inputVolume << std::endl;
       //  ReferenceImage = itkUtil::ReadImage<RefImageType>( inputVolume );
-      if ( orientationRAI )
+      if (orientationRAI)
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( inputVolume );
-        ReferenceImage = itkUtil::OrientImage< RefImageType >(
-          ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(inputVolume);
+        ReferenceImage =
+          itkUtil::OrientImage<RefImageType>(ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
       }
       else
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( inputVolume );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(inputVolume);
       }
     }
   }
-  else if ( !useTransform ) // that is, it's a warp by deformation field:
+  else if (!useTransform) // that is, it's a warp by deformation field:
   {
-    if ( orientationRAI )
+    if (orientationRAI)
     {
-      DisplacementField = itkUtil::ReadImage< DisplacementFieldType >( deformationVolume );
-      DisplacementField = itkUtil::OrientImage< DisplacementFieldType >(
-        DisplacementField, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+      DisplacementField = itkUtil::ReadImage<DisplacementFieldType>(deformationVolume);
+      DisplacementField = itkUtil::OrientImage<DisplacementFieldType>(
+        DisplacementField, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
     }
     else
     {
-      DisplacementField = itkUtil::ReadImage< DisplacementFieldType >( deformationVolume );
+      DisplacementField = itkUtil::ReadImage<DisplacementFieldType>(deformationVolume);
     }
-    if ( referenceVolume.size() > 0 )
+    if (referenceVolume.size() > 0)
     {
-      if ( orientationRAI )
+      if (orientationRAI)
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( referenceVolume );
-        ReferenceImage = itkUtil::OrientImage< RefImageType >(
-          ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(referenceVolume);
+        ReferenceImage =
+          itkUtil::OrientImage<RefImageType>(ReferenceImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
       }
       else
       {
-        ReferenceImage = itkUtil::ReadImage< RefImageType >( referenceVolume );
+        ReferenceImage = itkUtil::ReadImage<RefImageType>(referenceVolume);
       }
     }
   }
@@ -198,134 +198,134 @@ ApplyWarp( int argc, char * argv[] )
   BSplineTransformType::Pointer itkBSplineTransform;
   AffineTransformType::Pointer  ITKAffineTransform;
 
-  if ( useTransform )
+  if (useTransform)
   {
     std::cerr << "Invalid option, not implemented in ITKv4 version yet." << std::endl;
     return -1;
   }
 
   ImageType::Pointer TransformedImage =
-    GenericTransformImage< ImageType, RefImageType, DisplacementFieldType >( PrincipalOperandImage,
-                                                                             ReferenceImage,
-                                                                             DisplacementField,
-                                                                             NULL,
-                                                                             defaultValue,
-                                                                             interpolationMode,
-                                                                             pixelType == "binary" );
+    GenericTransformImage<ImageType, RefImageType, DisplacementFieldType>(PrincipalOperandImage,
+                                                                          ReferenceImage,
+                                                                          DisplacementField,
+                                                                          NULL,
+                                                                          defaultValue,
+                                                                          interpolationMode,
+                                                                          pixelType == "binary");
 
   // Write out the output image;  threshold it if necessary.
-  if ( pixelType == "binary" )
+  if (pixelType == "binary")
   {
     // A special case for dealing with binary images
     // where signed distance maps are warped and thresholds created
     using MaskPixelType = short int;
-    using MaskImageType = itk::Image< MaskPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, MaskImageType >;
+    using MaskImageType = itk::Image<MaskPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, MaskImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
 
     MaskImageType::Pointer outputImage = castFilter->GetOutput();
-    using WriterType = itk::ImageFileWriter< MaskImageType >;
+    using WriterType = itk::ImageFileWriter<MaskImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "uchar" )
+  else if (pixelType == "uchar")
   {
     using NewPixelType = unsigned char;
-    using NewImageType = itk::Image< NewPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, NewImageType >;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
 
-    using WriterType = itk::ImageFileWriter< NewImageType >;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "short" )
+  else if (pixelType == "short")
   {
     using NewPixelType = signed short;
-    using NewImageType = itk::Image< NewPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, NewImageType >;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
 
-    using WriterType = itk::ImageFileWriter< NewImageType >;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "ushort" )
+  else if (pixelType == "ushort")
   {
     using NewPixelType = unsigned short;
-    using NewImageType = itk::Image< NewPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, NewImageType >;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
 
-    using WriterType = itk::ImageFileWriter< NewImageType >;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "int" )
+  else if (pixelType == "int")
   {
     using NewPixelType = int;
-    using NewImageType = itk::Image< NewPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, NewImageType >;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
 
-    using WriterType = itk::ImageFileWriter< NewImageType >;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "uint" )
+  else if (pixelType == "uint")
   {
     using NewPixelType = unsigned int;
-    using NewImageType = itk::Image< NewPixelType, 3 >;
-    using CastImageFilter = itk::CastImageFilter< ImageType, NewImageType >;
+    using NewImageType = itk::Image<NewPixelType, 3>;
+    using CastImageFilter = itk::CastImageFilter<ImageType, NewImageType>;
     CastImageFilter::Pointer castFilter = CastImageFilter::New();
-    castFilter->SetInput( TransformedImage );
+    castFilter->SetInput(TransformedImage);
     castFilter->Update();
     ;
-    using WriterType = itk::ImageFileWriter< NewImageType >;
+    using WriterType = itk::ImageFileWriter<NewImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( castFilter->GetOutput() );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(castFilter->GetOutput());
     imageWriter->Update();
   }
-  else if ( pixelType == "float" )
+  else if (pixelType == "float")
   {
-    using WriterType = itk::ImageFileWriter< ImageType >;
+    using WriterType = itk::ImageFileWriter<ImageType>;
     WriterType::Pointer imageWriter = WriterType::New();
-    imageWriter->SetFileName( outputVolume );
-    imageWriter->SetInput( TransformedImage );
+    imageWriter->SetFileName(outputVolume);
+    imageWriter->SetInput(TransformedImage);
     imageWriter->Update();
   }
   else
   {
     std::cout << "ERROR:  Invalid pixelType" << std::endl;
-    exit( -1 );
+    exit(-1);
   }
 
   return EXIT_SUCCESS;
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
@@ -336,5 +336,5 @@ main( int argc, char * argv[] )
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
   std::cout << "This program has been replaced by BRAINSResample.  PLEASE TRY TO AVOID USING THIS!" << std::endl;
 
-  return ApplyWarp( argc, argv );
+  return ApplyWarp(argc, argv);
 }

@@ -25,23 +25,23 @@ namespace itk
 /** \class BlendImageFilter
  *  \brief Blend 2 images based using weights for each images
  */
-template < typename TInputImage, typename TOutputImage >
-class BlendImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class BlendImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( BlendImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(BlendImageFilter);
 
   /** Standard class type alias. */
   using Self = BlendImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( BlendImageFilter, ImageToImageFilter );
+  itkTypeMacro(BlendImageFilter, ImageToImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;
@@ -62,29 +62,28 @@ public:
       dimension must be one less than that of the input. */
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( ImageDimensionCheck,
-                   (Concept::SameDimension< Self::InputImageDimension, Self::OutputImageDimension >));
+  itkConceptMacro(ImageDimensionCheck, (Concept::SameDimension<Self::InputImageDimension, Self::OutputImageDimension>));
   /** End concept checking */
 #endif
 
   /** Set the blend amounts for each input image.
    * set before the update of the filter.
    */
-  itkGetConstMacro( Blend1, double );
-  itkSetMacro( Blend1, double );
-  itkGetConstMacro( Blend2, double );
-  itkSetMacro( Blend2, double );
+  itkGetConstMacro(Blend1, double);
+  itkSetMacro(Blend1, double);
+  itkGetConstMacro(Blend2, double);
+  itkSetMacro(Blend2, double);
 
   void
-  SetInput1( const TInputImage * image1 )
+  SetInput1(const TInputImage * image1)
   {
-    this->SetNthInput( 0, const_cast< TInputImage * >( image1 ) );
+    this->SetNthInput(0, const_cast<TInputImage *>(image1));
   }
 
   void
-  SetInput2( const TInputImage * image2 )
+  SetInput2(const TInputImage * image2)
   {
-    this->SetNthInput( 1, const_cast< TInputImage * >( image2 ) );
+    this->SetNthInput(1, const_cast<TInputImage *>(image2));
   }
 
 protected:
@@ -92,10 +91,10 @@ protected:
   virtual ~BlendImageFilter() {}
 
   virtual void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   virtual void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
 private:
   double m_Blend1, m_Blend2;

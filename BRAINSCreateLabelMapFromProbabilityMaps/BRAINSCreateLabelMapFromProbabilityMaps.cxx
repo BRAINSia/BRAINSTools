@@ -23,89 +23,89 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  using ProbabilityImageType = itk::Image< float, 3 >;
+  using ProbabilityImageType = itk::Image<float, 3>;
   using FloatingPointPrecision = double;
 
-  using ProbabilityImageVectorType = std::vector< ProbabilityImageType::Pointer >;
-  using BoolVectorType = std::vector< bool >;
-  using UnsignedIntVectorType = vnl_vector< unsigned int >;
+  using ProbabilityImageVectorType = std::vector<ProbabilityImageType::Pointer>;
+  using BoolVectorType = std::vector<bool>;
+  using UnsignedIntVectorType = vnl_vector<unsigned int>;
 
-  if ( inputProbabilityVolume.size() < 1 )
+  if (inputProbabilityVolume.size() < 1)
   {
     std::cerr << "Missing probability volume list" << std::endl;
     return 1;
   }
 
   ProbabilityImageVectorType Posteriors;
-  for ( unsigned i = 0; i < inputProbabilityVolume.size(); ++i )
+  for (unsigned i = 0; i < inputProbabilityVolume.size(); ++i)
   {
-    using ImageReaderType = itk::ImageFileReader< ProbabilityImageType >;
+    using ImageReaderType = itk::ImageFileReader<ProbabilityImageType>;
     ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( inputProbabilityVolume[i] );
+    reader->SetFileName(inputProbabilityVolume[i]);
     ProbabilityImageType::Pointer current;
     try
     {
       reader->Update();
       current = reader->GetOutput();
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
     }
-    Posteriors.push_back( current );
+    Posteriors.push_back(current);
   }
 
-  if ( priorLabelCodes.size() < 1 )
+  if (priorLabelCodes.size() < 1)
   {
     std::cerr << "Missing prior label codes" << std::endl;
   }
 
   UnsignedIntVectorType priorLabels;
-  priorLabels.set_size( priorLabelCodes.size() );
-  for ( unsigned i = 0; i < priorLabelCodes.size(); ++i )
+  priorLabels.set_size(priorLabelCodes.size());
+  for (unsigned i = 0; i < priorLabelCodes.size(); ++i)
   {
     priorLabels[i] = priorLabelCodes[i];
   }
 
-  if ( foregroundPriors.size() < 1 )
+  if (foregroundPriors.size() < 1)
   {
     std::cerr << "Missing prior label codes" << std::endl;
   }
 
   BoolVectorType priorIsForeground;
-  for ( unsigned i = 0; i < foregroundPriors.size(); ++i )
+  for (unsigned i = 0; i < foregroundPriors.size(); ++i)
   {
-    priorIsForeground.push_back( foregroundPriors[i] );
+    priorIsForeground.push_back(foregroundPriors[i]);
   }
 
   ByteImageType::Pointer nonAirVolume;
-  if ( nonAirRegionMask == "" )
+  if (nonAirRegionMask == "")
   {
     nonAirVolume = ByteImageType::New();
     ByteImageType::RegionType region = Posteriors[0]->GetLargestPossibleRegion();
-    nonAirVolume->CopyInformation( Posteriors[0] );
-    nonAirVolume->SetRegions( region );
+    nonAirVolume->CopyInformation(Posteriors[0]);
+    nonAirVolume->SetRegions(region);
     nonAirVolume->Allocate();
     ByteImageType::PixelType one = 1;
-    nonAirVolume->FillBuffer( one );
+    nonAirVolume->FillBuffer(one);
   }
   else
   {
-    using ImageReaderType = itk::ImageFileReader< ByteImageType >;
+    using ImageReaderType = itk::ImageFileReader<ByteImageType>;
     ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName( nonAirRegionMask );
+    reader->SetFileName(nonAirRegionMask);
     try
     {
       reader->Update();
       nonAirVolume = reader->GetOutput();
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
@@ -117,34 +117,34 @@ main( int argc, char * argv[] )
 
   try
   {
-    ComputeLabels< ProbabilityImageType, ByteImageType, FloatingPointPrecision >(
-      Posteriors, priorIsForeground, priorLabels, nonAirVolume, dirtyLabels, cleanLabels, inclusionThreshold, 0 );
+    ComputeLabels<ProbabilityImageType, ByteImageType, FloatingPointPrecision>(
+      Posteriors, priorIsForeground, priorLabels, nonAirVolume, dirtyLabels, cleanLabels, inclusionThreshold, 0);
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     return 1;
   }
 
-  if ( dirtyLabelVolume != "" )
+  if (dirtyLabelVolume != "")
   {
     try
     {
-      itkUtil::WriteImage< ByteImageType >( dirtyLabels, dirtyLabelVolume );
+      itkUtil::WriteImage<ByteImageType>(dirtyLabels, dirtyLabelVolume);
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
     }
   }
-  if ( cleanLabelVolume != "" )
+  if (cleanLabelVolume != "")
   {
     try
     {
-      itkUtil::WriteImage< ByteImageType >( cleanLabels, cleanLabelVolume );
+      itkUtil::WriteImage<ByteImageType>(cleanLabels, cleanLabelVolume);
     }
-    catch ( itk::ExceptionObject & err )
+    catch (itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;

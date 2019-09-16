@@ -31,7 +31,7 @@ public:
 
   /* Proces the BND file to obtain AC, PC, IRP and SLA points */
   void
-  ProcessBND( std::string bndFile );
+  ProcessBND(std::string bndFile);
 
   /* Get the AC, PC, IRP and SLA points */
   double *
@@ -75,23 +75,23 @@ private:
 
   /* Set the AC, PC, IRP and SLA points */
   void
-  SetAC( double pnt[3] );
+  SetAC(double pnt[3]);
   void
-  SetPC( double pnt[3] );
+  SetPC(double pnt[3]);
   void
-  SetIRP( double pnt[3] );
+  SetIRP(double pnt[3]);
   void
-  SetSLA( double pnt[3] );
+  SetSLA(double pnt[3]);
 
   /* Set the inverted AC, PC, IRP and SLA points */
   void
-  SetInverseAC( double pnt[3] );
+  SetInverseAC(double pnt[3]);
   void
-  SetInversePC( double pnt[3] );
+  SetInversePC(double pnt[3]);
   void
-  SetInverseSLA( double pnt[3] );
+  SetInverseSLA(double pnt[3]);
   void
-  SetInverseIRP( double pnt[3] );
+  SetInverseIRP(double pnt[3]);
 };
 
 #endif

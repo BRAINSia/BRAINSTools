@@ -50,13 +50,13 @@
 #include "GenericTransformImage.h"
 #include "BRAINSThreadControl.h"
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   bool                                                  debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "==============================================================" << std::endl;
     std::cout << "Input Image: " << inputCodeVolume << std::endl;
@@ -68,43 +68,43 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputCodeVolume.size() == 0 )
+  if (inputCodeVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputCodeVolume Required! " << std::endl;
   }
-  if ( inputReferenceVolume.size() == 0 )
+  if (inputReferenceVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputReferenceVolume Required! " << std::endl;
   }
-  if ( inputTransform.size() == 0 )
+  if (inputTransform.size() == 0)
   {
     violated = true;
     std::cout << "  --inputTransform Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   using CodePixelType = signed short;
 
-  using CodeImageType = itk::Image< CodePixelType, 3 >;
-  using CodeImageReaderType = itk::ImageFileReader< CodeImageType >;
+  using CodeImageType = itk::Image<CodePixelType, 3>;
+  using CodeImageReaderType = itk::ImageFileReader<CodeImageType>;
   CodeImageReaderType::Pointer codeImageReader = CodeImageReaderType::New();
-  codeImageReader->SetFileName( inputCodeVolume );
+  codeImageReader->SetFileName(inputCodeVolume);
 
   try
   {
     codeImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -112,107 +112,107 @@ main( int argc, char * argv[] )
 
   using PixelType = signed short;
 
-  using ImageType = itk::Image< PixelType, 3 >;
-  using ReferenceImageReaderType = itk::ImageFileReader< ImageType >;
+  using ImageType = itk::Image<PixelType, 3>;
+  using ReferenceImageReaderType = itk::ImageFileReader<ImageType>;
   ReferenceImageReaderType::Pointer referenceImageReader = ReferenceImageReaderType::New();
-  referenceImageReader->SetFileName( inputReferenceVolume );
+  referenceImageReader->SetFileName(inputReferenceVolume);
 
   try
   {
     referenceImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
-  using OrientFilterType = itk::OrientImageFilter< CodeImageType, ImageType >;
+  using OrientFilterType = itk::OrientImageFilter<CodeImageType, ImageType>;
   OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
-  orientImageFilter->SetInput( referenceImageReader->GetOutput() );
-  orientImageFilter->SetDesiredCoordinateDirection( codeImageReader->GetOutput()->GetDirection() );
+  orientImageFilter->SetInput(referenceImageReader->GetOutput());
+  orientImageFilter->SetDesiredCoordinateDirection(codeImageReader->GetOutput()->GetDirection());
   orientImageFilter->UseImageDirectionOn();
   try
   {
     orientImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
   }
 
   // Read the transform
-  using GenericTransformType = itk::Transform< double, 3, 3 >;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
 
-  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk( inputTransform );
-  using InterpolatorFunctionType = itk::NearestNeighborInterpolateImageFunction< CodeImageType, double >;
+  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
+  using InterpolatorFunctionType = itk::NearestNeighborInterpolateImageFunction<CodeImageType, double>;
   InterpolatorFunctionType::Pointer interpolatorFunction = InterpolatorFunctionType::New();
 
-  using ResampleFilterType = itk::ResampleImageFilter< CodeImageType, CodeImageType >;
+  using ResampleFilterType = itk::ResampleImageFilter<CodeImageType, CodeImageType>;
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
 
   {
-    resample->SetTransform( baseTransform );
+    resample->SetTransform(baseTransform);
   }
   std::cout << "Code image:  ";
-  codeImageReader->GetOutput()->Print( std::cout );
+  codeImageReader->GetOutput()->Print(std::cout);
   std::cout << "Reference image:  ";
-  referenceImageReader->GetOutput()->Print( std::cout );
+  referenceImageReader->GetOutput()->Print(std::cout);
 
-  CodeImageType::PointType          p1;
-  CodeImageType::PointType          p2;
-  itk::ContinuousIndex< double, 3 > imageIndex;
+  CodeImageType::PointType        p1;
+  CodeImageType::PointType        p2;
+  itk::ContinuousIndex<double, 3> imageIndex;
   imageIndex[0] = 0;
   imageIndex[1] = 0;
   imageIndex[2] = 0;
-  codeImageReader->GetOutput()->TransformContinuousIndexToPhysicalPoint( imageIndex, p1 );
-  p2 = resample->GetTransform()->TransformPoint( p1 );
+  codeImageReader->GetOutput()->TransformContinuousIndexToPhysicalPoint(imageIndex, p1);
+  p2 = resample->GetTransform()->TransformPoint(p1);
   std::cout << "Point " << p1 << " mapped to " << p2 << std::endl;
 
-  resample->SetInput( codeImageReader->GetOutput() );
-  resample->SetOutputParametersFromImage( orientImageFilter->GetOutput() );
-  resample->SetDefaultPixelValue( 0 );
-  resample->SetInterpolator( interpolatorFunction );
+  resample->SetInput(codeImageReader->GetOutput());
+  resample->SetOutputParametersFromImage(orientImageFilter->GetOutput());
+  resample->SetDefaultPixelValue(0);
+  resample->SetInterpolator(interpolatorFunction);
   try
   {
     resample->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
     throw;
   }
 
-  using OrientCodeFilterType = itk::OrientImageFilter< CodeImageType, CodeImageType >;
+  using OrientCodeFilterType = itk::OrientImageFilter<CodeImageType, CodeImageType>;
   OrientCodeFilterType::Pointer orientCodeImageFilter = OrientCodeFilterType::New();
-  orientCodeImageFilter->SetInput( resample->GetOutput() );
-  orientCodeImageFilter->SetDesiredCoordinateDirection( codeImageReader->GetOutput()->GetDirection() );
+  orientCodeImageFilter->SetInput(resample->GetOutput());
+  orientCodeImageFilter->SetDesiredCoordinateDirection(codeImageReader->GetOutput()->GetDirection());
   orientCodeImageFilter->UseImageDirectionOn();
   try
   {
     orientCodeImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
   }
 
   CodeImageType::Pointer resampledImage = orientCodeImageFilter->GetOutput();
-  resampledImage->SetMetaDataDictionary( codeImageReader->GetOutput()->GetMetaDataDictionary() );
+  resampledImage->SetMetaDataDictionary(codeImageReader->GetOutput()->GetMetaDataDictionary());
 
-  using ImageFileWriterType = itk::ImageFileWriter< CodeImageType >;
+  using ImageFileWriterType = itk::ImageFileWriter<CodeImageType>;
   ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
-  ImageWriter->SetFileName( outputVolume );
-  ImageWriter->SetInput( resampledImage );
+  ImageWriter->SetFileName(outputVolume);
+  ImageWriter->SetInput(resampledImage);
   try
   {
     ImageWriter->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

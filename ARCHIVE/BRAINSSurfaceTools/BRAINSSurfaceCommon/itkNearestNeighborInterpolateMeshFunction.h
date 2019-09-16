@@ -34,23 +34,23 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template < typename TInputMesh >
-class NearestNeighborInterpolateMeshFunction : public InterpolateMeshFunction< TInputMesh >
+template <typename TInputMesh>
+class NearestNeighborInterpolateMeshFunction : public InterpolateMeshFunction<TInputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( NearestNeighborInterpolateMeshFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(NearestNeighborInterpolateMeshFunction);
 
   /** Standard class type alias. */
   using Self = NearestNeighborInterpolateMeshFunction;
-  using Superclass = InterpolateMeshFunction< TInputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = InterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( NearestNeighborInterpolateMeshFunction, InterpolateMeshFunction );
+  itkTypeMacro(NearestNeighborInterpolateMeshFunction, InterpolateMeshFunction);
 
   /** OutputType type alias support. */
   using OutputType = typename Superclass::OutputType;
@@ -79,10 +79,10 @@ public:
    *
    */
   virtual OutputType
-  Evaluate( const PointType & point ) const override;
+  Evaluate(const PointType & point) const override;
 
   virtual void
-  EvaluateDerivative( const PointType & point, DerivativeType & derivative ) const override;
+  EvaluateDerivative(const PointType & point, DerivativeType & derivative) const override;
 
   using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 
@@ -91,7 +91,7 @@ protected:
   ~NearestNeighborInterpolateMeshFunction();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 };
 } // end namespace itk
 

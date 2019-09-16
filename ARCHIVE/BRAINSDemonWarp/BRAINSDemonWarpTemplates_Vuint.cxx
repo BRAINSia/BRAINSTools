@@ -19,7 +19,7 @@
 #include "BRAINSDemonWarpTemplates.h"
 
 void
-VectorProcessOutputType_uint( struct BRAINSDemonWarpAppParameters & command )
+VectorProcessOutputType_uint(struct BRAINSDemonWarpAppParameters & command)
 {
-  VectorProcessOutputType< unsigned int >( command );
+  VectorProcessOutputType<unsigned int>(command);
 }

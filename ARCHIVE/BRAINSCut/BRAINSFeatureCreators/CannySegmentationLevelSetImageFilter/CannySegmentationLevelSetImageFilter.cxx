@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined( _MSC_VER )
-#  pragma warning( disable : 4786 )
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
 #endif
 
 #ifdef __BORLANDC__
@@ -101,7 +101,7 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   /*if( argc < 9 )
     {
@@ -127,31 +127,31 @@ main( int argc, char * argv[] )
   // Software Guide : BeginCodeSnippet
   using InternalPixelType = float;
   constexpr unsigned int Dimension = 3;
-  using InternalImageType = itk::Image< InternalPixelType, Dimension >;
+  using InternalImageType = itk::Image<InternalPixelType, Dimension>;
   // Software Guide : EndCodeSnippet
 
   using OutputPixelType = unsigned char;
-  using OutputImageType = itk::Image< OutputPixelType, Dimension >;
-  using ThresholdingFilterType = itk::BinaryThresholdImageFilter< InternalImageType, OutputImageType >;
+  using OutputImageType = itk::Image<OutputPixelType, Dimension>;
+  using ThresholdingFilterType = itk::BinaryThresholdImageFilter<InternalImageType, OutputImageType>;
 
   ThresholdingFilterType::Pointer thresholder = ThresholdingFilterType::New();
 
-  thresholder->SetUpperThreshold( 10.0 );
-  thresholder->SetLowerThreshold( 0.0 );
+  thresholder->SetUpperThreshold(10.0);
+  thresholder->SetLowerThreshold(0.0);
 
-  thresholder->SetOutsideValue( 0 );
-  thresholder->SetInsideValue( 255 );
+  thresholder->SetOutsideValue(0);
+  thresholder->SetInsideValue(255);
 
-  using ReaderType = itk::ImageFileReader< InternalImageType >;
-  using WriterType = itk::ImageFileWriter< OutputImageType >;
+  using ReaderType = itk::ImageFileReader<InternalImageType>;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
 
   ReaderType::Pointer reader1 = ReaderType::New();
   ReaderType::Pointer reader2 = ReaderType::New();
   WriterType::Pointer writer = WriterType::New();
 
-  reader1->SetFileName( inputVolume );
-  reader2->SetFileName( initialModel );
-  writer->SetFileName( outputVolume );
+  reader1->SetFileName(inputVolume);
+  reader2->SetFileName(initialModel);
+  writer->SetFileName(outputVolume);
 
   //  Software Guide : BeginLatex
   //  The input image will be processed with a few iterations of
@@ -160,11 +160,11 @@ main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  using DiffusionFilterType = itk::GradientAnisotropicDiffusionImageFilter< InternalImageType, InternalImageType >;
+  using DiffusionFilterType = itk::GradientAnisotropicDiffusionImageFilter<InternalImageType, InternalImageType>;
   DiffusionFilterType::Pointer diffusion = DiffusionFilterType::New();
-  diffusion->SetNumberOfIterations( 5 );
-  diffusion->SetTimeStep( 0.125 );
-  diffusion->SetConductanceParameter( 1.0 );
+  diffusion->SetNumberOfIterations(5);
+  diffusion->SetTimeStep(0.125);
+  diffusion->SetConductanceParameter(1.0);
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -174,7 +174,7 @@ main( int argc, char * argv[] )
 
   // Software Guide : BeginCodeSnippet
   using CannySegmentationLevelSetImageFilterType =
-    itk::CannySegmentationLevelSetImageFilter< InternalImageType, InternalImageType >;
+    itk::CannySegmentationLevelSetImageFilter<InternalImageType, InternalImageType>;
   CannySegmentationLevelSetImageFilterType::Pointer cannySegmentation = CannySegmentationLevelSetImageFilterType::New();
   // Software Guide : EndCodeSnippet
 
@@ -189,9 +189,9 @@ main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   //  Software Guide : BeginCodeSnippet
-  cannySegmentation->SetAdvectionScaling( advectionWeight );
-  cannySegmentation->SetCurvatureScaling( 1.0 );
-  cannySegmentation->SetPropagationScaling( 0.0 );
+  cannySegmentation->SetAdvectionScaling(advectionWeight);
+  cannySegmentation->SetCurvatureScaling(1.0);
+  cannySegmentation->SetPropagationScaling(0.0);
   //  Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -201,8 +201,8 @@ main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  cannySegmentation->SetMaximumRMSError( 0.01 );
-  cannySegmentation->SetNumberOfIterations( maxIterations );
+  cannySegmentation->SetMaximumRMSError(0.01);
+  cannySegmentation->SetNumberOfIterations(maxIterations);
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -216,8 +216,8 @@ main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  cannySegmentation->SetThreshold( cannyThreshold );
-  cannySegmentation->SetVariance( cannyVariance );
+  cannySegmentation->SetThreshold(cannyThreshold);
+  cannySegmentation->SetVariance(cannyVariance);
   // Software Guide : EndCodeSnippet
 
   // Software Guide : BeginLatex
@@ -227,7 +227,7 @@ main( int argc, char * argv[] )
   // Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  cannySegmentation->SetIsoSurfaceValue( initialModelIsovalue );
+  cannySegmentation->SetIsoSurfaceValue(initialModelIsovalue);
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -236,11 +236,11 @@ main( int argc, char * argv[] )
   //  Software Guide : EndLatex
 
   // Software Guide : BeginCodeSnippet
-  diffusion->SetInput( reader1->GetOutput() );
-  cannySegmentation->SetInput( reader2->GetOutput() );
-  cannySegmentation->SetFeatureImage( diffusion->GetOutput() );
-  thresholder->SetInput( cannySegmentation->GetOutput() );
-  writer->SetInput( thresholder->GetOutput() );
+  diffusion->SetInput(reader1->GetOutput());
+  cannySegmentation->SetInput(reader2->GetOutput());
+  cannySegmentation->SetFeatureImage(diffusion->GetOutput());
+  thresholder->SetInput(cannySegmentation->GetOutput());
+  writer->SetInput(thresholder->GetOutput());
   // Software Guide : EndCodeSnippet
 
   //  Software Guide : BeginLatex
@@ -254,7 +254,7 @@ main( int argc, char * argv[] )
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
@@ -328,19 +328,19 @@ main( int argc, char * argv[] )
   cannySegmentation->GenerateSpeedImage();
 
   using SpeedImageType = CannySegmentationLevelSetImageFilterType::SpeedImageType;
-  using SpeedWriterType = itk::ImageFileWriter< SpeedImageType >;
+  using SpeedWriterType = itk::ImageFileWriter<SpeedImageType>;
   SpeedWriterType::Pointer speedWriter = SpeedWriterType::New();
 
-  speedWriter->SetInput( cannySegmentation->GetSpeedImage() );
+  speedWriter->SetInput(cannySegmentation->GetSpeedImage());
   //  Software Guide : EndCodeSnippet
 
-  speedWriter->SetFileName( outputSpeedVolume );
+  speedWriter->SetFileName(outputSpeedVolume);
 
   try
   {
     speedWriter->Update();
   }
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << "Exception caught ! while writing the speed image" << std::endl;
     std::cerr << "Filename : " << outputSpeedVolume << std::endl;

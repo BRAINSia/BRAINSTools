@@ -21,7 +21,7 @@
 
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 
-vtkStandardNewMacro( vtkITKDistanceTransform );
+vtkStandardNewMacro(vtkITKDistanceTransform);
 
 vtkITKDistanceTransform::vtkITKDistanceTransform()
 {
@@ -34,22 +34,25 @@ vtkITKDistanceTransform::vtkITKDistanceTransform()
 vtkITKDistanceTransform::~vtkITKDistanceTransform() {}
 
 
-template < typename T >
+template <typename T>
 void
-vtkITKDistanceTransformExecute( vtkITKDistanceTransform * self, vtkImageData * input,
-                                vtkImageData * vtkNotUsed( output ), T * inPtr, T * outPtr )
+vtkITKDistanceTransformExecute(vtkITKDistanceTransform * self,
+                               vtkImageData *            input,
+                               vtkImageData *            vtkNotUsed(output),
+                               T *                       inPtr,
+                               T *                       outPtr)
 {
 
   int dims[3];
-  input->GetDimensions( dims );
+  input->GetDimensions(dims);
   double spacing[3];
-  input->GetSpacing( spacing );
+  input->GetSpacing(spacing);
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  using ImageType = itk::Image< T, 3 >;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
-  inImage->GetPixelContainer()->SetImportPointer( inPtr, dims[0] * dims[1] * dims[2], false );
+  inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0] * dims[1] * dims[2], false);
   typename ImageType::RegionType region;
   typename ImageType::IndexType  index;
   typename ImageType::SizeType   size;
@@ -57,30 +60,30 @@ vtkITKDistanceTransformExecute( vtkITKDistanceTransform * self, vtkImageData * i
   size[0] = dims[0];
   size[1] = dims[1];
   size[2] = dims[2];
-  region.SetIndex( index );
-  region.SetSize( size );
-  inImage->SetLargestPossibleRegion( region );
-  inImage->SetBufferedRegion( region );
-  inImage->SetSpacing( spacing );
+  region.SetIndex(index);
+  region.SetSize(size);
+  inImage->SetLargestPossibleRegion(region);
+  inImage->SetBufferedRegion(region);
+  inImage->SetSpacing(spacing);
 
 
   // Calculate the distance transform
-  using DistanceImageType = itk::Image< T, 3 >;
-  using DistanceType = itk::SignedMaurerDistanceMapImageFilter< ImageType, DistanceImageType >;
+  using DistanceImageType = itk::Image<T, 3>;
+  using DistanceType = itk::SignedMaurerDistanceMapImageFilter<ImageType, DistanceImageType>;
   typename DistanceType::Pointer dist = DistanceType::New();
 
-  dist->SetBackgroundValue( static_cast< T >( self->GetBackgroundValue() ) );
-  dist->SetUseImageSpacing( self->GetUseImageSpacing() );
-  dist->SetInsideIsPositive( self->GetInsideIsPositive() );
-  dist->SetSquaredDistance( self->GetSquaredDistance() );
+  dist->SetBackgroundValue(static_cast<T>(self->GetBackgroundValue()));
+  dist->SetUseImageSpacing(self->GetUseImageSpacing());
+  dist->SetInsideIsPositive(self->GetInsideIsPositive());
+  dist->SetSquaredDistance(self->GetSquaredDistance());
 
-  dist->SetInput( inImage );
+  dist->SetInput(inImage);
   dist->Update();
 
   // Copy to the output
-  memcpy( outPtr,
-          dist->GetOutput()->GetBufferPointer(),
-          dist->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof( T ) );
+  memcpy(outPtr,
+         dist->GetOutput()->GetBufferPointer(),
+         dist->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 }
 
 
@@ -88,28 +91,28 @@ vtkITKDistanceTransformExecute( vtkITKDistanceTransform * self, vtkImageData * i
 //
 //
 void
-vtkITKDistanceTransform::SimpleExecute( vtkImageData * input, vtkImageData * output )
+vtkITKDistanceTransform::SimpleExecute(vtkImageData * input, vtkImageData * output)
 {
-  vtkDebugMacro( << "Executing distance transform" );
+  vtkDebugMacro(<< "Executing distance transform");
 
   //
   // Initialize and check input
   //
   vtkPointData * pd = input->GetPointData();
   pd = input->GetPointData();
-  if ( pd == nullptr )
+  if (pd == nullptr)
   {
-    vtkErrorMacro( << "PointData is NULL" );
+    vtkErrorMacro(<< "PointData is NULL");
     return;
   }
   vtkDataArray * inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
-    vtkErrorMacro( << "Scalars must be defined for distance tranform" );
+    vtkErrorMacro(<< "Scalars must be defined for distance tranform");
     return;
   }
 
-  if ( inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////
@@ -117,37 +120,36 @@ vtkITKDistanceTransform::SimpleExecute( vtkImageData * input, vtkImageData * out
 #undef VTK_TYPE_USE___INT64
 
 #define CALL                                                                                                           \
-  vtkITKDistanceTransformExecute(                                                                                      \
-    this, input, output, static_cast< VTK_TT * >( inPtr ), static_cast< VTK_TT * >( outPtr ) );
+  vtkITKDistanceTransformExecute(this, input, output, static_cast<VTK_TT *>(inPtr), static_cast<VTK_TT *>(outPtr));
 
     void * inPtr = input->GetScalarPointer();
     void * outPtr = output->GetScalarPointer();
 
-    switch ( inScalars->GetDataType() )
+    switch (inScalars->GetDataType())
     {
-      vtkTemplateMacroCase( VTK_DOUBLE, double, CALL );
-      vtkTemplateMacroCase( VTK_FLOAT, float, CALL );
-      vtkTemplateMacroCase( VTK_LONG, long, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_LONG, unsigned long, CALL );
-      vtkTemplateMacroCase( VTK_INT, int, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_INT, unsigned int, CALL );
-      vtkTemplateMacroCase( VTK_SHORT, short, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_SHORT, unsigned short, CALL );
-      vtkTemplateMacroCase( VTK_CHAR, char, CALL );
-      vtkTemplateMacroCase( VTK_SIGNED_CHAR, signed char, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_CHAR, unsigned char, CALL );
+      vtkTemplateMacroCase(VTK_DOUBLE, double, CALL);
+      vtkTemplateMacroCase(VTK_FLOAT, float, CALL);
+      vtkTemplateMacroCase(VTK_LONG, long, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);
+      vtkTemplateMacroCase(VTK_INT, int, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, CALL);
+      vtkTemplateMacroCase(VTK_SHORT, short, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, CALL);
+      vtkTemplateMacroCase(VTK_CHAR, char, CALL);
+      vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
     } // switch
   }
   else
   {
-    vtkErrorMacro( << "Can only calculate on scalar." );
+    vtkErrorMacro(<< "Can only calculate on scalar.");
   }
 }
 
 void
-vtkITKDistanceTransform::PrintSelf( ostream & os, vtkIndent indent )
+vtkITKDistanceTransform::PrintSelf(ostream & os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf( os, indent );
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "BackgroundValue: " << BackgroundValue << std::endl;
   os << indent << "InsideIsPositive: " << InsideIsPositive << std::endl;

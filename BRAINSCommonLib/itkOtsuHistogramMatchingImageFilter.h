@@ -77,24 +77,23 @@ namespace itk
  */
 /* THistogramMeasurement -- The precision level for which to do
  * HistogramMeasurmenets */
-template < typename TInputImage, typename TOutputImage,
-           typename THistogramMeasurement = typename TInputImage::PixelType >
-class OtsuHistogramMatchingImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement = typename TInputImage::PixelType>
+class OtsuHistogramMatchingImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( OtsuHistogramMatchingImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(OtsuHistogramMatchingImageFilter);
 
   /** Standard class type alias. */
   using Self = OtsuHistogramMatchingImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( OtsuHistogramMatchingImageFilter, ImageToImageFilter );
+  itkTypeMacro(OtsuHistogramMatchingImageFilter, ImageToImageFilter);
 
   /** ImageDimension enumeration. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -115,42 +114,42 @@ public:
   using OutputPixelType = typename OutputImageType::PixelType;
 
   /** Histogram related type alias. */
-  using HistogramType = Statistics::Histogram< THistogramMeasurement >;
+  using HistogramType = Statistics::Histogram<THistogramMeasurement>;
   using HistogramPointer = typename HistogramType::Pointer;
 
   /** Set/Get the source image. */
   void
-  SetSourceImage( const InputImageType * source )
+  SetSourceImage(const InputImageType * source)
   {
-    this->SetInput( source );
+    this->SetInput(source);
   }
 
   const InputImageType *
-  GetSourceImage( void )
+  GetSourceImage(void)
   {
     return this->GetInput();
   }
 
   /** Set/Get the reference image. */
   void
-  SetReferenceImage( const InputImageType * reference );
+  SetReferenceImage(const InputImageType * reference);
 
   const InputImageType *
-  GetReferenceImage( void );
+  GetReferenceImage(void);
 
-  itkSetObjectMacro( SourceMask, SpatialObjectType );
-  itkSetObjectMacro( ReferenceMask, SpatialObjectType );
+  itkSetObjectMacro(SourceMask, SpatialObjectType);
+  itkSetObjectMacro(ReferenceMask, SpatialObjectType);
 
-  itkGetConstObjectMacro( SourceMask, SpatialObjectType );
-  itkGetConstObjectMacro( ReferenceMask, SpatialObjectType );
+  itkGetConstObjectMacro(SourceMask, SpatialObjectType);
+  itkGetConstObjectMacro(ReferenceMask, SpatialObjectType);
 
   /** Set/Get the number of histogram levels used. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
-  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
+  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set/Get the number of match points used. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
-  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
+  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
 
   /** This filter requires all of the input to be in the buffer. */
   void
@@ -159,19 +158,19 @@ public:
   /** Methods to get the histograms of the source, reference, and
    * output. Objects are only valid after Update() has been called
    * on this filter. */
-  itkGetConstObjectMacro( SourceHistogram, HistogramType );
-  itkGetConstObjectMacro( ReferenceHistogram, HistogramType );
-  itkGetConstObjectMacro( OutputHistogram, HistogramType );
+  itkGetConstObjectMacro(SourceHistogram, HistogramType);
+  itkGetConstObjectMacro(ReferenceHistogram, HistogramType);
+  itkGetConstObjectMacro(OutputHistogram, HistogramType);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( IntConvertibleToInputCheck, (Concept::Convertible< int, InputPixelType >));
-  itkConceptMacro( SameDimensionCheck, (Concept::SameDimension< ImageDimension, OutputImageDimension >));
-  itkConceptMacro( DoubleConvertibleToInputCheck, (Concept::Convertible< double, InputPixelType >));
-  itkConceptMacro( DoubleConvertibleToOutputCheck, (Concept::Convertible< double, OutputPixelType >));
-  itkConceptMacro( InputConvertibleToDoubleCheck, (Concept::Convertible< InputPixelType, double >));
-  itkConceptMacro( OutputConvertibleToDoubleCheck, (Concept::Convertible< OutputPixelType, double >));
-  itkConceptMacro( SameTypeCheck, (Concept::SameType< InputPixelType, OutputPixelType >));
+  itkConceptMacro(IntConvertibleToInputCheck, (Concept::Convertible<int, InputPixelType>));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<ImageDimension, OutputImageDimension>));
+  itkConceptMacro(DoubleConvertibleToInputCheck, (Concept::Convertible<double, InputPixelType>));
+  itkConceptMacro(DoubleConvertibleToOutputCheck, (Concept::Convertible<double, OutputPixelType>));
+  itkConceptMacro(InputConvertibleToDoubleCheck, (Concept::Convertible<InputPixelType, double>));
+  itkConceptMacro(OutputConvertibleToDoubleCheck, (Concept::Convertible<OutputPixelType, double>));
+  itkConceptMacro(SameTypeCheck, (Concept::SameType<InputPixelType, OutputPixelType>));
   /** End concept checking */
 #endif
 protected:
@@ -188,7 +187,7 @@ protected:
   ~OtsuHistogramMatchingImageFilter() override = default;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   BeforeThreadedGenerateData() override;
@@ -197,18 +196,22 @@ protected:
   AfterThreadedGenerateData() override;
 
   void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId ) override;
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
   /** Compute min, max and mean of an image. */
   void
-  ComputeMinMaxMean( const InputImageType * image, THistogramMeasurement & minValue, THistogramMeasurement & maxValue,
-                     THistogramMeasurement & meanValue );
+  ComputeMinMaxMean(const InputImageType *  image,
+                    THistogramMeasurement & minValue,
+                    THistogramMeasurement & maxValue,
+                    THistogramMeasurement & meanValue);
 
   /** Construct a histogram from an image. */
   void
-  ConstructHistogram( const InputImageType * image, const typename SpatialObjectType::Pointer mask,
-                      HistogramType * histogram, const THistogramMeasurement minValue,
-                      const THistogramMeasurement maxValue );
+  ConstructHistogram(const InputImageType *                    image,
+                     const typename SpatialObjectType::Pointer mask,
+                     HistogramType *                           histogram,
+                     const THistogramMeasurement               minValue,
+                     const THistogramMeasurement               maxValue);
 
 private:
   unsigned long m_NumberOfHistogramLevels;
@@ -233,10 +236,10 @@ private:
   HistogramPointer m_ReferenceHistogram;
   HistogramPointer m_OutputHistogram;
 
-  using TableType = vnl_matrix< double >;
+  using TableType = vnl_matrix<double>;
   TableType m_QuantileTable;
 
-  using GradientArrayType = vnl_vector< double >;
+  using GradientArrayType = vnl_vector<double>;
   GradientArrayType m_Gradients;
   double            m_LowerGradient;
   double            m_UpperGradient;

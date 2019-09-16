@@ -78,24 +78,24 @@ namespace itk
  * \ingroup FiniteDifferenceFunctions
  *
  */
-template < typename TFixedImage, typename TMovingImage, typename TDisplacementField >
+template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
 class VectorESMDemonsRegistrationFunction
-  : public PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >
+  : public PDEDeformableRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( VectorESMDemonsRegistrationFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(VectorESMDemonsRegistrationFunction);
 
   /** Standard class type alias. */
   using Self = VectorESMDemonsRegistrationFunction;
-  using Superclass = PDEDeformableRegistrationFunction< TFixedImage, TMovingImage, TDisplacementField >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = PDEDeformableRegistrationFunction<TFixedImage, TMovingImage, TDisplacementField>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VectorESMDemonsRegistrationFunction, PDEDeformableRegistrationFunction );
+  itkTypeMacro(VectorESMDemonsRegistrationFunction, PDEDeformableRegistrationFunction);
 
   /** MovingImage image type. */
   using VectorMovingImageType = TMovingImage;
@@ -110,14 +110,14 @@ public:
 
   /** MovingImage image type. */
   //  using MovingImageType = typename Superclass::MovingImageType;
-  using MovingImageType = itk::Image< float, Self::ImageDimension >;
+  using MovingImageType = itk::Image<float, Self::ImageDimension>;
   //  using MovingImagePointer = typename Superclass::MovingImagePointer;
   using MovingImagePointer = typename MovingImageType::Pointer;
   using MovingPixelType = typename MovingImageType::PixelType;
 
   /** FixedImage image type. */
   //  using FixedImageType = typename Superclass::FixedImageType;
-  using FixedImageType = itk::Image< float, Self::ImageDimension >;
+  using FixedImageType = itk::Image<float, Self::ImageDimension>;
   using FixedImagePointer = typename FixedImageType::Pointer;
   //  using FixedImagePointer = typename Superclass::FixedImagePointer;
   using IndexType = typename FixedImageType::IndexType;
@@ -136,48 +136,48 @@ public:
   using FloatOffsetType = typename Superclass::FloatOffsetType;
   using TimeStepType = typename Superclass::TimeStepType;
 
-  using AdaptorType = itk::VectorImageToImageAdaptor< MovingPixelType, Self::ImageDimension >;
+  using AdaptorType = itk::VectorImageToImageAdaptor<MovingPixelType, Self::ImageDimension>;
 
   /** Interpolator type. */
   using CoordRepType = double;
-  using InterpolatorType = InterpolateImageFunction< AdaptorType, CoordRepType >;
+  using InterpolatorType = InterpolateImageFunction<AdaptorType, CoordRepType>;
   using InterpolatorPointer = typename InterpolatorType::Pointer;
   using PointType = typename InterpolatorType::PointType;
-  using DefaultInterpolatorType = LinearInterpolateImageFunction< AdaptorType, CoordRepType >;
+  using DefaultInterpolatorType = LinearInterpolateImageFunction<AdaptorType, CoordRepType>;
 
   /** Warper type */
-  using WarperType = WarpImageFilter< AdaptorType, MovingImageType, DisplacementFieldType >;
+  using WarperType = WarpImageFilter<AdaptorType, MovingImageType, DisplacementFieldType>;
   using WarperPointer = typename WarperType::Pointer;
 
   /** Covariant vector type. */
-  using CovariantVectorType = CovariantVector< double, Self::ImageDimension >;
+  using CovariantVectorType = CovariantVector<double, Self::ImageDimension>;
 
   /** Fixed image gradient calculator type. */
-  using GradientCalculatorType = CentralDifferenceImageFunction< AdaptorType >;
+  using GradientCalculatorType = CentralDifferenceImageFunction<AdaptorType>;
   using GradientCalculatorPointer = typename GradientCalculatorType::Pointer;
 
   /** Moving image gradient (unwarped) calculator type. */
-  using MovingImageGradientCalculatorType = CentralDifferenceImageFunction< AdaptorType, CoordRepType >;
+  using MovingImageGradientCalculatorType = CentralDifferenceImageFunction<AdaptorType, CoordRepType>;
   typedef typename MovingImageGradientCalculatorType::Pointer MovingImageGradientCalculatorPointer;
 
   /** Set the moving image interpolator. */
   void
-  SetMovingImageInterpolator( InterpolatorType * ptr )
+  SetMovingImageInterpolator(InterpolatorType * ptr)
   {
     m_MovingImageInterpolator = ptr;
-    m_MovingImageWarper->SetInterpolator( ptr );
+    m_MovingImageWarper->SetInterpolator(ptr);
   }
 
   /** Get the moving image interpolator. */
   InterpolatorType *
-  GetMovingImageInterpolator( void )
+  GetMovingImageInterpolator(void)
   {
     return m_MovingImageInterpolator;
   }
 
   /** This class uses a constant timestep of 1. */
   TimeStepType
-  ComputeGlobalTimeStep( void * itkNotUsed( GlobalData ) ) const override
+  ComputeGlobalTimeStep(void * itkNotUsed(GlobalData)) const override
   {
     return m_TimeStep;
   }
@@ -197,7 +197,7 @@ public:
 
   /** Release memory for global data structure. */
   void
-  ReleaseGlobalDataPointer( void * GlobalData ) const override;
+  ReleaseGlobalDataPointer(void * GlobalData) const override;
 
   /** Set the object's state before each iteration. */
   void
@@ -206,8 +206,9 @@ public:
   /** This method is called by a finite difference solver image filter at
    * each pixel that does not lie on a data set boundary */
   PixelType
-  ComputeUpdate( const NeighborhoodType & neighborhood, void * globalData,
-                 const FloatOffsetType & offset = FloatOffsetType( 0.0 ) ) override;
+  ComputeUpdate(const NeighborhoodType & neighborhood,
+                void *                   globalData,
+                const FloatOffsetType &  offset = FloatOffsetType(0.0)) override;
 
   /** Get the metric value. The metric value is the mean square difference
    * in intensity between the fixed image and transforming moving image
@@ -230,7 +231,7 @@ public:
    * moving and fixed image pixel, the update vector (for that
    * iteration) will be the zero vector. Default is 0.001. */
   virtual void
-  SetIntensityDifferenceThreshold( double );
+  SetIntensityDifferenceThreshold(double);
 
   virtual double
   GetIntensityDifferenceThreshold() const;
@@ -239,7 +240,7 @@ public:
    *  Setting it to 0 implies no restriction (beware of numerical
    *  instability in this case. */
   virtual void
-  SetMaximumUpdateStepLength( double sm )
+  SetMaximumUpdateStepLength(double sm)
   {
     this->m_MaximumUpdateStepLength = sm;
   }
@@ -261,7 +262,7 @@ public:
 
   /** Set/Get the type of used image forces */
   virtual void
-  SetUseGradientType( GradientType gtype )
+  SetUseGradientType(GradientType gtype)
   {
     m_UseGradientType = gtype;
   }
@@ -274,28 +275,28 @@ public:
 
   /** Set the moving image.  */
   void
-  SetMovingImage( const VectorMovingImageType * ptr )
+  SetMovingImage(const VectorMovingImageType * ptr)
   {
     m_MovingImage = ptr;
   }
 
   /** Get the moving image. */
   const VectorMovingImageType *
-  GetMovingImage( void ) const
+  GetMovingImage(void) const
   {
     return m_MovingImage;
   }
 
   /** Set the fixed image. */
   void
-  SetFixedImage( const VectorFixedImageType * ptr )
+  SetFixedImage(const VectorFixedImageType * ptr)
   {
     m_FixedImage = ptr;
   }
 
   /** Get the fixed image. */
   const VectorFixedImageType *
-  GetFixedImage( void ) const
+  GetFixedImage(void) const
   {
     return m_FixedImage;
   }
@@ -305,10 +306,10 @@ protected:
   ~VectorESMDemonsRegistrationFunction() override {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** FixedImage image neighborhood iterator type. */
-  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator< FixedImageType >;
+  using FixedImageNeighborhoodIteratorType = ConstNeighborhoodIterator<FixedImageType>;
 
   /** A global data type for this class of equation. Used to store
    * iterators for the fixed image. */
@@ -367,10 +368,10 @@ private:
   /** Mutex lock to protect modification to metric. */
   mutable std::mutex m_MetricCalculationLock;
 
-  std::vector< WarperPointer >                        m_MovingImageWarperVector;
-  std::vector< InterpolatorPointer >                  m_MovingImageInterpolatorVector;
-  std::vector< GradientCalculatorPointer >            m_FixedImageGradientCalculatorVector;
-  std::vector< MovingImageGradientCalculatorPointer > m_MappedMovingImageGradientCalculatorVector;
+  std::vector<WarperPointer>                        m_MovingImageWarperVector;
+  std::vector<InterpolatorPointer>                  m_MovingImageInterpolatorVector;
+  std::vector<GradientCalculatorPointer>            m_FixedImageGradientCalculatorVector;
+  std::vector<MovingImageGradientCalculatorPointer> m_MappedMovingImageGradientCalculatorVector;
 };
 } // end namespace itk
 

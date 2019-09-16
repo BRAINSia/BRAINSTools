@@ -34,76 +34,76 @@
 #include "BRAINSCutCLP.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if ( !netConfiguration.empty() && modelConfigurationFilename.empty() )
+  if (!netConfiguration.empty() && modelConfigurationFilename.empty())
   {
     modelConfigurationFilename = netConfiguration;
   }
 
   // Data handler
-  if ( !itksys::SystemTools::FileExists( modelConfigurationFilename.c_str() ) )
+  if (!itksys::SystemTools::FileExists(modelConfigurationFilename.c_str()))
   {
     std::string errorMsg = " File does not exist! :";
     errorMsg += modelConfigurationFilename;
-    throw BRAINSCutExceptionStringHandler( errorMsg );
+    throw BRAINSCutExceptionStringHandler(errorMsg);
   }
-  BRAINSCutDataHandler m_dataHandler( modelConfigurationFilename );
+  BRAINSCutDataHandler m_dataHandler(modelConfigurationFilename);
 
-  BRAINSCutGenerateRegistrations m_registrationGenerator( m_dataHandler );
+  BRAINSCutGenerateRegistrations m_registrationGenerator(m_dataHandler);
   const bool                     m_applyDataSetOff = false;
-  const bool                     m_shuffleTrainVector = ( NoTrainingVectorShuffling != true );
+  const bool                     m_shuffleTrainVector = (NoTrainingVectorShuffling != true);
 
   std::cout << "m_shuffleTrainVector::" << m_shuffleTrainVector << std::endl;
 
-  if ( generateProbability )
+  if (generateProbability)
   {
-    m_registrationGenerator.SetAtlasToSubjectRegistrationOn( false );
-    m_registrationGenerator.SetDataSet( m_applyDataSetOff );
+    m_registrationGenerator.SetAtlasToSubjectRegistrationOn(false);
+    m_registrationGenerator.SetDataSet(m_applyDataSetOff);
     m_registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutGenerateProbability m_probabilityMapGenerator( m_dataHandler );
+    BRAINSCutGenerateProbability m_probabilityMapGenerator(m_dataHandler);
     m_probabilityMapGenerator.GenerateProbabilityMaps();
   }
-  if ( createVectors )
+  if (createVectors)
   {
-    m_registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-    m_registrationGenerator.SetDataSet( m_applyDataSetOff );
+    m_registrationGenerator.SetAtlasToSubjectRegistrationOn(true);
+    m_registrationGenerator.SetDataSet(m_applyDataSetOff);
     m_registrationGenerator.GenerateRegistrations();
 
-    BRAINSCutCreateVector m_trainingVectorCreator( m_dataHandler );
+    BRAINSCutCreateVector m_trainingVectorCreator(m_dataHandler);
     m_trainingVectorCreator.SetTrainingDataSet();
     m_trainingVectorCreator.CreateVectors();
   }
-  if ( trainModel )
+  if (trainModel)
   {
-    if ( method == "ANN" )
+    if (method == "ANN")
     {
       try
       {
-        BRAINSCutTrainModel m_ANNTrainer( m_dataHandler );
+        BRAINSCutTrainModel m_ANNTrainer(m_dataHandler);
         m_ANNTrainer.InitializeNeuralNetwork();
-        m_ANNTrainer.InitializeTrainDataSet( m_shuffleTrainVector );
+        m_ANNTrainer.InitializeTrainDataSet(m_shuffleTrainVector);
         m_ANNTrainer.TrainANN();
       }
-      catch ( BRAINSCutExceptionStringHandler & e )
+      catch (BRAINSCutExceptionStringHandler & e)
       {
         std::cout << e.Error();
       }
     }
-    else if ( method == "RandomForest" )
+    else if (method == "RandomForest")
     {
-      BRAINSCutTrainModel m_RandomForestTrainer( m_dataHandler );
+      BRAINSCutTrainModel m_RandomForestTrainer(m_dataHandler);
       m_RandomForestTrainer.InitializeRandomForest();
-      m_RandomForestTrainer.InitializeTrainDataSet( m_shuffleTrainVector );
+      m_RandomForestTrainer.InitializeTrainDataSet(m_shuffleTrainVector);
 
       // these set has to be **AFTER** InitializeTrainDataSet
-      if ( numberOfTrees > 0 && randomTreeDepth > 0 )
+      if (numberOfTrees > 0 && randomTreeDepth > 0)
       {
-        m_RandomForestTrainer.TrainRandomForestAt( randomTreeDepth, numberOfTrees );
+        m_RandomForestTrainer.TrainRandomForestAt(randomTreeDepth, numberOfTrees);
       }
       else
       {
@@ -113,37 +113,37 @@ main( int argc, char ** argv )
     else
     {
       std::cout << "No proper method found to train" << std::endl;
-      exit( EXIT_FAILURE );
+      exit(EXIT_FAILURE);
     }
   }
-  if ( applyModel )
+  if (applyModel)
   {
     try
     {
       const bool m_applyDataSetOn = true;
-      m_registrationGenerator.SetAtlasToSubjectRegistrationOn( true );
-      m_registrationGenerator.SetDataSet( m_applyDataSetOn );
+      m_registrationGenerator.SetAtlasToSubjectRegistrationOn(true);
+      m_registrationGenerator.SetDataSet(m_applyDataSetOn);
       m_registrationGenerator.GenerateRegistrations();
 
-      m_dataHandler.SetRandomForestModelFilename( modelFilename );
+      m_dataHandler.SetRandomForestModelFilename(modelFilename);
 
-      BRAINSCutApplyModel m_ModelApplier( m_dataHandler );
+      BRAINSCutApplyModel m_ModelApplier(m_dataHandler);
 
-      m_ModelApplier.SetMethod( method );
-      m_ModelApplier.SetComputeSSE( computeSSEOn );
+      m_ModelApplier.SetMethod(method);
+      m_ModelApplier.SetComputeSSE(computeSSEOn);
 
-      if ( method == "RandomForest" )
+      if (method == "RandomForest")
       {
-        m_ModelApplier.SetDepthOfTree( randomTreeDepth );
-        m_ModelApplier.SetNumberOfTrees( numberOfTrees );
+        m_ModelApplier.SetDepthOfTree(randomTreeDepth);
+        m_ModelApplier.SetNumberOfTrees(numberOfTrees);
       }
       m_ModelApplier.Apply();
     }
-    catch ( BRAINSCutExceptionStringHandler & e )
+    catch (BRAINSCutExceptionStringHandler & e)
     {
       std::cout << e.Error();
     }
-    catch ( ... )
+    catch (...)
     {
       std::cout << "Unspecified error in ";
     }

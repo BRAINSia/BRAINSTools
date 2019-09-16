@@ -34,7 +34,7 @@ Log ::GetInstance()
 }
 
 Log ::Log()
-  : m_OutputFileName( "" )
+  : m_OutputFileName("")
 {
   m_EchoFlag = true;
 }
@@ -44,67 +44,67 @@ Log ::~Log()
   this->CloseFile();
 }
 
-Log ::Log( const Log & l )
-  : m_EchoFlag( l.m_EchoFlag )
-  , m_OutputFileName( l.m_OutputFileName )
+Log ::Log(const Log & l)
+  : m_EchoFlag(l.m_EchoFlag)
+  , m_OutputFileName(l.m_OutputFileName)
 {}
 
 void
 Log ::CloseFile()
 {
-  if ( m_Output.is_open() )
+  if (m_Output.is_open())
   {
     m_Output.close();
   }
 }
 
 void
-Log ::SetOutputFileName( const char * s )
+Log ::SetOutputFileName(const char * s)
 {
-  if ( m_Output.is_open() )
+  if (m_Output.is_open())
   {
     m_Output.close();
   }
 
-  m_Output.open( s );
+  m_Output.open(s);
 
-  if ( m_Output.fail() )
+  if (m_Output.fail())
   {
-    muExceptionMacro( << "[Log::SetOutputFileName] Failed to open " << s );
+    muExceptionMacro(<< "[Log::SetOutputFileName] Failed to open " << s);
   }
 }
 
 void
-Log ::SetOutputFileName( const std::string & s )
+Log ::SetOutputFileName(const std::string & s)
 {
-  this->SetOutputFileName( s.c_str() );
+  this->SetOutputFileName(s.c_str());
 }
 
 void
-Log ::WriteString( const char * s )
+Log ::WriteString(const char * s)
 {
-  if ( s == nullptr )
+  if (s == nullptr)
   {
     std::cout << "[Log::WriteString] NULL argument" << std::endl << std::flush;
     return;
   }
 
-  if ( m_Output.good() )
+  if (m_Output.good())
   {
     m_Output << s;
     m_Output.flush();
   }
 
-  if ( m_EchoFlag )
+  if (m_EchoFlag)
   {
     std::cout << s;
-    ( std::cout ).flush();
+    (std::cout).flush();
   }
 }
 
 void
-Log ::WriteString( const std::string & s )
+Log ::WriteString(const std::string & s)
 {
-  this->WriteString( s.c_str() );
+  this->WriteString(s.c_str());
 }
 } // namespace mu

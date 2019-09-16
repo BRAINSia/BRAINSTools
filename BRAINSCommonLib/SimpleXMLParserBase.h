@@ -52,17 +52,17 @@ class SimpleXMLParserBase
 public:
   using ParserType = XercesDOMParser;
   SimpleXMLParserBase()
-    : m_Parser( 0 )
+    : m_Parser(0)
   {}
 
   void
-  Read( const std::string & filename )
+  Read(const std::string & filename)
   {
     try
     {
       XMLPlatformUtils::Initialize();
     }
-    catch ( const XMLException & toCatch )
+    catch (const XMLException & toCatch)
     {
       std::cerr << "Can't Initialize XMLPlatformUtils" << std::endl;
       throw;
@@ -72,11 +72,11 @@ public:
     //  discovers errors during the course of parsing the XML document.
     //
     this->m_Parser = new ParserType;
-    this->m_Parser->setValidationScheme( ParserType::Val_Auto );
-    this->m_Parser->setDoNamespaces( false );
-    this->m_Parser->setDoSchema( false );
-    this->m_Parser->setValidationSchemaFullChecking( false );
-    this->m_Parser->setCreateEntityReferenceNodes( false );
+    this->m_Parser->setValidationScheme(ParserType::Val_Auto);
+    this->m_Parser->setDoNamespaces(false);
+    this->m_Parser->setDoSchema(false);
+    this->m_Parser->setValidationSchemaFullChecking(false);
+    this->m_Parser->setCreateEntityReferenceNodes(false);
     //
     //  Parse the XML file, catching any XML exceptions that might propogate
     //  out of it.
@@ -84,20 +84,20 @@ public:
     bool errorsOccurred = false;
     try
     {
-      this->m_Parser->parse( filename.c_str() );
+      this->m_Parser->parse(filename.c_str());
     }
-    catch ( const OutOfMemoryException & )
+    catch (const OutOfMemoryException &)
     {
       std::cerr << "OutOfMemoryException" << std::endl;
       errorsOccurred = true;
     }
-    catch ( const XMLException & e )
+    catch (const XMLException & e)
     {
       std::cerr << "An error occurred during parsing\n   Message: " << e.getMessage() << std::endl;
       errorsOccurred = true;
     }
 
-    catch ( const DOMException & e )
+    catch (const DOMException & e)
     {
       constexpr unsigned int maxChars = 2047;
       XMLCh                  errText[maxChars + 1];
@@ -105,39 +105,39 @@ public:
       std::cerr << "\nDOM Error during parsing: '" << filename << "'\n"
                 << "DOMException code is:  " << e.code << std::endl;
 
-      if ( DOMImplementation::loadDOMExceptionMsg( e.code, errText, maxChars ) )
+      if (DOMImplementation::loadDOMExceptionMsg(e.code, errText, maxChars))
       {
         std::cerr << "Message is: " << errText << std::endl;
       }
 
       errorsOccurred = true;
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "An error occurred during parsing\n " << std::endl;
       errorsOccurred = true;
     }
-    if ( errorsOccurred )
+    if (errorsOccurred)
     {
       throw;
     }
   }
 
   void
-  Write( const std::string & filename )
+  Write(const std::string & filename)
   {
-    if ( m_Parser == 0 )
+    if (m_Parser == 0)
     {
       throw;
     }
     // get a serializer, an instance of DOMWriter
     XMLCh tempStr[100];
-    XMLString::transcode( "LS", tempStr, 99 );
-    DOMImplementation * impl = DOMImplementationRegistry::getDOMImplementation( tempStr );
-    DOMWriter *         theSerializer = ( (DOMImplementationLS *)impl )->createDOMWriter();
+    XMLString::transcode("LS", tempStr, 99);
+    DOMImplementation * impl = DOMImplementationRegistry::getDOMImplementation(tempStr);
+    DOMWriter *         theSerializer = ((DOMImplementationLS *)impl)->createDOMWriter();
 
-    XMLFormatTarget * formatTarget = new LocalFileFormatTarget( filename.c_str() );
-    theSerializer->writeNode( formatTarget, *static_cast< DOMNode * >( this->m_Parser->getDocument() ) );
+    XMLFormatTarget * formatTarget = new LocalFileFormatTarget(filename.c_str());
+    theSerializer->writeNode(formatTarget, *static_cast<DOMNode *>(this->m_Parser->getDocument()));
     delete theSerializer;
   }
 

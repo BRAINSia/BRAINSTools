@@ -23,30 +23,30 @@
 #include <vector>
 #include <map>
 
-template < typename TSampleType >
+template <typename TSampleType>
 class LogisticRegressionSample
 {
 private:
-  std::vector< TSampleType > *     m_sample;
-  unsigned int                     m_label;
-  std::map< unsigned int, double > m_predictedProbability;
-  bool                             m_labelSet;
+  std::vector<TSampleType> *     m_sample;
+  unsigned int                   m_label;
+  std::map<unsigned int, double> m_predictedProbability;
+  bool                           m_labelSet;
 
 public:
-  LogisticRegressionSample( const unsigned int featureCount );
-  LogisticRegressionSample( const LogisticRegressionSample & LRS );
+  LogisticRegressionSample(const unsigned int featureCount);
+  LogisticRegressionSample(const LogisticRegressionSample & LRS);
   ~LogisticRegressionSample();
   double
-  GetLabelProbability( unsigned int const & );
+  GetLabelProbability(unsigned int const &);
 
   void
-  SetSample( std::vector< TSampleType > & );
+  SetSample(std::vector<TSampleType> &);
 
-  std::vector< TSampleType > const *
+  std::vector<TSampleType> const *
   GetSample() const;
 
   void
-  SetLabelProbability( unsigned int const &, double const & );
+  SetLabelProbability(unsigned int const &, double const &);
 
   unsigned int
   GetLabel() const
@@ -54,7 +54,7 @@ public:
     return this->m_label;
   };
   void
-  SetLabel( unsigned int const & );
+  SetLabel(unsigned int const &);
 
   bool
   LabelIsSet() const
@@ -63,7 +63,7 @@ public:
   };
 };
 
-template < typename TSampleType >
+template <typename TSampleType>
 class LogisticRegression
 {
 private:
@@ -80,23 +80,23 @@ private:
   bool                  m_classTwoLabelSet;
 
 public:
-  LogisticRegression( const unsigned int featureCount, const unsigned int sampleCount );
-  LogisticRegression( const LogisticRegression & LR );
+  LogisticRegression(const unsigned int featureCount, const unsigned int sampleCount);
+  LogisticRegression(const LogisticRegression & LR);
   ~LogisticRegression();
   void
-  AddLabeledSample( LogisticRegressionSample< TSampleType > const & );
+  AddLabeledSample(LogisticRegressionSample<TSampleType> const &);
 
   void
   TrainModel();
 
   void
-  SetClassOneLabel( const unsigned int );
+  SetClassOneLabel(const unsigned int);
 
   void
-  SetClassTwoLabel( const unsigned int );
+  SetClassTwoLabel(const unsigned int);
 
   void
-  ClassifySample( LogisticRegressionSample< TSampleType > & );
+  ClassifySample(LogisticRegressionSample<TSampleType> &);
 };
 #include "LogisticRegression.hxx"
 #endif

@@ -32,78 +32,78 @@
  */
 
 inline LabelImagePointerType
-ThresholdLabelImageToOneValue( LabelImagePointerType inputMaskVolume );
+ThresholdLabelImageToOneValue(LabelImagePointerType inputMaskVolume);
 
 inline LabelImagePointerType
-ReadBinaryImageByFilename( std::string filename );
+ReadBinaryImageByFilename(std::string filename);
 
 inline WorkingImagePointer
-ReadWorkingImageByFilename( std::string filename );
+ReadWorkingImageByFilename(std::string filename);
 
 inline float
-GetVolume( LabelImagePointerType image );
+GetVolume(LabelImagePointerType image);
 
 void
-printToScreen( float manualVolume, float annVolume, float SI, float threshold );
+printToScreen(float manualVolume, float annVolume, float SI, float threshold);
 
 void
 printHeader();
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   BRAINSCutApplyModel BRAINSCutPostProcessing;
 
-  if ( inputManualVolume == "" )
+  if (inputManualVolume == "")
   {
     std::cout << " inputManualVolume is necessary" << std::endl;
-    exit( EXIT_FAILURE );
+    exit(EXIT_FAILURE);
   }
   /* read continuous image */
-  LabelImagePointerType manualVolume = ReadBinaryImageByFilename( inputManualVolume );
-  manualVolume = ThresholdLabelImageToOneValue( manualVolume );
+  LabelImagePointerType manualVolume = ReadBinaryImageByFilename(inputManualVolume);
+  manualVolume = ThresholdLabelImageToOneValue(manualVolume);
 
   /* temporary file to be compared */
   LabelImagePointerType annThresholdVolume;
 
   /* compute manual volume */
-  float floatManualVolume = GetVolume( manualVolume );
+  float floatManualVolume = GetVolume(manualVolume);
 
   /* set up similarity index computation */
-  using SimilarityIndexFilterType = itk::SimilarityIndexImageFilter< LabelImageType, LabelImageType >;
+  using SimilarityIndexFilterType = itk::SimilarityIndexImageFilter<LabelImageType, LabelImageType>;
   SimilarityIndexFilterType::Pointer similarityIndexFilter = SimilarityIndexFilterType::New();
 
-  similarityIndexFilter->SetInput1( manualVolume );
+  similarityIndexFilter->SetInput1(manualVolume);
 
   printHeader();
   /** iterate through the threshold */
-  for ( float threshold = 0.0F; threshold <= 1.00F; threshold += thresholdInterval )
+  for (float threshold = 0.0F; threshold <= 1.00F; threshold += thresholdInterval)
   {
     /* similarity index */
-    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingANN( ANNContinuousVolume, threshold );
-    similarityIndexFilter->SetInput2( annThresholdVolume );
+    annThresholdVolume = BRAINSCutPostProcessing.PostProcessingANN(ANNContinuousVolume, threshold);
+    similarityIndexFilter->SetInput2(annThresholdVolume);
     similarityIndexFilter->Update();
 
     printToScreen(
-      floatManualVolume, GetVolume( annThresholdVolume ), similarityIndexFilter->GetSimilarityIndex(), threshold );
+      floatManualVolume, GetVolume(annThresholdVolume), similarityIndexFilter->GetSimilarityIndex(), threshold);
   }
 
   return 0;
 }
 
 inline LabelImagePointerType
-ThresholdLabelImageToOneValue( LabelImagePointerType inputMaskVolume )
+ThresholdLabelImageToOneValue(LabelImagePointerType inputMaskVolume)
 {
-  using ThresholdType = itk::BinaryThresholdImageFilter< LabelImageType, LabelImageType >;
+  using ThresholdType = itk::BinaryThresholdImageFilter<LabelImageType, LabelImageType>;
   ThresholdType::Pointer thresholder = ThresholdType::New();
 
-  thresholder->SetInput( inputMaskVolume );
-  thresholder->SetInsideValue( 1 );
-  thresholder->SetOutsideValue( 0 );
-  thresholder->SetLowerThreshold( 1 );
+  thresholder->SetInput(inputMaskVolume);
+  thresholder->SetInsideValue(1);
+  thresholder->SetOutsideValue(0);
+  thresholder->SetLowerThreshold(1);
   thresholder->Update();
 
   LabelImagePointerType outputMask = thresholder->GetOutput();
@@ -111,12 +111,12 @@ ThresholdLabelImageToOneValue( LabelImagePointerType inputMaskVolume )
 }
 
 inline WorkingImagePointer
-ReadWorkingImageByFilename( std::string filename )
+ReadWorkingImageByFilename(std::string filename)
 {
-  using WorkingImageReaderType = itk::ImageFileReader< WorkingImageType >;
+  using WorkingImageReaderType = itk::ImageFileReader<WorkingImageType>;
   WorkingImageReaderType::Pointer reader = WorkingImageReaderType::New();
 
-  reader->SetFileName( filename );
+  reader->SetFileName(filename);
   reader->Update();
 
   WorkingImagePointer image = reader->GetOutput();
@@ -124,12 +124,12 @@ ReadWorkingImageByFilename( std::string filename )
 }
 
 inline LabelImagePointerType
-ReadBinaryImageByFilename( std::string filename )
+ReadBinaryImageByFilename(std::string filename)
 {
-  using BinaryImageReaderType = itk::ImageFileReader< LabelImageType >;
+  using BinaryImageReaderType = itk::ImageFileReader<LabelImageType>;
   BinaryImageReaderType::Pointer reader = BinaryImageReaderType::New();
 
-  reader->SetFileName( filename );
+  reader->SetFileName(filename);
   reader->Update();
 
   LabelImagePointerType image = reader->GetOutput();
@@ -137,24 +137,24 @@ ReadBinaryImageByFilename( std::string filename )
 }
 
 inline float
-GetVolume( LabelImagePointerType image )
+GetVolume(LabelImagePointerType image)
 {
   unsigned char labelValue = 1;
 
-  using MeasureFilterType = itk::LabelStatisticsImageFilter< LabelImageType, LabelImageType >;
+  using MeasureFilterType = itk::LabelStatisticsImageFilter<LabelImageType, LabelImageType>;
 
   MeasureFilterType::Pointer manualVolumeMeasrueFilter = MeasureFilterType::New();
 
-  manualVolumeMeasrueFilter->SetInput( image );
-  manualVolumeMeasrueFilter->SetLabelInput( image );
+  manualVolumeMeasrueFilter->SetInput(image);
+  manualVolumeMeasrueFilter->SetLabelInput(image);
   manualVolumeMeasrueFilter->Update();
 
-  float count = manualVolumeMeasrueFilter->GetCount( labelValue );
+  float count = manualVolumeMeasrueFilter->GetCount(labelValue);
 
   LabelImageType::SpacingType spacing = image->GetSpacing();
 
   float volumeOfOneVoxel = 1.0F;
-  for ( unsigned int i = 0; i < DIMENSION; i++ )
+  for (unsigned int i = 0; i < DIMENSION; i++)
   {
     volumeOfOneVoxel *= spacing[i];
   }
@@ -163,7 +163,7 @@ GetVolume( LabelImagePointerType image )
 }
 
 void
-printToScreen( float manualVolume, float annVolume, float SI, float threshold )
+printToScreen(float manualVolume, float annVolume, float SI, float threshold)
 {
   std::cout << threshold << ", " << manualVolume << ", " << annVolume << ", " << SI << std::endl;
 }

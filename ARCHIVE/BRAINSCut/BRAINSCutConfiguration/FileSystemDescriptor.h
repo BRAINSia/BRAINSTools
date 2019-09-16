@@ -21,24 +21,24 @@
 #include "ElementContainer.h"
 #include <itksys/SystemTools.hxx>
 #include <fstream>
-template < typename TOutputType >
-class FileSystemDescriptor : public XMLContents< TOutputType >
+template <typename TOutputType>
+class FileSystemDescriptor : public XMLContents<TOutputType>
 {
 public:
-  using SuperClass = XMLContents< TOutputType >;
+  using SuperClass = XMLContents<TOutputType>;
   using OutputType = TOutputType;
   int
-  PrintSelf( std::ostream & os, int indent ) const override
+  PrintSelf(std::ostream & os, int indent) const override
   {
-    indent += SuperClass::PrintSelf( os, indent );
-    os << this->PrintSpaces( indent ) << "=== FileSystemDescriptor ===" << this->m_Filename << std::endl;
+    indent += SuperClass::PrintSelf(os, indent);
+    os << this->PrintSpaces(indent) << "=== FileSystemDescriptor ===" << this->m_Filename << std::endl;
     return indent + 2;
   }
 
-  FileSystemDescriptor( const std::string & name, const std::string & filename )
-    : XMLContents< TOutputType >( name )
+  FileSystemDescriptor(const std::string & name, const std::string & filename)
+    : XMLContents<TOutputType>(name)
   {
-    this->SetFileName( filename );
+    this->SetFileName(filename);
   }
 
   FileSystemDescriptor() {}
@@ -50,7 +50,7 @@ public:
   }
 
   void
-  SetFileName( const std::string & s )
+  SetFileName(const std::string & s)
   {
     m_Filename = s;
   }
@@ -58,16 +58,16 @@ public:
   bool
   Exists() const
   {
-    return itksys::SystemTools::FileExists( m_Filename.c_str() );
+    return itksys::SystemTools::FileExists(m_Filename.c_str());
   }
 
   bool
   IsReadable() const
   {
-    std::fstream f( this->m_Filename.c_str(), std::fstream::in );
+    std::fstream f(this->m_Filename.c_str(), std::fstream::in);
     const bool   rval = f.is_open();
 
-    if ( rval == true )
+    if (rval == true)
     {
       f.close();
     }
@@ -77,7 +77,7 @@ public:
   bool
   IsDirectory() const
   {
-    return itksys::SystemTools::FileIsDirectory( m_Filename.c_str() );
+    return itksys::SystemTools::FileIsDirectory(m_Filename.c_str());
   }
 
   virtual void

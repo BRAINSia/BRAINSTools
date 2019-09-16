@@ -56,33 +56,33 @@
 //
 // ////////////////////////////////////////////////////////////////////////////////////////////////
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   // file pointer for opening the setup file
   // /////////////////////////////////////////////////////////////////////////////////////////////
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   std::cout << "================================================================" << std::endl;
   std::cout << "Processing: " << inputVolume << std::endl;
 
   // //////////////////////////////////////////////////////////////////////////
-  SImageType::Pointer volOrig = itkUtil::ReadImage< SImageType >( inputVolume );
-  if ( volOrig.IsNull() )
+  SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(inputVolume);
+  if (volOrig.IsNull())
   {
     std::cerr << "Could not open image " << inputVolume.c_str() << std::endl;
     return EXIT_FAILURE;
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  if ( directionCode == 0 )
+  if (directionCode == 0)
   {
     std::cout << "Your directionCode of 0 has selected the program default of 3 (maximize Superior/Inferior)."
               << std::endl;
     directionCode = 3;
   }
-  unsigned int axis = itk::Math::abs( directionCode ) - 1;
-  if ( axis > 2 )
+  unsigned int axis = itk::Math::abs(directionCode) - 1;
+  if (axis > 2)
   {
     std::cout << "Your directionCode was too large so we will use the program default, axis 2 (Superior/Inferior)."
               << std::endl;
@@ -91,20 +91,20 @@ main( int argc, char * argv[] )
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   SImageType::PixelType BackgroundFillValue;
-  if ( backgroundFillValueString == std::string( "BIGNEG" ) )
+  if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;
   }
   else
   {
-    BackgroundFillValue = std::stoi( backgroundFillValueString.c_str() );
+    BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   SImageType::Pointer volResult;
 
   TrimForegroundInDirection(
-    volResult, volOrig, axis, otsuPercentileThreshold, closingSize, headSizeLimit, BackgroundFillValue );
-  itkUtil::WriteImage< SImageType >( volResult, outputVolume );
+    volResult, volOrig, axis, otsuPercentileThreshold, closingSize, headSizeLimit, BackgroundFillValue);
+  itkUtil::WriteImage<SImageType>(volResult, outputVolume);
   return 0;
 }

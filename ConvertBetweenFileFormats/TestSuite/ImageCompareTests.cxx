@@ -18,8 +18,8 @@
  *=========================================================================*/
 // this file defines the ImageCompare-Tests for the test driver
 // and all it expects is that you have a function called RegisterTests
-#if defined( _MSC_VER )
-#  pragma warning( disable : 4786 )
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
 #endif
 #include <iostream>
 #include "itkBRAINSToolsTestMain.h"
@@ -27,7 +27,7 @@
 // A dummy method that does nothing. We intend doing a comparison which is done
 // by the itkBRAINSToolsTestMain.h. (It requires a main program, prior to the compare)
 int
-Dummy( int, char *[] )
+Dummy(int, char *[])
 {
   return EXIT_SUCCESS;
 }
@@ -35,5 +35,5 @@ Dummy( int, char *[] )
 void
 RegisterTests()
 {
-  REGISTER_TEST( Dummy );
+  REGISTER_TEST(Dummy);
 }

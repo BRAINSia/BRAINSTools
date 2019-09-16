@@ -55,22 +55,22 @@ namespace itk
  *
  */
 /* THistogramMeasurement -- The precision level for which to do HistogramMeasurmenets */
-template < typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement = typename TInputMesh::PixelType >
-class HistogramMatchingQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh, typename THistogramMeasurement = typename TInputMesh::PixelType>
+class HistogramMatchingQuadEdgeMeshFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( HistogramMatchingQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(HistogramMatchingQuadEdgeMeshFilter);
 
   using Self = HistogramMatchingQuadEdgeMeshFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( HistogramMatchingQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(HistogramMatchingQuadEdgeMeshFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = typename Superclass::InputMeshType;
   using InputPixelType = typename InputMeshType::PixelType;
@@ -85,45 +85,45 @@ public:
   using OutputPointDataContainerPointer = typename OutputPointDataContainer::Pointer;
 
   /** Histogram related type alias. */
-  using HistogramType = Statistics::Histogram< THistogramMeasurement >;
+  using HistogramType = Statistics::Histogram<THistogramMeasurement>;
 
   using HistogramPointer = typename HistogramType::Pointer;
 
   /** Set/Get the source mesh. */
   void
-  SetSourceMesh( const InputMeshType * source );
+  SetSourceMesh(const InputMeshType * source);
 
   const InputMeshType *
-  GetSourceMesh( void ) const;
+  GetSourceMesh(void) const;
 
   /** Set/Get the reference mesh. */
   void
-  SetReferenceMesh( const InputMeshType * reference );
+  SetReferenceMesh(const InputMeshType * reference);
 
   const InputMeshType *
-  GetReferenceMesh( void ) const;
+  GetReferenceMesh(void) const;
 
   /** Set/Get the number of histogram levels used. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
-  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
+  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set/Get the number of match points used. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
-  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
+  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
 
   /** Methods to get the histograms of the source, reference, and
    * output. Objects are only valid after Update() has been called
    * on this filter. */
-  itkGetConstObjectMacro( SourceHistogram, HistogramType );
-  itkGetConstObjectMacro( ReferenceHistogram, HistogramType );
-  itkGetConstObjectMacro( OutputHistogram, HistogramType );
+  itkGetConstObjectMacro(SourceHistogram, HistogramType);
+  itkGetConstObjectMacro(ReferenceHistogram, HistogramType);
+  itkGetConstObjectMacro(OutputHistogram, HistogramType);
 
 protected:
   HistogramMatchingQuadEdgeMeshFilter();
   ~HistogramMatchingQuadEdgeMeshFilter();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   BeforeTransform();
@@ -136,12 +136,14 @@ protected:
 
   /** Compute min, max and mean of an image. */
   void
-  ComputeMinMax( const InputMeshType * mesh, THistogramMeasurement & minValue, THistogramMeasurement & maxValue );
+  ComputeMinMax(const InputMeshType * mesh, THistogramMeasurement & minValue, THistogramMeasurement & maxValue);
 
   /** Construct a histogram from a mesh. */
   void
-  ConstructHistogram( const InputMeshType * mesh, HistogramType * histogram, const THistogramMeasurement minValue,
-                      const THistogramMeasurement maxValue );
+  ConstructHistogram(const InputMeshType *       mesh,
+                     HistogramType *             histogram,
+                     const THistogramMeasurement minValue,
+                     const THistogramMeasurement maxValue);
 
 private:
   unsigned long m_NumberOfHistogramLevels;
@@ -158,10 +160,10 @@ private:
   HistogramPointer m_ReferenceHistogram;
   HistogramPointer m_OutputHistogram;
 
-  using TableType = vnl_matrix< double >;
+  using TableType = vnl_matrix<double>;
   TableType m_QuantileTable;
 
-  using GradientArrayType = vnl_vector< double >;
+  using GradientArrayType = vnl_vector<double>;
   GradientArrayType m_Gradients;
   double            m_LowerGradient;
   double            m_UpperGradient;

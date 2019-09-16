@@ -21,47 +21,47 @@ namespace TimeSeriesDatabaseHelper
 /* For ANSI-challenged compilers, you may want to #define
  * NO_MEMBER_TEMPLATES or explicit */
 #define NO_MEMBER_TEMPLATES
-template < typename X >
+template <typename X>
 class counted_ptr
 {
 public:
   typedef X element_type;
 
-  explicit counted_ptr( X * p = 0 ) /// allocate a new counter
-    : itsCounter( nullptr )
+  explicit counted_ptr(X * p = 0) /// allocate a new counter
+    : itsCounter(nullptr)
   {
-    if ( p )
-      itsCounter = new counter( p );
+    if (p)
+      itsCounter = new counter(p);
   }
   ~counted_ptr() { release(); }
-  counted_ptr( const counted_ptr & r ) throw() { acquire( r.itsCounter ); }
+  counted_ptr(const counted_ptr & r) throw() { acquire(r.itsCounter); }
   counted_ptr &
-  operator=( const counted_ptr & r )
+  operator=(const counted_ptr & r)
   {
-    if ( this != &r )
+    if (this != &r)
     {
       release();
-      acquire( r.itsCounter );
+      acquire(r.itsCounter);
     }
     return *this;
   }
 
 #ifndef NO_MEMBER_TEMPLATES
-  template < typename Y >
-  friend class counted_ptr< Y >;
-  template < typename Y >
-  counted_ptr( const counted_ptr< Y > & r ) throw()
+  template <typename Y>
+  friend class counted_ptr<Y>;
+  template <typename Y>
+  counted_ptr(const counted_ptr<Y> & r) throw()
   {
-    acquire( r.itsCounter );
+    acquire(r.itsCounter);
   }
-  template < typename Y >
+  template <typename Y>
   counted_ptr &
-  operator=( const counted_ptr< Y > & r )
+  operator=(const counted_ptr<Y> & r)
   {
-    if ( this != &r )
+    if (this != &r)
     {
       release();
-      acquire( r.itsCounter );
+      acquire(r.itsCounter);
     }
     return *this;
   }
@@ -77,34 +77,34 @@ public:
   bool
   unique() const throw()
   {
-    return ( itsCounter ? itsCounter->count == 1 : true );
+    return (itsCounter ? itsCounter->count == 1 : true);
   }
 
 private:
   struct counter
   {
-    counter( X * p = 0, unsigned c = 1 )
-      : ptr( p )
-      , count( c )
+    counter(X * p = 0, unsigned c = 1)
+      : ptr(p)
+      , count(c)
     {}
     X *      ptr;
     unsigned count;
   } * itsCounter;
 
   void
-  acquire( counter * c ) throw()
+  acquire(counter * c) throw()
   { /// increment the count
     itsCounter = c;
-    if ( c )
+    if (c)
       ++c->count;
   }
 
   void
   release()
   { /// decrement the count, delete if it is 0
-    if ( itsCounter )
+    if (itsCounter)
     {
-      if ( --itsCounter->count == 0 )
+      if (--itsCounter->count == 0)
       {
         delete itsCounter->ptr;
         delete itsCounter;
@@ -120,9 +120,9 @@ using namespace std;
 
 
 #ifdef NDEBUG
-#  define IF_DEBUG( x )
+#  define IF_DEBUG(x)
 #else
-#  define IF_DEBUG( x ) x
+#  define IF_DEBUG(x) x
 #endif
 
 
@@ -144,7 +144,7 @@ using namespace std;
 /// rate that may be useful while debugging. The statistics
 /// counting works only if NDEBUG is not defined.
 ///
-template < typename key_type, typename value_type >
+template <typename key_type, typename value_type>
 class LRUCache
 {
 public:
@@ -152,12 +152,12 @@ public:
   ///
   /// \param maxsize_ maximal size of the cache
   ///
-  LRUCache( unsigned maxsize_ = 100 )
-    : maxsize( maxsize_ )
+  LRUCache(unsigned maxsize_ = 100)
+    : maxsize(maxsize_)
   {}
 
   void
-  set_maxsize( unsigned maxsize_ )
+  set_maxsize(unsigned maxsize_)
   {
     maxsize = maxsize_;
   }
@@ -193,24 +193,24 @@ public:
   {
     lru_list.clear();
     table.clear();
-    IF_DEBUG( stats.clear() );
+    IF_DEBUG(stats.clear());
   }
 
   /// Inserts a key/value pair to the cache.
   ///
   void
-  insert( const key_type & key, const value_type & value )
+  insert(const key_type & key, const value_type & value)
   {
     /// Is the key already in the cache ?
     /// Note: find() is used intentionally - if
     /// an element gets updated, it should be moved
     /// to be MRU.
     //
-    value_type * valptr = find( key );
+    value_type * valptr = find(key);
 
     /// Found ?
     //
-    if ( valptr )
+    if (valptr)
     {
       /// Update the value.
       //
@@ -221,20 +221,20 @@ public:
       /// Add it to the table and to the front of the
       /// list (mark it MRU).
       ///
-      lru_list.push_front( key );
-      cached_value cv( value, lru_list.begin() );
-      table.insert( make_pair( key, cv ) );
+      lru_list.push_front(key);
+      cached_value cv(value, lru_list.begin());
+      table.insert(make_pair(key, cv));
 
       /// If the maximal size was exceeded, clean up
       /// LRU element.
       //
-      if ( lru_list.size() > maxsize )
+      if (lru_list.size() > maxsize)
       {
         key_type lru_key = lru_list.back();
-        table.erase( lru_key );
+        table.erase(lru_key);
         lru_list.pop_back();
 
-        IF_DEBUG( stats.removed++ );
+        IF_DEBUG(stats.removed++);
       }
     }
   }
@@ -248,24 +248,24 @@ public:
   /// so it should be used immediately.
   ///
   value_type *
-  find( const key_type & key )
+  find(const key_type & key)
   {
-    table_iter ti = table.find( key );
+    table_iter ti = table.find(key);
 
-    IF_DEBUG( stats.finds++ );
+    IF_DEBUG(stats.finds++);
 
-    if ( ti == table.end() )
+    if (ti == table.end())
       return nullptr;
 
-    IF_DEBUG( stats.finds_hit++ );
+    IF_DEBUG(stats.finds_hit++);
 
     /// An access moves the element to the front of
     /// the list (marking it MRU).
     //
     list_iter li = ti->second.cache_i;
-    lru_list.splice( lru_list.begin(), lru_list, li );
+    lru_list.splice(lru_list.begin(), lru_list, li);
 
-    return &( ti->second.value );
+    return &(ti->second.value);
   }
 
   /// Dumps the cache to output.
@@ -274,24 +274,24 @@ public:
   /// an output operator (<<) defined.
   ///
   void
-  debug_dump( ostream & ostr = cerr )
+  debug_dump(ostream & ostr = cerr)
   {
     ostr << "Debug dump of LRUCache\n";
     ostr << "-------------------\n\n";
 
-    if ( lru_list.empty() )
+    if (lru_list.empty())
     {
       ostr << "The cache is empty\n";
     }
 
     ostr << "Sorted from MRU to LRU:\n\n";
 
-    for ( list_iter i = lru_list.begin(); i != lru_list.end(); ++i )
+    for (list_iter i = lru_list.begin(); i != lru_list.end(); ++i)
     {
       ostr << "Key: " << *i << endl;
 
-      table_iter ti = table.find( *i );
-      assert( ti != table.end() );
+      table_iter ti = table.find(*i);
+      assert(ti != table.end());
 
       ostr << "Value: " << ti->second.value << "\n|\n";
     }
@@ -305,23 +305,23 @@ public:
   ///
 #ifndef NDEBUG
   void
-  statistics( ostream & ostr = cerr ) const
+  statistics(ostream & ostr = cerr) const
   {
     ostr << "LRUCache statistics\n";
     ostr << "----------------\n\n";
-    ostr << format_str( "Max size: %ld, cur size %ld. Cache is %5.2lf%% full\n\n",
-                        maxsize,
-                        lru_list.size(),
-                        100.0 * lru_list.size() / maxsize );
-    ostr << format_str( "Lookups:  %7ld\nHits:     %7ld\nHit rate: %7.2lf%%\n\n",
-                        stats.finds,
-                        stats.finds_hit,
-                        100.0 * stats.finds_hit / ( stats.finds + 1e-15 ) );
-    ostr << format_str( "Items removed by LRU: %ld\n\n", stats.removed );
+    ostr << format_str("Max size: %ld, cur size %ld. Cache is %5.2lf%% full\n\n",
+                       maxsize,
+                       lru_list.size(),
+                       100.0 * lru_list.size() / maxsize);
+    ostr << format_str("Lookups:  %7ld\nHits:     %7ld\nHit rate: %7.2lf%%\n\n",
+                       stats.finds,
+                       stats.finds_hit,
+                       100.0 * stats.finds_hit / (stats.finds + 1e-15));
+    ostr << format_str("Items removed by LRU: %ld\n\n", stats.removed);
   }
 #else
   void
-  statistics( ostream & vtkNotUsed( ostr ) ) const
+  statistics(ostream & vtkNotUsed(ostr)) const
   {}
 #endif /// NDEBUG
 
@@ -330,13 +330,13 @@ public:
   /// memory-safe manner.
   ///
   string
-  format_str( const char * format, ... ) const
+  format_str(const char * format, ...) const
   {
     va_list arglist;
-    va_start( arglist, format );
+    va_start(arglist, format);
     char * buf = new char[10000];
 
-    vsprintf( buf, format, arglist );
+    vsprintf(buf, format, arglist);
     string ret = buf;
     delete[] buf;
     return ret;
@@ -344,20 +344,20 @@ public:
 #endif /// NDEBUG
 
 private:
-  typedef typename list< key_type >::iterator list_iter;
+  typedef typename list<key_type>::iterator list_iter;
 
   struct cached_value
   {
-    cached_value( value_type value_, list_iter cache_i_ )
-      : value( value_ )
-      , cache_i( cache_i_ )
+    cached_value(value_type value_, list_iter cache_i_)
+      : value(value_)
+      , cache_i(cache_i_)
     {}
 
     value_type value;
     list_iter  cache_i;
   };
 
-  typedef typename map< key_type, cached_value >::iterator table_iter;
+  typedef typename map<key_type, cached_value>::iterator table_iter;
 
   /// Maximal cache size.
   ///
@@ -369,11 +369,11 @@ private:
   /// Note: the elements in lru_list and table are always
   /// the same.
   ///
-  list< key_type > lru_list;
+  list<key_type> lru_list;
 
   /// Table storing cache elements for quick access.
   ///
-  map< key_type, cached_value > table;
+  map<key_type, cached_value> table;
 
 #ifndef NDEBUG
 

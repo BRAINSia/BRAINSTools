@@ -45,27 +45,27 @@
 #include "itkMacro.h" //Needed for nullptr
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  if ( sourceSurfaceFile == "" )
+  if (sourceSurfaceFile == "")
   {
     std::cerr << "No source file specified" << std::endl;
     return 1;
   }
-  if ( targetSurfaceFile == "" )
+  if (targetSurfaceFile == "")
   {
     std::cerr << "No target file specified" << std::endl;
     return 1;
   }
-  if ( outputSurfaceFile == "" )
+  if (outputSurfaceFile == "")
   {
     std::cerr << "No output file specified" << std::endl;
     return 1;
   }
 
-  if ( getArrayName == "scalars" )
+  if (getArrayName == "scalars")
   {
     std::cout << "----------------------------------------------------" << std::endl;
     std::cout << "Assign scalars from: " << std::endl;
@@ -89,54 +89,54 @@ main( int argc, char * argv[] )
     std::cout << outputSurfaceFile << std::endl;
     std::cout << "----------------------------------------------------" << std::endl;
   }
-  vtkSmartPointer< vtkPolyDataReader > s_reader = vtkSmartPointer< vtkPolyDataReader >::New();
-  s_reader->SetFileName( sourceSurfaceFile.c_str() );
+  vtkSmartPointer<vtkPolyDataReader> s_reader = vtkSmartPointer<vtkPolyDataReader>::New();
+  s_reader->SetFileName(sourceSurfaceFile.c_str());
   s_reader->Update();
 
   vtkPolyData * source = s_reader->GetOutput();
 
-  vtkSmartPointer< vtkPolyDataReader > t_reader = vtkSmartPointer< vtkPolyDataReader >::New();
-  t_reader->SetFileName( targetSurfaceFile.c_str() );
+  vtkSmartPointer<vtkPolyDataReader> t_reader = vtkSmartPointer<vtkPolyDataReader>::New();
+  t_reader->SetFileName(targetSurfaceFile.c_str());
   t_reader->Update();
 
   vtkPolyData * target = t_reader->GetOutput();
 
   vtkDataArray * label;
 
-  if ( getArrayName != "scalars" )
+  if (getArrayName != "scalars")
   {
-    label = source->GetPointData()->GetArray( getArrayName.c_str() );
+    label = source->GetPointData()->GetArray(getArrayName.c_str());
   }
   else
   {
     label = source->GetPointData()->GetScalars();
   }
 
-  if ( label == nullptr )
+  if (label == nullptr)
   {
     std::cout << "there is no label array in the source." << std::endl;
     return 1;
   }
 
   // set new name to the label
-  label->SetName( setArrayName.c_str() );
+  label->SetName(setArrayName.c_str());
 
-  if ( target->GetPointData()->GetScalars() == nullptr )
+  if (target->GetPointData()->GetScalars() == nullptr)
   {
-    target->GetPointData()->SetScalars( label );
+    target->GetPointData()->SetScalars(label);
   }
   else
   {
-    target->GetPointData()->AddArray( label );
+    target->GetPointData()->AddArray(label);
   }
 
-  vtkSmartPointer< vtkPolyDataWriter > writer = vtkSmartPointer< vtkPolyDataWriter >::New();
-#if ( VTK_MAJOR_VERSION < 6 )
-  writer->SetInput( target );
+  vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+#if (VTK_MAJOR_VERSION < 6)
+  writer->SetInput(target);
 #else
-  writer->SetInputData( target );
+  writer->SetInputData(target);
 #endif
-  writer->SetFileName( outputSurfaceFile.c_str() );
+  writer->SetFileName(outputSurfaceFile.c_str());
   writer->Update();
 
   return 0;

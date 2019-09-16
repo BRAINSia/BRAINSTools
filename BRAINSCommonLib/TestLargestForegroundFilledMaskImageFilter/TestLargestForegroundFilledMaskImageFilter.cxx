@@ -21,22 +21,22 @@
 #include <string>
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
-  if ( argc < 3 )
+  if (argc < 3)
   {
     std::cerr << "TestLargestForegrounFilledMaskImageFilter <input image> <output image>" << std::endl;
     return EXIT_FAILURE;
   }
-  using ImageType = itk::Image< float, 3 >;
-  using FilterType = itk::LargestForegroundFilledMaskImageFilter< ImageType >;
-  std::string         inputname( argv[1] );
-  std::string         outputname( argv[2] );
-  ImageType::Pointer  image = itkUtil::ReadImage< ImageType >( inputname );
+  using ImageType = itk::Image<float, 3>;
+  using FilterType = itk::LargestForegroundFilledMaskImageFilter<ImageType>;
+  std::string         inputname(argv[1]);
+  std::string         outputname(argv[2]);
+  ImageType::Pointer  image = itkUtil::ReadImage<ImageType>(inputname);
   FilterType::Pointer filter = FilterType::New();
-  filter->SetInput( image );
+  filter->SetInput(image);
   filter->Update();
   ImageType::Pointer outputImage = filter->GetOutput();
-  itkUtil::WriteImage< ImageType >( outputImage, outputname );
+  itkUtil::WriteImage<ImageType>(outputImage, outputname);
   return EXIT_SUCCESS;
 }

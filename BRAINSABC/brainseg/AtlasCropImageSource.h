@@ -37,17 +37,17 @@
 
 /** \class AtlasCropImageSource
  */
-template < typename TInputImage, typename TProbabilityImage >
+template <typename TInputImage, typename TProbabilityImage>
 class AtlasCropImageSource : public itk::Object
 {
 public:
   /** Standard class type alias. */
   using Self = AtlasCropImageSource;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** The dimension of the image. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
@@ -72,7 +72,7 @@ public:
   using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
   using ProbabilityImageSpacingType = typename ProbabilityImageType::SpacingType;
 
-  using ProbabilityImageList = std::vector< ProbabilityImagePointer >;
+  using ProbabilityImageList = std::vector<ProbabilityImagePointer>;
 
   typedef struct
   {
@@ -82,25 +82,25 @@ public:
   } CropInfoType;
 
   // Set/get output image padding, in mm
-  itkGetMacro( Padding, double );
-  itkSetMacro( Padding, double );
+  itkGetMacro(Padding, double);
+  itkSetMacro(Padding, double);
 
   bool
   CheckBounds();
 
   void
-  UseProbabilities( ProbabilityImageList probs );
+  UseProbabilities(ProbabilityImageList probs);
 
   // Create new images (either cropped or padded)
   InputImagePointer
-  Restore( InputImagePointer img );
+  Restore(InputImagePointer img);
 
   InputImagePointer
-  Crop( InputImagePointer img );
+  Crop(InputImagePointer img);
 
   // Crop region information
   void
-  SetCropInfo( const CropInfoType & info )
+  SetCropInfo(const CropInfoType & info)
   {
     m_CropInfo = info;
   }
@@ -112,9 +112,9 @@ public:
   }
 
   // For debugging, generate slabs in last dim with top and bottom parts removed
-  itkSetMacro( SlabMode, bool );
-  itkGetConstMacro( SlabMode, bool );
-  itkBooleanMacro( SlabMode );
+  itkSetMacro(SlabMode, bool);
+  itkGetConstMacro(SlabMode, bool);
+  itkBooleanMacro(SlabMode);
 
 protected:
   AtlasCropImageSource();

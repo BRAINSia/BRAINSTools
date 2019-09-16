@@ -58,8 +58,8 @@
 class EmptyVectorException
 {
 public:
-  EmptyVectorException( const char * pStr = "The list of input images was empty.  Nothing to averge." )
-    : pMessage( pStr )
+  EmptyVectorException(const char * pStr = "The list of input images was empty.  Nothing to averge.")
+    : pMessage(pStr)
   {}
 
   const char *
@@ -74,62 +74,62 @@ private:
 
 
 // Take a list of coregistered images, all of the same type (T1,T2) and return the average image.
-template < typename TImage >
+template <typename TImage>
 typename TImage::Pointer
-AverageImageList( const std::vector< typename TImage::Pointer > & inputImageList )
+AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
 {
-  if ( inputImageList.empty() )
+  if (inputImageList.empty())
   {
     // No images, something went wrong.
     throw EmptyVectorException();
   }
-  if ( inputImageList.size() == 1 )
+  if (inputImageList.size() == 1)
   {
     // Only one image, nothing to average.
     return inputImageList[0];
   }
 
-  using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter< TImage, TImage >;
-  using MultiplyFilterType = itk::MultiplyImageFilter< TImage, TImage >;
+  using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter<TImage, TImage>;
+  using MultiplyFilterType = itk::MultiplyImageFilter<TImage, TImage>;
   typename BinaryThreshImageFilterType::Pointer firstBinary = BinaryThreshImageFilterType::New();
-  firstBinary->SetLowerThreshold( 0 );
-  firstBinary->SetUpperThreshold( 0 );
-  firstBinary->SetInsideValue( 0.0 );
-  firstBinary->SetOutsideValue( 1.0 );
-  firstBinary->SetInput( inputImageList[0] );
+  firstBinary->SetLowerThreshold(0);
+  firstBinary->SetUpperThreshold(0);
+  firstBinary->SetInsideValue(0.0);
+  firstBinary->SetOutsideValue(1.0);
+  firstBinary->SetInput(inputImageList[0]);
   firstBinary->Update();
   typename TImage::Pointer averageMask = firstBinary->GetOutput();
-  for ( unsigned int i = 1; i < inputImageList.size(); ++i )
+  for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
     typename BinaryThreshImageFilterType::Pointer myThresholder = BinaryThreshImageFilterType::New();
-    myThresholder->SetInput( inputImageList[i] );
-    myThresholder->SetLowerThreshold( 0 ); // Only valuse exactly equal to zero are to be used.
-    myThresholder->SetUpperThreshold( 0 );
-    myThresholder->SetInsideValue( 0.0 );
-    myThresholder->SetOutsideValue( 1.0 );
+    myThresholder->SetInput(inputImageList[i]);
+    myThresholder->SetLowerThreshold(0); // Only valuse exactly equal to zero are to be used.
+    myThresholder->SetUpperThreshold(0);
+    myThresholder->SetInsideValue(0.0);
+    myThresholder->SetOutsideValue(1.0);
     myThresholder->Update();
     typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
-    multIF->SetInput1( averageMask );
-    multIF->SetInput2( myThresholder->GetOutput() );
+    multIF->SetInput1(averageMask);
+    multIF->SetInput2(myThresholder->GetOutput());
     multIF->Update();
     averageMask = multIF->GetOutput();
   }
 
-  using AvgFilterType = itk::AverageImageFilter< TImage, TImage >;
+  using AvgFilterType = itk::AverageImageFilter<TImage, TImage>;
   typename AvgFilterType::Pointer filter = AvgFilterType::New();
   typename TImage::Pointer        referenceScaleImg = inputImageList[0];
-  filter->SetInput( 0, referenceScaleImg );
-  for ( unsigned int i = 1; i < inputImageList.size(); ++i )
+  filter->SetInput(0, referenceScaleImg);
+  for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
     // Modify inputImageList in place.
-    typename TImage::Pointer temp = LinearRegressionIntensityMatching< TImage, TImage >(
-      referenceScaleImg.GetPointer(), averageMask.GetPointer(), inputImageList[i].GetPointer() );
-    filter->SetInput( i, temp );
+    typename TImage::Pointer temp = LinearRegressionIntensityMatching<TImage, TImage>(
+      referenceScaleImg.GetPointer(), averageMask.GetPointer(), inputImageList[i].GetPointer());
+    filter->SetInput(i, temp);
   }
   filter->Update();
   typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
-  multIF->SetInput1( averageMask );
-  multIF->SetInput2( filter->GetOutput() );
+  multIF->SetInput1(averageMask);
+  multIF->SetInput2(filter->GetOutput());
   multIF->Update();
 
   return multIF->GetOutput();
@@ -137,20 +137,20 @@ AverageImageList( const std::vector< typename TImage::Pointer > & inputImageList
 
 /** \class AtlasRegistrationMethod
  */
-template < typename TOutputPixel, typename TProbabilityPixel >
+template <typename TOutputPixel, typename TProbabilityPixel>
 class AtlasRegistrationMethod : public itk::Object
 {
 public:
   /** Standard class type alias. */
   using Self = AtlasRegistrationMethod;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   // Image types
-  using OutputImageType = itk::Image< TOutputPixel, 3 >;
+  using OutputImageType = itk::Image<TOutputPixel, 3>;
   using OutputImagePointer = typename OutputImageType::Pointer;
   using OutputImageIndexType = typename OutputImageType::IndexType;
   using OutputImageOffsetType = typename OutputImageType::OffsetType;
@@ -158,7 +158,7 @@ public:
   using OutputImageSizeType = typename OutputImageType::SizeType;
   using OutputImageRegionType = typename OutputImageType::RegionType;
 
-  using ProbabilityImageType = itk::Image< TProbabilityPixel, 3 >;
+  using ProbabilityImageType = itk::Image<TProbabilityPixel, 3>;
   using ProbabilityImagePointer = typename ProbabilityImageType::Pointer;
   using ProbabilityImageIndexType = typename ProbabilityImageType::IndexType;
   using ProbabilityImageOffsetType = typename ProbabilityImageType::OffsetType;
@@ -166,7 +166,7 @@ public:
   using ProbabilityImageSizeType = typename ProbabilityImageType::SizeType;
   using ProbabilityImageRegionType = typename ProbabilityImageType::RegionType;
 
-  using InternalImageType = itk::Image< float, 3 >;
+  using InternalImageType = itk::Image<float, 3>;
   using InternalImagePointer = typename InternalImageType::Pointer;
   using InternalImageIndexType = typename InternalImageType::IndexType;
   using InternalImageOffsetType = typename InternalImageType::OffsetType;
@@ -174,7 +174,7 @@ public:
   using InternalImageRegionType = typename InternalImageType::RegionType;
   using InternalImageSizeType = typename InternalImageType::SizeType;
 
-  using ByteImageType = itk::Image< unsigned char, 3 >;
+  using ByteImageType = itk::Image<unsigned char, 3>;
   using ByteImagePointer = typename ByteImageType::Pointer;
   using ByteImageIndexType = typename ByteImageType::IndexType;
   using ByteImageOffsetType = typename ByteImageType::OffsetType;
@@ -182,60 +182,60 @@ public:
   using ByteImageRegionType = typename ByteImageType::RegionType;
   using ByteImageSizeType = typename ByteImageType::SizeType;
 
-  using GenericTransformType = itk::Transform< double, 3, 3 >;
-  using CompositeTransformType = itk::CompositeTransform< double, 3 >;
+  using GenericTransformType = itk::Transform<double, 3, 3>;
+  using CompositeTransformType = itk::CompositeTransform<double, 3>;
   using CompositeTransformPointer = CompositeTransformType::Pointer;
-  using ProbabilityImageList = std::vector< ProbabilityImagePointer >;
-  using OutputImageList = std::vector< OutputImagePointer >;
+  using ProbabilityImageList = std::vector<ProbabilityImagePointer>;
+  using OutputImageList = std::vector<OutputImagePointer>;
 
-  using FlagArrayType = itk::Array< unsigned char >;
+  using FlagArrayType = itk::Array<unsigned char>;
 
-  using StringVector = std::vector< std::string >;
-  using MapOfStringVectors = orderedmap< std::string, StringVector >;
+  using StringVector = std::vector<std::string>;
+  using MapOfStringVectors = orderedmap<std::string, StringVector>;
 
-  using FloatImageVector = std::vector< InternalImagePointer >;
-  using MapOfFloatImageVectors = orderedmap< std::string, FloatImageVector >;
+  using FloatImageVector = std::vector<InternalImagePointer>;
+  using MapOfFloatImageVectors = orderedmap<std::string, FloatImageVector>;
 
-  using TransformList = std::vector< GenericTransformType::Pointer >;
-  using MapOfTransformLists = orderedmap< std::string, TransformList >;
+  using TransformList = std::vector<GenericTransformType::Pointer>;
+  using MapOfTransformLists = orderedmap<std::string, TransformList>;
 
   void
-  SetSuffix( std::string suffix );
+  SetSuffix(std::string suffix);
 
-  itkGetConstMacro( OutputDebugDir, std::string );
-  itkSetMacro( OutputDebugDir, std::string );
+  itkGetConstMacro(OutputDebugDir, std::string);
+  itkSetMacro(OutputDebugDir, std::string);
 
-  itkGetConstMacro( SaveState, std::string );
-  itkSetMacro( SaveState, std::string );
+  itkGetConstMacro(SaveState, std::string);
+  itkSetMacro(SaveState, std::string);
 
   InternalImagePointer
   GetFirstAtlasOriginalImage()
   {
-    return GetMapVectorFirstElement( this->m_AtlasOriginalImageList );
+    return GetMapVectorFirstElement(this->m_AtlasOriginalImageList);
   }
   InternalImagePointer
-  GetSecondModalityAtlasOriginalImage( const std::string & type )
+  GetSecondModalityAtlasOriginalImage(const std::string & type)
   {
-    MapOfFloatImageVectors::iterator test_map_location = this->m_AtlasOriginalImageList.find( type );
-    if ( test_map_location == this->m_AtlasOriginalImageList.end() )
+    MapOfFloatImageVectors::iterator test_map_location = this->m_AtlasOriginalImageList.find(type);
+    if (test_map_location == this->m_AtlasOriginalImageList.end())
     {
       return nullptr;
     }
-    return *( test_map_location->second.begin() );
+    return *(test_map_location->second.begin());
   }
 
   void
-  SetAtlasOriginalImageList( MapOfFloatImageVectors & NewAtlasList );
+  SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList);
 
   void
-  SetIntraSubjectOriginalImageList( MapOfFloatImageVectors & NewImageList );
+  SetIntraSubjectOriginalImageList(MapOfFloatImageVectors & NewImageList);
 
   // itkSetMacro( IntraSubjectTransformFileNames, std::vector<std::string> );
-  itkSetMacro( AtlasToSubjectTransformFileName, std::string );
+  itkSetMacro(AtlasToSubjectTransformFileName, std::string);
 
   // INFO: KENT:  Move all code from class definition to the .hxx file outside the class definition
   void
-  SetIntraSubjectTransformFileNames( MapOfStringVectors userlist )
+  SetIntraSubjectTransformFileNames(MapOfStringVectors userlist)
   {
     m_IntraSubjectTransformFileNames = userlist;
     m_RegistrationUpdateNeeded = true;
@@ -257,36 +257,36 @@ public:
   }
 
   // Set/Get the Debugging level for filter verboseness
-  itkSetMacro( DebugLevel, unsigned int );
-  itkGetMacro( DebugLevel, unsigned int );
+  itkSetMacro(DebugLevel, unsigned int);
+  itkGetMacro(DebugLevel, unsigned int);
 
-  itkGetMacro( UseNonLinearInterpolation, bool );
-  itkSetMacro( UseNonLinearInterpolation, bool );
+  itkGetMacro(UseNonLinearInterpolation, bool);
+  itkSetMacro(UseNonLinearInterpolation, bool);
 
-  itkSetMacro( RestoreState, CompositeTransformPointer );
-  itkGetConstMacro( RestoreState, CompositeTransformPointer );
+  itkSetMacro(RestoreState, CompositeTransformPointer);
+  itkGetConstMacro(RestoreState, CompositeTransformPointer);
 
-  itkSetObjectMacro( KeySubjectImage, InternalImageType );
-  itkGetModifiableObjectMacro( KeySubjectImage, InternalImageType );
+  itkSetObjectMacro(KeySubjectImage, InternalImageType);
+  itkGetModifiableObjectMacro(KeySubjectImage, InternalImageType);
 
   void
-  SetAtlasLinearTransformChoice( const std::string & c )
+  SetAtlasLinearTransformChoice(const std::string & c)
   {
     m_AtlasLinearTransformChoice = c;
     m_RegistrationUpdateNeeded = true;
   }
 
   void
-  SetImageLinearTransformChoice( const std::string & c )
+  SetImageLinearTransformChoice(const std::string & c)
   {
     m_ImageLinearTransformChoice = c;
     m_RegistrationUpdateNeeded = true;
   }
 
   void
-  SetWarpGrid( const unsigned int gx, const unsigned int gy, const unsigned int gz )
+  SetWarpGrid(const unsigned int gx, const unsigned int gy, const unsigned int gz)
   {
-    m_WarpGrid.resize( 3 );
+    m_WarpGrid.resize(3);
     m_WarpGrid[0] = gx;
     m_WarpGrid[1] = gy;
     m_WarpGrid[2] = gz;
@@ -294,9 +294,9 @@ public:
   }
 
   void
-  SetAtlasToSubjectInitialTransform( const GenericTransformType::Pointer atlasToSubjectInitialTransform )
+  SetAtlasToSubjectInitialTransform(const GenericTransformType::Pointer atlasToSubjectInitialTransform)
   {
-    if ( this->m_AtlasToSubjectInitialTransform != atlasToSubjectInitialTransform )
+    if (this->m_AtlasToSubjectInitialTransform != atlasToSubjectInitialTransform)
     {
       this->m_AtlasToSubjectInitialTransform = atlasToSubjectInitialTransform;
       m_RegistrationUpdateNeeded = true;
@@ -308,20 +308,20 @@ public:
 
 protected:
   void
-  RegisterIntraSubjectImages( void );
+  RegisterIntraSubjectImages(void);
   void
-  AverageIntraSubjectRegisteredImages( void );
+  AverageIntraSubjectRegisteredImages(void);
   void
-  RegisterAtlasToSubjectImages( void );
+  RegisterAtlasToSubjectImages(void);
 
   AtlasRegistrationMethod();
   ~AtlasRegistrationMethod();
 
   OutputImagePointer
-  CopyOutputImage( InternalImagePointer img );
+  CopyOutputImage(InternalImagePointer img);
 
   ProbabilityImagePointer
-  CopyProbabilityImage( InternalImagePointer img );
+  CopyProbabilityImage(InternalImagePointer img);
 
 private:
   std::string m_Suffix;
@@ -336,9 +336,9 @@ private:
   ByteImagePointer m_InputImageTissueRegion;
   ImageMaskPointer m_InputSpatialObjectTissueRegion;
 
-  std::vector< unsigned int > m_WarpGrid;
-  MapOfStringVectors          m_IntraSubjectTransformFileNames;
-  std::string                 m_AtlasToSubjectTransformFileName;
+  std::vector<unsigned int> m_WarpGrid;
+  MapOfStringVectors        m_IntraSubjectTransformFileNames;
+  std::string               m_AtlasToSubjectTransformFileName;
 
   GenericTransformType::Pointer m_AtlasToSubjectTransform;
   GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;

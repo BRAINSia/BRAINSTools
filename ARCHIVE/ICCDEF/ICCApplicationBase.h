@@ -31,21 +31,21 @@ namespace itk
  * form a deformable registration/atlas segmentation application.
  *
  */
-template < typename TPreprocessor, typename TRegistrator >
+template <typename TPreprocessor, typename TRegistrator>
 class ICCApplicationBase : public Object
 {
 public:
   /** Standard class type alias. */
   using Self = ICCApplicationBase;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( MIMApplication, Object );
+  itkTypeMacro(MIMApplication, Object);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Preprocessor type. */
   using PreprocessorType = TPreprocessor;
@@ -56,11 +56,11 @@ public:
   using RegistratorPointer = typename RegistratorType::Pointer;
 
   /**Set Debug mode*/
-  itkSetMacro( OutDebug, bool );
-  itkGetConstMacro( OutDebug, bool );
+  itkSetMacro(OutDebug, bool);
+  itkGetConstMacro(OutDebug, bool);
 
   RegistratorType *
-  GetRegistratorType( void )
+  GetRegistratorType(void)
   {
     return m_Registrator;
   }

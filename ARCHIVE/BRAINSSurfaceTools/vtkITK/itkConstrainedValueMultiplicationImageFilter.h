@@ -54,69 +54,72 @@ namespace itk
 namespace Functor
 {
 
-template < typename TInput1, typename TInput2, typename TOutput >
+template <typename TInput1, typename TInput2, typename TOutput>
 class ConstrainedValueMultiplication
 {
 public:
   ConstrainedValueMultiplication(){};
   ~ConstrainedValueMultiplication(){};
   bool
-  operator!=( const ConstrainedValueMultiplication & ) const
+  operator!=(const ConstrainedValueMultiplication &) const
   {
     return false;
   }
   bool
-  operator==( const ConstrainedValueMultiplication & other ) const
+  operator==(const ConstrainedValueMultiplication & other) const
   {
-    return !( *this != other );
+    return !(*this != other);
   }
   inline TOutput
-  operator()( const TInput1 & A, const TInput2 & B )
+  operator()(const TInput1 & A, const TInput2 & B)
   {
-    const double dA = static_cast< double >( A );
-    const double dB = static_cast< double >( B );
+    const double dA = static_cast<double>(A);
+    const double dB = static_cast<double>(B);
     const double add = dA * dB;
-    const double cadd1 = ( add < NumericTraits< TOutput >::max() ) ? add : NumericTraits< TOutput >::max();
+    const double cadd1 = (add < NumericTraits<TOutput>::max()) ? add : NumericTraits<TOutput>::max();
     const double cadd2 =
-      ( cadd1 > NumericTraits< TOutput >::NonpositiveMin() ) ? cadd1 : NumericTraits< TOutput >::NonpositiveMin();
-    return static_cast< TOutput >( cadd2 );
+      (cadd1 > NumericTraits<TOutput>::NonpositiveMin()) ? cadd1 : NumericTraits<TOutput>::NonpositiveMin();
+    return static_cast<TOutput>(cadd2);
   }
 };
 } // namespace Functor
 
-template < typename TInputImage1, typename TInputImage2, typename TOutputImage >
+template <typename TInputImage1, typename TInputImage2, typename TOutputImage>
 class ConstrainedValueMultiplicationImageFilter
-  : public BinaryFunctorImageFilter<
-      TInputImage1, TInputImage2, TOutputImage,
-      Functor::ConstrainedValueMultiplication< typename TInputImage1::PixelType, typename TInputImage2::PixelType,
-                                               typename TOutputImage::PixelType > >
+  : public BinaryFunctorImageFilter<TInputImage1,
+                                    TInputImage2,
+                                    TOutputImage,
+                                    Functor::ConstrainedValueMultiplication<typename TInputImage1::PixelType,
+                                                                            typename TInputImage2::PixelType,
+                                                                            typename TOutputImage::PixelType>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ConstrainedValueMultiplicationImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ConstrainedValueMultiplicationImageFilter);
 
   /** Standard class type alias. */
   using Self = ConstrainedValueMultiplicationImageFilter;
-  using Superclass = BinaryFunctorImageFilter<
-    TInputImage1, TInputImage2, TOutputImage,
-    Functor::ConstrainedValueMultiplication< typename TInputImage1::PixelType, typename TInputImage2::PixelType,
-                                             typename TOutputImage::PixelType > >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass =
+    BinaryFunctorImageFilter<TInputImage1,
+                             TInputImage2,
+                             TOutputImage,
+                             Functor::ConstrainedValueMultiplication<typename TInputImage1::PixelType,
+                                                                     typename TInputImage2::PixelType,
+                                                                     typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( ConstrainedValueMultiplicationImageFilter, BinaryFunctorImageFilter );
+  itkTypeMacro(ConstrainedValueMultiplicationImageFilter, BinaryFunctorImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( Input1ConvertibleToDoubleCheck, (Concept::Convertible< typename TInputImage1::PixelType, double >));
-  itkConceptMacro( Input2ConvertibleToDoubleCheck, (Concept::Convertible< typename TInputImage2::PixelType, double >));
-  itkConceptMacro( DoubleConvertibleToOutputCastCheck,
-                   (Concept::Convertible< double, typename TOutputImage::PixelType >));
-  itkConceptMacro( DoubleLessThanOutputCheck,
-                   (Concept::LessThanComparable< double, typename TOutputImage::PixelType >));
+  itkConceptMacro(Input1ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage1::PixelType, double>));
+  itkConceptMacro(Input2ConvertibleToDoubleCheck, (Concept::Convertible<typename TInputImage2::PixelType, double>));
+  itkConceptMacro(DoubleConvertibleToOutputCastCheck, (Concept::Convertible<double, typename TOutputImage::PixelType>));
+  itkConceptMacro(DoubleLessThanOutputCheck, (Concept::LessThanComparable<double, typename TOutputImage::PixelType>));
   /** End concept checking */
 #endif
 

@@ -79,17 +79,17 @@ using AnisotropyType = enum ENUM_ANISOTROPY_TYPE;
 class GTRACT_COMMON_EXPORT TensorToAnisotropyImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( TensorToAnisotropyImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(TensorToAnisotropyImageFilter);
 
   /** Standard class type alias. */
   using Self = TensorToAnisotropyImageFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Some convenient type alias. */
-  using InputPixelType = itk::Vector< float, 6 >;
-  using InputImageType = itk::Image< InputPixelType, 3 >;
+  using InputPixelType = itk::Vector<float, 6>;
+  using InputImageType = itk::Image<InputPixelType, 3>;
   using InputImagePointer = InputImageType::Pointer;
   using InputImageConstPointer = InputImageType::ConstPointer;
   using InputImageRegionType = InputImageType::RegionType;
@@ -99,7 +99,7 @@ public:
   using InputImagePixelType = InputImageType::PixelType;
   using InputImageDirectionType = InputImageType::DirectionType;
 
-  using OutputImageType = itk::Image< float, 3 >;
+  using OutputImageType = itk::Image<float, 3>;
   using OutputImagePointer = OutputImageType::Pointer;
   using OutputImageConstPointer = OutputImageType::ConstPointer;
   using OutputImageRegionType = OutputImageType::RegionType;
@@ -120,16 +120,16 @@ public:
     (Concept::SameDimension<Self::InputImageDimension,4>));
 */
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( TensorToAnisotropyImageFilter, itk::Object );
+  itkTypeMacro(TensorToAnisotropyImageFilter, itk::Object);
 
   /* SetInput and GetOutput Macros */
-  itkSetObjectMacro( Input, InputImageType );
-  itkGetConstObjectMacro( Output, OutputImageType );
+  itkSetObjectMacro(Input, InputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
 
-  itkSetMacro( AnisotropyType, AnisotropyType );
+  itkSetMacro(AnisotropyType, AnisotropyType);
 
   void
   Update();

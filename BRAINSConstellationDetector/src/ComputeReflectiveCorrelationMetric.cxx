@@ -57,7 +57,7 @@
 #include "ComputeReflectiveCorrelationMetricCLP.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
@@ -67,91 +67,91 @@ main( int argc, char * argv[] )
   // Input image is read as a double image;
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
-  using ReaderType = itk::ImageFileReader< DImageType3D >;
+  using ReaderType = itk::ImageFileReader<DImageType3D>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputVolume );
+  reader->SetFileName(inputVolume);
   try
   {
     reader->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << " Error while reading image file( s ) with ITK:\n " << err << std::endl;
   }
 
-  DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity< DImageType3D, ByteImageType >(
-    reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE );
+  DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity<DImageType3D, ByteImageType>(
+    reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE);
 
-  using CasterType = itk::CastImageFilter< DImageType3D, SImageType >;
+  using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
   CasterType::Pointer caster = CasterType::New();
-  caster->SetInput( rescaledInputVolume );
+  caster->SetInput(rescaledInputVolume);
   caster->Update();
   SImageType::Pointer originalImage = caster->GetOutput();
 
-  PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid( originalImage );
-  SImageType::Pointer        inputImage = MyPyramid->GetOutput( 0 ); // one-eighth image
+  PyramidFilterType::Pointer MyPyramid = MakeOneLevelPyramid(originalImage);
+  SImageType::Pointer        inputImage = MyPyramid->GetOutput(0); // one-eighth image
 
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  using FindCenterFilter = itk::FindCenterOfBrainFilter< SImageType >;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
-  findCenterFilter->SetInput( originalImage );
-  findCenterFilter->SetAxis( 2 );
-  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-  findCenterFilter->SetClosingSize( 7 );
-  findCenterFilter->SetHeadSizeLimit( 700 );
-  findCenterFilter->SetBackgroundValue( 0 );
+  findCenterFilter->SetInput(originalImage);
+  findCenterFilter->SetAxis(2);
+  findCenterFilter->SetOtsuPercentileThreshold(0.01);
+  findCenterFilter->SetClosingSize(7);
+  findCenterFilter->SetHeadSizeLimit(700);
+  findCenterFilter->SetBackgroundValue(0);
   findCenterFilter->Update();
   SImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
-  using ReflectionFunctorType = Rigid3DCenterReflectorFunctor< itk::PowellOptimizerv4< double > >;
+  using ReflectionFunctorType = Rigid3DCenterReflectorFunctor<itk::PowellOptimizerv4<double>>;
   using ParametersType = ReflectionFunctorType::ParametersType;
 
   ReflectionFunctorType::Pointer reflectionFunctor = ReflectionFunctorType::New();
-  reflectionFunctor->Setorig_lmk_CenterOfHeadMass( orig_lmk_CenterOfHeadMass );
-  reflectionFunctor->InitializeImage( originalImage ); // initialize image is set to be original
-                                                       // high resolution image for consistency
-                                                       // with BCD behaviour
-  reflectionFunctor->SetDownSampledReferenceImage( inputImage );
+  reflectionFunctor->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
+  reflectionFunctor->InitializeImage(originalImage); // initialize image is set to be original
+                                                     // high resolution image for consistency
+                                                     // with BCD behaviour
+  reflectionFunctor->SetDownSampledReferenceImage(inputImage);
 
   // optimal parameters
   ParametersType opt_params;
-  opt_params.set_size( ReflectionFunctorType::SpaceDimension );
-  opt_params.fill( 0.0 );
-  reflectionFunctor->SetParameters( opt_params );
-  reflectionFunctor->SetDoPowell( false );
+  opt_params.set_size(ReflectionFunctorType::SpaceDimension);
+  opt_params.fill(0.0);
+  reflectionFunctor->SetParameters(opt_params);
+  reflectionFunctor->SetDoPowell(false);
   reflectionFunctor->Update();
   double opt_cc = reflectionFunctor->GetValue();
 
 
-  std::vector< std::string > prefix( 3 );
+  std::vector<std::string> prefix(3);
   prefix[0] = "0";
   prefix[1] = "1";
   prefix[2] = "2";
 
-  std::vector< double > Angle_Range( 3 );
+  std::vector<double> Angle_Range(3);
   Angle_Range[0] = 45.0;
   Angle_Range[1] = 2.5;
   Angle_Range[2] = 0.5;
 
-  std::vector< double > Angle_Stepsizes( 3 );
+  std::vector<double> Angle_Stepsizes(3);
   Angle_Stepsizes[0] = 5.0;
   Angle_Stepsizes[1] = 0.5;
   Angle_Stepsizes[2] = 0.25;
 
-  std::vector< double > Offset_Range( 3 );
+  std::vector<double> Offset_Range(3);
   Offset_Range[0] = 15.0;
   Offset_Range[1] = 1.5;
   Offset_Range[2] = 0.5;
 
-  std::vector< double > Offset_Stepsizes( 3 );
+  std::vector<double> Offset_Stepsizes(3);
   Offset_Stepsizes[0] = 3.0;
   Offset_Stepsizes[1] = 0.5;
   Offset_Stepsizes[2] = 0.25;
 
   const double degree_to_rad = itk::Math::pi / 180.0;
 
-  for ( unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter )
+  for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter)
   {
     const double HA_range = Angle_Range[resolutionIter];
     const double BA_range = Angle_Range[resolutionIter];
@@ -166,15 +166,15 @@ main( int argc, char * argv[] )
     std::cout << "LR RANGE: " << LR_range << " at " << LR_stepsize << " (mm) steps." << std::endl;
     itk::TimeProbe clock;
     clock.Start();
-    reflectionFunctor->DoExhaustiveSearch( opt_params,
-                                           opt_cc,
-                                           HA_range,
-                                           BA_range,
-                                           LR_range,
-                                           HA_stepsize,
-                                           BA_stepsize,
-                                           LR_stepsize,
-                                           prefix[resolutionIter] + outputCSVFile );
+    reflectionFunctor->DoExhaustiveSearch(opt_params,
+                                          opt_cc,
+                                          HA_range,
+                                          BA_range,
+                                          LR_range,
+                                          HA_stepsize,
+                                          BA_stepsize,
+                                          LR_stepsize,
+                                          prefix[resolutionIter] + outputCSVFile);
     clock.Stop();
     std::cout << "Time Mean: " << clock.GetMean() << std::endl;
     std::cout << "Time Total: " << clock.GetTotal() << std::endl;
@@ -188,9 +188,9 @@ main( int argc, char * argv[] )
   //
   std::cout << "\nFind optimized parameters set by running Powell optimizer..." << std::endl;
   ReflectionFunctorType::Pointer reflectionFunctor2 = ReflectionFunctorType::New();
-  reflectionFunctor2->Setorig_lmk_CenterOfHeadMass( orig_lmk_CenterOfHeadMass );
-  reflectionFunctor2->InitializeImage( originalImage );
-  reflectionFunctor2->SetDownSampledReferenceImage( inputImage );
+  reflectionFunctor2->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
+  reflectionFunctor2->InitializeImage(originalImage);
+  reflectionFunctor2->SetDownSampledReferenceImage(inputImage);
   reflectionFunctor2->Initialize();
   reflectionFunctor2->Update();
   ParametersType powell_params = reflectionFunctor2->GetParameters();

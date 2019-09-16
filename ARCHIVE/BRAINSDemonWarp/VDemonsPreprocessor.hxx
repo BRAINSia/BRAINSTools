@@ -35,65 +35,65 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TOutputImage >
-VDemonsPreprocessor< TInputImage, TOutputImage >::VDemonsPreprocessor()
+template <typename TInputImage, typename TOutputImage>
+VDemonsPreprocessor<TInputImage, TOutputImage>::VDemonsPreprocessor()
 {
   m_UseHistogramMatching = 0;
   m_NumberOfHistogramLevels = 256;
   m_NumberOfMatchPoints = 1;
 
-  m_FixedImageMinimum = NumericTraits< InputPixelType >::NonpositiveMin();
-  m_MovingImageMinimum = NumericTraits< InputPixelType >::NonpositiveMin();
+  m_FixedImageMinimum = NumericTraits<InputPixelType>::NonpositiveMin();
+  m_MovingImageMinimum = NumericTraits<InputPixelType>::NonpositiveMin();
 
-  m_InputFixedImage.reserve( 10 );
-  m_InputMovingImage.reserve( 10 );
-  m_OutputFixedImage.reserve( 10 );
-  m_OutputMovingImage.reserve( 10 );
-  m_UnNormalizedFixedImage.reserve( 10 );
-  m_UnNormalizedMovingImage.reserve( 10 );
+  m_InputFixedImage.reserve(10);
+  m_InputMovingImage.reserve(10);
+  m_OutputFixedImage.reserve(10);
+  m_OutputMovingImage.reserve(10);
+  m_UnNormalizedFixedImage.reserve(10);
+  m_UnNormalizedMovingImage.reserve(10);
 
   m_FixedBinaryVolume = "none";
   m_MovingBinaryVolume = "none";
   //    m_Seed =  NumericTraits<IndexType>::ZeroValue();
-  for ( unsigned i = 0; i < TInputImage::ImageDimension; i++ )
+  for (unsigned i = 0; i < TInputImage::ImageDimension; i++)
   {
     m_Seed[i] = 0;
     m_MedianFilterSize[i] = 0;
   }
-  m_Lower = NumericTraits< PixelType >::NonpositiveMin();
-  m_Upper = NumericTraits< PixelType >::max();
+  m_Lower = NumericTraits<PixelType>::NonpositiveMin();
+  m_Upper = NumericTraits<PixelType>::max();
 
-  m_DefaultPixelValue = NumericTraits< PixelType >::OneValue();
-  m_Radius.Fill( 1 );
+  m_DefaultPixelValue = NumericTraits<PixelType>::OneValue();
+  m_Radius.Fill(1);
   m_OutDebug = false;
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
+VDemonsPreprocessor<TInputImage, TOutputImage>::Execute()
 {
-  if ( m_MedianFilterSize[0] > 0 || m_MedianFilterSize[1] > 0 || m_MedianFilterSize[2] > 0 )
+  if (m_MedianFilterSize[0] > 0 || m_MedianFilterSize[1] > 0 || m_MedianFilterSize[2] > 0)
   {
-    for ( unsigned int i = 0; i < m_InputFixedImage.size(); ++i )
+    for (unsigned int i = 0; i < m_InputFixedImage.size(); ++i)
     {
-      using MedianImageFilterType = typename itk::MedianImageFilter< TInputImage, TInputImage >;
+      using MedianImageFilterType = typename itk::MedianImageFilter<TInputImage, TInputImage>;
       typename MedianImageFilterType::Pointer medianFilter = MedianImageFilterType::New();
-      medianFilter->SetRadius( m_MedianFilterSize );
-      medianFilter->SetInput( m_InputFixedImage[i] );
+      medianFilter->SetRadius(m_MedianFilterSize);
+      medianFilter->SetInput(m_InputFixedImage[i]);
       medianFilter->Update();
-      m_InputFixedImage.push_back( medianFilter->GetOutput() );
-      m_InputFixedImage.erase( m_InputFixedImage.begin() );
+      m_InputFixedImage.push_back(medianFilter->GetOutput());
+      m_InputFixedImage.erase(m_InputFixedImage.begin());
 
       // reinitialize
       medianFilter = MedianImageFilterType::New();
-      medianFilter->SetRadius( m_MedianFilterSize );
-      medianFilter->SetInput( m_InputMovingImage[i] );
+      medianFilter->SetRadius(m_MedianFilterSize);
+      medianFilter->SetInput(m_InputMovingImage[i]);
       medianFilter->Update();
-      m_InputMovingImage.push_back( medianFilter->GetOutput() );
-      m_InputMovingImage.erase( m_InputMovingImage.begin() );
+      m_InputMovingImage.push_back(medianFilter->GetOutput());
+      m_InputMovingImage.erase(m_InputMovingImage.begin());
     }
   }
-  for ( unsigned int i = 0; i < m_InputFixedImage.size(); ++i )
+  for (unsigned int i = 0; i < m_InputFixedImage.size(); ++i)
   {
     // Create UnNormalized...Images
     /*
@@ -112,74 +112,74 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
      *  multi_MovingImageConstant->Update();
      */
     this->m_UnNormalizedFixedImage.push_back(
-      itkUtil::PreserveCast< TInputImage, TOutputImage >( this->m_InputFixedImage[i] ) );
+      itkUtil::PreserveCast<TInputImage, TOutputImage>(this->m_InputFixedImage[i]));
     this->m_UnNormalizedMovingImage.push_back(
-      itkUtil::PreserveCast< TInputImage, TOutputImage >( this->m_InputMovingImage[i] ) );
+      itkUtil::PreserveCast<TInputImage, TOutputImage>(this->m_InputMovingImage[i]));
 
-    m_OutputMovingImage.push_back( itkUtil::CopyImage< TOutputImage >( m_UnNormalizedMovingImage[i] ) );
+    m_OutputMovingImage.push_back(itkUtil::CopyImage<TOutputImage>(m_UnNormalizedMovingImage[i]));
 
-    if ( this->GetUseHistogramMatching() )
+    if (this->GetUseHistogramMatching())
     {
-      using HistogramMatchingFilterType = HistogramMatchingImageFilter< OutputImageType, OutputImageType >;
+      using HistogramMatchingFilterType = HistogramMatchingImageFilter<OutputImageType, OutputImageType>;
       typename HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();
-      if ( this->GetOutDebug() )
+      if (this->GetOutDebug())
       {
         std::cout << "Performing Histogram Matching \n";
       }
 
-      if ( ( std::numeric_limits< typename OutputImageType::PixelType >::max() -
-             std::numeric_limits< typename OutputImageType::PixelType >::min() ) < m_NumberOfHistogramLevels )
+      if ((std::numeric_limits<typename OutputImageType::PixelType>::max() -
+           std::numeric_limits<typename OutputImageType::PixelType>::min()) < m_NumberOfHistogramLevels)
       {
         std::cout << "The intensity of range is less than Histogram levels!!" << std::endl;
       }
 
-      histogramfilter->SetInput( m_UnNormalizedMovingImage[i] );
-      histogramfilter->SetReferenceImage( m_UnNormalizedFixedImage[i] );
+      histogramfilter->SetInput(m_UnNormalizedMovingImage[i]);
+      histogramfilter->SetReferenceImage(m_UnNormalizedFixedImage[i]);
 
-      histogramfilter->SetNumberOfHistogramLevels( m_NumberOfHistogramLevels );
-      histogramfilter->SetNumberOfMatchPoints( m_NumberOfMatchPoints );
+      histogramfilter->SetNumberOfHistogramLevels(m_NumberOfHistogramLevels);
+      histogramfilter->SetNumberOfMatchPoints(m_NumberOfMatchPoints);
       histogramfilter->ThresholdAtMeanIntensityOn();
       histogramfilter->Update();
       m_OutputMovingImage.pop_back();
-      m_OutputMovingImage.push_back( histogramfilter->GetOutput() );
+      m_OutputMovingImage.push_back(histogramfilter->GetOutput());
     }
 
-    m_OutputFixedImage.push_back( itkUtil::CopyImage< TOutputImage >( m_UnNormalizedFixedImage[i] ) );
+    m_OutputFixedImage.push_back(itkUtil::CopyImage<TOutputImage>(m_UnNormalizedFixedImage[i]));
 
     // Make BOBF Images if specified
-    if ( this->m_FixedBinaryVolume != std::string( "none" ) )
+    if (this->m_FixedBinaryVolume != std::string("none"))
     {
-      if ( this->GetOutDebug() )
+      if (this->GetOutDebug())
       {
         std::cout << "Making BOBF \n";
         std::cout << "PRE Fixed Origin" << m_OutputFixedImage[i]->GetOrigin() << std::endl;
       }
-      m_OutputFixedImage[i] = this->MakeBOBFImage( m_OutputFixedImage[i], m_FixedBinaryVolume );
-      if ( this->GetOutDebug() )
+      m_OutputFixedImage[i] = this->MakeBOBFImage(m_OutputFixedImage[i], m_FixedBinaryVolume);
+      if (this->GetOutDebug())
       {
         std::cout << "Fixed Origin" << m_OutputFixedImage[i]->GetOrigin() << std::endl;
         std::cout << "PRE Moving Origin" << m_OutputMovingImage[i]->GetOrigin() << std::endl;
       }
-      m_OutputMovingImage[i] = this->MakeBOBFImage( m_OutputMovingImage[i], m_MovingBinaryVolume );
-      if ( this->GetOutDebug() )
+      m_OutputMovingImage[i] = this->MakeBOBFImage(m_OutputMovingImage[i], m_MovingBinaryVolume);
+      if (this->GetOutDebug())
       {
         std::cout << "Moving Origin" << m_OutputMovingImage[i]->GetOrigin() << std::endl;
         std::cout << "Writing Brain Only Background Filled Moving image" << std::endl;
-        itkUtil::WriteImage< TOutputImage >( m_OutputMovingImage[i], "BOBF_Moving.nii.gz" );
-        itkUtil::WriteImage< TOutputImage >( m_OutputFixedImage[i], "BOBF_Fixed.nii.gz" );
+        itkUtil::WriteImage<TOutputImage>(m_OutputMovingImage[i], "BOBF_Moving.nii.gz");
+        itkUtil::WriteImage<TOutputImage>(m_OutputFixedImage[i], "BOBF_Fixed.nii.gz");
       }
     }
     m_InputMovingImage[i] = nullptr;
     m_InputFixedImage[i] = nullptr;
   }
 
-  if ( m_OutputFixedImage.size() > 1 )
+  if (m_OutputFixedImage.size() > 1)
   {
     int condition = 1;
-    for ( unsigned int i = 1; i < m_InputFixedImage.size(); ++i )
+    for (unsigned int i = 1; i < m_InputFixedImage.size(); ++i)
     {
-      if ( m_OutputFixedImage[i]->GetLargestPossibleRegion().GetSize() ==
-           m_OutputFixedImage[0]->GetLargestPossibleRegion().GetSize() )
+      if (m_OutputFixedImage[i]->GetLargestPossibleRegion().GetSize() ==
+          m_OutputFixedImage[0]->GetLargestPossibleRegion().GetSize())
       {
         condition *= 1;
       }
@@ -188,7 +188,7 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
         condition *= 0;
       }
 
-      if ( m_OutputFixedImage[i]->GetSpacing() == m_OutputFixedImage[0]->GetSpacing() )
+      if (m_OutputFixedImage[i]->GetSpacing() == m_OutputFixedImage[0]->GetSpacing())
       {
         condition *= 1;
       }
@@ -197,8 +197,8 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
         condition *= 0;
       }
 
-      if ( m_OutputMovingImage[i]->GetLargestPossibleRegion().GetSize() ==
-           m_OutputMovingImage[0]->GetLargestPossibleRegion().GetSize() )
+      if (m_OutputMovingImage[i]->GetLargestPossibleRegion().GetSize() ==
+          m_OutputMovingImage[0]->GetLargestPossibleRegion().GetSize())
       {
         condition *= 1;
       }
@@ -207,7 +207,7 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
         condition *= 0;
       }
 
-      if ( m_OutputMovingImage[i]->GetDirection() == m_OutputMovingImage[0]->GetDirection() )
+      if (m_OutputMovingImage[i]->GetDirection() == m_OutputMovingImage[0]->GetDirection())
       {
         condition *= 1;
       }
@@ -216,9 +216,9 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
         condition *= 0;
       }
     }
-    if ( condition != 1 )
+    if (condition != 1)
     {
-      itkGenericExceptionMacro( << "Fixed images or Moving images have different size or spacing!" );
+      itkGenericExceptionMacro(<< "Fixed images or Moving images have different size or spacing!");
     }
   }
 }
@@ -227,26 +227,26 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::Execute()
  * skull of the image. It uses the BOBF filter to perform the skull
  * stripping.*/
 
-template < typename TInputImage, typename TOutputImage >
-typename VDemonsPreprocessor< TInputImage, TOutputImage >::OutputImagePointer
-VDemonsPreprocessor< TInputImage, TOutputImage >::MakeBOBFImage( OutputImagePointer input, std::string MaskName )
+template <typename TInputImage, typename TOutputImage>
+typename VDemonsPreprocessor<TInputImage, TOutputImage>::OutputImagePointer
+VDemonsPreprocessor<TInputImage, TOutputImage>::MakeBOBFImage(OutputImagePointer input, std::string MaskName)
 {
-  OutputImagePointer Mask = itkUtil::ReadImage< OutputImageType >( MaskName );
+  OutputImagePointer Mask = itkUtil::ReadImage<OutputImageType>(MaskName);
 
-  if ( ( m_UnNormalizedFixedImage[0]->GetLargestPossibleRegion().GetSize() !=
-         Mask->GetLargestPossibleRegion().GetSize() ) ||
-       ( m_UnNormalizedFixedImage[0]->GetSpacing() != Mask->GetSpacing() ) )
+  if ((m_UnNormalizedFixedImage[0]->GetLargestPossibleRegion().GetSize() !=
+       Mask->GetLargestPossibleRegion().GetSize()) ||
+      (m_UnNormalizedFixedImage[0]->GetSpacing() != Mask->GetSpacing()))
   {
-    if ( this->GetOutDebug() )
+    if (this->GetOutDebug())
     {
       std::cout << "Writing Resampled Output image" << std::endl;
-      itkUtil::WriteImage< TOutputImage >( Mask, "Resampled.mask" );
+      itkUtil::WriteImage<TOutputImage>(Mask, "Resampled.mask");
     }
   }
 
-  using BOBFFilterType = BOBFFilter< OutputImageType, OutputImageType >;
+  using BOBFFilterType = BOBFFilter<OutputImageType, OutputImageType>;
   typename BOBFFilterType::Pointer BOBFfilter = BOBFFilterType::New();
-  if ( this->GetOutDebug() )
+  if (this->GetOutDebug())
   {
     std::cout << "Making Brain only Background filled image with the following parameters. " << std::endl;
     std::cout << "Lower Threshold:  " << m_Lower << std::endl;
@@ -256,13 +256,13 @@ VDemonsPreprocessor< TInputImage, TOutputImage >::MakeBOBFImage( OutputImagePoin
     std::cout << "Seed :  " << m_Seed << std::endl;
   }
 
-  BOBFfilter->SetLower( m_Lower );
-  BOBFfilter->SetUpper( m_Upper );
-  BOBFfilter->SetRadius( m_Radius );
-  BOBFfilter->SetReplaceValue( m_DefaultPixelValue );
-  BOBFfilter->SetSeed( m_Seed );
-  BOBFfilter->SetInputImage( input );
-  BOBFfilter->SetInputMask( Mask );
+  BOBFfilter->SetLower(m_Lower);
+  BOBFfilter->SetUpper(m_Upper);
+  BOBFfilter->SetRadius(m_Radius);
+  BOBFfilter->SetReplaceValue(m_DefaultPixelValue);
+  BOBFfilter->SetSeed(m_Seed);
+  BOBFfilter->SetInputImage(input);
+  BOBFfilter->SetInputMask(Mask);
   BOBFfilter->Update();
 
   OutputImagePointer output = BOBFfilter->GetOutput();

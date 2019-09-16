@@ -25,34 +25,34 @@ namespace itk
 class VTK_ITK_EXPORT EncodedTransformFileWriter : public TransformFileWriter
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( EncodedTransformFileWriter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(EncodedTransformFileWriter);
 
   /** SmartPointer type alias support */
   using Self = EncodedTransformFileWriter;
-  using Pointer = SmartPointer< Self >;
+  using Pointer = SmartPointer<Self>;
 
   /** Method for creation through the object factory */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
   using Superclass = TransformFileWriter;
-  itkTypeMacro( EncodedTransformFileWriter, TransformFileWriter );
+  itkTypeMacro(EncodedTransformFileWriter, TransformFileWriter);
   using TransformType = Superclass::TransformType;
   using TransformPointer = Superclass::TransformPointer;
 
   /** Set/Get the input transform to write */
   void
-  SetInput( const TransformType * transform );
+  SetInput(const TransformType * transform);
 
   const TransformType *
   GetInput()
   {
-    return *( m_TransformList.begin() );
+    return *(m_TransformList.begin());
   }
 
   /** Add a transform to be written */
   void
-  AddTransform( const TransformType * transform );
+  AddTransform(const TransformType * transform);
 
   /** Write out the transform */
   void
@@ -63,7 +63,7 @@ protected:
   virtual ~EncodedTransformFileWriter();
 
 private:
-  std::list< const TransformType * > m_TransformList;
+  std::list<const TransformType *> m_TransformList;
 };
 } // namespace itk
 

@@ -93,13 +93,13 @@ namespace itk
  * \ingroup ImageObjects   TensorObjects    Geometry
  */
 
-template < typename TComponent >
-class gtractDiffusionTensor3D : public DiffusionTensor3D< TComponent >
+template <typename TComponent>
+class gtractDiffusionTensor3D : public DiffusionTensor3D<TComponent>
 {
 public:
   /** Standard class type alias. */
   using Self = gtractDiffusionTensor3D;
-  using Superclass = itk::DiffusionTensor3D< TComponent >;
+  using Superclass = itk::DiffusionTensor3D<TComponent>;
   using RealValueType = typename Superclass::RealValueType;
   using EigenValuesArrayType = typename Superclass::EigenValuesArrayType;
   /** Get the Volume Ratio from the Tensor. */

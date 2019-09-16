@@ -36,57 +36,57 @@ namespace Testing
  *
  * \ingroup ITKTestKernel
  */
-template < typename TInputImage, typename TOutputImage = TInputImage >
-class StretchIntensityImageFilter : public ImageSource< TOutputImage >
+template <typename TInputImage, typename TOutputImage = TInputImage>
+class StretchIntensityImageFilter : public ImageSource<TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( StretchIntensityImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(StretchIntensityImageFilter);
 
   /** Standard class type alias. */
   using Self = StretchIntensityImageFilter;
-  using Superclass = ImageSource< TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageSource<TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   using OutputPixelType = typename TOutputImage::PixelType;
   using InputPixelType = typename TInputImage::PixelType;
-  using RealType = typename NumericTraits< InputPixelType >::RealType;
+  using RealType = typename NumericTraits<InputPixelType>::RealType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( StretchIntensityImageFilter, ImageSource );
+  itkTypeMacro(StretchIntensityImageFilter, ImageSource);
 
-  itkSetMacro( OutputMinimum, OutputPixelType );
-  itkSetMacro( OutputMaximum, OutputPixelType );
-  itkGetConstReferenceMacro( OutputMinimum, OutputPixelType );
-  itkGetConstReferenceMacro( OutputMaximum, OutputPixelType );
+  itkSetMacro(OutputMinimum, OutputPixelType);
+  itkSetMacro(OutputMaximum, OutputPixelType);
+  itkGetConstReferenceMacro(OutputMinimum, OutputPixelType);
+  itkGetConstReferenceMacro(OutputMaximum, OutputPixelType);
 
   /** Get the Scale and Shift used for the linear transformation
       of gray level values.
    \warning These Values are only valid after the filter has been updated */
-  itkGetConstReferenceMacro( Scale, RealType );
-  itkGetConstReferenceMacro( Shift, RealType );
+  itkGetConstReferenceMacro(Scale, RealType);
+  itkGetConstReferenceMacro(Shift, RealType);
 
   /** Get the Minimum and Maximum values of the input image.
    \warning These Values are only valid after the filter has been updated */
-  itkGetConstReferenceMacro( InputMinimum, InputPixelType );
-  itkGetConstReferenceMacro( InputMaximum, InputPixelType );
+  itkGetConstReferenceMacro(InputMinimum, InputPixelType);
+  itkGetConstReferenceMacro(InputMaximum, InputPixelType);
 
   /** Set/Get the image input of this process object.  */
   virtual void
-  SetInput( const TInputImage * image );
+  SetInput(const TInputImage * image);
 
   const TInputImage *
-  GetInput( void ) const;
+  GetInput(void) const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( InputHasNumericTraitsCheck, (Concept::HasNumericTraits< InputPixelType >));
-  itkConceptMacro( OutputHasNumericTraitsCheck, (Concept::HasNumericTraits< OutputPixelType >));
-  itkConceptMacro( RealTypeMultiplyOperatorCheck, (Concept::MultiplyOperator< RealType >));
-  itkConceptMacro( RealTypeAdditiveOperatorsCheck, (Concept::AdditiveOperators< RealType >));
+  itkConceptMacro(InputHasNumericTraitsCheck, (Concept::HasNumericTraits<InputPixelType>));
+  itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelType>));
+  itkConceptMacro(RealTypeMultiplyOperatorCheck, (Concept::MultiplyOperator<RealType>));
+  itkConceptMacro(RealTypeAdditiveOperatorsCheck, (Concept::AdditiveOperators<RealType>));
   /** End concept checking */
 #endif
 protected:
@@ -95,11 +95,11 @@ protected:
 
   /** Process to execute before entering the multithreaded section */
   void
-  BeforeThreadedGenerateData( void );
+  BeforeThreadedGenerateData(void);
 
   /** Print internal ivars */
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 
   using OutputImageRegionType = typename Superclass::OutputImageRegionType;
   using InputImageRegionType = typename TInputImage::RegionType;
@@ -113,7 +113,7 @@ protected:
    * "outputRegionForThread"
    */
   void
-  ThreadedGenerateData( const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId );
+  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
 private:
   RealType m_Scale;

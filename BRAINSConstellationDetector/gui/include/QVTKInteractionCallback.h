@@ -46,10 +46,10 @@ class QVTKInteractionCallback
   Q_OBJECT;
 
 public:
-  QVTKInteractionCallback( const QString & text, const int type, double * bound, QObject * myParent = nullptr );
+  QVTKInteractionCallback(const QString & text, const int type, double * bound, QObject * myParent = nullptr);
 
   void
-  SetImageReslice( vtkImageReslice * reslice )
+  SetImageReslice(vtkImageReslice * reslice)
   {
     m_imageReslice = reslice;
   }
@@ -61,7 +61,7 @@ public:
   }
 
   void
-  SetInteractor( vtkRenderWindowInteractor * interactor )
+  SetInteractor(vtkRenderWindowInteractor * interactor)
   {
     m_interactor = interactor;
   }
@@ -73,7 +73,7 @@ public:
   }
 
   void
-  SetDirection( double * direction )
+  SetDirection(double * direction)
   {
     m_direction = direction;
   }
@@ -85,7 +85,7 @@ public:
   }
 
   void
-  SetOrigin( double * origin )
+  SetOrigin(double * origin)
   {
     m_origin = origin;
   }
@@ -97,7 +97,7 @@ public:
   }
 
   void
-  SetSpacing( double * spacing )
+  SetSpacing(double * spacing)
   {
     m_spacing = spacing;
   }
@@ -109,7 +109,7 @@ public:
   }
 
   void
-  SetPhysicalExtentIdentity( double * physicalExtentIdentity )
+  SetPhysicalExtentIdentity(double * physicalExtentIdentity)
   {
     m_physicalExtentIdentity = physicalExtentIdentity;
   }
@@ -121,7 +121,7 @@ public:
   }
 
   void
-  SetPhysicalExtent( double * physicalExtent )
+  SetPhysicalExtent(double * physicalExtent)
   {
     m_physicalExtent = physicalExtent;
   }
@@ -133,7 +133,7 @@ public:
   }
 
   void
-  SetBound( double * bound )
+  SetBound(double * bound)
   {
     m_bound = bound;
   }
@@ -145,7 +145,7 @@ public:
   }
 
   void
-  SetIndexExtent( int * indexExtent )
+  SetIndexExtent(int * indexExtent)
   {
     m_indexExtent = indexExtent;
   }
@@ -157,7 +157,7 @@ public:
   }
 
   void
-  SetType( int type )
+  SetType(int type)
   {
     m_type = type;
   }
@@ -169,7 +169,7 @@ public:
   }
 
   void
-  SetPrecision( double precision )
+  SetPrecision(double precision)
   {
     m_precision = precision;
   }
@@ -181,7 +181,7 @@ public:
   }
 
   void
-  Execute( vtkObject *, unsigned long event, void * ) override;
+  Execute(vtkObject *, unsigned long event, void *) override;
 
   const QString &
   textPhysicalLocation() const
@@ -197,17 +197,17 @@ public slots:
    * Later we have something like double m_zLocation = zLocation / 1000
    */
   void
-  setValueZLocation( const int zLocation );
+  setValueZLocation(const int zLocation);
 
   // this slot corresponds to commnication among slice viewers
   void
-  setValueXLocation( const double xLocation );
+  setValueXLocation(const double xLocation);
 
   void
-  setValueYLocation( const double yLocation );
+  setValueYLocation(const double yLocation);
 
   void
-  receiveLabelPos( double * pos ); // set the label positon from pos info
+  receiveLabelPos(double * pos); // set the label positon from pos info
 
   // from label list
 
@@ -219,17 +219,17 @@ public slots:
 signals:
 
   void
-  textChanged( const QString & ); // update status label
+  textChanged(const QString &); // update status label
 
   void
-  valueChangedZ( int ); // update slider bar, and due to int ui of QSlider
+  valueChangedZ(int); // update slider bar, and due to int ui of QSlider
 
   // update neighbor slice viewer
   void
-  valueChangedX( double );
+  valueChangedX(double);
 
   void
-  valueChangedY( double );
+  valueChangedY(double);
 
   // update fiducial label
   void
@@ -242,14 +242,14 @@ signals:
   deleteActor();
 
   void
-  moveActor( double * );
+  moveActor(double *);
 
   // update label list
   void
-  createListItem( const QString & );
+  createListItem(const QString &);
 
   void
-  editListItem( const QString & );
+  editListItem(const QString &);
 
   void
   switchListItem();
@@ -263,7 +263,7 @@ signals:
   // transmit current slice number to list for visiblity check
   // designed for slider bar effect
   void
-  visibilityCallback( double * tag );
+  visibilityCallback(double * tag);
 
   void
   wheelChanged(); // indicate the move of mouse wheel

@@ -25,14 +25,14 @@
 #include "itkRelabelComponentImageFilter.h"
 #include "itkCommand.h"
 
-vtkStandardNewMacro( vtkITKIslandMath );
+vtkStandardNewMacro(vtkITKIslandMath);
 
 vtkITKIslandMath::vtkITKIslandMath()
 {
   this->FullyConnected = 0;
   this->SliceBySlice = 0;
   this->MinimumSize = 0;
-#if ( VTK_MAJOR_VERSION <= 5 )
+#if (VTK_MAJOR_VERSION <= 5)
   this->MaximumSize = VTK_LARGE_ID;
 #else
   this->MaximumSize = VTK_ID_MAX;
@@ -44,9 +44,9 @@ vtkITKIslandMath::vtkITKIslandMath()
 vtkITKIslandMath::~vtkITKIslandMath() {}
 
 void
-vtkITKIslandMath::PrintSelf( ostream & os, vtkIndent indent )
+vtkITKIslandMath::PrintSelf(ostream & os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf( os, indent );
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "FullyConnected: " << FullyConnected << std::endl;
   os << indent << "SliceBySlice: " << SliceBySlice << std::endl;
@@ -58,76 +58,80 @@ vtkITKIslandMath::PrintSelf( ostream & os, vtkIndent indent )
 
 // Note: local function not method - conforms to signature in itkCommand.h
 void
-vtkITKIslandMathHandleProgressEvent( itk::Object * caller, const itk::EventObject & vtkNotUsed( eventObject ),
-                                     void * clientdata )
+vtkITKIslandMathHandleProgressEvent(itk::Object *            caller,
+                                    const itk::EventObject & vtkNotUsed(eventObject),
+                                    void *                   clientdata)
 {
-  itk::ProcessObject * itkFilter = dynamic_cast< itk::ProcessObject * >( caller );
-  vtkAlgorithm *       vtkFilter = reinterpret_cast< vtkAlgorithm * >( clientdata );
-  if ( itkFilter && vtkFilter )
+  itk::ProcessObject * itkFilter = dynamic_cast<itk::ProcessObject *>(caller);
+  vtkAlgorithm *       vtkFilter = reinterpret_cast<vtkAlgorithm *>(clientdata);
+  if (itkFilter && vtkFilter)
   {
-    vtkFilter->UpdateProgress( itkFilter->GetProgress() );
+    vtkFilter->UpdateProgress(itkFilter->GetProgress());
   }
 };
 
-template < typename T >
+template <typename T>
 void
-vtkITKIslandMathExecute( vtkITKIslandMath * self, vtkImageData * input, vtkImageData * vtkNotUsed( output ), T * inPtr,
-                         T * outPtr )
+vtkITKIslandMathExecute(vtkITKIslandMath * self,
+                        vtkImageData *     input,
+                        vtkImageData *     vtkNotUsed(output),
+                        T *                inPtr,
+                        T *                outPtr)
 {
 
   int dims[3];
-  input->GetDimensions( dims );
+  input->GetDimensions(dims);
   double spacing[3];
-  input->GetSpacing( spacing );
+  input->GetSpacing(spacing);
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  using ImageType = itk::Image< T, 3 >;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer    inImage = ImageType::New();
   typename ImageType::RegionType region;
   typename ImageType::IndexType  index;
   typename ImageType::SizeType   size;
 
-  inImage->GetPixelContainer()->SetImportPointer( inPtr, dims[0] * dims[1] * dims[2], false );
+  inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0] * dims[1] * dims[2], false);
   index[0] = index[1] = index[2] = 0;
-  region.SetIndex( index );
+  region.SetIndex(index);
   size[0] = dims[0];
   size[1] = dims[1];
   size[2] = dims[2];
-  region.SetSize( size );
-  inImage->SetLargestPossibleRegion( region );
-  inImage->SetBufferedRegion( region );
-  inImage->SetSpacing( spacing );
+  region.SetSize(size);
+  inImage->SetLargestPossibleRegion(region);
+  inImage->SetBufferedRegion(region);
+  inImage->SetSpacing(spacing);
 
   // set up the progress callback
   itk::CStyleCommand::Pointer progressCommand = itk::CStyleCommand::New();
-  progressCommand->SetClientData( static_cast< void * >( self ) );
-  progressCommand->SetCallback( vtkITKIslandMathHandleProgressEvent );
+  progressCommand->SetClientData(static_cast<void *>(self));
+  progressCommand->SetCallback(vtkITKIslandMathHandleProgressEvent);
 
 
   // Calculate the island operation
   // ccfilter - identifies the islands
   // relabel - sorts them by size
-  using ConnectedComponentType = itk::ConnectedComponentImageFilter< ImageType, ImageType >;
+  using ConnectedComponentType = itk::ConnectedComponentImageFilter<ImageType, ImageType>;
   typename ConnectedComponentType::Pointer ccfilter = ConnectedComponentType::New();
-  using RelabelComponentType = itk::RelabelComponentImageFilter< ImageType, ImageType >;
+  using RelabelComponentType = itk::RelabelComponentImageFilter<ImageType, ImageType>;
   typename RelabelComponentType::Pointer relabel = RelabelComponentType::New();
 
-  ccfilter->AddObserver( itk::ProgressEvent(), progressCommand );
-  relabel->AddObserver( itk::ProgressEvent(), progressCommand );
+  ccfilter->AddObserver(itk::ProgressEvent(), progressCommand);
+  relabel->AddObserver(itk::ProgressEvent(), progressCommand);
 
-  ccfilter->SetFullyConnected( self->GetFullyConnected() );
-  ccfilter->SetInput( inImage );
-  relabel->SetInput( ccfilter->GetOutput() );
-  relabel->SetMinimumObjectSize( self->GetMinimumSize() );
+  ccfilter->SetFullyConnected(self->GetFullyConnected());
+  ccfilter->SetInput(inImage);
+  relabel->SetInput(ccfilter->GetOutput());
+  relabel->SetMinimumObjectSize(self->GetMinimumSize());
   relabel->Update();
-  self->SetNumberOfIslands( relabel->GetNumberOfObjects() );
-  self->SetOriginalNumberOfIslands( relabel->GetOriginalNumberOfObjects() );
+  self->SetNumberOfIslands(relabel->GetNumberOfObjects());
+  self->SetOriginalNumberOfIslands(relabel->GetOriginalNumberOfObjects());
 
   // Copy to the output
-  memcpy( outPtr,
-          relabel->GetOutput()->GetBufferPointer(),
-          relabel->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof( T ) );
+  memcpy(outPtr,
+         relabel->GetOutput()->GetBufferPointer(),
+         relabel->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 }
 
 
@@ -135,59 +139,58 @@ vtkITKIslandMathExecute( vtkITKIslandMath * self, vtkImageData * input, vtkImage
 //
 //
 void
-vtkITKIslandMath::SimpleExecute( vtkImageData * input, vtkImageData * output )
+vtkITKIslandMath::SimpleExecute(vtkImageData * input, vtkImageData * output)
 {
-  vtkDebugMacro( << "Executing Island Math" );
+  vtkDebugMacro(<< "Executing Island Math");
 
   //
   // Initialize and check input
   //
   vtkPointData * pd = input->GetPointData();
   pd = input->GetPointData();
-  if ( pd == nullptr )
+  if (pd == nullptr)
   {
-    vtkErrorMacro( << "PointData is NULL" );
+    vtkErrorMacro(<< "PointData is NULL");
     return;
   }
   vtkDataArray * inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
-    vtkErrorMacro( << "Scalars must be defined for island math" );
+    vtkErrorMacro(<< "Scalars must be defined for island math");
     return;
   }
 
-  if ( inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////
 #undef VTK_TYPE_USE_LONG_LONG
 #undef VTK_TYPE_USE___INT64
 
-#define CALL                                                                                                           \
-  vtkITKIslandMathExecute( this, input, output, static_cast< VTK_TT * >( inPtr ), static_cast< VTK_TT * >( outPtr ) );
+#define CALL vtkITKIslandMathExecute(this, input, output, static_cast<VTK_TT *>(inPtr), static_cast<VTK_TT *>(outPtr));
 
     void * inPtr = input->GetScalarPointer();
     void * outPtr = output->GetScalarPointer();
 
-    switch ( inScalars->GetDataType() )
+    switch (inScalars->GetDataType())
     {
-      vtkTemplateMacroCase( VTK_LONG, long, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_LONG, unsigned long, CALL );
-      vtkTemplateMacroCase( VTK_INT, int, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_INT, unsigned int, CALL );
-      vtkTemplateMacroCase( VTK_SHORT, short, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_SHORT, unsigned short, CALL );
-      vtkTemplateMacroCase( VTK_CHAR, char, CALL );
-      vtkTemplateMacroCase( VTK_SIGNED_CHAR, signed char, CALL );
-      vtkTemplateMacroCase( VTK_UNSIGNED_CHAR, unsigned char, CALL );
+      vtkTemplateMacroCase(VTK_LONG, long, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, CALL);
+      vtkTemplateMacroCase(VTK_INT, int, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, CALL);
+      vtkTemplateMacroCase(VTK_SHORT, short, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, CALL);
+      vtkTemplateMacroCase(VTK_CHAR, char, CALL);
+      vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, CALL);
+      vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, CALL);
       default:
       {
-        vtkErrorMacro( << "Incompatible data type for this version of ITK." );
+        vtkErrorMacro(<< "Incompatible data type for this version of ITK.");
       }
     } // switch
   }
   else
   {
-    vtkErrorMacro( << "Only single component images supported." );
+    vtkErrorMacro(<< "Only single component images supported.");
   }
 }

@@ -31,29 +31,29 @@ namespace itk
 /*This file defines ICCDEF registration class which initializes the input
   preprocessor and the registrator. */
 
-template < typename TImage, typename TRealImage, typename TOutputImage >
+template <typename TImage, typename TRealImage, typename TOutputImage>
 class ICCDEFWarp
-  : public ICCApplicationBase< IccdefPreprocessor< TImage, TRealImage >,
-                               IccdefRegistrator< TRealImage, TOutputImage, typename TRealImage::PixelType > >
+  : public ICCApplicationBase<IccdefPreprocessor<TImage, TRealImage>,
+                              IccdefRegistrator<TRealImage, TOutputImage, typename TRealImage::PixelType>>
 {
 public:
   /** Standard class type alias. */
   using Self = ICCDEFWarp;
-  using Superclass = ICCApplicationBase< IccdefPreprocessor< TImage, TRealImage >,
-                                         IccdefRegistrator< TRealImage, TRealImage, typename TRealImage::PixelType > >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ICCApplicationBase<IccdefPreprocessor<TImage, TRealImage>,
+                                        IccdefRegistrator<TRealImage, TRealImage, typename TRealImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Deformation field pixel type. */
   using FieldValueType = float;
-  using FieldPixelType = Vector< FieldValueType, 3 >;
-  using TDisplacementField = Image< FieldPixelType, 3 >;
+  using FieldPixelType = Vector<FieldValueType, 3>;
+  using TDisplacementField = Image<FieldPixelType, 3>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ICCDEFWarp, ICCApplicationBase );
+  itkTypeMacro(ICCDEFWarp, ICCApplicationBase);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Image types. */
   using ImageType = TImage;
@@ -63,48 +63,48 @@ public:
   static constexpr unsigned int ImageDimension = TImage::ImageDimension;
 
   /** Type to hold the number of checker boxes per dimension */
-  using PatternArrayType = FixedArray< unsigned int, TImage::ImageDimension >;
+  using PatternArrayType = FixedArray<unsigned int, TImage::ImageDimension>;
 
   using PixelType = typename ImageType::PixelType;
   using IndexType = typename ImageType::IndexType;
   using SizeType = typename ImageType::SizeType;
 
   /** ShrinkFactors type. */
-  using ShrinkFactorsType = FixedArray< unsigned int, TImage::ImageDimension >;
+  using ShrinkFactorsType = FixedArray<unsigned int, TImage::ImageDimension>;
 
   /** IterationArray type. */
-  using IterationsArrayType = Array< unsigned int >;
+  using IterationsArrayType = Array<unsigned int>;
 
   /** Set the atlas patient ID. */
-  itkSetStringMacro( TheMovingImageFilename );
-  itkGetStringMacro( TheMovingImageFilename );
+  itkSetStringMacro(TheMovingImageFilename);
+  itkGetStringMacro(TheMovingImageFilename);
 
   /** Set the subject patient ID. */
-  itkSetStringMacro( TheFixedImageFilename );
-  itkGetStringMacro( TheFixedImageFilename );
+  itkSetStringMacro(TheFixedImageFilename);
+  itkGetStringMacro(TheFixedImageFilename);
 
   /** Set the initial Displacement Field one of 3 ways. */
   //  itkSetStringMacro (InitialDisplacementFieldFilename);
   //  itkGetStringMacro (InitialDisplacementFieldFilename);
 
-  itkSetStringMacro( InitialFixedDisplacementFieldFilename );
-  itkGetStringMacro( InitialFixedDisplacementFieldFilename );
+  itkSetStringMacro(InitialFixedDisplacementFieldFilename);
+  itkGetStringMacro(InitialFixedDisplacementFieldFilename);
 
-  itkSetStringMacro( InitialMovingDisplacementFieldFilename );
-  itkGetStringMacro( InitialMovingDisplacementFieldFilename );
+  itkSetStringMacro(InitialMovingDisplacementFieldFilename);
+  itkGetStringMacro(InitialMovingDisplacementFieldFilename);
 
-  itkSetStringMacro( InitialCoefficientFilename );
-  itkGetStringMacro( InitialCoefficientFilename );
+  itkSetStringMacro(InitialCoefficientFilename);
+  itkGetStringMacro(InitialCoefficientFilename);
 
-  itkSetStringMacro( InitialTransformFilename );
-  itkGetStringMacro( InitialTransformFilename );
+  itkSetStringMacro(InitialTransformFilename);
+  itkGetStringMacro(InitialTransformFilename);
 
   /** Set Displacementname */
   //  itkSetStringMacro (DisplacementBaseName);
   //  itkGetStringMacro (DisplacementBaseName);
   /** Set WarpedImageName */
-  itkSetStringMacro( OutputPrefix );
-  itkGetStringMacro( OutputPrefix );
+  itkSetStringMacro(OutputPrefix);
+  itkGetStringMacro(OutputPrefix);
 
   /** Set input parameter file */
   // itkSetStringMacro (ParameterFilename);
@@ -113,82 +113,81 @@ public:
   // itkSetStringMacro (OutputFilename);
 
   /**Set Deformation field output filename*/
-  itkSetStringMacro( ForwardDisplacementFieldOutputName );
-  itkGetStringMacro( ForwardDisplacementFieldOutputName );
+  itkSetStringMacro(ForwardDisplacementFieldOutputName);
+  itkGetStringMacro(ForwardDisplacementFieldOutputName);
 
-  itkSetStringMacro( BackwardDisplacementFieldOutputName );
-  itkGetStringMacro( BackwardDisplacementFieldOutputName );
+  itkSetStringMacro(BackwardDisplacementFieldOutputName);
+  itkGetStringMacro(BackwardDisplacementFieldOutputName);
   /**Set Jacobian Image prefix name*/
-  itkSetMacro( OutputJacobianImage, bool );
-  itkGetConstMacro( OutputJacobianImage, bool );
+  itkSetMacro(OutputJacobianImage, bool);
+  itkGetConstMacro(OutputJacobianImage, bool);
 
-  itkSetMacro( OutputDisplacementField, bool );
-  itkGetConstMacro( OutputDisplacementField, bool );
+  itkSetMacro(OutputDisplacementField, bool);
+  itkGetConstMacro(OutputDisplacementField, bool);
 
-  itkSetMacro( OutputDisplacement, bool );
-  itkGetConstMacro( OutputDisplacement, bool );
+  itkSetMacro(OutputDisplacement, bool);
+  itkGetConstMacro(OutputDisplacement, bool);
 
   /** Set append output file boolean. */
-  itkSetMacro( AppendOutputFile, bool );
-  itkGetMacro( AppendOutputFile, bool );
-  itkBooleanMacro( AppendOutputFile );
+  itkSetMacro(AppendOutputFile, bool);
+  itkGetMacro(AppendOutputFile, bool);
+  itkBooleanMacro(AppendOutputFile);
 
   /**Force Centered Image.*/
-  itkSetMacro( ForceCoronalZeroOrigin, bool );
-  itkGetConstMacro( ForceCoronalZeroOrigin, bool );
+  itkSetMacro(ForceCoronalZeroOrigin, bool);
+  itkGetConstMacro(ForceCoronalZeroOrigin, bool);
 
   /*BOBF macros */
   /**Set Target Mask filename*/
-  itkSetStringMacro( FixedBinaryVolume );
-  itkGetStringMacro( FixedBinaryVolume );
+  itkSetStringMacro(FixedBinaryVolume);
+  itkGetStringMacro(FixedBinaryVolume);
 
   /**Set Template Mask filename*/
-  itkSetStringMacro( MovingBinaryVolume );
-  itkGetStringMacro( MovingBinaryVolume );
+  itkSetStringMacro(MovingBinaryVolume);
+  itkGetStringMacro(MovingBinaryVolume);
 
   /** Set/Get value to replace thresholded pixels. Pixels that lie *
    *  within Lower and Upper (inclusive) will be replaced with this
    *  value. The default is 1. */
-  itkSetMacro( DefaultPixelValue, PixelType );
-  itkGetMacro( DefaultPixelValue, PixelType );
+  itkSetMacro(DefaultPixelValue, PixelType);
+  itkGetMacro(DefaultPixelValue, PixelType);
 
-  itkSetMacro( MedianFilterSize, SizeType );
-  itkGetMacro( MedianFilterSize, SizeType );
+  itkSetMacro(MedianFilterSize, SizeType);
+  itkGetMacro(MedianFilterSize, SizeType);
 
   /** Set the initial deformation field to prime registration */
   //    itkSetObjectMacro(InitialDisplacementField,TDisplacementField);
   /** Set the Input Landmark Filename*/
 
   /**Set histogram matching*/
-  itkSetMacro( UseHistogramMatching, bool );
-  itkGetConstMacro( UseHistogramMatching, bool );
+  itkSetMacro(UseHistogramMatching, bool);
+  itkGetConstMacro(UseHistogramMatching, bool);
 
   /** Get the number of histogram bins. */
-  itkGetConstMacro( NumberOfHistogramLevels, unsigned long );
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkGetConstMacro(NumberOfHistogramLevels, unsigned long);
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Get the number of match points. */
-  itkGetConstMacro( NumberOfMatchPoints, unsigned long );
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkGetConstMacro(NumberOfMatchPoints, unsigned long);
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Get the number of levels. */
-  itkGetMacro( NumberOfLevels, unsigned short );
-  itkSetMacro( NumberOfLevels, unsigned short );
+  itkGetMacro(NumberOfLevels, unsigned short);
+  itkSetMacro(NumberOfLevels, unsigned short);
 
   /** Get the number of iterations at each level. */
-  itkGetConstReferenceMacro( NumberOfIterations, IterationsArrayType );
+  itkGetConstReferenceMacro(NumberOfIterations, IterationsArrayType);
   void
-  SetNumberOfIterations( const IterationsArrayType & iterations )
+  SetNumberOfIterations(const IterationsArrayType & iterations)
   {
     m_NumberOfIterations = iterations;
   }
 
-  using BaseRegistrationFilterType =
-    ICCDeformableRegistrationFilter< RealImageType, RealImageType, TDisplacementField >;
+  using BaseRegistrationFilterType = ICCDeformableRegistrationFilter<RealImageType, RealImageType, TDisplacementField>;
   void
-  SetRegistrationFilter( BaseRegistrationFilterType * filter )
+  SetRegistrationFilter(BaseRegistrationFilterType * filter)
   {
-    this->m_Registrator->SetRegistrationFilter( filter );
+    this->m_Registrator->SetRegistrationFilter(filter);
   }
 
 protected:

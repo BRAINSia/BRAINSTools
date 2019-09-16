@@ -67,8 +67,8 @@ namespace itk
  *
  * \ingroup GradientFilters
  */
-template < typename TInputImage, typename TOutputImage >
-class HammerTissueAttributeVectorFromPartialVolumeImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class HammerTissueAttributeVectorFromPartialVolumeImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
   /** Extract dimension from input image. */
@@ -88,19 +88,19 @@ public:
   using InputRegionType = typename InputImageType::RegionType;
 
   /** types for neighborhood iterator */
-  using NeighborhoodIteratorType = ConstNeighborhoodIterator< InputImageType >;
+  using NeighborhoodIteratorType = ConstNeighborhoodIterator<InputImageType>;
   using NeighborOffsetType = typename NeighborhoodIteratorType::OffsetType;
 
   /** Standard class type alias. */
-  using Superclass = ImageToImageFilter< InputImageType, OutputImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( HammerTissueAttributeVectorFromPartialVolumeImageFilter, ImageToImageFilter );
+  itkTypeMacro(HammerTissueAttributeVectorFromPartialVolumeImageFilter, ImageToImageFilter);
 
   /** Image type alias support. */
   using InputPixelType = typename InputImageType::PixelType;
@@ -112,7 +112,7 @@ public:
   void
   SetUseImageSpacingOn()
   {
-    this->SetUseImageSpacing( true );
+    this->SetUseImageSpacing(true);
   }
 
   /** Ignore the image spacing. Use this option if you want derivatives in
@@ -120,7 +120,7 @@ public:
   void
   SetUseImageSpacingOff()
   {
-    this->SetUseImageSpacing( false );
+    this->SetUseImageSpacing(false);
   }
 
   // set input prior images
@@ -130,21 +130,21 @@ public:
   // 3. inputCSFVolume : CSF Partial volume/Posterior image
 
   void
-  SetGMVolume( const TInputImage * inputGMVolume )
+  SetGMVolume(const TInputImage * inputGMVolume)
   {
-    this->SetNthInput( 0, const_cast< TInputImage * >( inputGMVolume ) );
+    this->SetNthInput(0, const_cast<TInputImage *>(inputGMVolume));
   }
 
   void
-  SetWMVolume( const TInputImage * inputWMVolume )
+  SetWMVolume(const TInputImage * inputWMVolume)
   {
-    this->SetNthInput( 1, const_cast< TInputImage * >( inputWMVolume ) );
+    this->SetNthInput(1, const_cast<TInputImage *>(inputWMVolume));
   }
 
   void
-  SetCSFVolume( const TInputImage * inputCSFVolume )
+  SetCSFVolume(const TInputImage * inputCSFVolume)
   {
-    this->SetNthInput( 2, const_cast< TInputImage * >( inputCSFVolume ) );
+    this->SetNthInput(2, const_cast<TInputImage *>(inputCSFVolume));
   }
 
   /** HammerTissueAttributeVectorFromPartialVolumeImageFilter needs a larger input requested region than
@@ -154,34 +154,34 @@ public:
    *
    * \sa ImageToImageFilter::GenerateInputRequestedRegion() */
   void
-  GenerateInputRequestedRegion() throw( InvalidRequestedRegionError ) override;
+  GenerateInputRequestedRegion() throw(InvalidRequestedRegionError) override;
 
   /** Set/Get whether or not the filter will use the spacing of the input
     image in its calculations */
-  itkSetMacro( UseImageSpacing, bool );
-  itkGetMacro( UseImageSpacing, bool );
+  itkSetMacro(UseImageSpacing, bool);
+  itkGetMacro(UseImageSpacing, bool);
 
   /** Set/Get macroes for class member varibles */
-  itkSetMacro( Scale, float );
-  itkGetMacro( Scale, float );
+  itkSetMacro(Scale, float);
+  itkGetMacro(Scale, float);
 
-  itkSetMacro( Strength, unsigned char );
-  itkGetMacro( Strength, unsigned char );
+  itkSetMacro(Strength, unsigned char);
+  itkGetMacro(Strength, unsigned char);
 
-  itkSetMacro( GMValue, unsigned char );
-  itkGetMacro( GMValue, unsigned char );
+  itkSetMacro(GMValue, unsigned char);
+  itkGetMacro(GMValue, unsigned char);
 
-  itkSetMacro( WMValue, unsigned char );
-  itkGetMacro( WMValue, unsigned char );
+  itkSetMacro(WMValue, unsigned char);
+  itkGetMacro(WMValue, unsigned char);
 
-  itkSetMacro( CSFValue, unsigned char );
-  itkGetMacro( CSFValue, unsigned char );
+  itkSetMacro(CSFValue, unsigned char);
+  itkGetMacro(CSFValue, unsigned char);
 
-  itkSetMacro( VNValue, unsigned char );
-  itkGetMacro( VNValue, unsigned char );
+  itkSetMacro(VNValue, unsigned char);
+  itkGetMacro(VNValue, unsigned char);
 
-  itkSetMacro( BGValue, unsigned char );
-  itkGetMacro( BGValue, unsigned char );
+  itkSetMacro(BGValue, unsigned char);
+  itkGetMacro(BGValue, unsigned char);
 
   /** The UseImageDirection flag determines whether image derivatives are
    * computed with respect to the image grid or with respect to the physical
@@ -194,15 +194,15 @@ public:
    * The default value of this flag is the same as the CMAKE option
    * ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE (i.e ON by default when ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is ON,
    * and  OFF by default when ITK_IMAGE_BEHAVES_AS_ORIENTED_IMAGE is OFF).*/
-  itkSetMacro( UseImageDirection, bool );
-  itkGetMacro( UseImageDirection, bool );
-  itkBooleanMacro( UseImageDirection );
+  itkSetMacro(UseImageDirection, bool);
+  itkGetMacro(UseImageDirection, bool);
+  itkBooleanMacro(UseImageDirection);
 
 protected:
   HammerTissueAttributeVectorFromPartialVolumeImageFilter();
   ~HammerTissueAttributeVectorFromPartialVolumeImageFilter() override;
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** HammerTissueAttributeVectorFromPartialVolumeImageFilter can be implemented as a multithreaded filter.
    * Therefore, this implementation provides a ThreadedGenerateData()
@@ -218,10 +218,10 @@ protected:
   GenerateData() override;
 
 private:
-  HammerTissueAttributeVectorFromPartialVolumeImageFilter( const Self & ); // purposely not
+  HammerTissueAttributeVectorFromPartialVolumeImageFilter(const Self &); // purposely not
   // implemented
   void
-  operator=( const Self & ); // purposely not
+  operator=(const Self &); // purposely not
 
   // implemented
 
@@ -229,7 +229,7 @@ private:
   CreateN1Neighbor();
 
   void
-  CreateFeatureNeighbor( int Radius );
+  CreateFeatureNeighbor(int Radius);
 
   bool m_UseImageSpacing;
 
@@ -256,10 +256,10 @@ private:
   static const unsigned char m_WMCSFEDGE = 180;
   static const unsigned char m_GMCSFEDGE = 100;
 
-  std::vector< NeighborOffsetType > m_FeatureNeighborhood;
-  std::vector< InputIndexType >     m_N1Neighborhood;
+  std::vector<NeighborOffsetType> m_FeatureNeighborhood;
+  std::vector<InputIndexType>     m_N1Neighborhood;
   // indices in the spherical neighborhood
-  std::vector< NeighborOffsetType > m_OffsetInSphericalNeighborhood;
+  std::vector<NeighborOffsetType> m_OffsetInSphericalNeighborhood;
 };
 } // end namespace itk
 

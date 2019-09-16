@@ -41,7 +41,7 @@ public:
   ~MSTEdge() {}
 
   MSTEdge &
-  operator=( const MSTEdge & e )
+  operator=(const MSTEdge & e)
   {
     this->i = e.i;
     this->j = e.j;
@@ -50,7 +50,7 @@ public:
   }
 
   bool
-  operator<( const MSTEdge & e ) const
+  operator<(const MSTEdge & e) const
   {
     return this->dist < e.dist;
   }

@@ -46,18 +46,18 @@ namespace itk
  * \brief Abstract base class for attribute vector used by Hammer
  *
  */
-template < typename TValueType, unsigned int VLength = 3 >
-class HammerAttributeVector : public FixedArray< TValueType, VLength >
+template <typename TValueType, unsigned int VLength = 3>
+class HammerAttributeVector : public FixedArray<TValueType, VLength>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( HammerAttributeVector );
+  ITK_DISALLOW_COPY_AND_ASSIGN(HammerAttributeVector);
 
   /** Standard class type alias. */
   using Self = HammerAttributeVector;
-  using Superclass = FixedArray< TValueType, VLength >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using VectorType = FixedArray< TValueType, VLength >;
+  using Superclass = FixedArray<TValueType, VLength>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using VectorType = FixedArray<TValueType, VLength>;
 
   /** Length constant */
   static constexpr unsigned int Length = VLength;
@@ -78,60 +78,60 @@ public:
   typedef const ValueType * ConstIterator;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( HammerAttributeVector, FixedArray );
+  itkTypeMacro(HammerAttributeVector, FixedArray);
 
   /** define interface for computing similarity/difference between two
    * attribute vectors */
   virtual double
-  ComputeSimilarity( const VectorType & vec2 ) const
+  ComputeSimilarity(const VectorType & vec2) const
   {
     double diff = 0;
     double mag1 = 0;
     double mag2 = 0;
 
-    for ( unsigned int k = 0; k < Length; k++ )
+    for (unsigned int k = 0; k < Length; k++)
     {
-      const double a = static_cast< double >( this->operator[]( k ) );
-      const double b = static_cast< double >( vec2[k] );
-      diff += ( a - b ) * ( a - b );
+      const double a = static_cast<double>(this->operator[](k));
+      const double b = static_cast<double>(vec2[k]);
+      diff += (a - b) * (a - b);
       mag1 += a * a;
       mag2 += b * b;
     }
-    diff /= std::sqrt( mag1 * mag2 );
-    return std::asin( diff );
+    diff /= std::sqrt(mag1 * mag2);
+    return std::asin(diff);
   }
 
   virtual double
-  ComputeDifference( const VectorType & vec2 ) const
+  ComputeDifference(const VectorType & vec2) const
   {
     double diff = 0;
 
-    for ( unsigned int k = 0; k < Length; k++ )
+    for (unsigned int k = 0; k < Length; k++)
     {
-      const double a = static_cast< double >( this->operator[]( k ) );
-      const double b = static_cast< double >( vec2[k] );
-      diff += ( a - b ) * ( a - b );
+      const double a = static_cast<double>(this->operator[](k));
+      const double b = static_cast<double>(vec2[k]);
+      diff += (a - b) * (a - b);
     }
-    return std::sqrt( diff );
+    return std::sqrt(diff);
   }
 
 protected:
   HammerAttributeVector();
   // virtual ~HammerAttributeVector();
   void
-  PrintSelf( std::ostream & os, Indent indent ) const;
+  PrintSelf(std::ostream & os, Indent indent) const;
 };
 
-template < typename TValueType, unsigned int VLength >
-HammerAttributeVector< TValueType, VLength >::HammerAttributeVector()
+template <typename TValueType, unsigned int VLength>
+HammerAttributeVector<TValueType, VLength>::HammerAttributeVector()
 {}
 
-template < typename TValueType, unsigned int VLength >
+template <typename TValueType, unsigned int VLength>
 void
-HammerAttributeVector< TValueType, VLength >::PrintSelf( std::ostream & os, Indent indent ) const
+HammerAttributeVector<TValueType, VLength>::PrintSelf(std::ostream & os, Indent indent) const
 {}
 } // end namespace itk
 

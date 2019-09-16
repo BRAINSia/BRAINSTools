@@ -29,49 +29,49 @@
 #include "GenerateCsfClippedFromClassifiedImageCLP.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   using PixelType = float;
   constexpr unsigned int Dim = 3;
-  using ImageType = itk::Image< PixelType, Dim >;
+  using ImageType = itk::Image<PixelType, Dim>;
 
-  using ImageReaderType = itk::ImageFileReader< ImageType >;
+  using ImageReaderType = itk::ImageFileReader<ImageType>;
 
   ImageReaderType::Pointer classified_imageReader = ImageReaderType::New();
 
-  classified_imageReader->SetFileName( inputCassifiedVolume );
+  classified_imageReader->SetFileName(inputCassifiedVolume);
 
-  using ThresholdFilterType = itk::ThresholdImageFilter< ImageType >;
+  using ThresholdFilterType = itk::ThresholdImageFilter<ImageType>;
 
   ThresholdFilterType::Pointer classified_gradientFilter = ThresholdFilterType::New();
 
-  classified_gradientFilter->SetInput( classified_imageReader->GetOutput() );
+  classified_gradientFilter->SetInput(classified_imageReader->GetOutput());
 
-  classified_gradientFilter->SetLower( 50 );
+  classified_gradientFilter->SetLower(50);
   classified_gradientFilter->Update();
 
   // writer setting
   std::cout << "Writing output ... " << std::endl;
-  using WriterType = itk::ImageFileWriter< ImageType >;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  using RescaleFilterType = itk::RescaleIntensityImageFilter< ImageType, ImageType >;
+  using RescaleFilterType = itk::RescaleIntensityImageFilter<ImageType, ImageType>;
   RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
-  rescaler->SetOutputMinimum( 0 );
-  rescaler->SetOutputMaximum( 255 );
+  rescaler->SetOutputMinimum(0);
+  rescaler->SetOutputMaximum(255);
 
-  rescaler->SetInput( classified_gradientFilter->GetOutput() );
-  writer->SetFileName( outputVolume );
-  writer->SetInput( rescaler->GetOutput() );
+  rescaler->SetInput(classified_gradientFilter->GetOutput());
+  writer->SetFileName(outputVolume);
+  writer->SetInput(rescaler->GetOutput());
   try
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & exp )
+  catch (itk::ExceptionObject & exp)
   {
     std::cerr << "ExceptionObject with writer" << std::endl;
     std::cerr << exp << std::endl;

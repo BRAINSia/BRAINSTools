@@ -32,18 +32,18 @@ class QImageDisplay : public QWidget
   Q_OBJECT
 public slots:
   void
-  viewChanged( const QString & newView );
+  viewChanged(const QString & newView);
 
 public:
-  using ReadImageType = itk::Image< float, 3 >;
-  using ImageType = itk::Image< unsigned char, 3 >;
+  using ReadImageType = itk::Image<float, 3>;
+  using ImageType = itk::Image<unsigned char, 3>;
   using ImagePointer = ImageType::Pointer;
-  QImageDisplay( QWidget * parent = 0 );
+  QImageDisplay(QWidget * parent = 0);
   void
-  SetImage( const std::string & fileName );
+  SetImage(const std::string & fileName);
 
   void
-  SetImage( ImagePointer & image );
+  SetImage(ImagePointer & image);
 
   void
   SetBlankImage();

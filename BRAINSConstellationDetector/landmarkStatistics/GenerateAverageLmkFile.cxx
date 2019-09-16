@@ -22,17 +22,17 @@
  * University of Iowa Health Care 2011
  */
 
- /*
-  This program gets several fcsv file each one contains several landmarks with the same name but slightly different coordinates.
-  For EACH landmark we compute the average coordination.
+/*
+ This program gets several fcsv file each one contains several landmarks with the same name but slightly different
+ coordinates. For EACH landmark we compute the average coordination.
 
-  The final output of this program is a new landmark fcsv file which contains the average coordinate of each landmark.
+ The final output of this program is a new landmark fcsv file which contains the average coordinate of each landmark.
 
-  Usage:
-  $/GenerateAverageLmkFile \
-    --inputLandmarkFiles lmk1.fcsv,lmk2.fcsv,...,lmkn.fcsv \
-    --outputLandmarkFile outputAveLmk.fcsv
- */
+ Usage:
+ $/GenerateAverageLmkFile \
+   --inputLandmarkFiles lmk1.fcsv,lmk2.fcsv,...,lmkn.fcsv \
+   --outputLandmarkFile outputAveLmk.fcsv
+*/
 
 #include "itkImage.h"
 #include <cmath>
@@ -41,45 +41,46 @@
 
 #include "GenerateAverageLmkFileCLP.h"
 
-int main( int argc, char * argv[] )
+int
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
   std::vector<std::string> inputFileNames;
-  if( inputLandmarkFiles.size() >= 2 )
-    {
+  if (inputLandmarkFiles.size() >= 2)
+  {
     inputFileNames = inputLandmarkFiles;
-    }
-  else if ( inputLandmarkFiles.size() == 1 )
-    {
-    inputFileNames.reserve(1000); //Just reserve a huge memory footprint
+  }
+  else if (inputLandmarkFiles.size() == 1)
+  {
+    inputFileNames.reserve(1000); // Just reserve a huge memory footprint
     std::cout << "ASSUMING single file is a list of files." << std::endl;
-    std::string oneLine;
+    std::string   oneLine;
     std::ifstream infile(inputLandmarkFiles[0].c_str());
     while (std::getline(infile, oneLine))
-      {
-      inputFileNames.push_back(oneLine);
-      }
-    }
-  else
     {
+      inputFileNames.push_back(oneLine);
+    }
+  }
+  else
+  {
     std::cerr << "ERROR: No input file name is defined" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
 
   const unsigned int k = inputFileNames.size(); // The number of input landmark files
-  if( k==0 )
-    {
+  if (k == 0)
+  {
     std::cerr << "ERROR: Number of input landmark files is zero!" << std::endl;
     return EXIT_FAILURE;
-    }
+  }
   std::cout << "Computing the average file for " << k << " input landmark files..." << std::endl;
 
   unsigned int numNamedLandmarks = 0;
 
   std::map<std::string, LandmarkPointType> LandmarksAverageMap;
 
-  using LandmarksMapTypeVec = std::vector<std::map<std::string, LandmarkPointType> >;
+  using LandmarksMapTypeVec = std::vector<std::map<std::string, LandmarkPointType>>;
   LandmarksMapTypeVec LandmarksMapVector;
 
   // LandmarksMapType is as "std::map<std::string, LandmarkPointType>" which means a map between landmarks and their
@@ -87,35 +88,35 @@ int main( int argc, char * argv[] )
   // For each input landmark file this LandmarksMapType is computed and is set in a vector: "LandmarksMapTypeVec"
 
   LandmarksMapType temp;
-  for( unsigned int i = 0; i < k; i++ )
-    {
-    temp = ReadSlicer3toITKLmk( inputFileNames[i] );
+  for (unsigned int i = 0; i < k; i++)
+  {
+    temp = ReadSlicer3toITKLmk(inputFileNames[i]);
     LandmarksMapVector.push_back(temp);
-    }
+  }
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
   std::vector<std::string> LandmarksNames;
-  for( LandmarksMapType::const_iterator it = LandmarksMapVector[0].begin(); it != LandmarksMapVector[0].end(); ++it )
+  for (LandmarksMapType::const_iterator it = LandmarksMapVector[0].begin(); it != LandmarksMapVector[0].end(); ++it)
+  {
+    if ((it->first).compare("") != 0)
     {
-    if( ( it->first ).compare("") != 0 )
-      {
       LandmarksNames.push_back(it->first);
       numNamedLandmarks++;
-      }
     }
+  }
   // Computing the average coordinate for each landmark
-  for( unsigned int j = 0; j < numNamedLandmarks; j++ )
-    {
-    double x_ave = 0.0;
-    double y_ave = 0.0;
-    double z_ave = 0.0;
+  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  {
+    double      x_ave = 0.0;
+    double      y_ave = 0.0;
+    double      z_ave = 0.0;
     std::string name = LandmarksNames[j];
-    for( unsigned int i = 0; i < k; i++ )
-      {
+    for (unsigned int i = 0; i < k; i++)
+    {
       x_ave += LandmarksMapVector[i][name][0];
       y_ave += LandmarksMapVector[i][name][1];
       z_ave += LandmarksMapVector[i][name][2];
-      }
+    }
     x_ave = x_ave / static_cast<double>(k);
     y_ave = y_ave / static_cast<double>(k);
     z_ave = z_ave / static_cast<double>(k);
@@ -123,9 +124,9 @@ int main( int argc, char * argv[] )
     LandmarksAverageMap[name][0] = x_ave;
     LandmarksAverageMap[name][1] = y_ave;
     LandmarksAverageMap[name][2] = z_ave;
-    }
+  }
 
-  WriteITKtoSlicer3Lmk( outputLandmarkFile, LandmarksAverageMap );
+  WriteITKtoSlicer3Lmk(outputLandmarkFile, LandmarksAverageMap);
 
   return EXIT_SUCCESS;
 }

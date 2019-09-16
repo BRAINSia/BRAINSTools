@@ -38,19 +38,21 @@
 #include "BRAINSContinuousClassCLP.h"
 #include <BRAINSCommonLib.h>
 
-template < typename PixelType >
+template <typename PixelType>
 int
-ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, std::string discreteVolumeName,
-                          std::string outputVolumeName )
+ContinuousClassification(std::string t1VolumeName,
+                         std::string T2VolumeName,
+                         std::string discreteVolumeName,
+                         std::string outputVolumeName)
 {
   // using PixelType = float;
   constexpr unsigned int Dimension = 3;
 
-  using ImageType = typename itk::Image< PixelType, Dimension >;
-  using ShortImageType = typename itk::Image< unsigned int, Dimension >;
-  using ReaderType = typename itk::ImageFileReader< ImageType >;
-  using ShortReaderType = typename itk::ImageFileReader< ShortImageType >;
-  using WriterType = typename itk::ImageFileWriter< ImageType >;
+  using ImageType = typename itk::Image<PixelType, Dimension>;
+  using ShortImageType = typename itk::Image<unsigned int, Dimension>;
+  using ReaderType = typename itk::ImageFileReader<ImageType>;
+  using ShortReaderType = typename itk::ImageFileReader<ShortImageType>;
+  using WriterType = typename itk::ImageFileWriter<ImageType>;
 
   static constexpr typename ShortImageType::PixelType grayMatterDiscreteValue = 2;
   static constexpr typename ShortImageType::PixelType basalGrayMatterDiscreteValue = 3;
@@ -72,84 +74,84 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
 
   try
   {
-    t1Reader->SetFileName( t1VolumeName );
+    t1Reader->SetFileName(t1VolumeName);
     t1Reader->Update();
     t1Volume = t1Reader->GetOutput();
 
-    t2Reader->SetFileName( T2VolumeName );
+    t2Reader->SetFileName(T2VolumeName);
     t2Reader->Update();
     t2Volume = t2Reader->GetOutput();
 
-    discreteReader->SetFileName( discreteVolumeName );
+    discreteReader->SetFileName(discreteVolumeName);
     discreteReader->Update();
     discreteVolume = discreteReader->GetOutput();
   }
-  catch ( itk::ExceptionObject & exe )
+  catch (itk::ExceptionObject & exe)
   {
     std::cout << exe << std::endl;
-    exit( 1 );
+    exit(1);
   }
 
   // Use the labelStatistics filter to count the number of voxels for each tissue type.
   // Need this for the logistic regression problem later.
 
-  using LabelStatisticsFilterType = itk::LabelStatisticsImageFilter< ShortImageType, ShortImageType >;
+  using LabelStatisticsFilterType = itk::LabelStatisticsImageFilter<ShortImageType, ShortImageType>;
   LabelStatisticsFilterType::Pointer labelStatisticsFilter = LabelStatisticsFilterType::New();
-  labelStatisticsFilter->SetInput( discreteVolume );
-  labelStatisticsFilter->SetLabelInput( discreteVolume );
+  labelStatisticsFilter->SetInput(discreteVolume);
+  labelStatisticsFilter->SetLabelInput(discreteVolume);
   labelStatisticsFilter->Update();
-  const unsigned int grayMatterSampleCount = labelStatisticsFilter->GetCount( grayMatterDiscreteValue ) +
-                                             labelStatisticsFilter->GetCount( basalGrayMatterDiscreteValue );
-  const unsigned int whiteMatterSampleCount = labelStatisticsFilter->GetCount( whiteMatterDiscreteValue );
-  const unsigned int csfSampleCount = labelStatisticsFilter->GetCount( csfDiscreteValue );
-  const unsigned int veinousBloodSampleCount = labelStatisticsFilter->GetCount( veinousBloodDiscreteValue );
+  const unsigned int grayMatterSampleCount = labelStatisticsFilter->GetCount(grayMatterDiscreteValue) +
+                                             labelStatisticsFilter->GetCount(basalGrayMatterDiscreteValue);
+  const unsigned int whiteMatterSampleCount = labelStatisticsFilter->GetCount(whiteMatterDiscreteValue);
+  const unsigned int csfSampleCount = labelStatisticsFilter->GetCount(csfDiscreteValue);
+  const unsigned int veinousBloodSampleCount = labelStatisticsFilter->GetCount(veinousBloodDiscreteValue);
 
-  constexpr unsigned int          featureCount = 2; // T1 and T2
-  LogisticRegression< PixelType > logisticRegressionWhiteVsCSF =
-    LogisticRegression< PixelType >( featureCount, csfSampleCount + whiteMatterSampleCount );
-  logisticRegressionWhiteVsCSF.SetClassOneLabel( whiteMatterDiscreteValue );
-  logisticRegressionWhiteVsCSF.SetClassTwoLabel( csfDiscreteValue );
-  LogisticRegression< PixelType > logisticRegressionWhiteVsGray =
-    LogisticRegression< PixelType >( featureCount, grayMatterSampleCount + whiteMatterSampleCount );
-  logisticRegressionWhiteVsGray.SetClassOneLabel( whiteMatterDiscreteValue );
-  logisticRegressionWhiteVsGray.SetClassTwoLabel( grayMatterDiscreteValue );
-  LogisticRegression< PixelType > logisticRegressionGrayVsCSF =
-    LogisticRegression< PixelType >( featureCount, grayMatterSampleCount + csfSampleCount );
-  logisticRegressionGrayVsCSF.SetClassOneLabel( grayMatterDiscreteValue );
-  logisticRegressionGrayVsCSF.SetClassTwoLabel( csfDiscreteValue );
-  LogisticRegression< PixelType > logisticRegressionVeinousBloodVsAll =
-    LogisticRegression< PixelType >( featureCount, veinousBloodSampleCount + whiteMatterSampleCount );
-  logisticRegressionVeinousBloodVsAll.SetClassOneLabel( veinousBloodDiscreteValue );
-  logisticRegressionVeinousBloodVsAll.SetClassTwoLabel( allStandInDiscreteValue );
+  constexpr unsigned int        featureCount = 2; // T1 and T2
+  LogisticRegression<PixelType> logisticRegressionWhiteVsCSF =
+    LogisticRegression<PixelType>(featureCount, csfSampleCount + whiteMatterSampleCount);
+  logisticRegressionWhiteVsCSF.SetClassOneLabel(whiteMatterDiscreteValue);
+  logisticRegressionWhiteVsCSF.SetClassTwoLabel(csfDiscreteValue);
+  LogisticRegression<PixelType> logisticRegressionWhiteVsGray =
+    LogisticRegression<PixelType>(featureCount, grayMatterSampleCount + whiteMatterSampleCount);
+  logisticRegressionWhiteVsGray.SetClassOneLabel(whiteMatterDiscreteValue);
+  logisticRegressionWhiteVsGray.SetClassTwoLabel(grayMatterDiscreteValue);
+  LogisticRegression<PixelType> logisticRegressionGrayVsCSF =
+    LogisticRegression<PixelType>(featureCount, grayMatterSampleCount + csfSampleCount);
+  logisticRegressionGrayVsCSF.SetClassOneLabel(grayMatterDiscreteValue);
+  logisticRegressionGrayVsCSF.SetClassTwoLabel(csfDiscreteValue);
+  LogisticRegression<PixelType> logisticRegressionVeinousBloodVsAll =
+    LogisticRegression<PixelType>(featureCount, veinousBloodSampleCount + whiteMatterSampleCount);
+  logisticRegressionVeinousBloodVsAll.SetClassOneLabel(veinousBloodDiscreteValue);
+  logisticRegressionVeinousBloodVsAll.SetClassTwoLabel(allStandInDiscreteValue);
 
   unsigned int whiteVsGraySampleCount = 0;
   unsigned int csfVsGraySampleCount = 0;
   unsigned int whiteVsCSFSampleCount = 0;
   unsigned int veinousBloodVsAllSampleCount = 0;
 
-  using ImageRegionConstIteratorType = itk::ImageRegionConstIterator< ImageType >;
-  ImageRegionConstIteratorType imgItr( t1Volume, t1Volume->GetRequestedRegion() );
+  using ImageRegionConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
+  ImageRegionConstIteratorType imgItr(t1Volume, t1Volume->GetRequestedRegion());
 
-  LogisticRegressionSample< PixelType > tempSample = LogisticRegressionSample< PixelType >( featureCount );
-  std::vector< PixelType >              tempFeatures( featureCount );
-  for ( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
+  LogisticRegressionSample<PixelType> tempSample = LogisticRegressionSample<PixelType>(featureCount);
+  std::vector<PixelType>              tempFeatures(featureCount);
+  for (imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr)
   {
     const typename ImageType::IndexType      idx = imgItr.GetIndex();
-    const typename ImageType::PixelType      t1PixelValue = t1Volume->GetPixel( idx );
-    const typename ImageType::PixelType      t2PixelValue = t2Volume->GetPixel( idx );
-    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel( idx );
+    const typename ImageType::PixelType      t1PixelValue = t1Volume->GetPixel(idx);
+    const typename ImageType::PixelType      t2PixelValue = t2Volume->GetPixel(idx);
+    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
 
-    if ( discretePixelValue == grayMatterDiscreteValue || discretePixelValue == basalGrayMatterDiscreteValue )
+    if (discretePixelValue == grayMatterDiscreteValue || discretePixelValue == basalGrayMatterDiscreteValue)
     {
-      tempSample.SetLabel( grayMatterDiscreteValue );
+      tempSample.SetLabel(grayMatterDiscreteValue);
       tempFeatures[0] = t1PixelValue;
       tempFeatures[1] = t2PixelValue;
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionWhiteVsGray.AddLabeledSample( tempSample );
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsGray.AddLabeledSample(tempSample);
 
-      tempSample.SetLabel( grayMatterDiscreteValue );
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionGrayVsCSF.AddLabeledSample( tempSample );
+      tempSample.SetLabel(grayMatterDiscreteValue);
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionGrayVsCSF.AddLabeledSample(tempSample);
 
       // tempSample.SetLabel(allStandInDiscreteValue);
       // tempSample.SetSample(tempFeatures);
@@ -159,33 +161,33 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
       whiteVsGraySampleCount++;
       csfVsGraySampleCount++;
     }
-    else if ( discretePixelValue == whiteMatterDiscreteValue )
+    else if (discretePixelValue == whiteMatterDiscreteValue)
     {
-      tempSample.SetLabel( whiteMatterDiscreteValue );
+      tempSample.SetLabel(whiteMatterDiscreteValue);
       tempFeatures[0] = t1PixelValue;
       tempFeatures[1] = t2PixelValue;
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionWhiteVsGray.AddLabeledSample( tempSample );
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsGray.AddLabeledSample(tempSample);
 
-      tempSample.SetLabel( whiteMatterDiscreteValue );
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionWhiteVsCSF.AddLabeledSample( tempSample );
+      tempSample.SetLabel(whiteMatterDiscreteValue);
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsCSF.AddLabeledSample(tempSample);
 
       veinousBloodVsAllSampleCount++;
       whiteVsGraySampleCount++;
       whiteVsCSFSampleCount++;
     }
-    else if ( discretePixelValue == csfDiscreteValue )
+    else if (discretePixelValue == csfDiscreteValue)
     {
-      tempSample.SetLabel( csfDiscreteValue );
+      tempSample.SetLabel(csfDiscreteValue);
       tempFeatures[0] = t1PixelValue;
       tempFeatures[1] = t2PixelValue;
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionGrayVsCSF.AddLabeledSample( tempSample );
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionGrayVsCSF.AddLabeledSample(tempSample);
 
-      tempSample.SetLabel( csfDiscreteValue );
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionWhiteVsCSF.AddLabeledSample( tempSample );
+      tempSample.SetLabel(csfDiscreteValue);
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionWhiteVsCSF.AddLabeledSample(tempSample);
 
       // tempSample.SetLabel(allStandInDiscreteValue);
       // tempSample.SetSample(tempFeatures);
@@ -195,13 +197,13 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
       csfVsGraySampleCount++;
       whiteVsCSFSampleCount++;
     }
-    else if ( discretePixelValue == veinousBloodDiscreteValue )
+    else if (discretePixelValue == veinousBloodDiscreteValue)
     {
-      tempSample.SetLabel( veinousBloodDiscreteValue );
+      tempSample.SetLabel(veinousBloodDiscreteValue);
       tempFeatures[0] = t1PixelValue;
       tempFeatures[1] = t2PixelValue;
-      tempSample.SetSample( tempFeatures );
-      logisticRegressionVeinousBloodVsAll.AddLabeledSample( tempSample );
+      tempSample.SetSample(tempFeatures);
+      logisticRegressionVeinousBloodVsAll.AddLabeledSample(tempSample);
 
       veinousBloodVsAllSampleCount++;
     }
@@ -212,9 +214,9 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
   logisticRegressionWhiteVsGray.TrainModel();
   logisticRegressionVeinousBloodVsAll.TrainModel();
 
-  using ImageDuplicatorType = typename itk::ImageDuplicator< ImageType >;
+  using ImageDuplicatorType = typename itk::ImageDuplicator<ImageType>;
   typename ImageDuplicatorType::Pointer t1DuplicateImageFilter = ImageDuplicatorType::New();
-  t1DuplicateImageFilter->SetInputImage( t1Reader->GetOutput() );
+  t1DuplicateImageFilter->SetInputImage(t1Reader->GetOutput());
   t1DuplicateImageFilter->Update();
   typename ImageType::Pointer outputImage = t1DuplicateImageFilter->GetModifiableOutput();
 
@@ -226,41 +228,41 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
   typename ImageType::PixelType outputAirPixelValue = 0;
   typename ImageType::PixelType outputOtherPixelValue = 9;
   typename ImageType::PixelType predictedOutputPixelValue = outputAirPixelValue;
-  for ( imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr )
+  for (imgItr.GoToBegin(); !imgItr.IsAtEnd(); ++imgItr)
   {
     const typename ImageType::IndexType      idx = imgItr.GetIndex();
-    const typename ImageType::PixelType      t1PixelValue = t1Reader->GetOutput()->GetPixel( idx );
-    const typename ImageType::PixelType      t2PixelValue = t2Reader->GetOutput()->GetPixel( idx );
-    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel( idx );
+    const typename ImageType::PixelType      t1PixelValue = t1Reader->GetOutput()->GetPixel(idx);
+    const typename ImageType::PixelType      t2PixelValue = t2Reader->GetOutput()->GetPixel(idx);
+    const typename ShortImageType::PixelType discretePixelValue = discreteVolume->GetPixel(idx);
 
     tempFeatures[0] = t1PixelValue;
     tempFeatures[1] = t2PixelValue;
-    tempSample.SetSample( tempFeatures );
-    logisticRegressionWhiteVsCSF.ClassifySample( tempSample );
-    predictedProbabilityEstimatesWhiteVsCSF[0] = tempSample.GetLabelProbability( whiteMatterDiscreteValue );
-    predictedProbabilityEstimatesWhiteVsCSF[1] = tempSample.GetLabelProbability( csfDiscreteValue );
+    tempSample.SetSample(tempFeatures);
+    logisticRegressionWhiteVsCSF.ClassifySample(tempSample);
+    predictedProbabilityEstimatesWhiteVsCSF[0] = tempSample.GetLabelProbability(whiteMatterDiscreteValue);
+    predictedProbabilityEstimatesWhiteVsCSF[1] = tempSample.GetLabelProbability(csfDiscreteValue);
 
-    logisticRegressionWhiteVsGray.ClassifySample( tempSample );
-    predictedProbabilityEstimatesWhiteVsGray[0] = tempSample.GetLabelProbability( whiteMatterDiscreteValue );
-    predictedProbabilityEstimatesWhiteVsGray[1] = tempSample.GetLabelProbability( grayMatterDiscreteValue );
+    logisticRegressionWhiteVsGray.ClassifySample(tempSample);
+    predictedProbabilityEstimatesWhiteVsGray[0] = tempSample.GetLabelProbability(whiteMatterDiscreteValue);
+    predictedProbabilityEstimatesWhiteVsGray[1] = tempSample.GetLabelProbability(grayMatterDiscreteValue);
 
-    logisticRegressionGrayVsCSF.ClassifySample( tempSample );
-    predictedProbabilityEstimatesGrayVsCSF[0] = tempSample.GetLabelProbability( grayMatterDiscreteValue );
-    predictedProbabilityEstimatesGrayVsCSF[1] = tempSample.GetLabelProbability( csfDiscreteValue );
+    logisticRegressionGrayVsCSF.ClassifySample(tempSample);
+    predictedProbabilityEstimatesGrayVsCSF[0] = tempSample.GetLabelProbability(grayMatterDiscreteValue);
+    predictedProbabilityEstimatesGrayVsCSF[1] = tempSample.GetLabelProbability(csfDiscreteValue);
 
-    logisticRegressionVeinousBloodVsAll.ClassifySample( tempSample );
-    predictedProbabilityEstimatesVeinousBloodVsAll[0] = tempSample.GetLabelProbability( veinousBloodDiscreteValue );
-    predictedProbabilityEstimatesVeinousBloodVsAll[1] = tempSample.GetLabelProbability( allStandInDiscreteValue );
+    logisticRegressionVeinousBloodVsAll.ClassifySample(tempSample);
+    predictedProbabilityEstimatesVeinousBloodVsAll[0] = tempSample.GetLabelProbability(veinousBloodDiscreteValue);
+    predictedProbabilityEstimatesVeinousBloodVsAll[1] = tempSample.GetLabelProbability(allStandInDiscreteValue);
 
-    if ( discretePixelValue == airDiscreteValue )
+    if (discretePixelValue == airDiscreteValue)
     {
       predictedOutputPixelValue = outputAirPixelValue;
     }
-    else if ( predictedProbabilityEstimatesWhiteVsCSF[0] > predictedProbabilityEstimatesWhiteVsCSF[1] )
+    else if (predictedProbabilityEstimatesWhiteVsCSF[0] > predictedProbabilityEstimatesWhiteVsCSF[1])
     {
-      if ( predictedProbabilityEstimatesWhiteVsGray[0] < predictedProbabilityEstimatesWhiteVsGray[1] )
+      if (predictedProbabilityEstimatesWhiteVsGray[0] < predictedProbabilityEstimatesWhiteVsGray[1])
       {
-        if ( predictedProbabilityEstimatesGrayVsCSF[0] < predictedProbabilityEstimatesGrayVsCSF[1] )
+        if (predictedProbabilityEstimatesGrayVsCSF[0] < predictedProbabilityEstimatesGrayVsCSF[1])
         {
           // Output voxel is other
           predictedOutputPixelValue = outputOtherPixelValue;
@@ -268,22 +270,22 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
         else
         {
           //// White is more likely, check for veinous blood?
-          if ( predictedProbabilityEstimatesVeinousBloodVsAll[0] > predictedProbabilityEstimatesVeinousBloodVsAll[1] )
+          if (predictedProbabilityEstimatesVeinousBloodVsAll[0] > predictedProbabilityEstimatesVeinousBloodVsAll[1])
           {
             predictedOutputPixelValue = outputOtherPixelValue;
           }
           else
           {
             // white vs gray
-            predictedOutputPixelValue = static_cast< typename ImageType::PixelType >(
-              130 + ( 120 * predictedProbabilityEstimatesWhiteVsGray[0] ) );
+            predictedOutputPixelValue =
+              static_cast<typename ImageType::PixelType>(130 + (120 * predictedProbabilityEstimatesWhiteVsGray[0]));
           }
         }
       }
       else
       {
         // White is more likely, check for veinous blood?
-        if ( predictedProbabilityEstimatesVeinousBloodVsAll[0] < predictedProbabilityEstimatesVeinousBloodVsAll[1] )
+        if (predictedProbabilityEstimatesVeinousBloodVsAll[0] < predictedProbabilityEstimatesVeinousBloodVsAll[1])
         {
           predictedOutputPixelValue = predictedProbabilityEstimatesVeinousBloodVsAll[0] * 100;
         }
@@ -291,15 +293,15 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
         {
           // white vs gray
           predictedOutputPixelValue =
-            static_cast< typename ImageType::PixelType >( 130 + 120 * predictedProbabilityEstimatesWhiteVsGray[0] );
+            static_cast<typename ImageType::PixelType>(130 + 120 * predictedProbabilityEstimatesWhiteVsGray[0]);
         }
       }
     }
     else
     {
-      if ( predictedProbabilityEstimatesGrayVsCSF[0] < predictedProbabilityEstimatesGrayVsCSF[1] )
+      if (predictedProbabilityEstimatesGrayVsCSF[0] < predictedProbabilityEstimatesGrayVsCSF[1])
       {
-        if ( predictedProbabilityEstimatesWhiteVsGray[0] > predictedProbabilityEstimatesWhiteVsGray[1] )
+        if (predictedProbabilityEstimatesWhiteVsGray[0] > predictedProbabilityEstimatesWhiteVsGray[1])
         {
           // Output voxel is other
           predictedOutputPixelValue = outputOtherPixelValue;
@@ -308,25 +310,25 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
         {
           // CSF Vs Gray
           predictedOutputPixelValue =
-            static_cast< typename ImageType::PixelType >( 10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0] );
+            static_cast<typename ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
         }
       }
       else
       {
         // CSF Vs Gray
         predictedOutputPixelValue =
-          static_cast< typename ImageType::PixelType >( 10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0] );
+          static_cast<typename ImageType::PixelType>(10 + 120 * predictedProbabilityEstimatesGrayVsCSF[0]);
       }
     }
 
-    outputImage->SetPixel( idx, predictedOutputPixelValue );
+    outputImage->SetPixel(idx, predictedOutputPixelValue);
   }
   std::cerr << "whiteVsGraySampleCount " << whiteVsGraySampleCount << " csfVsGraySampleCount " << csfVsGraySampleCount
             << " whiteVsCSFSampleCount " << whiteVsCSFSampleCount << " veinousBloodVsAllSampleCount "
             << veinousBloodVsAllSampleCount << std::endl;
 
-  outputWriter->SetInput( outputImage );
-  outputWriter->SetFileName( outputVolumeName );
+  outputWriter->SetInput(outputImage);
+  outputWriter->SetFileName(outputVolumeName);
   outputWriter->Modified();
   outputWriter->Update();
 
@@ -334,40 +336,40 @@ ContinuousClassification( std::string t1VolumeName, std::string T2VolumeName, st
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if ( inputT1Volume.size() == 0 )
+  if (inputT1Volume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputT1Volume Required! " << std::endl;
   }
-  if ( inputT2Volume.size() == 0 )
+  if (inputT2Volume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputT2Volume Required! " << std::endl;
   }
-  if ( inputDiscreteVolume.size() == 0 )
+  if (inputDiscreteVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputDiscreteVolume Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
-    exit( 1 );
+    exit(1);
   }
 
   using PixelType = float;
 
-  ContinuousClassification< PixelType >( inputT1Volume, inputT2Volume, inputDiscreteVolume, outputVolume );
+  ContinuousClassification<PixelType>(inputT1Volume, inputT2Volume, inputDiscreteVolume, outputVolume);
 
   return EXIT_SUCCESS;
 }

@@ -35,28 +35,28 @@ namespace itk
  *
  * \ingroup   ImageFilters
  */
-template < typename TInputImage >
+template <typename TInputImage>
 class ITK_EXPORT ImageToVTKImageFilter : public ProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ImageToVTKImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ImageToVTKImageFilter);
 
   /** Standard class type alias. */
   using Self = ImageToVTKImageFilter;
   using Superclass = ProcessObject;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ImageToVTKImageFilter, ProcessObject );
+  itkTypeMacro(ImageToVTKImageFilter, ProcessObject);
 
   /** Some type alias. */
   using InputImageType = TInputImage;
   using InputImagePointer = typename InputImageType::ConstPointer;
-  using ExporterFilterType = VTKImageExport< InputImageType >;
+  using ExporterFilterType = VTKImageExport<InputImageType>;
   using ExporterFilterPointer = typename ExporterFilterType::Pointer;
 
   /** Get the output in the form of a vtkImage.
@@ -66,7 +66,7 @@ public:
 
   /** Set the input in the form of an itk::Image */
   void
-  SetInputData( const InputImageType * );
+  SetInputData(const InputImageType *);
 
   /** Return the internal VTK image importer filter.
       This is intended to facilitate users the access

@@ -55,9 +55,13 @@
 #include "landmarksConstellationCommon.h"
 
 extern SImageType::PointType
-TrimForegroundInDirection( SImageType::Pointer & foreground, SImageType::Pointer & volOrig, unsigned int axis,
-                           double otsuPercentileThreshold, unsigned int closingSize, double headSizeLowerLimit,
-                           SImageType::PixelType BackgroundFillValue );
+TrimForegroundInDirection(SImageType::Pointer & foreground,
+                          SImageType::Pointer & volOrig,
+                          unsigned int          axis,
+                          double                otsuPercentileThreshold,
+                          unsigned int          closingSize,
+                          double                headSizeLowerLimit,
+                          SImageType::PixelType BackgroundFillValue);
 
 // INFO: This function needs to be cleaned up.  It should not compute the otsu
 // threasholding, but rather, it should have been given
@@ -65,8 +69,11 @@ TrimForegroundInDirection( SImageType::Pointer & foreground, SImageType::Pointer
 // This filter slowly evolved from another filter, and should be cleaned
 // so that it only uses the items that are necessary for success.
 extern SImageType::PointType
-FindCenterOfBrainBasedOnTopOfHead( SImageType::Pointer & volOrig, unsigned int axis, double otsuPercentileThreshold,
-                                   unsigned int closingSize, double headSizeLowerLimit,
-                                   SImageType::PixelType BackgroundFillValue );
+FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & volOrig,
+                                  unsigned int          axis,
+                                  double                otsuPercentileThreshold,
+                                  unsigned int          closingSize,
+                                  double                headSizeLowerLimit,
+                                  SImageType::PixelType BackgroundFillValue);
 
 #endif /* __TrimForegroundInDirection_h */

@@ -51,9 +51,9 @@ public:
   static vtkFSSurfaceScalarReader *
   New();
 
-  vtkTypeMacro( vtkFSSurfaceScalarReader, vtkDataReader );
+  vtkTypeMacro(vtkFSSurfaceScalarReader, vtkDataReader);
   void
-  PrintSelf( ostream & os, vtkIndent indent );
+  PrintSelf(ostream & os, vtkIndent indent);
 
   vtkFloatArray *
   GetOutput()
@@ -61,7 +61,7 @@ public:
     return this->scalars;
   };
   void
-  SetOutput( vtkFloatArray * output )
+  SetOutput(vtkFloatArray * output)
   {
     this->scalars = output;
   };
@@ -86,18 +86,18 @@ protected:
   vtkFloatArray * scalars;
 
   int
-  ReadInt3( FILE * iFile, int & oInt );
+  ReadInt3(FILE * iFile, int & oInt);
 
   int
-  ReadInt2( FILE * iFile, int & oInt );
+  ReadInt2(FILE * iFile, int & oInt);
 
   int
-  ReadFloat( FILE * iFile, float & oInt );
+  ReadFloat(FILE * iFile, float & oInt);
 
 private:
-  vtkFSSurfaceScalarReader( const vtkFSSurfaceScalarReader & ); /// Not implemented.
+  vtkFSSurfaceScalarReader(const vtkFSSurfaceScalarReader &); /// Not implemented.
   void
-  operator=( const vtkFSSurfaceScalarReader & ); /// Not implemented.
+  operator=(const vtkFSSurfaceScalarReader &); /// Not implemented.
 };
 
 #endif

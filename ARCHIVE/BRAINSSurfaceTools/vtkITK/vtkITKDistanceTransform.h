@@ -19,25 +19,25 @@ class VTK_ITK_EXPORT vtkITKDistanceTransform : public vtkSimpleImageToImageFilte
 public:
   static vtkITKDistanceTransform *
   New();
-  vtkTypeMacro( vtkITKDistanceTransform, vtkSimpleImageToImageFilter );
+  vtkTypeMacro(vtkITKDistanceTransform, vtkSimpleImageToImageFilter);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   /// Output volume contains square of distance or actual distance
-  vtkGetMacro( SquaredDistance, int );
-  vtkSetMacro( SquaredDistance, int );
+  vtkGetMacro(SquaredDistance, int);
+  vtkSetMacro(SquaredDistance, int);
 
   /// Pixels inside region positive
-  vtkGetMacro( InsideIsPositive, int );
-  vtkSetMacro( InsideIsPositive, int );
+  vtkGetMacro(InsideIsPositive, int);
+  vtkSetMacro(InsideIsPositive, int);
 
   /// Use image spacing when calculating distances
-  vtkGetMacro( UseImageSpacing, int );
-  vtkSetMacro( UseImageSpacing, int );
+  vtkGetMacro(UseImageSpacing, int);
+  vtkSetMacro(UseImageSpacing, int);
 
   /// Value of background
-  vtkGetMacro( BackgroundValue, double );
-  vtkSetMacro( BackgroundValue, double );
+  vtkGetMacro(BackgroundValue, double);
+  vtkSetMacro(BackgroundValue, double);
 
 
 protected:
@@ -45,7 +45,7 @@ protected:
   ~vtkITKDistanceTransform();
 
   virtual void
-  SimpleExecute( vtkImageData * input, vtkImageData * output ) override;
+  SimpleExecute(vtkImageData * input, vtkImageData * output) override;
 
   int    SquaredDistance;
   int    InsideIsPositive;
@@ -53,9 +53,9 @@ protected:
   double BackgroundValue;
 
 private:
-  vtkITKDistanceTransform( const vtkITKDistanceTransform & ); /// Not implemented.
+  vtkITKDistanceTransform(const vtkITKDistanceTransform &); /// Not implemented.
   void
-  operator=( const vtkITKDistanceTransform & ); /// Not implemented.
+  operator=(const vtkITKDistanceTransform &); /// Not implemented.
 };
 
 #endif

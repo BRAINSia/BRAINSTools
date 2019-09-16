@@ -75,17 +75,17 @@ using TensorShapeType = enum ENUM_TENSOR_SHAPE_TYPE;
 class EigenVectorToColorImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( EigenVectorToColorImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
 
   /** Standard class type alias. */
   using Self = EigenVectorToColorImageFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Some convenient type alias. */
-  using InputPixelType = itk::Vector< float, 6 >;
-  using InputImageType = itk::Image< InputPixelType, 3 >;
+  using InputPixelType = itk::Vector<float, 6>;
+  using InputImageType = itk::Image<InputPixelType, 3>;
   using InputImagePointer = InputImageType::Pointer;
   using InputImageConstPointer = InputImageType::ConstPointer;
   using InputImageRegionType = InputImageType::RegionType;
@@ -95,21 +95,21 @@ public:
   using InputImagePixelType = InputImageType::PixelType;
   using InputImageDirectionType = InputImageType::DirectionType;
 
-  using OutputPixelType = itk::RGBAPixel< unsigned char >;
-  using OutputImageType = itk::Image< OutputPixelType, 3 >;
+  using OutputPixelType = itk::RGBAPixel<unsigned char>;
+  using OutputImageType = itk::Image<OutputPixelType, 3>;
   using OutputImagePointer = OutputImageType::Pointer;
   using OutputImageRegionType = OutputImageType::RegionType;
 
 
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( EigenVectorToColorImageFilter, itk::Object );
+  itkTypeMacro(EigenVectorToColorImageFilter, itk::Object);
 
-  itkSetObjectMacro( Input, InputImageType );
-  itkGetConstObjectMacro( Output, OutputImageType );
-  itkSetMacro( TensorShapeType, TensorShapeType );
+  itkSetObjectMacro(Input, InputImageType);
+  itkGetConstObjectMacro(Output, OutputImageType);
+  itkSetMacro(TensorShapeType, TensorShapeType);
 
   void
   Update();

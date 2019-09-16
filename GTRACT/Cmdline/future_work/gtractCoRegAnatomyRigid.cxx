@@ -47,13 +47,13 @@
 #include "gtractCoRegAnatomyRigidCLP.h"
 
 int
-main( int argc, char ** argv )
+main(int argc, char ** argv)
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Image: " << inputVolume << std::endl;
@@ -70,54 +70,54 @@ main( int argc, char ** argv )
   }
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( inputAnatomicalVolume.size() == 0 )
+  if (inputAnatomicalVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputAnatomicalVolume Required! " << std::endl;
   }
-  if ( outputRigidTransform.size() == 0 )
+  if (outputRigidTransform.size() == 0)
   {
     violated = true;
     std::cout << "  --outputRigidTransform Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   //  using PixelType = signed short;
   using PixelType = float;
-  using VectorImageType = itk::VectorImage< PixelType, 3 >;
+  using VectorImageType = itk::VectorImage<PixelType, 3>;
 
-  using VectorImageReaderType = itk::ImageFileReader< VectorImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+  using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
   VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
-  vectorImageReader->SetFileName( inputVolume );
+  vectorImageReader->SetFileName(inputVolume);
 
   try
   {
     vectorImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
-  using AnatomicalImageType = itk::Image< PixelType, 3 >;
-  using AnatomicalImageReaderType = itk::ImageFileReader< AnatomicalImageType >;
+  using AnatomicalImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
-  anatomicalReader->SetFileName( inputAnatomicalVolume );
+  anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
   {
     anatomicalReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -128,33 +128,33 @@ main( int argc, char ** argv )
   // anatomicalReader->GetOutput()->Print(std::cout, tabbed);
 
   /* Extract the Vector Image Index for Registration */
-  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter< VectorImageType, AnatomicalImageType >;
+  using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, AnatomicalImageType>;
   using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
 
   VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
-  selectIndexImageFilter->SetIndex( vectorIndex );
-  selectIndexImageFilter->SetInput( vectorImageReader->GetOutput() );
+  selectIndexImageFilter->SetIndex(vectorIndex);
+  selectIndexImageFilter->SetInput(vectorImageReader->GetOutput());
   try
   {
     selectIndexImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
   }
 
   /* The Threshold Image Filter is used to produce the brain clipping mask. */
-  using ThresholdFilterType = itk::ThresholdImageFilter< AnatomicalImageType >;
+  using ThresholdFilterType = itk::ThresholdImageFilter<AnatomicalImageType>;
   constexpr PixelType          imageThresholdBelow = 100;
   ThresholdFilterType::Pointer brainOnlyFilter = ThresholdFilterType::New();
-  brainOnlyFilter->SetInput( selectIndexImageFilter->GetOutput() );
-  brainOnlyFilter->ThresholdBelow( imageThresholdBelow );
+  brainOnlyFilter->SetInput(selectIndexImageFilter->GetOutput());
+  brainOnlyFilter->ThresholdBelow(imageThresholdBelow);
   try
   {
     brainOnlyFilter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
@@ -163,31 +163,31 @@ main( int argc, char ** argv )
   using RegisterFilterType = itk::BRAINSFitHelper;
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
-  std::vector< double > minStepLength;
-  minStepLength.push_back( (double)minimumStepSize );
+  std::vector<double> minStepLength;
+  minStepLength.push_back((double)minimumStepSize);
 
-  std::vector< std::string > transformTypes;
-  transformTypes.push_back( "ScaleVersor3D" );
+  std::vector<std::string> transformTypes;
+  transformTypes.push_back("ScaleVersor3D");
 
-  std::vector< int > iterations;
-  iterations.push_back( numberOfIterations );
+  std::vector<int> iterations;
+  iterations.push_back(numberOfIterations);
 
-  registerImageFilter->SetTranslationScale( spatialScale );
-  registerImageFilter->SetMaximumStepLength( maximumStepSize );
-  registerImageFilter->SetMinimumStepLength( minStepLength );
-  registerImageFilter->SetRelaxationFactor( relaxationFactor );
-  registerImageFilter->SetNumberOfIterations( iterations );
-  if ( numberOfSamples > 0 )
+  registerImageFilter->SetTranslationScale(spatialScale);
+  registerImageFilter->SetMaximumStepLength(maximumStepSize);
+  registerImageFilter->SetMinimumStepLength(minStepLength);
+  registerImageFilter->SetRelaxationFactor(relaxationFactor);
+  registerImageFilter->SetNumberOfIterations(iterations);
+  if (numberOfSamples > 0)
   {
     const unsigned long numberOfAllSamples = extractFixedVolume->GetBufferedRegion().GetNumberOfPixels();
-    samplingPercentage = static_cast< double >( numberOfSamples ) / numberOfAllSamples;
+    samplingPercentage = static_cast<double>(numberOfSamples) / numberOfAllSamples;
     std::cout << "WARNING --numberOfSamples is deprecated, please use --samplingPercentage instead " << std::endl;
     std::cout << "WARNING: Replacing command line --samplingPercentage " << samplingPercentage << std::endl;
   }
-  registerImageFilter->SetSamplePercentage( samplingPercentage );
-  registerImageFilter->SetFixedVolume( anatomicalReader->GetOutput() );
-  registerImageFilter->SetMovingVolume( brainOnlyFilter->GetOutput() );
-  registerImageFilter->SetTransformType( transformTypes );
+  registerImageFilter->SetSamplePercentage(samplingPercentage);
+  registerImageFilter->SetFixedVolume(anatomicalReader->GetOutput());
+  registerImageFilter->SetMovingVolume(brainOnlyFilter->GetOutput());
+  registerImageFilter->SetTransformType(transformTypes);
   // registerImageFilter->SetInitialRotationAngle( initialRotationAngle );
   // registerImageFilter->SetInitialRotationAxis( initialRotationAxis );
   try
@@ -195,12 +195,12 @@ main( int argc, char ** argv )
     // registerImageFilter->Update( );
     registerImageFilter->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
   GenericTransformType::Pointer versor3DTransform = registerImageFilter->GetCurrentGenericTransform();
 
-  itk::WriteTransformToDisk< double >( versor3DTransform, outputRigidTransform );
+  itk::WriteTransformToDisk<double>(versor3DTransform, outputRigidTransform);
 }

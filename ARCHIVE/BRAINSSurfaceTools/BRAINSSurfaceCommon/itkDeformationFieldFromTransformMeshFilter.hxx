@@ -24,41 +24,41 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::DeformationFieldFromTransformMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>::DeformationFieldFromTransformMeshFilter()
 {
   this->m_Transform = NULL;
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::~DeformationFieldFromTransformMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>::~DeformationFieldFromTransformMeshFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::GenerateOutputInformation()
+DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>::GenerateOutputInformation()
 {
   InputMeshConstPointer inputMesh = this->GetInput();
   OutputMeshPointer     outputMesh = this->GetOutput();
 
-  if ( !inputMesh )
+  if (!inputMesh)
   {
-    itkExceptionMacro( << "Missing Input Mesh" );
+    itkExceptionMacro(<< "Missing Input Mesh");
   }
 
-  if ( !outputMesh )
+  if (!outputMesh)
   {
-    itkExceptionMacro( << "Missing Output Mesh" );
+    itkExceptionMacro(<< "Missing Output Mesh");
   }
 
-  outputMesh->SetRequestedRegion( inputMesh->GetRequestedRegion() );
-  outputMesh->SetBufferedRegion( inputMesh->GetBufferedRegion() );
+  outputMesh->SetRequestedRegion(inputMesh->GetRequestedRegion());
+  outputMesh->SetBufferedRegion(inputMesh->GetBufferedRegion());
   outputMesh->SetRequestedRegionToLargestPossibleRegion();
 }
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
+DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
   using InputPointsContainerPointer = typename TInputMesh::PointsContainerConstPointer;
   using OutputPointsContainerPointer = typename TOutputMesh::PointsContainerPointer;
@@ -66,40 +66,40 @@ DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::GenerateData
   InputMeshConstPointer inputMesh = this->GetInput();
   OutputMeshPointer     outputMesh = this->GetOutput();
 
-  if ( !inputMesh )
+  if (!inputMesh)
   {
-    itkExceptionMacro( << "Missing Input Mesh" );
+    itkExceptionMacro(<< "Missing Input Mesh");
   }
 
-  if ( !outputMesh )
+  if (!outputMesh)
   {
-    itkExceptionMacro( << "Missing Output Mesh" );
+    itkExceptionMacro(<< "Missing Output Mesh");
   }
 
-  if ( this->m_Transform.IsNull() )
+  if (this->m_Transform.IsNull())
   {
-    itkExceptionMacro( << "Transform is not Set" );
+    itkExceptionMacro(<< "Transform is not Set");
   }
 
-  outputMesh->SetBufferedRegion( outputMesh->GetRequestedRegion() );
+  outputMesh->SetBufferedRegion(outputMesh->GetRequestedRegion());
 
   InputPointsContainerPointer  inPoints = inputMesh->GetPoints();
   OutputPointsContainerPointer outPoints = outputMesh->GetPoints();
 
-  outPoints->Reserve( inputMesh->GetNumberOfPoints() );
+  outPoints->Reserve(inputMesh->GetNumberOfPoints());
   outPoints->Squeeze(); // in case the previous mesh had
                         // allocated a larger memory
 
   const unsigned int numberOfPoints = outputMesh->GetNumberOfPoints();
 
-  ProgressReporter progress( this, 0, numberOfPoints );
+  ProgressReporter progress(this, 0, numberOfPoints);
 
   InputPointsContainerConstIterator inputPoint = inPoints->Begin();
   OutputPointsContainerIterator     outputPoint = outPoints->Begin();
 
-  while ( inputPoint != inPoints->End() )
+  while (inputPoint != inPoints->End())
   {
-    outputPoint.Value() = m_Transform->TransformPoint( inputPoint.Value() );
+    outputPoint.Value() = m_Transform->TransformPoint(inputPoint.Value());
 
     progress.CompletedPixel();
 
@@ -108,13 +108,13 @@ DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::GenerateData
   }
 }
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-DeformationFieldFromTransformMeshFilter< TInputMesh, TOutputMesh >::PrintSelf( std::ostream & os, Indent indent ) const
+DeformationFieldFromTransformMeshFilter<TInputMesh, TOutputMesh>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
-  if ( this->m_Transform )
+  if (this->m_Transform)
   {
     os << indent << "Transform: " << this->m_Transform << std::endl;
   }

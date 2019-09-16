@@ -24,8 +24,9 @@
 class GEDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  GEDWIConverter( DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                  DWIConverter::FileNamesContainer & inputFileNames, const bool useBMatrixGradientDirections );
+  GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
+                 DWIConverter::FileNamesContainer &       inputFileNames,
+                 const bool                               useBMatrixGradientDirections);
 
   ~GEDWIConverter() override;
   void

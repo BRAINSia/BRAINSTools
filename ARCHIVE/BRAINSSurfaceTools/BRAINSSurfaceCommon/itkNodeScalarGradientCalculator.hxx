@@ -27,30 +27,30 @@ namespace itk
 /**
  * Constructor
  */
-template < typename TInputMesh, typename TScalar >
-NodeScalarGradientCalculator< TInputMesh, TScalar >::NodeScalarGradientCalculator()
+template <typename TInputMesh, typename TScalar>
+NodeScalarGradientCalculator<TInputMesh, TScalar>::NodeScalarGradientCalculator()
 {
   this->m_AreaList = AreaListType::New();
   this->m_PointAreaAccumulatorList = CoordRepListType::New();
   this->m_PointDerivativeAccumulatorList = DerivativeListType::New();
 
-  this->m_SphereCenter.Fill( 0.0 );
+  this->m_SphereCenter.Fill(0.0);
   this->m_SphereRadius = 1.0;
 }
 
 /**
  * Destructor
  */
-template < typename TInputMesh, typename TScalar >
-NodeScalarGradientCalculator< TInputMesh, TScalar >::~NodeScalarGradientCalculator()
+template <typename TInputMesh, typename TScalar>
+NodeScalarGradientCalculator<TInputMesh, TScalar>::~NodeScalarGradientCalculator()
 {}
 
 /**
  * Check inputs
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::Initialize()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::Initialize()
 {
   this->VerifyInputs();
   this->AllocateInternalContainers();
@@ -60,36 +60,36 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Initialize()
 /**
  * Check inputs
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::VerifyInputs() const
+NodeScalarGradientCalculator<TInputMesh, TScalar>::VerifyInputs() const
 {
-  if ( this->m_InputMesh.IsNull() )
+  if (this->m_InputMesh.IsNull())
   {
-    itkExceptionMacro( << "NodeScalarGradientCalculator Initialize  m_InputMesh is NULL." );
+    itkExceptionMacro(<< "NodeScalarGradientCalculator Initialize  m_InputMesh is NULL.");
   }
 
-  if ( this->m_DataContainer.IsNull() )
+  if (this->m_DataContainer.IsNull())
   {
-    itkExceptionMacro( << "NodeScalarGradientCalculator Initialize  m_DataContainer is NULL." );
+    itkExceptionMacro(<< "NodeScalarGradientCalculator Initialize  m_DataContainer is NULL.");
   }
 
-  if ( this->m_BasisSystemList.IsNull() )
+  if (this->m_BasisSystemList.IsNull())
   {
-    itkExceptionMacro( << "NodeScalarGradientCalculator Initialize  m_BasisSystemList is NULL." );
+    itkExceptionMacro(<< "NodeScalarGradientCalculator Initialize  m_BasisSystemList is NULL.");
   }
 }
 
 /**
  * Allocate internal Containers
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::AllocateInternalContainers()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::AllocateInternalContainers()
 {
-  this->m_AreaList->Reserve( this->m_InputMesh->GetNumberOfCells() );
-  this->m_PointAreaAccumulatorList->Reserve( this->m_InputMesh->GetNumberOfPoints() );
-  this->m_PointDerivativeAccumulatorList->Reserve( this->m_InputMesh->GetNumberOfPoints() );
+  this->m_AreaList->Reserve(this->m_InputMesh->GetNumberOfCells());
+  this->m_PointAreaAccumulatorList->Reserve(this->m_InputMesh->GetNumberOfPoints());
+  this->m_PointDerivativeAccumulatorList->Reserve(this->m_InputMesh->GetNumberOfPoints());
 
   this->m_AreaList->Squeeze();
   this->m_PointAreaAccumulatorList->Squeeze();
@@ -99,9 +99,9 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::AllocateInternalContainers(
 /**
  * Compute the function
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::Compute()
 {
   this->SetContainersToNullValues();
 
@@ -125,7 +125,7 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
   PointIdentifier        pointIds[numberOfVerticesInTriangle];
   PointType              point[numberOfVerticesInTriangle];
 
-  while ( cellIterator != cellEnd )
+  while (cellIterator != cellEnd)
   {
     CellType * cellPointer = cellIterator.Value();
 
@@ -135,12 +135,12 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
     PointIdIterator pointIdEnd = cellPointer->PointIdsEnd();
 
     unsigned int i = 0;
-    while ( pointIdIterator != pointIdEnd )
+    while (pointIdIterator != pointIdEnd)
     {
       const PointIdentifier pointId = *pointIdIterator;
       pointIds[i] = pointId;
-      pixelValue[i] = this->m_DataContainer->GetElement( pointId );
-      point[i] = this->m_InputMesh->GetPoint( pointId );
+      pixelValue[i] = this->m_DataContainer->GetElement(pointId);
+      point[i] = this->m_InputMesh->GetPoint(pointId);
       i++;
       ++pointIdIterator;
     }
@@ -149,22 +149,22 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
     //
     // contribute to accumulated area around each point of triangle
     //
-    for ( unsigned int ii = 0; ii < numberOfVerticesInTriangle; ii++ )
+    for (unsigned int ii = 0; ii < numberOfVerticesInTriangle; ii++)
     {
-      this->m_PointAreaAccumulatorList->ElementAt( pointIds[ii] ) += area;
+      this->m_PointAreaAccumulatorList->ElementAt(pointIds[ii]) += area;
     }
 
     const TriangleBasisSystemType & basisSystem = basisSystemListIterator.Value();
 
-    const VectorType & u12 = basisSystem.GetVector( 0 );
-    const VectorType & u32 = basisSystem.GetVector( 1 );
+    const VectorType & u12 = basisSystem.GetVector(0);
+    const VectorType & u32 = basisSystem.GetVector(1);
 
     //
     //  Compute the coordinates of the point at the center of the cell.
     //
     const double equalWeight = 1.0 / 3.0;
     PointType    cellCenter;
-    cellCenter.SetToBarycentricCombination( point[0], point[1], point[2], equalWeight, equalWeight );
+    cellCenter.SetToBarycentricCombination(point[0], point[1], point[2], equalWeight, equalWeight);
 
     VectorType vectorToCenter = cellCenter - this->m_SphereCenter;
     vectorToCenter *= this->m_SphereRadius / vectorToCenter.GetNorm();
@@ -179,12 +179,12 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
     vectorToCenterNormalized.Normalize();
 
     InterpolatorType::GetDerivativeFromPixelsAndBasis(
-      pixelValue[0], pixelValue[1], pixelValue[2], u12, u32, derivative );
+      pixelValue[0], pixelValue[1], pixelValue[2], u12, u32, derivative);
 
     const double radialComponent = derivative * vectorToCenterNormalized;
 
     DerivativeType projectedDerivative;
-    for ( unsigned int k = 0; k < MeshDimension; k++ )
+    for (unsigned int k = 0; k < MeshDimension; k++)
     {
       projectedDerivative[k] = derivative[k] - vectorToCenterNormalized[k] * radialComponent;
     }
@@ -195,18 +195,18 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
     // Begin by weighting contribution to point of this triangle by its area.
 
     projectedDerivative *= area;
-    for ( unsigned int ij = 0; ij < numberOfVerticesInTriangle; ij++ )
+    for (unsigned int ij = 0; ij < numberOfVerticesInTriangle; ij++)
     {
       //
       // Parallel transport the derivative vector to each neighbor point
       //
       this->ParalelTransport(
-        cellCenterProjectedInSphere, point[ij], projectedDerivative, parallelTransportedDerivative );
+        cellCenterProjectedInSphere, point[ij], projectedDerivative, parallelTransportedDerivative);
 
       //
       // then accumulate them there.
       //
-      this->m_PointDerivativeAccumulatorList->ElementAt( pointIds[ij] ) += parallelTransportedDerivative;
+      this->m_PointDerivativeAccumulatorList->ElementAt(pointIds[ij]) += parallelTransportedDerivative;
     }
 
     ++cellIterator;
@@ -220,23 +220,23 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::Compute()
 /**
  * Initialize several containers with null values in all their elements.
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::SetContainersToNullValues()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::SetContainersToNullValues()
 {
   using DerivativeValueType = typename DerivativeType::ValueType;
 
   DerivativeType nullDerivative;
-  nullDerivative.Fill( NumericTraits< DerivativeValueType >::ZeroValue() );
+  nullDerivative.Fill(NumericTraits<DerivativeValueType>::ZeroValue());
 
   DerivativeListIterator derivativeItr = this->m_PointDerivativeAccumulatorList->Begin();
   DerivativeListIterator derivativeEnd = this->m_PointDerivativeAccumulatorList->End();
   AreaListIterator       areaItr = this->m_PointAreaAccumulatorList->Begin();
 
-  while ( derivativeItr != derivativeEnd )
+  while (derivativeItr != derivativeEnd)
   {
     derivativeItr.Value() = nullDerivative;
-    areaItr.Value() = NumericTraits< AreaType >::ZeroValue();
+    areaItr.Value() = NumericTraits<AreaType>::ZeroValue();
     ++derivativeItr;
     ++areaItr;
   }
@@ -245,9 +245,9 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::SetContainersToNullValues()
 /**
  * Compute the area of each cell and store them in a container
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::ComputeAreaForAllCells()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::ComputeAreaForAllCells()
 {
   const CellsContainer * cells = this->m_InputMesh->GetCells();
 
@@ -259,7 +259,7 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::ComputeAreaForAllCells()
   CellsContainerConstIterator cellIterator = cells->Begin();
   CellsContainerConstIterator cellEnd = cells->End();
 
-  while ( cellIterator != cellEnd )
+  while (cellIterator != cellEnd)
   {
     CellType * cellPointer = cellIterator.Value();
 
@@ -268,15 +268,15 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::ComputeAreaForAllCells()
     PointIdIterator pointIdEnd = cellPointer->PointIdsEnd();
 
     unsigned int i = 0;
-    while ( pointIdIterator != pointIdEnd )
+    while (pointIdIterator != pointIdEnd)
     {
       const PointIdentifier pointId = *pointIdIterator;
-      point[i] = m_InputMesh->GetPoint( pointId );
+      point[i] = m_InputMesh->GetPoint(pointId);
       i++;
       ++pointIdIterator;
     }
 
-    const AreaType area = TriangleType::ComputeArea( point[0], point[1], point[2] );
+    const AreaType area = TriangleType::ComputeArea(point[0], point[1], point[2]);
 
     areaIterator.Value() = area;
 
@@ -288,15 +288,15 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::ComputeAreaForAllCells()
 /**
  * Compute the function
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::NormalizeDerivativesByTotalArea()
+NodeScalarGradientCalculator<TInputMesh, TScalar>::NormalizeDerivativesByTotalArea()
 {
   DerivativeListIterator derivativeItr = this->m_PointDerivativeAccumulatorList->Begin();
   DerivativeListIterator derivativeEnd = this->m_PointDerivativeAccumulatorList->End();
   AreaListConstIterator  areaItr = this->m_PointAreaAccumulatorList->Begin();
 
-  while ( derivativeItr != derivativeEnd )
+  while (derivativeItr != derivativeEnd)
   {
     derivativeItr.Value() /= areaItr.Value();
     ++derivativeItr;
@@ -304,48 +304,49 @@ NodeScalarGradientCalculator< TInputMesh, TScalar >::NormalizeDerivativesByTotal
   }
 }
 
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::ParalelTransport( const PointType src, const PointType dst,
-                                                                       const DerivativeType & inputVector,
-                                                                       DerivativeType &       transportedVector ) const
+NodeScalarGradientCalculator<TInputMesh, TScalar>::ParalelTransport(const PointType        src,
+                                                                    const PointType        dst,
+                                                                    const DerivativeType & inputVector,
+                                                                    DerivativeType &       transportedVector) const
 {
   VectorType vsrc = src - this->m_SphereCenter;
   VectorType vdst = dst - this->m_SphereCenter;
 
-  VectorType axis = CrossProduct( vsrc, vdst );
+  VectorType axis = CrossProduct(vsrc, vdst);
 
   const double scaledSinus = axis.GetNorm();
   const double scaledCosinus = vsrc * vdst;
 
-  double angle = std::atan2( scaledSinus, scaledCosinus );
+  double angle = std::atan2(scaledSinus, scaledCosinus);
 
-  using VersorType = Versor< double >;
+  using VersorType = Versor<double>;
 
   VersorType versor;
-  versor.Set( axis, angle );
+  versor.Set(axis, angle);
 
-  transportedVector = versor.Transform( inputVector );
+  transportedVector = versor.Transform(inputVector);
 }
 
 /**
  * Compute the function
  */
-template < typename TInputMesh, typename TScalar >
-typename NodeScalarGradientCalculator< TInputMesh, TScalar >::OutputType
-NodeScalarGradientCalculator< TInputMesh, TScalar >::Evaluate( const InputType & input ) const
+template <typename TInputMesh, typename TScalar>
+typename NodeScalarGradientCalculator<TInputMesh, TScalar>::OutputType
+NodeScalarGradientCalculator<TInputMesh, TScalar>::Evaluate(const InputType & input) const
 {
-  return this->m_PointDerivativeAccumulatorList->ElementAt( input );
+  return this->m_PointDerivativeAccumulatorList->ElementAt(input);
 }
 
 /**
  * Standard "PrintSelf" method
  */
-template < typename TInputMesh, typename TScalar >
+template <typename TInputMesh, typename TScalar>
 void
-NodeScalarGradientCalculator< TInputMesh, TScalar >::PrintSelf( std::ostream & os, Indent indent ) const
+NodeScalarGradientCalculator<TInputMesh, TScalar>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  this->Superclass::PrintSelf( os, indent );
+  this->Superclass::PrintSelf(os, indent);
   os << indent << "Input mesh = " << this->m_InputMesh.GetPointer() << std::endl;
   os << indent << "Data Container = " << this->m_DataContainer.GetPointer() << std::endl;
   os << indent << "Basis System List = " << this->m_BasisSystemList.GetPointer() << std::endl;

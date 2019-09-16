@@ -23,7 +23,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( gtractConcatDwiTest );
+  REGISTER_TEST(gtractConcatDwiTest);
 }
 
 #undef main

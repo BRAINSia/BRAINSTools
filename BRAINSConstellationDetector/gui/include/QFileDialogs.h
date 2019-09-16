@@ -34,8 +34,8 @@ class QFileDialogs : public QWidget
 {
   Q_OBJECT
 public:
-  QFileDialogs( QString landmarks = "", QWidget * myParent = nullptr )
-    : QWidget( myParent )
+  QFileDialogs(QString landmarks = "", QWidget * myParent = nullptr)
+    : QWidget(myParent)
   {
     m_landmarks = landmarks;
   }

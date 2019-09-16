@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if defined( _MSC_VER )
-#  pragma warning( disable : 4786 )
+#if defined(_MSC_VER)
+#  pragma warning(disable : 4786)
 #endif
 
 #ifdef __BORLANDC__
@@ -38,13 +38,13 @@
 #include "CleanUpOverlapLabelsCLP.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   // check inputs
-  if ( inputBinaryVolumes.size() != outputBinaryVolumes.size() )
+  if (inputBinaryVolumes.size() != outputBinaryVolumes.size())
   {
     std::cout << "* Error! input and output has to be matched! " << std::endl;
     return EXIT_FAILURE;
@@ -53,42 +53,42 @@ main( int argc, char * argv[] )
 
   constexpr unsigned char Dim = 3;
 
-  using InputBinaryImageType = itk::Image< BinaryPixelType, Dim >;
+  using InputBinaryImageType = itk::Image<BinaryPixelType, Dim>;
 
-  using InputBinaryVolumeReaderType = itk::ImageFileReader< InputBinaryImageType >;
+  using InputBinaryVolumeReaderType = itk::ImageFileReader<InputBinaryImageType>;
 
-  std::vector< InputBinaryImageType::Pointer > inputBinaryVolumeVector;
-  std::vector< std::string >::iterator         inputBinaryVolumeStringIt;
-  for ( inputBinaryVolumeStringIt = inputBinaryVolumes.begin(); inputBinaryVolumeStringIt < inputBinaryVolumes.end();
-        ++inputBinaryVolumeStringIt )
+  std::vector<InputBinaryImageType::Pointer> inputBinaryVolumeVector;
+  std::vector<std::string>::iterator         inputBinaryVolumeStringIt;
+  for (inputBinaryVolumeStringIt = inputBinaryVolumes.begin(); inputBinaryVolumeStringIt < inputBinaryVolumes.end();
+       ++inputBinaryVolumeStringIt)
   {
     std::cout << "* Read image: " << *inputBinaryVolumeStringIt << std::endl;
     InputBinaryVolumeReaderType::Pointer reader = InputBinaryVolumeReaderType::New();
-    reader->SetFileName( *inputBinaryVolumeStringIt );
+    reader->SetFileName(*inputBinaryVolumeStringIt);
     reader->Update();
 
-    inputBinaryVolumeVector.push_back( reader->GetOutput() );
+    inputBinaryVolumeVector.push_back(reader->GetOutput());
   }
 
   // Add all labels
 
-  using ImageDuplicatorType = itk::ImageDuplicator< InputBinaryImageType >;
+  using ImageDuplicatorType = itk::ImageDuplicator<InputBinaryImageType>;
 
   ImageDuplicatorType::Pointer imageCopier = ImageDuplicatorType::New();
-  imageCopier->SetInputImage( inputBinaryVolumeVector.front() );
+  imageCopier->SetInputImage(inputBinaryVolumeVector.front());
   imageCopier->Update();
 
   InputBinaryImageType::Pointer sumVolume = imageCopier->GetOutput();
 
-  using AddImageFilterType = itk::AddImageFilter< InputBinaryImageType, InputBinaryImageType, InputBinaryImageType >;
+  using AddImageFilterType = itk::AddImageFilter<InputBinaryImageType, InputBinaryImageType, InputBinaryImageType>;
 
   AddImageFilterType::Pointer adder = AddImageFilterType::New();
-  for ( unsigned int i = 1; // should start from second image
-        i < inputBinaryVolumeVector.size();
-        ++i )
+  for (unsigned int i = 1; // should start from second image
+       i < inputBinaryVolumeVector.size();
+       ++i)
   {
-    adder->SetInput1( sumVolume );
-    adder->SetInput2( inputBinaryVolumeVector[i] );
+    adder->SetInput1(sumVolume);
+    adder->SetInput2(inputBinaryVolumeVector[i]);
     adder->Update();
 
     sumVolume = adder->GetOutput();
@@ -96,49 +96,49 @@ main( int argc, char * argv[] )
 
   // threshold summed image
 
-  using ThresholdFilterType = itk::BinaryThresholdImageFilter< InputBinaryImageType, InputBinaryImageType >;
+  using ThresholdFilterType = itk::BinaryThresholdImageFilter<InputBinaryImageType, InputBinaryImageType>;
 
   ThresholdFilterType::Pointer thresholder = ThresholdFilterType::New();
-  thresholder->SetInput( sumVolume );
-  thresholder->SetOutsideValue( 0 );
-  thresholder->SetInsideValue( 1 );
-  thresholder->SetLowerThreshold( 1 );
+  thresholder->SetInput(sumVolume);
+  thresholder->SetOutsideValue(0);
+  thresholder->SetInsideValue(1);
+  thresholder->SetLowerThreshold(1);
 
   thresholder->Update();
   sumVolume = thresholder->GetOutput();
 
   // process one label at a time
 
-  using AndImageFilterType = itk::AndImageFilter< InputBinaryImageType, InputBinaryImageType, InputBinaryImageType >;
+  using AndImageFilterType = itk::AndImageFilter<InputBinaryImageType, InputBinaryImageType, InputBinaryImageType>;
 
-  using XORImageFilterType = itk::XorImageFilter< InputBinaryImageType, InputBinaryImageType, InputBinaryImageType >;
+  using XORImageFilterType = itk::XorImageFilter<InputBinaryImageType, InputBinaryImageType, InputBinaryImageType>;
 
-  using WriterType = itk::ImageFileWriter< InputBinaryImageType >;
-  for ( unsigned int i = 0; i < inputBinaryVolumeVector.size(); ++i )
+  using WriterType = itk::ImageFileWriter<InputBinaryImageType>;
+  for (unsigned int i = 0; i < inputBinaryVolumeVector.size(); ++i)
   {
     // write out overlap between current mask and summed mask
     ThresholdFilterType::Pointer maskThresholder = ThresholdFilterType::New();
-    maskThresholder->SetInput( inputBinaryVolumeVector[i] );
-    maskThresholder->SetOutsideValue( 0 );
-    maskThresholder->SetInsideValue( 1 );
-    maskThresholder->SetLowerThreshold( 1 );
+    maskThresholder->SetInput(inputBinaryVolumeVector[i]);
+    maskThresholder->SetOutsideValue(0);
+    maskThresholder->SetInsideValue(1);
+    maskThresholder->SetLowerThreshold(1);
 
     AndImageFilterType::Pointer andFilter = AndImageFilterType::New();
-    andFilter->SetInput( 0, sumVolume );
-    andFilter->SetInput( 1, maskThresholder->GetOutput() );
+    andFilter->SetInput(0, sumVolume);
+    andFilter->SetInput(1, maskThresholder->GetOutput());
     andFilter->Update();
 
     std::cout << "Write binary volume : " << outputBinaryVolumes[i] << std::endl;
 
     WriterType::Pointer writer = WriterType::New();
-    writer->SetInput( andFilter->GetOutput() );
-    writer->SetFileName( outputBinaryVolumes[i] );
+    writer->SetInput(andFilter->GetOutput());
+    writer->SetFileName(outputBinaryVolumes[i]);
     writer->Update();
 
     // subtract current mask from the summed mask
     XORImageFilterType::Pointer xorFilter = XORImageFilterType::New();
-    xorFilter->SetInput1( sumVolume );
-    xorFilter->SetInput2( maskThresholder->GetOutput() );
+    xorFilter->SetInput1(sumVolume);
+    xorFilter->SetInput2(maskThresholder->GetOutput());
 
     xorFilter->Update();
 

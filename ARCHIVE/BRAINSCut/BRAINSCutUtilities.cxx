@@ -22,9 +22,9 @@
 // read/warp image
 //
 WorkingImagePointer
-SmoothImage( const WorkingImagePointer & image, const float GaussianValue )
+SmoothImage(const WorkingImagePointer & image, const float GaussianValue)
 {
-  if ( GaussianValue < 0 + FLOAT_TOLERANCE )
+  if (GaussianValue < 0 + FLOAT_TOLERANCE)
   {
     std::cout << "Gaussian value is less than tolerance. "
               << "No smoothing occurs at this time" << std::endl;
@@ -33,11 +33,11 @@ SmoothImage( const WorkingImagePointer & image, const float GaussianValue )
   /*std::cout<<"Smooth Image with Gaussian value of :: "
            << GaussianValue
            <<std::endl;*/
-  using SmoothingFilterType = itk::SmoothingRecursiveGaussianImageFilter< WorkingImageType, WorkingImageType >;
+  using SmoothingFilterType = itk::SmoothingRecursiveGaussianImageFilter<WorkingImageType, WorkingImageType>;
   SmoothingFilterType::Pointer smoothingFilter = SmoothingFilterType::New();
 
-  smoothingFilter->SetInput( image );
-  smoothingFilter->SetSigma( GaussianValue );
+  smoothingFilter->SetInput(image);
+  smoothingFilter->SetSigma(GaussianValue);
 
   smoothingFilter->Update();
 
@@ -45,7 +45,7 @@ SmoothImage( const WorkingImagePointer & image, const float GaussianValue )
 }
 
 WorkingImagePointer
-ReadImageByFilename( const std::string & filename )
+ReadImageByFilename(const std::string & filename)
 {
   std::cout << "********************************************************" << std::endl;
   std::cout << "ReadImageByFilename::: " << filename << std::endl;
@@ -53,44 +53,42 @@ ReadImageByFilename( const std::string & filename )
 
   WorkingImagePointer readInImage;
 
-  ReadInImagePointer inputImage = itkUtil::ReadImage< ReadInImageType >( filename.c_str() );
+  ReadInImagePointer inputImage = itkUtil::ReadImage<ReadInImageType>(filename.c_str());
 
-  readInImage = itkUtil::ScaleAndCast< ReadInImageType, WorkingImageType >( inputImage, 0.0F, 1.0F );
+  readInImage = itkUtil::ScaleAndCast<ReadInImageType, WorkingImageType>(inputImage, 0.0F, 1.0F);
   return readInImage;
 }
 
 /* inline functions */
 
 DisplacementFieldType::Pointer
-GetDeformationField( std::string filename )
+GetDeformationField(std::string filename)
 {
-  const bool useTransform( filename.find( ".mat" ) == std::string::npos ||
-                           filename.find( ".h5" ) == std::string::npos );
+  const bool useTransform(filename.find(".mat") == std::string::npos || filename.find(".h5") == std::string::npos);
 
-  if ( useTransform )
+  if (useTransform)
   {
     std::cout << "Return null deformation. Use transformation instead." << std::endl;
     return nullptr;
   }
-  using DeformationReaderType = itk::ImageFileReader< DisplacementFieldType >;
+  using DeformationReaderType = itk::ImageFileReader<DisplacementFieldType>;
   DeformationReaderType::Pointer deformationReader = DeformationReaderType::New();
-  deformationReader->SetFileName( filename );
+  deformationReader->SetFileName(filename);
   deformationReader->Update();
 
   return deformationReader->GetOutput();
 }
 
-itk::Transform< double, 3, 3 >::Pointer
-GetGenericTransform( std::string filename )
+itk::Transform<double, 3, 3>::Pointer
+GetGenericTransform(std::string filename)
 {
-  const bool useDeformation(
-    filename.find( ".mat" ) != std::string::npos && filename.find( ".h5" ) != std::string::npos &&
-    filename.find( ".hdf5" ) != std::string::npos && filename.find( ".txt" ) != std::string::npos );
+  const bool useDeformation(filename.find(".mat") != std::string::npos && filename.find(".h5") != std::string::npos &&
+                            filename.find(".hdf5") != std::string::npos && filename.find(".txt") != std::string::npos);
 
-  if ( useDeformation )
+  if (useDeformation)
   {
     std::cout << "Return null transformation. Use deformation instead." << std::endl;
     return nullptr;
   }
-  return itk::ReadTransformFromDisk( filename );
+  return itk::ReadTransformFromDisk(filename);
 }

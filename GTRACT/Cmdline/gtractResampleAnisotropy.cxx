@@ -48,14 +48,14 @@
 #include "GenericTransformImage.h"
 #include "BRAINSThreadControl.h"
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "==============================================================" << std::endl;
     std::cout << "Input Image: " << inputAnisotropyVolume << std::endl;
@@ -67,43 +67,43 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputAnisotropyVolume.size() == 0 )
+  if (inputAnisotropyVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputAnisotropyVolume Required! " << std::endl;
   }
-  if ( inputAnatomicalVolume.size() == 0 )
+  if (inputAnatomicalVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputAnatomicalVolume Required! " << std::endl;
   }
-  if ( inputTransform.size() == 0 )
+  if (inputTransform.size() == 0)
   {
     violated = true;
     std::cout << "  --inputTransform Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   using AnisotropyPixelType = float;
 
-  using AnisotropyImageType = itk::Image< AnisotropyPixelType, 3 >;
-  using AnisotropyImageReaderType = itk::ImageFileReader< AnisotropyImageType >;
+  using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
+  using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
   AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
-  anisotropyImageReader->SetFileName( inputAnisotropyVolume );
+  anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
   {
     anisotropyImageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -111,40 +111,40 @@ main( int argc, char * argv[] )
 
   using PixelType = signed short;
 
-  using ImageType = itk::Image< PixelType, 3 >;
-  using AnatomicalImageReaderType = itk::ImageFileReader< ImageType >;
+  using ImageType = itk::Image<PixelType, 3>;
+  using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
   AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
-  anatomicalReader->SetFileName( inputAnatomicalVolume );
+  anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
   {
     anatomicalReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
   }
 
   // Read the transform
-  using GenericTransformType = itk::Transform< double, 3, 3 >;
-  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk( inputTransform );
+  using GenericTransformType = itk::Transform<double, 3, 3>;
+  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
-  using AnisotropyImageType = itk::Image< float, 3 >;
-  using ResampleFilterType = itk::ResampleImageFilter< AnisotropyImageType, AnisotropyImageType >;
+  using AnisotropyImageType = itk::Image<float, 3>;
+  using ResampleFilterType = itk::ResampleImageFilter<AnisotropyImageType, AnisotropyImageType>;
 
   ResampleFilterType::Pointer resample = ResampleFilterType::New();
   {
-    resample->SetTransform( baseTransform );
+    resample->SetTransform(baseTransform);
   }
-  resample->SetInput( anisotropyImageReader->GetOutput() );
-  resample->SetOutputParametersFromImage( anatomicalReader->GetOutput() );
-  resample->SetDefaultPixelValue( 0 );
+  resample->SetInput(anisotropyImageReader->GetOutput());
+  resample->SetOutputParametersFromImage(anatomicalReader->GetOutput());
+  resample->SetDefaultPixelValue(0);
   try
   {
     resample->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -152,18 +152,18 @@ main( int argc, char * argv[] )
   }
 
   AnisotropyImageType::Pointer resampledImage = resample->GetOutput();
-  resampledImage->SetMetaDataDictionary( anatomicalReader->GetOutput()->GetMetaDataDictionary() );
+  resampledImage->SetMetaDataDictionary(anatomicalReader->GetOutput()->GetMetaDataDictionary());
 
-  using ImageFileWriterType = itk::ImageFileWriter< AnisotropyImageType >;
+  using ImageFileWriterType = itk::ImageFileWriter<AnisotropyImageType>;
   ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
-  ImageWriter->SetFileName( outputVolume );
-  ImageWriter->SetInput( resampledImage );
+  ImageWriter->SetFileName(outputVolume);
+  ImageWriter->SetInput(resampledImage);
   try
   {
     ImageWriter->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

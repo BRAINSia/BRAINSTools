@@ -23,7 +23,7 @@
 class GenericDWIConverter : public DWIConverter
 {
 public:
-  GenericDWIConverter( DWIConverter::FileNamesContainer & inputFileNames );
+  GenericDWIConverter(DWIConverter::FileNamesContainer & inputFileNames);
 
   void
   LoadFromDisk() override;

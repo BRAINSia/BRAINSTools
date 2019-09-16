@@ -43,14 +43,14 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Generate a labelmap out of label files:" << std::endl;
-  for ( unsigned int i = 0; i < labelFileList.size(); i++ )
+  for (unsigned int i = 0; i < labelFileList.size(); i++)
   {
     std::cout << labelFileList[i] << std::endl;
   }
@@ -61,33 +61,33 @@ main( int argc, char * argv[] )
   // define image type
   constexpr int dimension = 3;
   using PixelType = unsigned char;
-  using ImageType = itk::Image< PixelType, dimension >;
+  using ImageType = itk::Image<PixelType, dimension>;
 
   // read Inputimage
-  using InputReaderType = itk::ImageFileReader< ImageType >;
+  using InputReaderType = itk::ImageFileReader<ImageType>;
 
-  using FilterType = itk::NaryRelabelImageFilter< ImageType, ImageType >;
+  using FilterType = itk::NaryRelabelImageFilter<ImageType, ImageType>;
   FilterType::Pointer filter = FilterType::New();
-  for ( int i = 0; i < nLabels; i++ )
+  for (int i = 0; i < nLabels; i++)
   {
     InputReaderType::Pointer InputReader = InputReaderType::New();
 
     // input i
-    InputReader->SetFileName( labelFileList[i] );
+    InputReader->SetFileName(labelFileList[i]);
     InputReader->Update();
 
-    filter->SetInput( i, InputReader->GetOutput() );
+    filter->SetInput(i, InputReader->GetOutput());
   }
 
-  filter->SetBackgroundValue( 0.0 );
-  filter->SetIgnoreCollision( 1 ); // has to be 1
+  filter->SetBackgroundValue(0.0);
+  filter->SetIgnoreCollision(1); // has to be 1
 
-  itk::SimpleFilterWatcher watcher( filter, "filter" );
+  itk::SimpleFilterWatcher watcher(filter, "filter");
 
-  using OutputWriterType = itk::ImageFileWriter< ImageType >;
+  using OutputWriterType = itk::ImageFileWriter<ImageType>;
   OutputWriterType::Pointer Writer = OutputWriterType::New();
-  Writer->SetInput( filter->GetOutput() );
-  Writer->SetFileName( outputImageFile.c_str() );
+  Writer->SetInput(filter->GetOutput());
+  Writer->SetFileName(outputImageFile.c_str());
   Writer->Update();
 
   return EXIT_SUCCESS;

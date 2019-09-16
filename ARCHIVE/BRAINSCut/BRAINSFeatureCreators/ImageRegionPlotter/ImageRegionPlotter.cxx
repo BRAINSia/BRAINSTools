@@ -58,12 +58,12 @@
  *  get Path function
  */
 std::string
-GetPath( const std::string & filename )
+GetPath(const std::string & filename)
 {
   size_t found;
 
-  found = filename.find_last_of( "/" );
-  return filename.substr( 0, found );
+  found = filename.find_last_of("/");
+  return filename.substr(0, found);
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////////
@@ -71,24 +71,26 @@ GetPath( const std::string & filename )
  *  get Filename function
  */
 std::string
-GetFilename( const std::string & filename )
+GetFilename(const std::string & filename)
 {
   size_t found;
 
-  found = filename.find_last_of( "/" );
-  return filename.substr( found + 1 );
+  found = filename.find_last_of("/");
+  return filename.substr(found + 1);
 }
 
 // ///////////////////////////////////////////////////////////////////////////////////////
 /*
  * Histogram Mapping to Image
  */
-template < typename TImageType, typename THistogram >
+template <typename TImageType, typename THistogram>
 typename TImageType::Pointer
-MapHistogramToImage( typename TImageType::Pointer inputImage, typename THistogram::Pointer histogram,
-                     std::string mapFilename, bool verbose )
+MapHistogramToImage(typename TImageType::Pointer inputImage,
+                    typename THistogram::Pointer histogram,
+                    std::string                  mapFilename,
+                    bool                         verbose)
 {
-  itk::NumberToString< double > doubleToString;
+  itk::NumberToString<double> doubleToString;
 
   /* ------------------------------------------------------------------------
    * Make Look Up Table
@@ -96,20 +98,20 @@ MapHistogramToImage( typename TImageType::Pointer inputImage, typename THistogra
 
   // Fine Maximum of Intensity
 
-  using MaxCalculatorType = typename itk::MinimumMaximumImageCalculator< TImageType >;
+  using MaxCalculatorType = typename itk::MinimumMaximumImageCalculator<TImageType>;
 
   typename MaxCalculatorType::Pointer minmaxFilter = MaxCalculatorType::New();
 
-  minmaxFilter->SetImage( inputImage );
+  minmaxFilter->SetImage(inputImage);
   minmaxFilter->Compute();
-  const int Image_MAXIMUM = static_cast< int >( ceil( minmaxFilter->GetMaximum() ) );
-  const int Image_MINIMUM = static_cast< int >( ceil( minmaxFilter->GetMinimum() ) );
+  const int Image_MAXIMUM = static_cast<int>(ceil(minmaxFilter->GetMaximum()));
+  const int Image_MINIMUM = static_cast<int>(ceil(minmaxFilter->GetMinimum()));
 
   std::cout << "Maximum Image Intensity :" << Image_MAXIMUM << std::endl;
   // Fixed Number of Maximum Number of Intensity
-  if ( ( Image_MAXIMUM - Image_MINIMUM ) > MAXIMUM_NUMBER_OF_INTENSITY )
+  if ((Image_MAXIMUM - Image_MINIMUM) > MAXIMUM_NUMBER_OF_INTENSITY)
   {
-    itkGenericExceptionMacro( << "Range of Values are Too Large! " << Image_MINIMUM << " " << Image_MAXIMUM );
+    itkGenericExceptionMacro(<< "Range of Values are Too Large! " << Image_MINIMUM << " " << Image_MAXIMUM);
   }
 
   // Compute Quantiles
@@ -122,26 +124,26 @@ MapHistogramToImage( typename TImageType::Pointer inputImage, typename THistogra
   // - Generate Look Up Table
 
   std::ofstream mapOutFileStream;
-  mapOutFileStream.open( mapFilename.c_str() );
+  mapOutFileStream.open(mapFilename.c_str());
 
   mapOutFileStream << "intensity, quantile " << std::endl;
 
   int intensity = Image_MINIMUM;
-  for ( double quantile = 0.0; quantile < 1.0F; quantile = quantile + 0.01F )
+  for (double quantile = 0.0; quantile < 1.0F; quantile = quantile + 0.01F)
   {
-    double intensityAtQuantile = histogram->Quantile( 0, quantile );
-    while ( intensity < ceil( intensityAtQuantile ) )
+    double intensityAtQuantile = histogram->Quantile(0, quantile);
+    while (intensity < ceil(intensityAtQuantile))
     {
       lookUpTable[intensity] = quantile * 100;
       intensity++;
     }
 
-    if ( verbose )
+    if (verbose)
     {
-      std::cout << doubleToString( intensity ) << " <--> " << doubleToString( quantile ) << std::endl;
+      std::cout << doubleToString(intensity) << " <--> " << doubleToString(quantile) << std::endl;
     }
 
-    mapOutFileStream << doubleToString( intensity ) << "," << doubleToString( quantile ) << std::endl;
+    mapOutFileStream << doubleToString(intensity) << "," << doubleToString(quantile) << std::endl;
   }
   mapOutFileStream.close();
 
@@ -150,23 +152,23 @@ MapHistogramToImage( typename TImageType::Pointer inputImage, typename THistogra
      ------------------------------------------------------------------------*/
 
   typename TImageType::Pointer outputImage = TImageType::New();
-  outputImage->SetRegions( inputImage->GetLargestPossibleRegion() );
-  outputImage->SetSpacing( inputImage->GetSpacing() );
-  outputImage->SetOrigin( inputImage->GetOrigin() );
-  outputImage->SetDirection( inputImage->GetDirection() );
+  outputImage->SetRegions(inputImage->GetLargestPossibleRegion());
+  outputImage->SetSpacing(inputImage->GetSpacing());
+  outputImage->SetOrigin(inputImage->GetOrigin());
+  outputImage->SetDirection(inputImage->GetDirection());
   outputImage->Allocate();
-  outputImage->FillBuffer( 0.0 );
+  outputImage->FillBuffer(0.0);
 
-  using IteratorType = typename itk::ImageRegionIterator< TImageType >;
+  using IteratorType = typename itk::ImageRegionIterator<TImageType>;
 
-  IteratorType input_iterator( inputImage, inputImage->GetLargestPossibleRegion() );
+  IteratorType input_iterator(inputImage, inputImage->GetLargestPossibleRegion());
 
-  IteratorType output_iterator( outputImage, inputImage->GetLargestPossibleRegion() );
-  for ( input_iterator.GoToBegin(), output_iterator.GoToBegin(); !input_iterator.IsAtEnd();
-        ++input_iterator, ++output_iterator )
+  IteratorType output_iterator(outputImage, inputImage->GetLargestPossibleRegion());
+  for (input_iterator.GoToBegin(), output_iterator.GoToBegin(); !input_iterator.IsAtEnd();
+       ++input_iterator, ++output_iterator)
   {
     typename TImageType::PixelType currentIntensity = input_iterator.Get();
-    output_iterator.Set( lookUpTable[(int)floor( currentIntensity )] );
+    output_iterator.Set(lookUpTable[(int)floor(currentIntensity)]);
   }
 
   return outputImage;
@@ -177,17 +179,17 @@ MapHistogramToImage( typename TImageType::Pointer inputImage, typename THistogra
  * main function
  */
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   // define image with type of voxel
   using PixelType = double;
   constexpr int Dimension = 3;
-  using ImageType = itk::Image< PixelType, Dimension >;
+  using ImageType = itk::Image<PixelType, Dimension>;
 
   // there has to be two input volumes and label volume
-  if ( ( !inputLabelVolume.empty() ) && ( !inputVolume1.empty() ) && ( !inputVolume2.empty() ) )
+  if ((!inputLabelVolume.empty()) && (!inputVolume1.empty()) && (!inputVolume2.empty()))
   {
     // print volume names
 
@@ -196,44 +198,44 @@ main( int argc, char * argv[] )
               << "* Label Image Filename : " << inputLabelVolume << std::endl;
 
     // Image Reader for inputVolumes
-    using ImageReaderType = itk::ImageFileReader< ImageType >;
+    using ImageReaderType = itk::ImageFileReader<ImageType>;
 
     ImageReaderType::Pointer imageReader1 = ImageReaderType::New();
-    imageReader1->SetFileName( inputVolume1 );
+    imageReader1->SetFileName(inputVolume1);
 
     imageReader1->Update();
 
     ImageReaderType::Pointer imageReader2 = ImageReaderType::New();
-    imageReader2->SetFileName( inputVolume2 );
+    imageReader2->SetFileName(inputVolume2);
 
     imageReader2->Update();
 
     // Rescale input images between 0-4095
 
     using ProcessingPixelType = unsigned int;
-    using ProcessingImageType = itk::Image< ProcessingPixelType, Dimension >;
-    using RescalerType = itk::RescaleIntensityImageFilter< ImageType, ProcessingImageType >;
+    using ProcessingImageType = itk::Image<ProcessingPixelType, Dimension>;
+    using RescalerType = itk::RescaleIntensityImageFilter<ImageType, ProcessingImageType>;
 
     constexpr unsigned int MIN = 0;
     constexpr unsigned int MAX = 4095;
 
     RescalerType::Pointer image1Rescaler = RescalerType::New();
 
-    image1Rescaler->SetInput( imageReader1->GetOutput() );
-    image1Rescaler->SetOutputMinimum( MIN );
-    image1Rescaler->SetOutputMaximum( MAX );
+    image1Rescaler->SetInput(imageReader1->GetOutput());
+    image1Rescaler->SetOutputMinimum(MIN);
+    image1Rescaler->SetOutputMaximum(MAX);
 
     RescalerType::Pointer image2Rescaler = RescalerType::New();
 
-    image2Rescaler->SetInput( imageReader2->GetOutput() );
-    image2Rescaler->SetOutputMinimum( MIN );
-    image2Rescaler->SetOutputMaximum( MAX );
+    image2Rescaler->SetInput(imageReader2->GetOutput());
+    image2Rescaler->SetOutputMinimum(MIN);
+    image2Rescaler->SetOutputMaximum(MAX);
 
     // read in input label image
-    using LabelReaderType = itk::ImageFileReader< ProcessingImageType >;
+    using LabelReaderType = itk::ImageFileReader<ProcessingImageType>;
     LabelReaderType::Pointer labelReader = LabelReaderType::New();
 
-    labelReader->SetFileName( inputLabelVolume );
+    labelReader->SetFileName(inputLabelVolume);
 
     labelReader->Update();
 
@@ -243,28 +245,28 @@ main( int argc, char * argv[] )
     // - binary image type used for ROI
 
     using BinaryPixelType = unsigned char;
-    using ROIImageType = itk::Image< BinaryPixelType, Dimension >;
+    using ROIImageType = itk::Image<BinaryPixelType, Dimension>;
 
     ROIImageType::ConstPointer roiVolume;
 
     // case 1: given inputBinaryROIVolume
 
-    if ( !inputBinaryROIVolume.empty() )
+    if (!inputBinaryROIVolume.empty())
     {
       std::cout << "* Input Binary ROI Filename " << inputBinaryROIVolume << std::endl;
-      using ROIReaderType = itk::ImageFileReader< ROIImageType >;
+      using ROIReaderType = itk::ImageFileReader<ROIImageType>;
       ROIReaderType::Pointer roiReader = ROIReaderType::New();
 
-      roiReader->SetFileName( inputBinaryROIVolume );
+      roiReader->SetFileName(inputBinaryROIVolume);
       roiReader->Update();
 
-      using ThresholdType = itk::BinaryThresholdImageFilter< ROIImageType, ROIImageType >;
+      using ThresholdType = itk::BinaryThresholdImageFilter<ROIImageType, ROIImageType>;
       ThresholdType::Pointer thresholder = ThresholdType::New();
 
-      thresholder->SetInput( roiReader->GetOutput() );
-      thresholder->SetLowerThreshold( 1 );
-      thresholder->SetOutsideValue( 0 );
-      thresholder->SetInsideValue( 1 );
+      thresholder->SetInput(roiReader->GetOutput());
+      thresholder->SetLowerThreshold(1);
+      thresholder->SetOutsideValue(0);
+      thresholder->SetInsideValue(1);
       thresholder->Update();
 
       roiVolume = thresholder->GetOutput();
@@ -272,11 +274,11 @@ main( int argc, char * argv[] )
     else
     {
       // case 2: use ROIAUTO without any given binary image
-      using ROIAutoType = itk::BRAINSROIAutoImageFilter< ProcessingImageType, ROIImageType >;
+      using ROIAutoType = itk::BRAINSROIAutoImageFilter<ProcessingImageType, ROIImageType>;
 
       ROIAutoType::Pointer image1_ROIFilter = ROIAutoType::New();
 
-      image1_ROIFilter->SetInput( image1Rescaler->GetOutput() );
+      image1_ROIFilter->SetInput(image1Rescaler->GetOutput());
 
       image1_ROIFilter->Update();
 
@@ -288,105 +290,105 @@ main( int argc, char * argv[] )
     ProcessingImageType::Pointer mapper1;
     ProcessingImageType::Pointer mapper2;
 
-    if ( !useIntensityForHistogram )
+    if (!useIntensityForHistogram)
     {
       // typedef itk::Statistics::ScalarImagePortionToHistogramGenerator<
       // ProcessingImageType ,
       //                                                               MaskType>
       //                                                 histogramGeneratorType;
-      using histogramGeneratorType = itk::LabelStatisticsImageFilter< ProcessingImageType, ROIImageType >;
+      using histogramGeneratorType = itk::LabelStatisticsImageFilter<ProcessingImageType, ROIImageType>;
 
       histogramGeneratorType::Pointer histogramGenerator1 = histogramGeneratorType::New();
 
-      histogramGenerator1->SetInput( image1Rescaler->GetOutput() );
-      histogramGenerator1->SetLabelInput( roiVolume );
+      histogramGenerator1->SetInput(image1Rescaler->GetOutput());
+      histogramGenerator1->SetLabelInput(roiVolume);
 
-      histogramGenerator1->SetHistogramParameters( numberOfHistogramBins, MIN, MAX );
+      histogramGenerator1->SetHistogramParameters(numberOfHistogramBins, MIN, MAX);
       histogramGenerator1->UseHistogramsOn();
       histogramGenerator1->Update();
 
       histogramGeneratorType::Pointer histogramGenerator2 = histogramGeneratorType::New();
 
-      histogramGenerator2->SetInput( image2Rescaler->GetOutput() );
-      histogramGenerator2->SetLabelInput( roiVolume );
-      histogramGenerator2->SetHistogramParameters( numberOfHistogramBins, MIN, MAX );
+      histogramGenerator2->SetInput(image2Rescaler->GetOutput());
+      histogramGenerator2->SetLabelInput(roiVolume);
+      histogramGenerator2->SetHistogramParameters(numberOfHistogramBins, MIN, MAX);
       histogramGenerator2->UseHistogramsOn();
 
       histogramGenerator2->Update();
       // * Generate Mapping Table from Intensity to Quantile
       ProcessingImageType::Pointer image1 = image1Rescaler->GetOutput();
 
-      histogramGeneratorType::HistogramPointer histogram1 = histogramGenerator1->GetHistogram( 1 );
+      histogramGeneratorType::HistogramPointer histogram1 = histogramGenerator1->GetHistogram(1);
 
-      mapper1 = MapHistogramToImage< ProcessingImageType, histogramGeneratorType::HistogramType >(
-        image1, histogram1, outputJointHistogramData + "map1.txt", verbose );
+      mapper1 = MapHistogramToImage<ProcessingImageType, histogramGeneratorType::HistogramType>(
+        image1, histogram1, outputJointHistogramData + "map1.txt", verbose);
 
       ProcessingImageType::Pointer image2 = image2Rescaler->GetOutput();
 
-      histogramGeneratorType::HistogramPointer histogram2 = histogramGenerator2->GetHistogram( 1 );
+      histogramGeneratorType::HistogramPointer histogram2 = histogramGenerator2->GetHistogram(1);
 
-      mapper2 = MapHistogramToImage< ProcessingImageType, histogramGeneratorType::HistogramType >(
-        image2, histogram2, outputJointHistogramData + "map2.txt", verbose );
+      mapper2 = MapHistogramToImage<ProcessingImageType, histogramGeneratorType::HistogramType>(
+        image2, histogram2, outputJointHistogramData + "map2.txt", verbose);
     }
     // * Iterator For Label Map
 
     // TODO [useIntensityForHistogram] used, produce intensity based histogram
     // as well
-    using ConstIteratorType = itk::ImageRegionIterator< ProcessingImageType >;
-    ConstIteratorType label_iterator( labelReader->GetOutput(), labelReader->GetOutput()->GetLargestPossibleRegion() );
+    using ConstIteratorType = itk::ImageRegionIterator<ProcessingImageType>;
+    ConstIteratorType label_iterator(labelReader->GetOutput(), labelReader->GetOutput()->GetLargestPossibleRegion());
 
     // Rescale Input Images
-    using OutputImageType = itk::Image< unsigned int, 3 >;
-    using RescaleFilterType = itk::RescaleIntensityImageFilter< ProcessingImageType, OutputImageType >;
+    using OutputImageType = itk::Image<unsigned int, 3>;
+    using RescaleFilterType = itk::RescaleIntensityImageFilter<ProcessingImageType, OutputImageType>;
 
     RescaleFilterType::Pointer rescaler1 = RescaleFilterType::New();
 
     // Produce Joint Histogram of Intensity Values
 
-    if ( useIntensityForHistogram )
+    if (useIntensityForHistogram)
     {
-      rescaler1->SetInput( image1Rescaler->GetOutput() );
+      rescaler1->SetInput(image1Rescaler->GetOutput());
     } // Produce Joint Histogram of Quantiles[ default ]
     else
     {
-      rescaler1->SetInput( mapper1 );
+      rescaler1->SetInput(mapper1);
     }
 
-    rescaler1->SetOutputMaximum( 100 );
-    rescaler1->SetOutputMinimum( 0 );
+    rescaler1->SetOutputMaximum(100);
+    rescaler1->SetOutputMinimum(0);
     rescaler1->Update();
 
     RescaleFilterType::Pointer rescaler2 = RescaleFilterType::New();
 
     // Produce Joint Histogram of Intensity Values
 
-    if ( useIntensityForHistogram )
+    if (useIntensityForHistogram)
     {
-      rescaler2->SetInput( image2Rescaler->GetOutput() );
+      rescaler2->SetInput(image2Rescaler->GetOutput());
     } // Produce Joint Histogram of Quantiles[ default ]
     else
     {
-      rescaler2->SetInput( mapper2 );
+      rescaler2->SetInput(mapper2);
     }
 
-    rescaler2->SetOutputMaximum( 100 );
-    rescaler2->SetOutputMinimum( 0 );
+    rescaler2->SetOutputMaximum(100);
+    rescaler2->SetOutputMinimum(0);
     rescaler2->Update();
 
     // Start Iterator
-    using LabelMapType = std::map< int, int >;
+    using LabelMapType = std::map<int, int>;
     LabelMapType labelIndex;
     int          new_key = 0;
 
     int HistogramArray[MAXIMUMLABELNUMBER][101][101] = { { { 0 } } };
-    for ( label_iterator.GoToBegin(); !label_iterator.IsAtEnd(); ++label_iterator )
+    for (label_iterator.GoToBegin(); !label_iterator.IsAtEnd(); ++label_iterator)
     {
-      if ( label_iterator.Get() != 0 )
+      if (label_iterator.Get() != 0)
       {
         int temp_label = label_iterator.Get();
-        if ( labelIndex.find( temp_label ) == labelIndex.end() )
+        if (labelIndex.find(temp_label) == labelIndex.end())
         {
-          if ( verbose )
+          if (verbose)
           {
             std::cout << "New Key Found : " << temp_label << std::endl;
           }
@@ -394,8 +396,8 @@ main( int argc, char * argv[] )
           new_key++;
         }
 
-        int temp_image1_intensity = rescaler1->GetOutput()->GetPixel( label_iterator.GetIndex() );
-        int temp_image2_intensity = rescaler2->GetOutput()->GetPixel( label_iterator.GetIndex() );
+        int temp_image1_intensity = rescaler1->GetOutput()->GetPixel(label_iterator.GetIndex());
+        int temp_image2_intensity = rescaler2->GetOutput()->GetPixel(label_iterator.GetIndex());
 
         HistogramArray[labelIndex[temp_label]][temp_image1_intensity][temp_image2_intensity]++;
 
@@ -413,10 +415,10 @@ main( int argc, char * argv[] )
 
     // - open file stream and write to the file
     std::ofstream outputFileStream;
-    outputFileStream.open( outputJointHistogramData.c_str() );
+    outputFileStream.open(outputJointHistogramData.c_str());
 
-    const std::string IMAGE_FILENAME1 = GetFilename( inputVolume1 );
-    const std::string IMAGE_FILENAME2 = GetFilename( inputVolume2 );
+    const std::string IMAGE_FILENAME1 = GetFilename(inputVolume1);
+    const std::string IMAGE_FILENAME2 = GetFilename(inputVolume2);
     // const std::string LABEL_MAP_FILENAME = GetFilename( inputLabelVolume );
 
     // - write header line 1: including image names
@@ -427,7 +429,7 @@ main( int argc, char * argv[] )
     // - write header line 2: colume name
 
     std::string FrequencyName = "Frequence";
-    if ( useIntensityForHistogram )
+    if (useIntensityForHistogram)
     {
       FrequencyName += "OfIntensity";
     }
@@ -438,12 +440,12 @@ main( int argc, char * argv[] )
 
     outputFileStream << "label, " << IMAGE_FILENAME1 << ", " << IMAGE_FILENAME2 << ", " << FrequencyName << std::endl;
     // - Iterate for each label type
-    for ( LabelMapType::iterator iter = labelIndex.begin(); iter != labelIndex.end(); ++iter )
+    for (LabelMapType::iterator iter = labelIndex.begin(); iter != labelIndex.end(); ++iter)
     {
       // - Iterate for each bins
-      for ( int i = 0; i < 101; i++ )
+      for (int i = 0; i < 101; i++)
       {
-        for ( int j = 0; j < 101; j++ )
+        for (int j = 0; j < 101; j++)
         {
           // - Write text file
 

@@ -48,5 +48,5 @@ void mexFunction(int nlhs,
   int nrhs,
   Matrix *prhs[])
 {
-  mexPrintf( "Hello world" );
+  mexPrintf("Hello world");
 }

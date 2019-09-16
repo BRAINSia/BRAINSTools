@@ -22,7 +22,7 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "itkConnectedThresholdImageFilter.h"
 
-vtkStandardNewMacro( vtkITKWandImageFilter );
+vtkStandardNewMacro(vtkITKWandImageFilter);
 
 // Description:
 vtkITKWandImageFilter::vtkITKWandImageFilter()
@@ -37,20 +37,23 @@ vtkITKWandImageFilter::vtkITKWandImageFilter()
 vtkITKWandImageFilter::~vtkITKWandImageFilter() {}
 
 
-template < typename T >
+template <typename T>
 void
-vtkITKWandExecute( vtkITKWandImageFilter * self, vtkImageData * input, vtkImageData * vtkNotUsed( output ), T * inPtr,
-                   T * outPtr )
+vtkITKWandExecute(vtkITKWandImageFilter * self,
+                  vtkImageData *          input,
+                  vtkImageData *          vtkNotUsed(output),
+                  T *                     inPtr,
+                  T *                     outPtr)
 {
 
   int dims[3];
-  input->GetDimensions( dims );
+  input->GetDimensions(dims);
 
   // Wrap scalars into an ITK image
   // - mostly rely on defaults for spacing, origin etc for this filter
-  using ImageType = itk::Image< T, 3 >;
+  using ImageType = itk::Image<T, 3>;
   typename ImageType::Pointer inImage = ImageType::New();
-  inImage->GetPixelContainer()->SetImportPointer( inPtr, dims[0] * dims[1] * dims[2], false );
+  inImage->GetPixelContainer()->SetImportPointer(inPtr, dims[0] * dims[1] * dims[2], false);
   typename ImageType::RegionType region;
   typename ImageType::IndexType  index;
   typename ImageType::SizeType   size;
@@ -58,10 +61,10 @@ vtkITKWandExecute( vtkITKWandImageFilter * self, vtkImageData * input, vtkImageD
   size[0] = dims[0];
   size[1] = dims[1];
   size[2] = dims[2];
-  region.SetIndex( index );
-  region.SetSize( size );
-  inImage->SetLargestPossibleRegion( region );
-  inImage->SetBufferedRegion( region );
+  region.SetIndex(index);
+  region.SetSize(size);
+  inImage->SetLargestPossibleRegion(region);
+  inImage->SetBufferedRegion(region);
 
   // get the value at the seed location
   typename ImageType::IndexType ind;
@@ -69,37 +72,37 @@ vtkITKWandExecute( vtkITKWandImageFilter * self, vtkImageData * input, vtkImageD
   ind[1] = self->GetSeed()[1];
   ind[2] = self->GetSeed()[2];
 
-  if ( ind[0] < 0 || ind[0] >= dims[0] || ind[1] < 0 || ind[1] >= dims[1] || ind[2] < 0 || ind[2] >= dims[2] )
+  if (ind[0] < 0 || ind[0] >= dims[0] || ind[1] < 0 || ind[1] >= dims[1] || ind[2] < 0 || ind[2] >= dims[2])
   {
-    vtkWarningWithObjectMacro( self,
-                               "Seed (" << ind[0] << ", " << ind[1] << ", " << ind[2] << ") is not in input region ("
-                                        << dims[0] << ", " << dims[1] << ", " << dims[2] << ")" );
+    vtkWarningWithObjectMacro(self,
+                              "Seed (" << ind[0] << ", " << ind[1] << ", " << ind[2] << ") is not in input region ("
+                                       << dims[0] << ", " << dims[1] << ", " << dims[2] << ")");
     return;
   }
 
   // Segment using itk::WandImageFilter
-  using SegmentImageType = itk::Image< T, 3 >;
-  using WandType = itk::ConnectedThresholdImageFilter< ImageType, SegmentImageType >;
+  using SegmentImageType = itk::Image<T, 3>;
+  using WandType = itk::ConnectedThresholdImageFilter<ImageType, SegmentImageType>;
   typename WandType::Pointer wand = WandType::New();
 
-  wand->SetSeed( ind );
+  wand->SetSeed(ind);
 
   double *range, delta;
   range = input->GetScalarRange();
-  delta = self->GetDynamicRangePercentage() * ( range[1] - range[0] );
-  T threshold = static_cast< T >( input->GetScalarComponentAsDouble( ind[0], ind[1], ind[2], 0 ) );
-  wand->SetLower( threshold - static_cast< T >( delta ) );
-  wand->SetUpper( threshold + static_cast< T >( delta ) );
+  delta = self->GetDynamicRangePercentage() * (range[1] - range[0]);
+  T threshold = static_cast<T>(input->GetScalarComponentAsDouble(ind[0], ind[1], ind[2], 0));
+  wand->SetLower(threshold - static_cast<T>(delta));
+  wand->SetUpper(threshold + static_cast<T>(delta));
 
-  wand->SetReplaceValue( 1 );
+  wand->SetReplaceValue(1);
 
-  wand->SetInput( inImage );
+  wand->SetInput(inImage);
   wand->Update();
 
   // Copy to the output
-  memcpy( outPtr,
-          wand->GetOutput()->GetBufferPointer(),
-          wand->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof( T ) );
+  memcpy(outPtr,
+         wand->GetOutput()->GetBufferPointer(),
+         wand->GetOutput()->GetBufferedRegion().GetNumberOfPixels() * sizeof(T));
 }
 
 
@@ -107,63 +110,63 @@ vtkITKWandExecute( vtkITKWandImageFilter * self, vtkImageData * input, vtkImageD
 //
 //
 void
-vtkITKWandImageFilter::SimpleExecute( vtkImageData * input, vtkImageData * output )
+vtkITKWandImageFilter::SimpleExecute(vtkImageData * input, vtkImageData * output)
 {
-  vtkDebugMacro( << "Executing wand selection" );
+  vtkDebugMacro(<< "Executing wand selection");
 
   //
   // Initialize and check input
   //
   vtkPointData * pd = input->GetPointData();
   pd = input->GetPointData();
-  if ( pd == nullptr )
+  if (pd == nullptr)
   {
-    vtkErrorMacro( << "PointData is NULL" );
+    vtkErrorMacro(<< "PointData is NULL");
     return;
   }
   vtkDataArray * inScalars = pd->GetScalars();
-  if ( inScalars == nullptr )
+  if (inScalars == nullptr)
   {
-    vtkErrorMacro( << "Scalars must be defined for wand selection" );
+    vtkErrorMacro(<< "Scalars must be defined for wand selection");
     return;
   }
 
-  if ( inScalars->GetNumberOfComponents() == 1 )
+  if (inScalars->GetNumberOfComponents() == 1)
   {
 
 ////////// These types are not defined in itk ////////////
 #ifdef vtkTemplateMacroCase_ui64
 #  undef vtkTemplateMacroCase_ui64
-#  define vtkTemplateMacroCase_ui64( typeN, type, call )
+#  define vtkTemplateMacroCase_ui64(typeN, type, call)
 #endif
 #ifdef vtkTemplateMacroCase_si64
 #  undef vtkTemplateMacroCase_si64
-#  define vtkTemplateMacroCase_si64( typeN, type, call )
+#  define vtkTemplateMacroCase_si64(typeN, type, call)
 #endif
 #ifdef vtkTemplateMacroCase_ll
 #  undef vtkTemplateMacroCase_ll
-#  define vtkTemplateMacroCase_ll( typeN, type, call )
+#  define vtkTemplateMacroCase_ll(typeN, type, call)
 #endif
 
     void * inPtr = input->GetScalarPointer();
     void * outPtr = output->GetScalarPointer();
 
-    switch ( inScalars->GetDataType() )
+    switch (inScalars->GetDataType())
     {
       vtkTemplateMacro(
-        vtkITKWandExecute( this, input, output, static_cast< VTK_TT * >( inPtr ), static_cast< VTK_TT * >( outPtr ) ) );
+        vtkITKWandExecute(this, input, output, static_cast<VTK_TT *>(inPtr), static_cast<VTK_TT *>(outPtr)));
     } // switch
   }
   else
   {
-    vtkErrorMacro( << "Can only select scalar." );
+    vtkErrorMacro(<< "Can only select scalar.");
   }
 }
 
 void
-vtkITKWandImageFilter::PrintSelf( ostream & os, vtkIndent indent )
+vtkITKWandImageFilter::PrintSelf(ostream & os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf( os, indent );
+  this->Superclass::PrintSelf(os, indent);
 
   os << indent << "Seed point location: [" << Seed[0] << "," << Seed[1] << "," << Seed[2] << "]" << std::endl;
   os << indent << "Dynamic range percentage: " << DynamicRangePercentage << std::endl;

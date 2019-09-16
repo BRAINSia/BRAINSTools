@@ -28,14 +28,14 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshSplitFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshSplitFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   using Self = QuadEdgeMeshSplitFilter;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -60,18 +60,18 @@ public:
   using InputCellTraits = typename InputMeshType::CellTraits;
   typedef typename InputCellTraits::PointIdInternalIterator InputPointsIdInternalIterator;
   //    using InputQEIterator = typename InputQEPrimal::IteratorGeom;
-  using SeedVectorType = std::vector< InputCellIdentifier >;
+  using SeedVectorType = std::vector<InputCellIdentifier>;
 
-  using InputPolygonType = QuadEdgeMeshPolygonCell< InputCellType >;
+  using InputPolygonType = QuadEdgeMeshPolygonCell<InputCellType>;
   using InputPolygonAutoPointer = typename InputPolygonType::SelfAutoPointer;
 
-  using PolygonSetType = std::list< InputPolygonType * >;
+  using PolygonSetType = std::list<InputPolygonType *>;
 
-  using FaceAreaMapType = std::map< InputPolygonType *, InputCoordRepType >;
+  using FaceAreaMapType = std::map<InputPolygonType *, InputCoordRepType>;
 
-  using TriangleType = TriangleHelper< InputPointType >;
+  using TriangleType = TriangleHelper<InputPointType>;
 
-  using FMMType = QuadEdgeMeshDualFastMarching< InputMeshType >;
+  using FMMType = QuadEdgeMeshDualFastMarching<InputMeshType>;
   using FMMPointer = typename FMMType::Pointer;
   using FMMClusterType = typename FMMType::ClusterType;
   using FMMClusterIterator = typename FMMType::ClusterIterator;
@@ -92,15 +92,15 @@ public:
   typedef typename OutputMeshType::PointsContainerPointer  OutputPointsContainerPointer;
   typedef typename OutputMeshType::PointsContainerIterator OutputPointsContainerIterator;
 
-  using OutputPolygonType = QuadEdgeMeshPolygonCell< OutputCellType >;
+  using OutputPolygonType = QuadEdgeMeshPolygonCell<OutputCellType>;
   using OutputPolygonAutoPointer = typename OutputPolygonType::SelfAutoPointer;
 
 public:
-  itkNewMacro( Self );
-  itkTypeMacro( QuadEdgeMeshSplitFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkNewMacro(Self);
+  itkTypeMacro(QuadEdgeMeshSplitFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   void
-  SetSeedFaces( const SeedVectorType & iSeeds )
+  SetSeedFaces(const SeedVectorType & iSeeds)
   {
     m_SeedFaces = iSeeds;
   }
@@ -120,12 +120,12 @@ protected:
   GenerateData() override;
 
   OutputPointIdList
-  AddFacePointsToOutputMesh( OutputMeshType * iMesh, InputPolygonType * iPoly );
+  AddFacePointsToOutputMesh(OutputMeshType * iMesh, InputPolygonType * iPoly);
 
 private:
-  QuadEdgeMeshSplitFilter( const Self & );
+  QuadEdgeMeshSplitFilter(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 };
 } // namespace itk
 

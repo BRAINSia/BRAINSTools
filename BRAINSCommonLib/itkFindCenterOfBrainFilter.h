@@ -28,16 +28,16 @@ namespace itk
 /**
  * \class FindCenterOfBrainFilter
  */
-template < typename TInputImage, typename TMaskImage = itk::Image< unsigned char, 3 > >
-class FindCenterOfBrainFilter : public ImageToImageFilter< TInputImage, TInputImage >
+template <typename TInputImage, typename TMaskImage = itk::Image<unsigned char, 3>>
+class FindCenterOfBrainFilter : public ImageToImageFilter<TInputImage, TInputImage>
 {
 public:
   using Self = FindCenterOfBrainFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TInputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
-  itkNewMacro( Self );
-  itkTypeMacro( FindCenterOfBrain, Superclass );
+  using Superclass = ImageToImageFilter<TInputImage, TInputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
+  itkNewMacro(Self);
+  itkTypeMacro(FindCenterOfBrain, Superclass);
 
   using ImageType = TInputImage;
   using MaskImageType = TMaskImage;
@@ -48,41 +48,41 @@ public:
   using SizeType = typename ImageType::SizeType;
   using SpacingType = typename ImageType::SpacingType;
   using IndexType = typename ImageType::IndexType;
-  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex< ImageType >;
-  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex< ImageType >;
-  using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter< ImageType, MaskImageType >;
-  using DistanceImageType = typename itk::Image< float, 3 >;
+  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
+  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex<ImageType>;
+  using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter<ImageType, MaskImageType>;
+  using DistanceImageType = typename itk::Image<float, 3>;
   using DistanceImagePointer = typename DistanceImageType::Pointer;
   /** Image related type alias. */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
-  itkSetMacro( Maximize, bool );
-  itkGetConstMacro( Maximize, bool );
-  itkSetMacro( Axis, unsigned int );
-  itkGetConstMacro( Axis, unsigned int );
-  itkSetMacro( OtsuPercentileThreshold, double );
-  itkGetConstMacro( OtsuPercentileThreshold, double );
-  itkSetMacro( ClosingSize, unsigned int );
-  itkGetConstMacro( ClosingSize, unsigned int );
-  itkSetMacro( HeadSizeLimit, double );
-  itkGetConstMacro( HeadSizeLimit, double );
-  itkSetMacro( HeadSizeEstimate, double );
-  itkGetConstMacro( HeadSizeEstimate, double );
-  itkSetMacro( BackgroundValue, PixelType );
-  itkGetConstMacro( BackgroundValue, PixelType );
+  itkSetMacro(Maximize, bool);
+  itkGetConstMacro(Maximize, bool);
+  itkSetMacro(Axis, unsigned int);
+  itkGetConstMacro(Axis, unsigned int);
+  itkSetMacro(OtsuPercentileThreshold, double);
+  itkGetConstMacro(OtsuPercentileThreshold, double);
+  itkSetMacro(ClosingSize, unsigned int);
+  itkGetConstMacro(ClosingSize, unsigned int);
+  itkSetMacro(HeadSizeLimit, double);
+  itkGetConstMacro(HeadSizeLimit, double);
+  itkSetMacro(HeadSizeEstimate, double);
+  itkGetConstMacro(HeadSizeEstimate, double);
+  itkSetMacro(BackgroundValue, PixelType);
+  itkGetConstMacro(BackgroundValue, PixelType);
 
-  itkGetConstMacro( CenterOfBrain, PointType );
-  itkGetModifiableObjectMacro( TrimmedImage, TInputImage );
+  itkGetConstMacro(CenterOfBrain, PointType);
+  itkGetModifiableObjectMacro(TrimmedImage, TInputImage);
 
-  itkSetConstObjectMacro( ImageMask, TMaskImage );
-  itkGetConstObjectMacro( ImageMask, TMaskImage );
+  itkSetConstObjectMacro(ImageMask, TMaskImage);
+  itkGetConstObjectMacro(ImageMask, TMaskImage);
 
   // THIS IS OUTPUT ONLY  itkSetObjectMacro(ClippedImageMask, TMaskImage);
-  itkGetConstObjectMacro( ClippedImageMask, TMaskImage );
+  itkGetConstObjectMacro(ClippedImageMask, TMaskImage);
 
   // DEBUGGING STUFF
-  itkSetMacro( GenerateDebugImages, bool );
-  itkGetMacro( GenerateDebugImages, bool );
+  itkSetMacro(GenerateDebugImages, bool);
+  itkGetMacro(GenerateDebugImages, bool);
   DistanceImagePointer
   GetDebugDistanceImage() const
   {
@@ -117,7 +117,7 @@ protected:
   FindCenterOfBrainFilter();
   ~FindCenterOfBrainFilter() override;
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   AllocateOutputs() override;

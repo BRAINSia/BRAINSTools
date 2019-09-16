@@ -37,23 +37,23 @@ namespace itk
  * Caveat: itkConvertVTKToQuadEdgeMeshFilter can only convert triangle meshes.
  *         Use vtkTriangleFilter to convert your mesh to a triangle mesh.
  */
-template < typename TOutputMesh >
-class ConvertVTKToQuadEdgeMeshFilter : public MeshSource< TOutputMesh >
+template <typename TOutputMesh>
+class ConvertVTKToQuadEdgeMeshFilter : public MeshSource<TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ConvertVTKToQuadEdgeMeshFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ConvertVTKToQuadEdgeMeshFilter);
 
   /** Standard "Self" type alias. */
   using Self = ConvertVTKToQuadEdgeMeshFilter;
-  using Superclass = MeshSource< TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = MeshSource<TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ConvertVTKToQuadEdgeMeshFilter, MeshSource );
+  itkTypeMacro(ConvertVTKToQuadEdgeMeshFilter, MeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
   using OutputMeshType = TOutputMesh;
@@ -71,17 +71,17 @@ public:
   using PointIdIterator = typename CellTraits::PointIdIterator;
 
   /** Define the triangular cell types which form the surface  */
-  using TriangleCellType = TriangleCell< CellType >;
+  using TriangleCellType = TriangleCell<CellType>;
 
   typedef typename TriangleCellType::SelfAutoPointer TriangleCellAutoPointer;
 
-  using IndexPairType = std::pair< unsigned long, unsigned long >;
-  using PointMapType = MapContainer< IndexPairType, unsigned long >;
+  using IndexPairType = std::pair<unsigned long, unsigned long>;
+  using PointMapType = MapContainer<IndexPairType, unsigned long>;
   using VectorType = typename PointType::VectorType;
 
   /* set/get the input polydata */
   void
-  SetPolyData( vtkPolyData * );
+  SetPolyData(vtkPolyData *);
 
   vtkPolyData *
   GetPolyData();

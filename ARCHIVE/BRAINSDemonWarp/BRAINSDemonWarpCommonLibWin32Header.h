@@ -27,11 +27,11 @@
 
 #include <BRAINSDemonWarpCommonLib.h>
 
-#if defined( WIN32 ) && !defined( BRAINSDemonWarpCommonLib_STATIC )
-#  if defined( BRAINSDemonWarpCommonLib_EXPORTS )
-#    define BRAINSDemonWarpCommonLib_EXPORT __declspec( dllexport )
+#if defined(WIN32) && !defined(BRAINSDemonWarpCommonLib_STATIC)
+#  if defined(BRAINSDemonWarpCommonLib_EXPORTS)
+#    define BRAINSDemonWarpCommonLib_EXPORT __declspec(dllexport)
 #  else
-#    define BRAINSDemonWarpCommonLib_EXPORT __declspec( dllimport )
+#    define BRAINSDemonWarpCommonLib_EXPORT __declspec(dllimport)
 #  endif
 #else
 #  define BRAINSDemonWarpCommonLib_EXPORT

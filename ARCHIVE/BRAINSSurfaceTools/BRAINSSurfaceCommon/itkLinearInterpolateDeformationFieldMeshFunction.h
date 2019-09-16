@@ -36,23 +36,23 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template < typename TInputMesh, typename TDestinationPointsContainer = typename TInputMesh::PointsContainer >
-class LinearInterpolateDeformationFieldMeshFunction : public LinearInterpolateMeshFunction< TInputMesh >
+template <typename TInputMesh, typename TDestinationPointsContainer = typename TInputMesh::PointsContainer>
+class LinearInterpolateDeformationFieldMeshFunction : public LinearInterpolateMeshFunction<TInputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( LinearInterpolateDeformationFieldMeshFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateDeformationFieldMeshFunction);
 
   /** Standard class type alias. */
   using Self = LinearInterpolateDeformationFieldMeshFunction;
-  using Superclass = LinearInterpolateMeshFunction< TInputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = LinearInterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( LinearInterpolateDeformationFieldMeshFunction, LinearInterpolateMeshFunction );
+  itkTypeMacro(LinearInterpolateDeformationFieldMeshFunction, LinearInterpolateMeshFunction);
 
   /** OutputType type alias support. */
   using OutputType = typename Superclass::OutputType;
@@ -85,19 +85,19 @@ public:
    *
    */
   virtual bool
-  Evaluate( const DestinationPointsContainerType * field, const PointType & point, PointType & outputPoint ) const;
+  Evaluate(const DestinationPointsContainerType * field, const PointType & point, PointType & outputPoint) const;
 
   /** Provide empty implementation of virtual method from the base class.
       This method is not expected to be used by this current class. */
   virtual OutputType
-  Evaluate( const PointType & point ) const override;
+  Evaluate(const PointType & point) const override;
 
 protected:
   LinearInterpolateDeformationFieldMeshFunction();
   ~LinearInterpolateDeformationFieldMeshFunction();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 };

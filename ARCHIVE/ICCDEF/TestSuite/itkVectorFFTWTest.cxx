@@ -26,9 +26,9 @@
 #include "itkImageFileWriter.h"
 
 int
-itkVectorFFTWTest( int argc, char * argv[] )
+itkVectorFFTWTest(int argc, char * argv[])
 {
-  if ( argc < 2 )
+  if (argc < 2)
   {
     std::cerr << "You must supply two output filenames" << std::endl;
     return EXIT_FAILURE;
@@ -36,29 +36,29 @@ itkVectorFFTWTest( int argc, char * argv[] )
 
   using PixelType = float;
   constexpr unsigned int dims = 3;
-  using ImageType = itk::Image< itk::Vector< PixelType, dims >, dims >;
-  using FFTWComplexToRealImageType = itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter< ImageType::PixelType, 3 >;
-  using FFTWRealToComplexImageType = itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter< ImageType::PixelType, 3 >;
-  using WriterType = itk::ImageFileWriter< ImageType >;
+  using ImageType = itk::Image<itk::Vector<PixelType, dims>, dims>;
+  using FFTWComplexToRealImageType = itk::VectorFFTWHalfHermitianToRealInverseFFTImageFilter<ImageType::PixelType, 3>;
+  using FFTWRealToComplexImageType = itk::VectorFFTWRealToHalfHermitianForwardFFTImageFilter<ImageType::PixelType, 3>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
 
   const ImageType::SizeType  imageSize = { { 32, 32, 32 } };
   const ImageType::IndexType imageIndex = { { 0, 0, 0 } };
   ImageType::RegionType      region;
-  region.SetSize( imageSize );
-  region.SetIndex( imageIndex );
+  region.SetSize(imageSize);
+  region.SetIndex(imageIndex);
   ImageType::Pointer img = ImageType::New();
-  img->SetRegions( region );
+  img->SetRegions(region);
   img->Allocate();
 
   ImageType::PixelType zeros;
-  for ( unsigned int j = 0; j < 3; j++ )
+  for (unsigned int j = 0; j < 3; j++)
   {
     zeros[j] = 1.0;
   }
 
-  itk::ImageRegionIterator< ImageType > it( img, img->GetRequestedRegion() );
+  itk::ImageRegionIterator<ImageType> it(img, img->GetRequestedRegion());
 
-  while ( !it.IsAtEnd() )
+  while (!it.IsAtEnd())
   {
     zeros[0] += 1.0;
     zeros[1] += 0.5;
@@ -68,13 +68,13 @@ itkVectorFFTWTest( int argc, char * argv[] )
   }
 
   WriterType::Pointer writer1 = WriterType::New();
-  writer1->SetInput( img );
-  writer1->SetFileName( argv[1] );
+  writer1->SetInput(img);
+  writer1->SetFileName(argv[1]);
   try
   {
     writer1->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while writing image" << argv[1];
     std::cerr << " : " << e.GetDescription();
@@ -82,21 +82,21 @@ itkVectorFFTWTest( int argc, char * argv[] )
   }
 
   FFTWRealToComplexImageType::Pointer fft = FFTWRealToComplexImageType::New();
-  fft->SetInput( img );
+  fft->SetInput(img);
   fft->Update();
 
   FFTWComplexToRealImageType::Pointer invFFT = FFTWComplexToRealImageType::New();
-  invFFT->SetInput( fft->GetOutput() );
+  invFFT->SetInput(fft->GetOutput());
   invFFT->Update();
 
   WriterType::Pointer writer2 = WriterType::New();
-  writer2->SetInput( invFFT->GetOutput() );
-  writer2->SetFileName( argv[2] );
+  writer2->SetInput(invFFT->GetOutput());
+  writer2->SetFileName(argv[2]);
   try
   {
     writer2->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while writing image" << argv[1];
     std::cerr << " : " << e.GetDescription();

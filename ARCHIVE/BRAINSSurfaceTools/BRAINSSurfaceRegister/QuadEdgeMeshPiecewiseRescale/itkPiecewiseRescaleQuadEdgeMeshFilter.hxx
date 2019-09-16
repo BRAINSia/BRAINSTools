@@ -25,52 +25,52 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::PiecewiseRescaleQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::PiecewiseRescaleQuadEdgeMeshFilter()
 {
-  this->SetNumberOfRequiredInputs( 1 );
-  this->SetNumberOfRequiredOutputs( 1 );
-  this->SetNumberOfIndexedOutputs( 1 );
+  this->SetNumberOfRequiredInputs(1);
+  this->SetNumberOfRequiredOutputs(1);
+  this->SetNumberOfIndexedOutputs(1);
 
-  this->SetNthOutput( 0, OutputMeshType::New() );
+  this->SetNthOutput(0, OutputMeshType::New());
 
-  this->m_OutputMaximum = NumericTraits< OutputPixelType >::max();
-  this->m_OutputMinimum = NumericTraits< OutputPixelType >::NonpositiveMin();
+  this->m_OutputMaximum = NumericTraits<OutputPixelType>::max();
+  this->m_OutputMinimum = NumericTraits<OutputPixelType>::NonpositiveMin();
 
-  this->m_cValue = NumericTraits< InputPixelType >::ZeroValue();
-  this->m_InputMaximum = NumericTraits< InputPixelType >::min();
-  this->m_InputMinimum = NumericTraits< InputPixelType >::max();
+  this->m_cValue = NumericTraits<InputPixelType>::ZeroValue();
+  this->m_InputMaximum = NumericTraits<InputPixelType>::min();
+  this->m_InputMinimum = NumericTraits<InputPixelType>::max();
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::~PiecewiseRescaleQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::~PiecewiseRescaleQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::SetInputMesh( const InputMeshType * mesh )
+PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::SetInputMesh(const InputMeshType * mesh)
 {
-  itkDebugMacro( "setting input mesh to " << mesh );
-  if ( mesh != static_cast< const InputMeshType * >( this->ProcessObject::GetInput( 0 ) ) )
+  itkDebugMacro("setting input mesh to " << mesh);
+  if (mesh != static_cast<const InputMeshType *>(this->ProcessObject::GetInput(0)))
   {
-    this->ProcessObject::SetNthInput( 0, const_cast< InputMeshType * >( mesh ) );
+    this->ProcessObject::SetNthInput(0, const_cast<InputMeshType *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-const typename PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::InputMeshType *
-PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GetInputMesh() const
+template <typename TInputMesh, typename TOutputMesh>
+const typename PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::InputMeshType *
+PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::GetInputMesh() const
 {
-  Self *                surrogate = const_cast< Self * >( this );
-  const InputMeshType * inputMesh = static_cast< const InputMeshType * >( surrogate->ProcessObject::GetInput( 0 ) );
+  Self *                surrogate = const_cast<Self *>(this);
+  const InputMeshType * inputMesh = static_cast<const InputMeshType *>(surrogate->ProcessObject::GetInput(0));
 
   return inputMesh;
 }
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
+PiecewiseRescaleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
   // Copy the input mesh into the output mesh.
   this->CopyInputMeshToOutputMesh();
@@ -88,14 +88,14 @@ PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
   InputPointDataIterator inputPointDataItr = inputPointData->Begin();
   InputPointDataIterator inputPointDataEnd = inputPointData->End();
 
-  while ( inputPointDataItr != inputPointDataEnd )
+  while (inputPointDataItr != inputPointDataEnd)
   {
-    if ( inputPointDataItr.Value() > this->m_InputMaximum )
+    if (inputPointDataItr.Value() > this->m_InputMaximum)
     {
       this->m_InputMaximum = inputPointDataItr.Value();
     }
 
-    if ( inputPointDataItr.Value() < this->m_InputMinimum )
+    if (inputPointDataItr.Value() < this->m_InputMinimum)
     {
       this->m_InputMinimum = inputPointDataItr.Value();
     }
@@ -104,31 +104,29 @@ PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
   }
 
   // verify the cValue
-  if ( m_cValue > m_InputMaximum || m_cValue < m_InputMinimum )
+  if (m_cValue > m_InputMaximum || m_cValue < m_InputMinimum)
   {
-    itkExceptionMacro( "cValue should be in [InputMinimum, InputMaximum]!" );
+    itkExceptionMacro("cValue should be in [InputMinimum, InputMaximum]!");
   }
 
-  if ( ( this->m_InputMinimum != this->m_cValue ) && ( this->m_InputMaximum != this->m_cValue ) )
+  if ((this->m_InputMinimum != this->m_cValue) && (this->m_InputMaximum != this->m_cValue))
   {
-    this->m_Scale_a = ( static_cast< double >( this->m_cValue ) - static_cast< double >( this->m_OutputMinimum ) ) /
-                      ( static_cast< double >( this->m_cValue ) - static_cast< double >( this->m_InputMinimum ) );
+    this->m_Scale_a = (static_cast<double>(this->m_cValue) - static_cast<double>(this->m_OutputMinimum)) /
+                      (static_cast<double>(this->m_cValue) - static_cast<double>(this->m_InputMinimum));
 
-    this->m_Scale_b = ( static_cast< double >( this->m_OutputMaximum ) - static_cast< double >( this->m_cValue ) ) /
-                      ( static_cast< double >( this->m_InputMaximum ) - static_cast< double >( this->m_cValue ) );
+    this->m_Scale_b = (static_cast<double>(this->m_OutputMaximum) - static_cast<double>(this->m_cValue)) /
+                      (static_cast<double>(this->m_InputMaximum) - static_cast<double>(this->m_cValue));
   }
-  else if ( this->m_InputMinimum != this->m_InputMaximum )
+  else if (this->m_InputMinimum != this->m_InputMaximum)
   {
-    this->m_Scale_a =
-      ( static_cast< double >( this->m_OutputMaximum ) - static_cast< double >( this->m_OutputMinimum ) ) /
-      ( static_cast< double >( this->m_InputMaximum ) - static_cast< double >( this->m_InputMinimum ) );
+    this->m_Scale_a = (static_cast<double>(this->m_OutputMaximum) - static_cast<double>(this->m_OutputMinimum)) /
+                      (static_cast<double>(this->m_InputMaximum) - static_cast<double>(this->m_InputMinimum));
     this->m_Scale_b = this->m_Scale_a;
   }
-  else if ( this->m_InputMaximum != NumericTraits< InputPixelType >::ZeroValue() )
+  else if (this->m_InputMaximum != NumericTraits<InputPixelType>::ZeroValue())
   {
-    this->m_Scale_a =
-      ( static_cast< double >( this->m_OutputMaximum ) - static_cast< double >( this->m_OutputMinimum ) ) /
-      static_cast< double >( this->m_InputMaximum );
+    this->m_Scale_a = (static_cast<double>(this->m_OutputMaximum) - static_cast<double>(this->m_OutputMinimum)) /
+                      static_cast<double>(this->m_InputMaximum);
     this->m_Scale_b = this->m_Scale_a;
   }
   else
@@ -147,21 +145,21 @@ PiecewiseRescaleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
   PointDataIterator pointDataItr = pointData->Begin();
   PointDataIterator pointDataEnd = pointData->End();
 
-  while ( pointDataItr != pointDataEnd )
+  while (pointDataItr != pointDataEnd)
   {
-    if ( pointDataItr.Value() < static_cast< OutputPixelType >( m_cValue ) )
+    if (pointDataItr.Value() < static_cast<OutputPixelType>(m_cValue))
     {
-      pointDataItr.Value() = static_cast< OutputPixelType >(
-        this->m_OutputMinimum + ( ( pointDataItr.Value() - this->m_InputMinimum ) * this->m_Scale_a ) );
+      pointDataItr.Value() = static_cast<OutputPixelType>(
+        this->m_OutputMinimum + ((pointDataItr.Value() - this->m_InputMinimum) * this->m_Scale_a));
     }
-    else if ( pointDataItr.Value() > static_cast< OutputPixelType >( m_cValue ) )
+    else if (pointDataItr.Value() > static_cast<OutputPixelType>(m_cValue))
     {
-      pointDataItr.Value() = static_cast< OutputPixelType >(
-        this->m_cValue + ( ( pointDataItr.Value() - this->m_cValue ) * this->m_Scale_b ) );
+      pointDataItr.Value() =
+        static_cast<OutputPixelType>(this->m_cValue + ((pointDataItr.Value() - this->m_cValue) * this->m_Scale_b));
     }
     else
     {
-      pointDataItr.Value() = static_cast< OutputPixelType >( m_cValue );
+      pointDataItr.Value() = static_cast<OutputPixelType>(m_cValue);
     }
 
     ++pointDataItr;

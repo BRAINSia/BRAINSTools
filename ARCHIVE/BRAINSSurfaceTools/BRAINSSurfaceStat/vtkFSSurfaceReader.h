@@ -58,9 +58,9 @@ public:
   static vtkFSSurfaceReader *
   New();
 
-  vtkTypeMacro( vtkFSSurfaceReader, vtkDataReader );
+  vtkTypeMacro(vtkFSSurfaceReader, vtkDataReader);
   void
-  PrintSelf( ostream & os, vtkIndent indent );
+  PrintSelf(ostream & os, vtkIndent indent);
 
   ///
   /// Get the output of this reader.
@@ -68,19 +68,19 @@ public:
   GetOutput();
 
   vtkPolyData *
-  GetOutput( int idx );
+  GetOutput(int idx);
 
   void
-  SetOutput( vtkPolyData * output );
+  SetOutput(vtkPolyData * output);
 
   // BTX
   // Description:
   /// old previous versions constants
   enum
   {
-    FS_QUAD_FILE_MAGIC_NUMBER = ( -1 & 0x00ffffff ),
-    FS_NEW_QUAD_FILE_MAGIC_NUMBER = ( -3 & 0x00ffffff ),
-    FS_TRIANGLE_FILE_MAGIC_NUMBER = ( -2 & 0x00ffffff ),
+    FS_QUAD_FILE_MAGIC_NUMBER = (-1 & 0x00ffffff),
+    FS_NEW_QUAD_FILE_MAGIC_NUMBER = (-3 & 0x00ffffff),
+    FS_TRIANGLE_FILE_MAGIC_NUMBER = (-2 & 0x00ffffff),
     FS_NUM_VERTS_IN_QUAD_FACE = 4,    /// dealing with quads
     FS_NUM_VERTS_IN_TRI_FACE = 3,     /// dealing with tris
     FS_MAX_NUM_FACES_PER_VERTEX = 10, /// kinda arbitrary
@@ -88,7 +88,7 @@ public:
   // ETX
 
   int
-  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * outputVector );
+  RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector * outputVector);
 
 protected:
   vtkFSSurfaceReader();
@@ -99,13 +99,13 @@ protected:
   /// Update extent of PolyData is specified in pieces.
   /// Since all DataObjects should be able to set UpdateExent as pieces,
   /// just copy output->UpdateExtent  all Inputs.
-#if ( VTK_MAJOR_VERSION >= 5 )
+#if (VTK_MAJOR_VERSION >= 5)
   virtual int
-  FillOutputPortInformation( int, vtkInformation * );
+  FillOutputPortInformation(int, vtkInformation *);
 
 #else
   void
-  ComputeInputUpdateExtents( vtkDataObject * output );
+  ComputeInputUpdateExtents(vtkDataObject * output);
 
 #endif
 
@@ -116,9 +116,9 @@ protected:
   int ExecuteGhostLevel;
 
 private:
-  vtkFSSurfaceReader( const vtkFSSurfaceReader & ); /// Not implemented.
+  vtkFSSurfaceReader(const vtkFSSurfaceReader &); /// Not implemented.
   void
-  operator=( const vtkFSSurfaceReader & ); /// Not implemented.
+  operator=(const vtkFSSurfaceReader &); /// Not implemented.
 };
 
 /// If we're going to try to do normals, we need to keep some

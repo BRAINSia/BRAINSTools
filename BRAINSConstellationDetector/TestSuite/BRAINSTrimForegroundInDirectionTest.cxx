@@ -24,16 +24,16 @@
 //
 
 #ifdef WIN32
-#  define MODULE_IMPORT __declspec( dllimport )
+#  define MODULE_IMPORT __declspec(dllimport)
 #else
 #  define MODULE_IMPORT
 #endif
 
 extern "C" MODULE_IMPORT int
-ModuleEntryPoint( int, char *[] );
+ModuleEntryPoint(int, char *[]);
 
 int
-BRAINSTrimForegroundInDirectionTest( int argc, char ** argv )
+BRAINSTrimForegroundInDirectionTest(int argc, char ** argv)
 {
-  return ModuleEntryPoint( argc, argv );
+  return ModuleEntryPoint(argc, argv);
 }

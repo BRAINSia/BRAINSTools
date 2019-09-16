@@ -41,8 +41,8 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_debug = false;
   this->m_verbose = false;
 
-  this->m_inputTemplateModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "T1.mdl";
-  this->m_llsModel = itksys::SystemTools::GetProgramPath( pathOut.c_str() ) + "/" + "LLSModel.h5";
+  this->m_inputTemplateModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "T1.mdl";
+  this->m_llsModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "LLSModel.h5";
 
   this->m_inputVolume = "";
   this->m_outputVolume = "";
@@ -57,8 +57,8 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   this->m_writeBranded2DImage = "";
   this->m_backgroundFillValueString = "0";
   this->m_interpolationMode = "Linear";
-  this->m_rescaleIntensitiesOutputRange.push_back( 40 );
-  this->m_rescaleIntensitiesOutputRange.push_back( 4000 );
+  this->m_rescaleIntensitiesOutputRange.push_back(40);
+  this->m_rescaleIntensitiesOutputRange.push_back(4000);
   this->m_force_orig_lmk_ACPointLPS.clear();
   this->m_force_orig_lmk_PCPointLPS.clear();
   this->m_force_orig_lmk_VN4PointLPS.clear();
@@ -74,42 +74,42 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
 
 BRAINSConstellationDetectorPrimary::ImagePointType
 BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
-  BRAINSConstellationDetectorPrimary::ImageType::ConstPointer img )
+  BRAINSConstellationDetectorPrimary::ImageType::ConstPointer img)
 {
   // ------------------------------------
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
   FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
 
-  findCenterFilter->SetAxis( 2 );
-  findCenterFilter->SetOtsuPercentileThreshold( 0.01 );
-  findCenterFilter->SetClosingSize( 7 );
-  findCenterFilter->SetHeadSizeLimit( 700 );
-  findCenterFilter->SetBackgroundValue( 0 );
-  findCenterFilter->SetInput( img );
+  findCenterFilter->SetAxis(2);
+  findCenterFilter->SetOtsuPercentileThreshold(0.01);
+  findCenterFilter->SetClosingSize(7);
+  findCenterFilter->SetHeadSizeLimit(700);
+  findCenterFilter->SetBackgroundValue(0);
+  findCenterFilter->SetInput(img);
   findCenterFilter->Update();
   const ImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
   return orig_lmk_CenterOfHeadMass;
 }
 
 bool
-BRAINSConstellationDetectorPrimary::Compute( void )
+BRAINSConstellationDetectorPrimary::Compute(void)
 {
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( this->m_numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(this->m_numberOfThreads);
 
   // ------------------------------------
   // Read external files
   std::cout << "\nReading in external files..." << std::endl;
 
   // read in lls model file
-  std::map< std::string, std::vector< double > >  llsMeans;
-  std::map< std::string, LandmarkIO::MatrixType > llsMatrices;
-  std::map< std::string, double >                 searchRadii;
+  std::map<std::string, std::vector<double>>    llsMeans;
+  std::map<std::string, LandmarkIO::MatrixType> llsMatrices;
+  std::map<std::string, double>                 searchRadii;
 
   LLSModel theModel;
 
-  theModel.SetFileName( this->m_llsModel );
-  if ( theModel.Read() != 0 )
+  theModel.SetFileName(this->m_llsModel);
+  if (theModel.Read() != 0)
   {
     std::cerr << "Error reading LLS Model" << std::endl;
     return EXIT_FAILURE;
@@ -125,25 +125,25 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   // Input image is read as a double image;
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
-  using AtlasReaderType = itk::ImageFileReader< DImageType3D >;
+  using AtlasReaderType = itk::ImageFileReader<DImageType3D>;
   AtlasReaderType::Pointer reader = AtlasReaderType::New();
-  reader->SetFileName( this->m_inputVolume );
+  reader->SetFileName(this->m_inputVolume);
   try
   {
     reader->Update();
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << " Error while reading image file( s ) with ITK:\n " << err << std::endl;
   }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
 
-  DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity< DImageType3D, ByteImageType >(
-    reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE );
+  DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity<DImageType3D, ByteImageType>(
+    reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE);
 
-  using CasterType = itk::CastImageFilter< DImageType3D, SImageType >;
+  using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
   CasterType::Pointer caster = CasterType::New();
-  caster->SetInput( rescaledInputVolume );
+  caster->SetInput(rescaledInputVolume);
   caster->Update();
 
   SImageType::Pointer orig_img = caster->GetOutput();
@@ -152,21 +152,21 @@ BRAINSConstellationDetectorPrimary::Compute( void )
    * Look for existing manually identified landmark point files adjacent
    * to the original image.
    */
-  if ( this->orig_lmks_filename.empty() ) // Only look for default files if not specified on command line.
+  if (this->orig_lmks_filename.empty()) // Only look for default files if not specified on command line.
   {
     const static std::string fcsv_extension{ ".fcsv" };
-    const std::string        root_dir = itksys::SystemTools::GetParentDirectory( this->m_inputVolume );
+    const std::string        root_dir = itksys::SystemTools::GetParentDirectory(this->m_inputVolume);
     std::string              potentialLandmarkFileName =
-      root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension( this->m_inputVolume );
+      root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension(this->m_inputVolume);
 
     // If the extension is .gz, then also remove the preceding extension.
-    if ( itksys::SystemTools::GetFilenameExtension( this->m_inputVolume ) == ".gz" )
+    if (itksys::SystemTools::GetFilenameExtension(this->m_inputVolume) == ".gz")
     {
       potentialLandmarkFileName =
-        root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension( potentialLandmarkFileName );
+        root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension(potentialLandmarkFileName);
     }
     potentialLandmarkFileName += fcsv_extension;
-    if ( itksys::SystemTools::FileExists( potentialLandmarkFileName, true ) )
+    if (itksys::SystemTools::FileExists(potentialLandmarkFileName, true))
     {
       std::cerr << "NOTE: Using the side-car landmark override file to pre-load landmarks!: "
                 << "\n         " << potentialLandmarkFileName << std::endl;
@@ -181,10 +181,10 @@ BRAINSConstellationDetectorPrimary::Compute( void )
       itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
       std::string               ImageMetaDataEMSPFileOverride = "";
       // if it exists and the string matches what we put in on the image to write, AOK.
-      if ( itk::ExposeMetaData< std::string >( dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride ) != false )
+      if (itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false)
       {
-        std::string directoryName = itksys::SystemTools::GetParentDirectory( this->m_inputVolume.c_str() );
-        if ( directoryName == "" )
+        std::string directoryName = itksys::SystemTools::GetParentDirectory(this->m_inputVolume.c_str());
+        if (directoryName == "")
         {
           directoryName = ".";
         }
@@ -199,9 +199,9 @@ BRAINSConstellationDetectorPrimary::Compute( void )
 
   // ------------------------------------
   // Find eye centers with BRAINS Hough Eye Detector
-  HoughEyeDetectorType::Pointer                  houghEyeDetector = HoughEyeDetectorType::New();
-  itk::VersorRigid3DTransform< double >::Pointer orig2eyeFixed_img_tfm = nullptr;
-  itk::VersorRigid3DTransform< double >::Pointer orig2eyeFixed_lmk_tfm = nullptr;
+  HoughEyeDetectorType::Pointer                houghEyeDetector = HoughEyeDetectorType::New();
+  itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm = nullptr;
+  itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = nullptr;
 
 
   LandmarksMapType   eyeFixed_lmks;
@@ -209,111 +209,111 @@ BRAINSConstellationDetectorPrimary::Compute( void )
 
   // load corresponding landmarks in EMSP aligned space from file if possible
   const LandmarksMapType constant_orig_lmks =
-    ( !this->orig_lmks_filename.empty() ) ? ReadSlicer3toITKLmk( this->orig_lmks_filename ) : LandmarksMapType{};
+    (!this->orig_lmks_filename.empty()) ? ReadSlicer3toITKLmk(this->orig_lmks_filename) : LandmarksMapType{};
 
   LandmarksMapType orig_lmks = constant_orig_lmks;
-  if ( ( orig_lmks.find( "LE" ) != orig_lmks.end() ) && ( orig_lmks.find( "RE" ) != orig_lmks.end() ) )
+  if ((orig_lmks.find("LE") != orig_lmks.end()) && (orig_lmks.find("RE") != orig_lmks.end()))
   {
     std::cout << "\nLoaded eye centers information for BRAINS Hough Eye Detector." << std::endl;
     std::cout << "Skip estimation steps for eye centers." << std::endl;
-    const SImageType::PointType orig_lmk_LE = orig_lmks.find( "LE" )->second;
-    const SImageType::PointType orig_lmk_RE = orig_lmks.find( "RE" )->second;
+    const SImageType::PointType orig_lmk_LE = orig_lmks.find("LE")->second;
+    const SImageType::PointType orig_lmk_RE = orig_lmks.find("RE")->second;
 
-    orig2eyeFixed_img_tfm = itk::ResampleFromEyePoints< ImageType, ImageType >( orig_lmk_LE, orig_lmk_RE, orig_img );
-    eyeFixed_img = itk::RigidResampleInPlayByVersor3D< ImageType, ImageType >( orig_img, orig2eyeFixed_img_tfm );
+    orig2eyeFixed_img_tfm = itk::ResampleFromEyePoints<ImageType, ImageType>(orig_lmk_LE, orig_lmk_RE, orig_img);
+    eyeFixed_img = itk::RigidResampleInPlayByVersor3D<ImageType, ImageType>(orig_img, orig2eyeFixed_img_tfm);
 
     // Now transform landmarks based on the eye centerings.
-    orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform< double >::New();
-    orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
-    for ( auto & landmark_pair : orig_lmks )
+    orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
+    orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
+    for (auto & landmark_pair : orig_lmks)
     {
-      eyeFixed_lmks[landmark_pair.first] = orig2eyeFixed_lmk_tfm->TransformPoint( landmark_pair.second );
+      eyeFixed_lmks[landmark_pair.first] = orig2eyeFixed_lmk_tfm->TransformPoint(landmark_pair.second);
     }
 
     // If CM is not provided from original space and moved to eyeFixedSpace, then compute it here from the eyeFixedImage
-    if ( eyeFixed_lmks.find( "CM" ) == eyeFixed_lmks.end() )
+    if (eyeFixed_lmks.find("CM") == eyeFixed_lmks.end())
     {
-      eyeFixed_lmks["CM"] = localFindCenterHeadFunc( eyeFixed_img );
+      eyeFixed_lmks["CM"] = localFindCenterHeadFunc(eyeFixed_img);
     }
   }
   else
   {
     std::cout << "\nFinding eye centers with BRAINS Hough Eye Detector..." << std::endl;
-    houghEyeDetector->SetInput( orig_img );
-    houghEyeDetector->SetHoughEyeDetectorMode( this->m_houghEyeDetectorMode );
-    houghEyeDetector->SetResultsDir( this->m_resultsDir ); // debug output dir
-    houghEyeDetector->SetWritedebuggingImagesLevel( this->m_writedebuggingImagesLevel );
+    houghEyeDetector->SetInput(orig_img);
+    houghEyeDetector->SetHoughEyeDetectorMode(this->m_houghEyeDetectorMode);
+    houghEyeDetector->SetResultsDir(this->m_resultsDir); // debug output dir
+    houghEyeDetector->SetWritedebuggingImagesLevel(this->m_writedebuggingImagesLevel);
 
-    if ( orig_lmks.find( "CM" ) == orig_lmks.end() ) // no CM prescribed
+    if (orig_lmks.find("CM") == orig_lmks.end()) // no CM prescribed
     {
-      orig_lmks["CM"] = localFindCenterHeadFunc( orig_img );
+      orig_lmks["CM"] = localFindCenterHeadFunc(orig_img);
     }
-    houghEyeDetector->Setorig_lmk_CenterOfHeadMass( orig_lmks.at( "CM" ) );
+    houghEyeDetector->Setorig_lmk_CenterOfHeadMass(orig_lmks.at("CM"));
     try
     {
       houghEyeDetector->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot find eye centers" << std::endl;
       std::cerr << excep << std::endl;
     }
-    catch ( ... )
+    catch (...)
     {
       std::cout << "Failed to find eye centers exception occurred" << std::endl;
     }
     orig2eyeFixed_img_tfm = houghEyeDetector->GetModifiableorig2eyeFixedTransform();
-    orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform< double >::New();
-    orig2eyeFixed_img_tfm->GetInverse( orig2eyeFixed_lmk_tfm );
+    orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
+    orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
 
-    eyeFixed_lmks["CM"] = orig2eyeFixed_lmk_tfm->TransformPoint( orig_lmks.at( "CM" ) );
+    eyeFixed_lmks["CM"] = orig2eyeFixed_lmk_tfm->TransformPoint(orig_lmks.at("CM"));
 
     orig_lmks["LE"] = houghEyeDetector->Getorig_lmk_LE();
     orig_lmks["RE"] = houghEyeDetector->Getorig_lmk_RE();
 
-    eyeFixed_img = itk::RigidResampleInPlayByVersor3D< SImageType, SImageType >( orig_img, orig2eyeFixed_img_tfm );
+    eyeFixed_img = itk::RigidResampleInPlayByVersor3D<SImageType, SImageType>(orig_img, orig2eyeFixed_img_tfm);
   }
 
   // ------------------------------------
   // Find MPJ, AC, PC, and VN4 points with BRAINS Constellation Detector
   std::cout << "\nFinding named points with BRAINS Constellation Detector..." << std::endl;
-  itk::BRAINSConstellationDetector2< ImageType, ImageType >::Pointer constellation2 =
-    itk::BRAINSConstellationDetector2< ImageType, ImageType >::New();
+  itk::BRAINSConstellationDetector2<ImageType, ImageType>::Pointer constellation2 =
+    itk::BRAINSConstellationDetector2<ImageType, ImageType>::New();
 
 
   { /** Force setting the landmark points from the command line. */
     // NOTE:  These command lines override values if specified in file.
-    if ( this->m_force_orig_lmk_ACPointLPS.size() == 3 )
+    if (this->m_force_orig_lmk_ACPointLPS.size() == 3)
     {
       SImageType::PointType manualACPoint;
-      for ( int i = 0; i < 3; i++ )
+      for (int i = 0; i < 3; i++)
       {
         manualACPoint[i] = this->m_force_orig_lmk_ACPointLPS[i];
       }
       orig_lmks["AC"] = manualACPoint;
     }
-    if ( this->m_force_orig_lmk_PCPointLPS.size() == 3 )
+    if (this->m_force_orig_lmk_PCPointLPS.size() == 3)
     {
       SImageType::PointType manualPCPoint;
-      for ( int i = 0; i < 3; i++ )
+      for (int i = 0; i < 3; i++)
       {
         manualPCPoint[i] = this->m_force_orig_lmk_PCPointLPS[i];
       }
       orig_lmks["PC"] = manualPCPoint;
     }
-    if ( this->m_force_orig_lmk_VN4PointLPS.size() == 3 )
+    if (this->m_force_orig_lmk_VN4PointLPS.size() == 3)
     {
       SImageType::PointType manualVN4Point;
-      for ( int i = 0; i < 3; i++ )
+      for (int i = 0; i < 3; i++)
       {
         manualVN4Point[i] = this->m_force_orig_lmk_VN4PointLPS[i];
       }
       orig_lmks["VN4"] = manualVN4Point;
     }
-    if ( this->m_force_orig_lmk_RPPointLPS.size() == 3 )
+    if (this->m_force_orig_lmk_RPPointLPS.size() == 3)
     {
       SImageType::PointType manualRPPoint;
-      for ( int i = 0; i < 3; i++ )
+      for (int i = 0; i < 3; i++)
       {
         manualRPPoint[i] = this->m_force_orig_lmk_RPPointLPS[i];
       }
@@ -333,11 +333,11 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     constellation2->SetForce_orig_lmk_RPPointLPS( this->m_force_orig_lmk_RPPointLPS );
   */
 
-  constellation2->Setforced_orig_lmks( orig_lmks );
+  constellation2->Setforced_orig_lmks(orig_lmks);
 
 
-  constellation2->Setorig2eyeFixed_img_tfm( orig2eyeFixed_img_tfm );
-  constellation2->SetInput( eyeFixed_img );
+  constellation2->Setorig2eyeFixed_img_tfm(orig2eyeFixed_img_tfm);
+  constellation2->SetInput(eyeFixed_img);
 
 
   //  //HACK: --- REMOVE ME
@@ -366,61 +366,61 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   //  dggwriter->Update();
 
 
-  constellation2->SetInputTemplateModel( this->m_inputTemplateModel );
-  constellation2->SetMspQualityLevel( this->m_mspQualityLevel );
-  constellation2->SetOtsuPercentileThreshold( this->m_otsuPercentileThreshold );
-  constellation2->SetAcLowerBound( this->m_acLowerBound );
-  constellation2->SetCutOutHeadInOutputVolume( this->m_cutOutHeadInOutputVolume );
-  constellation2->SetRescaleIntensities( this->m_rescaleIntensities );
-  constellation2->SetTrimRescaledIntensities( this->m_trimRescaledIntensities );
-  constellation2->SetRescaleIntensitiesOutputRange( this->m_rescaleIntensitiesOutputRange );
-  constellation2->SetBackgroundFillValueString( this->m_backgroundFillValueString );
-  constellation2->SetInterpolationMode( this->m_interpolationMode );
+  constellation2->SetInputTemplateModel(this->m_inputTemplateModel);
+  constellation2->SetMspQualityLevel(this->m_mspQualityLevel);
+  constellation2->SetOtsuPercentileThreshold(this->m_otsuPercentileThreshold);
+  constellation2->SetAcLowerBound(this->m_acLowerBound);
+  constellation2->SetCutOutHeadInOutputVolume(this->m_cutOutHeadInOutputVolume);
+  constellation2->SetRescaleIntensities(this->m_rescaleIntensities);
+  constellation2->SetTrimRescaledIntensities(this->m_trimRescaledIntensities);
+  constellation2->SetRescaleIntensitiesOutputRange(this->m_rescaleIntensitiesOutputRange);
+  constellation2->SetBackgroundFillValueString(this->m_backgroundFillValueString);
+  constellation2->SetInterpolationMode(this->m_interpolationMode);
 
-  constellation2->SetRadiusMPJ( this->m_radiusMPJ );
-  constellation2->SetRadiusAC( this->m_radiusAC );
-  constellation2->SetRadiusPC( this->m_radiusPC );
-  constellation2->SetRadiusVN4( this->m_radiusVN4 );
-  constellation2->SetDebug( this->m_debug );
-  constellation2->SetVerbose( this->m_verbose );
-  constellation2->SetWritedebuggingImagesLevel( this->m_writedebuggingImagesLevel );
-  constellation2->SetWriteBranded2DImage( this->m_writeBranded2DImage );
-  constellation2->SetResultsDir( this->m_resultsDir );
-  constellation2->SetLlsMatrices( llsMatrices );
-  constellation2->SetLlsMeans( llsMeans );
-  constellation2->SetSearchRadii( searchRadii );
-  constellation2->SetOriginalInputImage( orig_img );
-  constellation2->SetatlasVolume( this->m_atlasVolume );
-  constellation2->SetatlasLandmarks( this->m_atlasLandmarks );
-  constellation2->SetatlasLandmarkWeights( this->m_atlasLandmarkWeights );
+  constellation2->SetRadiusMPJ(this->m_radiusMPJ);
+  constellation2->SetRadiusAC(this->m_radiusAC);
+  constellation2->SetRadiusPC(this->m_radiusPC);
+  constellation2->SetRadiusVN4(this->m_radiusVN4);
+  constellation2->SetDebug(this->m_debug);
+  constellation2->SetVerbose(this->m_verbose);
+  constellation2->SetWritedebuggingImagesLevel(this->m_writedebuggingImagesLevel);
+  constellation2->SetWriteBranded2DImage(this->m_writeBranded2DImage);
+  constellation2->SetResultsDir(this->m_resultsDir);
+  constellation2->SetLlsMatrices(llsMatrices);
+  constellation2->SetLlsMeans(llsMeans);
+  constellation2->SetSearchRadii(searchRadii);
+  constellation2->SetOriginalInputImage(orig_img);
+  constellation2->SetatlasVolume(this->m_atlasVolume);
+  constellation2->SetatlasLandmarks(this->m_atlasLandmarks);
+  constellation2->SetatlasLandmarkWeights(this->m_atlasLandmarkWeights);
   constellation2->Update();
 
 
   // Save landmarks in input/output or original/aligned space
   this->m_outputLandmarksInACPCAlignedSpaceMap = constellation2->GetAlignedPoints();
 
-  for ( LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
-        lit != constellation2->GetAlignedPoints().end();
-        ++lit )
+  for (LandmarksMapType::const_iterator lit = constellation2->GetAlignedPoints().begin();
+       lit != constellation2->GetAlignedPoints().end();
+       ++lit)
   {
     const VersorTransformType::OutputPointType transformedPoint =
-      constellation2->GetOrigToACPCVersorTransform()->TransformPoint( lit->second );
+      constellation2->GetOrigToACPCVersorTransform()->TransformPoint(lit->second);
     this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint;
   }
 
   // ----------------------
   // Write results to disk
   std::cout << "\nWriting results to files..." << std::endl;
-  if ( this->m_outputTransform.compare( "" ) != 0 )
+  if (this->m_outputTransform.compare("") != 0)
   {
     TransformWriterType::Pointer writer = TransformWriterType::New();
-    writer->SetInput( constellation2->GetOrigToACPCVersorTransform() );
-    writer->SetFileName( this->m_outputTransform );
+    writer->SetInput(constellation2->GetOrigToACPCVersorTransform());
+    writer->SetFileName(this->m_outputTransform);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputTransform file!" << std::endl;
       std::cerr << excep << std::endl;
@@ -429,20 +429,20 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   }
 
   std::string preferedOutputReferenceImage = "";
-  if ( this->m_outputVolume.compare( "" ) != 0 )
+  if (this->m_outputVolume.compare("") != 0)
   {
     preferedOutputReferenceImage = this->m_outputVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
     WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_outputVolume );
-    writer->SetInput( constellation2->GetOutput() );
-        writer->SetUseCompression( true );
+    writer->SetFileName(this->m_outputVolume);
+    writer->SetInput(constellation2->GetOutput());
+    writer->SetUseCompression(true);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputVolume image!" << std::endl;
       std::cerr << excep << std::endl;
@@ -450,20 +450,20 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     std::cout << "The output unresampled volume is written." << std::endl;
   }
 
-  if ( this->m_outputResampledVolume.compare( "" ) != 0 )
+  if (this->m_outputResampledVolume.compare("") != 0)
   {
     preferedOutputReferenceImage = this->m_outputResampledVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
     WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_outputResampledVolume );
-    writer->SetInput( constellation2->GetOutputResampledImage() );
-        writer->SetUseCompression( true );
+    writer->SetFileName(this->m_outputResampledVolume);
+    writer->SetInput(constellation2->GetOutputResampledImage());
+    writer->SetUseCompression(true);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputResampledVolume image!" << std::endl;
       std::cerr << excep << std::endl;
@@ -472,50 +472,50 @@ BRAINSConstellationDetectorPrimary::Compute( void )
   }
 
   // ------------------------
-  if ( this->m_outputLandmarksInInputSpace.compare( "" ) != 0 )
+  if (this->m_outputLandmarksInInputSpace.compare("") != 0)
   {
-    WriteITKtoSlicer3Lmk( this->m_outputLandmarksInInputSpace, this->m_outputLandmarksInInputSpaceMap );
+    WriteITKtoSlicer3Lmk(this->m_outputLandmarksInInputSpace, this->m_outputLandmarksInInputSpaceMap);
     std::cout << "The output landmarks list file in the original space is written. \n    "
               << this->m_outputLandmarksInInputSpace << std::endl;
   }
 
-  if ( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 )
+  if (this->m_outputLandmarksInACPCAlignedSpace.compare("") != 0)
   {
-    WriteITKtoSlicer3Lmk( this->m_outputLandmarksInACPCAlignedSpace, this->m_outputLandmarksInACPCAlignedSpaceMap );
+    WriteITKtoSlicer3Lmk(this->m_outputLandmarksInACPCAlignedSpace, this->m_outputLandmarksInACPCAlignedSpaceMap);
     std::cout << "The output landmarks list file in the output space is written. \n    "
               << this->m_outputLandmarksInACPCAlignedSpace << std::endl;
-    if ( preferedOutputReferenceImage.compare( "" ) == 0 )
+    if (preferedOutputReferenceImage.compare("") == 0)
     {
       std::cout << "WARNING no aligned output volume is requested." << std::endl;
     }
   }
 
   // ----------------------
-  if ( this->m_outputMRML.compare( "" ) != 0 )
+  if (this->m_outputMRML.compare("") != 0)
   {
-    WriteMRMLFile( this->m_outputMRML,
-                   this->m_outputLandmarksInInputSpace,
-                   this->m_outputLandmarksInACPCAlignedSpace,
-                   this->m_inputVolume,
-                   preferedOutputReferenceImage,
-                   this->m_outputTransform,
-                   this->m_outputLandmarksInInputSpaceMap,
-                   this->m_outputLandmarksInACPCAlignedSpaceMap,
-                   constellation2->GetOrigToACPCVersorTransform() );
+    WriteMRMLFile(this->m_outputMRML,
+                  this->m_outputLandmarksInInputSpace,
+                  this->m_outputLandmarksInACPCAlignedSpace,
+                  this->m_inputVolume,
+                  preferedOutputReferenceImage,
+                  this->m_outputTransform,
+                  this->m_outputLandmarksInInputSpaceMap,
+                  this->m_outputLandmarksInACPCAlignedSpaceMap,
+                  constellation2->GetOrigToACPCVersorTransform());
     std::cout << "The output mrml scene file is written." << std::endl;
   }
 
-  if ( this->m_outputUntransformedClippedVolume.compare( "" ) != 0 )
+  if (this->m_outputUntransformedClippedVolume.compare("") != 0)
   {
     WriterType::Pointer writer = WriterType::New();
-    writer->SetFileName( this->m_outputUntransformedClippedVolume );
-    writer->SetInput( constellation2->GetOutputUntransformedClippedVolume() );
-        writer->SetUseCompression( true );
+    writer->SetFileName(this->m_outputUntransformedClippedVolume);
+    writer->SetInput(constellation2->GetOutputUntransformedClippedVolume());
+    writer->SetUseCompression(true);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputUntransformedClippedVolume image!" << std::endl;
       std::cerr << excep << std::endl;
@@ -523,11 +523,11 @@ BRAINSConstellationDetectorPrimary::Compute( void )
     std::cout << "The output untransformed clipped volume is written." << std::endl;
   }
 
-  if ( ( this->m_outputVerificationScript.compare( "" ) != 0 ) &&
-       ( this->m_outputLandmarksInACPCAlignedSpace.compare( "" ) != 0 ) && ( this->m_outputVolume.compare( "" ) != 0 ) )
+  if ((this->m_outputVerificationScript.compare("") != 0) &&
+      (this->m_outputLandmarksInACPCAlignedSpace.compare("") != 0) && (this->m_outputVolume.compare("") != 0))
   {
     writeVerificationScript(
-      this->m_outputVerificationScript, this->m_outputVolume, this->m_outputLandmarksInACPCAlignedSpace );
+      this->m_outputVerificationScript, this->m_outputVolume, this->m_outputLandmarksInACPCAlignedSpace);
     std::cout << "The verification script is written." << std::endl;
   }
   return EXIT_SUCCESS;

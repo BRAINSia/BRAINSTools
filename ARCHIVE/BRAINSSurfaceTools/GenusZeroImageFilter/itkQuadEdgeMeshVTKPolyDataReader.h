@@ -32,23 +32,23 @@ namespace itk
  * Caveat: itkQuadEdgeMeshVTKPolyDataReader can only read triangle meshes.
  *         Use vtkTriangleFilter to convert your mesh to a triangle mesh.
  */
-template < typename TOutputMesh >
-class QuadEdgeMeshVTKPolyDataReader : public MeshSource< TOutputMesh >
+template <typename TOutputMesh>
+class QuadEdgeMeshVTKPolyDataReader : public MeshSource<TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshVTKPolyDataReader );
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshVTKPolyDataReader);
 
   /** Standard "Self" type alias. */
   using Self = QuadEdgeMeshVTKPolyDataReader;
-  using Superclass = MeshSource< TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = MeshSource<TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( QuadEdgeMeshVTKPolyDataReader, MeshSource );
+  itkTypeMacro(QuadEdgeMeshVTKPolyDataReader, MeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
   using OutputMeshType = TOutputMesh;
@@ -70,27 +70,27 @@ public:
   typedef typename OutputMeshType::PointsContainer PointsContainer;
 
   /** Define the triangular cell types which form the surface  */
-  using TriangleCellType = TriangleCell< CellType >;
+  using TriangleCellType = TriangleCell<CellType>;
 
   typedef typename TriangleCellType::SelfAutoPointer TriangleCellAutoPointer;
 
-  using IndexPairType = std::pair< unsigned long, unsigned long >;
-  using PointMapType = MapContainer< IndexPairType, unsigned long >;
+  using IndexPairType = std::pair<unsigned long, unsigned long>;
+  using PointMapType = MapContainer<IndexPairType, unsigned long>;
   using VectorType = typename PointType::VectorType;
 
   /** Set the resolution level to be used for generating cells in the
    * Sphere. High values of this parameter will produce sphere with more
    * triangles. */
   /** Set/Get the name of the file to be read. */
-  itkSetStringMacro( FileName );
-  itkGetStringMacro( FileName );
+  itkSetStringMacro(FileName);
+  itkGetStringMacro(FileName);
 
 protected:
   QuadEdgeMeshVTKPolyDataReader();
   ~QuadEdgeMeshVTKPolyDataReader() {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Reads the file */
   void

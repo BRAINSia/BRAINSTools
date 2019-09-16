@@ -50,61 +50,61 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
-  using ImageType = itk::Image< signed short, 3 >;
-  using MaskImageType = itk::Image< unsigned char, 3 >;
+  using ImageType = itk::Image<signed short, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
-  if ( inputVolumes.size() < 1 )
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  if (inputVolumes.size() < 1)
   {
     std::cerr << argv[0] << ": Missing required --inputVolumes parameter" << std::endl;
     return EXIT_FAILURE;
   }
   const unsigned int numberOfModes = inputVolumes.size();
-  using ThresholdRegionFinderType = itk::MultiModeHistogramThresholdBinaryImageFilter< ImageType, MaskImageType >;
-  ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold( numberOfModes );
-  ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold( numberOfModes );
+  using ThresholdRegionFinderType = itk::MultiModeHistogramThresholdBinaryImageFilter<ImageType, MaskImageType>;
+  ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
+  ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
 
   ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
 
   MaskImageType::Pointer RegionMaskVolume = nullptr;
-  if ( inputMaskVolume != "" )
+  if (inputMaskVolume != "")
   {
-    RegionMaskVolume = itkUtil::ReadImage< MaskImageType >( inputMaskVolume );
+    RegionMaskVolume = itkUtil::ReadImage<MaskImageType>(inputMaskVolume);
   }
-  for ( unsigned int modeIndex = 0; modeIndex < numberOfModes; modeIndex++ )
+  for (unsigned int modeIndex = 0; modeIndex < numberOfModes; modeIndex++)
   {
     {
-      ImageType::Pointer ImageInput = itkUtil::ReadImage< ImageType >( inputVolumes[modeIndex] );
-      thresholdRegionFinder->SetInput( modeIndex, ImageInput );
-      if ( RegionMaskVolume.IsNull() ) // USE ROIAUTO if no explicit mask is
-                                       // specified on command line.
+      ImageType::Pointer ImageInput = itkUtil::ReadImage<ImageType>(inputVolumes[modeIndex]);
+      thresholdRegionFinder->SetInput(modeIndex, ImageInput);
+      if (RegionMaskVolume.IsNull()) // USE ROIAUTO if no explicit mask is
+                                     // specified on command line.
       {
-        using ROIAutoType = itk::BRAINSROIAutoImageFilter< ImageType, MaskImageType >;
+        using ROIAutoType = itk::BRAINSROIAutoImageFilter<ImageType, MaskImageType>;
         ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
-        ROIFilter->SetInput( ImageInput );
+        ROIFilter->SetInput(ImageInput);
         ROIFilter->Update();
         RegionMaskVolume = ROIFilter->GetOutput();
       }
-      thresholdRegionFinder->SetBinaryPortionImage( RegionMaskVolume );
+      thresholdRegionFinder->SetBinaryPortionImage(RegionMaskVolume);
     }
     {
       const float lower = lowerThreshold[modeIndex];
       const float upper = upperThreshold[modeIndex];
-      QuantileLowerThreshold.SetElement( modeIndex, lower );
-      QuantileUpperThreshold.SetElement( modeIndex, upper );
+      QuantileLowerThreshold.SetElement(modeIndex, lower);
+      QuantileUpperThreshold.SetElement(modeIndex, upper);
     }
   }
   // std::cout << "============ Starting Threshold for Prior index: " << i <<
   // std::endl;
   // Assume upto (2*0.025)% of intensities are noise that corrupts the image
   // min/max values
-  thresholdRegionFinder->SetLinearQuantileThreshold( 0.025 );
-  thresholdRegionFinder->SetQuantileLowerThreshold( QuantileLowerThreshold );
-  thresholdRegionFinder->SetQuantileUpperThreshold( QuantileUpperThreshold );
+  thresholdRegionFinder->SetLinearQuantileThreshold(0.025);
+  thresholdRegionFinder->SetQuantileLowerThreshold(QuantileLowerThreshold);
+  thresholdRegionFinder->SetQuantileUpperThreshold(QuantileUpperThreshold);
   // thresholdRegionFinder->SetInsideValue(1);
   // thresholdRegionFinder->SetOutsideValue(0);//Greatly reduce the value to
   // zero.
@@ -113,12 +113,12 @@ main( int argc, char * argv[] )
   // clipping.
   MaskImageType::Pointer MaskImage = thresholdRegionFinder->GetOutput();
 
-  if ( outputROIMaskVolume != "" )
+  if (outputROIMaskVolume != "")
   {
-    itkUtil::WriteImage< MaskImageType >( MaskImage, outputROIMaskVolume );
+    itkUtil::WriteImage<MaskImageType>(MaskImage, outputROIMaskVolume);
   }
 
-  if ( outputClippedVolumeROI != "" )
+  if (outputClippedVolumeROI != "")
   {
     std::cout << "WARNING:  This feature is not yet implemented! " << std::endl;
     //    itkUtil::WriteImage<unsigned char>(,MaskImage,outputClippedVolumeROI);

@@ -39,23 +39,23 @@ namespace itk
  * German Cancer Research Center, Heidelberg.
  *
  */
-template < typename TOutputMesh >
-class IcosahedralRegularSphereMeshSource : public MeshSource< TOutputMesh >
+template <typename TOutputMesh>
+class IcosahedralRegularSphereMeshSource : public MeshSource<TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( IcosahedralRegularSphereMeshSource );
+  ITK_DISALLOW_COPY_AND_ASSIGN(IcosahedralRegularSphereMeshSource);
 
   /** Standard "Self" type alias. */
   using Self = IcosahedralRegularSphereMeshSource;
-  using Superclass = itk::MeshSource< TOutputMesh >;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
+  using Superclass = itk::MeshSource<TOutputMesh>;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( IcosahedralRegularSphereMeshSource, MeshSource );
+  itkTypeMacro(IcosahedralRegularSphereMeshSource, MeshSource);
 
   /** Hold on to the type information specified by the template parameters. */
   using OutputMeshType = TOutputMesh;
@@ -70,45 +70,45 @@ public:
   using PointsContainer = typename OutputMeshType::PointsContainer;
 
   /** Define the triangular cell types which form the surface  */
-  using CellInterfaceType = itk::CellInterface< PixelType, CellTraits >;
-  using TriCellType = itk::TriangleCell< CellInterfaceType >;
+  using CellInterfaceType = itk::CellInterface<PixelType, CellTraits>;
+  using TriCellType = itk::TriangleCell<CellInterfaceType>;
   using TriCellAutoPointer = typename TriCellType::SelfAutoPointer;
   using CellAutoPointer = typename TriCellType::CellAutoPointer;
 
-  using IndexPairType = std::pair< unsigned long, unsigned long >;
-  using PointMapType = itk::MapContainer< IndexPairType, unsigned long >;
+  using IndexPairType = std::pair<unsigned long, unsigned long>;
+  using PointMapType = itk::MapContainer<IndexPairType, unsigned long>;
   using VectorType = typename PointType::VectorType;
 
   /** Set the resolution level to be used for generating cells in the Sphere.
    *  High values of this parameter will produce sphere with more triangles. */
-  itkSetMacro( Resolution, unsigned int );
-  itkGetConstMacro( Resolution, unsigned int );
+  itkSetMacro(Resolution, unsigned int);
+  itkGetConstMacro(Resolution, unsigned int);
 
   /** Set/Get Coordinates of the Sphere center. */
-  itkSetMacro( Center, PointType );
-  itkGetConstMacro( Center, PointType );
+  itkSetMacro(Center, PointType);
+  itkGetConstMacro(Center, PointType);
 
   /** Set/Get scales of the Sphere. This is a vector of values that can
    * actually be used for generating ellipsoids aligned with the coordinate
    * axis. */
-  itkSetMacro( Scale, VectorType );
-  itkGetConstMacro( Scale, VectorType );
+  itkSetMacro(Scale, VectorType);
+  itkGetConstMacro(Scale, VectorType);
 
 protected:
   IcosahedralRegularSphereMeshSource();
   ~IcosahedralRegularSphereMeshSource() {}
 
   void
-  PrintSelf( std::ostream & os, itk::Indent indent ) const override;
+  PrintSelf(std::ostream & os, itk::Indent indent) const override;
 
   void
   GenerateData() override;
 
   PointType
-  Divide( const PointType & p1, const PointType & p2 ) const;
+  Divide(const PointType & p1, const PointType & p2) const;
 
   void
-  AddCell( OutputMeshType * mesh, const unsigned long * pointIds, unsigned long idx );
+  AddCell(OutputMeshType * mesh, const unsigned long * pointIds, unsigned long idx);
 
   /** model center */
   PointType m_Center;

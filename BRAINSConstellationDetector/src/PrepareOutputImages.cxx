@@ -29,11 +29,11 @@ namespace itk
 {
 
 SImageType::PointType
-GetNamedPointFromLandmarkList( const LandmarksMapType & landmarks, const std::string & NamedPoint )
+GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::string & NamedPoint)
 {
-  LandmarksMapType::const_iterator itpair = landmarks.find( NamedPoint );
+  LandmarksMapType::const_iterator itpair = landmarks.find(NamedPoint);
 
-  if ( itpair == landmarks.end() )
+  if (itpair == landmarks.end())
   {
     std::cout << "ERROR:  " << NamedPoint << " not found in list." << std::endl;
     return SImageType::PointType();
@@ -42,34 +42,38 @@ GetNamedPointFromLandmarkList( const LandmarksMapType & landmarks, const std::st
 }
 
 void
-PrepareOutputImages( SImageType::Pointer & lOutputResampledImage, SImageType::Pointer & lOutputImage,
-                     SImageType::Pointer &    lOutputUntransformedClippedVolume,
-                     SImageType::ConstPointer lImageToBeResampled, VersorTransformType::ConstPointer lVersorTransform,
-                     const double lACLowerBound, const short int BackgroundFillValue,
-                     const std::string & lInterpolationMode, const bool lCutOutHeadInOutputVolume,
-                     const double lOtsuPercentileThreshold )
+PrepareOutputImages(SImageType::Pointer &             lOutputResampledImage,
+                    SImageType::Pointer &             lOutputImage,
+                    SImageType::Pointer &             lOutputUntransformedClippedVolume,
+                    SImageType::ConstPointer          lImageToBeResampled,
+                    VersorTransformType::ConstPointer lVersorTransform,
+                    const double                      lACLowerBound,
+                    const short int                   BackgroundFillValue,
+                    const std::string &               lInterpolationMode,
+                    const bool                        lCutOutHeadInOutputVolume,
+                    const double                      lOtsuPercentileThreshold)
 {
-  using ResampleIPFilterType = ResampleInPlaceImageFilter< SImageType, SImageType >;
+  using ResampleIPFilterType = ResampleInPlaceImageFilter<SImageType, SImageType>;
   using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
 
   const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - lACLowerBound;
   {
-    const SImageType * constImage( lImageToBeResampled.GetPointer() );
+    const SImageType * constImage(lImageToBeResampled.GetPointer());
 
     ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
-    resampleIPFilter->SetInputImage( constImage );
-    resampleIPFilter->SetRigidTransform( lVersorTransform.GetPointer() );
+    resampleIPFilter->SetInputImage(constImage);
+    resampleIPFilter->SetRigidTransform(lVersorTransform.GetPointer());
     resampleIPFilter->Update();
     lOutputImage = resampleIPFilter->GetOutput();
   }
 
   {
-    lOutputResampledImage = TransformResample< SImageType, SImageType >(
-      lImageToBeResampled.GetPointer(),
-      MakeIsoTropicReferenceImage().GetPointer(),
-      BackgroundFillValue,
-      GetInterpolatorFromString< SImageType >( lInterpolationMode ).GetPointer(),
-      lVersorTransform.GetPointer() );
+    lOutputResampledImage =
+      TransformResample<SImageType, SImageType>(lImageToBeResampled.GetPointer(),
+                                                MakeIsoTropicReferenceImage().GetPointer(),
+                                                BackgroundFillValue,
+                                                GetInterpolatorFromString<SImageType>(lInterpolationMode).GetPointer(),
+                                                lVersorTransform.GetPointer());
   }
 
   {
@@ -78,50 +82,50 @@ PrepareOutputImages( SImageType::Pointer & lOutputResampledImage, SImageType::Po
     //  HACK -- chopping based on AcLowerBound
     //  This is ugly code that could be re-written much simpler.
     //
-    using IteratorType = itk::ImageRegionIteratorWithIndex< SImageType >;
+    using IteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     constexpr double thousand = 1000.0; // we need a DOUBLE constant, not a
     // FLOAT constant, for exact switch
     // comparisons.
-    if ( lACLowerBound < thousand )
+    if (lACLowerBound < thousand)
     {
       // First Process the OutputResampledImage
       std::cout << "Chopping image below physical location: " << PhysicalLowerBound << "." << std::endl;
-      ChopImageBelowLowerBound< SImageType >( lOutputResampledImage, BackgroundFillValue, PhysicalLowerBound );
-      ChopImageBelowLowerBound< SImageType >( lOutputImage, BackgroundFillValue, PhysicalLowerBound );
+      ChopImageBelowLowerBound<SImageType>(lOutputResampledImage, BackgroundFillValue, PhysicalLowerBound);
+      ChopImageBelowLowerBound<SImageType>(lOutputImage, BackgroundFillValue, PhysicalLowerBound);
 
       // Second Create a mask for inverse resampling to orignal space
       SImageType::Pointer ZeroOneImage = SImageType::New();
-      ZeroOneImage->CopyInformation( lOutputResampledImage );
-      ZeroOneImage->SetRegions( lOutputResampledImage->GetLargestPossibleRegion() );
+      ZeroOneImage->CopyInformation(lOutputResampledImage);
+      ZeroOneImage->SetRegions(lOutputResampledImage->GetLargestPossibleRegion());
       ZeroOneImage->Allocate();
-      ZeroOneImage->FillBuffer( 1 );
-      ChopImageBelowLowerBound< SImageType >( ZeroOneImage, BackgroundFillValue, PhysicalLowerBound );
+      ZeroOneImage->FillBuffer(1);
+      ChopImageBelowLowerBound<SImageType>(ZeroOneImage, BackgroundFillValue, PhysicalLowerBound);
 
-      if ( lCutOutHeadInOutputVolume ) // Restrict mask to head
+      if (lCutOutHeadInOutputVolume) // Restrict mask to head
       // tissue region if necessary
       {
         //  No double opportunity when generating both kinds of images.
         constexpr unsigned int closingSize = 7;
-        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter< SImageType >;
+        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
         LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
-        LFF->SetInput( lOutputResampledImage );
-        LFF->SetOtsuPercentileThreshold( lOtsuPercentileThreshold );
-        LFF->SetClosingSize( closingSize );
+        LFF->SetInput(lOutputResampledImage);
+        LFF->SetOtsuPercentileThreshold(lOtsuPercentileThreshold);
+        LFF->SetClosingSize(closingSize);
         LFF->Update();
         SImageType::Pointer HeadOutlineMaskImage = LFF->GetOutput();
 
-        IteratorType ItZeroOneImage( ZeroOneImage, ZeroOneImage->GetRequestedRegion() );
+        IteratorType ItZeroOneImage(ZeroOneImage, ZeroOneImage->GetRequestedRegion());
         ItZeroOneImage.GoToBegin();
-        IteratorType ItOutputResampledImage( lOutputResampledImage, lOutputResampledImage->GetRequestedRegion() );
+        IteratorType ItOutputResampledImage(lOutputResampledImage, lOutputResampledImage->GetRequestedRegion());
         ItOutputResampledImage.GoToBegin();
-        IteratorType ItHead( HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion() );
+        IteratorType ItHead(HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion());
         ItHead.GoToBegin();
-        while ( !ItHead.IsAtEnd() )
+        while (!ItHead.IsAtEnd())
         {
-          if ( ItHead.Get() == 0 )
+          if (ItHead.Get() == 0)
           {
-            ItOutputResampledImage.Set( 0 );
-            ItZeroOneImage.Set( 0 );
+            ItOutputResampledImage.Set(0);
+            ItZeroOneImage.Set(0);
           }
           ++ItZeroOneImage;
           ++ItOutputResampledImage;
@@ -130,30 +134,30 @@ PrepareOutputImages( SImageType::Pointer & lOutputResampledImage, SImageType::Po
       }
       // Map the ZeroOne image through the inverse zero-centered transform
       // to make the clipping factor image:
-      using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction< SImageType, double >;
+      using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<SImageType, double>;
       NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
-      using ResampleFilterType = itk::ResampleImageFilter< SImageType, SImageType >;
+      using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
       ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
-      ResampleFilter->SetInput( ZeroOneImage );
-      ResampleFilter->SetInterpolator( interpolator );
-      ResampleFilter->SetDefaultPixelValue( 0 );
-      ResampleFilter->SetOutputParametersFromImage( lImageToBeResampled );
+      ResampleFilter->SetInput(ZeroOneImage);
+      ResampleFilter->SetInterpolator(interpolator);
+      ResampleFilter->SetDefaultPixelValue(0);
+      ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
       {
         VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
         const SImageType::PointType  centerPoint = lVersorTransform->GetCenter();
-        lInvVersorTransform->SetCenter( centerPoint );
+        lInvVersorTransform->SetCenter(centerPoint);
         lInvVersorTransform->SetIdentity();
-        lVersorTransform->GetInverse( lInvVersorTransform );
-        ResampleFilter->SetTransform( lInvVersorTransform );
+        lVersorTransform->GetInverse(lInvVersorTransform);
+        ResampleFilter->SetTransform(lInvVersorTransform);
       }
       ResampleFilter->Update();
       SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
 
       // Multiply the raw input image by the clipping factor image:
-      using MultiplyFilterType = itk::MultiplyImageFilter< SImageType, SImageType >;
+      using MultiplyFilterType = itk::MultiplyImageFilter<SImageType, SImageType>;
       MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
-      MultiplyFilter->SetInput1( lImageToBeResampled );
-      MultiplyFilter->SetInput2( lClippingFactorImage );
+      MultiplyFilter->SetInput1(lImageToBeResampled);
+      MultiplyFilter->SetInput2(lClippingFactorImage);
       MultiplyFilter->Update();
       lOutputUntransformedClippedVolume = MultiplyFilter->GetOutput();
     }
@@ -163,22 +167,22 @@ PrepareOutputImages( SImageType::Pointer & lOutputResampledImage, SImageType::Po
 }
 
 void
-ApplyInverseOfTransformToLandmarks( VersorTransformType::ConstPointer lVersorTransform,
-                                    const LandmarksMapType & inputLmks, LandmarksMapType & outputLmks )
+ApplyInverseOfTransformToLandmarks(VersorTransformType::ConstPointer lVersorTransform,
+                                   const LandmarksMapType &          inputLmks,
+                                   LandmarksMapType &                outputLmks)
 {
   VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
   {
     const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
-    lInvVersorTransform->SetCenter( centerPoint );
+    lInvVersorTransform->SetCenter(centerPoint);
     lInvVersorTransform->SetIdentity();
-    lVersorTransform->GetInverse( lInvVersorTransform );
+    lVersorTransform->GetInverse(lInvVersorTransform);
   }
 
   outputLmks.clear();
-  for ( LandmarksMapType::const_iterator lit = inputLmks.begin(); lit != inputLmks.end(); ++lit )
+  for (LandmarksMapType::const_iterator lit = inputLmks.begin(); lit != inputLmks.end(); ++lit)
   {
-    outputLmks[lit->first] =
-      lInvVersorTransform->TransformPoint( GetNamedPointFromLandmarkList( inputLmks, lit->first ) );
+    outputLmks[lit->first] = lInvVersorTransform->TransformPoint(GetNamedPointFromLandmarkList(inputLmks, lit->first));
   }
 }
 } // namespace itk

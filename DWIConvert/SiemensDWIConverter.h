@@ -26,60 +26,62 @@
 class SiemensDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  SiemensDWIConverter( DCMTKFileVector & allHeaders, DWIConverter::FileNamesContainer & inputFileNames,
-                       const bool useBMatrixGradientDirections, const double smallGradientThreshold );
+  SiemensDWIConverter(DCMTKFileVector &                  allHeaders,
+                      DWIConverter::FileNamesContainer & inputFileNames,
+                      const bool                         useBMatrixGradientDirections,
+                      const double                       smallGradientThreshold);
   ~SiemensDWIConverter() override;
 
-  template < typename T >
+  template <typename T>
   T
-  CSAExtractFromString( const char * ptr );
+  CSAExtractFromString(const char * ptr);
 
-  class CSAItem : public std::vector< std::string >
+  class CSAItem : public std::vector<std::string>
   {
   public:
-    using SuperClass = std::vector< std::string >;
+    using SuperClass = std::vector<std::string>;
 
     itk::uint32_t vm;
     std::string   vr;
 
-    CSAItem( unsigned int length )
-      : SuperClass( length )
-      , vm( 0 )
+    CSAItem(unsigned int length)
+      : SuperClass(length)
+      , vm(0)
     {}
     CSAItem()
       : SuperClass()
     {}
-    CSAItem( const CSAItem & other )
-      : SuperClass( other.size() )
+    CSAItem(const CSAItem & other)
+      : SuperClass(other.size())
     {
       *this = other;
     }
     CSAItem &
-    operator=( const CSAItem & other )
+    operator=(const CSAItem & other)
     {
-      this->resize( 0 );
-      for ( CSAItem::const_iterator it = other.begin(); it != other.end(); ++it )
+      this->resize(0);
+      for (CSAItem::const_iterator it = other.begin(); it != other.end(); ++it)
       {
-        this->push_back( *it );
+        this->push_back(*it);
       }
       this->vm = other.vm;
       this->vr = other.vr;
       return *this;
     }
 
-    template < typename T >
-    std::vector< T >
+    template <typename T>
+    std::vector<T>
     AsVector() const
     {
-      std::vector< T > rval;
-      for ( unsigned i = 0; i < this->size(); ++i )
+      std::vector<T> rval;
+      for (unsigned i = 0; i < this->size(); ++i)
       {
-        if ( !( *this )[i].empty() )
+        if (!(*this)[i].empty())
         {
           T                 val = 0;
-          std::stringstream convert( ( *this )[i] );
+          std::stringstream convert((*this)[i]);
           convert >> val;
-          rval.push_back( val );
+          rval.push_back(val);
         }
       }
       return rval;
@@ -88,10 +90,10 @@ public:
     DebugPrint() const
     {
       std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl << "    ";
-      bool firstTime( false );
-      for ( CSAItem::const_iterator it = this->begin(); it != this->end(); ++it )
+      bool firstTime(false);
+      for (CSAItem::const_iterator it = this->begin(); it != this->end(); ++it)
       {
-        if ( firstTime )
+        if (firstTime)
         {
           firstTime = false;
         }
@@ -105,13 +107,13 @@ public:
     }
   };
 
-  class CSAHeader : public std::map< std::string, CSAItem >
+  class CSAHeader : public std::map<std::string, CSAItem>
   {
   public:
     void
     DebugPrint() const
     {
-      for ( CSAHeader::const_iterator it = this->begin(); it != this->end(); ++it )
+      for (CSAHeader::const_iterator it = this->begin(); it != this->end(); ++it)
       {
         std::cerr << it->first << std::endl;
         it->second.DebugPrint();
@@ -121,7 +123,7 @@ public:
 
 
   void
-  DecodeCSAHeader( CSAHeader & header, const std::string & infoString );
+  DecodeCSAHeader(CSAHeader & header, const std::string & infoString);
 
 
   /** Siemens datasets are either in the
@@ -134,14 +136,13 @@ public:
   LoadDicomDirectory() override;
 
   double
-  ExtractBValue( CSAHeader * csaHeader, unsigned int strideVolume );
+  ExtractBValue(CSAHeader * csaHeader, unsigned int strideVolume);
 
   bool
-  ExtractGradientDirection( CSAHeader * csaHeader, unsigned int strideVolume,
-                            vnl_vector_fixed< double, 3 > & gradient );
+  ExtractGradientDirection(CSAHeader * csaHeader, unsigned int strideVolume, vnl_vector_fixed<double, 3> & gradient);
 
   bool
-  ExtractBMatrix( CSAHeader * csaHeader, unsigned int strideVolume, vnl_matrix_fixed< double, 3, 3 > & bMatrix );
+  ExtractBMatrix(CSAHeader * csaHeader, unsigned int strideVolume, vnl_matrix_fixed<double, 3, 3> & bMatrix);
   /**
    * @brief  find the bvalues and gradient vectors
    */
@@ -150,7 +151,7 @@ public:
 
 private:
   static bool
-  IsZeroMag( DWIMetaDataDictionaryValidator::GradientDirectionType vec );
+  IsZeroMag(DWIMetaDataDictionaryValidator::GradientDirectionType vec);
 
 protected:
   /** turn a mosaic image back into a sequential volume image */
@@ -158,7 +159,7 @@ protected:
   DeMosaic();
 
   unsigned int
-  ConvertFromCharPtr( const char * s );
+  ConvertFromCharPtr(const char * s);
   /** pull data out of Siemens scans.
    *
    *  Siemens sticks most of the DTI information into a single
@@ -169,8 +170,9 @@ protected:
    *  document.
    */
   unsigned int
-  ExtractSiemensDiffusionInformation( const std::string & tagString, const std::string & nameString,
-                                      std::vector< double > & valueArray );
+  ExtractSiemensDiffusionInformation(const std::string &   tagString,
+                                     const std::string &   nameString,
+                                     std::vector<double> & valueArray);
 
   void
   CheckCSAHeaderAvailable();

@@ -36,7 +36,7 @@
 #include "vtkFSIO.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
-#if ( VTK_MAJOR_VERSION >= 5 )
+#if (VTK_MAJOR_VERSION >= 5)
 #  include "vtkStreamingDemandDrivenPipeline.h"
 #  include "vtkInformation.h"
 #endif
@@ -46,12 +46,12 @@ vtkFSSurfaceReader *
 vtkFSSurfaceReader::New()
 {
   // First try to create the object from the vtkObjectFactory
-  vtkObject * ret = vtkObjectFactory::CreateInstance( "vtkFSSurfaceReader" );
+  vtkObject * ret = vtkObjectFactory::CreateInstance("vtkFSSurfaceReader");
 
-  if ( ret )
+  if (ret)
   {
     // return (vtkFSSurfaceReader*)ret;
-    return dynamic_cast< vtkFSSurfaceReader * > ret;
+    return dynamic_cast<vtkFSSurfaceReader *> ret;
   }
   // If the factory was unable to create the object, then create it here.
   return new vtkFSSurfaceReader;
@@ -62,7 +62,7 @@ vtkFSSurfaceReader::vtkFSSurfaceReader()
 {
   vtkPolyData * output = vtkPolyData::New();
 
-  this->SetOutput( output );
+  this->SetOutput(output);
 
   // Releasing data for pipeline parallism.
   // Filters will know it is empty.
@@ -81,72 +81,72 @@ vtkFSSurfaceReader::GetOutput()
 {
   int numberOfOutputs;
 
-#if ( VTK_MAJOR_VERSION >= 5 )
+#if (VTK_MAJOR_VERSION >= 5)
   numberOfOutputs = this->GetNumberOfOutputPorts();
 #else
   numberOfOutputs = this->NumberOfOutputs;
 #endif
 
-  if ( numberOfOutputs < 1 )
+  if (numberOfOutputs < 1)
   {
     return NULL;
   }
-#if ( VTK_MAJOR_VERSION >= 5 )
-  return dynamic_cast< vtkPolyData * >( this->GetOutput( 0 ) );
+#if (VTK_MAJOR_VERSION >= 5)
+  return dynamic_cast<vtkPolyData *>(this->GetOutput(0));
 #else
-  return dynamic_cast< vtkPolyData * >( this->Outputs[0] );
+  return dynamic_cast<vtkPolyData *>(this->Outputs[0]);
 #endif
 }
 
 // ----------------------------------------------------------------------------
 vtkPolyData *
-vtkFSSurfaceReader::GetOutput( int idx )
+vtkFSSurfaceReader::GetOutput(int idx)
 {
-#if ( VTK_MAJOR_VERSION >= 5 )
-  return vtkPolyData::SafeDownCast( this->GetOutputDataObject( idx ) );
+#if (VTK_MAJOR_VERSION >= 5)
+  return vtkPolyData::SafeDownCast(this->GetOutputDataObject(idx));
 #else
-  return vtkPolyData::SafeDownCast( this->vtkSource::GetOutput( idx ) );
+  return vtkPolyData::SafeDownCast(this->vtkSource::GetOutput(idx));
 #endif
 }
 
 // ----------------------------------------------------------------------------
 void
-vtkFSSurfaceReader::SetOutput( vtkPolyData * output )
+vtkFSSurfaceReader::SetOutput(vtkPolyData * output)
 {
-#if ( VTK_MAJOR_VERSION >= 5 )
-  this->GetExecutive()->SetOutputData( 0, output );
+#if (VTK_MAJOR_VERSION >= 5)
+  this->GetExecutive()->SetOutputData(0, output);
 #else
-  this->vtkSource::SetNthOutput( 0, output );
+  this->vtkSource::SetNthOutput(0, output);
 #endif
 }
 
 // ----------------------------------------------------------------------------
-#if !( VTK_MAJOR_VERSION >= 5 )
+#if !(VTK_MAJOR_VERSION >= 5)
 void
-vtkFSSurfaceReader::ComputeInputUpdateExtents( vtkDataObject * data )
+vtkFSSurfaceReader::ComputeInputUpdateExtents(vtkDataObject * data)
 {
   int           piece, numPieces, ghostLevel;
   vtkPolyData * output = (vtkPolyData *)data;
   int           idx;
 
-  output->GetUpdateExtent( piece, numPieces, ghostLevel );
+  output->GetUpdateExtent(piece, numPieces, ghostLevel);
 
   // make sure piece is valid
-  if ( piece < 0 || piece >= numPieces )
+  if (piece < 0 || piece >= numPieces)
   {
     return;
   }
 
-  if ( ghostLevel < 0 )
+  if (ghostLevel < 0)
   {
     return;
   }
   // just copy the Update extent as default behavior.
-  for ( idx = 0; idx < this->NumberOfInputs; ++idx )
+  for (idx = 0; idx < this->NumberOfInputs; ++idx)
   {
-    if ( this->Inputs[idx] )
+    if (this->Inputs[idx])
     {
-      this->Inputs[idx]->SetUpdateExtent( piece, numPieces, ghostLevel );
+      this->Inputs[idx]->SetUpdateExtent(piece, numPieces, ghostLevel);
     }
   }
 
@@ -160,11 +160,11 @@ vtkFSSurfaceReader::ComputeInputUpdateExtents( vtkDataObject * data )
 #endif
 
 int
-vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * outputVector )
+vtkFSSurfaceReader::RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector * outputVector)
 {
-  vtkInformation * outInfo = outputVector->GetInformationObject( 0 );
+  vtkInformation * outInfo = outputVector->GetInformationObject(0);
   //  vtkPolyData *output = this->GetOutput();
-  vtkPolyData *  output = vtkPolyData::SafeDownCast( outInfo->Get( vtkDataObject::DATA_OBJECT() ) );
+  vtkPolyData *  output = vtkPolyData::SafeDownCast(outInfo->Get(vtkDataObject::DATA_OBJECT()));
   FILE *         surfaceFile;
   int            magicNumber;
   char           line[256];
@@ -199,33 +199,33 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
   int totalSteps = 1;
   int thisStep = 0;
 
-  vtkDebugMacro( << "RequestData: Reading vtk polygonal data..." );
+  vtkDebugMacro(<< "RequestData: Reading vtk polygonal data...");
 
   // Try to open the file.
-  surfaceFile = fopen( this->FileName, "rb" );
-  if ( !surfaceFile )
+  surfaceFile = fopen(this->FileName, "rb");
+  if (!surfaceFile)
   {
-    vtkErrorMacro( << "Could not open file " << this->FileName );
+    vtkErrorMacro(<< "Could not open file " << this->FileName);
     return 1;
   }
 
   // Get the three byte magic number. We support two file types.
-  vtkFSIO::ReadInt3( surfaceFile, magicNumber );
-  if ( magicNumber != vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER &&
-       magicNumber != vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER &&
-       magicNumber != vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER )
+  vtkFSIO::ReadInt3(surfaceFile, magicNumber);
+  if (magicNumber != vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER &&
+      magicNumber != vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER &&
+      magicNumber != vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER)
   {
-    vtkErrorMacro( << "vtkFSSurfaceReader.cxx Execute: Wrong file type when loading " << this->FileName
-                   << "\n magic number = " << magicNumber << ". Supported ar "
-                   << vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER << ", "
-                   << vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER << ", and "
-                   << vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER );
+    vtkErrorMacro(<< "vtkFSSurfaceReader.cxx Execute: Wrong file type when loading " << this->FileName
+                  << "\n magic number = " << magicNumber << ". Supported ar "
+                  << vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER << ", "
+                  << vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER << ", and "
+                  << vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER);
     return 1;
   }
 
 #if FS_DEBUG
 
-  switch ( magicNumber )
+  switch (magicNumber)
   {
     case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
     {
@@ -247,11 +247,11 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
 
   // Triangle file has some kind of header string at the
   // beginning. Skip it.
-  if ( vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER == magicNumber )
+  if (vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER == magicNumber)
   {
-    char * skipchars = fgets( line, 200, surfaceFile );
-    int    skip = fscanf( surfaceFile, "\n" );
-    if ( skipchars == NULL || skip > 0 )
+    char * skipchars = fgets(line, 200, surfaceFile);
+    int    skip = fscanf(surfaceFile, "\n");
+    if (skipchars == NULL || skip > 0)
     {
       // trying to avoid unused var warnings while checking return values
     }
@@ -261,34 +261,34 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
   // and faces, while quad files use three byte ints.
   size_t retval;
 
-  switch ( magicNumber )
+  switch (magicNumber)
   {
     case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
     case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
     {
-      vtkFSIO::ReadInt3( surfaceFile, numVertices );
-      vtkFSIO::ReadInt3( surfaceFile, numFaces );
+      vtkFSIO::ReadInt3(surfaceFile, numVertices);
+      vtkFSIO::ReadInt3(surfaceFile, numFaces);
     }
     break;
     case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER:
     {
-      retval = fread( &numVertices, sizeof( int ), 1, surfaceFile );
-      if ( retval == 1 )
+      retval = fread(&numVertices, sizeof(int), 1, surfaceFile);
+      if (retval == 1)
       {
-        vtkByteSwap::Swap4BE( &numVertices );
+        vtkByteSwap::Swap4BE(&numVertices);
       }
       else
       {
-        vtkErrorMacro( "Error reading number of vertices" );
+        vtkErrorMacro("Error reading number of vertices");
       }
-      retval = fread( &numFaces, sizeof( int ), 1, surfaceFile );
-      if ( retval == 1 )
+      retval = fread(&numFaces, sizeof(int), 1, surfaceFile);
+      if (retval == 1)
       {
-        vtkByteSwap::Swap4BE( &numFaces );
+        vtkByteSwap::Swap4BE(&numFaces);
       }
       else
       {
-        vtkErrorMacro( "Error reading number of faces" );
+        vtkErrorMacro("Error reading number of faces");
       }
     }
     break;
@@ -299,7 +299,7 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
   // here we just generate quads where as in the old code they
   // generated tries from the quads. (Trust me.) In tri files, we use
   // every face.
-  switch ( magicNumber )
+  switch (magicNumber)
   {
     case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
     case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
@@ -322,7 +322,7 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
 
   // If quad files, there are four vertices per face, in tri files,
   // there are three.
-  switch ( magicNumber )
+  switch (magicNumber)
   {
     case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
     case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
@@ -339,43 +339,43 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
 
   // Allocate our VTK arrays.
   outputVertices = vtkPoints::New();
-  outputVertices->Allocate( numVertices );
+  outputVertices->Allocate(numVertices);
   outputFaces = vtkCellArray::New();
-  outputFaces->Allocate( outputFaces->EstimateSize( numFaces, numVerticesPerFace ) );
+  outputFaces->Allocate(outputFaces->EstimateSize(numFaces, numVerticesPerFace));
 #if FS_CALC_NORMALS
   outputNormals = vtkFloatArray::New();
-  outputNormals->Allocate( numVertices );
-  outputNormals->SetNumberOfComponents( 3 );
-  outputNormals->SetName( "Normals" );
+  outputNormals->Allocate(numVertices);
+  outputNormals->SetNumberOfComponents(3);
+  outputNormals->SetName("Normals");
 
   // Allocate our vertex and face connectivity arrays for calculating
   // the normals. If we can't, no big deal.
-  vertices = (FSVertex *)calloc( numVertices, sizeof( FSVertex ) );
-  faces = (FSFace *)calloc( numFaces, sizeof( FSFace ) );
-  if ( NULL == vertices || NULL == faces )
+  vertices = (FSVertex *)calloc(numVertices, sizeof(FSVertex));
+  faces = (FSFace *)calloc(numFaces, sizeof(FSFace));
+  if (NULL == vertices || NULL == faces)
   {
-    vtkErrorMacro( << "Couldn't allocate vertex or face connectivity "
-                      "structures, unable to calc normals" );
+    vtkErrorMacro(<< "Couldn't allocate vertex or face connectivity "
+                     "structures, unable to calc normals");
   }
 #endif
 
-  totalSteps = numVertices + ( numFaces * faceMultiplier / faceIncrement * numVerticesPerFace );
+  totalSteps = numVertices + (numFaces * faceMultiplier / faceIncrement * numVerticesPerFace);
 #if FS_CALC_NORMALS
-  if ( NULL != vertices && NULL != faces )
+  if (NULL != vertices && NULL != faces)
   {
-    for ( vIndex = 0; vIndex < numVertices; vIndex++ )
+    for (vIndex = 0; vIndex < numVertices; vIndex++)
     {
       fv1 = &vertices[vIndex];
-      for ( fvIndex = 0; fvIndex < fv1->numFaces; fvIndex++ )
+      for (fvIndex = 0; fvIndex < fv1->numFaces; fvIndex++)
       {
         totalSteps++;
       }
     }
   }
 #endif
-  vtkDebugMacro( << "Got total steps = " << totalSteps );
+  vtkDebugMacro(<< "Got total steps = " << totalSteps);
   // For each vertex...
-  for ( vIndex = 0; vIndex < numVertices; vIndex++ )
+  for (vIndex = 0; vIndex < numVertices; vIndex++)
   {
     thisStep++;
 
@@ -384,13 +384,13 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
     // in millimeters. Insert them into the vertices array.  The old
     // quad format uses the ints and the new quad and triangle formats
     // use floats.
-    switch ( magicNumber )
+    switch (magicNumber)
     {
       case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
       {
-        vtkFSIO::ReadInt2( surfaceFile, tmpX );
-        vtkFSIO::ReadInt2( surfaceFile, tmpY );
-        vtkFSIO::ReadInt2( surfaceFile, tmpZ );
+        vtkFSIO::ReadInt2(surfaceFile, tmpX);
+        vtkFSIO::ReadInt2(surfaceFile, tmpY);
+        vtkFSIO::ReadInt2(surfaceFile, tmpZ);
         locations[0] = (float)tmpX / 100.0;
         locations[1] = (float)tmpY / 100.0;
         locations[2] = (float)tmpZ / 100.0;
@@ -399,19 +399,19 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
       case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
       case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER:
       {
-        vtkFSIO::ReadFloat( surfaceFile, locations[0] );
-        vtkFSIO::ReadFloat( surfaceFile, locations[1] );
-        vtkFSIO::ReadFloat( surfaceFile, locations[2] );
+        vtkFSIO::ReadFloat(surfaceFile, locations[0]);
+        vtkFSIO::ReadFloat(surfaceFile, locations[1]);
+        vtkFSIO::ReadFloat(surfaceFile, locations[2]);
       }
       break;
     }
 
-    outputVertices->InsertNextPoint( locations );
+    outputVertices->InsertNextPoint(locations);
 
 #if FS_CALC_NORMALS
     // If we have connectivity info, fill out the location and
     // initialize the normals to 0 for this vertex.
-    if ( NULL != vertices && NULL != faces )
+    if (NULL != vertices && NULL != faces)
     {
       v = &vertices[vIndex];
       v->x = locations[0];
@@ -424,39 +424,39 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
     }
 
 #endif
-    if ( ( thisStep % 1000 ) == 0 )
+    if ((thisStep % 1000) == 0)
     {
-      this->UpdateProgress( 1.0 * thisStep / totalSteps );
+      this->UpdateProgress(1.0 * thisStep / totalSteps);
     }
   }
   // For each face...
-  for ( fIndex = 0; fIndex < numFaces * faceMultiplier; fIndex += faceIncrement )
+  for (fIndex = 0; fIndex < numFaces * faceMultiplier; fIndex += faceIncrement)
   {
     // For each vertex in the face...
-    for ( fvIndex = 0; fvIndex < numVerticesPerFace; fvIndex++ )
+    for (fvIndex = 0; fvIndex < numVerticesPerFace; fvIndex++)
     {
       thisStep++;
 
       // Read in a vertex index. Triangle format gets a normal int,
       // quad formats get three byte ints.
-      switch ( magicNumber )
+      switch (magicNumber)
       {
         case vtkFSSurfaceReader::FS_QUAD_FILE_MAGIC_NUMBER:
         case vtkFSSurfaceReader::FS_NEW_QUAD_FILE_MAGIC_NUMBER:
         {
-          vtkFSIO::ReadInt3( surfaceFile, tmpfIndex );
+          vtkFSIO::ReadInt3(surfaceFile, tmpfIndex);
         }
         break;
         case vtkFSSurfaceReader::FS_TRIANGLE_FILE_MAGIC_NUMBER:
         {
-          retval = fread( &tmpfIndex, sizeof( int ), 1, surfaceFile );
-          if ( retval == 1 )
+          retval = fread(&tmpfIndex, sizeof(int), 1, surfaceFile);
+          if (retval == 1)
           {
-            vtkByteSwap::Swap4BE( &tmpfIndex );
+            vtkByteSwap::Swap4BE(&tmpfIndex);
           }
           else
           {
-            vtkErrorMacro( "Error reading integer at index " << fvIndex );
+            vtkErrorMacro("Error reading integer at index " << fvIndex);
           }
         }
         break;
@@ -469,7 +469,7 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
       // the vertex index and add this face index to its list of
       // faces. Then add this vertex index to the list of indicies in
       // the face.
-      if ( NULL != vertices && NULL != faces )
+      if (NULL != vertices && NULL != faces)
       {
         v = &vertices[tmpfIndex];
         v->faces[v->numFaces] = fIndex;
@@ -483,15 +483,15 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
     }
 
     // Add the face to the list.
-    outputFaces->InsertNextCell( numVerticesPerFace, faceIndices );
-    if ( ( thisStep % 1000 ) == 0 )
+    outputFaces->InsertNextCell(numVerticesPerFace, faceIndices);
+    if ((thisStep % 1000) == 0)
     {
-      this->UpdateProgress( 1.0 * thisStep / totalSteps );
+      this->UpdateProgress(1.0 * thisStep / totalSteps);
     }
   }
 
   // Close the surface file.
-  fclose( surfaceFile );
+  fclose(surfaceFile);
 
 #if FS_DEBUG
   cerr << "Done reading surface." << endl;
@@ -501,14 +501,14 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
 
   // If we allocated the space for our vertex and face connectivity,
   // calculate the normals.
-  if ( NULL != vertices && NULL != faces )
+  if (NULL != vertices && NULL != faces)
   {
     // For each vertex...
-    for ( vIndex = 0; vIndex < numVertices; vIndex++ )
+    for (vIndex = 0; vIndex < numVertices; vIndex++)
     {
       // For each face it is a part of...
       fv1 = &vertices[vIndex];
-      for ( fIndex = 0; fIndex < fv1->numFaces; fIndex++ )
+      for (fIndex = 0; fIndex < fv1->numFaces; fIndex++)
       {
         thisStep++;
 
@@ -519,7 +519,7 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
         // adjacent in the face, with fv1 being the orignal vertex.
         f = &faces[fv1->faces[fIndex]];
         fvIndex1 = fv1->indicesInFace[fIndex];
-        if ( 0 == fvIndex1 )
+        if (0 == fvIndex1)
         {
           fvIndex0 = numVerticesPerFace - 1;
         }
@@ -527,7 +527,7 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
         {
           fvIndex0 = fvIndex1 - 1;
         }
-        if ( numVerticesPerFace == fvIndex1 )
+        if (numVerticesPerFace == fvIndex1)
         {
           fvIndex2 = 0;
         }
@@ -550,16 +550,16 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
         faceVector1[1] = fv2->y - fv1->y;
         faceVector1[2] = fv2->z - fv1->z;
         length =
-          sqrt( faceVector0[0] * faceVector0[0] + faceVector0[1] * faceVector0[1] + faceVector0[2] * faceVector0[2] );
-        if ( length > 0 )
+          sqrt(faceVector0[0] * faceVector0[0] + faceVector0[1] * faceVector0[1] + faceVector0[2] * faceVector0[2]);
+        if (length > 0)
         {
           faceVector0[0] /= length;
           faceVector0[1] /= length;
           faceVector0[2] /= length;
         }
         length =
-          sqrt( faceVector1[0] * faceVector1[0] + faceVector1[1] * faceVector1[1] + faceVector1[2] * faceVector1[2] );
-        if ( length > 0 )
+          sqrt(faceVector1[0] * faceVector1[0] + faceVector1[1] * faceVector1[1] + faceVector1[2] * faceVector1[2]);
+        if (length > 0)
         {
           faceVector1[0] /= length;
           faceVector1[1] /= length;
@@ -583,53 +583,53 @@ vtkFSSurfaceReader::RequestData( vtkInformation *, vtkInformationVector **, vtkI
       faceNormal[0] = fv1->nx;
       faceNormal[1] = fv1->ny;
       faceNormal[2] = fv1->nz;
-      length = sqrt( faceNormal[0] * faceNormal[0] + faceNormal[1] * faceNormal[1] + faceNormal[2] * faceNormal[2] );
-      if ( length > 0 )
+      length = sqrt(faceNormal[0] * faceNormal[0] + faceNormal[1] * faceNormal[1] + faceNormal[2] * faceNormal[2]);
+      if (length > 0)
       {
         faceNormal[0] /= length;
         faceNormal[1] /= length;
         faceNormal[2] /= length;
       }
 
-      if ( ( thisStep % 1000 ) == 0 )
+      if ((thisStep % 1000) == 0)
       {
-        this->UpdateProgress( 1.0 * thisStep / totalSteps );
+        this->UpdateProgress(1.0 * thisStep / totalSteps);
       }
 
       // Add the final normal to the array.
-      outputNormals->InsertNextTuple( faceNormal );
+      outputNormals->InsertNextTuple(faceNormal);
     }
 
-    free( vertices );
-    free( faces );
+    free(vertices);
+    free(faces);
   }
 #endif
 
   // Set all the arrays in the output.
-  output->SetPoints( outputVertices );
+  output->SetPoints(outputVertices);
   outputVertices->Delete();
 
-  this->SetProgressText( "" );
-  this->UpdateProgress( 0.0 );
+  this->SetProgressText("");
+  this->UpdateProgress(0.0);
 
 #if FS_CALC_NORMALS
-  output->GetPointData()->SetNormals( outputNormals );
+  output->GetPointData()->SetNormals(outputNormals);
   outputNormals->Delete();
 #endif
 
   outputFaces->Squeeze();
-  output->SetPolys( outputFaces );
+  output->SetPolys(outputFaces);
   outputFaces->Delete();
 
   return 1;
 }
 
 // ----------------------------------------------------------------------------
-#if ( VTK_MAJOR_VERSION >= 5 )
+#if (VTK_MAJOR_VERSION >= 5)
 int
-vtkFSSurfaceReader::FillOutputPortInformation( int, vtkInformation * info )
+vtkFSSurfaceReader::FillOutputPortInformation(int, vtkInformation * info)
 {
-  info->Set( vtkDataObject::DATA_TYPE_NAME(), "vtkPolyData" );
+  info->Set(vtkDataObject::DATA_TYPE_NAME(), "vtkPolyData");
   return 1;
 }
 
@@ -637,7 +637,7 @@ vtkFSSurfaceReader::FillOutputPortInformation( int, vtkInformation * info )
 
 // ----------------------------------------------------------------------------
 void
-vtkFSSurfaceReader::PrintSelf( ostream & os, vtkIndent indent )
+vtkFSSurfaceReader::PrintSelf(ostream & os, vtkIndent indent)
 {
-  this->Superclass::PrintSelf( os, indent );
+  this->Superclass::PrintSelf(os, indent);
 }

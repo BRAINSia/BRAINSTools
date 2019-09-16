@@ -9,7 +9,7 @@
 #include <cstring> /* strcmp */
 
 void
-printUsage( char * argv0 )
+printUsage(char * argv0)
 {
   std::cout << "Function: check whether a specific tag-value pair in header file match with a input value."
             << std::endl;
@@ -30,7 +30,7 @@ printUsage( char * argv0 )
 }
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   int result = 1; // 1 means unmatching;
   // Get input parameters
@@ -41,43 +41,43 @@ main( int argc, char * argv[] )
   std::string verifyingValue;
   bool        numType = true;
 
-  if ( 13 != argc )
+  if (13 != argc)
   {
     std::cout << "Parameter Error: it should have 12 parameters." << std::endl;
-    printUsage( argv[0] );
+    printUsage(argv[0]);
     return -1;
   }
-  for ( int i = 1; i < 12; i = i + 2 )
+  for (int i = 1; i < 12; i = i + 2)
   {
-    if ( 0 == strcmp( "--f", argv[i] ) )
+    if (0 == strcmp("--f", argv[i]))
     {
       inputFilename = argv[i + 1];
     }
-    else if ( 0 == strcmp( "--tag", argv[i] ) )
+    else if (0 == strcmp("--tag", argv[i]))
     {
       tagStr = argv[i + 1];
     }
-    else if ( 0 == strcmp( "--section", argv[i] ) )
+    else if (0 == strcmp("--section", argv[i]))
     {
-      sectionIndex = std::stoi( argv[i + 1] );
+      sectionIndex = std::stoi(argv[i + 1]);
     }
-    else if ( 0 == strcmp( "--subsection", argv[i] ) )
+    else if (0 == strcmp("--subsection", argv[i]))
     {
-      subsectionIndex = std::stoi( argv[i + 1] );
+      subsectionIndex = std::stoi(argv[i + 1]);
     }
-    else if ( 0 == strcmp( "--v", argv[i] ) )
+    else if (0 == strcmp("--v", argv[i]))
     {
       verifyingValue = argv[i + 1];
     }
-    else if ( 0 == strcmp( "--numtype", argv[i] ) )
+    else if (0 == strcmp("--numtype", argv[i]))
     {
-      numType = std::stoi( argv[i + 1] ) > 0;
+      numType = std::stoi(argv[i + 1]) > 0;
     }
     else
     {
       std::cout << "Parameter Error: unmatched option." << std::endl;
       std::cout << "All options are small case characters." << std::endl;
-      printUsage( argv[0] );
+      printUsage(argv[0]);
       return -1;
     }
   }
@@ -85,73 +85,73 @@ main( int argc, char * argv[] )
   // check whether tag has blank space inside
   int         nSpace = 0;
   std::size_t pos = 0;
-  pos = tagStr.find( ' ', pos );
-  while ( std::string::npos != pos )
+  pos = tagStr.find(' ', pos);
+  while (std::string::npos != pos)
   {
     ++nSpace;
-    pos = tagStr.find( ' ', pos + 1 );
+    pos = tagStr.find(' ', pos + 1);
   }
 
   // read file
-  std::ifstream file( inputFilename.c_str() );
+  std::ifstream file(inputFilename.c_str());
   std::string   lineText;
-  while ( std::getline( file, lineText ) )
+  while (std::getline(file, lineText))
   {
-    std::istringstream lineStream( lineText );
+    std::istringstream lineStream(lineText);
     std::string        fileTag;
     fileTag.clear();
-    for ( int i = 0; i <= nSpace; ++i )
+    for (int i = 0; i <= nSpace; ++i)
     {
       std::string tag;
-      std::getline( lineStream, tag, ' ' );
-      if ( 0 != tag.length() )
+      std::getline(lineStream, tag, ' ');
+      if (0 != tag.length())
       {
         fileTag += tag + " ";
       }
     }
-    fileTag.erase( fileTag.length() - 1, 1 ); // trim tail whitespace
-    if ( fileTag.length() > 2 )
+    fileTag.erase(fileTag.length() - 1, 1); // trim tail whitespace
+    if (fileTag.length() > 2)
     {
-      fileTag.erase( fileTag.length() - 1, 1 ); // trim tail ':'
+      fileTag.erase(fileTag.length() - 1, 1); // trim tail ':'
     }
 
-    if ( 0 == tagStr.compare( fileTag ) )
+    if (0 == tagStr.compare(fileTag))
     {
       std::string sectionStr;
-      for ( int i = 0; i <= sectionIndex; ++i )
+      for (int i = 0; i <= sectionIndex; ++i)
       {
         sectionStr.clear();
-        std::getline( lineStream, sectionStr, ' ' );
-        if ( 0 == sectionStr.length() )
+        std::getline(lineStream, sectionStr, ' ');
+        if (0 == sectionStr.length())
           --i;
       }
       std::cout << "finding section = " << sectionStr << std::endl;
 
       // erease bracket at both ends
-      if ( '(' == sectionStr.at( 0 ) )
+      if ('(' == sectionStr.at(0))
       {
-        sectionStr.erase( 0, 1 );
+        sectionStr.erase(0, 1);
       }
-      if ( ')' == sectionStr.at( sectionStr.length() - 1 ) )
+      if (')' == sectionStr.at(sectionStr.length() - 1))
       {
-        sectionStr.erase( sectionStr.length() - 1, 1 );
+        sectionStr.erase(sectionStr.length() - 1, 1);
       }
 
 
-      std::istringstream sectionStream( sectionStr );
+      std::istringstream sectionStream(sectionStr);
       std::string        valueStr;
-      for ( int i = 0; i <= subsectionIndex; ++i )
+      for (int i = 0; i <= subsectionIndex; ++i)
       {
         valueStr.clear();
-        std::getline( sectionStream, valueStr, ',' );
+        std::getline(sectionStream, valueStr, ',');
       }
 
       // compare the value
-      if ( numType )
+      if (numType)
       {
-        double verifyingNum = std::stod( verifyingValue.c_str() );
-        double tagNum = std::stod( valueStr.c_str() );
-        if ( fabs( verifyingNum - tagNum ) <= 1e-3 )
+        double verifyingNum = std::stod(verifyingValue.c_str());
+        double tagNum = std::stod(valueStr.c_str());
+        if (fabs(verifyingNum - tagNum) <= 1e-3)
         {
           result = 0;
           break;
@@ -166,7 +166,7 @@ main( int argc, char * argv[] )
       }
       else
       {
-        if ( 0 == verifyingValue.compare( valueStr ) )
+        if (0 == verifyingValue.compare(valueStr))
         {
           result = 0;
           break;
@@ -182,7 +182,7 @@ main( int argc, char * argv[] )
     }
   }
   file.close();
-  if ( 0 != result )
+  if (0 != result)
   {
     std::cout << "Can not find matching key-value with input" << std::endl;
   }

@@ -55,22 +55,22 @@ namespace itk
  * \ingroup MeshFilters
  *
  */
-template < typename TInputMesh, typename TOutputMesh >
-class QuadEdgeMeshScalarPixelValuesSmoothingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
+class QuadEdgeMeshScalarPixelValuesSmoothingFilter : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( QuadEdgeMeshScalarPixelValuesSmoothingFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(QuadEdgeMeshScalarPixelValuesSmoothingFilter);
 
   using Self = QuadEdgeMeshScalarPixelValuesSmoothingFilter;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( QuadEdgeMeshScalarPixelValuesSmoothingFilter, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkTypeMacro(QuadEdgeMeshScalarPixelValuesSmoothingFilter, QuadEdgeMeshToQuadEdgeMeshFilter);
 
   /** New macro for creation of through a Smart Pointer   */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   using InputMeshType = TInputMesh;
   using InputMeshPointer = typename InputMeshType::Pointer;
@@ -102,8 +102,8 @@ public:
    * are enough for typical deformation fields, but of course this would depend
    * on the process that you used for generating your deformation field.
    */
-  itkSetMacro( MaximumNumberOfIterations, unsigned long );
-  itkGetMacro( MaximumNumberOfIterations, unsigned long );
+  itkSetMacro(MaximumNumberOfIterations, unsigned long);
+  itkGetMacro(MaximumNumberOfIterations, unsigned long);
 
   /** Factor that controls the degree of Smoothing. Large values of Lambda
    * result is stronger smoothing.  The Lambda factor is used to compute the
@@ -122,8 +122,8 @@ public:
    * the neighbor values when computing their weighted average.
    *
    */
-  itkSetMacro( Lambda, double );
-  itkGetMacro( Lambda, double );
+  itkSetMacro(Lambda, double);
+  itkGetMacro(Lambda, double);
 
 protected:
   QuadEdgeMeshScalarPixelValuesSmoothingFilter();

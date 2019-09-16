@@ -55,7 +55,7 @@ DICOM Data Dictionary: http://medical.nema.org/Dicom/2011/11_06pu.pdf
 #include "DWIConvertLib.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   // const std::string version = commandLine.getVersion();
@@ -64,38 +64,38 @@ main( int argc, char * argv[] )
   std::cout << "======= DWI Convert Tool Program=========" << std::endl;
   DWIConvert dWIConvert;
 
-  if ( conversionMode == "FSLToNrrd" && ( !fslNIFTIFile.empty() ) )
+  if (conversionMode == "FSLToNrrd" && (!fslNIFTIFile.empty()))
   {
     inputVolume = fslNIFTIFile;
   }
 
   const std::string inputPathName = inputVolume.empty() ? inputDicomDirectory : inputVolume;
 
-  dWIConvert.SetInputFileName( inputPathName );
-  dWIConvert.setInputBValues( inputBValues );
-  dWIConvert.setInputBVectors( inputBVectors );
-  dWIConvert.setGradientVectorFile( gradientVectorFile );
-  dWIConvert.setSmallGradientThreshold( smallGradientThreshold );
+  dWIConvert.SetInputFileName(inputPathName);
+  dWIConvert.setInputBValues(inputBValues);
+  dWIConvert.setInputBVectors(inputBVectors);
+  dWIConvert.setGradientVectorFile(gradientVectorFile);
+  dWIConvert.setSmallGradientThreshold(smallGradientThreshold);
 
-  dWIConvert.setfMRIOutput( fMRIOutput );
-  dWIConvert.setAllowLossyConversion( allowLossyConversion );
-  dWIConvert.setUseIdentityMeasurementFrame( useIdentityMeaseurementFrame );
-  dWIConvert.setUseBMatrixGradientDirections( useBMatrixGradientDirections );
+  dWIConvert.setfMRIOutput(fMRIOutput);
+  dWIConvert.setAllowLossyConversion(allowLossyConversion);
+  dWIConvert.setUseIdentityMeasurementFrame(useIdentityMeaseurementFrame);
+  dWIConvert.setUseBMatrixGradientDirections(useBMatrixGradientDirections);
 
-  if ( !outputNiftiFile.empty() )
+  if (!outputNiftiFile.empty())
   {
     outputVolume = outputNiftiFile;
   }
 
-  dWIConvert.SetOutputFileName( outputVolume );
-  dWIConvert.setOutputDirectory( outputDirectory );
-  dWIConvert.setOutputBValues( outputBValues );
-  dWIConvert.setOutputBVectors( outputBVectors );
+  dWIConvert.SetOutputFileName(outputVolume);
+  dWIConvert.setOutputDirectory(outputDirectory);
+  dWIConvert.setOutputBValues(outputBValues);
+  dWIConvert.setOutputBVectors(outputBVectors);
 
   int result = dWIConvert.read();
-  if ( EXIT_SUCCESS == result )
+  if (EXIT_SUCCESS == result)
   {
-    return dWIConvert.write( outputVolume );
+    return dWIConvert.write(outputVolume);
   }
   else
     return result;

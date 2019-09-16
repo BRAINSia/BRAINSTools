@@ -61,32 +61,32 @@ class AddScaledVersions:
 
 
 // If image types don't match, always return false!
-template < typename TPInputImage1, typename TPInputImage2 >
-bool isSameImage( TPInputImage1, TPInputImage2 )
+template <typename TPInputImage1, typename TPInputImage2>
+bool isSameImage(TPInputImage1, TPInputImage2)
 {
   return false;
 }
 
-template < typename TPInputImage1 >
+template <typename TPInputImage1>
 bool
-isSameImage( TPInputImage1 inImg1, TPInputImage1 inImg2 )
+isSameImage(TPInputImage1 inImg1, TPInputImage1 inImg2)
 {
-  return ( inImg1.GetPointer() == inImg2.GetPointer() );
+  return (inImg1.GetPointer() == inImg2.GetPointer());
 }
 
 /* Macro for generating image to image operations */
-#define MAKE_MATH_OPERATION_II( OPERATION )                                                                            \
+#define MAKE_MATH_OPERATION_II(OPERATION)                                                                              \
   {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter< typename TPInputImage1::ObjectType,                                           \
-                                         typename TPInputImage2::ObjectType,                                           \
-                                         typename TPOutputImage::ObjectType >                                          \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,                                            \
+                                        typename TPInputImage2::ObjectType,                                            \
+                                        typename TPOutputImage::ObjectType>                                            \
       OPERATION##Type;                                                                                                 \
     typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
     do                                                                                                                 \
-      ##OPERATION->SetInput1( inImg1 );                                                                                \
+      ##OPERATION->SetInput1(inImg1);                                                                                  \
     do                                                                                                                 \
-      ##OPERATION->SetInput2( inImg2 );                                                                                \
-    if ( inImg1.IsNotNull() && isSameImage( outImg, inImg1 ) )                                                         \
+      ##OPERATION->SetInput2(inImg2);                                                                                  \
+    if (inImg1.IsNotNull() && isSameImage(outImg, inImg1))                                                             \
     {                                                                                                                  \
       do                                                                                                               \
         ##OPERATION->InPlaceOn();                                                                                      \
@@ -94,7 +94,7 @@ isSameImage( TPInputImage1 inImg1, TPInputImage1 inImg2 )
     else                                                                                                               \
     {                                                                                                                  \
       do                                                                                                               \
-        ##OPERATION->GraftOutput( outImg );                                                                            \
+        ##OPERATION->GraftOutput(outImg);                                                                              \
     }                                                                                                                  \
     do                                                                                                                 \
       ##OPERATION->Update();                                                                                           \
@@ -107,24 +107,24 @@ isSameImage( TPInputImage1 inImg1, TPInputImage1 inImg2 )
  * outImg = opII('*',in1,in2,outImg);    outImg = in1 * in2;
  *
  */
-template < typename TPInputImage1, typename TPInputImage2, typename TPOutputImage >
+template <typename TPInputImage1, typename TPInputImage2, typename TPOutputImage>
 TPOutputImage
-opII( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2 )
+opII(TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2)
 {
-  switch ( op )
+  switch (op)
   {
     case '+':
-      MAKE_MATH_OPERATION_II( Add );
+      MAKE_MATH_OPERATION_II(Add);
       break;
     case '-':
-      MAKE_MATH_OPERATION_II( Subtract );
+      MAKE_MATH_OPERATION_II(Subtract);
       break;
     case '*':
-      MAKE_MATH_OPERATION_II( Multiply );
+      MAKE_MATH_OPERATION_II(Multiply);
       break;
     default:
       std::cout << "ERROR: Invalid operator" << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
@@ -136,23 +136,23 @@ opII( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 i
  * outImg = opII('*',in1,in2,outImg);    outImg = in1 * in2;
  *
  */
-template < typename TPInputImage1, typename TPInputImage2, typename TPOutputImage >
+template <typename TPInputImage1, typename TPInputImage2, typename TPOutputImage>
 TPOutputImage
-opII_scalar( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2 )
+opII_scalar(TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2)
 {
-  switch ( op )
+  switch (op)
   {
     case '+':
     case '-':
     case '*':
-      opII( outImg, inImg1, op, inImg2 );
+      opII(outImg, inImg1, op, inImg2);
       break;
     case '/':
-      MAKE_MATH_OPERATION_II( Divide );
+      MAKE_MATH_OPERATION_II(Divide);
       break;
     default:
       std::cout << "ERROR: Invalid operator" << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
@@ -164,36 +164,36 @@ opII_scalar( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputI
  *
  */
 // Specialization for CV vector multiplication
-template < typename TPInputImage1, typename TPInputImage2, typename TPOutputImage >
+template <typename TPInputImage1, typename TPInputImage2, typename TPOutputImage>
 TPOutputImage
-opII_CVmult( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2 )
+opII_CVmult(TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputImage2 inImg2)
 {
-  switch ( op )
+  switch (op)
   {
     case '*':
-      MAKE_MATH_OPERATION_II( Multiply );
+      MAKE_MATH_OPERATION_II(Multiply);
       break;
     default:
       std::cout << "ERROR: Invalid operator" << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
 }
 
 /* Macro for generating image to image operations */
-#define MAKE_MATH_OPERATION_IC( OPERATION )                                                                            \
+#define MAKE_MATH_OPERATION_IC(OPERATION)                                                                              \
   {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter< typename TPInputImage1::ObjectType,                                           \
-                                         typename TPInputImage1::ObjectType,                                           \
-                                         typename TPOutputImage::ObjectType >                                          \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,                                            \
+                                        typename TPInputImage1::ObjectType,                                            \
+                                        typename TPOutputImage::ObjectType>                                            \
       OPERATION##Type;                                                                                                 \
     typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
     do                                                                                                                 \
-      ##OPERATION->SetInput1( inImg1 );                                                                                \
+      ##OPERATION->SetInput1(inImg1);                                                                                  \
     do                                                                                                                 \
-      ##OPERATION->SetConstant2( constant2 );                                                                          \
-    if ( isSameImage( outImg, inImg1 ) )                                                                               \
+      ##OPERATION->SetConstant2(constant2);                                                                            \
+    if (isSameImage(outImg, inImg1))                                                                                   \
     {                                                                                                                  \
       do                                                                                                               \
         ##OPERATION->InPlaceOn();                                                                                      \
@@ -201,7 +201,7 @@ opII_CVmult( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputI
     else                                                                                                               \
     {                                                                                                                  \
       do                                                                                                               \
-        ##OPERATION->GraftOutput( outImg );                                                                            \
+        ##OPERATION->GraftOutput(outImg);                                                                              \
     }                                                                                                                  \
     do                                                                                                                 \
       ##OPERATION->Update();                                                                                           \
@@ -210,14 +210,14 @@ opII_CVmult( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputI
 
 
 /* Macro for generating image to image operations */
-#define MAKE_UNARY_MATH_OPERATION_IC( OPERATION )                                                                      \
+#define MAKE_UNARY_MATH_OPERATION_IC(OPERATION)                                                                        \
   {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter< typename TPInputImage1::ObjectType, typename TPOutputImage::ObjectType >      \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType, typename TPOutputImage::ObjectType>        \
       OPERATION##Type;                                                                                                 \
     typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
     do                                                                                                                 \
-      ##OPERATION->SetInput( inImg1 );                                                                                 \
-    if ( isSameImage( outImg, inImg1 ) )                                                                               \
+      ##OPERATION->SetInput(inImg1);                                                                                   \
+    if (isSameImage(outImg, inImg1))                                                                                   \
     {                                                                                                                  \
       do                                                                                                               \
         ##OPERATION->InPlaceOn();                                                                                      \
@@ -225,7 +225,7 @@ opII_CVmult( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputI
     else                                                                                                               \
     {                                                                                                                  \
       do                                                                                                               \
-        ##OPERATION->GraftOutput( outImg );                                                                            \
+        ##OPERATION->GraftOutput(outImg);                                                                              \
     }                                                                                                                  \
     do                                                                                                                 \
       ##OPERATION->Update();                                                                                           \
@@ -239,36 +239,40 @@ opII_CVmult( TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputI
  *
  */
 /* outImg = inImg1 'op' constant2 */
-template < typename TPInputImage1, typename TPOutputImage >
+template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
-opIC( TPOutputImage outImg, TPInputImage1 inImg1, const char op,
-      const typename TPInputImage1::ObjectType::PixelType constant2 )
+opIC(TPOutputImage                                       outImg,
+     TPInputImage1                                       inImg1,
+     const char                                          op,
+     const typename TPInputImage1::ObjectType::PixelType constant2)
 {
-  switch ( op )
+  switch (op)
   {
     case '+':
-      MAKE_MATH_OPERATION_IC( Add ); // I+C
+      MAKE_MATH_OPERATION_IC(Add); // I+C
       break;
     case '-':
-      MAKE_MATH_OPERATION_IC( Subtract ); // I-C
+      MAKE_MATH_OPERATION_IC(Subtract); // I-C
       break;
     case '*':
-      MAKE_MATH_OPERATION_IC( Multiply ); // I*C
+      MAKE_MATH_OPERATION_IC(Multiply); // I*C
       break;
     default:
       std::cout << "ERROR: Invalid operator: " << op << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
 }
 
-template < typename TPInputImage1, typename TPOutputImage >
+template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
-opIC( TPOutputImage outImg, const typename TPInputImage1::ObjectType::PixelType constant2, const char op,
-      TPInputImage1 inImg1 )
+opIC(TPOutputImage                                       outImg,
+     const typename TPInputImage1::ObjectType::PixelType constant2,
+     const char                                          op,
+     TPInputImage1                                       inImg1)
 {
-  return opIC( outImg, inImg1, op, constant2 );
+  return opIC(outImg, inImg1, op, constant2);
 };
 
 
@@ -280,22 +284,22 @@ opIC( TPOutputImage outImg, const typename TPInputImage1::ObjectType::PixelType 
  */
 // Specialization for extra math operations that only apply
 // to scalar images.  For example std::sqrt(CovariantVector) is not valid.
-template < typename TPInputImage1, typename TPOutputImage >
+template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
-opIC_scalar( TPOutputImage outImg, const std::string opS, TPInputImage1 inImg1 )
+opIC_scalar(TPOutputImage outImg, const std::string opS, TPInputImage1 inImg1)
 {
   const char op = opS[0];
-  switch ( op )
+  switch (op)
   {
     case 's':
-      MAKE_UNARY_MATH_OPERATION_IC( Sqrt );
+      MAKE_UNARY_MATH_OPERATION_IC(Sqrt);
       break;
     case 'e':
-      MAKE_UNARY_MATH_OPERATION_IC( Exp );
+      MAKE_UNARY_MATH_OPERATION_IC(Exp);
       break;
     default:
       std::cout << "ERROR: Invalid operator: " << op << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
@@ -309,43 +313,47 @@ opIC_scalar( TPOutputImage outImg, const std::string opS, TPInputImage1 inImg1 )
  */
 // Specialization for extra math operations that only apply
 // to scalar images.  For example std::sqrt(CovariantVector) is not valid.
-template < typename TPInputImage1, typename TPOutputImage >
+template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
-opIC_scalar( TPOutputImage outImg, TPInputImage1 inImg1, const char op,
-             const typename TPInputImage1::ObjectType::PixelType constant2 )
+opIC_scalar(TPOutputImage                                       outImg,
+            TPInputImage1                                       inImg1,
+            const char                                          op,
+            const typename TPInputImage1::ObjectType::PixelType constant2)
 {
-  switch ( op )
+  switch (op)
   {
     case '+':
     case '-':
     case '*':
-      opIC( outImg, inImg1, op, constant2 );
+      opIC(outImg, inImg1, op, constant2);
       break;
     case '^':
-      if ( constant2 == 0.5F )
+      if (constant2 == 0.5F)
       {
-        opIC_scalar( outImg, "sqrt", inImg1 );
+        opIC_scalar(outImg, "sqrt", inImg1);
       }
       else
       {
-        MAKE_MATH_OPERATION_IC( Pow );
+        MAKE_MATH_OPERATION_IC(Pow);
       }
       break;
     default:
       std::cout << "ERROR: Invalid operator: " << op << " " << __FILE__ << " " << __LINE__ << std::endl;
-      assert( 0 == 1 ); // ERROR bad operator
+      assert(0 == 1); // ERROR bad operator
       break;
   }
   return outImg;
 }
 
 // Use Commutative property for easing migration
-template < typename TPInputImage1, typename TPOutputImage >
+template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
-opIC_scalar( TPOutputImage outImg, const typename TPInputImage1::ObjectType::PixelType constant2, const char op,
-             TPInputImage1 inImg1 )
+opIC_scalar(TPOutputImage                                       outImg,
+            const typename TPInputImage1::ObjectType::PixelType constant2,
+            const char                                          op,
+            TPInputImage1                                       inImg1)
 {
-  return opIC_scalar( outImg, inImg1, op, constant2 ); //
+  return opIC_scalar(outImg, inImg1, op, constant2); //
 };
 
 

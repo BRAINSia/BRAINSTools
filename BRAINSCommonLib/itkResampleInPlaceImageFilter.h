@@ -91,23 +91,23 @@ namespace itk
  *
  * \ingroup GeometricTransforms
  */
-template < typename TInputImage, typename TOutputImage >
-class ResampleInPlaceImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class ResampleInPlaceImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( ResampleInPlaceImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(ResampleInPlaceImageFilter);
 
   /** Standard class type alias */
   using Self = ResampleInPlaceImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro( ResampleInPlaceImageFilter, ImageToImageFilter );
+  itkTypeMacro(ResampleInPlaceImageFilter, ImageToImageFilter);
 
   /** input/output image type alias */
   using InputImageType = TInputImage;
@@ -126,21 +126,21 @@ public:
   static constexpr unsigned int OutputImageDimension = TOutputImage::ImageDimension;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
-  itkConceptMacro( SameDimensionCheck, (Concept::SameDimension< InputImageDimension, OutputImageDimension >));
-  itkConceptMacro( InputConvertibleToOutputCheck, (Concept::Convertible< InputImagePixelType, OutputImagePixelType >));
+  itkConceptMacro(SameDimensionCheck, (Concept::SameDimension<InputImageDimension, OutputImageDimension>));
+  itkConceptMacro(InputConvertibleToOutputCheck, (Concept::Convertible<InputImagePixelType, OutputImagePixelType>));
 #endif
 
   /** Transform type alias */
-  using RigidTransformType = VersorRigid3DTransform< double >;
+  using RigidTransformType = VersorRigid3DTransform<double>;
   using RigidTransformConstPointer = typename RigidTransformType::ConstPointer;
 
   /** Set/Get rigid transform. The default is an identity transform */
-  itkSetConstObjectMacro( RigidTransform, RigidTransformType );
-  itkGetConstObjectMacro( RigidTransform, RigidTransformType );
+  itkSetConstObjectMacro(RigidTransform, RigidTransformType);
+  itkGetConstObjectMacro(RigidTransform, RigidTransformType);
 
   /** Set/Get required input image. (A wrapper to this->Set/GetInput()) */
   void
-  SetInputImage( const InputImageType * image );
+  SetInputImage(const InputImageType * image);
 
   const InputImageType *
   GetInputImage() const;
@@ -153,7 +153,7 @@ protected:
   GenerateData() override;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   OutputImagePointer         m_OutputImage;

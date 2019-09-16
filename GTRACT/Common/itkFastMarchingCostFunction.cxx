@@ -83,9 +83,9 @@ FastMarchingCostFunction ::GetNumberOfParameters() const
 
 // template <typename TCostImage>
 void FastMarchingCostFunction // < TCostImage>
-  ::PrintSelf( std::ostream & os, Indent indent ) const
+  ::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Input Cost Image: " << m_CostImage.GetPointer() << std::endl;
 }
@@ -93,7 +93,7 @@ void FastMarchingCostFunction // < TCostImage>
 // template <typename TCostImage>
 // typename FastMarchingCostFunction< TCostImage>::MeasureType
 FastMarchingCostFunction::MeasureType
-FastMarchingCostFunction ::GetValue( const ParametersType & parameters ) const
+FastMarchingCostFunction ::GetValue(const ParametersType & parameters) const
 {
   /* Cost Function = |gradient(T)| = |T(r)-T(n)| = |r-n|/F(r):
     where "T" is the std::cost, "r" is initial point,"n" is neighbor.
@@ -103,15 +103,15 @@ FastMarchingCostFunction ::GetValue( const ParametersType & parameters ) const
 
   CostIPType::ContinuousIndexType inputIndex, neighIndex;
 
-  m_CostIP->SetInputImage( m_CostImage );
+  m_CostIP->SetInputImage(m_CostImage);
   CostImageRegionType costRegion = m_CostImage->GetLargestPossibleRegion();
   double              value = 0.0;
-  for ( unsigned int i = 0; i < CostImageDimension; i++ )
+  for (unsigned int i = 0; i < CostImageDimension; i++)
   {
     inputIndex[i] = parameters[i];
   }
 
-  initialCost = m_CostIP->EvaluateAtContinuousIndex( inputIndex );
+  initialCost = m_CostIP->EvaluateAtContinuousIndex(inputIndex);
 
   value = initialCost;
 
@@ -120,40 +120,40 @@ FastMarchingCostFunction ::GetValue( const ParametersType & parameters ) const
 
 // template <typename TCostImage>
 void FastMarchingCostFunction // < TCostImage>
-  ::GetDerivative( const ParametersType & parameters, DerivativeType & derivative ) const
+  ::GetDerivative(const ParametersType & parameters, DerivativeType & derivative) const
 {
   float initialCost;
 
   CostIPType::ContinuousIndexType inputIndex, neighIndex;
 
-  m_CostIP->SetInputImage( m_CostImage );
+  m_CostIP->SetInputImage(m_CostImage);
   CostImageRegionType costRegion = m_CostImage->GetLargestPossibleRegion();
-  for ( unsigned int i = 0; i < CostImageDimension; i++ )
+  for (unsigned int i = 0; i < CostImageDimension; i++)
   {
     inputIndex[i] = parameters[i];
   }
 
-  if ( !costRegion.IsInside( inputIndex ) ) // not in Region so skip, normal
-                                            // will be 0.0
+  if (!costRegion.IsInside(inputIndex)) // not in Region so skip, normal
+                                        // will be 0.0
   {
     std::cout << "Warning initial point is outside of region " << std::endl;
   }
 
-  using FVector = vnl_vector_fixed< float, CostImageDimension >;
+  using FVector = vnl_vector_fixed<float, CostImageDimension>;
   FVector offset;
 
   FVector sum;
-  sum.fill( 0 );
+  sum.fill(0);
   FVector newSum;
-  newSum.fill( 0 );
+  newSum.fill(0);
   FVector neighOffset; // vector representation of neighborhood
                        // offsets
   FVector normal;
-  normal.fill( 0 ); // normal used for derivative
+  normal.fill(0); // normal used for derivative
 
   CostImageSpacingType spacing = m_CostImage->GetSpacing();
 
-  initialCost = m_CostIP->EvaluateAtContinuousIndex( inputIndex );
+  initialCost = m_CostIP->EvaluateAtContinuousIndex(inputIndex);
 
   double value = initialCost; // Cost Function solution
 
@@ -161,45 +161,45 @@ void FastMarchingCostFunction // < TCostImage>
 
   float neighCost = 0.0;
   float lowNeighCost = initialCost;
-  for ( int i = -1; i < 2; i++ )
+  for (int i = -1; i < 2; i++)
   {
-    for ( int j = -1; j < 2; j++ )
+    for (int j = -1; j < 2; j++)
     {
-      for ( int k = -1; k < 2; k++ ) // Fix later to account for dimension
+      for (int k = -1; k < 2; k++) // Fix later to account for dimension
       {
-        neighIndex[0] = inputIndex[0] + static_cast< float >( i ) / 1; //
-                                                                       // +i,+i/1.5,
-                                                                       // /4
-        neighIndex[1] = inputIndex[1] + static_cast< float >( j ) / 1;
-        neighIndex[2] = inputIndex[2] + static_cast< float >( k ) / 1;
+        neighIndex[0] = inputIndex[0] + static_cast<float>(i) / 1; //
+                                                                   // +i,+i/1.5,
+                                                                   // /4
+        neighIndex[1] = inputIndex[1] + static_cast<float>(j) / 1;
+        neighIndex[2] = inputIndex[2] + static_cast<float>(k) / 1;
 
-        if ( neighIndex == inputIndex ) // same index so skip this neighbor
+        if (neighIndex == inputIndex) // same index so skip this neighbor
         {
           continue;
         }
 
-        if ( !costRegion.IsInside( neighIndex ) ) // not in Region so skip
+        if (!costRegion.IsInside(neighIndex)) // not in Region so skip
         {
           continue;
         }
-        offset[0] = static_cast< float >( i ) / 1;
-        offset[1] = static_cast< float >( j ) / 1;
-        offset[2] = static_cast< float >( k ) / 1;
+        offset[0] = static_cast<float>(i) / 1;
+        offset[1] = static_cast<float>(j) / 1;
+        offset[2] = static_cast<float>(k) / 1;
         /* Compute distance from initial point to its neighbor */
-        for ( unsigned int n = 0; n < CostImageDimension; n++ )
+        for (unsigned int n = 0; n < CostImageDimension; n++)
         {
-          neighOffset[n] = offset[n] * itk::Math::abs( spacing[n] );
+          neighOffset[n] = offset[n] * itk::Math::abs(spacing[n]);
         }
 
-        neighCost = m_CostIP->EvaluateAtContinuousIndex( neighIndex );
+        neighCost = m_CostIP->EvaluateAtContinuousIndex(neighIndex);
 
-        if ( neighCost < lowNeighCost )
+        if (neighCost < lowNeighCost)
         {
           lowNeighCost = neighCost;
           newSum = neighOffset;
         }
 
-        if ( neighCost < initialCost )
+        if (neighCost < initialCost)
         {
           sum += neighOffset; // sum all offsets
         }
@@ -208,15 +208,15 @@ void FastMarchingCostFunction // < TCostImage>
   } // end of neighbor iteration
 
   bool pass = false;
-  for ( unsigned int i = 0; i < CostImageDimension; i++ )
+  for (unsigned int i = 0; i < CostImageDimension; i++)
   {
-    if ( ( sum[i] > 0.0 ) || ( sum[i] < 0.0 ) )
+    if ((sum[i] > 0.0) || (sum[i] < 0.0))
     {
       pass = true;
     }
   }
 
-  if ( !pass )
+  if (!pass)
   {
     normal = newSum.normalize(); // when normal neighborhood is 0, take least
                                  // std::cost direction
@@ -230,10 +230,10 @@ void FastMarchingCostFunction // < TCostImage>
   /* DerivativeCostFunction = n(r)*CostValue,
       where "n(r)" is the direction of the initial point towards the lowest std::cost neighbor */
 
-  derivative = DerivativeType( CostImageDimension );
-  for ( unsigned int i = 0; i < CostImageDimension; i++ )
+  derivative = DerivativeType(CostImageDimension);
+  for (unsigned int i = 0; i < CostImageDimension; i++)
   {
-    derivative[i] = static_cast< double >( normal[i] * value );
+    derivative[i] = static_cast<double>(normal[i] * value);
   }
 }
 } // end of namespace itk

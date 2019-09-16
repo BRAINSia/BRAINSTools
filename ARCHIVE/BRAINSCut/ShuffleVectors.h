@@ -41,7 +41,7 @@ class ShuffleVectors
   //    - Eun Young (Regina) Kim
 public:
   ShuffleVectors();
-  ShuffleVectors( const std::string & inputFilename, const std::string & outputFilename, float downSampleSize = 1.0F );
+  ShuffleVectors(const std::string & inputFilename, const std::string & outputFilename, float downSampleSize = 1.0F);
   ~ShuffleVectors();
 
   void
@@ -55,10 +55,10 @@ public:
 
 private:
   std::string
-  TempName( const char * s );
+  TempName(const char * s);
 
   void
-  ShuffleOrder( std::vector< std::ios::off_type > & rval ) const;
+  ShuffleOrder(std::vector<std::ios::off_type> & rval) const;
 
   //
   // Member Variables::

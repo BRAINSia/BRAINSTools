@@ -36,23 +36,23 @@ namespace itk
  * \ingroup MeshFunctions MeshInterpolators
  *
  * */
-template < typename TInputMesh >
-class LinearInterpolateMeshFunction : public InterpolateMeshFunction< TInputMesh >
+template <typename TInputMesh>
+class LinearInterpolateMeshFunction : public InterpolateMeshFunction<TInputMesh>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( LinearInterpolateMeshFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(LinearInterpolateMeshFunction);
 
   /** Standard class type alias. */
   using Self = LinearInterpolateMeshFunction;
-  using Superclass = InterpolateMeshFunction< TInputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = InterpolateMeshFunction<TInputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( LinearInterpolateMeshFunction, InterpolateMeshFunction );
+  itkTypeMacro(LinearInterpolateMeshFunction, InterpolateMeshFunction);
 
   /** OutputType type alias support. */
   using OutputType = typename Superclass::OutputType;
@@ -83,25 +83,33 @@ public:
    *
    */
   virtual OutputType
-  Evaluate( const PointType & point ) const override;
+  Evaluate(const PointType & point) const override;
 
   virtual void
-  EvaluateDerivative( const PointType & point, DerivativeType & derivative ) const override;
+  EvaluateDerivative(const PointType & point, DerivativeType & derivative) const override;
 
   static void
-  GetDerivativeFromPixelsAndBasis( PixelType pixelValue1, PixelType pixelValue2, PixelType pixelValue3,
-                                   const VectorType & u12, const VectorType & u32, DerivativeType & derivative );
+  GetDerivativeFromPixelsAndBasis(PixelType          pixelValue1,
+                                  PixelType          pixelValue2,
+                                  PixelType          pixelValue3,
+                                  const VectorType & u12,
+                                  const VectorType & u32,
+                                  DerivativeType &   derivative);
 
-  template < typename TArray, typename TMatrix >
+  template <typename TArray, typename TMatrix>
   static void
-  GetJacobianFromVectorAndBasis( const TArray & pixelArray1, const TArray & pixelArray2, const TArray & pixelArray3,
-                                 const VectorType & u12, const VectorType & u32, TMatrix & jacobian );
+  GetJacobianFromVectorAndBasis(const TArray &     pixelArray1,
+                                const TArray &     pixelArray2,
+                                const TArray &     pixelArray3,
+                                const VectorType & u12,
+                                const VectorType & u32,
+                                TMatrix &          jacobian);
 
   using InstanceIdentifierVectorType = typename Superclass::InstanceIdentifierVectorType;
 
   /** Find the triangle that contains the input point. Return the point Ids of the triangle vertices. */
   virtual bool
-  FindTriangle( const PointType & point, InstanceIdentifierVectorType & pointIds ) const;
+  FindTriangle(const PointType & point, InstanceIdentifierVectorType & pointIds) const;
 
   /** Find the first triangle touching the closest point to the input point,
    * and return the point Ids of the triangle vertices. Note that this triangle
@@ -109,15 +117,15 @@ public:
    * position to use when the FindTriangle() fails to find a triangle that
    * contains the input point. */
   virtual void
-  FindTriangleOfClosestPoint( const PointType & point, InstanceIdentifierVectorType & pointIds ) const;
+  FindTriangleOfClosestPoint(const PointType & point, InstanceIdentifierVectorType & pointIds) const;
 
   /** Set Sphere Center.  The implementation of this interpolator assumes that the
    * Mesh surface has a spherical geometry (not only spherical topology). With
    * this method you can specify the coordinates of the center of the sphere
    * represented by the Mesh.
    */
-  itkSetMacro( SphereCenter, PointType );
-  itkGetConstMacro( SphereCenter, PointType );
+  itkSetMacro(SphereCenter, PointType);
+  itkGetConstMacro(SphereCenter, PointType);
 
   /** When this boolean flag is ON, and the Evaluate() method fails to locate a
    * triangle that contains the queried point position, the interpolator will
@@ -125,22 +133,22 @@ public:
    * Evaluate() method to simply return the value of the mesh point that is
    * closest to the queried point. This option is useful when dealing with
    * meshses whose geometry may have folding or poorly shaped triangles. */
-  itkSetMacro( UseNearestNeighborInterpolationAsBackup, bool );
-  itkGetConstMacro( UseNearestNeighborInterpolationAsBackup, bool );
-  itkBooleanMacro( UseNearestNeighborInterpolationAsBackup );
+  itkSetMacro(UseNearestNeighborInterpolationAsBackup, bool);
+  itkGetConstMacro(UseNearestNeighborInterpolationAsBackup, bool);
+  itkBooleanMacro(UseNearestNeighborInterpolationAsBackup);
 
 protected:
   LinearInterpolateMeshFunction();
   ~LinearInterpolateMeshFunction();
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   virtual bool
-  ComputeWeights( const PointType & point, const InstanceIdentifierVectorType & pointIds ) const;
+  ComputeWeights(const PointType & point, const InstanceIdentifierVectorType & pointIds) const;
 
   const RealType &
-  GetInterpolationWeight( unsigned int ) const;
+  GetInterpolationWeight(unsigned int) const;
 
 private:
   mutable VectorType m_V12;
@@ -153,8 +161,8 @@ private:
 
   static constexpr unsigned int SurfaceDimension = 2;
 
-  using TriangleBasisSystemType = TriangleBasisSystem< VectorType, SurfaceDimension >;
-  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator< TInputMesh, TriangleBasisSystemType >;
+  using TriangleBasisSystemType = TriangleBasisSystem<VectorType, SurfaceDimension>;
+  using TriangleBasisSystemCalculatorType = TriangleBasisSystemCalculator<TInputMesh, TriangleBasisSystemType>;
 
   typename TriangleBasisSystemCalculatorType::Pointer m_TriangleBasisSystemCalculator;
 

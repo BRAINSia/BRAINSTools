@@ -49,7 +49,7 @@
  * NONE
  */
 extern void
-WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename, const LandmarksWeightMapType & landmarks );
+WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const LandmarksWeightMapType & landmarks);
 
 /*
  * Read Slicer3 landmark list file (.wts) into a map of doubles
@@ -60,6 +60,6 @@ WriteITKtoSlicer3LmkWts( const std::string & landmarksWeightFilename, const Land
  * landmark weights          - a map of doubles to save the landmark wights in ITK
  */
 extern LandmarksWeightMapType
-ReadSlicer3toITKLmkWts( const std::string & landmarksWeightFilename );
+ReadSlicer3toITKLmkWts(const std::string & landmarksWeightFilename);
 
 #endif

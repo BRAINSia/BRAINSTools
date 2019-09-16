@@ -24,7 +24,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( VBRAINSDemonWarpTest );
+  REGISTER_TEST(VBRAINSDemonWarpTest);
 }
 
 #undef main

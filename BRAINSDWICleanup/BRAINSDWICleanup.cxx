@@ -28,22 +28,22 @@
 #include <list>
 
 using PixelType = signed short;
-using NrrdImageType = itk::VectorImage< PixelType, 3 >;
-using SingleComponentImageType = itk::Image< PixelType, 3 >;
-using ReaderType = itk::ImageFileReader< NrrdImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+using NrrdImageType = itk::VectorImage<PixelType, 3>;
+using SingleComponentImageType = itk::Image<PixelType, 3>;
+using ReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
 
-using WriterType = itk::ImageFileWriter< NrrdImageType >;
+using WriterType = itk::ImageFileWriter<NrrdImageType>;
 
-using GradStringVector = std::vector< std::string >;
+using GradStringVector = std::vector<std::string>;
 
-template < typename TImage >
+template <typename TImage>
 TImage *
-AllocVecImage( const itk::ImageBase< TImage::ImageDimension > * templateImage, unsigned long vecSize )
+AllocVecImage(const itk::ImageBase<TImage::ImageDimension> * templateImage, unsigned long vecSize)
 {
   typename TImage::Pointer p1 = TImage::New();
-  p1->CopyInformation( templateImage );
-  p1->SetRegions( templateImage->GetLargestPossibleRegion() );
-  p1->SetNumberOfComponentsPerPixel( vecSize );
+  p1->CopyInformation(templateImage);
+  p1->SetRegions(templateImage->GetLargestPossibleRegion());
+  p1->SetNumberOfComponentsPerPixel(vecSize);
   p1->Allocate();
   p1.GetPointer()->Register();
   return p1.GetPointer();
@@ -52,15 +52,15 @@ AllocVecImage( const itk::ImageBase< TImage::ImageDimension > * templateImage, u
 class inBadList
 {
 public:
-  inBadList( const std::vector< int > & list )
-    : valueList( list )
+  inBadList(const std::vector<int> & list)
+    : valueList(list)
   {}
   bool
-  operator()( const int & value )
+  operator()(const int & value)
   {
-    for ( unsigned int i = 0; i < valueList.size(); ++i )
+    for (unsigned int i = 0; i < valueList.size(); ++i)
     {
-      if ( valueList[i] == value )
+      if (valueList[i] == value)
       {
         return true;
       }
@@ -69,36 +69,36 @@ public:
   }
 
 private:
-  const std::vector< int > & valueList;
+  const std::vector<int> & valueList;
 };
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  if ( badGradients.size() == 0 )
+  if (badGradients.size() == 0)
   {
     std::cerr << "Missing bad gradient list" << std::endl;
     return 1;
   }
-  if ( inputVolume.empty() )
+  if (inputVolume.empty())
   {
     std::cerr << "Missing input NRRD file name" << std::endl;
     return 1;
   }
-  if ( outputVolume.empty() )
+  if (outputVolume.empty())
   {
     std::cerr << "Missing output NRRD file name" << std::endl;
     return 1;
   }
   ReaderType::Pointer imageReader = ReaderType::New();
-  imageReader->SetFileName( inputVolume );
+  imageReader->SetFileName(inputVolume);
   try
   {
     imageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -111,16 +111,16 @@ main( int argc, char * argv[] )
 
   //
   // make an index list containing the list of gradients/volumes to keep.
-  std::list< int > keepIndices;
-  for ( unsigned int i = 0; i < numInputGradients; ++i )
+  std::list<int> keepIndices;
+  for (unsigned int i = 0; i < numInputGradients; ++i)
   {
-    keepIndices.push_back( i ); // add all indicies
+    keepIndices.push_back(i); // add all indicies
   }
   // remove the indices in badGradients
-  inBadList pred( badGradients );
-  keepIndices.remove_if( pred );
+  inBadList pred(badGradients);
+  keepIndices.remove_if(pred);
 
-  if ( keepIndices.size() != newGradientCount )
+  if (keepIndices.size() != newGradientCount)
   {
     std::cerr << "ERROR: The number of gradients to be kept does not match the number of output components!"
               << std::endl
@@ -129,26 +129,26 @@ main( int argc, char * argv[] )
   }
 
   // create output volume
-  NrrdImageType::Pointer outImage = AllocVecImage< NrrdImageType >( inImage, newGradientCount );
+  NrrdImageType::Pointer outImage = AllocVecImage<NrrdImageType>(inImage, newGradientCount);
 
   // copy input vector pixels to output, skipping the bad gradients.
-  itk::ImageRegionConstIterator< NrrdImageType > inIt( inImage, inImage->GetLargestPossibleRegion() );
-  itk::ImageRegionIterator< NrrdImageType >      outIt( outImage, outImage->GetLargestPossibleRegion() );
-  for ( ; !inIt.IsAtEnd(); ++inIt, ++outIt )
+  itk::ImageRegionConstIterator<NrrdImageType> inIt(inImage, inImage->GetLargestPossibleRegion());
+  itk::ImageRegionIterator<NrrdImageType>      outIt(outImage, outImage->GetLargestPossibleRegion());
+  for (; !inIt.IsAtEnd(); ++inIt, ++outIt)
   {
-    NrrdImageType::PixelType   inPix = inIt.Get();
-    NrrdImageType::PixelType   outpix( newGradientCount );
-    std::list< int >::iterator keepIt = keepIndices.begin();
-    for ( unsigned int i = 0; i < newGradientCount; ++i, ++keepIt )
+    NrrdImageType::PixelType inPix = inIt.Get();
+    NrrdImageType::PixelType outpix(newGradientCount);
+    std::list<int>::iterator keepIt = keepIndices.begin();
+    for (unsigned int i = 0; i < newGradientCount; ++i, ++keepIt)
     {
-      outpix[i] = inPix[*( keepIt )];
+      outpix[i] = inPix[*(keepIt)];
     }
-    outIt.Set( outpix );
+    outIt.Set(outpix);
   }
 
   // deal with gradients in meta data
   DWIMetaDataDictionaryValidator nrrdMetaDataValidator;
-  nrrdMetaDataValidator.SetMetaDataDictionary( inImage->GetMetaDataDictionary() );
+  nrrdMetaDataValidator.SetMetaDataDictionary(inImage->GetMetaDataDictionary());
 
   // Get gradient table and update the gradient vectors based on keepIndices
   DWIMetaDataDictionaryValidator::GradientTableType inputGradTable = nrrdMetaDataValidator.GetGradientTable();
@@ -156,29 +156,29 @@ main( int argc, char * argv[] )
   // Now delete the gradient table to fill with new gradient values
   nrrdMetaDataValidator.DeleteGradientTable();
 
-  DWIMetaDataDictionaryValidator::GradientTableType outputGradTable( newGradientCount );
+  DWIMetaDataDictionaryValidator::GradientTableType outputGradTable(newGradientCount);
 
   // add the good gradients to the outputGradTable
-  std::list< int >::iterator keepIt = keepIndices.begin();
-  for ( unsigned int i = 0; i < keepIndices.size(); ++i, ++keepIt )
+  std::list<int>::iterator keepIt = keepIndices.begin();
+  for (unsigned int i = 0; i < keepIndices.size(); ++i, ++keepIt)
   {
     outputGradTable[i] = inputGradTable[*keepIt];
   }
-  nrrdMetaDataValidator.SetGradientTable( outputGradTable );
+  nrrdMetaDataValidator.SetGradientTable(outputGradTable);
 
-  outImage->SetMetaDataDictionary( nrrdMetaDataValidator.GetMetaDataDictionary() );
+  outImage->SetMetaDataDictionary(nrrdMetaDataValidator.GetMetaDataDictionary());
 
   std::cout << "Write Output Image..." << std::endl;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
-  nrrdWriter->SetInput( outImage );
-  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->SetInput(outImage);
+  nrrdWriter->SetFileName(outputVolume);
   try
   {
     nrrdWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     return 1;

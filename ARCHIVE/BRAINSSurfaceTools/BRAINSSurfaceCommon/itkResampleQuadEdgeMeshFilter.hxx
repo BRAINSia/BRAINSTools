@@ -26,39 +26,38 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::ResampleQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::ResampleQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::~ResampleQuadEdgeMeshFilter()
+template <typename TInputMesh, typename TOutputMesh>
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::~ResampleQuadEdgeMeshFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::SetReferenceMesh( const TOutputMesh * mesh )
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::SetReferenceMesh(const TOutputMesh * mesh)
 {
-  itkDebugMacro( "setting input ReferenceMesh to " << mesh );
-  if ( mesh != static_cast< const TOutputMesh * >( this->ProcessObject::GetInput( 1 ) ) )
+  itkDebugMacro("setting input ReferenceMesh to " << mesh);
+  if (mesh != static_cast<const TOutputMesh *>(this->ProcessObject::GetInput(1)))
   {
-    this->ProcessObject::SetNthInput( 1, const_cast< TOutputMesh * >( mesh ) );
+    this->ProcessObject::SetNthInput(1, const_cast<TOutputMesh *>(mesh));
     this->Modified();
   }
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-const typename ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::OutputMeshType *
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GetReferenceMesh() const
+template <typename TInputMesh, typename TOutputMesh>
+const typename ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::OutputMeshType *
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::GetReferenceMesh() const
 {
-  Self *                 surrogate = const_cast< Self * >( this );
-  const OutputMeshType * referenceMesh =
-    static_cast< const OutputMeshType * >( surrogate->ProcessObject::GetInput( 1 ) );
+  Self *                 surrogate = const_cast<Self *>(this);
+  const OutputMeshType * referenceMesh = static_cast<const OutputMeshType *>(surrogate->ProcessObject::GetInput(1));
   return referenceMesh;
 }
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
   // Copy the input mesh into the output mesh.
   this->CopyReferenceMeshToOutputMesh();
@@ -71,27 +70,27 @@ ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
 
   OutputPointsContainerPointer points = outputMesh->GetPoints();
 
-  if ( points.IsNull() )
+  if (points.IsNull())
   {
-    itkExceptionMacro( "Mesh has NULL Points" );
+    itkExceptionMacro("Mesh has NULL Points");
   }
 
   const unsigned int numberOfPoints = outputMesh->GetNumberOfPoints();
 
-  ProgressReporter progress( this, 0, numberOfPoints );
+  ProgressReporter progress(this, 0, numberOfPoints);
 
   OutputPointDataContainerPointer pointData = outputMesh->GetPointData();
 
-  if ( pointData.IsNull() )
+  if (pointData.IsNull())
   {
     pointData = OutputPointDataContainer::New();
-    outputMesh->SetPointData( pointData );
+    outputMesh->SetPointData(pointData);
   }
 
-  pointData->Reserve( numberOfPoints );
+  pointData->Reserve(numberOfPoints);
 
   // Initialize the internal point locator structure
-  this->m_Interpolator->SetInputMesh( this->GetInput() );
+  this->m_Interpolator->SetInputMesh(this->GetInput());
   this->m_Interpolator->Initialize();
 
   using PointIterator = typename OutputMeshType::PointsContainer::ConstIterator;
@@ -108,14 +107,14 @@ ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
   OutputPointType inputPoint;
   OutputPointType pointToEvaluate;
 
-  while ( pointItr != pointEnd && pointDataItr != pointDataEnd )
+  while (pointItr != pointEnd && pointDataItr != pointDataEnd)
   {
-    inputPoint.CastFrom( pointItr.Value() );
+    inputPoint.CastFrom(pointItr.Value());
 
-    MappedPointType transformedPoint = this->m_Transform->TransformPoint( inputPoint );
+    MappedPointType transformedPoint = this->m_Transform->TransformPoint(inputPoint);
 
-    pointToEvaluate.CastFrom( transformedPoint );
-    pointDataItr.Value() = this->m_Interpolator->Evaluate( pointToEvaluate );
+    pointToEvaluate.CastFrom(transformedPoint);
+    pointDataItr.Value() = this->m_Interpolator->Evaluate(pointToEvaluate);
 
     progress.CompletedPixel();
 
@@ -125,18 +124,18 @@ ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::GenerateData()
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMesh()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMesh()
 {
   this->CopyReferenceMeshToOutputMeshGeometry();
   this->CopyReferenceMeshToOutputMeshFieldData();
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshGeometry()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshGeometry()
 {
   this->CopyReferenceMeshToOutputMeshPoints();
   this->CopyReferenceMeshToOutputMeshEdgeCells();
@@ -144,67 +143,67 @@ ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutput
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshFieldData()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshFieldData()
 {
   this->CopyReferenceMeshToOutputMeshPointData();
   this->CopyReferenceMeshToOutputMeshCellData();
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshPoints()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshPoints()
 {
   const OutputMeshType * in = this->GetReferenceMesh();
   OutputMeshType *       out = this->GetOutput();
 
-  CopyMeshToMeshPoints( in, out );
+  CopyMeshToMeshPoints(in, out);
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshEdgeCells()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshEdgeCells()
 {
   const OutputMeshType * in = this->GetReferenceMesh();
   OutputMeshType *       out = this->GetOutput();
 
-  CopyMeshToMeshEdgeCells( in, out );
+  CopyMeshToMeshEdgeCells(in, out);
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshCells()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshCells()
 {
   const OutputMeshType * in = this->GetReferenceMesh();
   OutputMeshType *       out = this->GetOutput();
 
-  CopyMeshToMeshCells( in, out );
+  CopyMeshToMeshCells(in, out);
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshPointData()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshPointData()
 {
   const OutputMeshType * in = this->GetReferenceMesh();
   OutputMeshType *       out = this->GetOutput();
 
-  CopyMeshToMeshPointData( in, out );
+  CopyMeshToMeshPointData(in, out);
 }
 
 // ---------------------------------------------------------------------
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-ResampleQuadEdgeMeshFilter< TInputMesh, TOutputMesh >::CopyReferenceMeshToOutputMeshCellData()
+ResampleQuadEdgeMeshFilter<TInputMesh, TOutputMesh>::CopyReferenceMeshToOutputMeshCellData()
 {
   const OutputMeshType * in = this->GetReferenceMesh();
   OutputMeshType *       out = this->GetOutput();
 
-  CopyMeshToMeshCellData( in, out );
+  CopyMeshToMeshCellData(in, out);
 }
 } // end namespace itk
 

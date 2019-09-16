@@ -33,27 +33,27 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
   constexpr unsigned int Dim = 3;
 
-  using FloatImageType = itk::Image< float, Dim >;
+  using FloatImageType = itk::Image<float, Dim>;
   using FloatImagePointer = FloatImageType::Pointer;
-  using InputImageList = std::vector< FloatImagePointer >;
-  using ImageReaderType = itk::ImageFileReader< FloatImageType >;
-  using CharImageType = itk::Image< unsigned char, Dim >;
-  using MaskReaderType = itk::ImageFileReader< CharImageType >;
+  using InputImageList = std::vector<FloatImagePointer>;
+  using ImageReaderType = itk::ImageFileReader<FloatImageType>;
+  using CharImageType = itk::Image<unsigned char, Dim>;
+  using MaskReaderType = itk::ImageFileReader<CharImageType>;
 
-  if ( outputEdgeMap.compare( "" ) == 0 && outputMaximumGradientImage.compare( "" ) == 0 )
+  if (outputEdgeMap.compare("") == 0 && outputMaximumGradientImage.compare("") == 0)
   {
     std::cerr << "ERROR: No output image is specified!" << std::endl;
     return EXIT_FAILURE;
   }
 
-  std::vector< std::string > inputMRFileNames;
-  if ( inputMRVolumes.size() > 0 )
+  std::vector<std::string> inputMRFileNames;
+  if (inputMRVolumes.size() > 0)
   {
     inputMRFileNames = inputMRVolumes;
   }
@@ -69,33 +69,33 @@ main( int argc, char * argv[] )
   using LocalReaderPointer = ImageReaderType::Pointer;
 
   InputImageList inputMRImageModalitiesList;
-  for ( unsigned int i = 0; i < numberOfMRImages; i++ )
+  for (unsigned int i = 0; i < numberOfMRImages; i++)
   {
     std::cout << "Reading image: " << inputMRFileNames[i] << std::endl;
     LocalReaderPointer imgreader = ImageReaderType::New();
-    imgreader->SetFileName( inputMRFileNames[i].c_str() );
+    imgreader->SetFileName(inputMRFileNames[i].c_str());
     try
     {
       imgreader->Update();
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "ERROR:  Could not read image " << inputMRFileNames[i] << "." << std::endl;
       return EXIT_FAILURE;
     }
-    inputMRImageModalitiesList.push_back( imgreader->GetOutput() );
+    inputMRImageModalitiesList.push_back(imgreader->GetOutput());
   }
 
   CharImageType::Pointer mask;
-  if ( inputMask.compare( "" ) != 0 )
+  if (inputMask.compare("") != 0)
   {
     MaskReaderType::Pointer maskreader = MaskReaderType::New();
-    maskreader->SetFileName( inputMask );
+    maskreader->SetFileName(inputMask);
     try
     {
       maskreader->Update();
     }
-    catch ( ... )
+    catch (...)
     {
       std::cerr << "ERROR:  Could not read mask " << inputMask << "." << std::endl;
       return EXIT_FAILURE;
@@ -105,25 +105,25 @@ main( int argc, char * argv[] )
 
   // Create maximum gradient image using the input structural MR images.
   CharImageType::Pointer MGI =
-    GenerateMaxGradientImage< FloatImageType, CharImageType, CharImageType >( inputMRImageModalitiesList,
-                                                                              lowerPercentileMatching,
-                                                                              upperPercentileMatching,
-                                                                              minimumOutputRange,
-                                                                              maximumOutputRange,
-                                                                              mask );
+    GenerateMaxGradientImage<FloatImageType, CharImageType, CharImageType>(inputMRImageModalitiesList,
+                                                                           lowerPercentileMatching,
+                                                                           upperPercentileMatching,
+                                                                           minimumOutputRange,
+                                                                           maximumOutputRange,
+                                                                           mask);
 
-  if ( outputMaximumGradientImage.compare( "" ) != 0 )
+  if (outputMaximumGradientImage.compare("") != 0)
   {
-    using WriterType = itk::ImageFileWriter< CharImageType >;
+    using WriterType = itk::ImageFileWriter<CharImageType>;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
-    writer->SetFileName( outputMaximumGradientImage );
-    writer->SetInput( MGI );
+    writer->SetFileName(outputMaximumGradientImage);
+    writer->SetInput(MGI);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & exp )
+    catch (itk::ExceptionObject & exp)
     {
       std::cerr << "ExceptionObject with writer" << std::endl;
       std::cerr << exp << std::endl;
@@ -132,26 +132,26 @@ main( int argc, char * argv[] )
   }
 
   // EdgeMap is created as the inverse of Maximum Gradient Image
-  using DivideImageFilterType = itk::DivideImageFilter< FloatImageType, CharImageType, FloatImageType >;
+  using DivideImageFilterType = itk::DivideImageFilter<FloatImageType, CharImageType, FloatImageType>;
 
   DivideImageFilterType::Pointer divideImageFilter = DivideImageFilterType::New();
-  divideImageFilter->SetInput1( 1.0 );
-  divideImageFilter->SetInput2( MGI );
+  divideImageFilter->SetInput1(1.0);
+  divideImageFilter->SetInput2(MGI);
   divideImageFilter->Update();
   FloatImageType::Pointer edgeMap = divideImageFilter->GetOutput();
 
-  if ( outputEdgeMap.compare( "" ) != 0 )
+  if (outputEdgeMap.compare("") != 0)
   {
-    using WriterType = itk::ImageFileWriter< FloatImageType >;
+    using WriterType = itk::ImageFileWriter<FloatImageType>;
     WriterType::Pointer writer = WriterType::New();
     writer->UseCompressionOn();
-    writer->SetFileName( outputEdgeMap );
-    writer->SetInput( edgeMap );
+    writer->SetFileName(outputEdgeMap);
+    writer->SetInput(edgeMap);
     try
     {
       writer->Update();
     }
-    catch ( itk::ExceptionObject & exp )
+    catch (itk::ExceptionObject & exp)
     {
       std::cerr << "ExceptionObject with writer" << std::endl;
       std::cerr << exp << std::endl;

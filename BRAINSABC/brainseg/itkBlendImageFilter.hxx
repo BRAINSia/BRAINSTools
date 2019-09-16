@@ -27,43 +27,43 @@ namespace itk
 /**
  * Constructor
  */
-template < typename TInputImage, typename TOutputImage >
-BlendImageFilter< TInputImage, TOutputImage >::BlendImageFilter()
-  : m_Blend1( 1.0 )
-  , m_Blend2( 1.0 )
+template <typename TInputImage, typename TOutputImage>
+BlendImageFilter<TInputImage, TOutputImage>::BlendImageFilter()
+  : m_Blend1(1.0)
+  , m_Blend2(1.0)
 {}
 
 /**
  * GenerateData Performs the accumulation
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BlendImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
-  const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId )
+BlendImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
+                                                                  ThreadIdType                  threadId)
 {
   // We use dynamic_cast since inputs are stored as DataObjects.  The
   // ImageToImageFilter::GetInput(int) always returns a pointer to a
   // TInputImage so it cannot be used for the second input.
-  InputImagePointer  inputPtr1 = dynamic_cast< TInputImage * >( this->ProcessObject::GetInput( 0 ) );
-  InputImagePointer  inputPtr2 = dynamic_cast< TInputImage * >( this->ProcessObject::GetInput( 1 ) );
-  OutputImagePointer outputPtr = dynamic_cast< TOutputImage * >( this->GetOutput( 0 ) );
+  InputImagePointer  inputPtr1 = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(0));
+  InputImagePointer  inputPtr2 = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
+  OutputImagePointer outputPtr = dynamic_cast<TOutputImage *>(this->GetOutput(0));
 
-  ImageRegionIterator< TInputImage > inputIt1( inputPtr1, outputRegionForThread );
-  ImageRegionIterator< TInputImage > inputIt2( inputPtr2, outputRegionForThread );
+  ImageRegionIterator<TInputImage> inputIt1(inputPtr1, outputRegionForThread);
+  ImageRegionIterator<TInputImage> inputIt2(inputPtr2, outputRegionForThread);
 
-  ImageRegionIterator< TOutputImage > outputIt( outputPtr, outputRegionForThread );
+  ImageRegionIterator<TOutputImage> outputIt(outputPtr, outputRegionForThread);
 
-  ProgressReporter progress( this, threadId, outputRegionForThread.GetNumberOfPixels() );
+  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
 
   inputIt1.GoToBegin();
   inputIt2.GoToBegin();
   outputIt.GoToBegin();
 
-  while ( !inputIt1.IsAtEnd() )
+  while (!inputIt1.IsAtEnd())
   {
-    double acc = static_cast< double >( inputIt1.Get() ) * this->m_Blend1;
-    acc += static_cast< double >( inputIt2.Get() ) * this->m_Blend2;
-    outputIt.Set( static_cast< typename TOutputImage::PixelType >( acc ) );
+    double acc = static_cast<double>(inputIt1.Get()) * this->m_Blend1;
+    acc += static_cast<double>(inputIt2.Get()) * this->m_Blend2;
+    outputIt.Set(static_cast<typename TOutputImage::PixelType>(acc));
     ++inputIt2;
     ++inputIt1;
     ++outputIt;
@@ -71,11 +71,11 @@ BlendImageFilter< TInputImage, TOutputImage >::ThreadedGenerateData(
   }
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BlendImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+BlendImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << indent << "Blend1: " << this->m_Blend1 << std::endl;
   os << indent << "Blend2: " << this->m_Blend2 << std::endl;

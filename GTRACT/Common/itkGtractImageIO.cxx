@@ -46,37 +46,37 @@ namespace itk
 GtractImageIO ::GtractImageIO() {}
 
 void
-GtractImageIO::SetDicomDirectory( char * dicomDir )
+GtractImageIO::SetDicomDirectory(char * dicomDir)
 {
   m_DicomDirectory = dicomDir;
 }
 
 void
-GtractImageIO::SetDicomDirectory( std::string dicomDir )
+GtractImageIO::SetDicomDirectory(std::string dicomDir)
 {
   m_DicomDirectory = dicomDir;
 }
 
 void
-GtractImageIO::SetFileName( char * fileName )
+GtractImageIO::SetFileName(char * fileName)
 {
   m_FileName = fileName;
 }
 
 void
-GtractImageIO::SetFileName( std::string fileName )
+GtractImageIO::SetFileName(std::string fileName)
 {
   m_FileName = fileName;
 }
 
 void
-GtractImageIO::SetDicomSeriesUID( char * UID )
+GtractImageIO::SetDicomSeriesUID(char * UID)
 {
   m_DicomSeriesUID = UID;
 }
 
 void
-GtractImageIO::SetDicomSeriesUID( std::string UID )
+GtractImageIO::SetDicomSeriesUID(std::string UID)
 {
   m_DicomSeriesUID = UID;
 }
@@ -84,10 +84,10 @@ GtractImageIO::SetDicomSeriesUID( std::string UID )
 void
 GtractImageIO::Load3dShortImage()
 {
-  using FileReaderType = itk::ImageFileReader< Short3dImageType >;
+  using FileReaderType = itk::ImageFileReader<Short3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
-  reader->SetFileName( m_FileName.c_str() );
+  reader->SetFileName(m_FileName.c_str());
   reader->Update();
 
   m_Short3dImage = reader->GetOutput();
@@ -96,10 +96,10 @@ GtractImageIO::Load3dShortImage()
 void
 GtractImageIO::Load4dShortImage()
 {
-  using FileReaderType = itk::ImageFileReader< Short4dImageType >;
+  using FileReaderType = itk::ImageFileReader<Short4dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
-  reader->SetFileName( m_FileName.c_str() );
+  reader->SetFileName(m_FileName.c_str());
   reader->Update();
 
   m_Short4dImage = reader->GetOutput();
@@ -108,10 +108,10 @@ GtractImageIO::Load4dShortImage()
 void
 GtractImageIO::Load3dFloatImage()
 {
-  using FileReaderType = itk::ImageFileReader< Float3dImageType >;
+  using FileReaderType = itk::ImageFileReader<Float3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
-  reader->SetFileName( m_FileName.c_str() );
+  reader->SetFileName(m_FileName.c_str());
   reader->Update();
 
   m_Float3dImage = reader->GetOutput();
@@ -120,10 +120,10 @@ GtractImageIO::Load3dFloatImage()
 void
 GtractImageIO::Load3dRgbImage()
 {
-  using FileReaderType = itk::ImageFileReader< Rgb3dImageType >;
+  using FileReaderType = itk::ImageFileReader<Rgb3dImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
-  reader->SetFileName( m_FileName.c_str() );
+  reader->SetFileName(m_FileName.c_str());
   reader->Update();
 
   m_Rgb3dImage = reader->GetOutput();
@@ -132,10 +132,10 @@ GtractImageIO::Load3dRgbImage()
 void
 GtractImageIO::LoadTensorImage()
 {
-  using FileReaderType = itk::ImageFileReader< TensorImageType >;
+  using FileReaderType = itk::ImageFileReader<TensorImageType>;
   FileReaderType::Pointer reader = FileReaderType::New();
   std::cout << "Loading image " << m_FileName << " ...." << std::endl;
-  reader->SetFileName( m_FileName.c_str() );
+  reader->SetFileName(m_FileName.c_str());
   reader->Update();
 
   m_TensorImage = reader->GetOutput();
@@ -144,12 +144,12 @@ GtractImageIO::LoadTensorImage()
 void
 GtractImageIO::Save3dShortImage()
 {
-  using FileWriterType = itk::ImageFileWriter< Short3dImageType >;
+  using FileWriterType = itk::ImageFileWriter<Short3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
-  writer->SetInput( m_Short3dImage );
-  writer->SetFileName( m_FileName.c_str() );
+  writer->SetInput(m_Short3dImage);
+  writer->SetFileName(m_FileName.c_str());
   writer->Update();
   std::cout << "Done!" << std::endl;
 }
@@ -157,12 +157,12 @@ GtractImageIO::Save3dShortImage()
 void
 GtractImageIO::Save4dShortImage()
 {
-  using FileWriterType = itk::ImageFileWriter< Short4dImageType >;
+  using FileWriterType = itk::ImageFileWriter<Short4dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
-  writer->SetInput( m_Short4dImage );
-  writer->SetFileName( m_FileName.c_str() );
+  writer->SetInput(m_Short4dImage);
+  writer->SetFileName(m_FileName.c_str());
   writer->Update();
   std::cout << "Done!" << std::endl;
 }
@@ -170,12 +170,12 @@ GtractImageIO::Save4dShortImage()
 void
 GtractImageIO::Save3dFloatImage()
 {
-  using FileWriterType = itk::ImageFileWriter< Float3dImageType >;
+  using FileWriterType = itk::ImageFileWriter<Float3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
-  writer->SetInput( m_Float3dImage );
-  writer->SetFileName( m_FileName.c_str() );
+  writer->SetInput(m_Float3dImage);
+  writer->SetFileName(m_FileName.c_str());
   writer->Update();
   std::cout << "Done!" << std::endl;
 }
@@ -183,12 +183,12 @@ GtractImageIO::Save3dFloatImage()
 void
 GtractImageIO::Save3dRgbImage()
 {
-  using FileWriterType = itk::ImageFileWriter< Rgb3dImageType >;
+  using FileWriterType = itk::ImageFileWriter<Rgb3dImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
-  writer->SetInput( m_Rgb3dImage );
-  writer->SetFileName( m_FileName.c_str() );
+  writer->SetInput(m_Rgb3dImage);
+  writer->SetFileName(m_FileName.c_str());
   writer->Update();
   std::cout << "Done!" << std::endl;
 }
@@ -196,12 +196,12 @@ GtractImageIO::Save3dRgbImage()
 void
 GtractImageIO::SaveTensorImage()
 {
-  using FileWriterType = itk::ImageFileWriter< TensorImageType >;
+  using FileWriterType = itk::ImageFileWriter<TensorImageType>;
   FileWriterType::Pointer writer = FileWriterType::New();
   writer->UseCompressionOn();
   std::cout << "Saving image " << m_FileName << " ...." << std::endl;
-  writer->SetInput( m_TensorImage );
-  writer->SetFileName( m_FileName.c_str() );
+  writer->SetInput(m_TensorImage);
+  writer->SetFileName(m_FileName.c_str());
   writer->Update();
   std::cout << "Done!" << std::endl;
 }
@@ -209,18 +209,18 @@ GtractImageIO::SaveTensorImage()
 void
 GtractImageIO::Load3dDICOMSeries()
 {
-  using ReaderType = itk::ImageSeriesReader< Short3dImageType >;
+  using ReaderType = itk::ImageSeriesReader<Short3dImageType>;
   ReaderType::Pointer       reader = ReaderType::New();
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
 
   /* Generate a list of Series UIDs */
   itk::GDCMSeriesFileNames::Pointer FileNameGenerator;
   FileNameGenerator = itk::GDCMSeriesFileNames::New();
-  FileNameGenerator->SetUseSeriesDetails( false );
-  FileNameGenerator->SetDirectory( m_DicomDirectory.c_str() );
+  FileNameGenerator->SetUseSeriesDetails(false);
+  FileNameGenerator->SetDirectory(m_DicomDirectory.c_str());
 
-  reader->SetFileNames( FileNameGenerator->GetFileNames( m_DicomSeriesUID.c_str() ) );
-  reader->SetImageIO( dicomIO );
+  reader->SetFileNames(FileNameGenerator->GetFileNames(m_DicomSeriesUID.c_str()));
+  reader->SetImageIO(dicomIO);
 
   std::cout << "Loading dicom images...." << std::endl;
   reader->Update();
@@ -232,18 +232,18 @@ GtractImageIO::Load3dDICOMSeries()
 void
 GtractImageIO::Load4dDICOMSeries()
 {
-  using ReaderType = itk::ImageSeriesReader< Short4dImageType >;
+  using ReaderType = itk::ImageSeriesReader<Short4dImageType>;
   ReaderType::Pointer       reader = ReaderType::New();
   itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
 
   /* Generate a list of Series UIDs */
   itk::GDCMSeriesFileNames::Pointer FileNameGenerator;
   FileNameGenerator = itk::GDCMSeriesFileNames::New();
-  FileNameGenerator->SetUseSeriesDetails( true );
-  FileNameGenerator->SetDirectory( m_DicomDirectory.c_str() );
+  FileNameGenerator->SetUseSeriesDetails(true);
+  FileNameGenerator->SetDirectory(m_DicomDirectory.c_str());
 
-  reader->SetFileNames( FileNameGenerator->GetFileNames( m_DicomSeriesUID.c_str() ) );
-  reader->SetImageIO( dicomIO );
+  reader->SetFileNames(FileNameGenerator->GetFileNames(m_DicomSeriesUID.c_str()));
+  reader->SetImageIO(dicomIO);
 
   std::cout << "Loading dicom images...." << std::endl;
   reader->Update();

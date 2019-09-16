@@ -32,7 +32,7 @@ namespace itk
  *the thresholds.
  *
  */
-template < typename TInputImage, typename TMaskImage >
+template <typename TInputImage, typename TMaskImage>
 class ComputeHistogramQuantileThresholds : public Object
 {
 public:
@@ -47,35 +47,35 @@ public:
 
   using Self = ComputeHistogramQuantileThresholds;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
+  using Pointer = SmartPointer<Self>;
   using MaskPixelType = typename TMaskImage::PixelType;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( ComputeHistogramQuantileThresholds, Object );
+  itkTypeMacro(ComputeHistogramQuantileThresholds, Object);
 
   /** set Quantile Threshold */
-  itkSetMacro( QuantileLowerThreshold, double );
-  itkGetConstMacro( QuantileLowerThreshold, double );
-  itkSetMacro( QuantileUpperThreshold, double );
-  itkGetConstMacro( QuantileUpperThreshold, double );
+  itkSetMacro(QuantileLowerThreshold, double);
+  itkGetConstMacro(QuantileLowerThreshold, double);
+  itkSetMacro(QuantileUpperThreshold, double);
+  itkGetConstMacro(QuantileUpperThreshold, double);
 
-  itkGetConstMacro( LowerIntensityThresholdValue, typename InputImageType::PixelType );
-  itkGetConstMacro( UpperIntensityThresholdValue, typename InputImageType::PixelType );
-  itkGetConstMacro( NumberOfValidHistogramsEntries, unsigned int );
+  itkGetConstMacro(LowerIntensityThresholdValue, typename InputImageType::PixelType);
+  itkGetConstMacro(UpperIntensityThresholdValue, typename InputImageType::PixelType);
+  itkGetConstMacro(NumberOfValidHistogramsEntries, unsigned int);
 
-  itkGetConstObjectMacro( Image, InputImageType );
-  itkSetConstObjectMacro( Image, InputImageType );
+  itkGetConstObjectMacro(Image, InputImageType);
+  itkSetConstObjectMacro(Image, InputImageType);
 
-  itkSetMacro( ImageMin, typename TInputImage::PixelType );
-  itkGetConstMacro( ImageMin, typename TInputImage::PixelType );
-  itkSetMacro( ImageMax, typename TInputImage::PixelType );
-  itkGetConstMacro( ImageMax, typename TInputImage::PixelType );
+  itkSetMacro(ImageMin, typename TInputImage::PixelType);
+  itkGetConstMacro(ImageMin, typename TInputImage::PixelType);
+  itkSetMacro(ImageMax, typename TInputImage::PixelType);
+  itkGetConstMacro(ImageMax, typename TInputImage::PixelType);
 
-  itkGetConstObjectMacro( BinaryPortionImage, TMaskImage );
-  itkSetObjectMacro( BinaryPortionImage, TMaskImage );
+  itkGetConstObjectMacro(BinaryPortionImage, TMaskImage);
+  itkSetObjectMacro(BinaryPortionImage, TMaskImage);
 
   void
   Calculate();
@@ -84,11 +84,11 @@ protected:
   ComputeHistogramQuantileThresholds();
   ~ComputeHistogramQuantileThresholds() override;
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
   void
-  ImageMinMax( InputPixelType & min, InputPixelType & max );
+  ImageMinMax(InputPixelType & min, InputPixelType & max);
 
   InputImagePointer            m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;

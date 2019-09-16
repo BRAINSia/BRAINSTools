@@ -28,44 +28,44 @@
 
 #include <iostream>
 
-#define muAlloc( n, T ) muAlloc_func< T >( n, __FILE__, __LINE__ )
+#define muAlloc(n, T) muAlloc_func<T>(n, __FILE__, __LINE__)
 
-template < typename T >
+template <typename T>
 T *
-muAlloc_func( unsigned int n, const char * s, int line )
+muAlloc_func(unsigned int n, const char * s, int line)
 {
   T * array = new T[n];
 
-  if ( array == NULL )
+  if (array == NULL)
   {
-    muExceptionMacro( << "muAlloc: Failed at " << s << ": " << line );
+    muExceptionMacro(<< "muAlloc: Failed at " << s << ": " << line);
   }
   return array;
 }
 
-template < typename TImage >
+template <typename TImage>
 typename TImage::Pointer
-readImage( const char * fn )
+readImage(const char * fn)
 {
-  using ReaderType = itk::ImageFileReader< TImage >;
+  using ReaderType = itk::ImageFileReader<TImage>;
   typename ReaderType::Pointer reader = ReaderType::New();
 
-  reader->SetFileName( fn );
+  reader->SetFileName(fn);
   reader->Update();
 
   return reader->GetOutput();
 }
 
-template < typename TImage >
+template <typename TImage>
 void
-writeImage( const char * fn, const TImage * ip )
+writeImage(const char * fn, const TImage * ip)
 {
-  using WriterType = itk::ImageFileWriter< TImage >;
+  using WriterType = itk::ImageFileWriter<TImage>;
   typename WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
 
-  writer->SetFileName( fn );
-  writer->SetInput( ip );
+  writer->SetFileName(fn);
+  writer->SetInput(ip);
 
   writer->Update();
 }

@@ -51,14 +51,14 @@
 #include "DWIConvertLib.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
     std::cout << "Input Image: " << inputVolume << std::endl;
@@ -69,23 +69,23 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( inputVolume.size() == 0 )
+  if (inputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
   std::string convertedVolume;
-  if ( convertInputVolumeToNrrdOrNifti( detectOuputVolumeType( outputVolume ), inputVolume, convertedVolume ) )
+  if (convertInputVolumeToNrrdOrNifti(detectOuputVolumeType(outputVolume), inputVolume, convertedVolume))
   {
     inputVolume = convertedVolume;
   }
@@ -96,19 +96,19 @@ main( int argc, char * argv[] )
   }
 
   using PixelType = float;
-  using ImageType = itk::Image< PixelType, 3 >;
+  using ImageType = itk::Image<PixelType, 3>;
   using ImageRegionType = ImageType::RegionType;
   using IndexType = ImageRegionType::IndexType;
 
-  using FileReaderType = itk::ImageFileReader< ImageType >;
+  using FileReaderType = itk::ImageFileReader<ImageType>;
   FileReaderType::Pointer imageReader = FileReaderType::New();
-  imageReader->SetFileName( inputVolume );
+  imageReader->SetFileName(inputVolume);
 
   try
   {
     imageReader->Update();
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -116,35 +116,35 @@ main( int argc, char * argv[] )
 
   ImageType::Pointer originalImage = imageReader->GetOutput();
 
-  using ImageIteratorType = itk::ImageRegionIteratorWithIndex< ImageType >;
-  ImageIteratorType it( originalImage, originalImage->GetLargestPossibleRegion() );
+  using ImageIteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
+  ImageIteratorType it(originalImage, originalImage->GetLargestPossibleRegion());
   ImageRegionType   region = originalImage->GetLargestPossibleRegion();
-  int               lastSlice = region.GetSize( 2 ) - 1;
+  int               lastSlice = region.GetSize(2) - 1;
   std::cout << "Last Slice " << lastSlice << std::endl;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     IndexType index = it.GetIndex();
-    if ( ( index[2] == 0 ) && clipFirstSlice )
+    if ((index[2] == 0) && clipFirstSlice)
     {
-      it.Set( 0.0 );
+      it.Set(0.0);
     }
-    if ( ( index[2] == lastSlice ) && clipLastSlice )
+    if ((index[2] == lastSlice) && clipLastSlice)
     {
-      it.Set( 0.0 );
+      it.Set(0.0);
     }
   }
 
-  using WriterType = itk::ImageFileWriter< ImageType >;
+  using WriterType = itk::ImageFileWriter<ImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
-  nrrdWriter->SetInput( originalImage );
-  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->SetInput(originalImage);
+  nrrdWriter->SetFileName(outputVolume);
   try
   {
     nrrdWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }

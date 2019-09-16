@@ -23,7 +23,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( gtractCoRegAnatomyTest );
+  REGISTER_TEST(gtractCoRegAnatomyTest);
 }
 
 #undef main

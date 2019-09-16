@@ -45,23 +45,23 @@ namespace itk
  * the post-transform.
  *
  */
-template < typename TCoordinateType, unsigned int NDimensions, typename TInputImage >
+template <typename TCoordinateType, unsigned int NDimensions, typename TInputImage>
 class TransformAdaptor : public LightProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( TransformAdaptor );
+  ITK_DISALLOW_COPY_AND_ASSIGN(TransformAdaptor);
 
   /** Standard class type alias. */
   using Self = TransformAdaptor;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( TransformAdaptor, Object );
+  itkTypeMacro(TransformAdaptor, Object);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Input Image Type. */
   using InputImageType = TInputImage;
@@ -74,10 +74,10 @@ public:
   /** Type of the scalar representing coordinate and vector elements. */
   typedef TCoordinateType ScalarType;
 
-  typedef vnl_matrix_fixed< TCoordinateType, NDimensions + 1, NDimensions + 1 > VnlTransformMatrixType44;
+  typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions + 1> VnlTransformMatrixType44;
 
   /** Affine transform type. */
-  using AffineTransformType = AffineTransform< TCoordinateType, Self::ImageDimension >;
+  using AffineTransformType = AffineTransform<TCoordinateType, Self::ImageDimension>;
   typedef typename AffineTransformType::Pointer          AffineTransformPointer;
   typedef typename AffineTransformType::MatrixType       MatrixType;
   typedef typename AffineTransformType::InputPointType   PointType;
@@ -85,16 +85,16 @@ public:
   typedef typename VectorType::ValueType                 ValueType;
 
   /** CrossOverAffineSystem type. */
-  using CrossOverAffineSystemType = CrossOverAffineSystem< TCoordinateType, Self::ImageDimension >;
+  using CrossOverAffineSystemType = CrossOverAffineSystem<TCoordinateType, Self::ImageDimension>;
   typedef typename CrossOverAffineSystemType::Pointer CrossOverAffineSystemPointer;
 
   /** Set the input fixed image. */
-  iplSetMacro( FixedImage, InputImagePointer );
-  iplGetMacro( FixedImage, InputImagePointer );
+  iplSetMacro(FixedImage, InputImagePointer);
+  iplGetMacro(FixedImage, InputImagePointer);
 
   /** Set the input moving image. */
-  iplSetMacro( MovingImage, InputImagePointer );
-  iplGetMacro( MovingImage, InputImagePointer );
+  iplSetMacro(MovingImage, InputImagePointer);
+  iplGetMacro(MovingImage, InputImagePointer);
 
   /** Methods to execute the transform processing. */
   void
@@ -105,40 +105,40 @@ public:
 
   /** Methods to define and perform Air16 AffineTransform conversion. */
   void
-  EstablishCrossOverSystemForAir16( void );
+  EstablishCrossOverSystemForAir16(void);
 
   void
-  EstablishCrossOverSystemForB2xfrm( void );
+  EstablishCrossOverSystemForB2xfrm(void);
 
   void
-  ConvertInputAffineToITKAffine( void );
+  ConvertInputAffineToITKAffine(void);
 
   void
-  ConvertITKAffineToOutputAffine( void );
+  ConvertITKAffineToOutputAffine(void);
 
-  iplSetMacro( CenterMovingAffineTransform, AffineTransformPointer );
-  iplGetMacro( CenterMovingAffineTransform, AffineTransformPointer );
-  iplSetMacro( DeCenterMovingAffineTransform, AffineTransformPointer );
-  iplGetMacro( DeCenterMovingAffineTransform, AffineTransformPointer );
-  iplSetMacro( CenterFixedAffineTransform, AffineTransformPointer );
-  iplGetMacro( CenterFixedAffineTransform, AffineTransformPointer );
-  iplSetMacro( DeCenterFixedAffineTransform, AffineTransformPointer );
-  iplGetMacro( DeCenterFixedAffineTransform, AffineTransformPointer );
+  iplSetMacro(CenterMovingAffineTransform, AffineTransformPointer);
+  iplGetMacro(CenterMovingAffineTransform, AffineTransformPointer);
+  iplSetMacro(DeCenterMovingAffineTransform, AffineTransformPointer);
+  iplGetMacro(DeCenterMovingAffineTransform, AffineTransformPointer);
+  iplSetMacro(CenterFixedAffineTransform, AffineTransformPointer);
+  iplGetMacro(CenterFixedAffineTransform, AffineTransformPointer);
+  iplSetMacro(DeCenterFixedAffineTransform, AffineTransformPointer);
+  iplGetMacro(DeCenterFixedAffineTransform, AffineTransformPointer);
 
-  iplGetMacro( InputAffineTransformFilename, std::string );
-  iplSetMacro( InputAffineTransformFilename, std::string );
-  iplGetMacro( OutputAffineTransformFilename, std::string );
-  iplSetMacro( OutputAffineTransformFilename, std::string );
+  iplGetMacro(InputAffineTransformFilename, std::string);
+  iplSetMacro(InputAffineTransformFilename, std::string);
+  iplGetMacro(OutputAffineTransformFilename, std::string);
+  iplSetMacro(OutputAffineTransformFilename, std::string);
 
-  iplSetMacro( InputAffineTransform, AffineTransformPointer );
-  iplGetMacro( InputAffineTransform, AffineTransformPointer );
-  iplSetMacro( ITKAffineTransform, AffineTransformPointer );
-  iplGetMacro( ITKAffineTransform, AffineTransformPointer );
-  iplSetMacro( OutputAffineTransform, AffineTransformPointer );
-  iplGetMacro( OutputAffineTransform, AffineTransformPointer );
+  iplSetMacro(InputAffineTransform, AffineTransformPointer);
+  iplGetMacro(InputAffineTransform, AffineTransformPointer);
+  iplSetMacro(ITKAffineTransform, AffineTransformPointer);
+  iplGetMacro(ITKAffineTransform, AffineTransformPointer);
+  iplSetMacro(OutputAffineTransform, AffineTransformPointer);
+  iplGetMacro(OutputAffineTransform, AffineTransformPointer);
 
-  iplSetMacro( CrossOverAffineSystem, CrossOverAffineSystemPointer );
-  iplGetMacro( CrossOverAffineSystem, CrossOverAffineSystemPointer );
+  iplSetMacro(CrossOverAffineSystem, CrossOverAffineSystemPointer);
+  iplGetMacro(CrossOverAffineSystem, CrossOverAffineSystemPointer);
 
 protected:
   TransformAdaptor();

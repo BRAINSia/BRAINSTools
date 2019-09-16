@@ -38,11 +38,11 @@ class QDelLabelDialogs : public QDialog
 {
   Q_OBJECT
 public:
-  QDelLabelDialogs( QString text = "", QWidget * myParent = nullptr );
+  QDelLabelDialogs(QString text = "", QWidget * myParent = nullptr);
 public slots:
 
   void
-  exec( QListWidgetItem * );
+  exec(QListWidgetItem *);
 
   void
   accept2(); // a wrap for double click situation
@@ -53,7 +53,7 @@ signals:
   exec2(); // a wrap for double click situation
 
   void
-  accepted( QListWidgetItem * );
+  accepted(QListWidgetItem *);
 
 protected:
   QGridLayout *     m_layout;

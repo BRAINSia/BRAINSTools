@@ -26,7 +26,7 @@
 class BRAINSCutTrainModel
 {
 public:
-  BRAINSCutTrainModel( BRAINSCutDataHandler & dataHandler );
+  BRAINSCutTrainModel(BRAINSCutDataHandler & dataHandler);
   virtual ~BRAINSCutTrainModel();
 
   using CvRTrees = cv::ml::RTrees;
@@ -39,7 +39,7 @@ public:
   InitializeRandomForest();
 
   void
-  InitializeTrainDataSet( bool doShuffle );
+  InitializeTrainDataSet(bool doShuffle);
 
   void
   TrainANN();
@@ -48,26 +48,26 @@ public:
   TrainRandomForest();
 
   void
-  TrainRandomForestAt( const int depth, const int numberOfTree );
+  TrainRandomForestAt(const int depth, const int numberOfTree);
 
   /** inline functions */
   inline void
-  TrainWithUpdate( cv::Ptr< OpenCVMLPType > myTrainer, pairedTrainingSetType & currentTrainData );
+  TrainWithUpdate(cv::Ptr<OpenCVMLPType> myTrainer, pairedTrainingSetType & currentTrainData);
 
   inline void
-  SaveANNTrainModelAtIteration( cv::Ptr< OpenCVMLPType > myTrainer, unsigned int No );
+  SaveANNTrainModelAtIteration(cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No);
 
   inline void
-  SaveRFTrainModelAtIteration( cv::Ptr< cv::ml::RTrees > myTrainer, int depth, int NTrees );
+  SaveRFTrainModelAtIteration(cv::Ptr<cv::ml::RTrees> myTrainer, int depth, int NTrees);
 
   inline void
-  recordRFTrainInformation( int depth, int nTree );
+  recordRFTrainInformation(int depth, int nTree);
 
   inline void
-  printANNTrainInformation( cv::Ptr< OpenCVMLPType > myTrainer, unsigned int No );
+  printANNTrainInformation(cv::Ptr<OpenCVMLPType> myTrainer, unsigned int No);
 
   void
-  FillANNLayerStructureArray3D( int * const layer ) const;
+  FillANNLayerStructureArray3D(int * const layer) const;
 
   // INFO: REGINA all "Get" functions should be const
   /** setting function with net configuration */
@@ -100,37 +100,37 @@ public:
 
   /** default functions to set/get member variables */
   void
-  SetIteration( unsigned int iteration );
+  SetIteration(unsigned int iteration);
 
   unsigned int
   GetIteration();
 
   void
-  SetEpochIteration( unsigned int epochIteration );
+  SetEpochIteration(unsigned int epochIteration);
 
   unsigned int
   GetEpochIteration();
 
   void
-  SetDesiredError( float desiredError );
+  SetDesiredError(float desiredError);
 
   float
   GetDesiredError();
 
   void
-  SetMaximumDataSize( unsigned int maximumDataSize );
+  SetMaximumDataSize(unsigned int maximumDataSize);
 
   unsigned int
   GetMaximumDataSize();
 
   void
-  Setm_ANNHiddenNodesNumber( int hiddenNodes );
+  Setm_ANNHiddenNodesNumber(int hiddenNodes);
 
   int
   Getm_ANNHiddenNodesNumber();
 
   void
-  SetActivationFunction( float slope, float minMax );
+  SetActivationFunction(float slope, float minMax);
 
   float
   GetActivationSlope();
@@ -161,7 +161,7 @@ public:
   SetRFErrorFile();
 
   inline void
-  appendToFile( std::string filename, std::string line );
+  appendToFile(std::string filename, std::string line);
 
 private:
   // INFO:  REGINA:  These all need to be called with "m_" prefix

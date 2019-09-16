@@ -19,10 +19,11 @@ class DWIDICOMConverterBase : public DWIConverter
 {
 public:
   using InputNamesGeneratorType = itk::DCMTKSeriesFileNames;
-  using DCMTKFileVector = std::vector< itk::DCMTKFileReader * >;
+  using DCMTKFileVector = std::vector<itk::DCMTKFileReader *>;
 
-  DWIDICOMConverterBase( const DCMTKFileVector & allHeaders, const FileNamesContainer & inputFileNames,
-                         const bool useBMatrixGradientDirections );
+  DWIDICOMConverterBase(const DCMTKFileVector &    allHeaders,
+                        const FileNamesContainer & inputFileNames,
+                        const bool                 useBMatrixGradientDirections);
 
   /**
    * @brief Return common fields.  Does nothing for FSL
@@ -39,7 +40,7 @@ public:
   double
   readThicknessFromDicom() const;
   int
-  getDicomSpacing( double * const spacing ) const;
+  getDicomSpacing(double * const spacing) const;
 
 protected:
   enum VRType
@@ -60,8 +61,10 @@ protected:
    * @param vr "DCM_DS" for enumeration as indicated by vr in example above
    */
   void
-  _addToStringDictionary( const std::string dcm_primary_name, const std::string dcm_seconary_name,
-                          const std::string dcm_human_readable_name, const enum VRType vr );
+  _addToStringDictionary(const std::string dcm_primary_name,
+                         const std::string dcm_seconary_name,
+                         const std::string dcm_human_readable_name,
+                         const enum VRType vr);
 
   /** the SliceOrderIS flag can be computed (as above) but if it's
    *  invariant, the derived classes can just set the flag. This method

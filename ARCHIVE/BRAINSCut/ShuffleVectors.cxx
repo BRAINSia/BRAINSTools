@@ -60,27 +60,27 @@ ShuffleVectors::ReadHeader()
 {
   std::ifstream filestr;
 
-  filestr.open( m_inputHeaderFilename.c_str() );
-  if ( !filestr.is_open() )
+  filestr.open(m_inputHeaderFilename.c_str());
+  if (!filestr.is_open())
   {
     std::cout << "Error: Could not open ANN vector file" << std::endl << m_inputHeaderFilename;
   }
-  for ( int tags = 0; tags < 3; tags++ )
+  for (int tags = 0; tags < 3; tags++)
   {
     std::string temp;
     char        currentline[MAX_LINE_SIZE];
-    filestr.getline( currentline, MAX_LINE_SIZE - 1 );
-    std::istringstream iss( currentline, std::istringstream::in );
+    filestr.getline(currentline, MAX_LINE_SIZE - 1);
+    std::istringstream iss(currentline, std::istringstream::in);
     iss >> temp;
-    if ( temp == "IVS" )
+    if (temp == "IVS")
     {
       iss >> m_IVS;
     }
-    else if ( temp == "OVS" )
+    else if (temp == "OVS")
     {
       iss >> m_OVS;
     }
-    else if ( temp == "TVC" )
+    else if (temp == "TVC")
     {
       iss >> m_input_TVC;
     }
@@ -91,7 +91,7 @@ ShuffleVectors::ReadHeader()
   std::cout << "IVS = " << m_IVS << std::endl;
   std::cout << "OVS = " << m_OVS << std::endl;
 
-  m_output_TVC = std::floor( (float)m_input_TVC * m_resampleProportion + 0.5F );
+  m_output_TVC = std::floor((float)m_input_TVC * m_resampleProportion + 0.5F);
   std::cout << m_input_TVC << " * " << m_resampleProportion << " = "
             << "m_output_TVC == " << m_output_TVC << std::endl;
 }
@@ -101,8 +101,8 @@ ShuffleVectors::WriteHeader()
 {
   std::ofstream filestr;
 
-  filestr.open( m_outputHeaderFilename.c_str() );
-  if ( !filestr.is_open() )
+  filestr.open(m_outputHeaderFilename.c_str());
+  if (!filestr.is_open())
   {
     std::cout << "Error: Could not open ANN vector file" << std::endl;
   }
@@ -115,17 +115,17 @@ ShuffleVectors::WriteHeader()
 
 namespace
 {
-template < size_t LongSize >
+template <size_t LongSize>
 class findUINT64Type
 {};
 template <>
-class findUINT64Type< 4 >
+class findUINT64Type<4>
 {
 public:
   using unsigned64 = unsigned long long;
 };
 template <>
-class findUINT64Type< 8 >
+class findUINT64Type<8>
 {
 public:
   using unsigned64 = unsigned long;
@@ -133,23 +133,22 @@ public:
 } // namespace
 
 void
-ShuffleVectors::ShuffleOrder( std::vector< std::ios::off_type > & rval ) const
+ShuffleVectors::ShuffleOrder(std::vector<std::ios::off_type> & rval) const
 {
-  using unsigned64 = findUINT64Type< sizeof( unsigned long ) >::unsigned64;
-  vnl_random randgen( 98765 );
-#define randgen64()                                                                                                    \
-  ( ( static_cast< unsigned64 >( randgen.lrand32() ) << 32 ) | static_cast< unsigned64 >( randgen.lrand32() ) )
+  using unsigned64 = findUINT64Type<sizeof(unsigned long)>::unsigned64;
+  vnl_random randgen(98765);
+#define randgen64() ((static_cast<unsigned64>(randgen.lrand32()) << 32) | static_cast<unsigned64>(randgen.lrand32()))
 
-  rval.resize( m_output_TVC );
-  for ( unsigned long i = 0; i < m_output_TVC; i++ )
+  rval.resize(m_output_TVC);
+  for (unsigned long i = 0; i < m_output_TVC; i++)
   {
-    rval[i] = static_cast< std::ios::off_type >( i );
+    rval[i] = static_cast<std::ios::off_type>(i);
   }
   // do the shuffle
-  for ( std::ios::off_type i = m_output_TVC - 1; i > 0; i-- )
+  for (std::ios::off_type i = m_output_TVC - 1; i > 0; i--)
   {
-    std::ios::off_type j( randgen64() % ( i + 1 ) ); // rand() % (i+1);
-    std::ios::off_type tmp( rval[i] );
+    std::ios::off_type j(randgen64() % (i + 1)); // rand() % (i+1);
+    std::ios::off_type tmp(rval[i]);
     rval[i] = rval[j];
     rval[j] = tmp;
   }
@@ -160,31 +159,32 @@ ShuffleVectors::ShuffleOrder( std::vector< std::ios::off_type > & rval ) const
 // Constructors
 //
 ShuffleVectors::ShuffleVectors()
-  : m_IVS( 0 )
-  , m_OVS( 0 )
-  , m_input_TVC( 0 )
-  , m_output_TVC( 0 )
-  , m_resampleProportion( 0.0F )
+  : m_IVS(0)
+  , m_OVS(0)
+  , m_input_TVC(0)
+  , m_output_TVC(0)
+  , m_resampleProportion(0.0F)
 {}
 
-ShuffleVectors::ShuffleVectors( const std::string & inputVectorFilename, const std::string & outputVectorFilename,
-                                float resampleProportion )
-  : m_IVS( 0 )
-  , m_OVS( 0 )
-  , m_input_TVC( 0 )
-  , m_output_TVC( 0 )
-  , m_resampleProportion( 0.0F )
+ShuffleVectors::ShuffleVectors(const std::string & inputVectorFilename,
+                               const std::string & outputVectorFilename,
+                               float               resampleProportion)
+  : m_IVS(0)
+  , m_OVS(0)
+  , m_input_TVC(0)
+  , m_output_TVC(0)
+  , m_resampleProportion(0.0F)
 {
   std::cout << "Shuffle Vectors of ======================================= " << std::endl
             << inputVectorFilename << " to " << std::endl
             << outputVectorFilename << std::endl
             << "========================================================== " << std::endl;
 
-  if ( inputVectorFilename == "" || outputVectorFilename == "" )
+  if (inputVectorFilename == "" || outputVectorFilename == "")
   {
     std::cout << " Filenames for inputVector and outputVector are neccessary" << std::endl;
   }
-  else if ( inputVectorFilename == outputVectorFilename )
+  else if (inputVectorFilename == outputVectorFilename)
   {
     std::cout << "ERROR:  Can not use the same file for input and output." << inputVectorFilename;
   }
@@ -196,7 +196,7 @@ ShuffleVectors::ShuffleVectors( const std::string & inputVectorFilename, const s
     m_outputHeaderFilename = outputVectorFilename + ".hdr";
   }
 
-  if ( !itksys::SystemTools::FileExists( inputVectorFilename.c_str(), false ) )
+  if (!itksys::SystemTools::FileExists(inputVectorFilename.c_str(), false))
   {
     std::cout << "ERROR: Cannot open " << inputVectorFilename << ". \n The file does not exist." << std::endl;
   }
@@ -209,24 +209,24 @@ ShuffleVectors::Shuffling()
   // read binary
   std::ifstream inputVectorFileStream;
 
-  inputVectorFileStream.open( m_inputVectorFilename.c_str(), std::ios::in | std::ios::binary );
-  if ( !inputVectorFileStream.is_open() )
+  inputVectorFileStream.open(m_inputVectorFilename.c_str(), std::ios::in | std::ios::binary);
+  if (!inputVectorFileStream.is_open())
   {
     std::cout << "Can't open " << m_inputVectorFilename;
   }
 
   int shuffledFile =
-    open( m_outputVectorFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
-  if ( shuffledFile == -1 )
+    open(m_outputVectorFilename.c_str(), O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+  if (shuffledFile == -1)
   {
     std::cout << "Can't open output file " << m_outputVectorFilename;
   }
   // make a shuffled output ordering
 
-  std::vector< std::ios::off_type > randomOrder;
-  ShuffleOrder( randomOrder );
+  std::vector<std::ios::off_type> randomOrder;
+  ShuffleOrder(randomOrder);
 
-  unsigned recordsize = ( m_IVS + m_OVS + 1 ) * sizeof( float );
+  unsigned recordsize = (m_IVS + m_OVS + 1) * sizeof(float);
   float *  buf = new float[m_IVS + m_OVS + 1];
 
   std::cout << "Writing a shuffled output file " << m_outputVectorFilename << std::endl;
@@ -238,44 +238,44 @@ ShuffleVectors::Shuffling()
    * include only those have (randomly assigned) index less
    * than a desired output size
    */
-  for ( unsigned int vectorIndex = 0; vectorIndex < m_output_TVC; vectorIndex++ )
+  for (unsigned int vectorIndex = 0; vectorIndex < m_output_TVC; vectorIndex++)
   {
-    if ( vectorIndex > current_percent * VectorsPerPercent )
+    if (vectorIndex > current_percent * VectorsPerPercent)
     {
       current_percent += 1;
-      if ( current_percent % 5 == 0 )
+      if (current_percent % 5 == 0)
       {
         std::cout << current_percent << "% " << std::endl;
       }
     }
 
-    if ( ( vectorIndex + 1 ) % m_input_TVC == 1 ) // vector index starts from 0
+    if ((vectorIndex + 1) % m_input_TVC == 1) // vector index starts from 0
     {
       std::cout << "*** Re-open the vector file" << std::endl;
       // read input vector file stream from the first again
       inputVectorFileStream.close();
-      inputVectorFileStream.open( m_inputVectorFilename.c_str(), std::ios::in | std::ios::binary );
+      inputVectorFileStream.open(m_inputVectorFilename.c_str(), std::ios::in | std::ios::binary);
     }
-    else if ( inputVectorFileStream.eof() )
+    else if (inputVectorFileStream.eof())
     {
       std::cerr << "Premature end of file at record " << vectorIndex << std::endl
-                << ( vectorIndex + 1 ) % m_input_TVC << " != 1" << std::endl;
+                << (vectorIndex + 1) % m_input_TVC << " != 1" << std::endl;
       break; // TODO throw error here
     }
 
     // read in the record
-    inputVectorFileStream.read( (char *)buf, recordsize );
+    inputVectorFileStream.read((char *)buf, recordsize);
     /*
     std::cout<< " randomOrder[ "<< vectorIndex<<" ] :: "
              << randomOrder[vectorIndex]
              << " < " << m_output_TVC
              << " ? " << std::endl;
              */
-    if ( randomOrder[vectorIndex] < static_cast< std::ios::off_type >( m_output_TVC ) )
+    if (randomOrder[vectorIndex] < static_cast<std::ios::off_type>(m_output_TVC))
     {
-      std::ios::off_type seekval = randomOrder[vectorIndex] * static_cast< std::ios::off_type >( recordsize );
-      lseek( shuffledFile, seekval, SEEK_SET );
-      (void)write( shuffledFile, (const char *)buf, recordsize );
+      std::ios::off_type seekval = randomOrder[vectorIndex] * static_cast<std::ios::off_type>(recordsize);
+      lseek(shuffledFile, seekval, SEEK_SET);
+      (void)write(shuffledFile, (const char *)buf, recordsize);
       /*
       // debugging code
       for( int dummy_i = 0; dummy_i< m_IVS  + m_OVS +1; dummy_i++ )
@@ -289,14 +289,14 @@ ShuffleVectors::Shuffling()
       */
     }
 
-    if ( buf[m_IVS + m_OVS] != LineGuard )
+    if (buf[m_IVS + m_OVS] != LineGuard)
     {
       std::cerr << "Record not properly terminated by sentinel value ::  " << buf << " where " << buf[m_IVS + m_OVS]
                 << " != " << LineGuard << " at Vector index " << vectorIndex << std::endl;
-      exit( EXIT_FAILURE ); // TODO throw error here
+      exit(EXIT_FAILURE); // TODO throw error here
     }
   }
-  close( shuffledFile );
+  close(shuffledFile);
   std::cout << "done." << std::endl;
   delete[] buf;
 }

@@ -29,38 +29,38 @@ class ProcessDescription : public CompoundObjectBase
 public:
   using SuperClass = CompoundObjectBase;
   virtual int
-  PrintSelf( std::ostream & os, int indent ) const
+  PrintSelf(std::ostream & os, int indent) const
   {
-    indent += SuperClass::PrintSelf( os, indent );
+    indent += SuperClass::PrintSelf(os, indent);
     return indent + 2;
   }
 
-  using TrainDataSetListType = std::list< DataSet * >;
+  using TrainDataSetListType = std::list<DataSet *>;
   ProcessDescription()
-    : CompoundObjectBase( "BRAINSCutProcessDescription" )
+    : CompoundObjectBase("BRAINSCutProcessDescription")
   {
-    this->Add( new DataSetList, "DataSetList" );
-    this->Add( new ProbabilityMapList, "ProbabilityMapList" );
-    this->Add( new RegistrationParams, "RegistrationParams" );
+    this->Add(new DataSetList, "DataSetList");
+    this->Add(new ProbabilityMapList, "ProbabilityMapList");
+    this->Add(new RegistrationParams, "RegistrationParams");
   }
 
   void
-  AddDataSet( DataSet * newSet )
+  AddDataSet(DataSet * newSet)
   {
-    DataSetList * set = this->Get< DataSetList >( "DataSetList" );
+    DataSetList * set = this->Get<DataSetList>("DataSetList");
 
-    set->Add( newSet, newSet->GetAttribute< StringValue >( "Name" ) );
+    set->Add(newSet, newSet->GetAttribute<StringValue>("Name"));
   }
 
   DataSet *
   GetAtlasDataSet() const
   {
-    const DataSetList * set = this->Get< DataSetList >( "DataSetList" );
+    const DataSetList * set = this->Get<DataSetList>("DataSetList");
 
-    for ( CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it )
+    for (CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it)
     {
-      DataSet * current = dynamic_cast< DataSet * >( it->second );
-      if ( current->GetAttribute< StringValue >( "Type" ) == "Atlas" )
+      DataSet * current = dynamic_cast<DataSet *>(it->second);
+      if (current->GetAttribute<StringValue>("Type") == "Atlas")
       {
         return current;
       }
@@ -71,17 +71,17 @@ public:
   TrainDataSetListType
   GetTrainDataSets() const
   {
-    const DataSetList * set = this->Get< DataSetList >( "DataSetList" );
+    const DataSetList * set = this->Get<DataSetList>("DataSetList");
 
-    std::list< DataSet * > rval;
+    std::list<DataSet *> rval;
 
-    for ( CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it )
+    for (CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it)
     {
-      DataSet *   current = dynamic_cast< DataSet * >( it->second );
-      std::string type( current->GetAttribute< StringValue >( "Type" ) );
-      if ( type != "Atlas" && type != "Apply" )
+      DataSet *   current = dynamic_cast<DataSet *>(it->second);
+      std::string type(current->GetAttribute<StringValue>("Type"));
+      if (type != "Atlas" && type != "Apply")
       {
-        rval.push_back( current );
+        rval.push_back(current);
       }
     }
     return rval;
@@ -90,16 +90,16 @@ public:
   TrainDataSetListType
   GetApplyDataSets() const
   {
-    const DataSetList * set = this->Get< DataSetList >( "DataSetList" );
+    const DataSetList * set = this->Get<DataSetList>("DataSetList");
 
-    std::list< DataSet * > rval;
+    std::list<DataSet *> rval;
 
-    for ( CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it )
+    for (CompoundObjectBase::const_iterator it = set->begin(); it != set->end(); ++it)
     {
-      DataSet * current = dynamic_cast< DataSet * >( it->second );
-      if ( current->GetAttribute< StringValue >( "Type" ) == "Apply" )
+      DataSet * current = dynamic_cast<DataSet *>(it->second);
+      if (current->GetAttribute<StringValue>("Type") == "Apply")
       {
-        rval.push_back( current );
+        rval.push_back(current);
       }
     }
     return rval;
@@ -108,13 +108,13 @@ public:
   const DataSet::TypeVector
   ImageTypes() const
   {
-    const DataSetList * set = this->Get< DataSetList >( "DataSetList" );
+    const DataSetList * set = this->Get<DataSetList>("DataSetList");
 
-    if ( set->size() == 0 )
+    if (set->size() == 0)
     {
       return DataSet::TypeVector();
     }
-    return dynamic_cast< const DataSet * >( set->begin()->second )->ImageTypes();
+    return dynamic_cast<const DataSet *>(set->begin()->second)->ImageTypes();
   }
 };
 

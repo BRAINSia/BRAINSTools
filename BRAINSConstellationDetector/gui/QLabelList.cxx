@@ -27,47 +27,47 @@
 #include "itkNumberToString.h"
 
 void
-QLabelList::createListItemSlot( const QString & label )
+QLabelList::createListItemSlot(const QString & label)
 {
   // copy label to m_label
   m_label.clear();
-  m_label = m_label.append( label );
+  m_label = m_label.append(label);
 
-  QString newLabel = QString( "newLabel_%1: ( %2 )" ).arg( QString::number( m_color + 1 ) ).arg( label );
-  this->addItem( newLabel );
-  this->setCurrentRow( this->count() - 1 );
-  this->setCurrentItem( this->item( this->currentRow() ) );
-  QColor color( ( m_color % 3 / 2 / 2.0 + ( m_color * m_color ) % 3 / 4.0 ) * 255,
-                ( ( m_color + 1 ) % 3 / 2 / 2.0 + m_color % 7 / 12.0 ) * 255,
-                ( ( m_color + 2 ) % 3 / 2 / 2.0 + m_color % 4 / 6.0 ) * 255,
-                127 );
-  QBrush brush( color );
-  this->item( this->currentRow() )->setBackground( brush );
+  QString newLabel = QString("newLabel_%1: ( %2 )").arg(QString::number(m_color + 1)).arg(label);
+  this->addItem(newLabel);
+  this->setCurrentRow(this->count() - 1);
+  this->setCurrentItem(this->item(this->currentRow()));
+  QColor color((m_color % 3 / 2 / 2.0 + (m_color * m_color) % 3 / 4.0) * 255,
+               ((m_color + 1) % 3 / 2 / 2.0 + m_color % 7 / 12.0) * 255,
+               ((m_color + 2) % 3 / 2 / 2.0 + m_color % 4 / 6.0) * 255,
+               127);
+  QBrush brush(color);
+  this->item(this->currentRow())->setBackground(brush);
 
-  cancelHighlight( this->currentItem() );
+  cancelHighlight(this->currentItem());
 
   m_color++;
 }
 
 void
-QLabelList::createListItem( const QString & label, const QString & name )
+QLabelList::createListItem(const QString & label, const QString & name)
 {
   // copy label to m_label
   m_label.clear();
-  m_label = m_label.append( label );
+  m_label = m_label.append(label);
 
-  QString newLabel = QString( "%1: ( %2 )" ).arg( name ).arg( label );
-  this->addItem( newLabel );
-  this->setCurrentRow( this->count() - 1 );
-  this->setCurrentItem( this->item( this->currentRow() ) );
-  QColor color( ( m_color % 3 / 2 / 2.0 + ( m_color * m_color ) % 3 / 4.0 ) * 255,
-                ( ( m_color + 1 ) % 3 / 2 / 2.0 + m_color % 7 / 12.0 ) * 255,
-                ( ( m_color + 2 ) % 3 / 2 / 2.0 + m_color % 4 / 6.0 ) * 255,
-                127 );
-  QBrush brush( color );
-  this->item( this->currentRow() )->setBackground( brush );
+  QString newLabel = QString("%1: ( %2 )").arg(name).arg(label);
+  this->addItem(newLabel);
+  this->setCurrentRow(this->count() - 1);
+  this->setCurrentItem(this->item(this->currentRow()));
+  QColor color((m_color % 3 / 2 / 2.0 + (m_color * m_color) % 3 / 4.0) * 255,
+               ((m_color + 1) % 3 / 2 / 2.0 + m_color % 7 / 12.0) * 255,
+               ((m_color + 2) % 3 / 2 / 2.0 + m_color % 4 / 6.0) * 255,
+               127);
+  QBrush brush(color);
+  this->item(this->currentRow())->setBackground(brush);
 
-  cancelHighlight( this->currentItem() );
+  cancelHighlight(this->currentItem());
 
   m_color++;
 }
@@ -75,92 +75,92 @@ QLabelList::createListItem( const QString & label, const QString & name )
 void
 QLabelList::createListItemAddButtonSlot()
 {
-  createListItemSlot( m_label );
+  createListItemSlot(m_label);
 }
 
 void
-QLabelList::editListItemSlot( const QString & label )
+QLabelList::editListItemSlot(const QString & label)
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     QString lastLabel = this->currentItem()->text();
-    QString newLabel = QString( "%1: ( %2 )" ).arg( lastLabel.section( ':', 0, 0 ) ).arg( label );
-    this->currentItem()->setText( newLabel );
+    QString newLabel = QString("%1: ( %2 )").arg(lastLabel.section(':', 0, 0)).arg(label);
+    this->currentItem()->setText(newLabel);
   }
 }
 
 void
 QLabelList::switchListItemSlot()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
-    if ( this->currentRow() == this->count() - 1 )
+    if (this->currentRow() == this->count() - 1)
     {
-      this->setCurrentRow( 0 );
-      this->setCurrentItem( this->item( this->currentRow() ) );
+      this->setCurrentRow(0);
+      this->setCurrentItem(this->item(this->currentRow()));
     }
     else
     {
-      this->setCurrentRow( this->currentRow() + 1 );
-      this->setCurrentItem( this->item( this->currentRow() ) );
+      this->setCurrentRow(this->currentRow() + 1);
+      this->setCurrentItem(this->item(this->currentRow()));
     }
 
-    cancelHighlight( this->currentItem() );
+    cancelHighlight(this->currentItem());
   }
 }
 
 void
 QLabelList::deleteListItemSlot()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     delete this->currentItem();
-    if ( this->count() > 0 )
+    if (this->count() > 0)
     {
-      this->setCurrentRow( 0 );
+      this->setCurrentRow(0);
     }
     else
     {
-      this->setCurrentRow( -1 );
+      this->setCurrentRow(-1);
     }
-    this->setCurrentItem( this->item( this->currentRow() ) );
-    cancelHighlight( this->currentItem() );
+    this->setCurrentItem(this->item(this->currentRow()));
+    cancelHighlight(this->currentItem());
   }
 }
 
 void
 QLabelList::deleteListSlot()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
-    this->setCurrentItem( this->item( 0 ) );
-    while ( this->currentItem() != nullptr )
+    this->setCurrentItem(this->item(0));
+    while (this->currentItem() != nullptr)
     {
       delete this->currentItem();
     }
 
-    this->setCurrentRow( -1 );
+    this->setCurrentRow(-1);
     // reset the color seed
     m_color = 0;
   }
 }
 
 void
-QLabelList::deleteListItemMouseSlot( QListWidgetItem * )
+QLabelList::deleteListItemMouseSlot(QListWidgetItem *)
 {
   deleteListItemSlot();
 }
 
 void
-QLabelList::cancelHighlight( QListWidgetItem * )
+QLabelList::cancelHighlight(QListWidgetItem *)
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     // disable the highlight color
-    const QColor color = this->item( this->currentRow() )->background().color();
+    const QColor color = this->item(this->currentRow())->background().color();
     QPalette     pal = this->palette();
-    pal.setColor( QPalette::Highlight, color );
-    this->setPalette( pal );
+    pal.setColor(QPalette::Highlight, color);
+    this->setPalette(pal);
 
     // signal to sliceChangeSlot indicating the update of slice viewer
     emit sliceChangedList();
@@ -170,14 +170,14 @@ QLabelList::cancelHighlight( QListWidgetItem * )
 void
 QLabelList::sliceChangedSlot()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
-    QString textLabel = this->item( this->currentRow() )->text();
+    QString textLabel = this->item(this->currentRow())->text();
     double  myPos[3];
-    myPos[0] = textLabel.section( ' ', 2, 2 ).toDouble();
-    myPos[1] = textLabel.section( ' ', 3, 3 ).toDouble();
-    myPos[2] = textLabel.section( ' ', 4, 4 ).toDouble();
-    emit sendLabelPosition( myPos );
+    myPos[0] = textLabel.section(' ', 2, 2).toDouble();
+    myPos[1] = textLabel.section(' ', 3, 3).toDouble();
+    myPos[2] = textLabel.section(' ', 4, 4).toDouble();
+    emit sendLabelPosition(myPos);
   }
 }
 
@@ -186,27 +186,27 @@ QLabelList::sliceChangedSlot()
 void
 QLabelList::checkVisibilitySlot()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     int table[3 * MAX_LABEL_NUM];
 
     int     currRow = this->currentRow();
-    QString textLabel = this->item( currRow )->text();
+    QString textLabel = this->item(currRow)->text();
     double  currPos[3];
-    currPos[0] = textLabel.section( ' ', 2, 2 ).toDouble();
-    currPos[1] = textLabel.section( ' ', 3, 3 ).toDouble();
-    currPos[2] = textLabel.section( ' ', 4, 4 ).toDouble();
+    currPos[0] = textLabel.section(' ', 2, 2).toDouble();
+    currPos[1] = textLabel.section(' ', 3, 3).toDouble();
+    currPos[2] = textLabel.section(' ', 4, 4).toDouble();
     double slice;
 
     int i;
-    for ( i = 0; i < 3; ++i )
+    for (i = 0; i < 3; ++i)
     { // for different viewers
-      this->setCurrentRow( 0 );
-      while ( this->item( this->currentRow() ) != nullptr )
+      this->setCurrentRow(0);
+      while (this->item(this->currentRow()) != nullptr)
       {
-        textLabel = this->item( this->currentRow() )->text();
-        slice = textLabel.section( ' ', 2 + i, 2 + i ).toDouble();
-        if ( ( slice >= currPos[i] - .5 ) && ( slice < currPos[i] + .5 ) )
+        textLabel = this->item(this->currentRow())->text();
+        slice = textLabel.section(' ', 2 + i, 2 + i).toDouble();
+        if ((slice >= currPos[i] - .5) && (slice < currPos[i] + .5))
         {
           table[i * this->count() + this->currentRow()] = 1;
         }
@@ -214,39 +214,39 @@ QLabelList::checkVisibilitySlot()
         {
           table[i * this->count() + this->currentRow()] = 0;
         }
-        this->setCurrentRow( this->currentRow() + 1 );
+        this->setCurrentRow(this->currentRow() + 1);
       }
     }
-    this->setCurrentRow( currRow );
-    emit visibilityTable( table );
+    this->setCurrentRow(currRow);
+    emit visibilityTable(table);
   }
 }
 
 void
-QLabelList::checkVisibilitySlot( double * tag )
+QLabelList::checkVisibilitySlot(double * tag)
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     int     table[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
-    QString textLabel = this->item( currRow )->text();
+    QString textLabel = this->item(currRow)->text();
     double  currPos[3];
-    currPos[0] = textLabel.section( ' ', 2, 2 ).toDouble();
-    currPos[1] = textLabel.section( ' ', 3, 3 ).toDouble();
-    currPos[2] = textLabel.section( ' ', 4, 4 ).toDouble();
+    currPos[0] = textLabel.section(' ', 2, 2).toDouble();
+    currPos[1] = textLabel.section(' ', 3, 3).toDouble();
+    currPos[2] = textLabel.section(' ', 4, 4).toDouble();
     double slice;
 
-    currPos[( int( tag[1] ) + 1 ) % 3] = tag[0];
+    currPos[(int(tag[1]) + 1) % 3] = tag[0];
 
     int i;
-    for ( i = 0; i < 3; ++i )
+    for (i = 0; i < 3; ++i)
     { // for different viewers
-      this->setCurrentRow( 0 );
-      while ( this->item( this->currentRow() ) != nullptr )
+      this->setCurrentRow(0);
+      while (this->item(this->currentRow()) != nullptr)
       {
-        textLabel = this->item( this->currentRow() )->text();
-        slice = textLabel.section( ' ', 2 + i, 2 + i ).toDouble();
-        if ( ( slice >= currPos[i] - .5 ) && ( slice < currPos[i] + .5 ) )
+        textLabel = this->item(this->currentRow())->text();
+        slice = textLabel.section(' ', 2 + i, 2 + i).toDouble();
+        if ((slice >= currPos[i] - .5) && (slice < currPos[i] + .5))
         {
           table[i * this->count() + this->currentRow()] = 1;
         }
@@ -254,16 +254,16 @@ QLabelList::checkVisibilitySlot( double * tag )
         {
           table[i * this->count() + this->currentRow()] = 0;
         }
-        this->setCurrentRow( this->currentRow() + 1 );
+        this->setCurrentRow(this->currentRow() + 1);
       }
     }
-    this->setCurrentRow( currRow );
-    emit visibilityTable( table );
+    this->setCurrentRow(currRow);
+    emit visibilityTable(table);
   }
 }
 
 void
-QLabelList::checkVisibilitySlot( QListWidgetItem * )
+QLabelList::checkVisibilitySlot(QListWidgetItem *)
 {
   checkVisibilitySlot();
 }
@@ -271,32 +271,32 @@ QLabelList::checkVisibilitySlot( QListWidgetItem * )
 void
 QLabelList::ackWheelChanged()
 {
-  if ( this->currentItem() != nullptr )
+  if (this->currentItem() != nullptr)
   {
     double  labelPos[3 * MAX_LABEL_NUM];
     int     currRow = this->currentRow();
     double  currPos[3];
     QString textLabel;
 
-    this->setCurrentRow( 0 );
-    while ( this->item( this->currentRow() ) != nullptr )
+    this->setCurrentRow(0);
+    while (this->item(this->currentRow()) != nullptr)
     {
-      textLabel = this->item( this->currentRow() )->text();
-      currPos[0] = textLabel.section( ' ', 2, 2 ).toDouble();
-      currPos[1] = textLabel.section( ' ', 3, 3 ).toDouble();
-      currPos[2] = textLabel.section( ' ', 4, 4 ).toDouble();
+      textLabel = this->item(this->currentRow())->text();
+      currPos[0] = textLabel.section(' ', 2, 2).toDouble();
+      currPos[1] = textLabel.section(' ', 3, 3).toDouble();
+      currPos[2] = textLabel.section(' ', 4, 4).toDouble();
 
       int i;
-      for ( i = 0; i < 3; ++i )
+      for (i = 0; i < 3; ++i)
       {
         labelPos[3 * this->currentRow() + i] = currPos[i];
       }
 
-      this->setCurrentRow( this->currentRow() + 1 );
+      this->setCurrentRow(this->currentRow() + 1);
     }
 
-    this->setCurrentRow( currRow );
-    emit sendLabelPositions( labelPos );
+    this->setCurrentRow(currRow);
+    emit sendLabelPositions(labelPos);
   }
 }
 
@@ -305,50 +305,50 @@ QLabelList::readLandmarks()
 {
   int currRow = this->currentRow();
 
-  this->setCurrentRow( 0 );
+  this->setCurrentRow(0);
   m_landmarks.clear();
-  while ( this->item( this->currentRow() ) != nullptr )
+  while (this->item(this->currentRow()) != nullptr)
   {
-    std::vector< double > labelPos;
-    QString               textLabel = this->item( this->currentRow() )->text();
+    std::vector<double> labelPos;
+    QString             textLabel = this->item(this->currentRow())->text();
 
-    QString name = textLabel.section( ':', 0, 0 );
-    labelPos.push_back( textLabel.section( ' ', 2, 2 ).toDouble() );
-    labelPos.push_back( textLabel.section( ' ', 3, 3 ).toDouble() );
-    labelPos.push_back( textLabel.section( ' ', 4, 4 ).toDouble() );
-    m_landmarks.insert( std::make_pair( name, labelPos ) );
-    this->setCurrentRow( this->currentRow() + 1 );
+    QString name = textLabel.section(':', 0, 0);
+    labelPos.push_back(textLabel.section(' ', 2, 2).toDouble());
+    labelPos.push_back(textLabel.section(' ', 3, 3).toDouble());
+    labelPos.push_back(textLabel.section(' ', 4, 4).toDouble());
+    m_landmarks.insert(std::make_pair(name, labelPos));
+    this->setCurrentRow(this->currentRow() + 1);
   }
 
-  this->setCurrentRow( currRow );
+  this->setCurrentRow(currRow);
 }
 
 void
 QLabelList::loadLandmarks()
 {
-  if ( m_inputLandmarks.compare( "" ) != 0 )
+  if (m_inputLandmarks.compare("") != 0)
   {
     m_landmarks.clear();
-    QFile input( m_inputLandmarks );
-    if ( !input.open( QIODevice::ReadOnly ) )
+    QFile input(m_inputLandmarks);
+    if (!input.open(QIODevice::ReadOnly))
     {
       std::cerr << "Cannot load landmark file!" << std::endl;
-      exit( -1 );
+      exit(-1);
     }
-    QTextStream myfile( &input );
+    QTextStream myfile(&input);
     QString     line = myfile.readLine();
-    while ( !line.isNull() )
+    while (!line.isNull())
     {
-      if ( !line.startsWith( '#' ) )
+      if (!line.startsWith('#'))
       {
-        QString name = line.section( ',', 0, 0 );
-        if ( name.compare( "" ) != 0 )
+        QString name = line.section(',', 0, 0);
+        if (name.compare("") != 0)
         {
-          std::vector< double > labelPos;
-          labelPos.push_back( -line.section( ',', 1, 1 ).toDouble() );
-          labelPos.push_back( -line.section( ',', 2, 2 ).toDouble() );
-          labelPos.push_back( line.section( ',', 3, 3 ).toDouble() );
-          m_landmarks.insert( std::make_pair( name, labelPos ) );
+          std::vector<double> labelPos;
+          labelPos.push_back(-line.section(',', 1, 1).toDouble());
+          labelPos.push_back(-line.section(',', 2, 2).toDouble());
+          labelPos.push_back(line.section(',', 3, 3).toDouble());
+          m_landmarks.insert(std::make_pair(name, labelPos));
         }
       }
       line = myfile.readLine();
@@ -362,12 +362,12 @@ void
 QLabelList::saveLandmarks()
 {
   // if user specifies output landmarks filename
-  if ( m_outputLandmarks.compare( "" ) != 0 )
+  if (m_outputLandmarks.compare("") != 0)
   {
     writeLandmarks();
   }
   // if user specifies input landmarks filename but not the output one
-  else if ( m_inputLandmarks.compare( "" ) != 0 )
+  else if (m_inputLandmarks.compare("") != 0)
   {
     m_outputLandmarks = m_inputLandmarks;
     writeLandmarks();
@@ -385,7 +385,7 @@ QLabelList::saveAsLandmarks()
   QFileDialogs fileDialog;
 
   m_outputLandmarks = fileDialog.saveLandmarksFile();
-  if ( m_outputLandmarks.compare( "" ) != 0 )
+  if (m_outputLandmarks.compare("") != 0)
   {
     writeLandmarks();
   }
@@ -394,14 +394,14 @@ QLabelList::saveAsLandmarks()
 void
 QLabelList::writeLandmarks()
 {
-  itk::NumberToString< double > doubleConvert;
+  itk::NumberToString<double> doubleConvert;
 
-  assert( m_outputLandmarks.compare( "" ) != 0 );
-  assert( m_inputVolume.compare( "" ) != 0 );
+  assert(m_outputLandmarks.compare("") != 0);
+  assert(m_inputVolume.compare("") != 0);
 
   // get proper filename for fcsv and mrml file
-  QFileInfo landmarksFileInfo( m_outputLandmarks );
-  QFileInfo imageFileInfo( m_inputVolume );
+  QFileInfo landmarksFileInfo(m_outputLandmarks);
+  QFileInfo imageFileInfo(m_inputVolume);
   m_outputLandmarks = landmarksFileInfo.absoluteFilePath();
   QString landmarksFullFilenameWithoutExtension =
     landmarksFileInfo.absolutePath() + "/" + landmarksFileInfo.completeBaseName();
@@ -412,14 +412,14 @@ QLabelList::writeLandmarks()
   this->readLandmarks();
 
   {
-    QFile output( m_outputLandmarks );
-    if ( !output.open( QIODevice::WriteOnly | QIODevice::Truncate ) )
+    QFile output(m_outputLandmarks);
+    if (!output.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
       std::cerr << "Cannot save landmark file!" << std::endl;
-      exit( -1 );
+      exit(-1);
     }
 
-    QTextStream myfile( &output );
+    QTextStream myfile(&output);
     myfile << "#Fiducial List file " << m_outputLandmarks << "\n";
     myfile << "#numPoints = " << m_landmarks.size() << "\n";
     myfile << "#symbolScale = 5\n";
@@ -431,13 +431,12 @@ QLabelList::writeLandmarks()
 
     // note no LPS -> RAS is needed
     LandmarksMapType::iterator it;
-    for ( it = m_landmarks.begin(); it != m_landmarks.end(); ++it )
+    for (it = m_landmarks.begin(); it != m_landmarks.end(); ++it)
     {
-      if ( ( it->first ).compare( "" ) != 0 )
+      if ((it->first).compare("") != 0)
       {
-        myfile << it->first << "," << doubleConvert( -( it->second )[0] ).c_str() << ","
-               << doubleConvert( -( it->second )[1] ).c_str() << "," << doubleConvert( ( it->second )[2] ).c_str()
-               << ",1,1\n";
+        myfile << it->first << "," << doubleConvert(-(it->second)[0]).c_str() << ","
+               << doubleConvert(-(it->second)[1]).c_str() << "," << doubleConvert((it->second)[2]).c_str() << ",1,1\n";
       }
     }
 
@@ -447,13 +446,13 @@ QLabelList::writeLandmarks()
   // write scene to mrml file
   QString mrmlFullFilename = landmarksFullFilenameWithoutExtension + ".mrml";
   {
-    QFile output( mrmlFullFilename );
-    if ( !output.open( QIODevice::WriteOnly | QIODevice::Truncate ) )
+    QFile output(mrmlFullFilename);
+    if (!output.open(QIODevice::WriteOnly | QIODevice::Truncate))
     {
       std::cerr << "Cannot write mrml file!" << std::endl;
-      exit( -1 );
+      exit(-1);
     }
-    QTextStream myfile( &output );
+    QTextStream myfile(&output);
 
     myfile
       << "<MRML userTags=\"\">\n<Selection\n id=\"vtkMRMLSelectionNode1\" name=\"vtkMRMLSelectionNode1\" "
@@ -529,12 +528,11 @@ QLabelList::writeLandmarks()
 
     LandmarksMapType::iterator it;
     unsigned int               index = 0;
-    for ( it = m_landmarks.begin(); it != m_landmarks.end(); ++it )
+    for (it = m_landmarks.begin(); it != m_landmarks.end(); ++it)
     {
-      myfile << "id " << it->first << " labeltext " << it->first << " xyz "
-             << doubleConvert( ( it->second )[0] ).c_str() << " " << doubleConvert( ( it->second )[1] ).c_str() << " "
-             << doubleConvert( ( it->second )[2] ).c_str();
-      if ( ++index < m_landmarks.size() )
+      myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleConvert((it->second)[0]).c_str()
+             << " " << doubleConvert((it->second)[1]).c_str() << " " << doubleConvert((it->second)[2]).c_str();
+      if (++index < m_landmarks.size())
       {
         myfile << " orientationwxyz 0 0 0 1 selected 1 visibility 1\n";
       }

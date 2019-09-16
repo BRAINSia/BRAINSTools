@@ -24,8 +24,8 @@
 
 #include "QHelpDialog.h"
 
-QHelpDialog::QHelpDialog( QWidget * myParent )
-  : QDialog( myParent )
+QHelpDialog::QHelpDialog(QWidget * myParent)
+  : QDialog(myParent)
 {
   QString text(
     "This help message provides the basic usage of the GUI tool. Please visit our wiki page for more information:<br "
@@ -39,11 +39,11 @@ QHelpDialog::QHelpDialog( QWidget * myParent )
     "/><b>Remove</b><br />To remove a landmark:<br />* Double click the landmark in the label list, then choose Accept "
     "in the dialog window, or<br />* Select the landmark, then click on the Remove button in the GUI<br /><br />Other "
     "operations such as <b>Remove All</b> landmarks, <b>Save</b> landmarks, etc can be achieved by clicking a proper "
-    "button on the GUI." );
+    "button on the GUI.");
 
-  this->setWindowTitle( "GUI Help Info" );
-  m_label.setText( text );
-  m_label.setTextInteractionFlags( Qt::TextBrowserInteraction );
-  m_layout = new QGridLayout( this );
-  m_layout->addWidget( &m_label, 1, 1, Qt::AlignLeft );
+  this->setWindowTitle("GUI Help Info");
+  m_label.setText(text);
+  m_label.setTextInteractionFlags(Qt::TextBrowserInteraction);
+  m_layout = new QGridLayout(this);
+  m_layout->addWidget(&m_label, 1, 1, Qt::AlignLeft);
 }

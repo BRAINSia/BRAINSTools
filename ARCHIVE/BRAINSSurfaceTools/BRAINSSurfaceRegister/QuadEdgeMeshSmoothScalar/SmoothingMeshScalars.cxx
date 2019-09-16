@@ -43,17 +43,17 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if ( inputSurfaceFile == "" )
+  if (inputSurfaceFile == "")
   {
     std::cerr << "No input file specified" << std::endl;
     return 1;
   }
-  if ( outputSurfaceFile == "" )
+  if (outputSurfaceFile == "")
   {
     std::cerr << "No output file specified" << std::endl;
     return 1;
@@ -69,36 +69,36 @@ main( int argc, char * argv[] )
   constexpr unsigned int Dimension = 3;
   using MeshPixelType = float;
 
-  using InputMeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
-  using OutputMeshType = itk::QuadEdgeMesh< MeshPixelType, Dimension >;
+  using InputMeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
+  using OutputMeshType = itk::QuadEdgeMesh<MeshPixelType, Dimension>;
 
-  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader< InputMeshType >;
+  using ReaderType = itk::QuadEdgeMeshVTKPolyDataReader<InputMeshType>;
 
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( inputSurfaceFile.c_str() );
+  reader->SetFileName(inputSurfaceFile.c_str());
 
-  using FilterType = itk::QuadEdgeMeshScalarPixelValuesSmoothingFilter< InputMeshType, OutputMeshType >;
+  using FilterType = itk::QuadEdgeMeshScalarPixelValuesSmoothingFilter<InputMeshType, OutputMeshType>;
 
   FilterType::Pointer filter = FilterType::New();
 
-  filter->SetLambda( lambda );
-  filter->SetMaximumNumberOfIterations( iterations );
+  filter->SetLambda(lambda);
+  filter->SetMaximumNumberOfIterations(iterations);
 
-  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter< OutputMeshType >;
+  using WriterType = itk::QuadEdgeMeshScalarDataVTKPolyDataWriter<OutputMeshType>;
   WriterType::Pointer writer = WriterType::New();
 
-  filter->SetInput( reader->GetOutput() );
-  writer->SetInput( filter->GetOutput() );
+  filter->SetInput(reader->GetOutput());
+  writer->SetInput(filter->GetOutput());
 
   filter->Update();
 
-  writer->SetFileName( outputSurfaceFile.c_str() );
+  writer->SetFileName(outputSurfaceFile.c_str());
 
   try
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << excp << std::endl;
     return 1;

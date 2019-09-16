@@ -16,7 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if !defined( __ImageCalculatorTemplates_h____ )
+#if !defined(__ImageCalculatorTemplates_h____)
 #  define __ImageCalculatorTemplates_h____
 
 #  define ITK_CONCEPT_NO_CHECKING
@@ -42,96 +42,96 @@
 #  include "ImageCalculatorUtils.h"
 #  include <metaCommand.h>
 
-#  define FunctorClassDeclare( name, op )                                                                              \
-    template < typename PixelType >                                                                                    \
+#  define FunctorClassDeclare(name, op)                                                                                \
+    template <typename PixelType>                                                                                      \
     class name                                                                                                         \
     {                                                                                                                  \
     public:                                                                                                            \
-      name( const PixelType & p )                                                                                      \
-        : m_Val( p ){};                                                                                                \
+      name(const PixelType & p)                                                                                        \
+        : m_Val(p){};                                                                                                  \
       name(){};                                                                                                        \
       ~name(){};                                                                                                       \
       PixelType                                                                                                        \
-      operator()( const PixelType & a ) const                                                                          \
+      operator()(const PixelType & a) const                                                                            \
       {                                                                                                                \
-        return static_cast< PixelType >( a op m_Val );                                                                 \
+        return static_cast<PixelType>(a op m_Val);                                                                     \
       }                                                                                                                \
       bool                                                                                                             \
-      operator==( const name & other ) const                                                                           \
+      operator==(const name & other) const                                                                             \
       {                                                                                                                \
         return this == &other;                                                                                         \
       }                                                                                                                \
       bool                                                                                                             \
-      operator!=( const name & other ) const                                                                           \
+      operator!=(const name & other) const                                                                             \
       {                                                                                                                \
-        return !( *this == other );                                                                                    \
+        return !(*this == other);                                                                                      \
       }                                                                                                                \
                                                                                                                        \
     protected:                                                                                                         \
     private:                                                                                                           \
-      name( const name & ){};                                                                                          \
+      name(const name &){};                                                                                            \
       PixelType m_Val;                                                                                                 \
     };
 
-#  define FunctorClassDeclare2( name, op )                                                                             \
-    template < typename PixelType >                                                                                    \
+#  define FunctorClassDeclare2(name, op)                                                                               \
+    template <typename PixelType>                                                                                      \
     class name                                                                                                         \
     {                                                                                                                  \
     public:                                                                                                            \
-      name( const PixelType & p )                                                                                      \
-        : m_Val( p ){};                                                                                                \
+      name(const PixelType & p)                                                                                        \
+        : m_Val(p){};                                                                                                  \
       name(){};                                                                                                        \
       ~name(){};                                                                                                       \
       PixelType                                                                                                        \
-      operator()( const PixelType & a ) const                                                                          \
+      operator()(const PixelType & a) const                                                                            \
       {                                                                                                                \
-        return static_cast< PixelType >( op );                                                                         \
+        return static_cast<PixelType>(op);                                                                             \
       }                                                                                                                \
       bool                                                                                                             \
-      operator==( const name & other ) const                                                                           \
+      operator==(const name & other) const                                                                             \
       {                                                                                                                \
         return this == &other;                                                                                         \
       }                                                                                                                \
       bool                                                                                                             \
-      operator!=( const name & other ) const                                                                           \
+      operator!=(const name & other) const                                                                             \
       {                                                                                                                \
-        return !( *this == other );                                                                                    \
+        return !(*this == other);                                                                                      \
       }                                                                                                                \
                                                                                                                        \
     protected:                                                                                                         \
     private:                                                                                                           \
-      name( const name & ){};                                                                                          \
+      name(const name &){};                                                                                            \
       PixelType m_Val;                                                                                                 \
     };
 
 namespace Functor
 {
-FunctorClassDeclare( mult, * );
-FunctorClassDeclare( divide, / );
-FunctorClassDeclare( add, +);
-FunctorClassDeclare( subtract, -);
-FunctorClassDeclare2( square, a * a );
-FunctorClassDeclare2( binarydecimate, a > 0 ? 255 : 0 );
-FunctorClassDeclare2( squareroot, sqrt( (double)a ) );
+FunctorClassDeclare(mult, *);
+FunctorClassDeclare(divide, /);
+FunctorClassDeclare(add, +);
+FunctorClassDeclare(subtract, -);
+FunctorClassDeclare2(square, a * a);
+FunctorClassDeclare2(binarydecimate, a > 0 ? 255 : 0);
+FunctorClassDeclare2(squareroot, sqrt((double)a));
 } // namespace Functor
 
-#  define FunctorProcess( op, constvalue )                                                                               \
-    {                                                                                                                    \
-      Functor::op< PixelType >                                                               op##functor( constvalue );  \
-      typedef itk::UnaryFunctorImageFilter< ImageType, ImageType, Functor::op< PixelType > > FilterType;                 \
-      typename FilterType::Pointer                                                           filter = FilterType::New(); \
-      filter->SetFunctor( op##functor );                                                                                 \
-      filter->SetInput( IntermediateImage );                                                                             \
-      filter->Update();                                                                                                  \
-      IntermediateImage = filter->GetOutput();                                                                           \
+#  define FunctorProcess(op, constvalue)                                                                               \
+    {                                                                                                                  \
+      Functor::op<PixelType>                                                             op##functor(constvalue);      \
+      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                   \
+      typename FilterType::Pointer                                                       filter = FilterType::New();   \
+      filter->SetFunctor(op##functor);                                                                                 \
+      filter->SetInput(IntermediateImage);                                                                             \
+      filter->Update();                                                                                                \
+      IntermediateImage = filter->GetOutput();                                                                         \
     }
-#  define FunctorProcess2( op )                                                                                          \
-    {                                                                                                                    \
-      typedef itk::UnaryFunctorImageFilter< ImageType, ImageType, Functor::op< PixelType > > FilterType;                 \
-      typename FilterType::Pointer                                                           filter = FilterType::New(); \
-      filter->SetInput( IntermediateImage );                                                                             \
-      filter->Update();                                                                                                  \
-      IntermediateImage = filter->GetOutput();                                                                           \
+#  define FunctorProcess2(op)                                                                                          \
+    {                                                                                                                  \
+      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                   \
+      typename FilterType::Pointer                                                       filter = FilterType::New();   \
+      filter->SetInput(IntermediateImage);                                                                             \
+      filter->Update();                                                                                                \
+      IntermediateImage = filter->GetOutput();                                                                         \
     }
 
 #  include "itkDiscreteGaussianImageFilter.h"
@@ -141,45 +141,45 @@ static std::stringstream EffectiveInputFilters;
 
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
-template < typename ImageType >
+template <typename ImageType>
 typename ImageType::Pointer
-DoGaussian( typename ImageType::Pointer input, const double sigma )
+DoGaussian(typename ImageType::Pointer input, const double sigma)
 {
-  using InternalImageType = itk::Image< float, ImageType::ImageDimension >;
+  using InternalImageType = itk::Image<float, ImageType::ImageDimension>;
   // Cast to float
-  using ToFloatCasterType = itk::CastImageFilter< ImageType, InternalImageType >;
+  using ToFloatCasterType = itk::CastImageFilter<ImageType, InternalImageType>;
   typename ToFloatCasterType::Pointer toFloatCaster = ToFloatCasterType::New();
-  toFloatCaster->SetInput( input );
+  toFloatCaster->SetInput(input);
 
-  using FilterType = itk::DiscreteGaussianImageFilter< InternalImageType, InternalImageType >;
+  using FilterType = itk::DiscreteGaussianImageFilter<InternalImageType, InternalImageType>;
   /*============Filter the inputVolume using DiscreteGaussianImageFilter
    *   Include setting the x and y directions of the input images and setting order
    *     to be zero, and including normalizing Gaussian filter==================*/
   typename FilterType::Pointer filter = FilterType::New();
-  filter->SetVariance( sigma );
-  filter->SetMaximumError( 0.01 );
-  filter->SetInput( toFloatCaster->GetOutput() );
+  filter->SetVariance(sigma);
+  filter->SetMaximumError(0.01);
+  filter->SetInput(toFloatCaster->GetOutput());
   filter->Update();
 
-  using FromFloatCasterType = itk::CastImageFilter< InternalImageType, ImageType >;
+  using FromFloatCasterType = itk::CastImageFilter<InternalImageType, ImageType>;
   typename FromFloatCasterType::Pointer fromFloatCaster = FromFloatCasterType::New();
-  fromFloatCaster->SetInput( filter->GetOutput() );
+  fromFloatCaster->SetInput(filter->GetOutput());
   fromFloatCaster->Update();
   // Cast to data type
   return fromFloatCaster->GetOutput();
 }
 
 /*This function if called performs histogram equalization with the given number of match points*/
-template < typename ImageType >
+template <typename ImageType>
 typename ImageType::Pointer
-DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, const int NumOfMatchPoints )
+DoHisteq(typename ImageType::Pointer ref, typename ImageType::Pointer input, const int NumOfMatchPoints)
 {
-  using HistogramMatchingFilterType = itk::HistogramMatchingImageFilter< ImageType, ImageType >;
+  using HistogramMatchingFilterType = itk::HistogramMatchingImageFilter<ImageType, ImageType>;
   typename HistogramMatchingFilterType::Pointer matchingFilter = HistogramMatchingFilterType::New();
-  matchingFilter->SetSourceImage( input );
-  matchingFilter->SetReferenceImage( ref );
-  matchingFilter->SetNumberOfHistogramLevels( 256 );
-  matchingFilter->SetNumberOfMatchPoints( NumOfMatchPoints );
+  matchingFilter->SetSourceImage(input);
+  matchingFilter->SetReferenceImage(ref);
+  matchingFilter->SetNumberOfHistogramLevels(256);
+  matchingFilter->SetNumberOfMatchPoints(NumOfMatchPoints);
   matchingFilter->ThresholdAtMeanIntensityOn();
   matchingFilter->Update();
 
@@ -188,70 +188,70 @@ DoHisteq( typename ImageType::Pointer ref, typename ImageType::Pointer input, co
 
 /*This function if called performs arithmetic operation with a constant value
  * to all the pixels in an input image.*/
-template < typename ImageType >
+template <typename ImageType>
 typename ImageType::Pointer
-Ifilters( typename ImageType::Pointer input, MetaCommand command )
+Ifilters(typename ImageType::Pointer input, MetaCommand command)
 {
   using PixelType = typename ImageType::PixelType;
 
   typename ImageType::Pointer IntermediateImage = input;
   /*Multiplies a constant value to all the pixels of the Input image.*/
-  if ( command.GetValueAsString( "IMulC", "constant" ) != "" )
+  if (command.GetValueAsString("IMulC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "IMulC", "constant" ) );
-    EffectiveInputFilters << "-ifmulc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( mult, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("IMulC", "constant"));
+    EffectiveInputFilters << "-ifmulc " << static_cast<double>(temp) << " ";
+    FunctorProcess(mult, temp);
   }
   /*Divides a constant value from all the pixels of the Input image.*/
-  if ( command.GetValueAsString( "IDivC", "constant" ) != "" )
+  if (command.GetValueAsString("IDivC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "IDivC", "constant" ) );
-    EffectiveInputFilters << "-ifdivc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( divide, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("IDivC", "constant"));
+    EffectiveInputFilters << "-ifdivc " << static_cast<double>(temp) << " ";
+    FunctorProcess(divide, temp);
   }
   /*Adds a constant value to all the pixels of the Input image.*/
-  if ( command.GetValueAsString( "IAddC", "constant" ) != "" )
+  if (command.GetValueAsString("IAddC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "IAddC", "constant" ) );
-    EffectiveInputFilters << "-ifaddc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( add, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("IAddC", "constant"));
+    EffectiveInputFilters << "-ifaddc " << static_cast<double>(temp) << " ";
+    FunctorProcess(add, temp);
   }
 
   /*Subtracts a constant value from all the pixels of the Input image.*/
-  if ( command.GetValueAsString( "ISubC", "constant" ) != "" )
+  if (command.GetValueAsString("ISubC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "ISubC", "constant" ) );
-    EffectiveInputFilters << "-ifsubc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( subtract, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("ISubC", "constant"));
+    EffectiveInputFilters << "-ifsubc " << static_cast<double>(temp) << " ";
+    FunctorProcess(subtract, temp);
   }
 
   /*Gaussian Filters input image with value of sigma image.*/
-  if ( command.GetValueAsString( "IGaussianSigma", "constant" ) != "" )
+  if (command.GetValueAsString("IGaussianSigma", "constant") != "")
   {
-    const double temp = static_cast< double >( command.GetValueAsFloat( "IGaussianSigma", "constant" ) );
-    EffectiveInputFilters << "-ifgaussiansigma " << static_cast< double >( temp ) << " ";
-    IntermediateImage = DoGaussian< ImageType >( IntermediateImage, temp );
+    const double temp = static_cast<double>(command.GetValueAsFloat("IGaussianSigma", "constant"));
+    EffectiveInputFilters << "-ifgaussiansigma " << static_cast<double>(temp) << " ";
+    IntermediateImage = DoGaussian<ImageType>(IntermediateImage, temp);
   }
 
   /*Make Binary Output image.*/
-  if ( command.GetValueAsBool( "Ifbin", "ifbin" ) )
+  if (command.GetValueAsBool("Ifbin", "ifbin"))
   {
     EffectiveInputFilters << "-ifbin ";
-    FunctorProcess2( binarydecimate );
+    FunctorProcess2(binarydecimate);
   }
 
   /*Squares the pixels of the Input image.*/
-  if ( command.GetValueAsBool( "ISqr", "ifsqr" ) )
+  if (command.GetValueAsBool("ISqr", "ifsqr"))
   {
     EffectiveInputFilters << "-ifsqr ";
-    FunctorProcess2( square );
+    FunctorProcess2(square);
   }
 
   /*Takes the square root of the pixels in the Input image.*/
-  if ( command.GetValueAsBool( "ISqrt", "ifsqrt" ) )
+  if (command.GetValueAsBool("ISqrt", "ifsqrt"))
   {
     EffectiveInputFilters << "-ifsqrt ";
-    FunctorProcess2( squareroot );
+    FunctorProcess2(squareroot);
   }
   std::cout << "--Storage type effective  input filter options:  " << EffectiveInputFilters.str() << std::endl;
   return IntermediateImage;
@@ -259,68 +259,68 @@ Ifilters( typename ImageType::Pointer input, MetaCommand command )
 
 /* This function if called performs arithmetic operation with a constant value
  * to all the pixels in tee output image.*/
-template < typename ImageType >
+template <typename ImageType>
 typename ImageType::Pointer
-Ofilters( typename ImageType::Pointer input, MetaCommand command )
+Ofilters(typename ImageType::Pointer input, MetaCommand command)
 {
   using PixelType = typename ImageType::PixelType;
   std::stringstream           EffectiveOutputFilters;
   typename ImageType::Pointer IntermediateImage = input;
   /*Multiplies a constant value to all the pixels of the Output image.*/
-  if ( command.GetValueAsString( "OMulC", "constant" ) != "" )
+  if (command.GetValueAsString("OMulC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "OMulC", "constant" ) );
-    EffectiveOutputFilters << "-ofmulc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( mult, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("OMulC", "constant"));
+    EffectiveOutputFilters << "-ofmulc " << static_cast<double>(temp) << " ";
+    FunctorProcess(mult, temp);
   }
   /*Divides a constant value from all the pixels of the Output image.*/
-  if ( command.GetValueAsString( "ODivC", "constant" ) != "" )
+  if (command.GetValueAsString("ODivC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "ODivC", "constant" ) );
-    EffectiveOutputFilters << "-ofdivc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( divide, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("ODivC", "constant"));
+    EffectiveOutputFilters << "-ofdivc " << static_cast<double>(temp) << " ";
+    FunctorProcess(divide, temp);
   }
 
   /*Adds a constant value to all the pixels of the Output image.*/
-  if ( command.GetValueAsString( "OAddC", "constant" ) != "" )
+  if (command.GetValueAsString("OAddC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "OAddC", "constant" ) );
-    EffectiveOutputFilters << "-ofaddc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( add, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("OAddC", "constant"));
+    EffectiveOutputFilters << "-ofaddc " << static_cast<double>(temp) << " ";
+    FunctorProcess(add, temp);
   }
 
   /*Subtracts a constant value from all the pixels of the Output image.*/
-  if ( command.GetValueAsString( "OSubC", "constant" ) != "" )
+  if (command.GetValueAsString("OSubC", "constant") != "")
   {
-    const PixelType temp = static_cast< PixelType >( command.GetValueAsFloat( "OSubC", "constant" ) );
-    EffectiveOutputFilters << "-ofsubc " << static_cast< double >( temp ) << " ";
-    FunctorProcess( subtract, temp );
+    const PixelType temp = static_cast<PixelType>(command.GetValueAsFloat("OSubC", "constant"));
+    EffectiveOutputFilters << "-ofsubc " << static_cast<double>(temp) << " ";
+    FunctorProcess(subtract, temp);
   }
   /*Gaussian Filters output image with value of sigma image.*/
-  if ( command.GetValueAsString( "OGaussianSigma", "constant" ) != "" )
+  if (command.GetValueAsString("OGaussianSigma", "constant") != "")
   {
-    const double temp = static_cast< double >( command.GetValueAsFloat( "OGaussianSigma", "constant" ) );
-    EffectiveOutputFilters << "-ofgaussiansigma " << static_cast< double >( temp ) << " ";
-    IntermediateImage = DoGaussian< ImageType >( IntermediateImage, temp );
+    const double temp = static_cast<double>(command.GetValueAsFloat("OGaussianSigma", "constant"));
+    EffectiveOutputFilters << "-ofgaussiansigma " << static_cast<double>(temp) << " ";
+    IntermediateImage = DoGaussian<ImageType>(IntermediateImage, temp);
   }
 
   /*Make Binary Output image.*/
-  if ( command.GetValueAsBool( "Ofbin", "ofbin" ) )
+  if (command.GetValueAsBool("Ofbin", "ofbin"))
   {
     EffectiveOutputFilters << "-ofbin ";
-    FunctorProcess2( binarydecimate );
+    FunctorProcess2(binarydecimate);
   }
   /*Squares the pixels of the Output image.*/
-  if ( command.GetValueAsBool( "OSqr", "ofsqr" ) )
+  if (command.GetValueAsBool("OSqr", "ofsqr"))
   {
     EffectiveOutputFilters << "-ofsqr ";
-    FunctorProcess2( square );
+    FunctorProcess2(square);
   }
   /*Takes the square root of the pixels in the Output image.*/
-  if ( command.GetValueAsBool( "OSqrt", "ofsqrt" ) )
+  if (command.GetValueAsBool("OSqrt", "ofsqrt"))
   {
     EffectiveOutputFilters << "-ofsqrt ";
-    FunctorProcess2( squareroot );
+    FunctorProcess2(squareroot);
   }
   // return typename itk::Image< PixelType, ImageType::ImageDimension >::Pointer();
   std::cout << "--Storage type effective output filter options:  " << EffectiveOutputFilters.str() << std::endl;
@@ -328,47 +328,47 @@ Ofilters( typename ImageType::Pointer input, MetaCommand command )
 }
 
 /*statfilters performs user specified statistical operations on the output image.*/
-template < typename ImageType >
+template <typename ImageType>
 void
-statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
+statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
 {
-  std::map< std::string, std::string > StatDescription;
-  std::map< std::string, float >       StatValues;
+  std::map<std::string, std::string> StatDescription;
+  std::map<std::string, float>       StatValues;
 
   // The statistics image filter calclates all the statistics of AccImage
-  using StatsFilterType = itk::StatisticsImageFilter< ImageType >;
+  using StatsFilterType = itk::StatisticsImageFilter<ImageType>;
   typename StatsFilterType::Pointer Statsfilter = StatsFilterType::New();
-  Statsfilter->SetInput( AccImage );
+  Statsfilter->SetInput(AccImage);
   Statsfilter->Update();
 
   // The absolute Image filter calculates the absolute value of the pixels.
-  using AbsFilterType = itk::AbsImageFilter< ImageType, ImageType >;
+  using AbsFilterType = itk::AbsImageFilter<ImageType, ImageType>;
   typename AbsFilterType::Pointer Absfilter = AbsFilterType::New();
-  Absfilter->SetInput( AccImage );
+  Absfilter->SetInput(AccImage);
   Absfilter->Update();
   typename StatsFilterType::Pointer AbsStatsfilter = StatsFilterType::New();
-  AbsStatsfilter->SetInput( Absfilter->GetOutput() );
+  AbsStatsfilter->SetInput(Absfilter->GetOutput());
   AbsStatsfilter->Update();
 
   bool havestatmask = false;
   // If user gives an Input Mask Calculate the statistics of the image in the mask
-  using UIntImageType = itk::Image< unsigned int, ImageType::ImageDimension >;
-  using ReaderType = itk::ImageFileReader< UIntImageType >;
+  using UIntImageType = itk::Image<unsigned int, ImageType::ImageDimension>;
+  using ReaderType = itk::ImageFileReader<UIntImageType>;
   typename ReaderType::Pointer reader = ReaderType::New();
 
-  using LabelFilterType = itk::LabelStatisticsImageFilter< ImageType, UIntImageType >;
+  using LabelFilterType = itk::LabelStatisticsImageFilter<ImageType, UIntImageType>;
   typename LabelFilterType::Pointer MaskStatsfilter = LabelFilterType::New();
   typename LabelFilterType::Pointer MaskAbsStatsfilter = LabelFilterType::New();
 
-  if ( command.GetValueAsString( "Statmask", "File Name" ) != "" )
+  if (command.GetValueAsString("Statmask", "File Name") != "")
   {
-    reader->SetFileName( command.GetValueAsString( "Statmask", "File Name" ).c_str() );
+    reader->SetFileName(command.GetValueAsString("Statmask", "File Name").c_str());
 
     try
     {
       reader->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Error reading the series " << std::endl;
       std::cerr << excp << std::endl;
@@ -377,7 +377,7 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
 
     havestatmask = true;
 
-    if ( command.GetValueAsString( "Statmaskvalue", "constant" ) == "" )
+    if (command.GetValueAsString("Statmaskvalue", "constant") == "")
     {
       std::cout << "Error: If a mask image is given, a pixel value should be"
                 << " entered and the Statistics in the input image will be calculated for"
@@ -386,33 +386,33 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
       return;
     }
 
-    MaskStatsfilter->SetInput( AccImage );
-    MaskStatsfilter->SetLabelInput( reader->GetOutput() );
+    MaskStatsfilter->SetInput(AccImage);
+    MaskStatsfilter->SetLabelInput(reader->GetOutput());
     MaskStatsfilter->Update();
 
     // Absolute Values of the Masked Output Image
     typename AbsFilterType::Pointer MaskAbsfilter = AbsFilterType::New();
-    MaskAbsfilter->SetInput( AccImage );
+    MaskAbsfilter->SetInput(AccImage);
     MaskAbsfilter->Update();
     // Statistics of The Absolute Masked Output Image.
-    MaskAbsStatsfilter->SetInput( MaskAbsfilter->GetOutput() );
-    MaskAbsStatsfilter->SetLabelInput( reader->GetOutput() );
+    MaskAbsStatsfilter->SetInput(MaskAbsfilter->GetOutput());
+    MaskAbsStatsfilter->SetLabelInput(reader->GetOutput());
     MaskAbsStatsfilter->Update();
   }
   unsigned int MaskValue = 321231;
-  if ( havestatmask )
+  if (havestatmask)
   {
-    MaskValue = static_cast< unsigned int >( command.GetValueAsInt( "Statmaskvalue", "constant" ) );
+    MaskValue = static_cast<unsigned int>(command.GetValueAsInt("Statmaskvalue", "constant"));
   }
 
   StatDescription["AVG:"] = "Average of all pixel values";
   StatDescription["MAVG:"] = "Average of all pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatAvg", "statAVG" ) )
+  if (command.GetValueAsBool("StatAvg", "statAVG"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MAVG:"] = MaskStatsfilter->GetMean( MaskValue );
+      StatValues["MAVG:"] = MaskStatsfilter->GetMean(MaskValue);
     }
     else
     {
@@ -423,11 +423,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["VAR:"] = "Variance of all pixel values";
   StatDescription["MVAR:"] = "Variance of all pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatVAR", "statVAR" ) )
+  if (command.GetValueAsBool("StatVAR", "statVAR"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MVAR:"] = MaskStatsfilter->GetVariance( MaskValue );
+      StatValues["MVAR:"] = MaskStatsfilter->GetVariance(MaskValue);
     }
     else
     {
@@ -438,11 +438,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["SUM:"] = "Sum of all pixel values";
   StatDescription["MSUM:"] = "Sum of all pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatSUM", "statSUM" ) )
+  if (command.GetValueAsBool("StatSUM", "statSUM"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MSUM:"] = MaskStatsfilter->GetSum( MaskValue );
+      StatValues["MSUM:"] = MaskStatsfilter->GetSum(MaskValue);
     }
     else
     {
@@ -453,11 +453,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["MIN:"] = "Minimum of all pixel values";
   StatDescription["MMIN:"] = "Minimum of all pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatMIN", "statMIN" ) )
+  if (command.GetValueAsBool("StatMIN", "statMIN"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MMIN:"] = MaskStatsfilter->GetMinimum( MaskValue );
+      StatValues["MMIN:"] = MaskStatsfilter->GetMinimum(MaskValue);
     }
     else
     {
@@ -468,11 +468,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["MAX:"] = "Maximum of all pixel values";
   StatDescription["MMAX:"] = "Maximum of all pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatMAX", "statMAX" ) )
+  if (command.GetValueAsBool("StatMAX", "statMAX"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MMAX:"] = MaskStatsfilter->GetMaximum( MaskValue );
+      StatValues["MMAX:"] = MaskStatsfilter->GetMaximum(MaskValue);
     }
     else
     {
@@ -483,11 +483,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["AMN:"] = "Minimum of the absolute value of the pixel values";
   StatDescription["MAMN:"] = "Minimum of the absolute value of the pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatAMN", "statAMN" ) )
+  if (command.GetValueAsBool("StatAMN", "statAMN"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MAMN:"] = MaskAbsStatsfilter->GetMinimum( MaskValue );
+      StatValues["MAMN:"] = MaskAbsStatsfilter->GetMinimum(MaskValue);
     }
     else
     {
@@ -498,11 +498,11 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["AMX:"] = "Maximum of the absolute value of the pixel values";
   StatDescription["MAMX:"] = "Maximum of the absolute value of the pixel values where mask > 0";
 
-  if ( command.GetValueAsBool( "StatAMX", "statAMX" ) )
+  if (command.GetValueAsBool("StatAMX", "statAMX"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
-      StatValues["MAMX:"] = MaskAbsStatsfilter->GetMaximum( MaskValue );
+      StatValues["MAMX:"] = MaskAbsStatsfilter->GetMaximum(MaskValue);
     }
     else
     {
@@ -513,14 +513,14 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   StatDescription["NPX:"] = "Number of pixels used in calculations";
   StatDescription["MNPX:"] = "Number of pixels used in calculations where mask > 0";
 
-  if ( command.GetValueAsBool( "StatNPX", "statNPX" ) )
+  if (command.GetValueAsBool("StatNPX", "statNPX"))
   {
-    if ( havestatmask )
+    if (havestatmask)
     {
       typename ImageType::SizeType size;
       size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
       float NumberOfPixels = size[0] * size[1];
-      if ( ImageType::ImageDimension == 3 )
+      if (ImageType::ImageDimension == 3)
       {
         NumberOfPixels = NumberOfPixels * size[2];
       }
@@ -531,7 +531,7 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
       typename ImageType::SizeType size;
       size = AccImage->GetLargestPossibleRegion().GetSize();
       float NumberOfPixels = size[0] * size[1];
-      if ( ImageType::ImageDimension == 3 )
+      if (ImageType::ImageDimension == 3)
       {
         NumberOfPixels = NumberOfPixels * size[2];
       }
@@ -539,10 +539,10 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
     }
   }
   // Show the stat values which can be calculated.
-  if ( command.GetValueAsBool( "Statallcodes", "statallcodes" ) )
+  if (command.GetValueAsBool("Statallcodes", "statallcodes"))
   {
-    for ( std::map< std::string, std::string >::const_iterator p = StatDescription.begin(); p != StatDescription.end();
-          ++p )
+    for (std::map<std::string, std::string>::const_iterator p = StatDescription.begin(); p != StatDescription.end();
+         ++p)
     {
       std::cout << p->first << '\t' << p->second << std::endl;
     }
@@ -550,17 +550,17 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
   }
 
   // Print the value map
-  if ( ( command.GetValueAsString( "Statmask", "File Name" ) != "" ) ||
-       command.GetValueAsBool( "StatAvg", "statAVG" ) || command.GetValueAsBool( "StatVAR", "statVAR" ) ||
-       command.GetValueAsBool( "StatSUM", "statSUM" ) || command.GetValueAsBool( "StatNPX", "statNPX" ) )
+  if ((command.GetValueAsString("Statmask", "File Name") != "") || command.GetValueAsBool("StatAvg", "statAVG") ||
+      command.GetValueAsBool("StatVAR", "statVAR") || command.GetValueAsBool("StatSUM", "statSUM") ||
+      command.GetValueAsBool("StatNPX", "statNPX"))
   {
-    if ( command.GetValueAsString( "OutputFilename", "filename" ) != "" )
+    if (command.GetValueAsString("OutputFilename", "filename") != "")
     {
-      std::cout << "Stats for " << command.GetValueAsString( "OutputFilename", "filename" ) << '\t';
+      std::cout << "Stats for " << command.GetValueAsString("OutputFilename", "filename") << '\t';
     }
   }
   {
-    for ( std::map< std::string, float >::const_iterator p = StatValues.begin(); p != StatValues.end(); ++p )
+    for (std::map<std::string, float>::const_iterator p = StatValues.begin(); p != StatValues.end(); ++p)
     {
       std::cout << p->first << ' ' << p->second << ",  ";
     }
@@ -571,60 +571,60 @@ statfilters( const typename ImageType::Pointer AccImage, MetaCommand command )
 
 /*This function is called when the user wants to write the ouput image to a file. The output image is typecasted to the
   user specified data type. */
-template < typename InPixelType, typename PixelType, unsigned int ImageDims >
+template <typename InPixelType, typename PixelType, unsigned int ImageDims>
 void
-ProcessOutputStage( const typename itk::Image< InPixelType, ImageDims >::Pointer AccImage,
-                    const std::string & outputImageFilename, MetaCommand command )
+ProcessOutputStage(const typename itk::Image<InPixelType, ImageDims>::Pointer AccImage,
+                   const std::string &                                        outputImageFilename,
+                   MetaCommand                                                command)
 {
-  using InputImageType = itk::Image< InPixelType, ImageDims >;
-  using OutputImageType = itk::Image< PixelType, ImageDims >;
-  using CastToOutputFilterType = itk::CastImageFilter< InputImageType, OutputImageType >;
+  using InputImageType = itk::Image<InPixelType, ImageDims>;
+  using OutputImageType = itk::Image<PixelType, ImageDims>;
+  using CastToOutputFilterType = itk::CastImageFilter<InputImageType, OutputImageType>;
   typename CastToOutputFilterType::Pointer ToOutputTypeFilter = CastToOutputFilterType::New();
 
-  using WriterType = itk::ImageFileWriter< OutputImageType >;
-  ToOutputTypeFilter->SetInput( AccImage );
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
+  ToOutputTypeFilter->SetInput(AccImage);
   ToOutputTypeFilter->Update();
 
-  typename OutputImageType::Pointer OutputImage =
-    Ofilters< OutputImageType >( ToOutputTypeFilter->GetOutput(), command );
+  typename OutputImageType::Pointer OutputImage = Ofilters<OutputImageType>(ToOutputTypeFilter->GetOutput(), command);
 
   typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( outputImageFilename );
-  writer->SetInput( OutputImage );
+  writer->SetFileName(outputImageFilename);
+  writer->SetInput(OutputImage);
 
   writer->Update();
 
   // Caluculate Statistics of the Image.
-  statfilters< OutputImageType >( OutputImage, command );
+  statfilters<OutputImageType>(OutputImage, command);
 }
 
-class string_tokenizer : public std::vector< std::string >
+class string_tokenizer : public std::vector<std::string>
 {
 public:
-  string_tokenizer( const std::string & s, const char * const sep = " " ) { this->init( s, sep ); }
+  string_tokenizer(const std::string & s, const char * const sep = " ") { this->init(s, sep); }
 
-  string_tokenizer( const char * const s, const char * const sep = " " ) { this->init( std::string( s ), sep ); }
+  string_tokenizer(const char * const s, const char * const sep = " ") { this->init(std::string(s), sep); }
 
 protected:
   string_tokenizer &
-  operator=( const string_tokenizer & )
+  operator=(const string_tokenizer &)
   {
     return *this;
   }; // explicitly prevent this
-  string_tokenizer( const string_tokenizer & )
-    : std::vector< std::string >(){}; // explicitly prevent this
+  string_tokenizer(const string_tokenizer &)
+    : std::vector<std::string>(){}; // explicitly prevent this
 private:
   void
-  init( const std::string & input, const char * const sep = " " )
+  init(const std::string & input, const char * const sep = " ")
   {
     std::string::size_type start, _end = 0;
     int                    i = 0;
 
-    while ( ( start = input.find_first_not_of( sep, _end ) ) != std::string::npos )
+    while ((start = input.find_first_not_of(sep, _end)) != std::string::npos)
     {
-      this->resize( i + 1 );
-      _end = input.find_first_of( sep, start );
-      ( *this )[i] = input.substr( start, _end - start );
+      this->resize(i + 1);
+      _end = input.find_first_of(sep, start);
+      (*this)[i] = input.substr(start, _end - start);
       ++i;
     }
   }
@@ -632,62 +632,62 @@ private:
 
 /*This function reads in the input images and writes the output image ,
  * delegating the computations to other functions*/
-template < typename ImageType >
+template <typename ImageType>
 void
-ImageCalculatorReadWrite( MetaCommand & command )
+ImageCalculatorReadWrite(MetaCommand & command)
 {
   // Replace backslash blank with a unique string
-  std::string tempFilenames = command.GetValueAsString( "in" );
+  std::string tempFilenames = command.GetValueAsString("in");
 
-  ReplaceSubWithSub( tempFilenames, "\\ ", "BACKSLASH_BLANK" );
+  ReplaceSubWithSub(tempFilenames, "\\ ", "BACKSLASH_BLANK");
 
   // Now split into separate filenames
-  string_tokenizer InputList( tempFilenames, " " );
+  string_tokenizer InputList(tempFilenames, " ");
   // Finally, return the blanks to the filenames
-  for ( size_t i = 0; i < InputList.size(); ++i )
+  for (size_t i = 0; i < InputList.size(); ++i)
   {
-    ReplaceSubWithSub( InputList[i], "BACKSLASH_BLANK", " " );
+    ReplaceSubWithSub(InputList[i], "BACKSLASH_BLANK", " ");
   }
 
-  using ReaderType = itk::ImageFileReader< ImageType >;
+  using ReaderType = itk::ImageFileReader<ImageType>;
   using PixelType = typename ImageType::PixelType;
   // Read the first Image
   typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( InputList.at( 0 ).c_str() );
+  reader->SetFileName(InputList.at(0).c_str());
 
-  std::cout << "Reading 1st Image..." << InputList.at( 0 ).c_str() << std::endl;
+  std::cout << "Reading 1st Image..." << InputList.at(0).c_str() << std::endl;
 
   try
   {
     reader->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Error reading the series " << excp << std::endl;
     throw;
   }
 
   // Create an Accumulator Image.
-  typename ImageType::Pointer AccImage = Ifilters< ImageType >( reader->GetOutput(), command );
+  typename ImageType::Pointer AccImage = Ifilters<ImageType>(reader->GetOutput(), command);
 
   /*For variance image first step is to square the input image.*/
   typename ImageType::Pointer SqrImageSum;
-  if ( command.GetValueAsBool( "Var", "var" ) )
+  if (command.GetValueAsBool("Var", "var"))
   {
-    SqrImageSum = Imul< ImageType >( reader->GetOutput(), reader->GetOutput() );
+    SqrImageSum = Imul<ImageType>(reader->GetOutput(), reader->GetOutput());
   }
   /* Accumulator contains the first image initially and is updated by the next image at each count */
-  for ( unsigned int currimage = 1; currimage < InputList.size(); ++currimage )
+  for (unsigned int currimage = 1; currimage < InputList.size(); ++currimage)
   {
-    std::cout << "Reading image.... " << InputList.at( currimage ).c_str() << std::endl;
+    std::cout << "Reading image.... " << InputList.at(currimage).c_str() << std::endl;
 
     typename ReaderType::Pointer reader2 = ReaderType::New();
-    reader2->SetFileName( InputList.at( currimage ).c_str() );
+    reader2->SetFileName(InputList.at(currimage).c_str());
     try
     {
       reader2->Update();
     }
-    catch ( itk::ExceptionObject & excp )
+    catch (itk::ExceptionObject & excp)
     {
       std::cerr << "Error reading the series " << excp << std::endl;
       throw;
@@ -695,137 +695,136 @@ ImageCalculatorReadWrite( MetaCommand & command )
     typename ImageType::Pointer SubSequentImage = reader2->GetOutput();
 
     // Check whether the image dimensions and the spacing are the same.
-    if ( ( AccImage->GetLargestPossibleRegion().GetSize() != SubSequentImage->GetLargestPossibleRegion().GetSize() ) )
+    if ((AccImage->GetLargestPossibleRegion().GetSize() != SubSequentImage->GetLargestPossibleRegion().GetSize()))
     {
-      itkGenericExceptionMacro( << "Error:: The size of the images don't match." );
+      itkGenericExceptionMacro(<< "Error:: The size of the images don't match.");
     }
 
     /*If the accumulator buffer is not empty, then every subsequent image is histogram equalized to the current
       accumulator buffer.*/
-    if ( command.GetValueAsString( "IHisteq", "constant" ) != "" && AccImage.IsNotNull() )
+    if (command.GetValueAsString("IHisteq", "constant") != "" && AccImage.IsNotNull())
     {
-      const int NumOfMatchPoints = static_cast< int >( command.GetValueAsInt( "IHisteq", "constant" ) );
-      EffectiveInputFilters << "-ifhisteq " << static_cast< int >( NumOfMatchPoints ) << " ";
-      SubSequentImage = DoHisteq< ImageType >( AccImage, reader2->GetOutput(), NumOfMatchPoints );
+      const int NumOfMatchPoints = static_cast<int>(command.GetValueAsInt("IHisteq", "constant"));
+      EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
+      SubSequentImage = DoHisteq<ImageType>(AccImage, reader2->GetOutput(), NumOfMatchPoints);
     }
 
-    typename ImageType::Pointer image = Ifilters< ImageType >( SubSequentImage, command );
+    typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);
 
-    vnl_vector_fixed< double, 3 > spacingDifference;
+    vnl_vector_fixed<double, 3> spacingDifference;
     spacingDifference[0] = AccImage->GetSpacing()[0] - image->GetSpacing()[0];
     spacingDifference[1] = AccImage->GetSpacing()[1] - image->GetSpacing()[1];
     spacingDifference[2] = AccImage->GetSpacing()[2] - image->GetSpacing()[2];
 
-    if ( spacingDifference.two_norm() > 0.0001 ) // HACK:  Should be a percentage of the actual spacing size.
+    if (spacingDifference.two_norm() > 0.0001) // HACK:  Should be a percentage of the actual spacing size.
     {
-      itkGenericExceptionMacro( << "ERROR:: The pixel spacing of the images are not close enough." );
+      itkGenericExceptionMacro(<< "ERROR:: The pixel spacing of the images are not close enough.");
     }
-    else if ( AccImage->GetSpacing() != image->GetSpacing() )
+    else if (AccImage->GetSpacing() != image->GetSpacing())
     {
       std::cout << "WARNING: ::The pixel spacing of the images don't match exactly. \n";
     }
-    if ( AccImage->GetDirection() != image->GetDirection() )
+    if (AccImage->GetDirection() != image->GetDirection())
     {
-      itkGenericExceptionMacro( << "Error:: The orientation of the images are different." );
+      itkGenericExceptionMacro(<< "Error:: The orientation of the images are different.");
     }
 
     // Do the math for the Accumulator image and the image read in for each iteration.
     /*Call the multiplication function*/
-    if ( command.GetValueAsBool( "Mul", "mul" ) )
+    if (command.GetValueAsBool("Mul", "mul"))
     {
-      AccImage = Imul< ImageType >( AccImage, image );
+      AccImage = Imul<ImageType>(AccImage, image);
     }
 
     /*Call the addition function*/
-    if ( command.GetValueAsBool( "Add", "add" ) )
+    if (command.GetValueAsBool("Add", "add"))
     {
-      AccImage = Iadd< ImageType >( AccImage, image );
+      AccImage = Iadd<ImageType>(AccImage, image);
     }
 
     /*Call the subtraction function*/
-    if ( command.GetValueAsBool( "Sub", "sub" ) )
+    if (command.GetValueAsBool("Sub", "sub"))
     {
-      AccImage = Isub< ImageType >( AccImage, image );
+      AccImage = Isub<ImageType>(AccImage, image);
     }
 
     /*Call the divisionion function*/
-    if ( command.GetValueAsBool( "Div", "div" ) )
+    if (command.GetValueAsBool("Div", "div"))
     {
-      AccImage = Idiv< ImageType >( AccImage, image );
+      AccImage = Idiv<ImageType>(AccImage, image);
     }
 
     /*For Average we add the images first*/
-    if ( command.GetValueAsBool( "Avg", "avg" ) )
+    if (command.GetValueAsBool("Avg", "avg"))
     {
-      AccImage = Iadd< ImageType >( AccImage, image );
+      AccImage = Iadd<ImageType>(AccImage, image);
     }
 
     /*For variance we add the square image to the image in the current
       iteration and store the sum of the square image.*/
-    if ( command.GetValueAsBool( "Var", "var" ) )
+    if (command.GetValueAsBool("Var", "var"))
     {
-      AccImage = Iadd< ImageType >( AccImage, image );
-      typename ImageType::Pointer multimage = Imul< ImageType >( image, image );
-      SqrImageSum = Iadd< ImageType >( SqrImageSum, multimage );
+      AccImage = Iadd<ImageType>(AccImage, image);
+      typename ImageType::Pointer multimage = Imul<ImageType>(image, image);
+      SqrImageSum = Iadd<ImageType>(SqrImageSum, multimage);
     }
   }
 
   const int NumImages = InputList.size();
   // To get the average image we divide the accumulator image with the total number of images.
-  if ( command.GetValueAsBool( "Avg", "avg" ) )
+  if (command.GetValueAsBool("Avg", "avg"))
   {
-    AccImage = Iavg< ImageType >( AccImage, NumImages );
+    AccImage = Iavg<ImageType>(AccImage, NumImages);
   }
 
   // Image variance is calculated.
-  if ( command.GetValueAsBool( "Var", "var" ) )
+  if (command.GetValueAsBool("Var", "var"))
   {
     typename ImageType::Pointer NumSqrImageSum =
-      ImageMultiplyConstant< ImageType >( SqrImageSum, static_cast< PixelType >( NumImages ) );
-    AccImage = Imul< ImageType >( AccImage, AccImage );
-    AccImage = Isub< ImageType >( NumSqrImageSum, AccImage );
-    AccImage =
-      ImageDivideConstant< ImageType >( AccImage, static_cast< PixelType >( NumImages * NumImages - NumImages ) );
+      ImageMultiplyConstant<ImageType>(SqrImageSum, static_cast<PixelType>(NumImages));
+    AccImage = Imul<ImageType>(AccImage, AccImage);
+    AccImage = Isub<ImageType>(NumSqrImageSum, AccImage);
+    AccImage = ImageDivideConstant<ImageType>(AccImage, static_cast<PixelType>(NumImages * NumImages - NumImages));
   }
 
-  const std::string OutType( command.GetValueAsString( "OutputPixelType", "PixelType" ) );
+  const std::string OutType(command.GetValueAsString("OutputPixelType", "PixelType"));
 
   // The resultant Image is written.
-  if ( command.GetValueAsString( "OutputFilename", "filename" ) != "" )
+  if (command.GetValueAsString("OutputFilename", "filename") != "")
   {
-    const std::string outputFilename( command.GetValueAsString( "OutputFilename", "filename" ) );
+    const std::string outputFilename(command.GetValueAsString("OutputFilename", "filename"));
     std::cout << "Before write..." << outputFilename << std::endl;
     // Type cast image according to the output type specified. Default is float.
-    if ( command.GetValueAsString( "OutputPixelType", "PixelType" ) != "" )
+    if (command.GetValueAsString("OutputPixelType", "PixelType") != "")
     {
       // process the string for the data type
-      if ( CompareNoCase( OutType, std::string( "UCHAR" ) ) == 0 )
+      if (CompareNoCase(OutType, std::string("UCHAR")) == 0)
       {
-        ProcessOutputStage< PixelType, unsigned char, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, unsigned char, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "SHORT" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("SHORT")) == 0)
       {
-        ProcessOutputStage< PixelType, short, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, short, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "USHORT" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("USHORT")) == 0)
       {
-        ProcessOutputStage< PixelType, unsigned short, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, unsigned short, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "INT" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("INT")) == 0)
       {
-        ProcessOutputStage< PixelType, int, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, int, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "UINT" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("UINT")) == 0)
       {
-        ProcessOutputStage< PixelType, unsigned int, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, unsigned int, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "FLOAT" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("FLOAT")) == 0)
       {
-        ProcessOutputStage< PixelType, float, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, float, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
-      else if ( CompareNoCase( OutType, std::string( "DOUBLE" ) ) == 0 )
+      else if (CompareNoCase(OutType, std::string("DOUBLE")) == 0)
       {
-        ProcessOutputStage< PixelType, double, ImageType::ImageDimension >( AccImage, outputFilename, command );
+        ProcessOutputStage<PixelType, double, ImageType::ImageDimension>(AccImage, outputFilename, command);
       }
       else
       {
@@ -837,43 +836,43 @@ ImageCalculatorReadWrite( MetaCommand & command )
     else
     {
       // Default is the Input Pixel Type.
-      ProcessOutputStage< PixelType, PixelType, ImageType::ImageDimension >( AccImage, outputFilename, command );
+      ProcessOutputStage<PixelType, PixelType, ImageType::ImageDimension>(AccImage, outputFilename, command);
     }
   }
 }
 
 /*This function calls the ImageCalculatorReadWrite function based on the data type specified by the user.*/
-template < unsigned int DIMS >
+template <unsigned int DIMS>
 void
-ImageCalculatorProcessND( const std::string & InType, MetaCommand & command )
+ImageCalculatorProcessND(const std::string & InType, MetaCommand & command)
 {
-  if ( CompareNoCase( InType, std::string( "UCHAR" ) ) == 0 )
+  if (CompareNoCase(InType, std::string("UCHAR")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< unsigned char, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<unsigned char, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "SHORT" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("SHORT")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< short, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<short, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "USHORT" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("USHORT")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< unsigned short, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<unsigned short, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "INT" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("INT")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< int, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<int, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "UINT" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("UINT")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< unsigned int, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<unsigned int, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "FLOAT" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("FLOAT")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< float, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<float, DIMS>>(command);
   }
-  else if ( CompareNoCase( InType, std::string( "DOUBLE" ) ) == 0 )
+  else if (CompareNoCase(InType, std::string("DOUBLE")) == 0)
   {
-    ImageCalculatorReadWrite< itk::Image< double, DIMS > >( command );
+    ImageCalculatorReadWrite<itk::Image<double, DIMS>>(command);
   }
 }
 

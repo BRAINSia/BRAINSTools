@@ -27,30 +27,30 @@
 namespace itk
 {
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
-RigidResampleInPlayByVersor3D( const typename TInputImage::ConstPointer & image,
-                               VersorRigid3DTransform< double >::Pointer  versorRigid3DTfm )
+RigidResampleInPlayByVersor3D(const typename TInputImage::ConstPointer & image,
+                              VersorRigid3DTransform<double>::Pointer    versorRigid3DTfm)
 {
   /** The output image will have exact the same index contents
    but with modified image info so that the index-to-physical mapping
    makes the image in the physical space aligned */
-  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter< TInputImage, TOutputImage >;
+  using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<TInputImage, TOutputImage>;
 
   typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
-  resampleIPFilter->SetInputImage( image );
-  resampleIPFilter->SetRigidTransform( versorRigid3DTfm.GetPointer() );
+  resampleIPFilter->SetInputImage(image);
+  resampleIPFilter->SetRigidTransform(versorRigid3DTfm.GetPointer());
   resampleIPFilter->Update();
   typename TOutputImage::Pointer resampledOutput = resampleIPFilter->GetOutput();
   return resampledOutput;
 }
 
 /** Isolate resample function from landamrk points **/
-template < typename TInputImage, typename TOutputImage >
-VersorRigid3DTransform< double >::Pointer
-ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
-                       const typename TInputImage::PointType &    RE_Point,
-                       const typename TInputImage::ConstPointer & image )
+template <typename TInputImage, typename TOutputImage>
+VersorRigid3DTransform<double>::Pointer
+ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
+                      const typename TInputImage::PointType &    RE_Point,
+                      const typename TInputImage::ConstPointer & image)
 {
   using InputIndexType = typename TInputImage::IndexType;
   using InputSizeType = typename TInputImage::SizeType;
@@ -58,7 +58,7 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
   using InputPointType = typename TInputImage::PointType;
 
   /* Transform and filter type alias */
-  using VersorTransformType = VersorRigid3DTransform< double >;
+  using VersorTransformType = VersorRigid3DTransform<double>;
   using VersorVectorType = typename VersorTransformType::OutputVectorType;
 
   static constexpr unsigned int Dimension = TInputImage::ImageDimension;
@@ -77,8 +77,8 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
     stopIndex[0] = startIndex[0] + size[0] - 1;
     stopIndex[1] = startIndex[1] + size[1] - 1;
     stopIndex[2] = startIndex[2] + size[2] - 1;
-    image->TransformIndexToPhysicalPoint( startIndex, physicalStartLocation );
-    image->TransformIndexToPhysicalPoint( stopIndex, physicalStopLocation );
+    image->TransformIndexToPhysicalPoint(startIndex, physicalStartLocation);
+    image->TransformIndexToPhysicalPoint(stopIndex, physicalStopLocation);
   }
 
   // Space coordinate origin -> center of eye centers of input image
@@ -87,12 +87,12 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
    Here we use an approximation which is vertically at an IPD distance from center
    of eye centers, i.e., the center is at ( 0, -IPD, 0 ) in LPS coordinate system */
   VersorVectorType translation2;
-  for ( unsigned int i = 0; i < Dimension; ++i )
+  for (unsigned int i = 0; i < Dimension; ++i)
   {
-    translation1[i] = 0.5 * ( LE_Point[i] + RE_Point[i] );
+    translation1[i] = 0.5 * (LE_Point[i] + RE_Point[i]);
     translation2[i] = 0;
   }
-  const double IPD_dist = LE_Point.EuclideanDistanceTo( RE_Point );
+  const double IPD_dist = LE_Point.EuclideanDistanceTo(RE_Point);
   // https://en.wikipedia.org/wiki/Pupillary_distance  Minimum inter pupulary distance measured is 51mm for women
 
   // 1988 Anthropometric Survey MIN: 51mm,  Max 77mm, so add bit of margin on this stddev=3.6
@@ -101,8 +101,8 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
   constexpr double maxdistance_IPD = 77.0;
   constexpr double two_stddev_distance_IPD = 2.0 * 3.6;
 
-  const double IPD = ( LE_Point.EuclideanDistanceTo( RE_Point ) );
-  if ( IPD < ( mindistance_IPD - two_stddev_distance_IPD ) )
+  const double IPD = (LE_Point.EuclideanDistanceTo(RE_Point));
+  if (IPD < (mindistance_IPD - two_stddev_distance_IPD))
   {
 
     std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
@@ -113,10 +113,10 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
 
 
     std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-    exit( -1 );
+    exit(-1);
   }
 
-  if ( IPD > ( maxdistance_IPD + two_stddev_distance_IPD ) )
+  if (IPD > (maxdistance_IPD + two_stddev_distance_IPD))
   {
     std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
               << IPD << std::endl;
@@ -124,7 +124,7 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
     std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
 
     std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-    exit( -1 );
+    exit(-1);
   }
   translation2[1] = IPD_dist;
 
@@ -149,23 +149,23 @@ ResampleFromEyePoints( const typename TInputImage::PointType &    LE_Point,
 
 
   // about +P-axis
-  RotAngle[1] = std::atan( ( LE_Point[2] - RE_Point[2] ) / IPD_dist );
+  RotAngle[1] = std::atan((LE_Point[2] - RE_Point[2]) / IPD_dist);
   // about +S-axis
-  RotAngle[2] = -std::atan( ( LE_Point[1] - RE_Point[1] ) / IPD_dist );
+  RotAngle[2] = -std::atan((LE_Point[1] - RE_Point[1]) / IPD_dist);
 
 
   // Set rigid tranformation
-  VersorRigid3DTransform< double >::Pointer versorRigid3DTfm = VersorRigid3DTransform< double >::New();
-  versorRigid3DTfm->Translate( translation2 );
-  versorRigid3DTfm->SetRotation( rotation1, -RotAngle[2] );
-  versorRigid3DTfm->SetRotation( rotation2, -RotAngle[1] );
-  versorRigid3DTfm->Translate( translation1 );
+  VersorRigid3DTransform<double>::Pointer versorRigid3DTfm = VersorRigid3DTransform<double>::New();
+  versorRigid3DTfm->Translate(translation2);
+  versorRigid3DTfm->SetRotation(rotation1, -RotAngle[2]);
+  versorRigid3DTfm->SetRotation(rotation2, -RotAngle[1]);
+  versorRigid3DTfm->Translate(translation1);
 
   return versorRigid3DTfm;
 }
 
-template < typename TInputImage, typename TOutputImage >
-BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
+template <typename TInputImage, typename TOutputImage>
+BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
 {
   /** Input Parameters */
   // Note the default parameter set is designed for the IXI database
@@ -182,7 +182,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
   this->m_NbOfThreads = 64;
   this->m_SamplingRatio = .2;
   this->m_HoughEyeDetectorMode = 1; // for T1-weighted image
-  this->m_orig_lmk_CenterOfHeadMass.Fill( -9999.87654321 );
+  this->m_orig_lmk_CenterOfHeadMass.Fill(-9999.87654321);
 
   this->m_R1 = 30;
   this->m_R2 = 120;
@@ -194,8 +194,8 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
   /** Output parameters */
   this->m_AccumulatorImage = TInputImage::New();
   this->m_RoIImage = TInputImage::New();
-  this->m_orig_lmk_LE.Fill( 123 );
-  this->m_orig_lmk_RE.Fill( 123 );
+  this->m_orig_lmk_LE.Fill(123);
+  this->m_orig_lmk_RE.Fill(123);
   this->m_Failure = false;
 
   this->m_MaxInputPixelValue = 0;
@@ -208,20 +208,20 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::BRAINSHoughEyeDetector()
   this->m_orig2eyeFixedTransform = VersorTransformType::New();
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
+BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
 {
-  const InputImageConstPointer image( this->GetInput() );
+  const InputImageConstPointer image(this->GetInput());
   const InputRegionType        region = image->GetLargestPossibleRegion();
   {
     /*
      * Set RoI of the input image
      */
-    this->m_RoIImage->CopyInformation( image );
-    this->m_RoIImage->SetRegions( image->GetLargestPossibleRegion() );
+    this->m_RoIImage->CopyInformation(image);
+    this->m_RoIImage->SetRegions(image->GetLargestPossibleRegion());
     this->m_RoIImage->Allocate();
-    this->m_RoIImage->FillBuffer( 0 );
+    this->m_RoIImage->FillBuffer(0);
 
     {
       // A unit vector pointing to the anterior direction
@@ -230,17 +230,17 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       unitVectorAnterior[1] = -1.;
       unitVectorAnterior[2] = 0.;
 
-      if ( ( this->m_R1 > 0 ) && ( this->m_R2 > this->m_R1 ) && ( this->m_Theta > 0 ) )
+      if ((this->m_R1 > 0) && (this->m_R2 > this->m_R1) && (this->m_Theta > 0))
       {
-        InputImageConstIterator It0( image, region );
+        InputImageConstIterator It0(image, region);
         It0.GoToBegin();
-        OutputImageIteratorWithIndex It1( this->m_RoIImage, region );
+        OutputImageIteratorWithIndex It1(this->m_RoIImage, region);
         It1.GoToBegin();
 
-        while ( !( It0.IsAtEnd() || It1.IsAtEnd() ) )
+        while (!(It0.IsAtEnd() || It1.IsAtEnd()))
         {
           InputPointType currPt;
-          image->TransformIndexToPhysicalPoint( It1.GetIndex(), currPt );
+          image->TransformIndexToPhysicalPoint(It1.GetIndex(), currPt);
 
           // Center of head mass to current vector
           const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
@@ -252,19 +252,19 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
           const float CMtoCurrNorm = CMtoCurrVec.GetNorm();
 
           // angle between current vector and unitVectorAnterior
-          const float currTheta = acos( CMtoCurrPA / CMtoCurrNorm );
+          const float currTheta = acos(CMtoCurrPA / CMtoCurrNorm);
 
-          if ( ( CMtoCurrNorm > this->m_R1 ) && ( CMtoCurrNorm < this->m_R2 ) && ( currTheta < this->m_Theta ) )
+          if ((CMtoCurrNorm > this->m_R1) && (CMtoCurrNorm < this->m_R2) && (currTheta < this->m_Theta))
           {
-            It1.Set( It0.Get() );
+            It1.Set(It0.Get());
           }
 
           // save max/min pixel value info
-          if ( It0.Get() < this->m_MinInputPixelValue )
+          if (It0.Get() < this->m_MinInputPixelValue)
           {
             this->m_MinInputPixelValue = It0.Get();
           }
-          else if ( It0.Get() > this->m_MaxInputPixelValue )
+          else if (It0.Get() > this->m_MaxInputPixelValue)
           {
             this->m_MaxInputPixelValue = It0.Get();
           }
@@ -278,39 +278,39 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
      * Sphere detection with Hough transform radial voting filter
      */
     HoughFilterPointer houghFilter = HoughFilterType::New();
-    if ( ( this->m_R1 > 0 ) && ( this->m_R2 > this->m_R1 ) && ( this->m_Theta > 0 ) )
+    if ((this->m_R1 > 0) && (this->m_R2 > this->m_R1) && (this->m_Theta > 0))
     {
-      houghFilter->SetInput( this->m_RoIImage );
+      houghFilter->SetInput(this->m_RoIImage);
     }
     else
     {
       std::cout << "Warning: RoI parameters are not valid"
                 << "Set to ( default ) entire image" << std::endl;
-      houghFilter->SetInput( image );
+      houghFilter->SetInput(image);
     }
-    houghFilter->SetNumberOfSpheres( this->m_NumberOfSpheres );
-    houghFilter->SetMinimumRadius( this->m_MinimumRadius );
-    houghFilter->SetMaximumRadius( this->m_MaximumRadius );
-    houghFilter->SetSigmaGradient( this->m_SigmaGradient );
-    houghFilter->SetVariance( this->m_Variance );
-    houghFilter->SetSphereRadiusRatio( this->m_SphereRadiusRatio );
-    houghFilter->SetVotingRadiusRatio( this->m_VotingRadiusRatio );
-    houghFilter->SetThreshold( this->m_Threshold );
-    houghFilter->SetOutputThreshold( this->m_OutputThreshold );
-    houghFilter->SetGradientThreshold( this->m_GradientThreshold );
-    houghFilter->SetNbOfThreads( this->m_NbOfThreads );
-    houghFilter->SetSamplingRatio( this->m_SamplingRatio );
-    houghFilter->SetHoughEyeDetectorMode( this->m_HoughEyeDetectorMode );
+    houghFilter->SetNumberOfSpheres(this->m_NumberOfSpheres);
+    houghFilter->SetMinimumRadius(this->m_MinimumRadius);
+    houghFilter->SetMaximumRadius(this->m_MaximumRadius);
+    houghFilter->SetSigmaGradient(this->m_SigmaGradient);
+    houghFilter->SetVariance(this->m_Variance);
+    houghFilter->SetSphereRadiusRatio(this->m_SphereRadiusRatio);
+    houghFilter->SetVotingRadiusRatio(this->m_VotingRadiusRatio);
+    houghFilter->SetThreshold(this->m_Threshold);
+    houghFilter->SetOutputThreshold(this->m_OutputThreshold);
+    houghFilter->SetGradientThreshold(this->m_GradientThreshold);
+    houghFilter->SetNbOfThreads(this->m_NbOfThreads);
+    houghFilter->SetSamplingRatio(this->m_SamplingRatio);
+    houghFilter->SetHoughEyeDetectorMode(this->m_HoughEyeDetectorMode);
     try
     {
       houghFilter->Update();
     }
-    catch ( itk::ExceptionObject & excep )
+    catch (itk::ExceptionObject & excep)
     {
       std::cerr << "Failed houghFilter " << std::endl;
       std::cerr << excep << std::endl;
     }
-    catch ( ... )
+    catch (...)
     {
       std::cout << "Failed on houghFilter exception occured" << std::endl;
     }
@@ -319,19 +319,19 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     /*
      * Write debug image
      */
-    if ( this->m_WritedebuggingImagesLevel > 1 )
+    if (this->m_WritedebuggingImagesLevel > 1)
     {
       {
         // Write debug ROI image
         typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( this->m_ResultsDir + "/HoughEyeROI.nii.gz" );
-        writer->SetInput( this->m_RoIImage );
-        writer->SetUseCompression( true );
+        writer->SetFileName(this->m_ResultsDir + "/HoughEyeROI.nii.gz");
+        writer->SetInput(this->m_RoIImage);
+        writer->SetUseCompression(true);
         try
         {
           writer->Update();
         }
-        catch ( itk::ExceptionObject & excep )
+        catch (itk::ExceptionObject & excep)
         {
           std::cerr << "Cannot write the ROI image!" << std::endl;
           std::cerr << excep << std::endl;
@@ -341,14 +341,14 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
       {
         // Write debug accumulator image
         typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
-        writer->SetInput( this->m_AccumulatorImage );
-        writer->SetUseCompression( true );
+        writer->SetFileName(this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz");
+        writer->SetInput(this->m_AccumulatorImage);
+        writer->SetUseCompression(true);
         try
         {
           writer->Update();
         }
-        catch ( itk::ExceptionObject & excep )
+        catch (itk::ExceptionObject & excep)
         {
           std::cerr << "Cannot write the ROI image!" << std::endl;
           std::cerr << excep << std::endl;
@@ -363,7 +363,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     // Get some basic information of the image
 
     const SpheresListType spheres = houghFilter->GetSpheres();
-    if ( spheres.size() < 2 )
+    if (spheres.size() < 2)
     {
       std::cerr << "Error: The number of detected spheres is less than 2!" << std::endl;
       std::cerr << "The program will continue to run for generating some debug output for GUI corrector." << std::endl;
@@ -374,32 +374,32 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
 
     InputIndexType indexEye1;
     SphereIterator itSpheres = spheres.begin();
-    for ( unsigned int i = 0; i < Dimension; ++i )
+    for (unsigned int i = 0; i < Dimension; ++i)
     {
-      indexEye1[i] = static_cast< unsigned long int >( ( *itSpheres )->GetObjectToParentTransform()->GetOffset()[i] );
+      indexEye1[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
     }
 
     ++itSpheres;
 
     InputIndexType indexEye2;
-    for ( unsigned int i = 0; i < Dimension; ++i )
+    for (unsigned int i = 0; i < Dimension; ++i)
     {
-      indexEye2[i] = static_cast< unsigned long int >( ( *itSpheres )->GetObjectToParentTransform()->GetOffset()[i] );
+      indexEye2[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
     }
 
     InputPointType physicalEye1;
     InputPointType physicalEye2;
     {
-      image->TransformIndexToPhysicalPoint( indexEye1, physicalEye1 );
-      image->TransformIndexToPhysicalPoint( indexEye2, physicalEye2 );
+      image->TransformIndexToPhysicalPoint(indexEye1, physicalEye1);
+      image->TransformIndexToPhysicalPoint(indexEye2, physicalEye2);
     }
 
     // We will determine the left and right of the eyes
     // Assuming that the degradation of the image does not
     // change their relative positions.
-    if ( physicalEye1[0] > physicalEye2[0] ) // eye1 is on the left
+    if (physicalEye1[0] > physicalEye2[0]) // eye1 is on the left
     {
-      for ( unsigned int i = 0; i < Dimension; ++i )
+      for (unsigned int i = 0; i < Dimension; ++i)
       {
         this->m_orig_lmk_LE[i] = physicalEye1[i];
         this->m_orig_lmk_RE[i] = physicalEye2[i];
@@ -407,7 +407,7 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
     }
     else
     {
-      for ( unsigned int i = 0; i < Dimension; ++i )
+      for (unsigned int i = 0; i < Dimension; ++i)
       {
         this->m_orig_lmk_LE[i] = physicalEye2[i]; // eye2 is on the left
         this->m_orig_lmk_RE[i] = physicalEye1[i];
@@ -419,17 +419,18 @@ BRAINSHoughEyeDetector< TInputImage, TOutputImage >::GenerateData()
      */
 
     this->m_orig2eyeFixedTransform =
-      ResampleFromEyePoints< TInputImage, TOutputImage >( this->m_orig_lmk_LE, this->m_orig_lmk_RE, image );
-    auto output_resampled_image = RigidResampleInPlayByVersor3D< TInputImage, TOutputImage >(image,this->m_orig2eyeFixedTransform);
+      ResampleFromEyePoints<TInputImage, TOutputImage>(this->m_orig_lmk_LE, this->m_orig_lmk_RE, image);
+    auto output_resampled_image =
+      RigidResampleInPlayByVersor3D<TInputImage, TOutputImage>(image, this->m_orig2eyeFixedTransform);
     this->GraftOutput(output_resampled_image);
   }
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BRAINSHoughEyeDetector< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+BRAINSHoughEyeDetector<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << "HoughEyeDetectorMode: " << this->m_HoughEyeDetectorMode << std::endl;
   os << "Number Of Spheres: " << this->m_NumberOfSpheres << std::endl;

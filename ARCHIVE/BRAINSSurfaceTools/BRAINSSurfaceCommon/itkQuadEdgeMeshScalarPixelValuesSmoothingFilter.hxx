@@ -26,20 +26,20 @@
 
 namespace itk
 {
-template < typename TInputMesh, typename TOutputMesh >
-QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::QuadEdgeMeshScalarPixelValuesSmoothingFilter()
+template <typename TInputMesh, typename TOutputMesh>
+QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>::QuadEdgeMeshScalarPixelValuesSmoothingFilter()
 {
   this->m_Lambda = 1.0;
   this->m_MaximumNumberOfIterations = 10;
 }
 
-template < typename TInputMesh, typename TOutputMesh >
-QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::~QuadEdgeMeshScalarPixelValuesSmoothingFilter()
+template <typename TInputMesh, typename TOutputMesh>
+QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>::~QuadEdgeMeshScalarPixelValuesSmoothingFilter()
 {}
 
-template < typename TInputMesh, typename TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh>
 void
-QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::GenerateData()
+QuadEdgeMeshScalarPixelValuesSmoothingFilter<TInputMesh, TOutputMesh>::GenerateData()
 {
   // Copy the input mesh into the output mesh.
   this->CopyInputMeshToOutputMesh();
@@ -51,26 +51,26 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::Generat
   //
   OutputPointsContainerPointer points = outputMesh->GetPoints();
 
-  if ( points.IsNull() )
+  if (points.IsNull())
   {
-    itkExceptionMacro( "Mesh has NULL PointData" );
+    itkExceptionMacro("Mesh has NULL PointData");
   }
 
   OutputPointDataContainerPointer pointData = outputMesh->GetPointData();
 
-  if ( pointData.IsNull() )
+  if (pointData.IsNull())
   {
-    itkExceptionMacro( "Output Mesh has NULL PointData" );
+    itkExceptionMacro("Output Mesh has NULL PointData");
   }
 
-  const double weightFactor = std::exp( -1.0 / ( 2.0 * this->m_Lambda ) );
+  const double weightFactor = std::exp(-1.0 / (2.0 * this->m_Lambda));
 
-  ProgressReporter progress( this, 0, this->m_MaximumNumberOfIterations );
+  ProgressReporter progress(this, 0, this->m_MaximumNumberOfIterations);
 
   const unsigned int numberOfPoints = outputMesh->GetNumberOfPoints();
 
   std::cout << "Output Mesh numberOfPoints " << numberOfPoints << std::endl;
-  for ( unsigned int iter = 0; iter < this->m_MaximumNumberOfIterations; ++iter )
+  for (unsigned int iter = 0; iter < this->m_MaximumNumberOfIterations; ++iter)
   {
     std::cout << " Smoothing Iteration " << iter << std::endl;
 
@@ -78,14 +78,14 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::Generat
 
     OutputPointDataContainerPointer newPointDataContainer = OutputPointDataContainer::New();
 
-    newPointDataContainer->Reserve( pointData->Size() );
+    newPointDataContainer->Reserve(pointData->Size());
 
-    using AccumulatePixelType = typename NumericTraits< OutputPixelType >::AccumulateType;
-    for ( unsigned int pointId = 0; pointId < numberOfPoints; pointId++ )
+    using AccumulatePixelType = typename NumericTraits<OutputPixelType>::AccumulateType;
+    for (unsigned int pointId = 0; pointId < numberOfPoints; pointId++)
     {
-      const OutputPixelType & centralPixelValue = pointData->GetElement( pointId );
+      const OutputPixelType & centralPixelValue = pointData->GetElement(pointId);
 
-      const EdgeType * edgeToFirstNeighborPoint = outputMesh->FindEdge( pointId );
+      const EdgeType * edgeToFirstNeighborPoint = outputMesh->FindEdge(pointId);
       const EdgeType * edgeToNeighborPoint = edgeToFirstNeighborPoint;
 
       AccumulatePixelType pixelSum = centralPixelValue;
@@ -95,23 +95,23 @@ QuadEdgeMeshScalarPixelValuesSmoothingFilter< TInputMesh, TOutputMesh >::Generat
       do
       {
         const OutputPointIdentifier neighborPointId = edgeToNeighborPoint->GetDestination();
-        const OutputPixelType &     neighborPixelValue = pointData->GetElement( neighborPointId );
+        const OutputPixelType &     neighborPixelValue = pointData->GetElement(neighborPointId);
 
         pixelSum += weightFactor * neighborPixelValue;
 
         numberOfNeighbors++;
 
         edgeToNeighborPoint = edgeToNeighborPoint->GetOnext();
-      } while ( edgeToNeighborPoint != edgeToFirstNeighborPoint );
+      } while (edgeToNeighborPoint != edgeToFirstNeighborPoint);
 
-      const double normalizationFactor = 1.0 / ( 1.0 + numberOfNeighbors * weightFactor );
+      const double normalizationFactor = 1.0 / (1.0 + numberOfNeighbors * weightFactor);
 
       OutputPixelType smoothedPixelValue = pixelSum * normalizationFactor;
 
-      newPointDataContainer->SetElement( pointId, smoothedPixelValue );
+      newPointDataContainer->SetElement(pointId, smoothedPixelValue);
     }
 
-    outputMesh->SetPointData( newPointDataContainer );
+    outputMesh->SetPointData(newPointDataContainer);
 
     pointData = newPointDataContainer;
 

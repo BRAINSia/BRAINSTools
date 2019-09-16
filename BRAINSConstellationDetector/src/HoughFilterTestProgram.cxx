@@ -24,52 +24,52 @@
 #include "itkHoughTransformRadialVotingImageFilter.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   constexpr unsigned int LocalImageDimension = 3;
 
   using InputPixelType = short;
   using OutputPixelType = double;
-  using InputImageType = itk::Image< InputPixelType, LocalImageDimension >;
-  using OutputImageType = itk::Image< OutputPixelType, LocalImageDimension >;
+  using InputImageType = itk::Image<InputPixelType, LocalImageDimension>;
+  using OutputImageType = itk::Image<OutputPixelType, LocalImageDimension>;
 
-  using HoughFilterType = itk::HoughTransformRadialVotingImageFilter< InputImageType, OutputImageType >;
+  using HoughFilterType = itk::HoughTransformRadialVotingImageFilter<InputImageType, OutputImageType>;
   using SpheresListType = HoughFilterType::SpheresListType;
   using HoughFilterPointer = HoughFilterType::Pointer;
   HoughFilterPointer houghFilter = HoughFilterType::New();
 
   // Reader type
-  using ReaderType = itk::ImageFileReader< InputImageType >;
+  using ReaderType = itk::ImageFileReader<InputImageType>;
   ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName( argv[1] );
+  reader->SetFileName(argv[1]);
   // reader->Update();
 
-  houghFilter->SetInput( reader->GetOutput() );
+  houghFilter->SetInput(reader->GetOutput());
 
-  houghFilter->SetNumberOfSpheres( 2 );
-  houghFilter->SetMinimumRadius( 11. );
-  houghFilter->SetMaximumRadius( 13. );
-  houghFilter->SetSigmaGradient( 1. );
-  houghFilter->SetVariance( 1. );
-  houghFilter->SetSphereRadiusRatio( 1. );
-  houghFilter->SetVotingRadiusRatio( .5 );
-  houghFilter->SetThreshold( 10. );
-  houghFilter->SetOutputThreshold( .8 );
-  houghFilter->SetGradientThreshold( 0. );
-  houghFilter->SetNbOfThreads( 64 );
-  houghFilter->SetSamplingRatio( .2 );
-  houghFilter->SetHoughEyeDetectorMode( 1 );
+  houghFilter->SetNumberOfSpheres(2);
+  houghFilter->SetMinimumRadius(11.);
+  houghFilter->SetMaximumRadius(13.);
+  houghFilter->SetSigmaGradient(1.);
+  houghFilter->SetVariance(1.);
+  houghFilter->SetSphereRadiusRatio(1.);
+  houghFilter->SetVotingRadiusRatio(.5);
+  houghFilter->SetThreshold(10.);
+  houghFilter->SetOutputThreshold(.8);
+  houghFilter->SetGradientThreshold(0.);
+  houghFilter->SetNbOfThreads(64);
+  houghFilter->SetSamplingRatio(.2);
+  houghFilter->SetHoughEyeDetectorMode(1);
 
   try
   {
     houghFilter->Update();
   }
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << "Failed houghFilter " << std::endl;
     std::cerr << excep << std::endl;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Failed on houghFilter exception occured" << std::endl;
   }
@@ -86,22 +86,22 @@ main( int argc, char * argv[] )
   */
 
   // writer type
-  using WriterType = itk::ImageFileWriter< OutputImageType >;
+  using WriterType = itk::ImageFileWriter<OutputImageType>;
   WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName( argv[2] );
-  writer->SetInput( houghFilter->GetOutput() );
+  writer->SetFileName(argv[2]);
+  writer->SetInput(houghFilter->GetOutput());
   try
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & excep )
+  catch (itk::ExceptionObject & excep)
   {
     std::cerr << "Cannot write the Accumulator image!" << std::endl;
     std::cerr << excep << std::endl;
   }
 
   const SpheresListType spheres = houghFilter->GetSpheres();
-  if ( spheres.size() < 2 )
+  if (spheres.size() < 2)
   {
     std::cerr << "Error: The number of detected spheres is less than 2!" << std::endl;
     // std::cerr << "The program will continue to run for generating some debug output for GUI corrector." << std::endl;

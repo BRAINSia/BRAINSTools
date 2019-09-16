@@ -44,26 +44,26 @@
 
 namespace itk
 {
-template < typename TInputImage, typename TOutputImage >
-LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::LargestForegroundFilledMaskImageFilter()
-  : m_OtsuPercentileLowerThreshold( 0.01 )
-  , m_OtsuPercentileUpperThreshold( 1.0 - 0.01 )
-  , m_ThresholdCorrectionFactor( 1.0 )
-  , m_ClosingSize( 9.0 )
-  , m_DilateSize( 0.0 )
-  , m_InsideValue( NumericTraits< typename IntegerImageType::PixelType >::OneValue() )
-  , m_OutsideValue( NumericTraits< typename IntegerImageType::PixelType >::ZeroValue() )
+template <typename TInputImage, typename TOutputImage>
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::LargestForegroundFilledMaskImageFilter()
+  : m_OtsuPercentileLowerThreshold(0.01)
+  , m_OtsuPercentileUpperThreshold(1.0 - 0.01)
+  , m_ThresholdCorrectionFactor(1.0)
+  , m_ClosingSize(9.0)
+  , m_DilateSize(0.0)
+  , m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue())
+  , m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
 {}
 
-template < typename TInputImage, typename TOutputImage >
-LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::~LargestForegroundFilledMaskImageFilter()
+template <typename TInputImage, typename TOutputImage>
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::~LargestForegroundFilledMaskImageFilter()
 {}
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 
   os << "OtsuPercentileLowerThreshold " << m_OtsuPercentileLowerThreshold << " "
      << "OtsuPercentileUpperThreshold " << m_OtsuPercentileUpperThreshold << " "
@@ -72,57 +72,55 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::PrintSelf( 
      << "OutsideValue " << m_OutsideValue << std::endl;
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::ImageMinMax(
-  typename TInputImage::PixelType & imageMin, typename TInputImage::PixelType & imageMax ) const
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::ImageMinMax(
+  typename TInputImage::PixelType & imageMin,
+  typename TInputImage::PixelType & imageMax) const
 {
-  typename MinimumMaximumImageFilter< TInputImage >::Pointer minmaxFilter =
-    MinimumMaximumImageFilter< TInputImage >::New();
-  minmaxFilter->SetInput( this->GetInput() );
+  typename MinimumMaximumImageFilter<TInputImage>::Pointer minmaxFilter = MinimumMaximumImageFilter<TInputImage>::New();
+  minmaxFilter->SetInput(this->GetInput());
   minmaxFilter->Update();
   imageMax = minmaxFilter->GetMaximum();
   imageMin = minmaxFilter->GetMinimum();
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::GenerateData()
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData()
 {
   {
     // These checks guarantee that setLowHigh works with at least two bins.
     // Threshold 0.0 is special:  a pure Otsu on 100 bins.
-    if ( this->m_OtsuPercentileLowerThreshold < 0.0 || this->m_OtsuPercentileLowerThreshold > 1.5 ||
-         this->m_OtsuPercentileUpperThreshold < 0 )
+    if (this->m_OtsuPercentileLowerThreshold < 0.0 || this->m_OtsuPercentileLowerThreshold > 1.5 ||
+        this->m_OtsuPercentileUpperThreshold < 0)
     {
-      itkExceptionMacro( << "Throwing out worthless PercentileThreshold:  " << this->m_OtsuPercentileLowerThreshold
-                         << " " << this->m_OtsuPercentileUpperThreshold << " " );
+      itkExceptionMacro(<< "Throwing out worthless PercentileThreshold:  " << this->m_OtsuPercentileLowerThreshold
+                        << " " << this->m_OtsuPercentileUpperThreshold << " ");
     }
-    if ( this->m_OtsuPercentileUpperThreshold > 1.5 )
+    if (this->m_OtsuPercentileUpperThreshold > 1.5)
     {
-      itkExceptionMacro( << "To save the day, PRETENDING an apparently mistaken histogram-trimming"
-                            " threshold >= 1.5 really indicates number of histogram bins"
-                            " (3.5 rounds up and indicates quartiles, etc.):  "
-                         << this->m_OtsuPercentileLowerThreshold << " " << this->m_OtsuPercentileUpperThreshold
-                         << " " );
+      itkExceptionMacro(<< "To save the day, PRETENDING an apparently mistaken histogram-trimming"
+                           " threshold >= 1.5 really indicates number of histogram bins"
+                           " (3.5 rounds up and indicates quartiles, etc.):  "
+                        << this->m_OtsuPercentileLowerThreshold << " " << this->m_OtsuPercentileUpperThreshold << " ");
     }
-    if ( this->m_OtsuPercentileLowerThreshold > 0.5 || this->m_OtsuPercentileUpperThreshold < 0.5 )
+    if (this->m_OtsuPercentileLowerThreshold > 0.5 || this->m_OtsuPercentileUpperThreshold < 0.5)
     {
-      itkExceptionMacro( << "Trimming back worthless PercentileThreshold"
-                            " over the two-tailed maximum of 0.5:  "
-                         << this->m_OtsuPercentileLowerThreshold << " " << this->m_OtsuPercentileUpperThreshold
-                         << " " );
+      itkExceptionMacro(<< "Trimming back worthless PercentileThreshold"
+                           " over the two-tailed maximum of 0.5:  "
+                        << this->m_OtsuPercentileLowerThreshold << " " << this->m_OtsuPercentileUpperThreshold << " ");
     }
   }
   this->AllocateOutputs();
 
   // This is to help with noisy data that has a few spurious very high/ very low values.
-  using ImageCalcType = ComputeHistogramQuantileThresholds< TInputImage, TOutputImage >;
+  using ImageCalcType = ComputeHistogramQuantileThresholds<TInputImage, TOutputImage>;
   typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
-  ImageCalc->SetImage( this->GetInput() );
+  ImageCalc->SetImage(this->GetInput());
 
-  ImageCalc->SetQuantileLowerThreshold( m_OtsuPercentileLowerThreshold );
-  ImageCalc->SetQuantileUpperThreshold( m_OtsuPercentileUpperThreshold );
+  ImageCalc->SetQuantileLowerThreshold(m_OtsuPercentileLowerThreshold);
+  ImageCalc->SetQuantileUpperThreshold(m_OtsuPercentileUpperThreshold);
 
   ImageCalc->Calculate();
 
@@ -130,7 +128,7 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::GenerateDat
   typename TInputImage::PixelType threshold_hi = ImageCalc->GetUpperIntensityThresholdValue();
   const unsigned int              numNonZeroHistogramBins = ImageCalc->GetNumberOfValidHistogramsEntries();
 
-  if ( numNonZeroHistogramBins <= 2 )
+  if (numNonZeroHistogramBins <= 2)
   {
     threshold_low_foreground = threshold_hi;
   }
@@ -138,208 +136,207 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::GenerateDat
   {
     // ##The Otsu thresholding stuff below should not be part of the new class,
     // it shout really be a separate function.
-    using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter< TInputImage >;
+    using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter<TInputImage>;
     using HistogramType = typename HistogramGeneratorType::HistogramType;
 
     typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
-    histGenerator->SetInput( this->GetInput() );
-    typename HistogramGeneratorType::HistogramSizeType hsize( 1 );
+    histGenerator->SetInput(this->GetInput());
+    typename HistogramGeneratorType::HistogramSizeType hsize(1);
     hsize[0] = 128; // V3 itkOtsuThresholdImageCalculator.hxx m_NumberOfHistogramBins = 128
-    histGenerator->SetHistogramSize( hsize );
-    histGenerator->SetAutoMinimumMaximum( true );
+    histGenerator->SetHistogramSize(hsize);
+    histGenerator->SetAutoMinimumMaximum(true);
 
-    using OtsuImageCalcType = itk::OtsuThresholdCalculator< HistogramType >;
+    using OtsuImageCalcType = itk::OtsuThresholdCalculator<HistogramType>;
     typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
-    OtsuImageCalc->SetInput( histGenerator->GetOutput() );
+    OtsuImageCalc->SetInput(histGenerator->GetOutput());
     OtsuImageCalc->Update();
     typename TInputImage::PixelType otsuThreshold = OtsuImageCalc->GetThreshold();
     // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold <<
     // std::endl;
 
     const typename TInputImage::PixelType & otsuThresholdResult =
-      static_cast< typename TInputImage::PixelType >( m_ThresholdCorrectionFactor * otsuThreshold );
+      static_cast<typename TInputImage::PixelType>(m_ThresholdCorrectionFactor * otsuThreshold);
     threshold_low_foreground = otsuThresholdResult;
   }
 
-  using InputThresholdFilterType = BinaryThresholdImageFilter< TInputImage, IntegerImageType >;
+  using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage, IntegerImageType>;
   typename InputThresholdFilterType::Pointer threshold = InputThresholdFilterType::New();
-  threshold->SetInput( this->GetInput() );
-  threshold->SetInsideValue( this->m_InsideValue );
-  threshold->SetOutsideValue( this->m_OutsideValue );
-  threshold->SetLowerThreshold( threshold_low_foreground );
-  const typename TInputImage::PixelType threshold_hi_foreground =
-    NumericTraits< typename TInputImage::PixelType >::max();
-  threshold->SetUpperThreshold( threshold_hi_foreground );
+  threshold->SetInput(this->GetInput());
+  threshold->SetInsideValue(this->m_InsideValue);
+  threshold->SetOutsideValue(this->m_OutsideValue);
+  threshold->SetLowerThreshold(threshold_low_foreground);
+  const typename TInputImage::PixelType threshold_hi_foreground = NumericTraits<typename TInputImage::PixelType>::max();
+  threshold->SetUpperThreshold(threshold_hi_foreground);
   threshold->Update();
   //  typename TInputImage::PixelType threshold_low = ImageCalc->GetLowerIntensityThresholdValue();
-  std::cout << "LowHigh Thresholds: [" << static_cast< int >( threshold_low_foreground ) << ","
-            << static_cast< int >( threshold_hi_foreground ) << "]" << std::endl;
+  std::cout << "LowHigh Thresholds: [" << static_cast<int>(threshold_low_foreground) << ","
+            << static_cast<int>(threshold_hi_foreground) << "]" << std::endl;
 
-  using FilterType = ConnectedComponentImageFilter< IntegerImageType, IntegerImageType >;
+  using FilterType = ConnectedComponentImageFilter<IntegerImageType, IntegerImageType>;
   typename FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
   //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
   //  watcher.QuietOn();
-  labelConnectedComponentsFilter->SetInput( threshold->GetOutput() );
+  labelConnectedComponentsFilter->SetInput(threshold->GetOutput());
   // labelConnectedComponentsFilter->Update();
 
-  using RelabelType = RelabelComponentImageFilter< IntegerImageType, IntegerImageType >;
+  using RelabelType = RelabelComponentImageFilter<IntegerImageType, IntegerImageType>;
   typename RelabelType::Pointer relabel = RelabelType::New();
-  relabel->SetInput( labelConnectedComponentsFilter->GetOutput() );
+  relabel->SetInput(labelConnectedComponentsFilter->GetOutput());
 
   try
   {
     relabel->Update();
   }
-  catch ( ExceptionObject & excep )
+  catch (ExceptionObject & excep)
   {
     std::cerr << "Relabel: exception caught !" << std::endl;
     std::cerr << excep << std::endl;
   }
 
-  using ThresholdFilterType = BinaryThresholdImageFilter< IntegerImageType, IntegerImageType >;
+  using ThresholdFilterType = BinaryThresholdImageFilter<IntegerImageType, IntegerImageType>;
   // unsigned short numObjects = relabel->GetNumberOfObjects();
   // std::cout << "Removed " << numObjects - 1 << " smaller objects." <<
   // std::endl;
   typename ThresholdFilterType::Pointer LargestFilter = ThresholdFilterType::New();
-  LargestFilter->SetInput( relabel->GetOutput() );
-  LargestFilter->SetInsideValue( this->m_InsideValue );
-  LargestFilter->SetOutsideValue( this->m_OutsideValue );
-  LargestFilter->SetLowerThreshold( 1 );
-  LargestFilter->SetUpperThreshold( 1 );
+  LargestFilter->SetInput(relabel->GetOutput());
+  LargestFilter->SetInsideValue(this->m_InsideValue);
+  LargestFilter->SetOutsideValue(this->m_OutsideValue);
+  LargestFilter->SetLowerThreshold(1);
+  LargestFilter->SetUpperThreshold(1);
   LargestFilter->Update();
 
   using myKernelType =
-    BinaryBallStructuringElement< typename IntegerImageType::PixelType, IntegerImageType::ImageDimension >;
+    BinaryBallStructuringElement<typename IntegerImageType::PixelType, IntegerImageType::ImageDimension>;
 
-  using ErodeFilterType = BinaryErodeImageFilter< IntegerImageType, IntegerImageType, myKernelType >;
+  using ErodeFilterType = BinaryErodeImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
   typename ErodeFilterType::Pointer ErodeFilter = ErodeFilterType::New();
   {
     myKernelType                    dilateBall;
     myKernelType                    erodeBall;
     typename myKernelType::SizeType dilateBallSize;
     typename myKernelType::SizeType erodeBallSize;
-    for ( unsigned int d = 0; d < 3; ++d )
+    for (unsigned int d = 0; d < 3; ++d)
     {
-      const unsigned int ClosingVoxels = itk::Math::ceil( m_ClosingSize / ( relabel->GetOutput()->GetSpacing()[d] ) );
-      if ( ClosingVoxels > 20 )
+      const unsigned int ClosingVoxels = itk::Math::ceil(m_ClosingSize / (relabel->GetOutput()->GetSpacing()[d]));
+      if (ClosingVoxels > 20)
       {
         std::cout << "WARNING:  Attempting to close with a very large number of voxels:  " << m_ClosingSize << " / "
-                  << ( relabel->GetOutput()->GetSpacing()[d] ) << " = " << ClosingVoxels << std::endl;
+                  << (relabel->GetOutput()->GetSpacing()[d]) << " = " << ClosingVoxels << std::endl;
         std::cout << "Perhaps there is a mis-match between the voxel spacing"
                   << " and the assumption that  ClosingSize is given in mm" << std::endl;
       }
       dilateBallSize[d] = ClosingVoxels;
       erodeBallSize[d] = ClosingVoxels;
     }
-    dilateBall.SetRadius( dilateBallSize );
+    dilateBall.SetRadius(dilateBallSize);
     dilateBall.CreateStructuringElement();
-    erodeBall.SetRadius( erodeBallSize );
+    erodeBall.SetRadius(erodeBallSize);
     erodeBall.CreateStructuringElement();
 
-    using DilateFilterType = BinaryDilateImageFilter< IntegerImageType, IntegerImageType, myKernelType >;
+    using DilateFilterType = BinaryDilateImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
     typename DilateFilterType::Pointer DilateFilter = DilateFilterType::New();
 
     // DilateFilter->SetForegroundValue(1);
-    DilateFilter->SetDilateValue( 1 );
-    DilateFilter->SetBackgroundValue( 0 );
-    DilateFilter->SetInput( LargestFilter->GetOutput() );
-    DilateFilter->SetKernel( dilateBall );
+    DilateFilter->SetDilateValue(1);
+    DilateFilter->SetBackgroundValue(0);
+    DilateFilter->SetInput(LargestFilter->GetOutput());
+    DilateFilter->SetKernel(dilateBall);
     DilateFilter->Update();
 
     // ErodeFilter->SetForegroundValue(1);
-    ErodeFilter->SetErodeValue( 1 );
-    ErodeFilter->SetBackgroundValue( 0 );
-    ErodeFilter->SetInput( DilateFilter->GetOutput() );
-    ErodeFilter->SetKernel( erodeBall );
+    ErodeFilter->SetErodeValue(1);
+    ErodeFilter->SetBackgroundValue(0);
+    ErodeFilter->SetInput(DilateFilter->GetOutput());
+    ErodeFilter->SetKernel(erodeBall);
     ErodeFilter->Update();
   }
 
   // silence warnings by converting the size to index
   typename IntegerImageType::IndexType IndImageSize;
-  for ( unsigned int _i = 0; _i < IntegerImageType::ImageDimension; ++_i )
+  for (unsigned int _i = 0; _i < IntegerImageType::ImageDimension; ++_i)
   {
-    IndImageSize[_i] = static_cast< typename IntegerImageType::IndexValueType >(
-      ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[_i] );
+    IndImageSize[_i] = static_cast<typename IntegerImageType::IndexValueType>(
+      ErodeFilter->GetOutput()->GetLargestPossibleRegion().GetSize()[_i]);
   }
   // NOTE:  The most robust way to do this would be to find the largest
   // background labeled image, and then choose one of those locations as the
   // seed.
   // For now just choose all the corners as seed points
-  using seededConnectedThresholdFilterType = ConnectedThresholdImageFilter< IntegerImageType, IntegerImageType >;
+  using seededConnectedThresholdFilterType = ConnectedThresholdImageFilter<IntegerImageType, IntegerImageType>;
   typename seededConnectedThresholdFilterType::Pointer seededConnectedThresholdFilter =
     seededConnectedThresholdFilterType::New();
 
   {
     const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, 0 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, 0, 0 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { 0, IndImageSize[1] - 1, 0 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, IndImageSize[1] - 1, 0 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, IndImageSize[2] - 1 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { IndImageSize[0] - 1, 0, IndImageSize[2] - 1 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = { { 0, IndImageSize[1] - 1, IndImageSize[2] - 1 } };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
   {
     const typename IntegerImageType::IndexType SeedLocation = {
       { IndImageSize[0] - 1, IndImageSize[1] - 1, IndImageSize[2] - 1 }
     };
-    seededConnectedThresholdFilter->SetSeed( SeedLocation );
+    seededConnectedThresholdFilter->SetSeed(SeedLocation);
   }
 
-  seededConnectedThresholdFilter->SetReplaceValue( 100 );
-  seededConnectedThresholdFilter->SetUpper( 0 );
-  seededConnectedThresholdFilter->SetLower( 0 );
-  seededConnectedThresholdFilter->SetInput( ErodeFilter->GetOutput() );
+  seededConnectedThresholdFilter->SetReplaceValue(100);
+  seededConnectedThresholdFilter->SetUpper(0);
+  seededConnectedThresholdFilter->SetLower(0);
+  seededConnectedThresholdFilter->SetInput(ErodeFilter->GetOutput());
   seededConnectedThresholdFilter->Update();
 
   typename IntegerImageType::Pointer dilateMask = nullptr;
   {
     typename ThresholdFilterType::Pointer FinalThreshold = ThresholdFilterType::New();
-    FinalThreshold->SetInput( seededConnectedThresholdFilter->GetOutput() );
-    FinalThreshold->SetInsideValue( this->m_OutsideValue );
-    FinalThreshold->SetOutsideValue( this->m_InsideValue );
-    FinalThreshold->SetLowerThreshold( 100 );
-    FinalThreshold->SetUpperThreshold( 100 );
+    FinalThreshold->SetInput(seededConnectedThresholdFilter->GetOutput());
+    FinalThreshold->SetInsideValue(this->m_OutsideValue);
+    FinalThreshold->SetOutsideValue(this->m_InsideValue);
+    FinalThreshold->SetLowerThreshold(100);
+    FinalThreshold->SetUpperThreshold(100);
     FinalThreshold->Update();
 
-    if ( m_DilateSize > 0.0 )
+    if (m_DilateSize > 0.0)
     {
       // Dilate to get some background to better drive BSplineRegistration
-      using DilateType = itk::BinaryDilateImageFilter< IntegerImageType, IntegerImageType, myKernelType >;
+      using DilateType = itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
 
       myKernelType                    dilateBall;
       typename myKernelType::SizeType dilateBallSize;
-      for ( unsigned int d = 0; d < 3; ++d )
+      for (unsigned int d = 0; d < 3; ++d)
       {
         const unsigned int DilateVoxels =
-          itk::Math::ceil( m_DilateSize / ( FinalThreshold->GetOutput()->GetSpacing()[d] ) );
+          itk::Math::ceil(m_DilateSize / (FinalThreshold->GetOutput()->GetSpacing()[d]));
         dilateBallSize[d] = DilateVoxels;
       }
-      dilateBall.SetRadius( dilateBallSize );
+      dilateBall.SetRadius(dilateBallSize);
       dilateBall.CreateStructuringElement();
 
       typename DilateType::Pointer dil = DilateType::New();
-      dil->SetDilateValue( this->m_InsideValue );
-      dil->SetKernel( dilateBall );
-      dil->SetInput( FinalThreshold->GetOutput() );
+      dil->SetDilateValue(this->m_InsideValue);
+      dil->SetKernel(dilateBall);
+      dil->SetInput(FinalThreshold->GetOutput());
       dil->Update();
       dilateMask = dil->GetOutput();
     }
@@ -349,13 +346,13 @@ LargestForegroundFilledMaskImageFilter< TInputImage, TOutputImage >::GenerateDat
     }
   }
 
-  using outputCasterType = CastImageFilter< IntegerImageType, OutputImageType >;
+  using outputCasterType = CastImageFilter<IntegerImageType, OutputImageType>;
   typename outputCasterType::Pointer outputCaster = outputCasterType::New();
-  outputCaster->SetInput( dilateMask );
+  outputCaster->SetInput(dilateMask);
 
-  outputCaster->GraftOutput( this->GetOutput() );
+  outputCaster->GraftOutput(this->GetOutput());
   outputCaster->Update();
-  this->GraftOutput( outputCaster->GetOutput() );
+  this->GraftOutput(outputCaster->GetOutput());
   //  typename OutputImageType::Pointer outputMaskImage =
   // outputCaster->GetOutput();
   //  return outputMaskImage;

@@ -68,13 +68,13 @@ namespace itk
  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
  * \endcode
  */
-template < typename TInputScalarType, typename TWriteScalarType >
-extern void WriteTransformToDisk( itk::Transform< TInputScalarType, 3, 3 > const * const genericTransformToWrite,
-                                  const std::string &                                    outputTransform );
+template <typename TInputScalarType, typename TWriteScalarType>
+extern void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const genericTransformToWrite,
+                                 const std::string &                                  outputTransform);
 
-template < typename TScalarType >
-extern void WriteTransformToDisk( itk::Transform< TScalarType, 3, 3 > const * const genericTransformToWrite,
-                                  const std::string &                               outputTransform );
+template <typename TScalarType>
+extern void WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const genericTransformToWrite,
+                                 const std::string &                             outputTransform);
 
 /**
  * \author Hans J. Johnson
@@ -110,12 +110,12 @@ extern void WriteTransformToDisk( itk::Transform< TScalarType, 3, 3 > const * co
  * \endcode
  */
 
-template < typename TScalarType >
-extern typename itk::Transform< TScalarType, 3, 3 >::Pointer
-ReadTransformFromDisk( const std::string & initialTransform );
+template <typename TScalarType>
+extern typename itk::Transform<TScalarType, 3, 3>::Pointer
+ReadTransformFromDisk(const std::string & initialTransform);
 
-extern itk::Transform< double, 3, 3 >::Pointer
-ReadTransformFromDisk( const std::string & initialTransform );
+extern itk::Transform<double, 3, 3>::Pointer
+ReadTransformFromDisk(const std::string & initialTransform);
 
 /**
  * \author Hans J. Johnson
@@ -134,75 +134,77 @@ ReadTransformFromDisk( const std::string & initialTransform );
  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
  * \endcode
  */
-extern itk::VersorRigid3DTransform< double >::Pointer
-ComputeRigidTransformFromGeneric( const itk::Transform< double, 3, 3 >::ConstPointer genericTransformToWrite );
+extern itk::VersorRigid3DTransform<double>::Pointer
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite);
 
 /**
  * \author Hans J. Johnson
  * \brief Special purpose convenience function -- should not have a public
  *interface.
  */
-template < typename TInputScalarType, typename TWriteScalarType >
+template <typename TInputScalarType, typename TWriteScalarType>
 extern int
-WriteBothTransformsToDisk(
-  const typename itk::Transform< TInputScalarType, 3, 3 >::ConstPointer genericTransformToWrite,
-  const std::string & outputTransform, const std::string & strippedOutputTransform );
+WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
+                          const std::string &                                                 outputTransform,
+                          const std::string &                                                 strippedOutputTransform);
 
 /**
  * \author Hans J. Johnson
  * \brief Special purpose convenience function -- should not have a public
  *interface.
  */
-template < typename TInputScalarType, typename TWriteScalarType >
+template <typename TInputScalarType, typename TWriteScalarType>
 extern int
 WriteStrippedRigidTransformToDisk(
-  const typename itk::Transform< TInputScalarType, 3, 3 >::ConstPointer genericTransformToWrite,
-  const std::string &                                                   strippedOutputTransform );
+  const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
+  const std::string &                                                 strippedOutputTransform);
 } // namespace itk
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images
  */
-template < typename InputImageType, typename OutputImageType >
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
-TransformResample(
-  typename InputImageType::ConstPointer                                   inputImage,
-  typename itk::ImageBase< InputImageType::ImageDimension >::ConstPointer ReferenceImage,
-  const typename InputImageType::PixelType                                defaultValue,
-  typename itk::InterpolateImageFunction<
-    InputImageType, typename itk::NumericTraits< typename InputImageType::PixelType >::RealType >::Pointer interp,
-  typename itk::Transform< double, 3, 3 >::ConstPointer                                                    transform );
+TransformResample(typename InputImageType::ConstPointer                                 inputImage,
+                  typename itk::ImageBase<InputImageType::ImageDimension>::ConstPointer ReferenceImage,
+                  const typename InputImageType::PixelType                              defaultValue,
+                  typename itk::InterpolateImageFunction<
+                    InputImageType,
+                    typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
+                  typename itk::Transform<double, 3, 3>::ConstPointer                                   transform);
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images
  */
-template < typename InputImageType, typename OutputImageType, typename DisplacementImageType >
+template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer
-TransformWarp(
-  InputImageType const * const inputImage, const itk::ImageBase< InputImageType::ImageDimension > * ReferenceImage,
-  typename InputImageType::PixelType defaultValue,
-  typename itk::InterpolateImageFunction<
-    InputImageType, typename itk::NumericTraits< typename InputImageType::PixelType >::RealType >::Pointer interp,
-  typename DisplacementImageType::Pointer displacementField );
+TransformWarp(InputImageType const * const                           inputImage,
+              const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+              typename InputImageType::PixelType                     defaultValue,
+              typename itk::InterpolateImageFunction<
+                InputImageType,
+                typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
+              typename DisplacementImageType::Pointer                                               displacementField);
 
 /**
  * \author Hans J. Johnson
  * \brief A class to transform images.  Only one of genericTransform or
  *DisplacementField can be non-null.
  */
-template < typename InputImageType, typename OutputImageType, typename DisplacementImageType >
+template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
 typename OutputImageType::Pointer
-GenericTransformImage( InputImageType const * const                             OperandImage,
-                       const itk::ImageBase< InputImageType::ImageDimension > * ReferenceImage,
-                       // typename DisplacementImageType::Pointer DisplacementField,
-                       typename itk::Transform< double, 3, 3 >::ConstPointer genericTransform,
-                       typename InputImageType::PixelType                    suggestedDefaultValue, // NOTE:  This is
-                                                                                                    // ignored in the
-                                                                                                    // case of binary
-                                                                                                    // image!
-                       const std::string & interpolationMode, const bool binaryFlag );
+GenericTransformImage(InputImageType const * const                           OperandImage,
+                      const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+                      // typename DisplacementImageType::Pointer DisplacementField,
+                      typename itk::Transform<double, 3, 3>::ConstPointer genericTransform,
+                      typename InputImageType::PixelType                  suggestedDefaultValue, // NOTE:  This is
+                                                                                                 // ignored in the
+                                                                                                 // case of binary
+                                                                                                 // image!
+                      const std::string & interpolationMode,
+                      const bool          binaryFlag);
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "GenericTransformImage.hxx"

@@ -64,43 +64,43 @@ EigenVectorToColorImageFilter ::Update()
   InputImageType::RegionType ImageRegion = m_Input->GetLargestPossibleRegion();
 
   m_Output = OutputImageType::New();
-  m_Output->SetRegions( ImageRegion );
-  m_Output->CopyInformation( m_Input );
+  m_Output->SetRegions(ImageRegion);
+  m_Output->CopyInformation(m_Input);
   m_Output->Allocate();
 
-  using IteratorType = itk::ImageRegionIteratorWithIndex< OutputImageType >;
+  using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
 
-  IteratorType it( m_Output, ImageRegion );
+  IteratorType it(m_Output, ImageRegion);
 
   OutputImageType::IndexType index;
-  for ( it.GoToBegin(); !it.IsAtEnd(); ++it )
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
     index = it.GetIndex();
-    InputPixelType  tensor = m_Input->GetPixel( index );
+    InputPixelType  tensor = m_Input->GetPixel(index);
     OutputPixelType currentVoxel;
-    currentVoxel.Fill( 0 );
-    if ( tensor.GetNorm() != 0 )
+    currentVoxel.Fill(0);
+    if (tensor.GetNorm() != 0)
     {
-      TMatrix                            M = Tensor2Matrix( tensor );
-      vnl_symmetric_eigensystem< float > eig( M );
-      TVector                            e( 3 );
-      float                              ai = FA( Eigen_Value( M ) );
+      TMatrix                          M = Tensor2Matrix(tensor);
+      vnl_symmetric_eigensystem<float> eig(M);
+      TVector                          e(3);
+      float                            ai = FA(Eigen_Value(M));
 
-      switch ( m_TensorShapeType )
+      switch (m_TensorShapeType)
       {
         case PRIMARY_EIGENVECTOR:
         case SECONDARY_EIGENVECTOR:
         case TERTIARY_EIGENVECTOR:
         {
-          e = eig.get_eigenvector( static_cast< int >( m_TensorShapeType ) );
+          e = eig.get_eigenvector(static_cast<int>(m_TensorShapeType));
         }
         break;
         case TENSOR_SHAPE:
-          TVector eigV( 3 );
-          eigV( 2 ) = eig.get_eigenvalue( 2 );
-          eigV( 1 ) = eig.get_eigenvalue( 1 );
-          eigV( 0 ) = eig.get_eigenvalue( 0 );
-          e = TensorShape( eigV );
+          TVector eigV(3);
+          eigV(2) = eig.get_eigenvalue(2);
+          eigV(1) = eig.get_eigenvalue(1);
+          eigV(0) = eig.get_eigenvalue(0);
+          e = TensorShape(eigV);
       }
       e *= ai;
 
@@ -110,16 +110,16 @@ EigenVectorToColorImageFilter ::Update()
         Green: Anterior-Posterior - z axis in Image
         Blue: Superior - Inferior - y axis in Image
       **************************************************************/
-      currentVoxel.SetRed( static_cast< unsigned char >( 255 * std::sqrt( std::fabs( e( 0 ) ) ) ) );
-      currentVoxel.SetGreen( static_cast< unsigned char >( 255 * std::sqrt( std::fabs( e( 2 ) ) ) ) );
-      currentVoxel.SetBlue( static_cast< unsigned char >( 255 * std::sqrt( std::fabs( e( 1 ) ) ) ) );
-      currentVoxel.SetAlpha( 255 );
+      currentVoxel.SetRed(static_cast<unsigned char>(255 * std::sqrt(std::fabs(e(0)))));
+      currentVoxel.SetGreen(static_cast<unsigned char>(255 * std::sqrt(std::fabs(e(2)))));
+      currentVoxel.SetBlue(static_cast<unsigned char>(255 * std::sqrt(std::fabs(e(1)))));
+      currentVoxel.SetAlpha(255);
     }
-    it.Set( currentVoxel );
+    it.Set(currentVoxel);
   }
 
   // Set Meta Data Orientation Information
-  m_Output->SetMetaDataDictionary( m_Input->GetMetaDataDictionary() );
+  m_Output->SetMetaDataDictionary(m_Input->GetMetaDataDictionary());
 }
 } // end namespace itk
 #endif

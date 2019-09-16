@@ -69,44 +69,45 @@ class DWIMetaDataDictionaryValidator
 private:
   itk::MetaDataDictionary m_dict;
   void
-  SetStringDictObject( const std::string, const std::string );
+  SetStringDictObject(const std::string, const std::string);
 
 protected:
   std::string
-  GetGradientKeyString( int ) const;
+  GetGradientKeyString(int) const;
   std::string
-  GetIndexedKeyString( const std::string base_key_name, const size_t index ) const;
+  GetIndexedKeyString(const std::string base_key_name, const size_t index) const;
 
   void
-  GenericSetStringVector( const std::vector< std::string > & values, const std::string & KeyBaseName );
+  GenericSetStringVector(const std::vector<std::string> & values, const std::string & KeyBaseName);
   void
-  GenericSetDoubleVector( const std::vector< double > & values, const std::string & KeyBaseName );
+  GenericSetDoubleVector(const std::vector<double> & values, const std::string & KeyBaseName);
 
-  std::vector< std::string >
-  GenericGetStringVector( const std::string & KeyBaseName, const size_t numElemnents,
-                          const std::string defaultValue ) const;
+  std::vector<std::string>
+  GenericGetStringVector(const std::string & KeyBaseName,
+                         const size_t        numElemnents,
+                         const std::string   defaultValue) const;
 
-  std::vector< double >
-  GenericGetDoubleVector( const std::string & KeyBaseName, const size_t numElements, const double defaultValue ) const;
+  std::vector<double>
+  GenericGetDoubleVector(const std::string & KeyBaseName, const size_t numElements, const double defaultValue) const;
 
 public:
   // 3D
-  using Integer3x1ArrayType = vnl_vector_fixed< int, 3 >;
-  using Double3x1ArrayType = vnl_vector_fixed< double, 3 >;
-  using String3x1ArrayType = vnl_vector_fixed< std::string, 3 >;
+  using Integer3x1ArrayType = vnl_vector_fixed<int, 3>;
+  using Double3x1ArrayType = vnl_vector_fixed<double, 3>;
+  using String3x1ArrayType = vnl_vector_fixed<std::string, 3>;
   // 4D
-  using Integer4x1ArrayType = vnl_vector_fixed< int, 4 >;
-  using Double4ArrayType = vnl_vector_fixed< double, 4 >;
-  using String4x1ArrayType = vnl_vector_fixed< std::string, 4 >;
+  using Integer4x1ArrayType = vnl_vector_fixed<int, 4>;
+  using Double4ArrayType = vnl_vector_fixed<double, 4>;
+  using String4x1ArrayType = vnl_vector_fixed<std::string, 4>;
 
-  using DoubleVectorType = std::vector< double >;
-  using StringVectorType = std::vector< std::string >;
-  using GradientDirectionType = vnl_vector_fixed< double, 3 >;
-  using GradientTableType = std::vector< GradientDirectionType >;
+  using DoubleVectorType = std::vector<double>;
+  using StringVectorType = std::vector<std::string>;
+  using GradientDirectionType = vnl_vector_fixed<double, 3>;
+  using GradientTableType = std::vector<GradientDirectionType>;
   // using MeasurementFrameType = std::vector<std::vector<double> >;
 
-  using RotationMatrixType = itk::Matrix< double, 3, 3 >;
-  using SpaceDirectionType = vnl_vector_fixed< DoubleVectorType, 3 >;
+  using RotationMatrixType = itk::Matrix<double, 3, 3>;
+  using SpaceDirectionType = vnl_vector_fixed<DoubleVectorType, 3>;
 
   using MetaDataDictionaryType = itk::MetaDataDictionary &;
   using ConstMetaDataDictionaryType = const itk::MetaDataDictionary &;
@@ -116,25 +117,25 @@ public:
   // metadata dictionary methods
   MetaDataDictionaryType
        GetMetaDataDictionary();
-  void SetMetaDataDictionary( ConstMetaDataDictionaryType );
+  void SetMetaDataDictionary(ConstMetaDataDictionaryType);
 
   // measurement frame
   RotationMatrixType
   GetMeasurementFrame() const;
   void
-  SetMeasurementFrame( const RotationMatrixType & );
+  SetMeasurementFrame(const RotationMatrixType &);
 
   // gradients
   Double3x1ArrayType
-  GetGradient( int ) const;
+  GetGradient(int) const;
   int
   GetGradientCount();
   void
-  SetGradient( int, Double3x1ArrayType & );
+  SetGradient(int, Double3x1ArrayType &);
   GradientTableType
   GetGradientTable() const;
   void
-  SetGradientTable( GradientTableType & );
+  SetGradientTable(GradientTableType &);
   void
   DeleteGradientTable();
 
@@ -148,25 +149,25 @@ public:
   double
   GetBValue() const;
   void
-  SetBValue( const double );
+  SetBValue(const double);
 
   // centering
-  std::vector< std::string >
+  std::vector<std::string>
   GetCenterings() const;
   void
-  SetCenterings( const std::vector< std::string > & );
+  SetCenterings(const std::vector<std::string> &);
 
   // thickness
-  std::vector< double >
+  std::vector<double>
   GetThicknesses() const;
   void
-  SetThicknesses( const std::vector< double > & values );
+  SetThicknesses(const std::vector<double> & values);
 
   // modality
   std::string
   GetModality() const;
   void
-  SetModality( const std::string & value );
+  SetModality(const std::string & value);
 };
 
 #endif // DWIMetaDataDictionaryValidator_h_

@@ -51,7 +51,7 @@ class BRAINSConstellationDetectorPrimary
 public:
   // Image, filter, transform typedef
   using PixelType = short;
-  using ImageType = itk::Image< PixelType, 3 >;
+  using ImageType = itk::Image<PixelType, 3>;
   using ImagePointerType = ImageType::Pointer;
   using ImagePointType = ImageType::PointType;
   using ImageSpacingType = ImageType::SpacingType;
@@ -59,290 +59,290 @@ public:
   using ImageDirectionType = ImageType::DirectionType;
   using ImageIndexType = ImageType::IndexType;
 
-  using ReaderType = itk::ImageFileReader< ImageType >;
-  using WriterType = itk::ImageFileWriter< ImageType >;
-  using FindCenterFilter = itk::FindCenterOfBrainFilter< ImageType >;
-  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector< ImageType, ImageType >;
+  using ReaderType = itk::ImageFileReader<ImageType>;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using FindCenterFilter = itk::FindCenterOfBrainFilter<ImageType>;
+  using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector<ImageType, ImageType>;
   using TransformWriterType = itk::TransformFileWriter;
-  using VersorTransformType = itk::VersorRigid3DTransform< double >;
+  using VersorTransformType = itk::VersorRigid3DTransform<double>;
   std::string pathOut;
   std::string errorMsg;
 
   BRAINSConstellationDetectorPrimary();
 
   void
-  SetHoughEyeDetectorMode( int houghEyeDetectorMode )
+  SetHoughEyeDetectorMode(int houghEyeDetectorMode)
   {
     this->m_houghEyeDetectorMode = houghEyeDetectorMode;
   }
 
   void
-  SetMspQualityLevel( unsigned int mspQualityLevel )
+  SetMspQualityLevel(unsigned int mspQualityLevel)
   {
     this->m_mspQualityLevel = mspQualityLevel;
   }
 
   void
-  SetWritedebuggingImagesLevel( unsigned int writedebuggingImagesLevel )
+  SetWritedebuggingImagesLevel(unsigned int writedebuggingImagesLevel)
   {
     this->m_writedebuggingImagesLevel = writedebuggingImagesLevel;
   }
 
   void
-  SetNumberOfWorkUnits( unsigned int numberOfThreads )
+  SetNumberOfWorkUnits(unsigned int numberOfThreads)
   {
     this->m_numberOfThreads = numberOfThreads;
   }
 
   void
-  SetOtsuPercentileThreshold( double otsuPercentileThreshold )
+  SetOtsuPercentileThreshold(double otsuPercentileThreshold)
   {
     this->m_otsuPercentileThreshold = otsuPercentileThreshold;
   }
 
   void
-  SetAcLowerBound( double acLowerBound )
+  SetAcLowerBound(double acLowerBound)
   {
     this->m_acLowerBound = acLowerBound;
   }
 
   void
-  SetTrimRescaledIntensities( double trimRescaledIntensities )
+  SetTrimRescaledIntensities(double trimRescaledIntensities)
   {
     this->m_trimRescaledIntensities = trimRescaledIntensities;
   }
 
   void
-  SetRadiusMPJ( double radiusMPJ )
+  SetRadiusMPJ(double radiusMPJ)
   {
     this->m_radiusMPJ = radiusMPJ;
   }
 
   void
-  SetRadiusAC( double radiusAC )
+  SetRadiusAC(double radiusAC)
   {
     this->m_radiusAC = radiusAC;
   }
 
   void
-  SetRadiusPC( double radiusPC )
+  SetRadiusPC(double radiusPC)
   {
     this->m_radiusPC = radiusPC;
   }
 
   void
-  SetRadiusVN4( double radiusVN4 )
+  SetRadiusVN4(double radiusVN4)
   {
     this->m_radiusVN4 = radiusVN4;
   }
 
   void
-  SetCutOutHeadInOutputVolume( bool cutOutHeadInOutputVolume )
+  SetCutOutHeadInOutputVolume(bool cutOutHeadInOutputVolume)
   {
     this->m_cutOutHeadInOutputVolume = cutOutHeadInOutputVolume;
   }
 
   void
-  SetRescaleIntensities( bool rescaleIntensities )
+  SetRescaleIntensities(bool rescaleIntensities)
   {
     this->m_rescaleIntensities = rescaleIntensities;
   }
 
   void
-  SetForceHoughEyeDetectorReportFailure( bool forceHoughEyeDetectorReportFailure )
+  SetForceHoughEyeDetectorReportFailure(bool forceHoughEyeDetectorReportFailure)
   {
     this->m_forceHoughEyeDetectorReportFailure = forceHoughEyeDetectorReportFailure;
   }
 
   void
-  SetDebug( bool debug )
+  SetDebug(bool debug)
   {
     this->m_debug = debug;
   }
 
   void
-  SetVerbose( bool verbose )
+  SetVerbose(bool verbose)
   {
     this->m_verbose = verbose;
   }
 
   void
-  SetAtlasVolume( const std::string & atlasVolume )
+  SetAtlasVolume(const std::string & atlasVolume)
   {
     this->m_atlasVolume = atlasVolume;
   }
 
   void
-  SetAtlasLandmarks( const std::string & atlasLandmarks )
+  SetAtlasLandmarks(const std::string & atlasLandmarks)
   {
     this->m_atlasLandmarks = atlasLandmarks;
   }
 
   void
-  SetAtlasLandmarkWeights( const std::string & atlasLandmarkWeights )
+  SetAtlasLandmarkWeights(const std::string & atlasLandmarkWeights)
   {
     this->m_atlasLandmarkWeights = atlasLandmarkWeights;
   }
 
   void
-  SetInputTemplateModel( std::string inputTemplateModel )
+  SetInputTemplateModel(std::string inputTemplateModel)
   {
     this->m_inputTemplateModel = inputTemplateModel;
   }
 
   void
-  SetLLSModel( std::string llsModel )
+  SetLLSModel(std::string llsModel)
   {
     this->m_llsModel = llsModel;
   }
 
   void
-  SetInputVolume( std::string inputVolume )
+  SetInputVolume(std::string inputVolume)
   {
     this->m_inputVolume = inputVolume;
   }
 
   void
-  SetOutputVolume( std::string outputVolume )
+  SetOutputVolume(std::string outputVolume)
   {
     this->m_outputVolume = outputVolume;
   }
 
   void
-  SetOutputResampledVolume( std::string outputResampledVolume )
+  SetOutputResampledVolume(std::string outputResampledVolume)
   {
     this->m_outputResampledVolume = outputResampledVolume;
   }
 
   void
-  SetOutputTransform( std::string outputTransform )
+  SetOutputTransform(std::string outputTransform)
   {
     this->m_outputTransform = outputTransform;
   }
 
   void
-  SetOutputLandmarksInInputSpace( std::string outputLandmarksInInputSpace )
+  SetOutputLandmarksInInputSpace(std::string outputLandmarksInInputSpace)
   {
     this->m_outputLandmarksInInputSpace = outputLandmarksInInputSpace;
   }
 
   void
-  SetOutputLandmarksInACPCAlignedSpace( std::string outputLandmarksInACPCAlignedSpace )
+  SetOutputLandmarksInACPCAlignedSpace(std::string outputLandmarksInACPCAlignedSpace)
   {
     this->m_outputLandmarksInACPCAlignedSpace = outputLandmarksInACPCAlignedSpace;
   }
 
   void
-  SetOutputMRML( std::string outputMRML )
+  SetOutputMRML(std::string outputMRML)
   {
     this->m_outputMRML = outputMRML;
   }
 
   void
-  SetOutputVerificationScript( std::string outputVerificationScript )
+  SetOutputVerificationScript(std::string outputVerificationScript)
   {
     this->m_outputVerificationScript = outputVerificationScript;
   }
 
   void
-  SetOutputUntransformedClippedVolume( std::string outputUntransformedClippedVolume )
+  SetOutputUntransformedClippedVolume(std::string outputUntransformedClippedVolume)
   {
     this->m_outputUntransformedClippedVolume = outputUntransformedClippedVolume;
   }
 
   void
-  SetInputLandmarksEMSP( std::string inputLandmarksEMSP )
+  SetInputLandmarksEMSP(std::string inputLandmarksEMSP)
   {
     this->orig_lmks_filename = inputLandmarksEMSP;
   }
 
   void
-  SetWriteBranded2DImage( std::string writeBranded2DImage )
+  SetWriteBranded2DImage(std::string writeBranded2DImage)
   {
     this->m_writeBranded2DImage = writeBranded2DImage;
   }
 
   void
-  SetBackgroundFillValueString( std::string backgroundFillValueString )
+  SetBackgroundFillValueString(std::string backgroundFillValueString)
   {
     this->m_backgroundFillValueString = backgroundFillValueString;
   }
 
   void
-  SetInterpolationMode( std::string interpolationMode )
+  SetInterpolationMode(std::string interpolationMode)
   {
     this->m_interpolationMode = interpolationMode;
   }
 
   void
-  SetRescaleIntensitiesOutputRange( std::vector< int > rescaleIntensitiesOutputRange )
+  SetRescaleIntensitiesOutputRange(std::vector<int> rescaleIntensitiesOutputRange)
   {
     this->m_rescaleIntensitiesOutputRange = rescaleIntensitiesOutputRange;
   }
 
 
   void
-  SetForce_orig_lmk_ACPointRAS( std::vector< float > forceACPointRAS )
+  SetForce_orig_lmk_ACPointRAS(std::vector<float> forceACPointRAS)
   {
-    this->m_force_orig_lmk_ACPointLPS = RAS2LPS( forceACPointRAS, "AC" );
+    this->m_force_orig_lmk_ACPointLPS = RAS2LPS(forceACPointRAS, "AC");
   }
 
   void
-  SetForce_orig_lmk_PCPointRAS( std::vector< float > forcePCPointRAS )
+  SetForce_orig_lmk_PCPointRAS(std::vector<float> forcePCPointRAS)
   {
-    this->m_force_orig_lmk_PCPointLPS = RAS2LPS( forcePCPointRAS, "PC" );
+    this->m_force_orig_lmk_PCPointLPS = RAS2LPS(forcePCPointRAS, "PC");
   }
 
   void
-  SetForce_with_lmk_VN4PointRAS( std::vector< float > forceVN4PointRAS )
+  SetForce_with_lmk_VN4PointRAS(std::vector<float> forceVN4PointRAS)
   {
-    this->m_force_orig_lmk_VN4PointLPS = RAS2LPS( forceVN4PointRAS, "VN4" );
+    this->m_force_orig_lmk_VN4PointLPS = RAS2LPS(forceVN4PointRAS, "VN4");
   }
 
   void
-  SetForce_with_lmk_RPPointRAS( std::vector< float > forceRPPointRAS )
+  SetForce_with_lmk_RPPointRAS(std::vector<float> forceRPPointRAS)
   {
-    this->m_force_orig_lmk_RPPointLPS = RAS2LPS( forceRPPointRAS, "RP" );
+    this->m_force_orig_lmk_RPPointLPS = RAS2LPS(forceRPPointRAS, "RP");
   }
 
   void
-  SetResultsDir( std::string resultsDir )
+  SetResultsDir(std::string resultsDir)
   {
     this->m_resultsDir = resultsDir;
   }
 
   const LandmarksMapType &
-  GetOutputLandmarksInInputSpace( void )
+  GetOutputLandmarksInInputSpace(void)
   {
     return this->m_outputLandmarksInInputSpaceMap;
   }
 
   const LandmarksMapType &
-  GetOutputLandmarksInACPCAlignedSpace( void )
+  GetOutputLandmarksInACPCAlignedSpace(void)
   {
     return this->m_outputLandmarksInACPCAlignedSpaceMap;
   }
 
   bool
-  Compute( void );
+  Compute(void);
 
 private:
-  static std::vector< float > &
-  RAS2LPS( std::vector< float > & RASlmk, std::string name )
+  static std::vector<float> &
+  RAS2LPS(std::vector<float> & RASlmk, std::string name)
   {
-    if ( !RASlmk.empty() )
+    if (!RASlmk.empty())
     {
       // If not empty, then only size 3 is allowed, and must negate first two elements.
-      if ( RASlmk.size() != 3 )
+      if (RASlmk.size() != 3)
       {
         std::cerr << "Forced landmark requires 3 dimensions, " << RASlmk.size() << " provided for " << name << ". ";
-        for ( const auto e : RASlmk )
+        for (const auto e : RASlmk)
         {
           std::cerr << e << ", ";
         }
         std::cerr << std::endl;
         RASlmk.clear();
-        exit( -1 );
+        exit(-1);
       }
       RASlmk[0] *= -1.0f;
       RASlmk[1] *= -1.0f;
@@ -350,7 +350,7 @@ private:
     return RASlmk;
   }
   static ImagePointType
-  localFindCenterHeadFunc( ImageType::ConstPointer img );
+  localFindCenterHeadFunc(ImageType::ConstPointer img);
 
   int          m_houghEyeDetectorMode;      // 1
   unsigned int m_mspQualityLevel;           // 2
@@ -390,12 +390,12 @@ private:
   std::string m_atlasLandmarks;
   std::string m_atlasLandmarkWeights;
 
-  std::vector< int > m_rescaleIntensitiesOutputRange; // default = [40,4000]
+  std::vector<int> m_rescaleIntensitiesOutputRange; // default = [40,4000]
 
-  std::vector< float > m_force_orig_lmk_ACPointLPS;  // default = 0.
-  std::vector< float > m_force_orig_lmk_PCPointLPS;  // default = 0.
-  std::vector< float > m_force_orig_lmk_VN4PointLPS; // default = 0.
-  std::vector< float > m_force_orig_lmk_RPPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_ACPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_PCPointLPS;  // default = 0.
+  std::vector<float> m_force_orig_lmk_VN4PointLPS; // default = 0.
+  std::vector<float> m_force_orig_lmk_RPPointLPS;  // default = 0.
 
   std::string m_resultsDir; // default = "./"
 

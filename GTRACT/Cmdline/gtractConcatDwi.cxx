@@ -58,17 +58,17 @@
 #include "gtractConcatDwiCLP.h"
 #include "DWIConvertLib.h"
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   const int                                             numberOfImages = inputVolume.size();
   bool                                                  debug = true;
-  if ( debug )
+  if (debug)
   {
     std::cout << "=====================================================" << std::endl;
-    for ( int i = 0; i < numberOfImages; i++ )
+    for (int i = 0; i < numberOfImages; i++)
     {
       std::cout << "Input Volume:                      " << inputVolume[i] << std::endl;
     }
@@ -77,23 +77,23 @@ main( int argc, char * argv[] )
   }
 
   bool violated = false;
-  if ( numberOfImages == 0 )
+  if (numberOfImages == 0)
   {
     violated = true;
     std::cout << " at least one --inputVolume is required! " << std::endl;
   }
-  if ( outputVolume.size() == 0 )
+  if (outputVolume.size() == 0)
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if ( violated )
+  if (violated)
   {
     return EXIT_FAILURE;
   }
 
-  std::vector< std::string > inputVolumeNrrd;
-  if ( convertInputVolumeVectorToNrrdOrNifti( detectOuputVolumeType( outputVolume ), inputVolume, inputVolumeNrrd ) )
+  std::vector<std::string> inputVolumeNrrd;
+  if (convertInputVolumeVectorToNrrdOrNifti(detectOuputVolumeType(outputVolume), inputVolume, inputVolumeNrrd))
   {
     inputVolume = inputVolumeNrrd;
   }
@@ -104,116 +104,115 @@ main( int argc, char * argv[] )
   }
 
   using PixelType = signed short;
-  using NrrdImageType = itk::VectorImage< PixelType, 3 >;
-  using IndexImageType = itk::Image< PixelType, 3 >;
+  using NrrdImageType = itk::VectorImage<PixelType, 3>;
+  using IndexImageType = itk::Image<PixelType, 3>;
 
-  using FileReaderType = itk::ImageFileReader< NrrdImageType, itk::DefaultConvertPixelTraits< PixelType > >;
+  using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
 
   DWIMetaDataDictionaryValidator                    currentMetaDataValidator;
   DWIMetaDataDictionaryValidator                    resultMetaDataValidator;
   DWIMetaDataDictionaryValidator::GradientTableType resultGradTable;
 
-  using VectorImageFilterType = itk::ComposeImageFilter< IndexImageType >;
+  using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
 
   int    vectorIndex = 0;
   double baselineBvalue = 0.0;
 
   NrrdImageType::PointType firstOrigin;
-  for ( unsigned i = 0; i < inputVolume.size(); i++ )
+  for (unsigned i = 0; i < inputVolume.size(); i++)
   {
     std::cout << "Reading volume:              " << inputVolume[i] << std::endl;
     FileReaderType::Pointer imageReader = FileReaderType::New();
-    imageReader->SetFileName( inputVolume[i] );
+    imageReader->SetFileName(inputVolume[i]);
     try
     {
       imageReader->Update();
     }
-    catch ( itk::ExceptionObject & ex )
+    catch (itk::ExceptionObject & ex)
     {
       std::cout << ex << std::endl << std::flush;
       throw;
     }
 
-    currentMetaDataValidator.SetMetaDataDictionary( imageReader->GetOutput()->GetMetaDataDictionary() );
+    currentMetaDataValidator.SetMetaDataDictionary(imageReader->GetOutput()->GetMetaDataDictionary());
     NrrdImageType::PointType currentOrigin = imageReader->GetOutput()->GetOrigin();
-    if ( i == 0 )
+    if (i == 0)
     {
       firstOrigin = currentOrigin;
 
-      resultMetaDataValidator.SetMetaDataDictionary( imageReader->GetOutput()->GetMetaDataDictionary() );
+      resultMetaDataValidator.SetMetaDataDictionary(imageReader->GetOutput()->GetMetaDataDictionary());
       resultMetaDataValidator.DeleteGradientTable();
       baselineBvalue = resultMetaDataValidator.GetBValue();
     }
     else
     {
-      double distance = std::sqrt( firstOrigin.SquaredEuclideanDistanceTo( currentOrigin ) );
-      if ( !ignoreOrigins && distance > 1.0E-3 )
+      double distance = std::sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin));
+      if (!ignoreOrigins && distance > 1.0E-3)
       {
         std::cerr << "Origins differ " << firstOrigin << " " << currentOrigin << std::endl;
         return EXIT_FAILURE;
       }
-      else if ( distance > 1.0E-6 )
+      else if (distance > 1.0E-6)
       {
         // if there is a small difference make them the same
-        imageReader->GetOutput()->SetOrigin( firstOrigin );
+        imageReader->GetOutput()->SetOrigin(firstOrigin);
       }
     }
     DWIMetaDataDictionaryValidator::GradientTableType currGradTable = currentMetaDataValidator.GetGradientTable();
     double                                            currentBvalue = currentMetaDataValidator.GetBValue();
     double                                            bValueScale = currentBvalue / baselineBvalue;
-    for ( unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); j++ )
+    for (unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); j++)
     {
-      using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType, IndexImageType >;
+      using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
       using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
       VectorSelectFilterPointer selectIndexImageFilter = VectorSelectFilterType::New();
-      selectIndexImageFilter->SetIndex( j );
-      selectIndexImageFilter->SetInput( imageReader->GetOutput() );
+      selectIndexImageFilter->SetIndex(j);
+      selectIndexImageFilter->SetInput(imageReader->GetOutput());
       try
       {
         selectIndexImageFilter->Update();
       }
-      catch ( itk::ExceptionObject & e )
+      catch (itk::ExceptionObject & e)
       {
         std::cout << e << std::endl;
       }
-      indexImageToVectorImageFilter->SetInput( vectorIndex, selectIndexImageFilter->GetOutput() );
+      indexImageToVectorImageFilter->SetInput(vectorIndex, selectIndexImageFilter->GetOutput());
 
       // Scale the current gradient and put in the result gradient table
       DWIMetaDataDictionaryValidator::Double3x1ArrayType scaledGradient;
       scaledGradient[0] = currGradTable[j][0] * bValueScale;
       scaledGradient[1] = currGradTable[j][1] * bValueScale;
       scaledGradient[2] = currGradTable[j][2] * bValueScale;
-      resultGradTable.push_back( scaledGradient );
+      resultGradTable.push_back(scaledGradient);
 
       vectorIndex++;
     }
   }
-  resultMetaDataValidator.SetGradientTable( resultGradTable );
+  resultMetaDataValidator.SetGradientTable(resultGradTable);
 
   try
   {
     indexImageToVectorImageFilter->Update();
-    indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary(
-      resultMetaDataValidator.GetMetaDataDictionary() );
+    indexImageToVectorImageFilter->GetOutput()->SetMetaDataDictionary(resultMetaDataValidator.GetMetaDataDictionary());
   }
-  catch ( itk::ExceptionObject & ex )
+  catch (itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl << std::flush;
     throw;
   }
 
-  using WriterType = itk::ImageFileWriter< NrrdImageType >;
+  using WriterType = itk::ImageFileWriter<NrrdImageType>;
   WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
-  nrrdWriter->SetInput( indexImageToVectorImageFilter->GetOutput() );
-  nrrdWriter->SetFileName( outputVolume );
+  nrrdWriter->SetInput(indexImageToVectorImageFilter->GetOutput());
+  nrrdWriter->SetFileName(outputVolume);
   try
   {
     nrrdWriter->Update();
   }
-  catch ( itk::ExceptionObject & e )
+  catch (itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }

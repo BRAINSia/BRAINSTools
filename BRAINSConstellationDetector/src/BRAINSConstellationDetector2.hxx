@@ -38,8 +38,8 @@ namespace itk
 {
 
 
-template < typename TInputImage, typename TOutputImage >
-BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDetector2()
+template <typename TInputImage, typename TOutputImage>
+BRAINSConstellationDetector2<TInputImage, TOutputImage>::BRAINSConstellationDetector2()
 {
   /** Essential Parameters */
   // Inputs
@@ -51,8 +51,8 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
   this->m_CutOutHeadInOutputVolume = false;
   this->m_RescaleIntensities = false;
   this->m_TrimRescaledIntensities = 4.4172;
-  this->m_RescaleIntensitiesOutputRange.push_back( 40 );
-  this->m_RescaleIntensitiesOutputRange.push_back( 4000 );
+  this->m_RescaleIntensitiesOutputRange.push_back(40);
+  this->m_RescaleIntensitiesOutputRange.push_back(4000);
   this->m_BackgroundFillValueString = "0";
   this->m_InterpolationMode = "Linear";
 
@@ -64,7 +64,7 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
   this->m_LlsMatrices.clear();
   this->m_LlsMeans.clear();
 
-  this->m_ACMean.Fill( -123 );
+  this->m_ACMean.Fill(-123);
   this->m_SearchRadii.clear();
 
   // Outputs
@@ -105,9 +105,9 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::BRAINSConstellationDe
   this->m_atlasLandmarkWeights = "";
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
+BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
 {
   // file pointer for opening the setup file
   // /////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,43 +116,43 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   short BackgroundFillValue;
-  if ( this->m_BackgroundFillValueString == std::string( "BIGNEG" ) )
+  if (this->m_BackgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;
   }
   else
   {
-    BackgroundFillValue = std::stoi( this->m_BackgroundFillValueString.c_str() );
+    BackgroundFillValue = std::stoi(this->m_BackgroundFillValueString.c_str());
   }
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, and initialize some variables
   landmarksConstellationModelIO myModel;
-  myModel.ReadModelFile( this->m_InputTemplateModel );
+  myModel.ReadModelFile(this->m_InputTemplateModel);
 
 
-  if ( LMC::globalverboseFlag )
+  if (LMC::globalverboseFlag)
   {
     std::cout << "Using Model File: " << this->m_InputTemplateModel << std::endl;
     myModel.PrintHeaderInfo();
   }
 
   // Override some landmarks by user
-  vnl_vector< double > templateRadius; // in units of mm
-  templateRadius.set_size( 4 );
-  templateRadius[0] = ( this->m_RadiusMPJ <= 0 ) ? myModel.GetRadius( "RP" ) : this->m_RadiusMPJ;
+  vnl_vector<double> templateRadius; // in units of mm
+  templateRadius.set_size(4);
+  templateRadius[0] = (this->m_RadiusMPJ <= 0) ? myModel.GetRadius("RP") : this->m_RadiusMPJ;
 
-  templateRadius[1] = ( this->m_RadiusAC <= 0 ) ? myModel.GetRadius( "AC" ) : this->m_RadiusAC;
-  templateRadius[2] = ( this->m_RadiusPC <= 0 ) ? myModel.GetRadius( "PC" ) : this->m_RadiusPC;
-  templateRadius[3] = ( this->m_RadiusVN4 <= 0 ) ? myModel.GetRadius( "VN4" ) : this->m_RadiusVN4;
-  myModel.SetRadius( "RP", templateRadius[0] );
-  myModel.SetRadius( "AC", templateRadius[1] );
-  myModel.SetRadius( "PC", templateRadius[2] );
-  myModel.SetRadius( "VN4", templateRadius[3] );
+  templateRadius[1] = (this->m_RadiusAC <= 0) ? myModel.GetRadius("AC") : this->m_RadiusAC;
+  templateRadius[2] = (this->m_RadiusPC <= 0) ? myModel.GetRadius("PC") : this->m_RadiusPC;
+  templateRadius[3] = (this->m_RadiusVN4 <= 0) ? myModel.GetRadius("VN4") : this->m_RadiusVN4;
+  myModel.SetRadius("RP", templateRadius[0]);
+  myModel.SetRadius("AC", templateRadius[1]);
+  myModel.SetRadius("PC", templateRadius[2]);
+  myModel.SetRadius("VN4", templateRadius[3]);
 
   SImageType::Pointer copyOfOriginalInputImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
-    duplicator->SetInputImage( this->m_OriginalInputImage );
+    duplicator->SetInputImage(this->m_OriginalInputImage);
     duplicator->Update();
     copyOfOriginalInputImage = duplicator->GetOutput();
   }
@@ -161,15 +161,15 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   //   RP------->PC
   // //////////////////////////////////////////////////////////////////////////
 
-  if ( this->m_RescaleIntensities == true )
+  if (this->m_RescaleIntensities == true)
   {
-    itk::StatisticsImageFilter< SImageType >::Pointer stats = itk::StatisticsImageFilter< SImageType >::New();
-    stats->SetInput( copyOfOriginalInputImage );
+    itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+    stats->SetInput(copyOfOriginalInputImage);
     stats->Update();
-    SImageType::PixelType minPixel( stats->GetMinimum() );
-    SImageType::PixelType maxPixel( stats->GetMaximum() );
+    SImageType::PixelType minPixel(stats->GetMinimum());
+    SImageType::PixelType maxPixel(stats->GetMaximum());
 
-    if ( this->m_TrimRescaledIntensities > 0.0 )
+    if (this->m_TrimRescaledIntensities > 0.0)
     {
       // FUTUREINFO:  Ali Consider updating this
       //  REFACTOR: a histogram would be traditional here, but seem over-the-top;
@@ -178,8 +178,8 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
       // Look at the setLowHigh function in landmarksConstellationCommon.h as a
       // possible replacement
 
-      const double meanOrig( stats->GetMean() );
-      const double sigmaOrig( stats->GetSigma() );
+      const double meanOrig(stats->GetMean());
+      const double sigmaOrig(stats->GetSigma());
 
       // FUTUREINFO:  Ali Consider updating this
       // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
@@ -195,21 +195,21 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
       // deviations of normal.
       // Naturally, the constant should default at the command line, ...
 
-      const double variationBound( ( maxPixel - meanOrig ) / sigmaOrig );
-      const double trimBound( variationBound - this->m_TrimRescaledIntensities );
-      if ( trimBound > 0.0 )
+      const double variationBound((maxPixel - meanOrig) / sigmaOrig);
+      const double trimBound(variationBound - this->m_TrimRescaledIntensities);
+      if (trimBound > 0.0)
       {
-        maxPixel = static_cast< SImageType::PixelType >( maxPixel - trimBound * sigmaOrig );
+        maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
       }
     }
 
-    itk::IntensityWindowingImageFilter< SImageType, SImageType >::Pointer remapIntensityFilter =
-      itk::IntensityWindowingImageFilter< SImageType, SImageType >::New();
-    remapIntensityFilter->SetInput( copyOfOriginalInputImage );
-    remapIntensityFilter->SetOutputMaximum( this->m_RescaleIntensitiesOutputRange[1] );
-    remapIntensityFilter->SetOutputMinimum( this->m_RescaleIntensitiesOutputRange[0] );
-    remapIntensityFilter->SetWindowMinimum( minPixel );
-    remapIntensityFilter->SetWindowMaximum( maxPixel );
+    itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
+      itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
+    remapIntensityFilter->SetInput(copyOfOriginalInputImage);
+    remapIntensityFilter->SetOutputMaximum(this->m_RescaleIntensitiesOutputRange[1]);
+    remapIntensityFilter->SetOutputMinimum(this->m_RescaleIntensitiesOutputRange[0]);
+    remapIntensityFilter->SetWindowMinimum(minPixel);
+    remapIntensityFilter->SetWindowMaximum(maxPixel);
     remapIntensityFilter->Update();
 
     this->m_CleanedIntensityOriginalInputImage = remapIntensityFilter->GetOutput();
@@ -220,38 +220,38 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
   }
 
 
-  landmarksConstellationDetector myDetector( m_forced_orig_lmks );
+  landmarksConstellationDetector myDetector(m_forced_orig_lmks);
   {
     // a little abuse of the eyeFixed_img_duplicator here
     LandmarkIO::DuplicatorType::Pointer eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();
     // Use HoughEyeAlignedImage + HoughTransform as starting point.
-    eyeFixed_img_duplicator->SetInputImage( this->GeteyeFixed_img().GetPointer() );
+    eyeFixed_img_duplicator->SetInputImage(this->GeteyeFixed_img().GetPointer());
     eyeFixed_img_duplicator->Update();
     // The detector will use the output image after the Hough eye detector
-    myDetector.SeteyeFixed_img( eyeFixed_img_duplicator->GetOutput() );
+    myDetector.SeteyeFixed_img(eyeFixed_img_duplicator->GetOutput());
   }
 
 
-  myDetector.SetInputTemplateModel( myModel );
-  myDetector.SetLlsMatrices( this->m_LlsMatrices );
-  myDetector.SetLlsMeans( this->m_LlsMeans );
-  myDetector.SetSearchRadii( this->m_SearchRadii );
-  myDetector.SetResultsDir( this->m_ResultsDir );
-  myDetector.SetTemplateRadius( myModel.GetRadii() );
-  myDetector.SetMSPQualityLevel( this->m_MspQualityLevel );
-  myDetector.SetHoughEyeFailure( this->m_HoughEyeFailure );
+  myDetector.SetInputTemplateModel(myModel);
+  myDetector.SetLlsMatrices(this->m_LlsMatrices);
+  myDetector.SetLlsMeans(this->m_LlsMeans);
+  myDetector.SetSearchRadii(this->m_SearchRadii);
+  myDetector.SetResultsDir(this->m_ResultsDir);
+  myDetector.SetTemplateRadius(myModel.GetRadii());
+  myDetector.SetMSPQualityLevel(this->m_MspQualityLevel);
+  myDetector.SetHoughEyeFailure(this->m_HoughEyeFailure);
 
 
-  myDetector.Setorig2eyeFixed_img_tfm( this->m_orig2eyeFixed_img_tfm );
+  myDetector.Setorig2eyeFixed_img_tfm(this->m_orig2eyeFixed_img_tfm);
 
-  myDetector.SetatlasVolume( this->GetatlasVolume() );
-  myDetector.SetatlasLandmarks( this->GetatlasLandmarks() );
-  myDetector.SetatlasLandmarkWeights( this->GetatlasLandmarkWeights() );
+  myDetector.SetatlasVolume(this->GetatlasVolume());
+  myDetector.SetatlasLandmarks(this->GetatlasLandmarks());
+  myDetector.SetatlasLandmarkWeights(this->GetatlasLandmarkWeights());
 
-  myDetector.Compute( this->m_CleanedIntensityOriginalInputImage );
+  myDetector.Compute(this->m_CleanedIntensityOriginalInputImage);
   this->m_OrigToACPCVersorTransform = myDetector.GetImageOrigToACPCVersorTransform();
 
-  if ( LMC::globalverboseFlag )
+  if (LMC::globalverboseFlag)
   {
     std::cout << "VersorRotation: " << this->m_OrigToACPCVersorTransform->GetMatrix() << std::endl;
     std::cout << "itkVersorRigid3DTransform Parameters: " << this->m_OrigToACPCVersorTransform->GetParameters()
@@ -276,71 +276,71 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
     std::cout << "itkRigid3DTransform: \n" << this->m_OrigToACPCVersorTransform << std::endl;
   }
 
-  itk::PrepareOutputImages( this->m_OutputResampledImage,
-                            this->m_OutputImage,
-                            this->m_OutputUntransformedClippedVolume,
-                            this->m_CleanedIntensityOriginalInputImage.GetPointer(), // Input RO
-                            this->m_OrigToACPCVersorTransform.GetPointer(),          // Input RO
-                            this->m_AcLowerBound,                                    // Input RO
-                            BackgroundFillValue,                                     // Input RO
-                            this->m_InterpolationMode,                               // Input RO
-                            this->m_CutOutHeadInOutputVolume,                        // Input RO
-                            this->m_OtsuPercentileThreshold                          // Input RO
+  itk::PrepareOutputImages(this->m_OutputResampledImage,
+                           this->m_OutputImage,
+                           this->m_OutputUntransformedClippedVolume,
+                           this->m_CleanedIntensityOriginalInputImage.GetPointer(), // Input RO
+                           this->m_OrigToACPCVersorTransform.GetPointer(),          // Input RO
+                           this->m_AcLowerBound,                                    // Input RO
+                           BackgroundFillValue,                                     // Input RO
+                           this->m_InterpolationMode,                               // Input RO
+                           this->m_CutOutHeadInOutputVolume,                        // Input RO
+                           this->m_OtsuPercentileThreshold                          // Input RO
   );
 
 
-  if ( globalImagedebugLevel > 3 )
+  if (globalImagedebugLevel > 3)
   {
     const SImageType::Pointer TaggedOriginalImage =
-      myDetector.GetTaggedImage( this->m_CleanedIntensityOriginalInputImage );
-    itkUtil::WriteImage< SImageType >( TaggedOriginalImage, this->m_ResultsDir + "/TAGGED_POINTS.nii.gz" );
+      myDetector.GetTaggedImage(this->m_CleanedIntensityOriginalInputImage);
+    itkUtil::WriteImage<SImageType>(TaggedOriginalImage, this->m_ResultsDir + "/TAGGED_POINTS.nii.gz");
     {
       SImageType::Pointer isoTaggedImage =
-        TransformResample< SImageType, SImageType >( TaggedOriginalImage.GetPointer(),
-                                                     MakeIsoTropicReferenceImage().GetPointer(),
-                                                     BackgroundFillValue,
-                                                     GetInterpolatorFromString< SImageType >( "Linear" ).GetPointer(),
-                                                     this->m_OrigToACPCVersorTransform.GetPointer() );
-      itkUtil::WriteImage< SImageType >( isoTaggedImage, this->m_ResultsDir + "/ISO_Lmk_MSP.nii.gz" );
+        TransformResample<SImageType, SImageType>(TaggedOriginalImage.GetPointer(),
+                                                  MakeIsoTropicReferenceImage().GetPointer(),
+                                                  BackgroundFillValue,
+                                                  GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                  this->m_OrigToACPCVersorTransform.GetPointer());
+      itkUtil::WriteImage<SImageType>(isoTaggedImage, this->m_ResultsDir + "/ISO_Lmk_MSP.nii.gz");
     }
     {
       SImageType::Pointer VersorisoTaggedImage =
-        TransformResample< SImageType, SImageType >( TaggedOriginalImage.GetPointer(),
-                                                     MakeIsoTropicReferenceImage().GetPointer(),
-                                                     BackgroundFillValue,
-                                                     GetInterpolatorFromString< SImageType >( "Linear" ).GetPointer(),
-                                                     this->m_OrigToACPCVersorTransform.GetPointer() );
-      itkUtil::WriteImage< SImageType >( VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz" );
+        TransformResample<SImageType, SImageType>(TaggedOriginalImage.GetPointer(),
+                                                  MakeIsoTropicReferenceImage().GetPointer(),
+                                                  BackgroundFillValue,
+                                                  GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                  this->m_OrigToACPCVersorTransform.GetPointer());
+      itkUtil::WriteImage<SImageType>(VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz");
     }
     {
       RigidTransformType::Pointer orig2msp_img_tfm = myDetector.Getorig2msp_img_tfm();
       SImageType::Pointer         msp_img =
-        TransformResample< SImageType, SImageType >( TaggedOriginalImage.GetPointer(),
-                                                     MakeIsoTropicReferenceImage().GetPointer(),
-                                                     BackgroundFillValue,
-                                                     GetInterpolatorFromString< SImageType >( "Linear" ).GetPointer(),
-                                                     orig2msp_img_tfm.GetPointer() );
-      itkUtil::WriteImage< SImageType >( msp_img, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz" );
+        TransformResample<SImageType, SImageType>(TaggedOriginalImage.GetPointer(),
+                                                  MakeIsoTropicReferenceImage().GetPointer(),
+                                                  BackgroundFillValue,
+                                                  GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                  orig2msp_img_tfm.GetPointer());
+      itkUtil::WriteImage<SImageType>(msp_img, this->m_ResultsDir + "/RigidMSPImage_Lmk_MSP.nii.gz");
     }
   }
 
-  itk::ApplyInverseOfTransformToLandmarks( this->m_OrigToACPCVersorTransform.GetPointer(), // Input RO
-                                           myDetector.Getorig_lmks_updated(),
-                                           this->m_AlignedPoints );
+  itk::ApplyInverseOfTransformToLandmarks(this->m_OrigToACPCVersorTransform.GetPointer(), // Input RO
+                                          myDetector.Getorig_lmks_updated(),
+                                          this->m_AlignedPoints);
 
   // Following is a mechanism to force BCD report failure if
   // transformed LE and RE are not in expected ranges with respect to AC point (0,0,0).
-  std::vector< double > eyes_LR_range( 2 );
+  std::vector<double> eyes_LR_range(2);
   eyes_LR_range[0] = 15.0;
   eyes_LR_range[1] = 45.0;
 
-  if ( this->m_AlignedPoints["LE"][0] < eyes_LR_range[0] || this->m_AlignedPoints["LE"][0] > eyes_LR_range[1] ||
-       this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1] ||
-       this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] > 0 )
+  if (this->m_AlignedPoints["LE"][0] < eyes_LR_range[0] || this->m_AlignedPoints["LE"][0] > eyes_LR_range[1] ||
+      this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1] ||
+      this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] > 0)
   {
-    const std::string EMSP_Fiducial_file_name( "EMSP.fcsv" );
-    std::stringstream failureMessageStream( "" );
-    if ( this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] > 0 )
+    const std::string EMSP_Fiducial_file_name("EMSP.fcsv");
+    std::stringstream failureMessageStream("");
+    if (this->m_AlignedPoints["LE"][2] > 0 || this->m_AlignedPoints["RE"][2] > 0)
     {
       failureMessageStream << "Eyes are normally lower than AC point in Superior-Inferior direction "
                            << "in MSP aligned space." << std::endl;
@@ -353,33 +353,33 @@ BRAINSConstellationDetector2< TInputImage, TOutputImage >::GenerateData()
                            << "LE[0] = " << this->m_AlignedPoints["LE"][0]
                            << ", RE[0] = " << this->m_AlignedPoints["RE"][0] << std::endl;
     }
-    WriteManualFixFiles( EMSP_Fiducial_file_name,
-                         this->m_OutputResampledImage.GetPointer(),
-                         this->m_ResultsDir,
-                         this->m_AlignedPoints,
-                         failureMessageStream.str(),
-                         true );
+    WriteManualFixFiles(EMSP_Fiducial_file_name,
+                        this->m_OutputResampledImage.GetPointer(),
+                        this->m_ResultsDir,
+                        this->m_AlignedPoints,
+                        failureMessageStream.str(),
+                        true);
   }
 
-  if ( this->m_WriteBranded2DImage.compare( "" ) != 0 )
+  if (this->m_WriteBranded2DImage.compare("") != 0)
   {
-    MakeBranded2DImage( this->m_OutputResampledImage.GetPointer(),
-                        myDetector,
-                        this->m_AlignedPoints["RP"],
-                        this->m_AlignedPoints["AC"],
-                        this->m_AlignedPoints["PC"],
-                        this->m_AlignedPoints["VN4"],
-                        this->m_AlignedPoints["CM"],
-                        this->m_WriteBranded2DImage );
+    MakeBranded2DImage(this->m_OutputResampledImage.GetPointer(),
+                       myDetector,
+                       this->m_AlignedPoints["RP"],
+                       this->m_AlignedPoints["AC"],
+                       this->m_AlignedPoints["PC"],
+                       this->m_AlignedPoints["VN4"],
+                       this->m_AlignedPoints["CM"],
+                       this->m_WriteBranded2DImage);
   }
-  this->GraftOutput( this->m_OutputImage );
+  this->GraftOutput(this->m_OutputImage);
 }
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 void
-BRAINSConstellationDetector2< TInputImage, TOutputImage >::PrintSelf( std::ostream & os, Indent indent ) const
+BRAINSConstellationDetector2<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, Indent indent) const
 {
-  Superclass::PrintSelf( os, indent );
+  Superclass::PrintSelf(os, indent);
 }
 
 } // namespace itk

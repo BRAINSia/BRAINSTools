@@ -67,24 +67,24 @@ namespace itk
 /** \class DtiFastMarchingTrackingFilter
  */
 
-template < typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType >
+template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 class GTRACT_COMMON_EXPORT DtiFastMarchingTrackingFilter
-  : public itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >
+  : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( DtiFastMarchingTrackingFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
 
   /** Standard class typdedefs. */
   using Self = DtiFastMarchingTrackingFilter;
-  using Superclass = itk::DtiTrackingFilterBase< TTensorImageType, TAnisotropyImageType, TMaskImageType >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( DtiFastMarchingTrackingFilter, itk::DtiTrackingFilterBase );
+  itkTypeMacro(DtiFastMarchingTrackingFilter, itk::DtiTrackingFilterBase);
 
   /** Typedef support of input Cost Image Type */
   using CostImageType = TCostImageType;
@@ -97,7 +97,7 @@ public:
   using CostImagePixelType = typename CostImageType::PixelType;
   using CostImageDirectionType = typename CostImageType::DirectionType;
 
-  using CostIPType = typename itk::LinearInterpolateImageFunction< CostImageType, double >;
+  using CostIPType = typename itk::LinearInterpolateImageFunction<CostImageType, double>;
   using ContinuousIndexType = typename CostIPType::ContinuousIndexType;
 
   // Setup the CostFunction
@@ -110,23 +110,23 @@ public:
   using ScalesType = OptimizerType::ScalesType;
   using DerivativeType = OptimizerType::DerivativeType;
 
-  using StartPointsListType = typename std::list< ContinuousIndexType >;
+  using StartPointsListType = typename std::list<ContinuousIndexType>;
 
-  itkSetObjectMacro( CostFN, CostFunctionType );
-  itkGetConstObjectMacro( CostFN, CostFunctionType );
-  itkSetObjectMacro( CostImage, CostImageType );
-  itkGetConstObjectMacro( CostImage, CostImageType );
+  itkSetObjectMacro(CostFN, CostFunctionType);
+  itkGetConstObjectMacro(CostFN, CostFunctionType);
+  itkSetObjectMacro(CostImage, CostImageType);
+  itkGetConstObjectMacro(CostImage, CostImageType);
 
-  itkSetMacro( MaxStepSize, double );              // for Gradient Descent with
-                                                   // default set to 1.0
-  itkSetMacro( MinStepSize, double );              // for Gradient Descent with
-                                                   // default set to 0.01
-  itkSetMacro( NumberOfIterations, unsigned long ) // for Gradient Descent with
-                                                   // default set to 150;
+  itkSetMacro(MaxStepSize, double);              // for Gradient Descent with
+                                                 // default set to 1.0
+  itkSetMacro(MinStepSize, double);              // for Gradient Descent with
+                                                 // default set to 0.01
+  itkSetMacro(NumberOfIterations, unsigned long) // for Gradient Descent with
+                                                 // default set to 150;
 
     /* For Cost Funtion neighborhood iterator; Size 1 default with smaller size
       for partial voxel */
-    itkSetMacro( CostFunctionStepSize, float );
+    itkSetMacro(CostFunctionStepSize, float);
 
   void
   Update(); // InitializeSeeds() and starts data generation
@@ -137,13 +137,13 @@ protected:
 
 private:
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   InitializeSeeds();
 
   void
-  GradientDescent( ContinuousIndexType & index );
+  GradientDescent(ContinuousIndexType & index);
 
   // Input and Output Image
   CostImagePointer    m_CostImage;

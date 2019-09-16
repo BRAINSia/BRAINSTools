@@ -44,26 +44,26 @@
 #include <BRAINSCommonLib.h>
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   constexpr unsigned int Dimension = 3;
   using ScalarPixelType = signed short;
-  using ScalarImageType = itk::Image< ScalarPixelType, Dimension >;
+  using ScalarImageType = itk::Image<ScalarPixelType, Dimension>;
 
   // Read the image defining the space for the inverse field
-  using ScalarReaderType = itk::ImageFileReader< ScalarImageType >;
+  using ScalarReaderType = itk::ImageFileReader<ScalarImageType>;
 
   ScalarReaderType::Pointer scalarReader = ScalarReaderType::New();
-  scalarReader->SetFileName( baseImage );
+  scalarReader->SetFileName(baseImage);
   try
   {
     scalarReader->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by scalar image reader" << std::endl;
     std::cerr << excp << std::endl;
@@ -72,19 +72,19 @@ main( int argc, char * argv[] )
 
   // Read the deformationfield field
   using VectorComponentType = float;
-  using VectorType = itk::Vector< VectorComponentType, Dimension >;
+  using VectorType = itk::Vector<VectorComponentType, Dimension>;
 
-  using DisplacementFieldType = itk::Image< VectorType, Dimension >;
+  using DisplacementFieldType = itk::Image<VectorType, Dimension>;
 
-  using VectorReaderType = itk::ImageFileReader< DisplacementFieldType >;
+  using VectorReaderType = itk::ImageFileReader<DisplacementFieldType>;
 
   VectorReaderType::Pointer vectorReader = VectorReaderType::New();
-  vectorReader->SetFileName( deformationImage );
+  vectorReader->SetFileName(deformationImage);
   try
   {
     vectorReader->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by vector image reader" << std::endl;
     std::cerr << excp << std::endl;
@@ -92,40 +92,40 @@ main( int argc, char * argv[] )
   }
 
   // Invert the deformationfield field
-  typedef itk::GtractInverseDisplacementFieldImageFilter< DisplacementFieldType, DisplacementFieldType > FilterType;
+  typedef itk::GtractInverseDisplacementFieldImageFilter<DisplacementFieldType, DisplacementFieldType> FilterType;
 
   FilterType::Pointer inverseFilter = FilterType::New();
-  inverseFilter->SetOutputSpacing( scalarReader->GetOutput()->GetSpacing() );
-  inverseFilter->SetOutputOrigin( scalarReader->GetOutput()->GetOrigin() );
+  inverseFilter->SetOutputSpacing(scalarReader->GetOutput()->GetSpacing());
+  inverseFilter->SetOutputOrigin(scalarReader->GetOutput()->GetOrigin());
   ScalarImageType::RegionType region = scalarReader->GetOutput()->GetLargestPossibleRegion();
 
-  inverseFilter->SetSize( region.GetSize() );
-  inverseFilter->SetInput( vectorReader->GetOutput() );
-  inverseFilter->SetSubsamplingFactor( subsamplingFactor );
+  inverseFilter->SetSize(region.GetSize());
+  inverseFilter->SetInput(vectorReader->GetOutput());
+  inverseFilter->SetSubsamplingFactor(subsamplingFactor);
 
   try
   {
     inverseFilter->UpdateLargestPossibleRegion();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown in Inverse filter" << std::endl;
     std::cerr << excp << std::endl;
   }
 
   // Write an image for regression testing
-  using WriterType = itk::ImageFileWriter< DisplacementFieldType >;
+  using WriterType = itk::ImageFileWriter<DisplacementFieldType>;
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  writer->SetInput( inverseFilter->GetOutput() );
-  writer->SetFileName( outputVolume );
+  writer->SetInput(inverseFilter->GetOutput());
+  writer->SetFileName(outputVolume);
 
   try
   {
     writer->Update();
   }
-  catch ( itk::ExceptionObject & excp )
+  catch (itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by writer" << std::endl;
     std::cerr << excp << std::endl;

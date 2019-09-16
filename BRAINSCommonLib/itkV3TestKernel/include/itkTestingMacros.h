@@ -19,12 +19,12 @@
 #define __itkTestingMacros_h
 
 // object's Class must be specified to build on sun studio
-#define EXERCISE_BASIC_OBJECT_METHODS( object, Class )                                                                 \
-  object->Print( std::cout );                                                                                          \
+#define EXERCISE_BASIC_OBJECT_METHODS(object, Class)                                                                   \
+  object->Print(std::cout);                                                                                            \
   std::cout << "Name of Class = " << object->GetNameOfClass() << std::endl;                                            \
   std::cout << "Name of Superclass = " << object->Class::Superclass::GetNameOfClass() << std::endl;
 
-#define TRY_EXPECT_EXCEPTION( command )                                                                                \
+#define TRY_EXPECT_EXCEPTION(command)                                                                                  \
   try                                                                                                                  \
   {                                                                                                                    \
     std::cout << "Trying " << #command << std::endl;                                                                   \
@@ -32,28 +32,28 @@
     std::cerr << "Failed to catch expected exception" << std::endl;                                                    \
     return EXIT_FAILURE;                                                                                               \
   }                                                                                                                    \
-  catch ( itk::ExceptionObject & excp )                                                                                \
+  catch (itk::ExceptionObject & excp)                                                                                  \
   {                                                                                                                    \
     std::cout << "Caught expected exception" << std::endl;                                                             \
     std::cout << excp << std::endl;                                                                                    \
   }
 
-#define TRY_EXPECT_NO_EXCEPTION( command )                                                                             \
+#define TRY_EXPECT_NO_EXCEPTION(command)                                                                               \
   try                                                                                                                  \
   {                                                                                                                    \
     std::cout << "Trying " << #command << std::endl;                                                                   \
     command;                                                                                                           \
   }                                                                                                                    \
-  catch ( itk::ExceptionObject & excp )                                                                                \
+  catch (itk::ExceptionObject & excp)                                                                                  \
   {                                                                                                                    \
     std::cerr << excp << std::endl;                                                                                    \
     return EXIT_FAILURE;                                                                                               \
   }
 
-#define TEST_EXPECT_TRUE( command )                                                                                    \
+#define TEST_EXPECT_TRUE(command)                                                                                      \
   {                                                                                                                    \
-    bool _TEST_EXPECT_TRUE_command( command );                                                                         \
-    if ( !( _TEST_EXPECT_TRUE_command ) )                                                                              \
+    bool _TEST_EXPECT_TRUE_command(command);                                                                           \
+    if (!(_TEST_EXPECT_TRUE_command))                                                                                  \
     {                                                                                                                  \
       std::cerr << "Error in " << #command << std::endl;                                                               \
       std::cerr << "Expected true" << std::endl;                                                                       \
@@ -62,10 +62,10 @@
     }                                                                                                                  \
   }
 
-#define TEST_EXPECT_EQUAL( lh, rh )                                                                                    \
+#define TEST_EXPECT_EQUAL(lh, rh)                                                                                      \
   {                                                                                                                    \
-    bool _TEST_EXPECT_EQUAL_result( ( lh ) == ( rh ) );                                                                \
-    if ( !( _TEST_EXPECT_EQUAL_result ) )                                                                              \
+    bool _TEST_EXPECT_EQUAL_result((lh) == (rh));                                                                      \
+    if (!(_TEST_EXPECT_EQUAL_result))                                                                                  \
     {                                                                                                                  \
       std::cerr << "Error in " << #lh << " == " << #rh << std::endl;                                                   \
       std::cerr << "Expression is not equal" << std::endl;                                                             \
@@ -73,8 +73,8 @@
     }                                                                                                                  \
   }
 
-#define TEST_SET_GET( variable, command )                                                                              \
-  if ( variable.GetPointer() != command )                                                                              \
+#define TEST_SET_GET(variable, command)                                                                                \
+  if (variable.GetPointer() != command)                                                                                \
   {                                                                                                                    \
     std::cerr << "Error in " << #command << std::endl;                                                                 \
     std::cerr << "Expected " << variable.GetPointer() << std::endl;                                                    \
@@ -82,8 +82,8 @@
     return EXIT_FAILURE;                                                                                               \
   }
 
-#define TEST_SET_GET_VALUE( variable, command )                                                                        \
-  if ( variable != command )                                                                                           \
+#define TEST_SET_GET_VALUE(variable, command)                                                                          \
+  if (variable != command)                                                                                             \
   {                                                                                                                    \
     std::cerr << "Error in " << #command << std::endl;                                                                 \
     std::cerr << "Expected " << variable << std::endl;                                                                 \

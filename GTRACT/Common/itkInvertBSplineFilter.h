@@ -67,19 +67,19 @@ namespace itk
 class GTRACT_COMMON_EXPORT InvertBSplineFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( InvertBSplineFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
 
   /** Standard class type alias. */
   using Self = InvertBSplineFilter;
   using Superclass = itk::Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   static constexpr unsigned int transformDimension = 3;
   using CoordinateRepresentationType = double;
 
   /** Fixed Image type alias. */
-  using ImageType = itk::Image< signed short, transformDimension >;
+  using ImageType = itk::Image<signed short, transformDimension>;
   using ImageTypePointer = ImageType::Pointer;
   using ImageConstPointer = ImageType::ConstPointer;
   using ImageRegionType = ImageType::RegionType;
@@ -92,34 +92,34 @@ public:
 
   /** B-Spline Transform type alias */
   static constexpr unsigned int SplineOrder = 3;
-  using BsplineTransformType = itk::BSplineTransform< CoordinateRepresentationType, transformDimension, SplineOrder >;
+  using BsplineTransformType = itk::BSplineTransform<CoordinateRepresentationType, transformDimension, SplineOrder>;
   using BsplineTransformTypePointer = BsplineTransformType::Pointer;
 
   /** Output Transform type alias. */
-  using TransformType = itk::ThinPlateR2LogRSplineKernelTransform< CoordinateRepresentationType, transformDimension >;
+  using TransformType = itk::ThinPlateR2LogRSplineKernelTransform<CoordinateRepresentationType, transformDimension>;
   using TransformTypePointer = TransformType::Pointer;
-  using PointType = itk::Point< CoordinateRepresentationType, transformDimension >;
+  using PointType = itk::Point<CoordinateRepresentationType, transformDimension>;
   using PointSetType = TransformType::PointSetType;
   using PointIdType = PointSetType::PointIdentifier;
 
   /** Standard New method. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( InvertBSplineFilter, itk::Object );
+  itkTypeMacro(InvertBSplineFilter, itk::Object);
 
   /* SetInput and GetOutput Macros */
-  itkSetObjectMacro( Input, BsplineTransformType );
-  itkSetObjectMacro( ExampleImage, ImageType );
-  itkGetConstObjectMacro( Output, TransformType );
+  itkSetObjectMacro(Input, BsplineTransformType);
+  itkSetObjectMacro(ExampleImage, ImageType);
+  itkGetConstObjectMacro(Output, TransformType);
 
-  itkSetMacro( XgridSize, int );
-  itkSetMacro( YgridSize, int );
-  itkSetMacro( ZgridSize, int );
+  itkSetMacro(XgridSize, int);
+  itkSetMacro(YgridSize, int);
+  itkSetMacro(ZgridSize, int);
 
-  itkGetMacro( XgridSize, int );
-  itkGetMacro( YgridSize, int );
-  itkGetMacro( ZgridSize, int );
+  itkGetMacro(XgridSize, int);
+  itkGetMacro(YgridSize, int);
+  itkGetMacro(ZgridSize, int);
 
   void
   Update();

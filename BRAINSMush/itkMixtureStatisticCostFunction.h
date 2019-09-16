@@ -46,23 +46,23 @@
 
 namespace itk
 {
-template < typename TFirstImage, typename TSecondImage >
+template <typename TFirstImage, typename TSecondImage>
 class MixtureStatisticCostFunction : public MultipleValuedCostFunction
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( MixtureStatisticCostFunction );
+  ITK_DISALLOW_COPY_AND_ASSIGN(MixtureStatisticCostFunction);
 
   /** Standard type alias. */
   using Self = MixtureStatisticCostFunction;
   using Superclass = MultipleValuedCostFunction;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods).   */
-  itkTypeMacro( MixtureStatisticCostFunction, MultipleValuedCostFunction );
+  itkTypeMacro(MixtureStatisticCostFunction, MultipleValuedCostFunction);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /**  Type of the First Image. */
   using FirstImageType = TFirstImage;
@@ -86,36 +86,36 @@ public:
 
   /**  Type for the mask of the first image. Only pixels that are "inside"
    * this mask will be considered for the computation of the metric */
-  using ImageMaskType = itk::Image< signed short, 3 >;
+  using ImageMaskType = itk::Image<signed short, 3>;
   using ImageMaskPointer = typename ImageMaskType::Pointer;
 
   /** Connect the First Image.  */
-  itkSetConstObjectMacro( FirstImage, FirstImageType );
+  itkSetConstObjectMacro(FirstImage, FirstImageType);
 
   /** Get the First Image. */
-  itkGetConstObjectMacro( FirstImage, FirstImageType );
+  itkGetConstObjectMacro(FirstImage, FirstImageType);
 
   /** Connect the Second Image.  */
-  itkSetConstObjectMacro( SecondImage, SecondImageType );
+  itkSetConstObjectMacro(SecondImage, SecondImageType);
 
   /** Get the Second Image. */
-  itkGetConstObjectMacro( SecondImage, SecondImageType );
+  itkGetConstObjectMacro(SecondImage, SecondImageType);
 
   /** Set/Get the first image mask. */
-  itkSetObjectMacro( ImageMask, ImageMaskType );
-  itkGetConstObjectMacro( ImageMask, ImageMaskType );
+  itkSetObjectMacro(ImageMask, ImageMaskType);
+  itkGetConstObjectMacro(ImageMask, ImageMaskType);
 
-  itkGetMacro( DesiredMean, double );
-  itkSetMacro( DesiredMean, double );
-  itkGetMacro( DesiredVariance, double );
-  itkSetMacro( DesiredVariance, double );
+  itkGetMacro(DesiredMean, double);
+  itkSetMacro(DesiredMean, double);
+  itkGetMacro(DesiredVariance, double);
+  itkSetMacro(DesiredVariance, double);
 
-  itkGetMacro( NumberOfMaskVoxels, double );
-  itkGetMacro( SumOfFirstMaskVoxels, double );
-  itkGetMacro( SumOfSecondMaskVoxels, double );
-  itkGetMacro( SumSquaresOfFirstMaskVoxels, double );
-  itkGetMacro( SumSquaresOfSecondMaskVoxels, double );
-  itkGetMacro( SumOfFirstTimesSecondMaskVoxels, double );
+  itkGetMacro(NumberOfMaskVoxels, double);
+  itkGetMacro(SumOfFirstMaskVoxels, double);
+  itkGetMacro(SumOfSecondMaskVoxels, double);
+  itkGetMacro(SumSquaresOfFirstMaskVoxels, double);
+  itkGetMacro(SumSquaresOfSecondMaskVoxels, double);
+  itkGetMacro(SumOfFirstTimesSecondMaskVoxels, double);
 
   /** The dimensions of parameter space. */
   enum
@@ -125,17 +125,16 @@ public:
 
   /** Not necessary for this optimizer. */
   void
-  GetDerivative( const ParametersType & itkNotUsed( parameters ),
-                 DerivativeType &       itkNotUsed( derivative ) ) const override
+  GetDerivative(const ParametersType & itkNotUsed(parameters), DerivativeType & itkNotUsed(derivative)) const override
   {}
 
   /** Return the values evaluated for the given parameters. */
   MeasureType
-  GetValue( const ParametersType & parameters ) const override;
+  GetValue(const ParametersType & parameters) const override;
 
   /** Return a pointer of values evaluated for the given parameters. */
   MeasureType *
-  GetValue( ParametersType & parameters );
+  GetValue(ParametersType & parameters);
 
   /** Get the SpaceDimension. */
   unsigned int
@@ -147,14 +146,14 @@ public:
 
   /** Initialize */
   void
-  Initialize( short label );
+  Initialize(short label);
 
 protected:
   MixtureStatisticCostFunction();
   ~MixtureStatisticCostFunction() override;
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   FirstImageConstPointer  m_FirstImage;
   SecondImageConstPointer m_SecondImage;

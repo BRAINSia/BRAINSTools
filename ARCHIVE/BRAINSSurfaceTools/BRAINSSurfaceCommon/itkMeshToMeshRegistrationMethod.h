@@ -59,23 +59,23 @@ namespace itk
  *
  * \ingroup RegistrationFilters
  */
-template < typename TFixedMesh, typename TMovingMesh >
+template <typename TFixedMesh, typename TMovingMesh>
 class MeshToMeshRegistrationMethod : public ProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( MeshToMeshRegistrationMethod );
+  ITK_DISALLOW_COPY_AND_ASSIGN(MeshToMeshRegistrationMethod);
 
   /** Standard class type alias. */
   using Self = MeshToMeshRegistrationMethod;
   using Superclass = ProcessObject;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( MeshToMeshRegistrationMethod, ProcessObject );
+  itkTypeMacro(MeshToMeshRegistrationMethod, ProcessObject);
 
   /**  Type of the Fixed Mesh. */
   using FixedMeshType = TFixedMesh;
@@ -86,7 +86,7 @@ public:
   using MovingMeshConstPointer = typename MovingMeshType::ConstPointer;
 
   /**  Type of the metric. */
-  using MetricType = MeshToMeshMetric< FixedMeshType, MovingMeshType >;
+  using MetricType = MeshToMeshMetric<FixedMeshType, MovingMeshType>;
   using MetricPointer = typename MetricType::Pointer;
 
   /**  Type of the Transform . */
@@ -99,7 +99,7 @@ public:
 
   /** Type for the output: Using Decorator pattern for enabling
    *  the Transform to be passed in the data pipeline */
-  using TransformOutputType = DataObjectDecorator< TransformType >;
+  using TransformOutputType = DataObjectDecorator<TransformType>;
   using TransformOutputPointer = typename TransformOutputType::Pointer;
   using TransformOutputConstPointer = typename TransformOutputType::ConstPointer;
 
@@ -114,42 +114,42 @@ public:
   using DataObjectPointer = typename DataObject::Pointer;
 
   /** Set/Get the Fixed Mesh. */
-  itkSetConstObjectMacro( FixedMesh, FixedMeshType );
-  itkGetConstObjectMacro( FixedMesh, FixedMeshType );
+  itkSetConstObjectMacro(FixedMesh, FixedMeshType);
+  itkGetConstObjectMacro(FixedMesh, FixedMeshType);
 
   /** Set/Get the Moving Mesh. */
-  itkSetConstObjectMacro( MovingMesh, MovingMeshType );
-  itkGetConstObjectMacro( MovingMesh, MovingMeshType );
+  itkSetConstObjectMacro(MovingMesh, MovingMeshType);
+  itkGetConstObjectMacro(MovingMesh, MovingMeshType);
 
   /** Set/Get the Optimizer. */
-  itkSetObjectMacro( Optimizer, OptimizerType );
-  itkGetConstObjectMacro( Optimizer, OptimizerType );
+  itkSetObjectMacro(Optimizer, OptimizerType);
+  itkGetConstObjectMacro(Optimizer, OptimizerType);
 
   /** Set/Get the Metric. */
-  itkSetObjectMacro( Metric, MetricType );
-  itkGetConstObjectMacro( Metric, MetricType );
+  itkSetObjectMacro(Metric, MetricType);
+  itkGetConstObjectMacro(Metric, MetricType);
 
   /** Set/Get the Transfrom. */
-  itkSetObjectMacro( Transform, TransformType );
-  itkGetConstObjectMacro( Transform, TransformType );
+  itkSetObjectMacro(Transform, TransformType);
+  itkGetConstObjectMacro(Transform, TransformType);
 
   /** Set/Get the Interpolator. */
-  itkSetObjectMacro( Interpolator, InterpolatorType );
-  itkGetConstObjectMacro( Interpolator, InterpolatorType );
+  itkSetObjectMacro(Interpolator, InterpolatorType);
+  itkGetConstObjectMacro(Interpolator, InterpolatorType);
 
   /** Set/Get the initial transformation parameters. */
   virtual void
-  SetInitialTransformParameters( const ParametersType & param );
+  SetInitialTransformParameters(const ParametersType & param);
 
-  itkGetConstReferenceMacro( InitialTransformParameters, ParametersType );
+  itkGetConstReferenceMacro(InitialTransformParameters, ParametersType);
 
   /** Get the last transformation parameters visited by
    * the optimizer. */
-  itkGetConstReferenceMacro( LastTransformParameters, ParametersType );
+  itkGetConstReferenceMacro(LastTransformParameters, ParametersType);
 
   /** Initialize by setting the interconnects between the components. */
   void
-  Initialize() throw( ExceptionObject );
+  Initialize() throw(ExceptionObject);
 
   /** Returns the transform resulting from the registration process  */
   const TransformOutputType *
@@ -159,7 +159,7 @@ public:
   /** Make a DataObject of the correct type to be used as the specified
    * output. */
   virtual DataObjectPointer
-  MakeOutput( size_t idx ) override;
+  MakeOutput(size_t idx) override;
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */
@@ -170,7 +170,7 @@ protected:
   MeshToMeshRegistrationMethod();
   virtual ~MeshToMeshRegistrationMethod(){};
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   /** Method invoked by the pipeline in order to trigger the computation of
    * the registration. */

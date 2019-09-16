@@ -55,19 +55,19 @@ public:
   static vtkImageGenus0MarchingCubes *
   New();
 
-  vtkTypeMacro( vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm );
+  vtkTypeMacro(vtkImageGenus0MarchingCubes, vtkPolyDataAlgorithm);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   // Description:
   // Methods to set contour values
   // why don't these do anything?
   void
-  SetValue( int, double )
+  SetValue(int, double)
   {}
 
   double
-  GetValue( int )
+  GetValue(int)
   {
     return 0.0;
   }
@@ -81,20 +81,20 @@ public:
   vtkCellArray * Triangles;
   vtkPoints *    Points;
 
-  vtkSetMacro( BiggestComponent, int );
-  vtkGetMacro( BiggestComponent, int );
-  vtkBooleanMacro( BiggestComponent, int );
+  vtkSetMacro(BiggestComponent, int);
+  vtkGetMacro(BiggestComponent, int);
+  vtkBooleanMacro(BiggestComponent, int);
 
-  vtkSetMacro( ConnectedComponent, int );
-  vtkGetMacro( ConnectedComponent, int );
-  vtkBooleanMacro( ConnectedComponent, int );
+  vtkSetMacro(ConnectedComponent, int);
+  vtkGetMacro(ConnectedComponent, int);
+  vtkBooleanMacro(ConnectedComponent, int);
 
-  vtkSetMacro( CutLoops, int );
-  vtkGetMacro( CutLoops, int );
-  vtkBooleanMacro( CutLoops, int );
+  vtkSetMacro(CutLoops, int);
+  vtkGetMacro(CutLoops, int);
+  vtkBooleanMacro(CutLoops, int);
 
   void
-  SetAltValue( int value )
+  SetAltValue(int value)
   {
     altValue = value;
   }
@@ -105,13 +105,13 @@ public:
     return altValue;
   }
 
-  vtkSetMacro( ComputeSurface, int );
-  vtkGetMacro( ComputeSurface, int );
-  vtkBooleanMacro( ComputeSurface, int );
+  vtkSetMacro(ComputeSurface, int);
+  vtkGetMacro(ComputeSurface, int);
+  vtkBooleanMacro(ComputeSurface, int);
 
-  vtkSetMacro( Verbose, int );
-  vtkGetMacro( Verbose, int );
-  vtkBooleanMacro( Verbose, int );
+  vtkSetMacro(Verbose, int);
+  vtkGetMacro(Verbose, int);
+  vtkBooleanMacro(Verbose, int);
 
   void
   Use18Connectivity()
@@ -136,9 +136,9 @@ protected:
   ~vtkImageGenus0MarchingCubes();
 
   virtual int
-  RequestData( vtkInformation *, vtkInformationVector **, vtkInformationVector * );
+  RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   virtual int
-  FillInputPortInformation( int port, vtkInformation * info ) override;
+  FillInputPortInformation(int port, vtkInformation * info) override;
 
   int BiggestComponent;
   int ConnectedComponent;
@@ -154,11 +154,11 @@ protected:
   vtkImageData * pCorrectedImageData;
 
 private:
-  vtkImageGenus0MarchingCubes( const vtkImageGenus0MarchingCubes & ); // Not
-                                                                      // implemented.
+  vtkImageGenus0MarchingCubes(const vtkImageGenus0MarchingCubes &); // Not
+                                                                    // implemented.
   void
-  operator=( const vtkImageGenus0MarchingCubes & ); // Not
-                                                    // implemented.
+  operator=(const vtkImageGenus0MarchingCubes &); // Not
+                                                  // implemented.
 };
 
 #endif

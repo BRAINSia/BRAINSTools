@@ -24,476 +24,939 @@
 #ifdef F2C_COMPAT
 
 void
-cdotc_( fcomplex * dotval, int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+cdotc_(fcomplex * dotval, int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
 
 void
-cdotu_( fcomplex * dotval, int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+cdotu_(fcomplex * dotval, int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
 
 double
-sasum_( int * n, float * sx, int * incx );
+sasum_(int * n, float * sx, int * incx);
 
 double
-scasum_( int * n, fcomplex * cx, int * incx );
+scasum_(int * n, fcomplex * cx, int * incx);
 
 double
-scnrm2_( int * n, fcomplex * x, int * incx );
+scnrm2_(int * n, fcomplex * x, int * incx);
 
 double
-sdot_( int * n, float * sx, int * incx, float * sy, int * incy );
+sdot_(int * n, float * sx, int * incx, float * sy, int * incy);
 
 double
-snrm2_( int * n, float * x, int * incx );
+snrm2_(int * n, float * x, int * incx);
 
 void
-zdotc_( dcomplex * dotval, int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zdotc_(dcomplex * dotval, int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 void
-zdotu_( dcomplex * dotval, int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zdotu_(dcomplex * dotval, int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 #else
 
 fcomplex
-cdotc_( int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+cdotc_(int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
 
 fcomplex
-cdotu_( int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+cdotu_(int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
 
 float
-sasum_( int * n, float * sx, int * incx );
+sasum_(int * n, float * sx, int * incx);
 
 float
-scasum_( int * n, fcomplex * cx, int * incx );
+scasum_(int * n, fcomplex * cx, int * incx);
 
 float
-scnrm2_( int * n, fcomplex * x, int * incx );
+scnrm2_(int * n, fcomplex * x, int * incx);
 
 float
-sdot_( int * n, float * sx, int * incx, float * sy, int * incy );
+sdot_(int * n, float * sx, int * incx, float * sy, int * incy);
 
 float
-snrm2_( int * n, float * x, int * incx );
+snrm2_(int * n, float * x, int * incx);
 
 dcomplex
-zdotc_( int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zdotc_(int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 dcomplex
-zdotu_( int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zdotu_(int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 #endif
 
 /* Remaining functions listed in alphabetical order */
 
 int
-caxpy_( int * n, fcomplex * ca, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+caxpy_(int * n, fcomplex * ca, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
+
+int
+ccopy_(int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
+
+int
+cgbmv_(char *     trans,
+       int *      m,
+       int *      n,
+       int *      kl,
+       int *      ku,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * beta,
+       fcomplex * y,
+       int *      incy);
+
+int
+cgemm_(char *     transa,
+       char *     transb,
+       int *      m,
+       int *      n,
+       int *      k,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * b,
+       int *      ldb,
+       fcomplex * beta,
+       fcomplex * c,
+       int *      ldc);
+
+int
+cgemv_(char *     trans,
+       int *      m,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * beta,
+       fcomplex * y,
+       int *      incy);
+
+int
+cgerc_(int * m, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * a, int * lda);
+
+int
+cgeru_(int * m, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * a, int * lda);
+
+int
+chbmv_(char *     uplo,
+       int *      n,
+       int *      k,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * beta,
+       fcomplex * y,
+       int *      incy);
 
 int
-ccopy_( int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+chemm_(char *     side,
+       char *     uplo,
+       int *      m,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * b,
+       int *      ldb,
+       fcomplex * beta,
+       fcomplex * c,
+       int *      ldc);
+
+int
+chemv_(char *     uplo,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * beta,
+       fcomplex * y,
+       int *      incy);
+
+int
+cher_(char * uplo, int * n, float * alpha, fcomplex * x, int * incx, fcomplex * a, int * lda);
+
+int
+cher2_(char *     uplo,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * y,
+       int *      incy,
+       fcomplex * a,
+       int *      lda);
 
 int
-cgbmv_( char * trans, int * m, int * n, int * kl, int * ku, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * x,
-        int * incx, fcomplex * beta, fcomplex * y, int * incy );
+cher2k_(char *     uplo,
+        char *     trans,
+        int *      n,
+        int *      k,
+        fcomplex * alpha,
+        fcomplex * a,
+        int *      lda,
+        fcomplex * b,
+        int *      ldb,
+        float *    beta,
+        fcomplex * c,
+        int *      ldc);
 
 int
-cgemm_( char * transa, char * transb, int * m, int * n, int * k, fcomplex * alpha, fcomplex * a, int * lda,
-        fcomplex * b, int * ldb, fcomplex * beta, fcomplex * c, int * ldc );
+cherk_(char *     uplo,
+       char *     trans,
+       int *      n,
+       int *      k,
+       float *    alpha,
+       fcomplex * a,
+       int *      lda,
+       float *    beta,
+       fcomplex * c,
+       int *      ldc);
 
 int
-cgemv_( char * trans, int * m, int * n, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * x, int * incx,
-        fcomplex * beta, fcomplex * y, int * incy );
+chpmv_(char *     uplo,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * ap,
+       fcomplex * x,
+       int *      incx,
+       fcomplex * beta,
+       fcomplex * y,
+       int *      incy);
 
 int
-cgerc_( int * m, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * a,
-        int * lda );
+chpr_(char * uplo, int * n, float * alpha, fcomplex * x, int * incx, fcomplex * ap);
 
 int
-cgeru_( int * m, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * a,
-        int * lda );
+chpr2_(char * uplo, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * ap);
 
 int
-chbmv_( char * uplo, int * n, int * k, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * x, int * incx,
-        fcomplex * beta, fcomplex * y, int * incy );
+crotg_(fcomplex * ca, fcomplex * cb, float * c, fcomplex * s);
 
 int
-chemm_( char * side, char * uplo, int * m, int * n, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * b, int * ldb,
-        fcomplex * beta, fcomplex * c, int * ldc );
+cscal_(int * n, fcomplex * ca, fcomplex * cx, int * incx);
 
 int
-chemv_( char * uplo, int * n, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * x, int * incx, fcomplex * beta,
-        fcomplex * y, int * incy );
+csscal_(int * n, float * sa, fcomplex * cx, int * incx);
 
 int
-cher_( char * uplo, int * n, float * alpha, fcomplex * x, int * incx, fcomplex * a, int * lda );
+cswap_(int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy);
 
 int
-cher2_( char * uplo, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * a,
-        int * lda );
+csymm_(char *     side,
+       char *     uplo,
+       int *      m,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * b,
+       int *      ldb,
+       fcomplex * beta,
+       fcomplex * c,
+       int *      ldc);
 
 int
-cher2k_( char * uplo, char * trans, int * n, int * k, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * b,
-         int * ldb, float * beta, fcomplex * c, int * ldc );
+csyr2k_(char *     uplo,
+        char *     trans,
+        int *      n,
+        int *      k,
+        fcomplex * alpha,
+        fcomplex * a,
+        int *      lda,
+        fcomplex * b,
+        int *      ldb,
+        fcomplex * beta,
+        fcomplex * c,
+        int *      ldc);
 
 int
-cherk_( char * uplo, char * trans, int * n, int * k, float * alpha, fcomplex * a, int * lda, float * beta, fcomplex * c,
-        int * ldc );
+csyrk_(char *     uplo,
+       char *     trans,
+       int *      n,
+       int *      k,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * beta,
+       fcomplex * c,
+       int *      ldc);
 
 int
-chpmv_( char * uplo, int * n, fcomplex * alpha, fcomplex * ap, fcomplex * x, int * incx, fcomplex * beta, fcomplex * y,
-        int * incy );
+ctbmv_(char * uplo, char * trans, char * diag, int * n, int * k, fcomplex * a, int * lda, fcomplex * x, int * incx);
 
 int
-chpr_( char * uplo, int * n, float * alpha, fcomplex * x, int * incx, fcomplex * ap );
+ctbsv_(char * uplo, char * trans, char * diag, int * n, int * k, fcomplex * a, int * lda, fcomplex * x, int * incx);
 
 int
-chpr2_( char * uplo, int * n, fcomplex * alpha, fcomplex * x, int * incx, fcomplex * y, int * incy, fcomplex * ap );
+ctpmv_(char * uplo, char * trans, char * diag, int * n, fcomplex * ap, fcomplex * x, int * incx);
 
 int
-crotg_( fcomplex * ca, fcomplex * cb, float * c, fcomplex * s );
+ctpsv_(char * uplo, char * trans, char * diag, int * n, fcomplex * ap, fcomplex * x, int * incx);
 
 int
-cscal_( int * n, fcomplex * ca, fcomplex * cx, int * incx );
+ctrmm_(char *     side,
+       char *     uplo,
+       char *     transa,
+       char *     diag,
+       int *      m,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * b,
+       int *      ldb);
 
 int
-csscal_( int * n, float * sa, fcomplex * cx, int * incx );
+ctrmv_(char * uplo, char * trans, char * diag, int * n, fcomplex * a, int * lda, fcomplex * x, int * incx);
 
 int
-cswap_( int * n, fcomplex * cx, int * incx, fcomplex * cy, int * incy );
+ctrsm_(char *     side,
+       char *     uplo,
+       char *     transa,
+       char *     diag,
+       int *      m,
+       int *      n,
+       fcomplex * alpha,
+       fcomplex * a,
+       int *      lda,
+       fcomplex * b,
+       int *      ldb);
 
 int
-csymm_( char * side, char * uplo, int * m, int * n, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * b, int * ldb,
-        fcomplex * beta, fcomplex * c, int * ldc );
+ctrsv_(char * uplo, char * trans, char * diag, int * n, fcomplex * a, int * lda, fcomplex * x, int * incx);
 
 int
-csyr2k_( char * uplo, char * trans, int * n, int * k, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * b,
-         int * ldb, fcomplex * beta, fcomplex * c, int * ldc );
+daxpy_(int * n, double * sa, double * sx, int * incx, double * sy, int * incy);
 
 int
-csyrk_( char * uplo, char * trans, int * n, int * k, fcomplex * alpha, fcomplex * a, int * lda, fcomplex * beta,
-        fcomplex * c, int * ldc );
+dcopy_(int * n, double * sx, int * incx, double * sy, int * incy);
 
 int
-ctbmv_( char * uplo, char * trans, char * diag, int * n, int * k, fcomplex * a, int * lda, fcomplex * x, int * incx );
+dgbmv_(char *   trans,
+       int *    m,
+       int *    n,
+       int *    kl,
+       int *    ku,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * x,
+       int *    incx,
+       double * beta,
+       double * y,
+       int *    incy);
 
 int
-ctbsv_( char * uplo, char * trans, char * diag, int * n, int * k, fcomplex * a, int * lda, fcomplex * x, int * incx );
+dgemm_(char *   transa,
+       char *   transb,
+       int *    m,
+       int *    n,
+       int *    k,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * b,
+       int *    ldb,
+       double * beta,
+       double * c,
+       int *    ldc);
 
 int
-ctpmv_( char * uplo, char * trans, char * diag, int * n, fcomplex * ap, fcomplex * x, int * incx );
+dgemv_(char *   trans,
+       int *    m,
+       int *    n,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * x,
+       int *    incx,
+       double * beta,
+       double * y,
+       int *    incy);
 
 int
-ctpsv_( char * uplo, char * trans, char * diag, int * n, fcomplex * ap, fcomplex * x, int * incx );
+dger_(int * m, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * a, int * lda);
 
 int
-ctrmm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, fcomplex * alpha, fcomplex * a,
-        int * lda, fcomplex * b, int * ldb );
+drot_(int * n, double * sx, int * incx, double * sy, int * incy, double * c, double * s);
 
 int
-ctrmv_( char * uplo, char * trans, char * diag, int * n, fcomplex * a, int * lda, fcomplex * x, int * incx );
+drotg_(double * sa, double * sb, double * c, double * s);
 
 int
-ctrsm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, fcomplex * alpha, fcomplex * a,
-        int * lda, fcomplex * b, int * ldb );
+dsbmv_(char *   uplo,
+       int *    n,
+       int *    k,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * x,
+       int *    incx,
+       double * beta,
+       double * y,
+       int *    incy);
 
 int
-ctrsv_( char * uplo, char * trans, char * diag, int * n, fcomplex * a, int * lda, fcomplex * x, int * incx );
+dscal_(int * n, double * sa, double * sx, int * incx);
 
 int
-daxpy_( int * n, double * sa, double * sx, int * incx, double * sy, int * incy );
+dspmv_(char *   uplo,
+       int *    n,
+       double * alpha,
+       double * ap,
+       double * x,
+       int *    incx,
+       double * beta,
+       double * y,
+       int *    incy);
 
 int
-dcopy_( int * n, double * sx, int * incx, double * sy, int * incy );
+dspr_(char * uplo, int * n, double * alpha, double * x, int * incx, double * ap);
 
 int
-dgbmv_( char * trans, int * m, int * n, int * kl, int * ku, double * alpha, double * a, int * lda, double * x,
-        int * incx, double * beta, double * y, int * incy );
+dspr2_(char * uplo, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * ap);
 
 int
-dgemm_( char * transa, char * transb, int * m, int * n, int * k, double * alpha, double * a, int * lda, double * b,
-        int * ldb, double * beta, double * c, int * ldc );
+dswap_(int * n, double * sx, int * incx, double * sy, int * incy);
 
 int
-dgemv_( char * trans, int * m, int * n, double * alpha, double * a, int * lda, double * x, int * incx, double * beta,
-        double * y, int * incy );
+dsymm_(char *   side,
+       char *   uplo,
+       int *    m,
+       int *    n,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * b,
+       int *    ldb,
+       double * beta,
+       double * c,
+       int *    ldc);
 
 int
-dger_( int * m, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * a, int * lda );
+dsymv_(char *   uplo,
+       int *    n,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * x,
+       int *    incx,
+       double * beta,
+       double * y,
+       int *    incy);
 
 int
-drot_( int * n, double * sx, int * incx, double * sy, int * incy, double * c, double * s );
+dsyr_(char * uplo, int * n, double * alpha, double * x, int * incx, double * a, int * lda);
 
 int
-drotg_( double * sa, double * sb, double * c, double * s );
+dsyr2_(char * uplo, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * a, int * lda);
 
 int
-dsbmv_( char * uplo, int * n, int * k, double * alpha, double * a, int * lda, double * x, int * incx, double * beta,
-        double * y, int * incy );
+dsyr2k_(char *   uplo,
+        char *   trans,
+        int *    n,
+        int *    k,
+        double * alpha,
+        double * a,
+        int *    lda,
+        double * b,
+        int *    ldb,
+        double * beta,
+        double * c,
+        int *    ldc);
 
 int
-dscal_( int * n, double * sa, double * sx, int * incx );
+dsyrk_(char *   uplo,
+       char *   trans,
+       int *    n,
+       int *    k,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * beta,
+       double * c,
+       int *    ldc);
 
 int
-dspmv_( char * uplo, int * n, double * alpha, double * ap, double * x, int * incx, double * beta, double * y,
-        int * incy );
+dtbmv_(char * uplo, char * trans, char * diag, int * n, int * k, double * a, int * lda, double * x, int * incx);
 
 int
-dspr_( char * uplo, int * n, double * alpha, double * x, int * incx, double * ap );
+dtbsv_(char * uplo, char * trans, char * diag, int * n, int * k, double * a, int * lda, double * x, int * incx);
 
 int
-dspr2_( char * uplo, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * ap );
+dtpmv_(char * uplo, char * trans, char * diag, int * n, double * ap, double * x, int * incx);
 
 int
-dswap_( int * n, double * sx, int * incx, double * sy, int * incy );
+dtpsv_(char * uplo, char * trans, char * diag, int * n, double * ap, double * x, int * incx);
 
 int
-dsymm_( char * side, char * uplo, int * m, int * n, double * alpha, double * a, int * lda, double * b, int * ldb,
-        double * beta, double * c, int * ldc );
+dtrmm_(char *   side,
+       char *   uplo,
+       char *   transa,
+       char *   diag,
+       int *    m,
+       int *    n,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * b,
+       int *    ldb);
 
 int
-dsymv_( char * uplo, int * n, double * alpha, double * a, int * lda, double * x, int * incx, double * beta, double * y,
-        int * incy );
+dtrmv_(char * uplo, char * trans, char * diag, int * n, double * a, int * lda, double * x, int * incx);
 
 int
-dsyr_( char * uplo, int * n, double * alpha, double * x, int * incx, double * a, int * lda );
+dtrsm_(char *   side,
+       char *   uplo,
+       char *   transa,
+       char *   diag,
+       int *    m,
+       int *    n,
+       double * alpha,
+       double * a,
+       int *    lda,
+       double * b,
+       int *    ldb);
 
 int
-dsyr2_( char * uplo, int * n, double * alpha, double * x, int * incx, double * y, int * incy, double * a, int * lda );
+dtrsv_(char * uplo, char * trans, char * diag, int * n, double * a, int * lda, double * x, int * incx);
 
 int
-dsyr2k_( char * uplo, char * trans, int * n, int * k, double * alpha, double * a, int * lda, double * b, int * ldb,
-         double * beta, double * c, int * ldc );
+saxpy_(int * n, float * sa, float * sx, int * incx, float * sy, int * incy);
 
 int
-dsyrk_( char * uplo, char * trans, int * n, int * k, double * alpha, double * a, int * lda, double * beta, double * c,
-        int * ldc );
+scopy_(int * n, float * sx, int * incx, float * sy, int * incy);
 
 int
-dtbmv_( char * uplo, char * trans, char * diag, int * n, int * k, double * a, int * lda, double * x, int * incx );
+sgbmv_(char *  trans,
+       int *   m,
+       int *   n,
+       int *   kl,
+       int *   ku,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * x,
+       int *   incx,
+       float * beta,
+       float * y,
+       int *   incy);
 
 int
-dtbsv_( char * uplo, char * trans, char * diag, int * n, int * k, double * a, int * lda, double * x, int * incx );
+sgemm_(char *  transa,
+       char *  transb,
+       int *   m,
+       int *   n,
+       int *   k,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * b,
+       int *   ldb,
+       float * beta,
+       float * c,
+       int *   ldc);
 
 int
-dtpmv_( char * uplo, char * trans, char * diag, int * n, double * ap, double * x, int * incx );
+sgemv_(char *  trans,
+       int *   m,
+       int *   n,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * x,
+       int *   incx,
+       float * beta,
+       float * y,
+       int *   incy);
 
 int
-dtpsv_( char * uplo, char * trans, char * diag, int * n, double * ap, double * x, int * incx );
+sger_(int * m, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * a, int * lda);
 
 int
-dtrmm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, double * alpha, double * a, int * lda,
-        double * b, int * ldb );
+srot_(int * n, float * sx, int * incx, float * sy, int * incy, float * c, float * s);
 
 int
-dtrmv_( char * uplo, char * trans, char * diag, int * n, double * a, int * lda, double * x, int * incx );
+srotg_(float * sa, float * sb, float * c, float * s);
 
 int
-dtrsm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, double * alpha, double * a, int * lda,
-        double * b, int * ldb );
+ssbmv_(char *  uplo,
+       int *   n,
+       int *   k,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * x,
+       int *   incx,
+       float * beta,
+       float * y,
+       int *   incy);
 
 int
-dtrsv_( char * uplo, char * trans, char * diag, int * n, double * a, int * lda, double * x, int * incx );
+sscal_(int * n, float * sa, float * sx, int * incx);
 
 int
-saxpy_( int * n, float * sa, float * sx, int * incx, float * sy, int * incy );
+sspmv_(char * uplo, int * n, float * alpha, float * ap, float * x, int * incx, float * beta, float * y, int * incy);
 
 int
-scopy_( int * n, float * sx, int * incx, float * sy, int * incy );
+sspr_(char * uplo, int * n, float * alpha, float * x, int * incx, float * ap);
 
 int
-sgbmv_( char * trans, int * m, int * n, int * kl, int * ku, float * alpha, float * a, int * lda, float * x, int * incx,
-        float * beta, float * y, int * incy );
+sspr2_(char * uplo, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * ap);
 
 int
-sgemm_( char * transa, char * transb, int * m, int * n, int * k, float * alpha, float * a, int * lda, float * b,
-        int * ldb, float * beta, float * c, int * ldc );
+sswap_(int * n, float * sx, int * incx, float * sy, int * incy);
 
 int
-sgemv_( char * trans, int * m, int * n, float * alpha, float * a, int * lda, float * x, int * incx, float * beta,
-        float * y, int * incy );
+ssymm_(char *  side,
+       char *  uplo,
+       int *   m,
+       int *   n,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * b,
+       int *   ldb,
+       float * beta,
+       float * c,
+       int *   ldc);
 
 int
-sger_( int * m, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * a, int * lda );
+ssymv_(char *  uplo,
+       int *   n,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * x,
+       int *   incx,
+       float * beta,
+       float * y,
+       int *   incy);
 
 int
-srot_( int * n, float * sx, int * incx, float * sy, int * incy, float * c, float * s );
+ssyr_(char * uplo, int * n, float * alpha, float * x, int * incx, float * a, int * lda);
 
 int
-srotg_( float * sa, float * sb, float * c, float * s );
+ssyr2_(char * uplo, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * a, int * lda);
 
 int
-ssbmv_( char * uplo, int * n, int * k, float * alpha, float * a, int * lda, float * x, int * incx, float * beta,
-        float * y, int * incy );
+ssyr2k_(char *  uplo,
+        char *  trans,
+        int *   n,
+        int *   k,
+        float * alpha,
+        float * a,
+        int *   lda,
+        float * b,
+        int *   ldb,
+        float * beta,
+        float * c,
+        int *   ldc);
 
 int
-sscal_( int * n, float * sa, float * sx, int * incx );
+ssyrk_(char *  uplo,
+       char *  trans,
+       int *   n,
+       int *   k,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * beta,
+       float * c,
+       int *   ldc);
 
 int
-sspmv_( char * uplo, int * n, float * alpha, float * ap, float * x, int * incx, float * beta, float * y, int * incy );
+stbmv_(char * uplo, char * trans, char * diag, int * n, int * k, float * a, int * lda, float * x, int * incx);
 
 int
-sspr_( char * uplo, int * n, float * alpha, float * x, int * incx, float * ap );
+stbsv_(char * uplo, char * trans, char * diag, int * n, int * k, float * a, int * lda, float * x, int * incx);
 
 int
-sspr2_( char * uplo, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * ap );
+stpmv_(char * uplo, char * trans, char * diag, int * n, float * ap, float * x, int * incx);
 
 int
-sswap_( int * n, float * sx, int * incx, float * sy, int * incy );
+stpsv_(char * uplo, char * trans, char * diag, int * n, float * ap, float * x, int * incx);
 
 int
-ssymm_( char * side, char * uplo, int * m, int * n, float * alpha, float * a, int * lda, float * b, int * ldb,
-        float * beta, float * c, int * ldc );
+strmm_(char *  side,
+       char *  uplo,
+       char *  transa,
+       char *  diag,
+       int *   m,
+       int *   n,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * b,
+       int *   ldb);
 
 int
-ssymv_( char * uplo, int * n, float * alpha, float * a, int * lda, float * x, int * incx, float * beta, float * y,
-        int * incy );
+strmv_(char * uplo, char * trans, char * diag, int * n, float * a, int * lda, float * x, int * incx);
 
 int
-ssyr_( char * uplo, int * n, float * alpha, float * x, int * incx, float * a, int * lda );
+strsm_(char *  side,
+       char *  uplo,
+       char *  transa,
+       char *  diag,
+       int *   m,
+       int *   n,
+       float * alpha,
+       float * a,
+       int *   lda,
+       float * b,
+       int *   ldb);
 
 int
-ssyr2_( char * uplo, int * n, float * alpha, float * x, int * incx, float * y, int * incy, float * a, int * lda );
+strsv_(char * uplo, char * trans, char * diag, int * n, float * a, int * lda, float * x, int * incx);
 
 int
-ssyr2k_( char * uplo, char * trans, int * n, int * k, float * alpha, float * a, int * lda, float * b, int * ldb,
-         float * beta, float * c, int * ldc );
+zaxpy_(int * n, dcomplex * ca, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 int
-ssyrk_( char * uplo, char * trans, int * n, int * k, float * alpha, float * a, int * lda, float * beta, float * c,
-        int * ldc );
+zcopy_(int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 int
-stbmv_( char * uplo, char * trans, char * diag, int * n, int * k, float * a, int * lda, float * x, int * incx );
+zdscal_(int * n, double * sa, dcomplex * cx, int * incx);
 
 int
-stbsv_( char * uplo, char * trans, char * diag, int * n, int * k, float * a, int * lda, float * x, int * incx );
+zgbmv_(char *     trans,
+       int *      m,
+       int *      n,
+       int *      kl,
+       int *      ku,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * beta,
+       dcomplex * y,
+       int *      incy);
 
 int
-stpmv_( char * uplo, char * trans, char * diag, int * n, float * ap, float * x, int * incx );
+zgemm_(char *     transa,
+       char *     transb,
+       int *      m,
+       int *      n,
+       int *      k,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * b,
+       int *      ldb,
+       dcomplex * beta,
+       dcomplex * c,
+       int *      ldc);
 
 int
-stpsv_( char * uplo, char * trans, char * diag, int * n, float * ap, float * x, int * incx );
+zgemv_(char *     trans,
+       int *      m,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * beta,
+       dcomplex * y,
+       int *      incy);
 
 int
-strmm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, float * alpha, float * a, int * lda,
-        float * b, int * ldb );
+zgerc_(int * m, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * a, int * lda);
 
 int
-strmv_( char * uplo, char * trans, char * diag, int * n, float * a, int * lda, float * x, int * incx );
+zgeru_(int * m, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * a, int * lda);
 
 int
-strsm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, float * alpha, float * a, int * lda,
-        float * b, int * ldb );
+zhbmv_(char *     uplo,
+       int *      n,
+       int *      k,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * beta,
+       dcomplex * y,
+       int *      incy);
 
 int
-strsv_( char * uplo, char * trans, char * diag, int * n, float * a, int * lda, float * x, int * incx );
+zhemm_(char *     side,
+       char *     uplo,
+       int *      m,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * b,
+       int *      ldb,
+       dcomplex * beta,
+       dcomplex * c,
+       int *      ldc);
 
 int
-zaxpy_( int * n, dcomplex * ca, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zhemv_(char *     uplo,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * beta,
+       dcomplex * y,
+       int *      incy);
 
 int
-zcopy_( int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+zher_(char * uplo, int * n, double * alpha, dcomplex * x, int * incx, dcomplex * a, int * lda);
 
 int
-zdscal_( int * n, double * sa, dcomplex * cx, int * incx );
+zher2_(char *     uplo,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * y,
+       int *      incy,
+       dcomplex * a,
+       int *      lda);
 
 int
-zgbmv_( char * trans, int * m, int * n, int * kl, int * ku, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * x,
-        int * incx, dcomplex * beta, dcomplex * y, int * incy );
+zher2k_(char *     uplo,
+        char *     trans,
+        int *      n,
+        int *      k,
+        dcomplex * alpha,
+        dcomplex * a,
+        int *      lda,
+        dcomplex * b,
+        int *      ldb,
+        double *   beta,
+        dcomplex * c,
+        int *      ldc);
 
 int
-zgemm_( char * transa, char * transb, int * m, int * n, int * k, dcomplex * alpha, dcomplex * a, int * lda,
-        dcomplex * b, int * ldb, dcomplex * beta, dcomplex * c, int * ldc );
+zherk_(char *     uplo,
+       char *     trans,
+       int *      n,
+       int *      k,
+       double *   alpha,
+       dcomplex * a,
+       int *      lda,
+       double *   beta,
+       dcomplex * c,
+       int *      ldc);
 
 int
-zgemv_( char * trans, int * m, int * n, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * x, int * incx,
-        dcomplex * beta, dcomplex * y, int * incy );
+zhpmv_(char *     uplo,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * ap,
+       dcomplex * x,
+       int *      incx,
+       dcomplex * beta,
+       dcomplex * y,
+       int *      incy);
 
 int
-zgerc_( int * m, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * a,
-        int * lda );
+zhpr_(char * uplo, int * n, double * alpha, dcomplex * x, int * incx, dcomplex * ap);
 
 int
-zgeru_( int * m, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * a,
-        int * lda );
+zhpr2_(char * uplo, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * ap);
 
 int
-zhbmv_( char * uplo, int * n, int * k, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * x, int * incx,
-        dcomplex * beta, dcomplex * y, int * incy );
+zrotg_(dcomplex * ca, dcomplex * cb, double * c, dcomplex * s);
 
 int
-zhemm_( char * side, char * uplo, int * m, int * n, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * b, int * ldb,
-        dcomplex * beta, dcomplex * c, int * ldc );
+zscal_(int * n, dcomplex * ca, dcomplex * cx, int * incx);
 
 int
-zhemv_( char * uplo, int * n, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * x, int * incx, dcomplex * beta,
-        dcomplex * y, int * incy );
+zswap_(int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy);
 
 int
-zher_( char * uplo, int * n, double * alpha, dcomplex * x, int * incx, dcomplex * a, int * lda );
+zsymm_(char *     side,
+       char *     uplo,
+       int *      m,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * b,
+       int *      ldb,
+       dcomplex * beta,
+       dcomplex * c,
+       int *      ldc);
 
 int
-zher2_( char * uplo, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * a,
-        int * lda );
+zsyr2k_(char *     uplo,
+        char *     trans,
+        int *      n,
+        int *      k,
+        dcomplex * alpha,
+        dcomplex * a,
+        int *      lda,
+        dcomplex * b,
+        int *      ldb,
+        dcomplex * beta,
+        dcomplex * c,
+        int *      ldc);
 
 int
-zher2k_( char * uplo, char * trans, int * n, int * k, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * b,
-         int * ldb, double * beta, dcomplex * c, int * ldc );
+zsyrk_(char *     uplo,
+       char *     trans,
+       int *      n,
+       int *      k,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * beta,
+       dcomplex * c,
+       int *      ldc);
 
 int
-zherk_( char * uplo, char * trans, int * n, int * k, double * alpha, dcomplex * a, int * lda, double * beta,
-        dcomplex * c, int * ldc );
+ztbmv_(char * uplo, char * trans, char * diag, int * n, int * k, dcomplex * a, int * lda, dcomplex * x, int * incx);
 
 int
-zhpmv_( char * uplo, int * n, dcomplex * alpha, dcomplex * ap, dcomplex * x, int * incx, dcomplex * beta, dcomplex * y,
-        int * incy );
+ztbsv_(char * uplo, char * trans, char * diag, int * n, int * k, dcomplex * a, int * lda, dcomplex * x, int * incx);
 
 int
-zhpr_( char * uplo, int * n, double * alpha, dcomplex * x, int * incx, dcomplex * ap );
+ztpmv_(char * uplo, char * trans, char * diag, int * n, dcomplex * ap, dcomplex * x, int * incx);
 
 int
-zhpr2_( char * uplo, int * n, dcomplex * alpha, dcomplex * x, int * incx, dcomplex * y, int * incy, dcomplex * ap );
+ztpsv_(char * uplo, char * trans, char * diag, int * n, dcomplex * ap, dcomplex * x, int * incx);
 
 int
-zrotg_( dcomplex * ca, dcomplex * cb, double * c, dcomplex * s );
+ztrmm_(char *     side,
+       char *     uplo,
+       char *     transa,
+       char *     diag,
+       int *      m,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * b,
+       int *      ldb);
 
 int
-zscal_( int * n, dcomplex * ca, dcomplex * cx, int * incx );
+ztrmv_(char * uplo, char * trans, char * diag, int * n, dcomplex * a, int * lda, dcomplex * x, int * incx);
 
 int
-zswap_( int * n, dcomplex * cx, int * incx, dcomplex * cy, int * incy );
+ztrsm_(char *     side,
+       char *     uplo,
+       char *     transa,
+       char *     diag,
+       int *      m,
+       int *      n,
+       dcomplex * alpha,
+       dcomplex * a,
+       int *      lda,
+       dcomplex * b,
+       int *      ldb);
 
 int
-zsymm_( char * side, char * uplo, int * m, int * n, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * b, int * ldb,
-        dcomplex * beta, dcomplex * c, int * ldc );
-
-int
-zsyr2k_( char * uplo, char * trans, int * n, int * k, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * b,
-         int * ldb, dcomplex * beta, dcomplex * c, int * ldc );
-
-int
-zsyrk_( char * uplo, char * trans, int * n, int * k, dcomplex * alpha, dcomplex * a, int * lda, dcomplex * beta,
-        dcomplex * c, int * ldc );
-
-int
-ztbmv_( char * uplo, char * trans, char * diag, int * n, int * k, dcomplex * a, int * lda, dcomplex * x, int * incx );
-
-int
-ztbsv_( char * uplo, char * trans, char * diag, int * n, int * k, dcomplex * a, int * lda, dcomplex * x, int * incx );
-
-int
-ztpmv_( char * uplo, char * trans, char * diag, int * n, dcomplex * ap, dcomplex * x, int * incx );
-
-int
-ztpsv_( char * uplo, char * trans, char * diag, int * n, dcomplex * ap, dcomplex * x, int * incx );
-
-int
-ztrmm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, dcomplex * alpha, dcomplex * a,
-        int * lda, dcomplex * b, int * ldb );
-
-int
-ztrmv_( char * uplo, char * trans, char * diag, int * n, dcomplex * a, int * lda, dcomplex * x, int * incx );
-
-int
-ztrsm_( char * side, char * uplo, char * transa, char * diag, int * m, int * n, dcomplex * alpha, dcomplex * a,
-        int * lda, dcomplex * b, int * ldb );
-
-int
-ztrsv_( char * uplo, char * trans, char * diag, int * n, dcomplex * a, int * lda, dcomplex * x, int * incx );
+ztrsv_(char * uplo, char * trans, char * diag, int * n, dcomplex * a, int * lda, dcomplex * x, int * incx);

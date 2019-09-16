@@ -50,23 +50,23 @@ namespace itk
  *    - the minimum value of original moving image
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 class VDemonsPreprocessor : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( VDemonsPreprocessor );
+  ITK_DISALLOW_COPY_AND_ASSIGN(VDemonsPreprocessor);
 
   /** Standard class type alias. */
   using Self = VDemonsPreprocessor;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( VDemonsPreprocessor, Object );
+  itkTypeMacro(VDemonsPreprocessor, Object);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Input Image Type. */
   using InputImageType = TInputImage;
@@ -86,14 +86,14 @@ public:
 
   /** Set the input fixed image. */
   void
-  SetInputFixedImage( std::vector< InputImagePointer > & image )
+  SetInputFixedImage(std::vector<InputImagePointer> & image)
   {
     m_InputFixedImage = image;
   }
 
   /** Set the input moving image. */
   void
-  SetInputMovingImage( std::vector< InputImagePointer > & image )
+  SetInputMovingImage(std::vector<InputImagePointer> & image)
   {
     m_InputMovingImage = image;
   }
@@ -102,111 +102,111 @@ public:
   using FieldValueType = float;
 
   /** Displacement field pixel type. */
-  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
+  using FieldPixelType = Vector<FieldValueType, Self::ImageDimension>;
 
   /** Displacement field type. */
-  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
+  using TDisplacementField = Image<FieldPixelType, Self::ImageDimension>;
 
   /** Set the initial Displacement Field. */
-  itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
-  itkGetModifiableObjectMacro( InitialDisplacementField, TDisplacementField );
+  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetModifiableObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set the number of match points to use. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Method to execute the preprocessing. */
   virtual void
   Execute();
 
   /** Get the output fixed image. */
-  std::vector< OutputImagePointer > &
-  GetOutputFixedImage( void )
+  std::vector<OutputImagePointer> &
+  GetOutputFixedImage(void)
   {
     return m_OutputFixedImage;
   }
 
   /** Get the output moving image. */
-  std::vector< OutputImagePointer > &
+  std::vector<OutputImagePointer> &
   GetOutputMovingImage()
   {
     return m_OutputMovingImage;
   }
 
   /** Get the output moving image. */
-  std::vector< OutputImagePointer > &
+  std::vector<OutputImagePointer> &
   GetUnNormalizedMovingImage()
   {
     return m_UnNormalizedMovingImage;
   }
 
   /** Get the output moving image. */
-  std::vector< OutputImagePointer > &
+  std::vector<OutputImagePointer> &
   GetUnNormalizedFixedImage()
   {
     return m_UnNormalizedFixedImage;
   }
 
   /** Get minimum value of original fixed image. */
-  itkGetMacro( FixedImageMinimum, InputPixelType );
+  itkGetMacro(FixedImageMinimum, InputPixelType);
 
   /** Get minimum value of original moving image. */
-  itkGetMacro( MovingImageMinimum, InputPixelType );
+  itkGetMacro(MovingImageMinimum, InputPixelType);
 
   /*BOBF macros
    *Set Target Mask filename*/
-  itkSetStringMacro( FixedBinaryVolume );
-  itkGetStringMacro( FixedBinaryVolume );
+  itkSetStringMacro(FixedBinaryVolume);
+  itkGetStringMacro(FixedBinaryVolume);
 
   /**Set Template Mask filename*/
-  itkSetStringMacro( MovingBinaryVolume );
-  itkGetStringMacro( MovingBinaryVolume );
+  itkSetStringMacro(MovingBinaryVolume);
+  itkGetStringMacro(MovingBinaryVolume);
 
   /** Set/Get the lower threshold. The default is 0. */
-  itkSetMacro( Lower, PixelType );
-  itkGetMacro( Lower, PixelType );
+  itkSetMacro(Lower, PixelType);
+  itkGetMacro(Lower, PixelType);
 
   /** Set/Get the upper threshold. The default is 70 */
-  itkSetMacro( Upper, PixelType );
-  itkGetMacro( Upper, PixelType );
+  itkSetMacro(Upper, PixelType);
+  itkGetMacro(Upper, PixelType);
 
-  itkSetMacro( DefaultPixelValue, PixelType );
-  itkGetMacro( DefaultPixelValue, PixelType );
+  itkSetMacro(DefaultPixelValue, PixelType);
+  itkGetMacro(DefaultPixelValue, PixelType);
 
-  itkSetMacro( MedianFilterSize, SizeType );
-  itkGetMacro( MedianFilterSize, SizeType );
+  itkSetMacro(MedianFilterSize, SizeType);
+  itkGetMacro(MedianFilterSize, SizeType);
 
   /** Set the radius of the neighborhood used for a mask. */
-  itkSetMacro( Radius, SizeType );
+  itkSetMacro(Radius, SizeType);
   /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro( Radius, SizeType );
+  itkGetConstReferenceMacro(Radius, SizeType);
 
   /** Set the Seed of the neighborhood used for a mask. */
-  itkSetMacro( Seed, IndexType );
+  itkSetMacro(Seed, IndexType);
   /** Get the radius of the neighborhood used to compute the median */
-  itkGetConstReferenceMacro( Seed, IndexType );
+  itkGetConstReferenceMacro(Seed, IndexType);
 
   /**Set Debug mode*/
-  itkSetMacro( OutDebug, bool );
-  itkGetConstMacro( OutDebug, bool );
+  itkSetMacro(OutDebug, bool);
+  itkGetConstMacro(OutDebug, bool);
 
   /**Set histogram matching*/
-  itkSetMacro( UseHistogramMatching, bool );
-  itkGetConstMacro( UseHistogramMatching, bool );
+  itkSetMacro(UseHistogramMatching, bool);
+  itkGetConstMacro(UseHistogramMatching, bool);
 
 protected:
   VDemonsPreprocessor();
   ~VDemonsPreprocessor() override {}
 
 private:
-  std::vector< InputImagePointer >     m_InputFixedImage;
-  std::vector< InputImagePointer >     m_InputMovingImage;
-  std::vector< OutputImagePointer >    m_OutputFixedImage;
-  std::vector< OutputImagePointer >    m_OutputMovingImage;
-  std::vector< OutputImagePointer >    m_UnNormalizedMovingImage;
-  std::vector< OutputImagePointer >    m_UnNormalizedFixedImage;
+  std::vector<InputImagePointer>       m_InputFixedImage;
+  std::vector<InputImagePointer>       m_InputMovingImage;
+  std::vector<OutputImagePointer>      m_OutputFixedImage;
+  std::vector<OutputImagePointer>      m_OutputMovingImage;
+  std::vector<OutputImagePointer>      m_UnNormalizedMovingImage;
+  std::vector<OutputImagePointer>      m_UnNormalizedFixedImage;
   typename TDisplacementField::Pointer m_InitialDisplacementField;
 
   unsigned long m_NumberOfHistogramLevels;
@@ -231,7 +231,7 @@ private:
    * the
    * skull of the image.*/
   OutputImagePointer
-  MakeBOBFImage( OutputImagePointer input, std::string MaskName );
+  MakeBOBFImage(OutputImagePointer input, std::string MaskName);
 };
 } // namespace itk
 

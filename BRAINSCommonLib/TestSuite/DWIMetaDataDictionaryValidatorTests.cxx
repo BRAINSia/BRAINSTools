@@ -23,7 +23,7 @@
 void
 RegisterTests()
 {
-  REGISTER_TEST( DWIMetaDataDictionaryValidatorTest );
+  REGISTER_TEST(DWIMetaDataDictionaryValidatorTest);
 }
 
 #undef main

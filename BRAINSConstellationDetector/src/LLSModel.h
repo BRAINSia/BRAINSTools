@@ -33,13 +33,13 @@ class LLSModel
 public:
   LLSModel();
   ~LLSModel();
-  using LLSMeansType = std::map< std::string, std::vector< double > >;
-  using MatrixType = vnl_matrix< double >;
-  using LLSMatricesType = std::map< std::string, MatrixType >;
-  using LLSSearchRadiiType = std::map< std::string, double >;
+  using LLSMeansType = std::map<std::string, std::vector<double>>;
+  using MatrixType = vnl_matrix<double>;
+  using LLSMatricesType = std::map<std::string, MatrixType>;
+  using LLSSearchRadiiType = std::map<std::string, double>;
 
   void
-  SetFileName( const std::string & fileName );
+  SetFileName(const std::string & fileName);
 
   //
   // read & write return zero on success -1 otherwise.
@@ -50,19 +50,19 @@ public:
   Write();
 
   void
-  SetLLSMeans( const LLSMeansType & llsMeans );
+  SetLLSMeans(const LLSMeansType & llsMeans);
 
   const LLSMeansType &
   GetLLSMeans() const;
 
   void
-  SetLLSMatrices( const LLSMatricesType & llsMatrices );
+  SetLLSMatrices(const LLSMatricesType & llsMatrices);
 
   const LLSMatricesType &
   GetLLSMatrices() const;
 
   void
-  SetSearchRadii( const LLSSearchRadiiType & llsSearchRadii );
+  SetSearchRadii(const LLSSearchRadiiType & llsSearchRadii);
 
   const LLSSearchRadiiType &
   GetSearchRadii() const;
@@ -70,28 +70,28 @@ public:
 private:
   // private methods
   void
-  WriteVector( const std::string & path, const std::vector< double > & vec );
+  WriteVector(const std::string & path, const std::vector<double> & vec);
 
   void
-  WriteMatrix( const std::string & path, const MatrixType & matrix );
+  WriteMatrix(const std::string & path, const MatrixType & matrix);
 
   void
-  WriteScalar( const std::string & path, const double & value );
+  WriteScalar(const std::string & path, const double & value);
 
   void
-  WriteString( const std::string & path, const std::string & strname );
+  WriteString(const std::string & path, const std::string & strname);
 
   double
-  ReadScalar( const std::string & DataSetName );
+  ReadScalar(const std::string & DataSetName);
 
   std::string
-  ReadString( const std::string & DataSetName );
+  ReadString(const std::string & DataSetName);
 
-  std::vector< double >
-  ReadVector( const std::string & DataSetName );
+  std::vector<double>
+  ReadVector(const std::string & DataSetName);
 
   MatrixType
-  ReadMatrix( const std::string & DataSetName );
+  ReadMatrix(const std::string & DataSetName);
 
 private:
   std::string               m_FileName;

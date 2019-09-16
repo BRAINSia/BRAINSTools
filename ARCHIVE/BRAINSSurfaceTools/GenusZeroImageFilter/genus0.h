@@ -114,19 +114,19 @@ typedef struct _genus0parameters
 
 /* public stuff */
 extern void
-genus0init( genus0parameters * g0 ); /* Initialize fields in
-                                       *g0 to their defaults.
-                                        Must be called before
-                                       genus0(). */
+genus0init(genus0parameters * g0); /* Initialize fields in
+                                     *g0 to their defaults.
+                                      Must be called before
+                                     genus0(). */
 
 extern int
-genus0( genus0parameters * g0 ); /* Call the algorithm.  Do
-                                   the work.  Returns 0 on
-                                   success, 1 on failure.
-                                   */
+genus0(genus0parameters * g0); /* Call the algorithm.  Do
+                                 the work.  Returns 0 on
+                                 success, 1 on failure.
+                                 */
 
 extern void
-genus0destruct( genus0parameters * g0 ); /* Frees *vertices and
-                                           *triangles, and frees
-                                           *output if it was
-                                           calloced */
+genus0destruct(genus0parameters * g0); /* Frees *vertices and
+                                         *triangles, and frees
+                                         *output if it was
+                                         calloced */

@@ -38,23 +38,23 @@ namespace itk
  * \sa BinaryThresholdImageFilter
  * \ingroup IntensityImageFilters  Multithreaded
  */
-template < typename TInputImage, typename TOutputImage >
-class NewOtsuThresholdImageFilter : public ImageToImageFilter< TInputImage, TOutputImage >
+template <typename TInputImage, typename TOutputImage>
+class NewOtsuThresholdImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( NewOtsuThresholdImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(NewOtsuThresholdImageFilter);
 
   /** Standard Self type alias */
   using Self = NewOtsuThresholdImageFilter;
-  using Superclass = ImageToImageFilter< TInputImage, TOutputImage >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = ImageToImageFilter<TInputImage, TOutputImage>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro( NewOtsuThresholdImageFilter, ImageToImageFilter );
+  itkTypeMacro(NewOtsuThresholdImageFilter, ImageToImageFilter);
 
   /** Image pixel value type alias. */
   using InputPixelType = typename TInputImage::PixelType;
@@ -78,34 +78,34 @@ public:
 
   /** Set the "outside" pixel value. The default value
    * NumericTraits<OutputPixelType>::ZeroValue(). */
-  itkSetMacro( OutsideValue, OutputPixelType );
+  itkSetMacro(OutsideValue, OutputPixelType);
 
   /** Get the "outside" pixel value. */
-  itkGetMacro( OutsideValue, OutputPixelType );
+  itkGetMacro(OutsideValue, OutputPixelType);
 
   /** Set the "inside" pixel value. The default value
    * NumericTraits<OutputPixelType>::max() */
-  itkSetMacro( InsideValue, OutputPixelType );
+  itkSetMacro(InsideValue, OutputPixelType);
 
   /** Get the "inside" pixel value. */
-  itkGetMacro( InsideValue, OutputPixelType );
+  itkGetMacro(InsideValue, OutputPixelType);
 
   /** Set/Get the number of histogram bins. Defaults is 128. */
-  itkSetClampMacro( NumberOfHistogramBins, unsigned long, 1, NumericTraits< unsigned long >::max() );
-  itkGetMacro( NumberOfHistogramBins, unsigned long );
+  itkSetClampMacro(NumberOfHistogramBins, unsigned long, 1, NumericTraits<unsigned long>::max());
+  itkGetMacro(NumberOfHistogramBins, unsigned long);
 
-  itkSetMacro( Omega, double );
-  itkGetMacro( Omega, double );
+  itkSetMacro(Omega, double);
+  itkGetMacro(Omega, double);
 
   /** Get the computed threshold. */
-  itkGetMacro( Threshold, InputPixelType );
+  itkGetMacro(Threshold, InputPixelType);
 
 
 protected:
   NewOtsuThresholdImageFilter();
   ~NewOtsuThresholdImageFilter(){};
   void
-  PrintSelf( std::ostream & os, Indent indent ) const override;
+  PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
   GenerateInputRequestedRegion() override;

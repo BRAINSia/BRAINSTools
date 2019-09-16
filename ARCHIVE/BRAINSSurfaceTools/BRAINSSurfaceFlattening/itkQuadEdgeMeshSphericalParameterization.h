@@ -30,14 +30,14 @@ namespace itk
  * mesh must be homeomorph to a sphere.
  * \note No test is perform on the topology of the input mesh.
  */
-template < typename TInputMesh, typename TOutputMesh, typename TInitializationFilter >
-class QuadEdgeMeshSphericalParameterization : public QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >
+template <typename TInputMesh, typename TOutputMesh, typename TInitializationFilter>
+class QuadEdgeMeshSphericalParameterization : public QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>
 {
 public:
   using Self = QuadEdgeMeshSphericalParameterization;
-  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter< TInputMesh, TOutputMesh >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Superclass = QuadEdgeMeshToQuadEdgeMeshFilter<TInputMesh, TOutputMesh>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Input types. */
   using InputMeshType = TInputMesh;
@@ -77,37 +77,37 @@ public:
 
   static constexpr unsigned int PointDimension = OutputMeshType::PointDimension;
 
-  using CoefficientsComputation = MatrixCoefficients< InputMeshType >;
+  using CoefficientsComputation = MatrixCoefficients<InputMeshType>;
 
   using InitializationFilterType = TInitializationFilter;
   typedef typename InitializationFilterType::Pointer InitializationFilterPointer;
-  using PointPairType = std::pair< OutputPointIdentifier, OutputPointIdentifier >;
+  using PointPairType = std::pair<OutputPointIdentifier, OutputPointIdentifier>;
 
 public:
   void
-  SetCoefficientsMethod( CoefficientsComputation * iMethod )
+  SetCoefficientsMethod(CoefficientsComputation * iMethod)
   {
     m_CoefficientsMethod = iMethod;
   }
 
-  itkNewMacro( Self );
-  itkTypeMacro( QuadEdgeMeshSphericalParameterization, QuadEdgeMeshToQuadEdgeMeshFilter );
+  itkNewMacro(Self);
+  itkTypeMacro(QuadEdgeMeshSphericalParameterization, QuadEdgeMeshToQuadEdgeMeshFilter);
 
-  itkSetMacro( IterationSTOP, unsigned int );
-  itkSetMacro( TimeStep, OutputCoordRepType );
-  itkSetMacro( Threshold, OutputCoordRepType );
-  itkSetMacro( Radius, OutputCoordRepType );
+  itkSetMacro(IterationSTOP, unsigned int);
+  itkSetMacro(TimeStep, OutputCoordRepType);
+  itkSetMacro(Threshold, OutputCoordRepType);
+  itkSetMacro(Radius, OutputCoordRepType);
 
 protected:
   QuadEdgeMeshSphericalParameterization()
     : Superclass()
-    , m_Iteration( 0 )
-    , m_IterationSTOP( 100000 )
-    , m_OldEnergy( 1e12 )
-    , m_NewEnergy( 1e12 )
-    , m_Threshold( 1e-10 )
-    , m_TimeStep( 0.1 )
-    , m_Radius( 1. )
+    , m_Iteration(0)
+    , m_IterationSTOP(100000)
+    , m_OldEnergy(1e12)
+    , m_NewEnergy(1e12)
+    , m_Threshold(1e-10)
+    , m_TimeStep(0.1)
+    , m_Radius(1.)
   {
     m_InitFilter = InitializationFilterType::New();
   }
@@ -119,7 +119,7 @@ protected:
   OutputCoordRepType m_OldEnergy;
   OutputCoordRepType m_NewEnergy;
 
-  std::map< PointPairType, OutputCoordRepType > m_CoefficientMap;
+  std::map<PointPairType, OutputCoordRepType> m_CoefficientMap;
 
   OutputCoordRepType m_Threshold;
   OutputCoordRepType m_TimeStep;
@@ -135,31 +135,31 @@ protected:
     InputMeshConstPointer input = this->GetInput();
 
     InputPointsContainerConstPointer points = input->GetPoints();
-    InputPointIdentifier             p_id( 0 );
-    InputQEType *                    qe( 0 );
-    InputQEType *                    qe_it( 0 );
+    InputPointIdentifier             p_id(0);
+    InputQEType *                    qe(0);
+    InputQEType *                    qe_it(0);
     InputPointType                   p;
-    OutputCoordRepType               coeff( 0. );
+    OutputCoordRepType               coeff(0.);
 
-    for ( InputPointsContainerConstIterator it = points->Begin(); it != points->End(); ++it )
+    for (InputPointsContainerConstIterator it = points->Begin(); it != points->End(); ++it)
     {
       p_id = it->Index();
       p = it->Value();
 
       qe = p.GetEdge();
-      if ( qe != 0 )
+      if (qe != 0)
       {
         qe_it = qe;
 
         do
         {
-          if ( p_id < qe_it->GetDestination() )
+          if (p_id < qe_it->GetDestination())
           {
-            coeff = static_cast< OutputCoordRepType >( ( *m_CoefficientsMethod )( input, qe_it ) );
-            m_CoefficientMap[PointPairType( p_id, qe_it->GetDestination() )] = coeff;
+            coeff = static_cast<OutputCoordRepType>((*m_CoefficientsMethod)(input, qe_it));
+            m_CoefficientMap[PointPairType(p_id, qe_it->GetDestination())] = coeff;
           }
           qe_it = qe_it->GetOnext();
-        } while ( qe_it != qe );
+        } while (qe_it != qe);
       }
     }
   }
@@ -167,21 +167,21 @@ protected:
   void
   GenerateData()
   {
-    assert( m_CoefficientsMethod != 0 );
+    assert(m_CoefficientsMethod != 0);
 
     m_Iteration = 0;
 
     ComputeCoefficientMap();
 
-    m_InitFilter->SetInput( this->GetInput() );
-    m_InitFilter->SetRadius( m_Radius );
-    m_InitFilter->SetCoefficientsMethod( m_CoefficientsMethod );
+    m_InitFilter->SetInput(this->GetInput());
+    m_InitFilter->SetRadius(m_Radius);
+    m_InitFilter->SetCoefficientsMethod(m_CoefficientsMethod);
     m_InitFilter->Update();
 
     OutputMeshPointer output = this->GetOutput();
-    output->Graft( m_InitFilter->GetOutput() );
+    output->Graft(m_InitFilter->GetOutput());
 
-    if ( m_IterationSTOP > 0 )
+    if (m_IterationSTOP > 0)
     {
       do
       {
@@ -192,64 +192,64 @@ protected:
         //             <<itk::Math::abs ( m_OldEnergy - m_NewEnergy )
         //             <<std::endl;
         ++m_Iteration;
-      } while ( itk::Math::abs( m_OldEnergy - m_NewEnergy ) > m_Threshold && m_Iteration < m_IterationSTOP );
+      } while (itk::Math::abs(m_OldEnergy - m_NewEnergy) > m_Threshold && m_Iteration < m_IterationSTOP);
 
       std::cout << m_Iteration << std::endl;
     }
   }
 
   inline OutputCoordRepType
-  ComputeQuadEdgeEnergy( const OutputCoordRepType & iCoeff, const OutputPointType & iOrg,
-                         const OutputPointType & iDest )
+  ComputeQuadEdgeEnergy(const OutputCoordRepType & iCoeff, const OutputPointType & iOrg, const OutputPointType & iDest)
   {
-    return iCoeff * iOrg.SquaredEuclideanDistanceTo( iDest );
+    return iCoeff * iOrg.SquaredEuclideanDistanceTo(iDest);
   }
 
   inline OutputVectorType
-  ComputeQuadEdgeAbsoluteDerivative( const OutputCoordRepType & iCoeff, const OutputPointType & iOrg,
-                                     const OutputPointType & iDest )
+  ComputeQuadEdgeAbsoluteDerivative(const OutputCoordRepType & iCoeff,
+                                    const OutputPointType &    iOrg,
+                                    const OutputPointType &    iDest)
   {
-    return iCoeff * ( iDest - iOrg );
+    return iCoeff * (iDest - iOrg);
   }
 
   /** E = \sum_K k_{uv} \| n_u - n_v \|^2 */
   OutputVectorType
-  ComputeEnergyAndAbsoluteDerivative( const OutputPointIdentifier & iId )
+  ComputeEnergyAndAbsoluteDerivative(const OutputPointIdentifier & iId)
   {
     OutputMeshPointer output = this->GetOutput();
-    OutputQEType *    qe = output->FindEdge( iId );
+    OutputQEType *    qe = output->FindEdge(iId);
     OutputVectorType  oVector;
 
-    oVector.Fill( 0. );
+    oVector.Fill(0.);
     OutputPointIdentifier id_dest;
 
-    if ( qe != 0 )
+    if (qe != 0)
     {
       OutputQEType * qe_it = qe;
 
-      OutputPointType p_org = output->GetPoint( iId );
+      OutputPointType p_org = output->GetPoint(iId);
       OutputPointType p_dest;
 
       OutputVectorType delta;
-      delta.Fill( 0. );
+      delta.Fill(0.);
 
       OutputVectorType   n = p_org.GetVectorFromOrigin();
-      OutputCoordRepType coeff( 0. );
+      OutputCoordRepType coeff(0.);
 
       do
       {
         id_dest = qe_it->GetDestination();
-        p_dest = output->GetPoint( id_dest );
+        p_dest = output->GetPoint(id_dest);
 
-        coeff = ( iId < id_dest ) ? m_CoefficientMap[PointPairType( iId, id_dest )]
-                                  : m_CoefficientMap[PointPairType( id_dest, iId )];
+        coeff = (iId < id_dest) ? m_CoefficientMap[PointPairType(iId, id_dest)]
+                                : m_CoefficientMap[PointPairType(id_dest, iId)];
 
-        m_NewEnergy += ComputeQuadEdgeEnergy( coeff, p_org, p_dest );
-        delta += ComputeQuadEdgeAbsoluteDerivative( coeff, p_org, p_dest );
+        m_NewEnergy += ComputeQuadEdgeEnergy(coeff, p_org, p_dest);
+        delta += ComputeQuadEdgeAbsoluteDerivative(coeff, p_org, p_dest);
         qe_it = qe_it->GetOnext();
-      } while ( qe_it != qe );
+      } while (qe_it != qe);
 
-      oVector = delta - ( delta * n ) * n;
+      oVector = delta - (delta * n) * n;
     }
 
     return oVector;
@@ -258,38 +258,38 @@ protected:
   void
   ComputeEnergyAndRelaxVertexLocation()
   {
-    m_NewEnergy = static_cast< OutputCoordRepType >( 0. );
+    m_NewEnergy = static_cast<OutputCoordRepType>(0.);
     OutputMeshPointer output = this->GetOutput();
 
     OutputPointsContainerPointer points = output->GetPoints();
     OutputVectorType             v;
     OutputPointType              p, q;
-    OutputPointIdentifier        id( 0 );
-    unsigned int                 dim( 0 );
-    OutputCoordRepType           norm( 0. );
-    for ( OutputPointsContainerIterator it = points->Begin(); it != points->End(); ++it )
+    OutputPointIdentifier        id(0);
+    unsigned int                 dim(0);
+    OutputCoordRepType           norm(0.);
+    for (OutputPointsContainerIterator it = points->Begin(); it != points->End(); ++it)
     {
       id = it->Index();
       p = it->Value();
 
-      if ( p.GetEdge() != 0 )
+      if (p.GetEdge() != 0)
       {
-        v = ComputeEnergyAndAbsoluteDerivative( id );
+        v = ComputeEnergyAndAbsoluteDerivative(id);
         norm = 0.;
-        for ( dim = 0; dim < PointDimension; ++dim )
+        for (dim = 0; dim < PointDimension; ++dim)
         {
-          p[dim] = ( 1. - m_TimeStep ) * p[dim] + m_TimeStep * v[dim];
+          p[dim] = (1. - m_TimeStep) * p[dim] + m_TimeStep * v[dim];
           norm += p[dim] * p[dim];
         }
 
-        norm = m_Radius / std::sqrt( norm );
-        for ( dim = 0; dim < PointDimension; ++dim )
+        norm = m_Radius / std::sqrt(norm);
+        for (dim = 0; dim < PointDimension; ++dim)
         {
           p[dim] *= norm;
         }
 
-        output->SetPoint( id, p );
-        q = output->GetPoint( id );
+        output->SetPoint(id, p);
+        q = output->GetPoint(id);
       }
       else
       {
@@ -299,9 +299,9 @@ protected:
   }
 
 private:
-  QuadEdgeMeshSphericalParameterization( const Self & );
+  QuadEdgeMeshSphericalParameterization(const Self &);
   void
-  operator=( const Self & );
+  operator=(const Self &);
 };
 } // namespace itk
 #endif

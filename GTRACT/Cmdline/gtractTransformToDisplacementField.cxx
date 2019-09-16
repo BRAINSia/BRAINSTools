@@ -55,52 +55,52 @@ PURPOSE.  See the above copyright notices for more information.
 #include "GenericTransformImage.h"
 
 int
-main( int argc, char * argv[] )
+main(int argc, char * argv[])
 {
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder( numberOfThreads );
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::cout << "Input Transform: " << inputTransform << std::endl;
   std::cout << "Reference Image: " << inputReferenceVolume << std::endl;
   std::cout << "Output Displacement Field: " << outputDeformationFieldVolume << std::endl;
 
-  using DeformationPixelType = itk::Vector< float, 3 >;
-  using DisplacementFieldType = itk::Image< DeformationPixelType, 3 >;
+  using DeformationPixelType = itk::Vector<float, 3>;
+  using DisplacementFieldType = itk::Image<DeformationPixelType, 3>;
   using ImageType = DisplacementFieldType;
-  using WriterType = itk::ImageFileWriter< ImageType >;
-  using ReferenceImageType = itk::Image< signed short, 3 >;
+  using WriterType = itk::ImageFileWriter<ImageType>;
+  using ReferenceImageType = itk::Image<signed short, 3>;
 
   ReferenceImageType::Pointer image;
   try
   {
-    image = itkUtil::ReadImage< ReferenceImageType >( inputReferenceVolume );
+    image = itkUtil::ReadImage<ReferenceImageType>(inputReferenceVolume);
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Error while reading Reference file." << std::endl;
     throw;
   }
 
   // Read the transform
-  using GenericTransformType = itk::Transform< double, 3, 3 >;
-  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk( inputTransform );
+  using GenericTransformType = itk::Transform<double, 3, 3>;
+  GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
 
   DisplacementFieldType::Pointer displacementField =
-    TransformToDisplacementField< ImageType::Pointer, GenericTransformType::Pointer >( image, baseTransform );
+    TransformToDisplacementField<ImageType::Pointer, GenericTransformType::Pointer>(image, baseTransform);
 
   // Write out Displacement field
 
   WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
-  writer->SetFileName( outputDeformationFieldVolume );
-  writer->SetInput( displacementField );
+  writer->SetFileName(outputDeformationFieldVolume);
+  writer->SetInput(displacementField);
   try
   {
     writer->Update();
     std::cout << "step 2 " << std::endl;
   }
-  catch ( ... )
+  catch (...)
   {
     std::cout << "Error while writing deformation file." << std::endl;
     // std::cerr<< std::exp <<std::endl;

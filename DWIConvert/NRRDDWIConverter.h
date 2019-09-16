@@ -12,7 +12,7 @@
 class NRRDDWIConverter : public DWIConverter
 {
 public:
-  NRRDDWIConverter( const DWIConverter::FileNamesContainer & inputFileNames );
+  NRRDDWIConverter(const DWIConverter::FileNamesContainer & inputFileNames);
 
   ~NRRDDWIConverter() override {}
 
@@ -40,7 +40,7 @@ public:
 
 private:
   Volume4DType::Pointer
-              CreateVolume( VectorVolumeType::Pointer & inputVol );
+              CreateVolume(VectorVolumeType::Pointer & inputVol);
   std::string m_inputBValues;
   std::string m_inputBVectors;
 };

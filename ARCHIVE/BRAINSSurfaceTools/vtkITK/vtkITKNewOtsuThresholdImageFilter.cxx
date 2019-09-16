@@ -32,4 +32,4 @@
 #  include "vtkITKNewOtsuThresholdImageFilter.h"
 #endif
 
-vtkStandardNewMacro( vtkITKNewOtsuThresholdImageFilter );
+vtkStandardNewMacro(vtkITKNewOtsuThresholdImageFilter);

@@ -55,7 +55,7 @@ namespace itk
  */
 namespace Functor
 {
-template < typename TInput, typename TOutput >
+template <typename TInput, typename TOutput>
 class Opposite
 {
 public:
@@ -64,54 +64,55 @@ public:
   ~Opposite() {}
 
   bool
-  operator!=( const Opposite & other ) const
+  operator!=(const Opposite & other) const
   {
     return false;
   }
 
   bool
-  operator==( const Opposite & other ) const
+  operator==(const Opposite & other) const
   {
     return true;
   }
 
   inline TOutput
-  operator()( const TInput & A ) const
+  operator()(const TInput & A) const
   {
     // We don't check if the TOutput can be signed.
     // It's up to the user to decide whether this makes sense.
-    return static_cast< TOutput >( -A );
+    return static_cast<TOutput>(-A);
   }
 };
 } // namespace Functor
 
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 class OppositeImageFilter
-  : public UnaryFunctorImageFilter<
-      TInputImage, TOutputImage,
-      Functor::Opposite< typename TInputImage::PixelType, typename TOutputImage::PixelType > >
+  : public UnaryFunctorImageFilter<TInputImage,
+                                   TOutputImage,
+                                   Functor::Opposite<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( OppositeImageFilter );
+  ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
 
   /** Standard class type alias. */
   using Self = OppositeImageFilter;
   using Superclass =
-    UnaryFunctorImageFilter< TInputImage, TOutputImage,
-                             Functor::Opposite< typename TInputImage::PixelType, typename TOutputImage::PixelType > >;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+    UnaryFunctorImageFilter<TInputImage,
+                            TOutputImage,
+                            Functor::Opposite<typename TInputImage::PixelType, typename TOutputImage::PixelType>>;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( OppositeImageFilter, UnaryFunctorImageFilter );
+  itkTypeMacro(OppositeImageFilter, UnaryFunctorImageFilter);
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
-  itkConceptMacro( InputConvertibleToOutputCheck,
-                   (Concept::Convertible< typename TInputImage::PixelType, typename TOutputImage::PixelType >));
+  itkConceptMacro(InputConvertibleToOutputCheck,
+                  (Concept::Convertible<typename TInputImage::PixelType, typename TOutputImage::PixelType>));
   /** End concept checking */
 #endif
 protected:
@@ -120,9 +121,9 @@ protected:
   virtual ~OppositeImageFilter() {}
 
   void
-  PrintSelf( std::ostream & os, Indent indent ) const
+  PrintSelf(std::ostream & os, Indent indent) const
   {
-    Superclass::PrintSelf( os, indent );
+    Superclass::PrintSelf(os, indent);
   }
 };
 } // end namespace itk

@@ -46,16 +46,16 @@ class VTK_ITK_EXPORT vtkITKArchetypeImageSeriesReader : public vtkImageAlgorithm
 public:
   static vtkITKArchetypeImageSeriesReader *
   New();
-  vtkTypeMacro( vtkITKArchetypeImageSeriesReader, vtkImageAlgorithm );
+  vtkTypeMacro(vtkITKArchetypeImageSeriesReader, vtkImageAlgorithm);
   void
-  PrintSelf( ostream & os, vtkIndent indent ) override;
+  PrintSelf(ostream & os, vtkIndent indent) override;
 
   using CoordinateOrientationCode = itk::SpatialOrientation::ValidCoordinateOrientationFlags;
 
   ///
   /// Specify the archetype filename for the series.
-  vtkSetStringMacro( Archetype );
-  vtkGetStringMacro( Archetype );
+  vtkSetStringMacro(Archetype);
+  vtkGetStringMacro(Archetype);
 
   ///
   /// See how many file names were generated during ExecuteInformation
@@ -63,7 +63,7 @@ public:
   GetNumberOfFileNames();
   ///
   /// Return all the file names
-  const std::vector< std::string > &
+  const std::vector<std::string> &
   GetFileNames();
 
   ///
@@ -71,47 +71,47 @@ public:
   /// that match the archetype in defining the volume to load (e.g.
   /// other canidate dicom files to look in for matching tags)
   unsigned int
-  AddFileName( const char * filename );
+  AddFileName(const char * filename);
   const char *
-  GetFileName( unsigned int n );
+  GetFileName(unsigned int n);
   void
   ResetFileNames();
 
   ///
   /// Set/Get the default spacing of the data in the file. This will be
   /// used if the reader provided spacing is 1.0. (Default is 1.0)
-  vtkSetVector3Macro( DefaultDataSpacing, double );
-  vtkGetVector3Macro( DefaultDataSpacing, double );
+  vtkSetVector3Macro(DefaultDataSpacing, double);
+  vtkGetVector3Macro(DefaultDataSpacing, double);
 
   ///
   /// Set/Get the default origin of the data (location of first pixel
   /// in the file). This will be used if the reader provided origin is
   /// 0.0. (Default is 0.0)
-  vtkSetVector3Macro( DefaultDataOrigin, double );
-  vtkGetVector3Macro( DefaultDataOrigin, double );
+  vtkSetVector3Macro(DefaultDataOrigin, double);
+  vtkGetVector3Macro(DefaultDataOrigin, double);
 
   ///
   /// When reading files which start at an unusual index, this can be added
   /// to the slice number when generating the file name (default = 0)
-  vtkSetMacro( FileNameSliceOffset, int );
-  vtkGetMacro( FileNameSliceOffset, int );
+  vtkSetMacro(FileNameSliceOffset, int);
+  vtkGetMacro(FileNameSliceOffset, int);
 
   ///
   /// When reading files which have regular, but non contiguous slices
   /// (eg filename.1,filename.3,filename.5)
   /// a spacing can be specified to skip missing files (default = 1)
-  vtkSetMacro( FileNameSliceSpacing, int );
-  vtkGetMacro( FileNameSliceSpacing, int );
+  vtkSetMacro(FileNameSliceSpacing, int);
+  vtkGetMacro(FileNameSliceSpacing, int);
 
   ///
   /// The maximum number of files to include in the series. If this is
   /// zero, then all files will be included. (Default is 0)
-  vtkSetMacro( FileNameSliceCount, int );
-  vtkGetMacro( FileNameSliceCount, int );
+  vtkSetMacro(FileNameSliceCount, int);
+  vtkGetMacro(FileNameSliceCount, int);
 
   ///  is the given file name a NRRD file?
   virtual int
-  CanReadFile( const char * filename );
+  CanReadFile(const char * filename);
 
   ///
   /// Set the orientation of the output image
@@ -145,8 +145,8 @@ public:
     this->UseNativeCoordinateOrientation = 1;
     this->Modified();
   }
-  vtkGetMacro( DesiredCoordinateOrientation, CoordinateOrientationCode );
-  vtkGetMacro( UseNativeCoordinateOrientation, char );
+  vtkGetMacro(DesiredCoordinateOrientation, CoordinateOrientationCode);
+  vtkGetMacro(UseNativeCoordinateOrientation, char);
 
   ///
   /// Set the data type of pixels in the file.
@@ -156,61 +156,61 @@ public:
   SetOutputScalarTypeToDouble()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_DOUBLE );
+    this->SetOutputScalarType(VTK_DOUBLE);
   }
   virtual void
   SetOutputScalarTypeToFloat()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_FLOAT );
+    this->SetOutputScalarType(VTK_FLOAT);
   }
   virtual void
   SetOutputScalarTypeToLong()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_LONG );
+    this->SetOutputScalarType(VTK_LONG);
   }
   virtual void
   SetOutputScalarTypeToUnsignedLong()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_UNSIGNED_LONG );
+    this->SetOutputScalarType(VTK_UNSIGNED_LONG);
   }
   virtual void
   SetOutputScalarTypeToInt()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_INT );
+    this->SetOutputScalarType(VTK_INT);
   }
   virtual void
   SetOutputScalarTypeToUnsignedInt()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_UNSIGNED_INT );
+    this->SetOutputScalarType(VTK_UNSIGNED_INT);
   }
   virtual void
   SetOutputScalarTypeToShort()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_SHORT );
+    this->SetOutputScalarType(VTK_SHORT);
   }
   virtual void
   SetOutputScalarTypeToUnsignedShort()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_UNSIGNED_SHORT );
+    this->SetOutputScalarType(VTK_UNSIGNED_SHORT);
   }
   virtual void
   SetOutputScalarTypeToChar()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_CHAR );
+    this->SetOutputScalarType(VTK_CHAR);
   }
   virtual void
   SetOutputScalarTypeToUnsignedChar()
   {
     UseNativeScalarType = 0;
-    this->SetOutputScalarType( VTK_UNSIGNED_CHAR );
+    this->SetOutputScalarType(VTK_UNSIGNED_CHAR);
   }
   virtual void
   SetOutputScalarTypeToNative()
@@ -237,23 +237,23 @@ public:
 
   ///
   /// Get the file format.  Pixels are this type in the file.
-  vtkSetMacro( OutputScalarType, int );
-  vtkGetMacro( OutputScalarType, int );
+  vtkSetMacro(OutputScalarType, int);
+  vtkGetMacro(OutputScalarType, int);
 
   ///
   /// Get number of scalars
-  vtkSetMacro( NumberOfComponents, unsigned int );
-  vtkGetMacro( NumberOfComponents, unsigned int );
+  vtkSetMacro(NumberOfComponents, unsigned int);
+  vtkGetMacro(NumberOfComponents, unsigned int);
 
   ///
   /// Whether load in a single file or a series
-  vtkSetMacro( SingleFile, int );
-  vtkGetMacro( SingleFile, int );
+  vtkSetMacro(SingleFile, int);
+  vtkGetMacro(SingleFile, int);
 
   ///
   /// Whether to use orientation from file
-  vtkSetMacro( UseOrientationFromFile, int );
-  vtkGetMacro( UseOrientationFromFile, int );
+  vtkSetMacro(UseOrientationFromFile, int);
+  vtkGetMacro(UseOrientationFromFile, int);
 
   ///
   /// Returns an IJK to RAS transformation matrix
@@ -268,22 +268,22 @@ public:
   ///
   /// Return the MetaDataDictionary from the ITK layer
   const itk::MetaDataDictionary &
-                             GetMetaDataDictionary() const;
-  std::vector< std::string > Tags;
-  std::vector< std::string > TagValues;
+                           GetMetaDataDictionary() const;
+  std::vector<std::string> Tags;
+  std::vector<std::string> TagValues;
   void
   ParseDictionary();
 
   unsigned int
   GetNumberOfItemsInDictionary();
   bool
-  HasKey( char * tag );
+  HasKey(char * tag);
   const char *
-  GetNthKey( unsigned int n );
+  GetNthKey(unsigned int n);
   const char *
-  GetNthValue( unsigned int n );
+  GetNthValue(unsigned int n);
   const char *
-  GetTagValue( char * tag );
+  GetTagValue(char * tag);
 
   /// set/get functions for grouping by tags
   bool
@@ -312,7 +312,7 @@ public:
   }
 
   void
-  SetSelectedUID( int v )
+  SetSelectedUID(int v)
   {
     SelectedUID = v;
     SetGroupingByTagsOn();
@@ -326,7 +326,7 @@ public:
   }
 
   void
-  SetSelectedContentTime( int v )
+  SetSelectedContentTime(int v)
   {
     SelectedContentTime = v;
     SetGroupingByTagsOn();
@@ -340,7 +340,7 @@ public:
   }
 
   void
-  SetSelectedTriggerTime( int v )
+  SetSelectedTriggerTime(int v)
   {
     SelectedTriggerTime = v;
     SetGroupingByTagsOn();
@@ -354,7 +354,7 @@ public:
   }
 
   void
-  SetSelectedEchoNumbers( int v )
+  SetSelectedEchoNumbers(int v)
   {
     SelectedEchoNumbers = v;
     SetGroupingByTagsOn();
@@ -369,7 +369,7 @@ public:
   }
 
   void
-  SetSelectedDiffusion( int v )
+  SetSelectedDiffusion(int v)
   {
     SelectedDiffusion = v;
     SetGroupingByTagsOn();
@@ -383,7 +383,7 @@ public:
   }
 
   void
-  SetSelectedSlice( int v )
+  SetSelectedSlice(int v)
   {
     SelectedSlice = v;
     SetGroupingByTagsOn();
@@ -397,7 +397,7 @@ public:
   }
 
   void
-  SetSelectedOrientation( int v )
+  SetSelectedOrientation(int v)
   {
     SelectedOrientation = v;
     SetGroupingByTagsOn();
@@ -454,11 +454,11 @@ public:
 
   /// check the existance of given discriminator
   int
-  ExistSeriesInstanceUID( const char * SeriesInstanceUID )
+  ExistSeriesInstanceUID(const char * SeriesInstanceUID)
   {
-    for ( unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfSeriesInstanceUIDs(); k++)
     {
-      if ( this->SeriesInstanceUIDs[k].find( SeriesInstanceUID ) != std::string::npos )
+      if (this->SeriesInstanceUIDs[k].find(SeriesInstanceUID) != std::string::npos)
       {
         return k;
       }
@@ -467,11 +467,11 @@ public:
   }
 
   int
-  ExistContentTime( const char * contentTime )
+  ExistContentTime(const char * contentTime)
   {
-    for ( unsigned int k = 0; k < GetNumberOfContentTime(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfContentTime(); k++)
     {
-      if ( this->ContentTime[k].find( contentTime ) != std::string::npos )
+      if (this->ContentTime[k].find(contentTime) != std::string::npos)
       {
         return k;
       }
@@ -480,11 +480,11 @@ public:
   }
 
   int
-  ExistTriggerTime( const char * triggerTime )
+  ExistTriggerTime(const char * triggerTime)
   {
-    for ( unsigned int k = 0; k < GetNumberOfTriggerTime(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfTriggerTime(); k++)
     {
-      if ( this->TriggerTime[k].find( triggerTime ) != std::string::npos )
+      if (this->TriggerTime[k].find(triggerTime) != std::string::npos)
       {
         return k;
       }
@@ -493,11 +493,11 @@ public:
   }
 
   int
-  ExistEchoNumbers( const char * echoNumbers )
+  ExistEchoNumbers(const char * echoNumbers)
   {
-    for ( unsigned int k = 0; k < GetNumberOfEchoNumbers(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfEchoNumbers(); k++)
     {
-      if ( this->EchoNumbers[k].find( echoNumbers ) != std::string::npos )
+      if (this->EchoNumbers[k].find(echoNumbers) != std::string::npos)
       {
         return k;
       }
@@ -506,26 +506,26 @@ public:
   }
 
   int
-  ExistDiffusionGradientOrientation( float * dgo )
+  ExistDiffusionGradientOrientation(float * dgo)
   {
     float a = 0;
-    for ( int n = 0; n < 3; n++ )
+    for (int n = 0; n < 3; n++)
     {
       a += dgo[n] * dgo[n];
     }
 
-    for ( unsigned int k = 0; k < GetNumberOfDiffusionGradientOrientation(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfDiffusionGradientOrientation(); k++)
     {
       float b = 0;
       float c = 0;
-      for ( int n = 0; n < 3; n++ )
+      for (int n = 0; n < 3; n++)
       {
         b += this->DiffusionGradientOrientation[k][n] * this->DiffusionGradientOrientation[k][n];
         c += this->DiffusionGradientOrientation[k][n] * dgo[n];
       }
-      c = fabs( c ) / sqrt( a * b );
+      c = fabs(c) / sqrt(a * b);
 
-      if ( c > 0.99999 )
+      if (c > 0.99999)
       {
         return k;
       }
@@ -534,43 +534,43 @@ public:
   }
 
   int
-  ExistSliceLocation( float sliceLocation )
+  ExistSliceLocation(float sliceLocation)
   {
-    std::vector< float >::iterator iter =
-      std::find( this->SliceLocation.begin(), this->SliceLocation.end(), sliceLocation );
-    return iter != this->SliceLocation.end() ? std::distance( this->SliceLocation.begin(), iter ) : -1;
+    std::vector<float>::iterator iter =
+      std::find(this->SliceLocation.begin(), this->SliceLocation.end(), sliceLocation);
+    return iter != this->SliceLocation.end() ? std::distance(this->SliceLocation.begin(), iter) : -1;
   }
 
   int
-  ExistImageOrientationPatient( float * directionCosine )
+  ExistImageOrientationPatient(float * directionCosine)
   {
     /// input has to have six elements
-    float a = sqrt( directionCosine[0] * directionCosine[0] + directionCosine[1] * directionCosine[1] +
-                    directionCosine[2] * directionCosine[2] );
-    for ( int k = 0; k < 3; k++ )
+    float a = sqrt(directionCosine[0] * directionCosine[0] + directionCosine[1] * directionCosine[1] +
+                   directionCosine[2] * directionCosine[2]);
+    for (int k = 0; k < 3; k++)
     {
       directionCosine[k] /= a;
     }
-    a = sqrt( directionCosine[3] * directionCosine[3] + directionCosine[4] * directionCosine[4] +
-              directionCosine[5] * directionCosine[5] );
-    for ( int k = 3; k < 6; k++ )
+    a = sqrt(directionCosine[3] * directionCosine[3] + directionCosine[4] * directionCosine[4] +
+             directionCosine[5] * directionCosine[5]);
+    for (int k = 3; k < 6; k++)
     {
       directionCosine[k] /= a;
     }
 
-    for ( unsigned int k = 0; k < GetNumberOfImageOrientationPatient(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfImageOrientationPatient(); k++)
     {
-      std::vector< float > aVec = ImageOrientationPatient[k];
-      a = sqrt( aVec[0] * aVec[0] + aVec[1] * aVec[1] + aVec[2] * aVec[2] );
-      float b = ( directionCosine[0] * aVec[0] + directionCosine[1] * aVec[1] + directionCosine[2] * aVec[2] ) / a;
-      if ( b < 0.99999 )
+      std::vector<float> aVec = ImageOrientationPatient[k];
+      a = sqrt(aVec[0] * aVec[0] + aVec[1] * aVec[1] + aVec[2] * aVec[2]);
+      float b = (directionCosine[0] * aVec[0] + directionCosine[1] * aVec[1] + directionCosine[2] * aVec[2]) / a;
+      if (b < 0.99999)
       {
         continue;
       }
 
-      a = sqrt( aVec[3] * aVec[3] + aVec[4] * aVec[4] + aVec[5] * aVec[5] );
-      b = ( directionCosine[3] * aVec[3] + directionCosine[4] * aVec[4] + directionCosine[5] * aVec[5] ) / a;
-      if ( b > 0.99999 )
+      a = sqrt(aVec[3] * aVec[3] + aVec[4] * aVec[4] + aVec[5] * aVec[5]);
+      b = (directionCosine[3] * aVec[3] + directionCosine[4] * aVec[4] + directionCosine[5] * aVec[5]) / a;
+      if (b > 0.99999)
       {
         return k;
       }
@@ -579,25 +579,25 @@ public:
   }
 
   int
-  ExistImagePositionPatient( float * ipp )
+  ExistImagePositionPatient(float * ipp)
   {
     float a = 0;
-    for ( int n = 0; n < 3; n++ )
+    for (int n = 0; n < 3; n++)
     {
       a += ipp[n] * ipp[n];
     }
 
-    for ( unsigned int k = 0; k < GetNumberOfImagePositionPatient(); k++ )
+    for (unsigned int k = 0; k < GetNumberOfImagePositionPatient(); k++)
     {
       float b = 0;
       float c = 0;
-      for ( int n = 0; n < 3; n++ )
+      for (int n = 0; n < 3; n++)
       {
         b += this->ImagePositionPatient[k][n] * this->ImagePositionPatient[k][n];
         c += this->ImagePositionPatient[k][n] * ipp[n];
       }
-      c = fabs( c ) / sqrt( a * b );
-      if ( c > 0.99999 )
+      c = fabs(c) / sqrt(a * b);
+      if (c > 0.99999)
       {
         return k;
       }
@@ -607,9 +607,9 @@ public:
 
   /// methods to get N-th discriminator
   const char *
-  GetNthSeriesInstanceUID( unsigned int n )
+  GetNthSeriesInstanceUID(unsigned int n)
   {
-    if ( n >= this->GetNumberOfSeriesInstanceUIDs() )
+    if (n >= this->GetNumberOfSeriesInstanceUIDs())
     {
       return nullptr;
     }
@@ -617,9 +617,9 @@ public:
   }
 
   const char *
-  GetNthContentTime( unsigned int n )
+  GetNthContentTime(unsigned int n)
   {
-    if ( n >= this->GetNumberOfContentTime() )
+    if (n >= this->GetNumberOfContentTime())
     {
       return nullptr;
     }
@@ -627,9 +627,9 @@ public:
   }
 
   const char *
-  GetNthTriggerTime( unsigned int n )
+  GetNthTriggerTime(unsigned int n)
   {
-    if ( n >= this->GetNumberOfTriggerTime() )
+    if (n >= this->GetNumberOfTriggerTime())
     {
       return nullptr;
     }
@@ -637,9 +637,9 @@ public:
   }
 
   const char *
-  GetNthEchoNumbers( unsigned int n )
+  GetNthEchoNumbers(unsigned int n)
   {
-    if ( n >= this->GetNumberOfEchoNumbers() )
+    if (n >= this->GetNumberOfEchoNumbers())
     {
       return nullptr;
     }
@@ -647,14 +647,14 @@ public:
   }
 
   float *
-  GetNthDiffusionGradientOrientation( unsigned int n )
+  GetNthDiffusionGradientOrientation(unsigned int n)
   {
-    if ( n >= this->GetNumberOfDiffusionGradientOrientation() )
+    if (n >= this->GetNumberOfDiffusionGradientOrientation())
     {
       return nullptr;
     }
     float * dgo = new float[3];
-    for ( int k = 0; k < 3; k++ )
+    for (int k = 0; k < 3; k++)
     {
       dgo[k] = this->DiffusionGradientOrientation[n][k];
     }
@@ -662,9 +662,9 @@ public:
   }
 
   float
-  GetNthSliceLocation( unsigned int n )
+  GetNthSliceLocation(unsigned int n)
   {
-    if ( n >= this->GetNumberOfSliceLocation() )
+    if (n >= this->GetNumberOfSliceLocation())
     {
       return this->SliceLocation[0];
     }
@@ -672,14 +672,14 @@ public:
   }
 
   float *
-  GetNthImageOrientationPatient( unsigned int n )
+  GetNthImageOrientationPatient(unsigned int n)
   {
-    if ( n >= this->GetNumberOfImageOrientationPatient() )
+    if (n >= this->GetNumberOfImageOrientationPatient())
     {
       return nullptr;
     }
     float * dgo = new float[6];
-    for ( int k = 0; k < 6; k++ )
+    for (int k = 0; k < 6; k++)
     {
       dgo[k] = this->ImageOrientationPatient[n][k];
     }
@@ -687,14 +687,14 @@ public:
   }
 
   float *
-  GetNthImagePositionPatient( unsigned int n )
+  GetNthImagePositionPatient(unsigned int n)
   {
-    if ( n >= this->GetNumberOfImagePositionPatient() )
+    if (n >= this->GetNumberOfImagePositionPatient())
     {
       return nullptr;
     }
     float * ipp = new float[3];
-    for ( int k = 0; k < 3; k++ )
+    for (int k = 0; k < 3; k++)
     {
       ipp[k] = this->ImagePositionPatient[n][k];
     }
@@ -704,94 +704,94 @@ public:
   /// insert unique item into array. Duplicate code for TCL wrapping.
   /// INFO: need to clean up
   int
-  InsertSeriesInstanceUIDs( const char * aUID )
+  InsertSeriesInstanceUIDs(const char * aUID)
   {
-    int k = ExistSeriesInstanceUID( aUID );
-    if ( k >= 0 )
+    int k = ExistSeriesInstanceUID(aUID);
+    if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector( aUID );
-    this->SeriesInstanceUIDs.push_back( aVector );
-    return ( this->SeriesInstanceUIDs.size() - 1 );
+    std::string aVector(aUID);
+    this->SeriesInstanceUIDs.push_back(aVector);
+    return (this->SeriesInstanceUIDs.size() - 1);
   }
 
   int
-  InsertContentTime( const char * aTime )
+  InsertContentTime(const char * aTime)
   {
-    int k = ExistContentTime( aTime );
-    if ( k >= 0 )
+    int k = ExistContentTime(aTime);
+    if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector( aTime );
-    this->ContentTime.push_back( aVector );
-    return ( this->ContentTime.size() - 1 );
+    std::string aVector(aTime);
+    this->ContentTime.push_back(aVector);
+    return (this->ContentTime.size() - 1);
   }
 
   int
-  InsertTriggerTime( const char * aTime )
+  InsertTriggerTime(const char * aTime)
   {
-    int k = ExistTriggerTime( aTime );
-    if ( k >= 0 )
+    int k = ExistTriggerTime(aTime);
+    if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector( aTime );
-    this->TriggerTime.push_back( aVector );
-    return ( this->TriggerTime.size() - 1 );
+    std::string aVector(aTime);
+    this->TriggerTime.push_back(aVector);
+    return (this->TriggerTime.size() - 1);
   }
 
   int
-  InsertEchoNumbers( const char * aEcho )
+  InsertEchoNumbers(const char * aEcho)
   {
-    int k = ExistEchoNumbers( aEcho );
-    if ( k >= 0 )
+    int k = ExistEchoNumbers(aEcho);
+    if (k >= 0)
     {
       return k;
     }
 
-    std::string aVector( aEcho );
-    this->EchoNumbers.push_back( aVector );
-    return ( this->EchoNumbers.size() - 1 );
+    std::string aVector(aEcho);
+    this->EchoNumbers.push_back(aVector);
+    return (this->EchoNumbers.size() - 1);
   }
 
   int
-  InsertDiffusionGradientOrientation( float * a )
+  InsertDiffusionGradientOrientation(float * a)
   {
-    int k = ExistDiffusionGradientOrientation( a );
-    if ( k >= 0 )
+    int k = ExistDiffusionGradientOrientation(a);
+    if (k >= 0)
     {
       return k;
     }
-    std::vector< float > aVector( 3 );
-    float                aMag = sqrt( a[0] * a[0] + a[1] * a[1] + a[2] * a[2] );
-    for ( k = 0; k < 3; k++ )
+    std::vector<float> aVector(3);
+    float              aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    for (k = 0; k < 3; k++)
     {
       aVector[k] = a[k] / aMag;
     }
 
-    this->DiffusionGradientOrientation.push_back( aVector );
-    return ( this->DiffusionGradientOrientation.size() - 1 );
+    this->DiffusionGradientOrientation.push_back(aVector);
+    return (this->DiffusionGradientOrientation.size() - 1);
   }
 
   /// Append the slice location a. Do nothing if the slice location has already
   /// been added.
   /// \sa InsertNextSliceLocation()
   int
-  InsertSliceLocation( float a )
+  InsertSliceLocation(float a)
   {
-    int k = ExistSliceLocation( a );
-    if ( k >= 0 )
+    int k = ExistSliceLocation(a);
+    if (k >= 0)
     {
       return k;
     }
 
-    this->SliceLocation.push_back( a );
-    return ( this->SliceLocation.size() - 1 );
+    this->SliceLocation.push_back(a);
+    return (this->SliceLocation.size() - 1);
   }
   /// Linearly insert the next slicer. This prevents a n*log(n) insertion
   /// \sa InsertSliceLocation()
@@ -799,62 +799,73 @@ public:
   InsertNextSliceLocation()
   {
     int size = this->SliceLocation.size();
-    this->SliceLocation.push_back( size > 0 ? this->SliceLocation.back() + 1 : 0.f );
+    this->SliceLocation.push_back(size > 0 ? this->SliceLocation.back() + 1 : 0.f);
     return size;
   }
 
   int
-  InsertImageOrientationPatient( float * a )
+  InsertImageOrientationPatient(float * a)
   {
-    int k = ExistImageOrientationPatient( a );
-    if ( k >= 0 )
+    int k = ExistImageOrientationPatient(a);
+    if (k >= 0)
     {
       return k;
     }
-    std::vector< float > aVector( 6 );
-    float                aMag = sqrt( a[0] * a[0] + a[1] * a[1] + a[2] * a[2] );
-    float                bMag = sqrt( a[3] * a[3] + a[4] * a[4] + a[5] * a[5] );
-    for ( k = 0; k < 3; k++ )
+    std::vector<float> aVector(6);
+    float              aMag = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    float              bMag = sqrt(a[3] * a[3] + a[4] * a[4] + a[5] * a[5]);
+    for (k = 0; k < 3; k++)
     {
       aVector[k] = a[k] / aMag;
       aVector[k + 3] = a[k + 3] / bMag;
     }
 
-    this->ImageOrientationPatient.push_back( aVector );
-    return ( this->ImageOrientationPatient.size() - 1 );
+    this->ImageOrientationPatient.push_back(aVector);
+    return (this->ImageOrientationPatient.size() - 1);
   }
 
   int
-  InsertImagePositionPatient( float * a )
+  InsertImagePositionPatient(float * a)
   {
-    int k = ExistImagePositionPatient( a );
-    if ( k >= 0 )
+    int k = ExistImagePositionPatient(a);
+    if (k >= 0)
     {
       return k;
     }
 
-    std::vector< float > aVector( 3 );
-    for ( unsigned int i = 0; i < 3; i++ )
+    std::vector<float> aVector(3);
+    for (unsigned int i = 0; i < 3; i++)
       aVector[i] = a[i];
-    this->ImagePositionPatient.push_back( aVector );
-    return ( this->ImagePositionPatient.size() - 1 );
+    this->ImagePositionPatient.push_back(aVector);
+    return (this->ImagePositionPatient.size() - 1);
   }
 
   void
   AnalyzeDicomHeaders();
 
   void
-  AssembleNthVolume( int n );
+  AssembleNthVolume(int n);
   int
   AssembleVolumeContainingArchetype();
 
   void
-  GroupFiles( int idxSeriesInstanceUID, int idxContentTime, int idxTriggerTime, int idxEchoNumbers,
-              int idxDiffusionGradientOrientation, int idxSliceLocation, int idxImageOrientationPatient );
+  GroupFiles(int idxSeriesInstanceUID,
+             int idxContentTime,
+             int idxTriggerTime,
+             int idxEchoNumbers,
+             int idxDiffusionGradientOrientation,
+             int idxSliceLocation,
+             int idxImageOrientationPatient);
 
   const char *
-  GetNthFileName( int idxSeriesInstanceUID, int idxContentTime, int idxTriggerTime, int idxEchoNumbers,
-                  int idxDiffusionGradientOrientation, int idxSliceLocation, int idxImageOrientationPatient, int n );
+  GetNthFileName(int idxSeriesInstanceUID,
+                 int idxContentTime,
+                 int idxTriggerTime,
+                 int idxEchoNumbers,
+                 int idxDiffusionGradientOrientation,
+                 int idxSliceLocation,
+                 int idxImageOrientationPatient,
+                 int n);
 
 
 protected:
@@ -896,11 +907,11 @@ protected:
 
   unsigned int IndexArchetype;
 
-  std::vector< std::string >              FileNames;
-  std::vector< std::pair< double, int > > FileNameSliceKey;
-  CoordinateOrientationCode               DesiredCoordinateOrientation;
+  std::vector<std::string>            FileNames;
+  std::vector<std::pair<double, int>> FileNameSliceKey;
+  CoordinateOrientationCode           DesiredCoordinateOrientation;
   virtual int
-  RequestInformation( vtkInformation *, vtkInformationVector **, vtkInformationVector * ) override;
+  RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   itk::MetaDataDictionary Dictionary;
 
@@ -918,33 +929,33 @@ protected:
   /// ImageOrientationPatient        0020,0037
   /// ImagePositionPatient           0020,0032
 
-  std::vector< std::string > AllFileNames;
-  bool                       AnalyzeHeader;
-  bool                       IsOnlyFile;
+  std::vector<std::string> AllFileNames;
+  bool                     AnalyzeHeader;
+  bool                     IsOnlyFile;
 
-  std::vector< std::string >          SeriesInstanceUIDs;
-  std::vector< std::string >          ContentTime;
-  std::vector< std::string >          TriggerTime;
-  std::vector< std::string >          EchoNumbers;
-  std::vector< std::vector< float > > DiffusionGradientOrientation;
-  std::vector< float >                SliceLocation;
-  std::vector< std::vector< float > > ImageOrientationPatient;
-  std::vector< std::vector< float > > ImagePositionPatient;
+  std::vector<std::string>        SeriesInstanceUIDs;
+  std::vector<std::string>        ContentTime;
+  std::vector<std::string>        TriggerTime;
+  std::vector<std::string>        EchoNumbers;
+  std::vector<std::vector<float>> DiffusionGradientOrientation;
+  std::vector<float>              SliceLocation;
+  std::vector<std::vector<float>> ImageOrientationPatient;
+  std::vector<std::vector<float>> ImagePositionPatient;
 
   /// index of each dicom file into the above arrays
-  std::vector< long int > IndexSeriesInstanceUIDs;
-  std::vector< long int > IndexContentTime;
-  std::vector< long int > IndexTriggerTime;
-  std::vector< long int > IndexEchoNumbers;
-  std::vector< long int > IndexDiffusionGradientOrientation;
-  std::vector< long int > IndexSliceLocation;
-  std::vector< long int > IndexImageOrientationPatient;
-  std::vector< long int > IndexImagePositionPatient;
+  std::vector<long int> IndexSeriesInstanceUIDs;
+  std::vector<long int> IndexContentTime;
+  std::vector<long int> IndexTriggerTime;
+  std::vector<long int> IndexEchoNumbers;
+  std::vector<long int> IndexDiffusionGradientOrientation;
+  std::vector<long int> IndexSliceLocation;
+  std::vector<long int> IndexImageOrientationPatient;
+  std::vector<long int> IndexImagePositionPatient;
 
 private:
-  vtkITKArchetypeImageSeriesReader( const vtkITKArchetypeImageSeriesReader & ); /// Not implemented.
+  vtkITKArchetypeImageSeriesReader(const vtkITKArchetypeImageSeriesReader &); /// Not implemented.
   void
-  operator=( const vtkITKArchetypeImageSeriesReader & ); /// Not implemented.
+  operator=(const vtkITKArchetypeImageSeriesReader &); /// Not implemented.
 };
 
 #endif

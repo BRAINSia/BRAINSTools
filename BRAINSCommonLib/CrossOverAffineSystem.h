@@ -47,23 +47,23 @@
  *
  */
 
-template < typename TCoordinateType, unsigned int NDimensions = 3 >
+template <typename TCoordinateType, unsigned int NDimensions = 3>
 class CrossOverAffineSystem : public itk::LightProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( CrossOverAffineSystem );
+  ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
 
   /** Standard class type alias. */
   using Self = CrossOverAffineSystem;
   using Superclass = itk::LightProcessObject;
-  using Pointer = itk::SmartPointer< Self >;
-  using ConstPointer = itk::SmartPointer< const Self >;
+  using Pointer = itk::SmartPointer<Self>;
+  using ConstPointer = itk::SmartPointer<const Self>;
 
   /** New method for creating an object using a factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( CrossOverAffineSystem, itk::LightProcessObject );
+  itkTypeMacro(CrossOverAffineSystem, itk::LightProcessObject);
 
   /** Dimension of the domain space. */
   static constexpr unsigned int SpaceDimension = NDimensions;
@@ -72,12 +72,12 @@ public:
   /** Type of the scalar representing coordinate and vector elements. */
   using ScalarType = TCoordinateType;
 
-  typedef vnl_matrix_fixed< TCoordinateType, NDimensions + 1, NDimensions + 1 > VnlTransformMatrixType44;
+  typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions + 1> VnlTransformMatrixType44;
   // typedef vnl_matrix_fixed<TCoordinateType, NDimensions+1, NDimensions+1>
   //  VnlTransformMatrixType33;
 
   /** Affine conversion type for this class */
-  using AffineTransformType = itk::AffineTransform< TCoordinateType, NDimensions >;
+  using AffineTransformType = itk::AffineTransform<TCoordinateType, NDimensions>;
   using AffineTransformPointer = typename AffineTransformType::Pointer;
   using MatrixType = typename AffineTransformType::MatrixType;
   using PointType = typename AffineTransformType::InputPointType;
@@ -85,48 +85,47 @@ public:
   using ValueType = typename VectorType::ValueType;
 
   /** Quaternion conversion types for this class */
-  using VersorTransformType = itk::VersorTransform< TCoordinateType >;
+  using VersorTransformType = itk::VersorTransform<TCoordinateType>;
   using VersorTransformPointer = typename VersorTransformType::Pointer;
   using VersorParametersType = typename VersorTransformType::ParametersType;
 
-  using VersorRigid3DTransformType = itk::VersorRigid3DTransform< TCoordinateType >;
+  using VersorRigid3DTransformType = itk::VersorRigid3DTransform<TCoordinateType>;
   typedef typename VersorRigid3DTransformType::Pointer        VersorRigid3DTransformPointer;
   typedef typename VersorRigid3DTransformType::ParametersType VersorRigid3DParametersType;
 
-  using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform< TCoordinateType >;
+  using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TCoordinateType>;
   typedef typename ScaleVersor3DTransformType::Pointer        ScaleVersor3DTransformPointer;
   typedef typename ScaleVersor3DTransformType::ParametersType ScaleVersor3DParametersType;
 
-  using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform< TCoordinateType >;
+  using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<TCoordinateType>;
   typedef typename ScaleSkewVersor3DTransformType::Pointer        ScaleSkewVersor3DTransformPointer;
   typedef typename ScaleSkewVersor3DTransformType::ParametersType ScaleSkewVersor3DParametersType;
 
   /** Get the four coordinated AffineTransform conversions. */
-  itkGetMacro( InhaleEncodeConversion, AffineTransformPointer );
-  itkGetMacro( InhaleDecodeConversion, AffineTransformPointer );
-  itkGetMacro( ExhaleEncodeConversion, AffineTransformPointer );
-  itkGetMacro( ExhaleDecodeConversion, AffineTransformPointer );
+  itkGetMacro(InhaleEncodeConversion, AffineTransformPointer);
+  itkGetMacro(InhaleDecodeConversion, AffineTransformPointer);
+  itkGetMacro(ExhaleEncodeConversion, AffineTransformPointer);
+  itkGetMacro(ExhaleDecodeConversion, AffineTransformPointer);
 
   /** Generate the four coordinated AffineTransform conversions. */
   void
-  EncloseInScaling( const VectorType & EncodeScale, const VectorType & DecodeScale );
+  EncloseInScaling(const VectorType & EncodeScale, const VectorType & DecodeScale);
 
   void
-  EncloseInTranslation( const VectorType & EncodeShift, const VectorType & DecodeShift );
+  EncloseInTranslation(const VectorType & EncodeShift, const VectorType & DecodeShift);
 
   void
-  EncloseInCentering( const PointType & EncodeCenter, const PointType & DecodeCenter );
+  EncloseInCentering(const PointType & EncodeCenter, const PointType & DecodeCenter);
 
   void
-  EncloseInAffineTransforms( AffineTransformPointer EncodeAffineTransform,
-                             AffineTransformPointer DecodeAffineTransform );
+  EncloseInAffineTransforms(AffineTransformPointer EncodeAffineTransform, AffineTransformPointer DecodeAffineTransform);
 
 protected:
   /** Set the four coordinated AffineTransform conversions. */
-  itkSetMacro( InhaleEncodeConversion, AffineTransformPointer );
-  itkSetMacro( InhaleDecodeConversion, AffineTransformPointer );
-  itkSetMacro( ExhaleEncodeConversion, AffineTransformPointer );
-  itkSetMacro( ExhaleDecodeConversion, AffineTransformPointer );
+  itkSetMacro(InhaleEncodeConversion, AffineTransformPointer);
+  itkSetMacro(InhaleDecodeConversion, AffineTransformPointer);
+  itkSetMacro(ExhaleEncodeConversion, AffineTransformPointer);
+  itkSetMacro(ExhaleDecodeConversion, AffineTransformPointer);
 
   CrossOverAffineSystem();
   ~CrossOverAffineSystem() override;

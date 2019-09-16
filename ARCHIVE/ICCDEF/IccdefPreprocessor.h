@@ -54,23 +54,23 @@ namespace itk
  *    - the minimum value of original moving image
  *
  */
-template < typename TInputImage, typename TOutputImage >
+template <typename TInputImage, typename TOutputImage>
 class IccdefPreprocessor : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN( IccdefPreprocessor );
+  ITK_DISALLOW_COPY_AND_ASSIGN(IccdefPreprocessor);
 
   /** Standard class type alias. */
   using Self = IccdefPreprocessor;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro( IccdefPreprocessor, Object );
+  itkTypeMacro(IccdefPreprocessor, Object);
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Input Image Type. */
   using InputImageType = TInputImage;
@@ -87,89 +87,89 @@ public:
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 
   /** Set the atlas patient ID. */
-  itkSetStringMacro( TheMovingImageFilename );
-  itkGetStringMacro( TheMovingImageFilename );
+  itkSetStringMacro(TheMovingImageFilename);
+  itkGetStringMacro(TheMovingImageFilename);
 
   /** Set the subject patient ID. */
-  itkSetStringMacro( TheFixedImageFilename );
-  itkGetStringMacro( TheFixedImageFilename );
+  itkSetStringMacro(TheFixedImageFilename);
+  itkGetStringMacro(TheFixedImageFilename);
 
   /** Deformation field value type. */
   using FieldValueType = float;
 
-  using TImageType = itk::Image< unsigned char, Self::ImageDimension >;
+  using TImageType = itk::Image<unsigned char, Self::ImageDimension>;
 
   /** Deformation field pixel type. */
-  using FieldPixelType = Vector< FieldValueType, Self::ImageDimension >;
+  using FieldPixelType = Vector<FieldValueType, Self::ImageDimension>;
 
   /** Deformation field type. */
-  using TDisplacementField = Image< FieldPixelType, Self::ImageDimension >;
+  using TDisplacementField = Image<FieldPixelType, Self::ImageDimension>;
 
   /** Set the initial Deformation Field. */
-  itkSetObjectMacro( InitialDisplacementField, TDisplacementField );
-  itkGetModifiableObjectMacro( InitialDisplacementField, TDisplacementField );
+  itkSetObjectMacro(InitialDisplacementField, TDisplacementField);
+  itkGetModifiableObjectMacro(InitialDisplacementField, TDisplacementField);
 
   /** Set the number of histogram levels to use. */
-  itkSetMacro( NumberOfHistogramLevels, unsigned long );
+  itkSetMacro(NumberOfHistogramLevels, unsigned long);
 
   /** Set the number of match points to use. */
-  itkSetMacro( NumberOfMatchPoints, unsigned long );
+  itkSetMacro(NumberOfMatchPoints, unsigned long);
 
   /** Method to execute the preprocessing. */
   virtual void
   Execute();
 
   /** Get the output fixed image. */
-  itkGetModifiableObjectMacro( OutputFixedImage, OutputImageType );
-  itkGetModifiableObjectMacro( OutputMovingImage, OutputImageType );
+  itkGetModifiableObjectMacro(OutputFixedImage, OutputImageType);
+  itkGetModifiableObjectMacro(OutputMovingImage, OutputImageType);
 
   /** Get the output moving image. */
-  itkGetModifiableObjectMacro( UnNormalizedMovingImage, OutputImageType );
-  itkGetModifiableObjectMacro( UnNormalizedFixedImage, OutputImageType );
+  itkGetModifiableObjectMacro(UnNormalizedMovingImage, OutputImageType);
+  itkGetModifiableObjectMacro(UnNormalizedFixedImage, OutputImageType);
 
   /** Get minimum value of original fixed image. */
-  itkGetMacro( FixedImageMinimum, InputPixelType );
+  itkGetMacro(FixedImageMinimum, InputPixelType);
 
   /** Get minimum value of original moving image. */
-  itkGetMacro( MovingImageMinimum, InputPixelType );
+  itkGetMacro(MovingImageMinimum, InputPixelType);
 
   /** Transform Types. */
-  using VersorRigid3DTransformType = VersorRigid3DTransform< double >;
-  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform< double >;
-  using AffineTransformType = AffineTransform< double, Self::ImageDimension >;
+  using VersorRigid3DTransformType = VersorRigid3DTransform<double>;
+  using ScaleSkewVersor3DTransformType = ScaleSkewVersor3DTransform<double>;
+  using AffineTransformType = AffineTransform<double, Self::ImageDimension>;
 
   /** Image dimension enumeration. */
   static constexpr unsigned int SplineOrder = 3;
 
   using CoordinateRepType = double;
   using BSplineTransformType =
-    typename itk::BSplineTransform< CoordinateRepType, Self::ImageDimension, Self::SplineOrder >;
+    typename itk::BSplineTransform<CoordinateRepType, Self::ImageDimension, Self::SplineOrder>;
 
   /*BOBF macros*/
   /**Set Target Mask filename*/
-  itkSetStringMacro( FixedBinaryVolume );
-  itkGetStringMacro( FixedBinaryVolume );
+  itkSetStringMacro(FixedBinaryVolume);
+  itkGetStringMacro(FixedBinaryVolume);
 
   /**Set Template Mask filename*/
-  itkSetStringMacro( MovingBinaryVolume );
-  itkGetStringMacro( MovingBinaryVolume );
+  itkSetStringMacro(MovingBinaryVolume);
+  itkGetStringMacro(MovingBinaryVolume);
 
 
-  itkSetMacro( DefaultPixelValue, PixelType );
-  itkGetMacro( DefaultPixelValue, PixelType );
+  itkSetMacro(DefaultPixelValue, PixelType);
+  itkGetMacro(DefaultPixelValue, PixelType);
 
-  itkSetMacro( MedianFilterSize, SizeType );
-  itkGetMacro( MedianFilterSize, SizeType );
+  itkSetMacro(MedianFilterSize, SizeType);
+  itkGetMacro(MedianFilterSize, SizeType);
 
-  itkSetStringMacro( InitialTransformFilename );
+  itkSetStringMacro(InitialTransformFilename);
 
   /**Set Debug mode*/
-  itkSetMacro( OutDebug, bool );
-  itkGetConstMacro( OutDebug, bool );
+  itkSetMacro(OutDebug, bool);
+  itkGetConstMacro(OutDebug, bool);
 
   /**Set histogram matching*/
-  itkSetMacro( UseHistogramMatching, bool );
-  itkGetConstMacro( UseHistogramMatching, bool );
+  itkSetMacro(UseHistogramMatching, bool);
+  itkGetConstMacro(UseHistogramMatching, bool);
 
 protected:
   IccdefPreprocessor();
@@ -210,7 +210,7 @@ private:
   /*MakeBOBF function takes in a brain image and a whole brain mask and strips
     the skull of the image.*/
   InputImagePointer
-  MakeBOBFImage( InputImagePointer input, std::string MaskName );
+  MakeBOBFImage(InputImagePointer input, std::string MaskName);
 };
 } // namespace itk
 

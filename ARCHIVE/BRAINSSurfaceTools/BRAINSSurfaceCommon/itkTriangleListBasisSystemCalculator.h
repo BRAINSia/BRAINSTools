@@ -38,25 +38,25 @@ namespace itk
  * \sa TriangleBasisSystem
  *
  */
-template < typename TMesh, typename TBasisSystem >
+template <typename TMesh, typename TBasisSystem>
 class TriangleListBasisSystemCalculator : public Object
 {
 public:
   /** Standard class type alias. */
   using Self = TriangleListBasisSystemCalculator;
   using Superclass = Object;
-  using Pointer = SmartPointer< Self >;
-  using ConstPointer = SmartPointer< const Self >;
+  using Pointer = SmartPointer<Self>;
+  using ConstPointer = SmartPointer<const Self>;
 
   /** Method for creation through the object factory. */
-  itkNewMacro( Self );
+  itkNewMacro(Self);
 
   /** Standard part of every itk Object. */
-  itkTypeMacro( TriangleListBasisSystemCalculator, Object );
+  itkTypeMacro(TriangleListBasisSystemCalculator, Object);
 
   using BasisSystemType = TBasisSystem;
   using CellIdentifier = typename TMesh::CellIdentifier;
-  using BasisSystemListType = VectorContainer< CellIdentifier, TBasisSystem >;
+  using BasisSystemListType = VectorContainer<CellIdentifier, TBasisSystem>;
   using BasisSystemListIterator = typename BasisSystemListType::ConstIterator;
   using BasisSystemListPointer = typename BasisSystemListType::Pointer;
 
@@ -70,15 +70,15 @@ public:
   using CellsContainerConstIterator = typename CellsContainer::ConstIterator;
 
   /** Set/Get the input mesh. */
-  itkSetConstObjectMacro( InputMesh, MeshType );
-  itkGetConstObjectMacro( InputMesh, MeshType );
+  itkSetConstObjectMacro(InputMesh, MeshType);
+  itkGetConstObjectMacro(InputMesh, MeshType);
 
   /** Compute the basis system at every triangle. */
   void
   Calculate();
 
   /** Get the list of basis systems. */
-  itkGetConstObjectMacro( BasisSystemList, BasisSystemListType );
+  itkGetConstObjectMacro(BasisSystemList, BasisSystemListType);
 
 protected:
   TriangleListBasisSystemCalculator();

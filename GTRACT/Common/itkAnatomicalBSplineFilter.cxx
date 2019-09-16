@@ -87,18 +87,18 @@ AnatomicalBSplineFilter::Update()
   // INFO: Needed for ITKv4 registration registration->InPlaceOn();
 
   /*** Set up the Registration ***/
-  registration->SetMetric( metric );
-  registration->SetOptimizer( optimizer );
-  registration->SetInterpolator( interpolator );
-  registration->SetTransform( m_Output );
+  registration->SetMetric(metric);
+  registration->SetOptimizer(optimizer);
+  registration->SetInterpolator(interpolator);
+  registration->SetTransform(m_Output);
 
   /*** Setup the Registration ***/
-  registration->SetFixedImage( m_FixedImage );
-  registration->SetMovingImage( m_MovingImage );
+  registration->SetFixedImage(m_FixedImage);
+  registration->SetMovingImage(m_MovingImage);
 
   RegisterImageRegionType fixedImageRegion = m_FixedImage->GetBufferedRegion();
 
-  registration->SetFixedImageRegion( fixedImageRegion );
+  registration->SetFixedImageRegion(fixedImageRegion);
 
   /*** Setup the B-SPline Parameters ***/
   TransformRegionType bsplineRegion;
@@ -106,39 +106,39 @@ AnatomicalBSplineFilter::Update()
   TransformSizeType   gridBorderSize;
   TransformSizeType   totalGridSize;
 
-  gridSizeOnImage.SetSize( m_GridSize.GetSize() );
-  gridBorderSize.Fill( m_GridBorderSize ); // Border for spline order = 3 ( 1
-                                           // lower, 2 upper )
+  gridSizeOnImage.SetSize(m_GridSize.GetSize());
+  gridBorderSize.Fill(m_GridBorderSize); // Border for spline order = 3 ( 1
+                                         // lower, 2 upper )
   totalGridSize = gridSizeOnImage + gridBorderSize;
 
   // bsplineRegion.SetSize( totalGridSize );
 
-  if ( m_BulkTransform.IsNotNull() )
+  if (m_BulkTransform.IsNotNull())
   {
     std::cout << "Using Bulk Transform" << std::endl;
-    m_Output->SetBulkTransform( m_BulkTransform );
+    m_Output->SetBulkTransform(m_BulkTransform);
   }
 
   const unsigned int numberOfParameters = m_Output->GetNumberOfParameters();
 
-  TransformParametersType parameters( numberOfParameters );
+  TransformParametersType parameters(numberOfParameters);
 
-  parameters.Fill( 0.0 );
+  parameters.Fill(0.0);
 
-  m_Output->SetParameters( parameters );
+  m_Output->SetParameters(parameters);
 
-  registration->SetInitialTransformParameters( m_Output->GetParameters() );
+  registration->SetInitialTransformParameters(m_Output->GetParameters());
 
-  OptimizerBoundSelectionType boundSelect( m_Output->GetNumberOfParameters() );
-  OptimizerBoundValueType     upperBound( m_Output->GetNumberOfParameters() );
-  OptimizerBoundValueType     lowerBound( m_Output->GetNumberOfParameters() );
+  OptimizerBoundSelectionType boundSelect(m_Output->GetNumberOfParameters());
+  OptimizerBoundValueType     upperBound(m_Output->GetNumberOfParameters());
+  OptimizerBoundValueType     lowerBound(m_Output->GetNumberOfParameters());
   /* Old Method - Unbounded Deformations in X,Y,Z */
   // boundSelect.Fill( 0 );
   // upperBound.Fill( 0.0 );
   // lowerBound.Fill( 0.0 );
   /* New Method - User Specifies the Displacement Bounds in X,Y,Z */
   /*    Default is the same as the Old method          */
-  for ( unsigned int i = 0; i < boundSelect.size(); i += 3 )
+  for (unsigned int i = 0; i < boundSelect.size(); i += 3)
   {
     boundSelect[i + 0] = m_BoundTypeX;
     boundSelect[i + 1] = m_BoundTypeY;
@@ -151,23 +151,23 @@ AnatomicalBSplineFilter::Update()
     upperBound[i + 2] = m_UpperBoundZ;
   }
 
-  optimizer->SetBoundSelection( boundSelect );
-  optimizer->SetUpperBound( upperBound );
-  optimizer->SetLowerBound( lowerBound );
+  optimizer->SetBoundSelection(boundSelect);
+  optimizer->SetUpperBound(upperBound);
+  optimizer->SetLowerBound(lowerBound);
 
-  optimizer->SetCostFunctionConvergenceFactor( m_CostFunctionConvergenceFactor );
-  optimizer->SetProjectedGradientTolerance( m_ProjectedGradientTolerance );
-  optimizer->SetMaximumNumberOfIterations( m_MaximumNumberOfIterations );
-  optimizer->SetMaximumNumberOfEvaluations( m_MaximumNumberOfEvaluations );
-  optimizer->SetMaximumNumberOfCorrections( m_MaximumNumberOfCorrections );
+  optimizer->SetCostFunctionConvergenceFactor(m_CostFunctionConvergenceFactor);
+  optimizer->SetProjectedGradientTolerance(m_ProjectedGradientTolerance);
+  optimizer->SetMaximumNumberOfIterations(m_MaximumNumberOfIterations);
+  optimizer->SetMaximumNumberOfEvaluations(m_MaximumNumberOfEvaluations);
+  optimizer->SetMaximumNumberOfCorrections(m_MaximumNumberOfCorrections);
 
-  metric->SetNumberOfHistogramBins( m_BSplineHistogramBins );
+  metric->SetNumberOfHistogramBins(m_BSplineHistogramBins);
 
   /*** Make this a Parameter ***/
   const unsigned int numberOfSamples = fixedImageRegion.GetNumberOfPixels() / m_SpatialSampleScale;
 
-  metric->SetNumberOfSpatialSamples( numberOfSamples );
-  metric->ReinitializeSeed( 76926294 );
+  metric->SetNumberOfSpatialSamples(numberOfSamples);
+  metric->ReinitializeSeed(76926294);
 
   // Add a time probe
   itk::TimeProbesCollectorBase collector;
@@ -176,11 +176,11 @@ AnatomicalBSplineFilter::Update()
 
   try
   {
-    collector.Start( "Registration" );
+    collector.Start("Registration");
     registration->Update();
-    collector.Stop( "Registration" );
+    collector.Stop("Registration");
   }
-  catch ( itk::ExceptionObject & err )
+  catch (itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -192,7 +192,7 @@ AnatomicalBSplineFilter::Update()
   collector.Report();
 
   /* This call is required to copy the parameters */
-  m_Output->SetParametersByValue( finalParameters );
+  m_Output->SetParametersByValue(finalParameters);
 
   std::cout << m_Output << std::endl;
 }

@@ -12,38 +12,92 @@ os:
   - linux
 #  - osx
 
-# http://www.brianlheim.com/2017/08/20/supercollider-travisci.html
-# use ccache to speed up build times. on osx,
-# we install it during the the before_install step
-# with xcode, this requires an additional flag passed during the configuration phase.
-# see README_MACOS.md for details.
-cache:
-  - ccache
 
 compiler:
 #  - clang
   - gcc
 
+# environment variables
+env:
+  global:
+    - PROJ_SOURCE_DIR=${TRAVIS_BUILD_DIR}
+    - PROJ_BUILD_DIR=${HOME}/build
+    - PROJ_INSTALL_DIR=${HOME}/install
+    - BUILD_TYPE=Release
+
+# https://docs.travis-ci.com/user/customizing-the-build/
 git:
   depth: false # Need the full depth of the repo for version history
 
-#cache: ccache  <-- todo investigate
+
+# http://www.brianlheim.com/2017/08/20/supercollider-travisci.html
+# use ccache to speed up build times. on osx,
+# we install it during the the before_install step
+# with xcode, this requires an additional flag passed during the configuration phase.
+# see README_MACOS.md for details.
+#cache:
+#  - ccache
+
+# cache the build dir
+cache:
+  timeout: 1000
+  directories:
+  - ${PROJ_BUILD_DIR}
+
 #use containers  <-- todo investigate
 
+# general dependencies
 addons:
-#  homebrew:
-#    packages:
-#    - ninja
-#    - cmake
-#    update: false # do not update homebrew by default
-  #apt:
+  apt:
     #sources:
     #- llvm-toolchain-precise-3.5
-    #packages:
+    packages:
+      - ninja-build
     #- gcc-4.9
     #- g++-4.9
     #- clang-3.5
     #- valgrind
+  homebrew:
+    packages:
+      - ninja
+#    - cmake
+#    update: false # do not update homebrew by default
+
+# additional setup
+install:
+
+  # additional dependencies in ${HOME}/deps/
+  - DEPS_DIR="${HOME}/deps"
+  - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
+
+  # install recent cmake
+  - |
+    if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz"
+      mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
+      export PATH=${DEPS_DIR}/cmake/bin:${PATH}
+    elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      brew install cmake || brew upgrade cmake
+    fi
+  - cmake --version && ctest --version
+
+# before script runs, we need to resolve timestamps between the git clone
+# and the older build cache. A good discussion is found here:
+# https://blog.esciencecenter.nl/travis-caching-and-incremental-builds-6518b89ee889
+before_script:
+
+  # create build & install directories if they do not exist
+  - mkdir -p ${PROJ_BUILD_DIR} ${PROJ_INSTALL_DIR}
+
+  # fix times on source
+  - |
+    MD5_FILE=${PROJ_BUILD_DIR}/build_cache.md5
+    export OLDEST_DATE=$(find ${PROJ_BUILD_DIR} -type f -printf '%TD %TT\n' | sort | head -1)
+    if [ -f ${MD5_FILE} ]; then
+      (md5sum -c ${MD5_FILE} 2>/dev/null || :) | awk '{if ($NF == "OK") print substr($0, 1, length($0)-4)}' | xargs touch -d "${OLDEST_DATE}"
+    fi
+    find ${PROJ_SOURCE_DIR} \( -type d -name .git \) -prune -o -type f -print0 | xargs -0 md5sum > ${MD5_FILE}
+
 matrix:
 #  allow_failures:
 #    - os: osx
@@ -62,7 +116,41 @@ matrix:
       os: linux
       dist: xenial
       compiler: gcc
-      script: ./.travis_build_script.sh
+      script:
+        - printenv
+        - mkdir -p ${PROJ_BUILD_DIR}
+        - cd ${PROJ_BUILD_DIR}
+        - cmake
+            -G Ninja
+            -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=${BUILD_TYPE}
+            -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE}
+            -DCMAKE_CXX_STANDARD:STRING=11
+            -DUSE_ANTS:BOOL=OFF
+            -DBRAINSTools_REQUIRES_VTK:BOOL=OFF
+            -DUSE_BRAINSABC:BOOL=OFF
+            -DUSE_BRAINSDWICleanup:BOOL=OFF
+            -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
+            -DUSE_BRAINSLabelStats:BOOL=OFF
+            -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
+            -DUSE_BRAINSROIAuto:BOOL=OFF
+            -DUSE_BRAINSRefacer:BOOL=OFF
+            -DUSE_BRAINSResample:BOOL=OFF
+            -DUSE_BRAINSSnapShotWriter:BOOL=OFF
+            -DUSE_BRAINSStripRotation:BOOL=OFF
+            -DUSE_BRAINSTransformConvert:BOOL=OFF
+            -DUSE_ConvertBetweenFileFormats:BOOL=OFF
+            -DUSE_ImageCalculator:BOOL=OFF
+            -DUSE_ReferenceAtlas:BOOL=OFF
+            ${PROJ_SOURCE_DIR}
+        - cd ${PROJ_BUILD_DIR}
+        - ninja
+        - cd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build
+        - ctest -D ExperimentalStart
+        - ctest -D ExperimentalConfigure
+        - ctest -D ExperimentalBuild -j2
+        - travis_wait 20 ctest -D ExperimentalTest --schedule-random -j2 --output-on-failure
+        - ctest -D ExperimentalSubmit
+#        - travis_wait 20 ninja test
 #   Valgrind has too many false positives from the python wrapping.  Need a good suppression file
 #    - name: xenial gcc cmake coverage
 #      os: linux

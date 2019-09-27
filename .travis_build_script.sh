@@ -5,16 +5,24 @@
 # -x: show expanded commands
 set -vex
 
+echo "STARTING BUILD"
 
-SOURCE_DIR=$(pwd)
-BUILD_DIR=${SOURCE_DIR}/cmake-travis-bld
+PROJ_SOURCE_DIR=${TRAVIS_BUILD_DIR}
+PROJ_BUILD_DIR=${HOME}/build
+PROJ_INSTALL_DIR=${HOME}/install
+BUILD_TYPE=Release
 
-mkdir ${BUILD_DIR}
-cd ${BUILD_DIR}
+printenv
+
+mkdir -p ${PROJ_BUILD_DIR}
+cd ${PROJ_SOURCE_DIR}
 
 cmake \
+    -G Ninja \
+    -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=${BUILD_TYPE} \
+    -DCMAKE_BUILD_TYPE:STRING=${BUILD_TYPE} \
     -DCMAKE_CXX_STANDARD:STRING=11 \
-    -DUSE_ANTS=BOOL=OFF \
+    -DUSE_ANTS:BOOL=OFF \
     -DBRAINSTools_REQUIRES_VTK=OFF \
     -DUSE_BRAINSABC:BOOL=OFF \
     -DUSE_BRAINSDWICleanup:BOOL=OFF \
@@ -30,10 +38,17 @@ cmake \
     -DUSE_ConvertBetweenFileFormats:BOOL=OFF \
     -DUSE_ImageCalculator:BOOL=OFF \
     -DUSE_ReferenceAtlas:BOOL=OFF \
-     ${SOURCE_DIR}
+    -S ${PROJ_SOURCE_DIR} \
+    -B ${PROJ_BUILD_DIR}
 
-#make -j 2 # BUILD EVERYTHING: INFO: BUILD_SUPPORT_SEPARATE.
-make -j 2
+#make -j 2
+cd ${PROJ_BUILD_DIR}
+ninja
 
-cd ${BUILD_DIR}/BRAINSTools-build/
-make test
+cd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build
+ctest -D ExperimentalStart
+ctest -D ExperimentalConfigure
+ctest -D ExperimentalBuild -j2
+ctest -D ExperimentalTest --schedule-random -j2 --output-on-failure
+ctest -D ExperimentalSubmit
+ninja test

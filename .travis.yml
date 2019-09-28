@@ -21,7 +21,7 @@ compiler:
 env:
   global:
     - PROJ_SOURCE_DIR=${TRAVIS_BUILD_DIR}
-    - PROJ_BUILD_DIR=${HOME}/build
+    - PROJ_BUILD_DIR=${HOME}/BT-11
     - PROJ_INSTALL_DIR=${HOME}/install
     - BUILD_TYPE=Release
 
@@ -97,6 +97,11 @@ before_script:
       (md5sum -c ${MD5_FILE} 2>/dev/null || :) | awk '{if ($NF == "OK") print substr($0, 1, length($0)-4)}' | xargs touch -d "${OLDEST_DATE}"
     fi
     find ${PROJ_SOURCE_DIR} \( -type d -name .git \) -prune -o -type f -print0 | xargs -0 md5sum > ${MD5_FILE}
+  - echo "SOURCES:"
+  - ls -alhrtd ${PROJ_SOURCE_DIR}/*
+  - echo "BUILD:"
+  - ls -alhrtd ${PROJ_BUILD_DIR}/*
+  - head ${MD5_FILE}
 
 matrix:
 #  allow_failures:
@@ -143,12 +148,15 @@ matrix:
             -DUSE_ReferenceAtlas:BOOL=OFF
             ${PROJ_SOURCE_DIR}
         - cd ${PROJ_BUILD_DIR}
+        - ls -alrthd ${PROJ_BUILD_DIR}/*
         - ninja
         - cd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build
+        - ls -alrthd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build/*
         - ctest -D ExperimentalStart
         - ctest -D ExperimentalConfigure
         - ctest -D ExperimentalBuild -j2
-        - travis_wait 20 ctest -D ExperimentalTest --schedule-random -j2 --output-on-failure
+#        - travis_wait 20 ctest -D ExperimentalTest --schedule-random -j2 --output-on-failure
+        - echo "NO TESTS RUN"
         - ctest -D ExperimentalSubmit
 #        - travis_wait 20 ninja test
 #   Valgrind has too many false positives from the python wrapping.  Need a good suppression file

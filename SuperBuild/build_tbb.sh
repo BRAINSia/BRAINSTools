@@ -70,16 +70,13 @@ cat > "${TEST_DIR}/CMakeLists.txt" << EOF
 cmake_minimum_required(VERSION 3.0)
 # tbb;tbbmalloc;tbbmalloc_proxy
 find_package(TBB REQUIRED COMPONENTS tbbmalloc CONFIG)       #Find one component - test
-message(STATUS "COMPONENTS FOUND: TBB_IMPORTED_TARGETS=:\${TBB_IMPORTED_TARGETS}: TBB_tbb_FOUND=:\${TBB_tbb_FOUND}: TBB_tbbmalloc_FOUND=:\${TBB_tbbmalloc_FOUND}: TBB_tbbmalloc_proxy_FOUND=:\${TBB_tbbmalloc_proxy_FOUND}:")
 find_package(TBB REQUIRED COMPONENTS tbbmalloc_proxy CONFIG) #Find one component - test
-message(STATUS "COMPONENTS FOUND: TBB_IMPORTED_TARGETS=:\${TBB_IMPORTED_TARGETS}: TBB_tbb_FOUND=:\${TBB_tbb_FOUND}: TBB_tbbmalloc_FOUND=:\${TBB_tbbmalloc_FOUND}: TBB_tbbmalloc_proxy_FOUND=:\${TBB_tbbmalloc_proxy_FOUND}:")
 find_package(TBB REQUIRED COMPONENTS tbb CONFIG)             #Find one component - test
-message(STATUS "COMPONENTS FOUND: TBB_IMPORTED_TARGETS=:\${TBB_IMPORTED_TARGETS}: TBB_tbb_FOUND=:\${TBB_tbb_FOUND}: TBB_tbbmalloc_FOUND=:\${TBB_tbbmalloc_FOUND}: TBB_tbbmalloc_proxy_FOUND=:\${TBB_tbbmalloc_proxy_FOUND}:")
 find_package(TBB REQUIRED CONFIG) # Should be able to find_package many times
-message(STATUS "COMPONENTS FOUND: TBB_IMPORTED_TARGETS=:\${TBB_IMPORTED_TARGETS}: TBB_tbb_FOUND=:\${TBB_tbb_FOUND}: TBB_tbbmalloc_FOUND=:\${TBB_tbbmalloc_FOUND}: TBB_tbbmalloc_proxy_FOUND=:\${TBB_tbbmalloc_proxy_FOUND}:")
 if(NOT TBB_FOUND)
   message(FATAL_ERROR "NO TBB")
 else()
+  #message(STATUS "COMPONENTS FOUND: TBB_IMPORTED_TARGETS=:\${TBB_IMPORTED_TARGETS}: TBB_tbb_FOUND=:\${TBB_tbb_FOUND}: TBB_tbbmalloc_FOUND=:\${TBB_tbbmalloc_FOUND}: TBB_tbbmalloc_proxy_FOUND=:\${TBB_tbbmalloc_proxy_FOUND}:")
   message(STATUS "FOUND TBB")
 endif()
 add_executable(tbb_test test.cpp)

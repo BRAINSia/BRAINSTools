@@ -138,14 +138,14 @@ DWIMetaDataDictionaryValidator::GetGradientCount()
 {
   DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
   int                                              count = 0;
-  for (DWIMetaDataDictionaryValidator::StringVectorType::iterator it = keys.begin(); it != keys.end(); ++it)
+  for (auto & key : keys)
   {
-    if ((*it).find("DWMRI_gradient_") != std::string::npos)
+    if (key.find("DWMRI_gradient_") != std::string::npos)
     {
       count++;
     }
     // Check for repeated components
-    else if ((*it).find("DWMRI_NEX") != std::string::npos)
+    else if (key.find("DWMRI_NEX") != std::string::npos)
     {
       int repeats = 0;
       if (itk::ExposeMetaData<int>(m_dict, "DWMRI_NEX", repeats))
@@ -163,11 +163,11 @@ DWIMetaDataDictionaryValidator::GetGradientTable() const
   DWIMetaDataDictionaryValidator::GradientTableType myGradientTable;
   DWIMetaDataDictionaryValidator::StringVectorType  allKeys = m_dict.GetKeys();
   int                                               count = 0;
-  for (DWIMetaDataDictionaryValidator::StringVectorType::iterator it = allKeys.begin(); it != allKeys.end(); ++it)
+  for (auto & allKey : allKeys)
   {
-    if ((*it).find("DWMRI_gradient_") != std::string::npos)
+    if (allKey.find("DWMRI_gradient_") != std::string::npos)
     {
-      std::string                                        gradientString = (*it).substr(15, 4);
+      std::string                                        gradientString = allKey.substr(15, 4);
       int                                                index = std::atoi(gradientString.c_str());
       DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
       myGradientTable.push_back(curGradientDirection);
@@ -181,11 +181,9 @@ void
 DWIMetaDataDictionaryValidator::SetGradientTable(GradientTableType & myGradientTable)
 {
   int count = 0;
-  for (DWIMetaDataDictionaryValidator::GradientTableType::iterator it = myGradientTable.begin();
-       it != myGradientTable.end();
-       ++it)
+  for (auto & it : myGradientTable)
   {
-    DWIMetaDataDictionaryValidator::SetGradient(count++, *it);
+    DWIMetaDataDictionaryValidator::SetGradient(count++, it);
   }
   // Remove additional gradients
   std::string nextKey = DWIMetaDataDictionaryValidator::GetGradientKeyString(count++);

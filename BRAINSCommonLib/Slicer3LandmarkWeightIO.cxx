@@ -36,11 +36,11 @@ WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const Landm
 
   unsigned int numNamedLandmarks = 0;
 
-  for (LandmarksWeightMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it)
+  for (const auto & landmark : landmarks)
   {
-    if ((it->first).compare("") != 0)
+    if ((landmark.first).compare("") != 0)
     {
-      lmkWeightStream << it->first << "," << doubleConvert(it->second) << std::endl;
+      lmkWeightStream << landmark.first << "," << doubleConvert(landmark.second) << std::endl;
 
       ++numNamedLandmarks;
     }

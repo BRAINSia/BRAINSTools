@@ -279,33 +279,33 @@ get_landmark_types(const std::string & landmark_types_list_file)
   static std::vector<std::string>                                      newLandmarksNames;
   const std::vector<std::vector<std::string>>                          csv_data = read_csv(landmark_types_list_file);
 
-  for (std::vector<std::vector<std::string>>::const_iterator iter = csv_data.begin(); iter != csv_data.end(); ++iter)
+  for (const auto & iter : csv_data)
   {
     // Check for comment
-    if (is_comment((*iter)[0]))
+    if (is_comment(iter[0]))
     {
       continue;
     }
 
-    if (iter->size() != 2)
+    if (iter.size() != 2)
     {
       std::cout << "Row in " << landmark_types_list_file << " must have precisely two entries:" << std::endl;
-      for (unsigned int i = 0; i < iter->size(); i++)
+      for (unsigned int i = 0; i < iter.size(); i++)
       {
-        std::cout << (*iter)[i] << " ";
+        std::cout << iter[i] << " ";
       }
       itkGenericExceptionMacro(<< "Row in " << landmark_types_list_file << " must have precisely two entries:");
     }
 
     // Add it to the list.  We'll assume that there either are no duplicates, or
     // that any duplicates are intentional.
-    if ((*iter)[1] == "baseLandmarks")
+    if (iter[1] == "baseLandmarks")
     {
-      baseLandmarksNames.push_back(sanitize((*iter)[0]));
+      baseLandmarksNames.push_back(sanitize(iter[0]));
     }
-    else if ((*iter)[1] == "newLandmarks")
+    else if (iter[1] == "newLandmarks")
     {
-      newLandmarksNames.push_back(sanitize((*iter)[0]));
+      newLandmarksNames.push_back(sanitize(iter[0]));
     }
   }
 
@@ -332,9 +332,9 @@ WriteHDFStringList(H5::H5File & file, const char * const name, const std::vector
   std::vector<char const *> stringListCstr;
 
   stringListCstr.reserve(numStrings);
-  for (std::vector<std::string>::const_iterator it = stringList.begin(); it != stringList.end(); ++it)
+  for (const auto & it : stringList)
   {
-    stringListCstr.push_back(it->c_str());
+    stringListCstr.push_back(it.c_str());
   }
   strSet.write(&(stringListCstr[0]), strType);
   strSet.close();
@@ -376,9 +376,9 @@ main(int argc, char * argv[])
   SubjectFilenameVector subjects = get_subject_filename_tuples(cleanedGlobPattern);
 
   std::vector<std::string> subjectIDVec;
-  for (SubjectFilenameVector::iterator it = subjects.begin(); it != subjects.end(); ++it)
+  for (auto & subject : subjects)
   {
-    subjectIDVec.push_back(it->first);
+    subjectIDVec.push_back(subject.first);
   }
 
   const FileToLandmarksMapType allFileToLandmarkMap = get_allFileToLandmarkMap(subjects);
@@ -395,18 +395,17 @@ main(int argc, char * argv[])
   // - landmark coordinates in each data set (a 3xN matrix)
 
   std::map<std::string, std::vector<std::pair<std::string, vnl_matrix<double>>>> byClassLandmarkMatrix;
-  for (LandmarkClassMapsTypes::const_iterator cit = landmark_types.begin(); cit != landmark_types.end(); ++cit)
+  for (const auto & landmark_type : landmark_types)
   {
     std::vector<std::pair<std::string, vnl_matrix<double>>> perLandmarkMatrix;
-    for (std::vector<std::string>::const_iterator lit = cit->second.begin(); lit != cit->second.end(); ++lit)
+    for (std::vector<std::string>::const_iterator lit = landmark_type.second.begin(); lit != landmark_type.second.end(); ++lit)
     {
       landmarkNames.push_back(*lit);
       vnl_matrix<double> CurrentLandmarkMatrix(allFileToLandmarkMap.size(), 3);
       int                subjCount = 0;
-      for (FileToLandmarksMapType::const_iterator fit = allFileToLandmarkMap.begin(); fit != allFileToLandmarkMap.end();
-           ++fit)
+      for (const auto & fit : allFileToLandmarkMap)
       {
-        const itk::Point<double, 3> & currPoint = fit->second.find(*lit)->second;
+        const itk::Point<double, 3> & currPoint = fit.second.find(*lit)->second;
         CurrentLandmarkMatrix[subjCount][0] = currPoint[0];
         CurrentLandmarkMatrix[subjCount][1] = currPoint[1];
         CurrentLandmarkMatrix[subjCount][2] = currPoint[2];
@@ -414,7 +413,7 @@ main(int argc, char * argv[])
       }
       perLandmarkMatrix.push_back(make_pair((*lit), CurrentLandmarkMatrix));
     }
-    byClassLandmarkMatrix[cit->first] = perLandmarkMatrix;
+    byClassLandmarkMatrix[landmark_type.first] = perLandmarkMatrix;
   }
 
   // ================================
@@ -423,15 +422,15 @@ main(int argc, char * argv[])
   WriteHDFStringList(output, "/SubjectIDs", subjectIDVec);
   WriteHDFStringList(output, "/LandmarkNames", landmarkNames);
 
-  for (LandmarkClassMapsTypes::const_iterator cit = landmark_types.begin(); cit != landmark_types.end(); ++cit)
+  for (const auto & landmark_type : landmark_types)
   {
     std::string groupName("/");
-    groupName += cit->first; // baseLandmarks or newLandmarks
+    groupName += landmark_type.first; // baseLandmarks or newLandmarks
     H5::Group group = output.createGroup(groupName);
 
     for (std::vector<std::pair<std::string, vnl_matrix<double>>>::const_iterator lit =
-           byClassLandmarkMatrix[cit->first].begin();
-         lit != byClassLandmarkMatrix[cit->first].end();
+           byClassLandmarkMatrix[landmark_type.first].begin();
+         lit != byClassLandmarkMatrix[landmark_type.first].end();
          ++lit)
     {
       vnl_matrix<double> CurrentLandmarkMatrix = lit->second;
@@ -440,7 +439,7 @@ main(int argc, char * argv[])
       dims[1] = CurrentLandmarkMatrix.columns();
 
       // Print info on the screen
-      std::cout << "=========" << cit->first << " " << lit->first << "========== " << dims[0] << "x" << dims[1]
+      std::cout << "=========" << landmark_type.first << " " << lit->first << "========== " << dims[0] << "x" << dims[1]
                 << std::endl;
       vnl_matlab_print(std::cout, CurrentLandmarkMatrix, (lit->first).c_str());
 

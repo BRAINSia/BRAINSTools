@@ -59,25 +59,25 @@ GetXmlLabelName(std::string fileName, int label)
   itk::DOMNode::Pointer          labelXmlInfo = xmlReader->GetOutput();
   itk::DOMNode::ChildrenListType elementList;
   labelXmlInfo->GetAllChildren(elementList);
-  for (std::vector<itk::DOMNode *>::iterator it = elementList.begin(); it != elementList.end(); ++it)
+  for (auto & it : elementList)
   {
     // std::cout << *it << std::endl;
     // std::cout << (*it)->GetName() << std::endl;
     // std::cout << (*it)->GetPath() << std::endl;
-    if ((*it)->GetName() == "data")
+    if (it->GetName() == "data")
     {
       itk::DOMNode::ChildrenListType labelList;
-      (*it)->GetAllChildren(labelList);
-      for (std::vector<itk::DOMNode *>::iterator lt = labelList.begin(); lt != labelList.end(); ++lt)
+      it->GetAllChildren(labelList);
+      for (auto & lt : labelList)
       {
         // std::cout << *lt << std::endl;
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
-        std::string attributeValue = (*lt)->GetAttribute("index");
+        std::string attributeValue = lt->GetAttribute("index");
         int         currentLabel = std::stoi(attributeValue.c_str());
         if (currentLabel == label)
         {
-          itk::DOMTextNode::Pointer textNode = (*lt)->GetTextChild(0);
+          itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
           labelName = textNode->GetText();
         }
       }
@@ -183,15 +183,15 @@ main(int argc, char * argv[])
     std::cout << "Label Map: " << labelVolume << std::endl;
     std::cout << "Label Name File: " << labelNameFile << std::endl;
     std::cout << "Column Prefix Names: ";
-    for (size_t i = 0; i < outputPrefixColumnNames.size(); ++i)
+    for (const auto & outputPrefixColumnName : outputPrefixColumnNames)
     {
-      std::cout << outputPrefixColumnNames[i] << ", ";
+      std::cout << outputPrefixColumnName << ", ";
     }
     std::cout << std::endl;
     std::cout << "Column Prefix Values: ";
-    for (size_t i = 0; i < outputPrefixColumnValues.size(); ++i)
+    for (const auto & outputPrefixColumnValue : outputPrefixColumnValues)
     {
-      std::cout << outputPrefixColumnValues[i] << ", ";
+      std::cout << outputPrefixColumnValue << ", ";
     }
     std::cout << std::endl;
     std::cout << "Label File Type: " << labelFileType << std::endl;
@@ -301,9 +301,9 @@ main(int argc, char * argv[])
 
   using ValidLabelValuesType = StatsFilterType::ValidLabelValuesContainerType;
   using LabelPixelType = StatsFilterType::LabelPixelType;
-  for (size_t i = 0; i < outputPrefixColumnNames.size(); ++i)
+  for (const auto & outputPrefixColumnName : outputPrefixColumnNames)
   {
-    std::cout << outputPrefixColumnNames[i] << ", ";
+    std::cout << outputPrefixColumnName << ", ";
   }
   std::cout << "Name, label, min, max, median, mean, stddev, var, sum, count" << std::endl;
   for (ValidLabelValuesType::const_iterator vIt = statsFilter->GetValidLabelValues().begin();
@@ -315,9 +315,9 @@ main(int argc, char * argv[])
       LabelPixelType labelValue = *vIt;
 
       std::string labelName = GetLabelName(mode, labelNameFile, labelValue);
-      for (size_t i = 0; i < outputPrefixColumnValues.size(); ++i)
+      for (const auto & outputPrefixColumnValue : outputPrefixColumnValues)
       {
-        std::cout << outputPrefixColumnValues[i] << ", ";
+        std::cout << outputPrefixColumnValue << ", ";
       }
       std::cout << labelName << ", ";
       std::cout << labelValue << ", ";

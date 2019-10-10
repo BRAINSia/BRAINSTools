@@ -152,7 +152,7 @@ main(int argc, char * argv[])
     }
     else
     {
-      for (unsigned int sgs = 0; sgs < BSplineGridSize.size(); ++sgs)
+      for (int & sgs : BSplineGridSize)
       {
         if (splineGridSize[0] < 3)
         {
@@ -160,7 +160,7 @@ main(int argc, char * argv[])
                     << " is invalid.  There must be at least 3 divisions in each dimension of the image." << std::endl;
           return EXIT_FAILURE;
         }
-        BSplineGridSize[sgs] = splineGridSize[0];
+        sgs = splineGridSize[0];
       }
     }
   }

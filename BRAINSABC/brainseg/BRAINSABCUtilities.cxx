@@ -71,10 +71,10 @@ ResampleImageListToFirstKeyImage(const std::string &            resamplerInterpo
 ByteImageType::Pointer
 intersectFOV(const MapOfMaskImageVectors & FOVMap)
 {
-  for (auto inputImageMapIter = FOVMap.begin(); inputImageMapIter != FOVMap.end(); ++inputImageMapIter)
+  for (const auto & inputImageMapIter : FOVMap)
   {
-    auto currModalIter = inputImageMapIter->second.begin();
-    while (currModalIter != inputImageMapIter->second.end())
+    auto currModalIter = inputImageMapIter.second.begin();
+    while (currModalIter != inputImageMapIter.second.end())
     {
     }
   }

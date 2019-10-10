@@ -64,9 +64,9 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
   ExtractIndexType sliceIndexToExtract;
   if (!inputSliceToExtractInIndex.empty())
   {
-    for (size_t i = 0; i < inputSliceToExtractInIndex.size(); i++)
+    for (int i : inputSliceToExtractInIndex)
     {
-      sliceIndexToExtract.push_back(inputSliceToExtractInIndex[i]);
+      sliceIndexToExtract.push_back(i);
     }
   }
   else if (!inputSliceToExtractInPhysicalPoint.empty())

@@ -114,15 +114,15 @@ WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const Land
 
   unsigned int numNamedLandmarks = 0;
 
-  for (LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it)
+  for (const auto & landmark : landmarks)
   {
-    if ((it->first).compare("") != 0)
+    if ((landmark.first).compare("") != 0)
     {
       // NOTE: Slicer3 use RAS coordinate system to represent landmarks
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
-      lmkPointStream << it->first << "," << doubleConvert(-(it->second[0])) << "," << doubleConvert(-(it->second[1]))
-                     << "," << doubleConvert(+(it->second[2])) << ",1,1\n"; // Note the last two columns are
+      lmkPointStream << landmark.first << "," << doubleConvert(-(landmark.second[0])) << "," << doubleConvert(-(landmark.second[1]))
+                     << "," << doubleConvert(+(landmark.second[2])) << ",1,1\n"; // Note the last two columns are
       // ,visible,editable
       ++numNamedLandmarks;
     }
@@ -162,17 +162,17 @@ WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const Landmar
 
   std::stringstream lmkPointStream;
   unsigned int      numNamedLandmarks = 0;
-  for (LandmarksMapType::const_iterator it = landmarks.begin(); it != landmarks.end(); ++it)
+  for (const auto & landmark : landmarks)
   {
-    if ((it->first).compare("") != 0)
+    if ((landmark.first).compare("") != 0)
     {
       // NOTE: Slicer4 Markups use RAS coordinate system to represent landmarks
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
       lmkPointStream << "vtkMRMLMarkupsFiducialNode_" << numNamedLandmarks << ",";
 
-      lmkPointStream << doubleConvert(-(it->second[0])) << "," << doubleConvert(-(it->second[1])) << ","
-                     << doubleConvert(+(it->second[2])) << ",0,0,0,1,1,1,0," << it->first << ",,"
+      lmkPointStream << doubleConvert(-(landmark.second[0])) << "," << doubleConvert(-(landmark.second[1])) << ","
+                     << doubleConvert(+(landmark.second[2])) << ",0,0,0,1,1,1,0," << landmark.first << ",,"
                      << std::endl; // Note the last two columns are
       ++numNamedLandmarks;
     }

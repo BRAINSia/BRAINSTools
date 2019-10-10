@@ -58,9 +58,9 @@ public:
   bool
   operator()(const int & value)
   {
-    for (unsigned int i = 0; i < valueList.size(); ++i)
+    for (int i : valueList)
     {
-      if (valueList[i] == value)
+      if (i == value)
       {
         return true;
       }

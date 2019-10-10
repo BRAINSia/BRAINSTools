@@ -51,11 +51,11 @@ CheckLandmarks(const LandmarksMapType & ldmk, const LandmarksWeightMapType & wei
   //    exit(EXIT_FAILURE);
   //    }
 
-  for (std::map<std::string, double>::const_iterator i = weightMap.begin(); i != weightMap.end(); ++i)
+  for (const auto & i : weightMap)
   {
-    if (ldmk.find(i->first) == ldmk.end())
+    if (ldmk.find(i.first) == ldmk.end())
     {
-      std::cerr << "WARNING: Landmark not found: " << i->first << std::endl;
+      std::cerr << "WARNING: Landmark not found: " << i.first << std::endl;
     }
 #if defined(VERBOSE_OUTPUT)
     else

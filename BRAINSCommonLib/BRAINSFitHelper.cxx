@@ -532,23 +532,23 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "SamplingPercentage:      " << this->m_SamplingPercentage << std::endl;
 
   os << indent << "NumberOfIterations:    [";
-  for (unsigned int q = 0; q < this->m_NumberOfIterations.size(); ++q)
+  for (int m_NumberOfIteration : this->m_NumberOfIterations)
   {
-    os << this->m_NumberOfIterations[q] << " ";
+    os << m_NumberOfIteration << " ";
   }
   os << "]" << std::endl;
   os << indent << "NumberOfHistogramBins:" << this->m_NumberOfHistogramBins << std::endl;
   os << indent << "MaximumStepLength:    " << this->m_MaximumStepLength << std::endl;
   os << indent << "MinimumStepLength:     [";
-  for (unsigned int q = 0; q < this->m_MinimumStepLength.size(); ++q)
+  for (double q : this->m_MinimumStepLength)
   {
-    os << this->m_MinimumStepLength[q] << " ";
+    os << q << " ";
   }
   os << "]" << std::endl;
   os << indent << "TransformType:     [";
-  for (unsigned int q = 0; q < this->m_TransformType.size(); ++q)
+  for (const auto & q : this->m_TransformType)
   {
-    os << this->m_TransformType[q] << " ";
+    os << q << " ";
   }
   os << "]" << std::endl;
 
@@ -563,9 +563,9 @@ BRAINSFitHelper::PrintSelf(std::ostream & os, Indent indent) const
   os << indent << "PermittedNumberOfIterations:       " << this->m_PermittedNumberOfIterations << std::endl;
 
   os << indent << "SplineGridSize:     [";
-  for (unsigned int q = 0; q < this->m_SplineGridSize.size(); ++q)
+  for (int q : this->m_SplineGridSize)
   {
-    os << this->m_SplineGridSize[q] << " ";
+    os << q << " ";
   }
   os << "]" << std::endl;
 

@@ -125,30 +125,30 @@ LLSModel ::Write()
     this->WriteString(LLSModel::m_LLSVersionGroupName, BCDVersionString);
 
     this->m_H5File->createGroup(LLSModel::m_LLSMeansGroupName);
-    for (LLSMeansType::iterator it = this->m_LLSMeans.begin(); it != this->m_LLSMeans.end(); ++it)
+    for (auto & m_LLSMean : this->m_LLSMeans)
     {
       std::string curVecName(LLSModel::m_LLSMeansGroupName);
       curVecName += "/";
-      curVecName += it->first;
-      this->WriteVector(curVecName, it->second);
+      curVecName += m_LLSMean.first;
+      this->WriteVector(curVecName, m_LLSMean.second);
     }
 
     this->m_H5File->createGroup(LLSModel::m_LLSMatricesGroupName);
-    for (LLSMatricesType::iterator it = this->m_LLSMatrices.begin(); it != this->m_LLSMatrices.end(); ++it)
+    for (auto & m_LLSMatrice : this->m_LLSMatrices)
     {
       std::string curMatName(LLSModel::m_LLSMatricesGroupName);
       curMatName += "/";
-      curMatName += it->first;
-      this->WriteMatrix(curMatName, it->second);
+      curMatName += m_LLSMatrice.first;
+      this->WriteMatrix(curMatName, m_LLSMatrice.second);
     }
 
     this->m_H5File->createGroup(LLSModel::m_LLSSearchRadiiGroupName);
-    for (LLSSearchRadiiType::iterator it = this->m_LLSSearchRadii.begin(); it != this->m_LLSSearchRadii.end(); ++it)
+    for (auto & it : this->m_LLSSearchRadii)
     {
       std::string curRadiusName(LLSModel::m_LLSSearchRadiiGroupName);
       curRadiusName += "/";
-      curRadiusName += it->first;
-      this->WriteScalar(curRadiusName, it->second);
+      curRadiusName += it.first;
+      this->WriteScalar(curRadiusName, it.second);
     }
 
     this->m_H5File->close();

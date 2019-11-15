@@ -37,7 +37,7 @@
 #include "itkDisplacementFieldJacobianDeterminantFilter.h"
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkWarpHarmonicEnergyCalculator.h"
-#include "itkVectorCentralDifferenceImageFunction.h"
+#include "itkCentralDifferenceImageFunction.h"
 // #include <getopt.h>
 #include <iostream>
 

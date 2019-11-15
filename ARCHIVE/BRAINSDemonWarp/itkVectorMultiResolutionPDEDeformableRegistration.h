@@ -25,7 +25,7 @@
 #include "itkPDEDeformableRegistrationFilter.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkRecursiveMultiResolutionPyramidImageFilter.h"
-#include "itkVectorResampleImageFilter.h"
+#include "itkResampleImageFilter.h"
 #include "itkVectorDiffeomorphicDemonsRegistrationFilter.h"
 #include "itkVectorImageToImageAdaptor.h"
 

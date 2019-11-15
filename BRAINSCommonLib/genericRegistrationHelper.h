@@ -341,7 +341,7 @@ protected:
   CommandIterationUpdate()
     : m_DisplayDeformedImage(false)
     , m_PromptUserAfterDisplay(false)
-    , m_PrintParameters(true)
+    , m_PrintParameters(false)
     , m_MovingImage(nullptr)
     , m_FixedImage(nullptr)
     , m_Transform(nullptr)

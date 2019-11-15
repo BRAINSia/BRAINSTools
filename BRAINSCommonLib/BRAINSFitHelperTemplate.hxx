@@ -547,7 +547,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   , m_DisplayDeformedImage(false)
   , m_PromptUserAfterDisplay(false)
   , m_FinalMetricValue(0.0)
-  , m_ObserveIterations(true)
+  , m_ObserveIterations(false)
   , m_CostMetricObject(nullptr)
   , m_UseROIBSpline(0)
   , m_SamplingStrategy(AffineRegistrationType::NONE)
@@ -1364,16 +1364,14 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
 
       using RegisterImageType = itk::Image<float, 3>;
 
-      // INFO: pass this option by commandline
-      const bool ObserveIterations = true;
-      if (ObserveIterations == true)
+      if (m_ObserveIterations == true)
       {
         using CommandIterationUpdateType =
           BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>;
         typename CommandIterationUpdateType::Pointer observer = CommandIterationUpdateType::New();
         observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
         observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
-        observer->SetPrintParameters(true);
+        observer->SetPrintParameters(m_ObserveIterations);
         observer->SetMovingImage(m_MovingVolume);
         observer->SetFixedImage(m_FixedVolume);
         observer->SetTransform(bsplineTx);

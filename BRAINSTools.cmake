@@ -66,7 +66,7 @@ if(USE_BRAINSABC)
      message(FATAL_ERROR "BRAINSABC requires USE_AutoWorkup to be ON: ${USE_BRAINSABC} != ${USE_AutoWorkup}")
   endif()
   if( APPLE )
-    set( TBB_MIN_VERSION "2019.0") ## Actually 2019.0.11002 is needed for when OSX MIN version < 10.12
+    set( TBB_MIN_VERSION "2019.1") ## Actually 2019.0.11002 is needed for when OSX MIN version < 10.12
   else()
     set( TBB_MIN_VERSION "2017.0")
   endif()

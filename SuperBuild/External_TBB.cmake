@@ -8,7 +8,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 # https://github.com/01org/tbb.git
 set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
-set(${proj}_GIT_TAG     2019_U6)  # 20190514
+set(${proj}_GIT_TAG     2019_U9)  # 20191010
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

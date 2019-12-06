@@ -54,14 +54,6 @@
 
 namespace itk
 {
-/** Method for verifying that the ordering of the transformTypes is consistent
- * with converting routines. */
-extern void
-ValidateTransformRankOrdering(const std::vector<std::string> & transformType);
-} // namespace itk
-
-namespace itk
-{
 class BRAINSFitHelper : public Object
 {
 public:

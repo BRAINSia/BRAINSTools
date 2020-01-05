@@ -55,11 +55,11 @@ main(int argc, char * argv[])
   using FixedImageReaderType = itk::ImageFileReader<FixedImageType>;
   using MovingImageReaderType = itk::ImageFileReader<MovingImageType>;
 
-  using TransformType = itk::BSplineTransform<double, Dimension>;
+  using TransformType = itk::BSplineTransform<PixelType, Dimension, 3>;
 
-  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
-  using MSEMetricType = itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType>;
-  using GenericMetricType = itk::ImageToImageMetricv4<FixedImageType, MovingImageType>;
+  using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, PixelType>;
+  using MSEMetricType = itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, PixelType>;
+  using GenericMetricType = itk::ImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, PixelType>;
   using MetricSamplePointSetType = GenericMetricType::FixedSampledPointSetType;
 
   // Read input images

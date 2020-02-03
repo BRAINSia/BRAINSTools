@@ -47,6 +47,8 @@ A rough example of *bawInputList.csv*:
 "projectB","112","12345614","{'T1-30':['somewhere/T1_filename.nii.gz', 'somewhere/T1_COR_REP1.nii.gz'],'T2-30':['somewhere/T2_COR.nii.gz']}"
 "projectA","111","12345698","{'T1-30':['somewhere/T1_COR.nii.gz', 'somewhere/T1_COR_REP1.nii.gz'],'T2-30':['somewhere/T2_COR.nii.gz']}"
 ```
+**Note:** All `MRISessionName` in the *bawInputList.csv* file has to be unique across all participants. For datasets in which the sessions for all participants are the same, such as the Adolescent Brain Cognitive Development (ABCD) dataset with all baseline sessions defined as `baselineYear1Arm1`, each subject's session has to renamed before running BRAINSAutoWorkUp.
+
 ### Configuration file
 A configuration file allows for HPC power utilization as well as local machine running. 
 Syntax follows a standard INI configuration file format (Please see https://en.wikipedia.org/wiki/INI_file)

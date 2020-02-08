@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -eax
 # \author Hans J. Johnson
 #
 # This is a wrapper around the non-standard, often confusing
@@ -8,17 +8,29 @@
 # wierd configuration to get a standard build and install
 # layout.
 #
-# Usage:  buld_tbb.sh -b build_directory -p install_prefix
+# Usage:  build_tbb.sh -b build_directory -p install_prefix
 #    EG:  ./build_tbb.sh -b /tmp -p /home/myaccout/local
 set -ev
 
-while getopts ":b:p:" opt; do
+while getopts ":c:x:i:b:p:d:" opt; do
   case ${opt} in
+    c ) # compiler_id
+      CC=$OPTARG
+      ;;
+    x ) # compiler_id
+      CXX=$OPTARG
+      ;;
+    i ) # compiler_id
+      TBB_COMPILERID=$OPTARG
+      ;;
     b ) # build
       BUILD_CACHE=$OPTARG
       ;;
     p ) # install
       INSTALL_PREFIX=$OPTARG
+      ;;
+    d ) # cmake -D flags
+      CMAKE_CMD_FLAGS="$OPTARG"
       ;;
     \? ) echo "Usage: cmd [-h] [-t]"
       ;;
@@ -43,13 +55,19 @@ mkdir -p "${INSTALL_PREFIX}"
 
 pushd "${BUILD_CACHE}"
 
-python3 "${SRC_DIR}/build/build.py"  \
+export CXX=${CXX}
+export CC=${CC}
+CXX=${CXX} CC=${CC} python3 "${SRC_DIR}/build/build.py"  \
        --tbbroot "${SRC_DIR}" \
        --prefix "${INSTALL_PREFIX}" \
        --install-libs --install-devel --install-docs \
+       --build-args compiler=${TBB_COMPILERID} \
   > /tmp/tbb_logger 2>&1
-
-#cat /tmp/tbb_logger
+python_build_status=$?
+if [ $python_build_status -ne 0 ]; then
+  cat /tmp/tbb_logger
+  exit ${python_build_status}
+fi
 
 cmake -DINSTALL_DIR="${INSTALL_PREFIX}/lib/cmake/tbb" \
       -DLIB_REL_PATH=../../../lib \
@@ -58,14 +76,13 @@ cmake -DINSTALL_DIR="${INSTALL_PREFIX}/lib/cmake/tbb" \
       -DTBB_VERSION_FILE="${TBB_VERSION_FILE}" \
       -P "${SRC_DIR}/cmake/tbb_config_installer.cmake"
 
-
 DO_TESTING=1
 if [[ ${DO_TESTING} -eq 1 ]]; then
 
-TEST_DIR=${BUILD_CACHE}/tbb_test
-mkdir -p "${TEST_DIR}"
+  TEST_DIR=${BUILD_CACHE}/tbb_test
+  mkdir -p "${TEST_DIR}"
 
-cat > "${TEST_DIR}/CMakeLists.txt" << EOF
+  cat > "${TEST_DIR}/CMakeLists.txt" << EOF
 # Put this cmake file in a directory, run "cmake ."  finding TBB results in a FATAL_ERROR from cmake
 cmake_minimum_required(VERSION 3.0)
 # tbb;tbbmalloc;tbbmalloc_proxy
@@ -83,7 +100,7 @@ add_executable(tbb_test test.cpp)
 target_link_libraries(tbb_test TBB::tbb)
 EOF
 
-cat > "${TEST_DIR}/test.cpp" << EOF
+  cat > "${TEST_DIR}/test.cpp" << EOF
 #include <tbb/task_scheduler_init.h>
 #include <iostream>
 int main()
@@ -93,19 +110,28 @@ int main()
 }
 EOF
 
-mkdir -p "${TEST_DIR}-bld"
-pushd "${TEST_DIR}-bld"
-cmake -DCMAKE_BUILD_TYPE:STRING=Release -DTBB_DIR:PATH="${INSTALL_PREFIX}/lib/cmake/tbb"  "${TEST_DIR}"
-make
+  mkdir -p "${TEST_DIR}-bld"
+  pushd "${TEST_DIR}-bld"
+  echo "====="
+  cmake -DCMAKE_BUILD_TYPE:STRING=Release \
+    -DTBB_DIR:PATH=${INSTALL_PREFIX}/lib/cmake/tbb  \
+     ${CMAKE_CMD_FLAGS} \
+    "${TEST_DIR}"
+  if [[ -f Makefile ]];then
+    echo "Attempting to build with a Makefile"
+    make
+  else
+    echo "Attempting to build with a ninja"
+    ninja
+  fi
+  ./tbb_test
 
-./tbb_test
-tbb_test_status=$?
-if [[ "${tbb_test_status}"  -eq 0 ]]; then
-  echo "SUCCESSFUL TESTING"
-  exit 0
-else
-  echo "FAILED TESTING"
-  exit 255
-fi
-
+  tbb_test_status=$?
+  if [[ "${tbb_test_status}"  -eq 0 ]]; then
+    echo "SUCCESSFUL TESTING"
+    exit 0
+  else
+    echo "FAILED TESTING"
+    exit 255
+  fi
 fi

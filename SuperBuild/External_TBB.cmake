@@ -6,6 +6,19 @@ set(${proj}_DEPENDENCIES "")
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+  set(TBB_COMPILERID "gcc")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  set(TBB_COMPILERID "clang")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Intel")
+  set(TBB_COMPILERID "icc")
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+  set(TBB_COMPILERID "cl")
+else()
+  #This is probably invalid
+  set(TBB_COMPILERID "${CMAKE_CXX_COMPILER_ID}")
+endif()
+
 # https://github.com/01org/tbb.git
 set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
 set(${proj}_GIT_TAG     2020_U1)  # 2020-01-21
@@ -17,7 +30,14 @@ ExternalProject_Add(${proj}
   BINARY_DIR ${SOURCE_DOWNLOAD_CACHE}/${${proj}_GIT_TAG}
   #DOWNLOAD_COMMAND  "" #, no download
   CONFIGURE_COMMAND "" #, no config
-  BUILD_COMMAND     ${CMAKE_CURRENT_LIST_DIR}/build_tbb.sh -b ${SOURCE_DOWNLOAD_CACHE}/${proj} -p ${SOURCE_DOWNLOAD_CACHE}/${proj}-install
+  BUILD_COMMAND
+    ${CMAKE_CURRENT_LIST_DIR}/build_tbb.sh
+       -c "${CMAKE_C_COMPILER}"
+       -x "${CMAKE_CXX_COMPILER}"
+       -i "${TBB_COMPILERID}"
+       -b "${SOURCE_DOWNLOAD_CACHE}/${proj}"
+       -p "${SOURCE_DOWNLOAD_CACHE}/${proj}-install"
+       -d " -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER} -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER} -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags} -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED} -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS} "
   INSTALL_COMMAND   "" #, no install
   UPDATE_COMMAND    "" #, no update
   LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

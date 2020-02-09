@@ -154,7 +154,7 @@ public:
   }
 
   void
-  Compute(SImageType::Pointer original_space_image);
+  Compute(SImageType::Pointer orig_space_image);
 
   SImageType::Pointer
   GetTaggedImage(SImageType::Pointer original_space_image) const
@@ -203,7 +203,7 @@ public:
   VersorTransformType::Pointer
   GetImageOrigToACPCVersorTransform() const;
   void
-  ComputeFinalRefinedACPCAlignedTransform(SImageType::Pointer      orig_space_img,
+  ComputeFinalRefinedACPCAlignedTransform(SImageType::Pointer      original_space_image,
                                           const LandmarksMapType & updated_orig_lmks);
 
 protected:
@@ -227,7 +227,7 @@ private:
   GetLandmarkTransformFromImageTransform(VersorTransformType::ConstPointer orig2msp_img_tfm);
   // Linear model estimation using EPCA
   void
-  LinearEstimation(LandmarksMapType &               namedPoints,
+  LinearEstimation(LandmarksMapType &               msp_lmks_linearly_estimated,
                    const std::vector<std::string> & processingList,
                    unsigned int                     numBasePoints);
 

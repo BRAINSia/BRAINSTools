@@ -351,5 +351,4 @@ WriteITKtoSlicer3Lmk(const std::string &             landmarksFilename,
       itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (No Match): " << slicerLmkType);
       break;
   }
-  return;
-}
+  }

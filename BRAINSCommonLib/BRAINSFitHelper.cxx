@@ -43,8 +43,6 @@ void
 debug_catch()
 {
   std::cout << "HERE" << __FILE__ << " " << __LINE__ << std::endl;
-
-  return;
 }
 
 // convert spatial object to image

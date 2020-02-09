@@ -201,11 +201,11 @@ main(int argc, char * argv[])
       localTransformType.push_back("Composite3D");
     }
   }
-  else if (transformType.size() > 0)
+  else if (!transformType.empty())
   {
     localTransformType = transformType;
   }
-  else if ((initialTransform.size() > 0) || (initializeTransformMode != "Off"))
+  else if ((!initialTransform.empty()) || (initializeTransformMode != "Off"))
   {
     // Only do the initialization phase;
   }
@@ -218,14 +218,14 @@ main(int argc, char * argv[])
   // In order to make the Slicer interface work, a few alternate command line
   // options need to available
   std::string localOutputTransform;
-  if ((linearTransform.size() > 0 && bsplineTransform.size() > 0) ||
-      (linearTransform.size() > 0 && outputTransform.size() > 0) ||
-      (outputTransform.size() > 0 && bsplineTransform.size() > 0))
+  if ((!linearTransform.empty() && !bsplineTransform.empty()) ||
+      (!linearTransform.empty() && !outputTransform.empty()) ||
+      (!outputTransform.empty() && !bsplineTransform.empty()))
   {
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
     return EXIT_FAILURE;
   }
-  if (linearTransform.size() > 0)
+  if (!linearTransform.empty())
   {
     localOutputTransform = linearTransform;
     if ((!localTransformType.empty()) && ((localTransformType[localTransformType.size() - 1] == "BSpline") ||
@@ -322,7 +322,7 @@ main(int argc, char * argv[])
   // Multimodal registration input setting
   FixedVolumeType::Pointer  extractFixedVolume2 = nullptr;
   MovingVolumeType::Pointer extractMovingVolume2 = nullptr;
-  if (fixedVolume2 != "" && movingVolume2 != "")
+  if (!fixedVolume2.empty() && !movingVolume2.empty())
   {
     InputImageType::Pointer OriginalFixedVolume2(itkUtil::ReadImage<InputImageType>(fixedVolume2));
     std::cout << "Second Fixed image original origin" << OriginalFixedVolume2->GetOrigin() << std::endl;
@@ -369,7 +369,7 @@ main(int argc, char * argv[])
   ImageMaskPointer movingMask = nullptr;
   if (maskProcessingMode == "NOMASK")
   {
-    if (fixedBinaryVolume != "" || movingBinaryVolume != "")
+    if (!fixedBinaryVolume.empty() || !movingBinaryVolume.empty())
     {
       std::cout
         << "ERROR:  Can not specify mask file names when the default of NOMASK is used for the maskProcessingMode"
@@ -379,7 +379,7 @@ main(int argc, char * argv[])
   }
   else if (maskProcessingMode == "ROIAUTO")
   {
-    if (fixedBinaryVolume != "" || movingBinaryVolume != "")
+    if (!fixedBinaryVolume.empty() || !movingBinaryVolume.empty())
     {
       std::cout << "ERROR:  Can not specify mask file names when ROIAUTO is used for the maskProcessingMode"
                 << std::endl;
@@ -406,12 +406,12 @@ main(int argc, char * argv[])
   }
   else if (maskProcessingMode == "ROI")
   {
-    if (fixedBinaryVolume == "" && movingBinaryVolume == "")
+    if (fixedBinaryVolume.empty() && movingBinaryVolume.empty())
     {
       std::cout << "ERROR:  Must specify mask file names when ROI is used for the maskProcessingMode" << std::endl;
       return EXIT_FAILURE;
     }
-    if (fixedBinaryVolume != "")
+    if (!fixedBinaryVolume.empty())
     {
       fixedMask = ReadImageMask<SpatialObjectType, Dimension>(fixedBinaryVolume, extractFixedVolume.GetPointer());
     }
@@ -420,7 +420,7 @@ main(int argc, char * argv[])
       fixedMask = nullptr;
     }
 
-    if (movingBinaryVolume != "")
+    if (!movingBinaryVolume.empty())
     {
       movingMask = ReadImageMask<SpatialObjectType, Dimension>(movingBinaryVolume, extractMovingVolume.GetPointer());
     }
@@ -432,7 +432,7 @@ main(int argc, char * argv[])
 
   using CompositeTransformType = itk::CompositeTransform<double, 3>;
   CompositeTransformType::Pointer currentGenericTransform;
-  if (initialTransform != "")
+  if (!initialTransform.empty())
   {
     currentGenericTransform = CompositeTransformType::New();
     GenericTransformType::Pointer movingInitialTransform = itk::ReadTransformFromDisk(initialTransform);
@@ -553,7 +553,7 @@ main(int argc, char * argv[])
     }
 
     // If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.
-    if (logFileReport != "")
+    if (!logFileReport.empty())
     {
       const double      finalMetricValue = myHelper->GetFinalMetricValue();
       std::stringstream myLogFileReportStream; // ( logFileReport );
@@ -582,7 +582,7 @@ main(int argc, char * argv[])
    *  At this point we can save the resampled image.
    */
 
-  if (outputVolume.size() > 0)
+  if (!outputVolume.empty())
   {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;

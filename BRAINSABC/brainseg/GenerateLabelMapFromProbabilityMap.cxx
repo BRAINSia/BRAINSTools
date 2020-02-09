@@ -40,7 +40,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  if (inputVolumes.size() < 1)
+  if (inputVolumes.empty())
   {
     std::cerr << argv[0] << ": Missing required probability maps" << std::endl;
     return EXIT_FAILURE;

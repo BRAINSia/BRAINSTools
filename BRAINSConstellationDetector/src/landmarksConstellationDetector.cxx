@@ -108,7 +108,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(SImageTy
     // ( using logic from BRAINSLandmarkInitializer) and create initToAtlasAffineTransform.
 
     LandmarksWeightMapType landmarkWeights;
-    if (this->m_atlasLandmarkWeights != "")
+    if (!this->m_atlasLandmarkWeights.empty())
     {
       landmarkWeights = ReadLandmarkWeights(this->m_atlasLandmarkWeights.c_str());
       std::cout << "read atlas landmarksweights:  " << this->m_atlasLandmarkWeights << std::endl;
@@ -716,7 +716,7 @@ WriteManualFixFiles(const std::string &      EMSP_Fiducial_file_name,
   // write EMSP aligned image
   itkUtil::WriteImage<SImageType>(mspVolume, resultDir + "/EMSP.nrrd");
 
-  if (errorLmks.size() > 0)
+  if (!errorLmks.empty())
   {
     WriteITKtoSlicer3Lmk(resultDir + "/" + EMSP_Fiducial_file_name, errorLmks);
   }

@@ -261,7 +261,7 @@ get_allFileToLandmarkMap(const std::vector<std::pair<std::string, std::string>> 
   {
     std::cout << "Processing " << subject_iter->second << "(" << subject_iter->first << ")" << std::endl;
     allLandmarks[subject_iter->first] = ReadSlicer3toITKLmk(subject_iter->second);
-    if (allLandmarks[subject_iter->first].size() == 0)
+    if (allLandmarks[subject_iter->first].empty())
     {
       itkGenericExceptionMacro(<< "FAILED TO PROCESS FILE:  " << subject_iter->second);
     }
@@ -352,12 +352,12 @@ main(int argc, char * argv[])
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  if (outputFile == "")
+  if (outputFile.empty())
   {
     std::cerr << "Missing output file name" << std::endl;
     return EXIT_FAILURE;
   }
-  if (landmarkTypesFile == "")
+  if (landmarkTypesFile.empty())
   {
     std::cerr << "Missing landmark types filename name" << std::endl;
     return EXIT_FAILURE;
@@ -781,7 +781,7 @@ main(int argc, char * argv[])
   //       Convert loadLLSModelMat to read from the HDF5 file rather than these
   // 3 hard coded files names.
 #if 1
-  if (modelFile == "")
+  if (modelFile.empty())
   {
     std::cerr << "Missing model file name" << std::endl;
     return 1;

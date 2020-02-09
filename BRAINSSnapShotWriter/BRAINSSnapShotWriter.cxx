@@ -301,13 +301,13 @@ main(int argc, char ** argv)
     std::cout << "Input image volume is required " << std::endl;
     exit(EXIT_FAILURE);
   }
-  if (inputPlaneDirection.size() == 0)
+  if (inputPlaneDirection.empty())
   {
     std::cout << "Input Plane Direction is required " << std::endl;
     exit(EXIT_FAILURE);
   }
-  if (inputSliceToExtractInIndex.size() == 0 && inputSliceToExtractInPercent.size() == 0 &&
-      inputSliceToExtractInPhysicalPoint.size())
+  if (inputSliceToExtractInIndex.empty() && inputSliceToExtractInPercent.empty() &&
+      !inputSliceToExtractInPhysicalPoint.empty())
   {
     std::cout << "At least one of input Slice to Extract has to be specified." << std::endl;
     exit(EXIT_FAILURE);

@@ -65,17 +65,17 @@ main(int argc, char * argv[])
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   bool violated = false;
-  if (inputVolume.size() == 0)
+  if (inputVolume.empty())
   {
     violated = true;
     std::cerr << "  --inputVolume Required! " << std::endl;
   }
-  if (splineGridSize.size() == 0)
+  if (splineGridSize.empty())
   {
     violated = true;
     std::cerr << "  --splineGridSize Required! " << std::endl;
   }
-  if (outputLandmarksFile.size() == 0)
+  if (outputLandmarksFile.empty())
   {
     violated = true;
     std::cerr << "  --outputLandMarksFile Required! " << std::endl;

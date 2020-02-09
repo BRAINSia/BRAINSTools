@@ -184,7 +184,7 @@ BRAINSConstellationDetectorPrimary::Compute()
       if (itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false)
       {
         std::string directoryName = itksys::SystemTools::GetParentDirectory(this->m_inputVolume.c_str());
-        if (directoryName == "")
+        if (directoryName.empty())
         {
           directoryName = ".";
         }

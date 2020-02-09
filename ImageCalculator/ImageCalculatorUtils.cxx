@@ -44,7 +44,7 @@ PrintDataTypeStrings()
 void
 ReplaceSubWithSub(std::string & s, const char * o, const char * n)
 {
-  if (s.size())
+  if (!s.empty())
   {
     std::string            from(o), to(n);
     std::string::size_type start = 0;
@@ -314,7 +314,7 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
 
   // Test if the input data type is valid
   const std::string PixelType(command.GetValueAsString("InputPixelType", "PixelType"));
-  if (PixelType != "")
+  if (!PixelType.empty())
   {
     if (!ValidPixelType(PixelType))
     {
@@ -327,7 +327,7 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
 
   const std::string OutPixelType(command.GetValueAsString("OutputPixelType", "PixelType"));
 
-  if (OutPixelType != "")
+  if (!OutPixelType.empty())
   {
     // check to see if valid type
     if (!ValidPixelType(OutPixelType))

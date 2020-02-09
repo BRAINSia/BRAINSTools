@@ -77,7 +77,7 @@ main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  if (badGradients.size() == 0)
+  if (badGradients.empty())
   {
     std::cerr << "Missing bad gradient list" << std::endl;
     return 1;

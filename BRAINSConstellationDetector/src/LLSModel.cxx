@@ -110,7 +110,7 @@ LLSModel ::WriteString(const std::string & path, const std::string & strname)
 int
 LLSModel ::Write()
 {
-  if (this->m_FileName == "")
+  if (this->m_FileName.empty())
   {
     return -1;
   }
@@ -285,7 +285,7 @@ LLSModel ::ReadString(const std::string & DataSetName)
 int
 LLSModel ::Read()
 {
-  if (this->m_FileName == "")
+  if (this->m_FileName.empty())
   {
     return -1;
   }

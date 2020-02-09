@@ -333,7 +333,7 @@ main(int argc, char * argv[])
   }
   stringVectorIteratorType planeDir = setCutDirectionForObliquePlane.begin();
 
-  if (inputLandmarkNamesForObliquePlane.size() != 0)
+  if (!inputLandmarkNamesForObliquePlane.empty())
   {
     if (inputLandmarkNamesForObliquePlane.size() != 3 * setCutDirectionForObliquePlane.size())
     {

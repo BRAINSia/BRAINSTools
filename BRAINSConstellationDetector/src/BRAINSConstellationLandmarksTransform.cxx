@@ -43,7 +43,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if (inputLandmarksFile == "" || inputTransformFile == "" || outputLandmarksFile == "")
+  if (inputLandmarksFile.empty() || inputTransformFile.empty() || outputLandmarksFile.empty())
   {
     std::cerr << "Input and output file names should be given by commandline. " << std::endl;
     std::cerr << "Usage:\n"

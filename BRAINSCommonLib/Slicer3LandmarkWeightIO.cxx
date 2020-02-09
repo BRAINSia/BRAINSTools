@@ -24,6 +24,8 @@
 
 #include "Slicer3LandmarkWeightIO.h"
 #include "itkNumberToString.h"
+#include "math.h"
+
 void
 WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const LandmarksWeightMapType & landmarks)
 {
@@ -91,7 +93,7 @@ ReadSlicer3toITKLmkWts(const std::string & landmarksWeightFilename)
     {
       size_t            pos1 = line.find(',', 0);
       const std::string name = line.substr(0, pos1);
-      double            weight;
+      double            weight = NAN;
       const size_t      pos2 = line.find(' ', pos1 + 1);
       weight = std::stod(line.substr(pos1 + 1, pos2 - pos1 - 1).c_str());
 

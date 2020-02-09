@@ -255,9 +255,9 @@ LoadLandmarks(std::string filename)
   {
     if (line.compare(0, 1, "#") != 0)
     {
-      unsigned int i;
+      unsigned int i = 0;
       int          pos1 = line.find(',', 0);
-      int          pos2;
+      int          pos2 = 0;
       std::string  name = line.substr(0, pos1);
       if (name.compare("CM") == 0) // exclude CM
       {

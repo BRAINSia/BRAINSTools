@@ -30,6 +30,8 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkTransformFileReader.h"
+#include "math.h"
+
 
 #define CHECK_PARAMETER_IS_SET(parameter, message)                                                                     \
   if (parameter == "")                                                                                                 \
@@ -173,7 +175,7 @@ main(int argc, char * argv[])
 
   metric->Initialize();
 
-  GenericMetricType::MeasureType    measure;
+  GenericMetricType::MeasureType    measure = NAN;
   GenericMetricType::DerivativeType derivative(metric->GetTransform()->GetNumberOfParameters());
   try
   {

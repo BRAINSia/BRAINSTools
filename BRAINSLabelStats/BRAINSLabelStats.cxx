@@ -42,6 +42,8 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkDOMNode.h"
 
 #include "BRAINSLabelStatsCLP.h"
+#include "math.h"
+
 
 std::string
 GetXmlLabelName(std::string fileName, int label)
@@ -257,8 +259,8 @@ main(int argc, char * argv[])
     }
   }
 
-  float minValue;
-  float maxValue;
+  float minValue = NAN;
+  float maxValue = NAN;
   bool  computeGlobalHistogram = false;
 
   if (minMaxType == "manual")
@@ -323,7 +325,7 @@ main(int argc, char * argv[])
       std::cout << labelValue << ", ";
       std::cout << statsFilter->GetMinimum(labelValue) << ", ";
       std::cout << statsFilter->GetMaximum(labelValue) << ", ";
-      float medianValue;
+      float medianValue = NAN;
 
       if (!computeGlobalHistogram)
       {

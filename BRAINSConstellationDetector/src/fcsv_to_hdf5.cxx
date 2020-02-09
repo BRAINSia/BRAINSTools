@@ -232,14 +232,14 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   std::vector<std::string> files;
   for (unsigned int i = 0; i < p.we_wordc; i++)
   {
-    files.push_back(w[i]);
+    files.emplace_back(w[i]);
     // std::cout << "Adding file to processing list: " << w[i] << std::endl;
   }
 
   std::vector<std::pair<std::string, std::string>> subjects;
   for (const auto & file : files)
   {
-    subjects.push_back(std::make_pair(get_subjectid(file), file));
+    subjects.emplace_back(get_subjectid(file), file);
   }
   return subjects;
 }
@@ -411,7 +411,7 @@ main(int argc, char * argv[])
         CurrentLandmarkMatrix[subjCount][2] = currPoint[2];
         subjCount++;
       }
-      perLandmarkMatrix.push_back(make_pair(lit, CurrentLandmarkMatrix));
+      perLandmarkMatrix.emplace_back(lit, CurrentLandmarkMatrix);
     }
     byClassLandmarkMatrix[landmark_type.first] = perLandmarkMatrix;
   }

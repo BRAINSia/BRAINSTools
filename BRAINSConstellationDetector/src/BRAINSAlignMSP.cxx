@@ -155,7 +155,7 @@ main(int argc, char * argv[])
   ComputeMSP_Easy(image, eyeFixed2msp_lmk_tfm, orig_lmk_CenterOfHeadMass, mspQualityLevel);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue;
+  short BackgroundFillValue = 0;
   if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;

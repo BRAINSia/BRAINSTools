@@ -39,11 +39,13 @@
 // I N C L U D E S ////////////////////////////////////////////////////////////
 
 #include "BRAINSConstellationDetectorPrimary.h"
+#include "Slicer3LandmarkWeightIO.h"
+#include "landmarkIO.h"
 #include "landmarksConstellationCommon.h"
 #include "landmarksConstellationTrainingDefinitionIO.h"
-#include "landmarkIO.h"
-#include "Slicer3LandmarkWeightIO.h"
 #include "landmarksConstellationWeightsCLP.h"
+#include "math.h"
+
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 
@@ -80,7 +82,7 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
 
   unsigned int             numNamedLandmarks = 0;
-  double                   d0, d1, d2, dist;
+  double                   d0 = NAN, d1 = NAN, d2 = NAN, dist = NAN;
   LandmarksDistanceMapType LandmarksDistanceMap;
   LandmarksValueMapType    LandmarksAverageMap; // for average
   LandmarksValueMapType    LandmarksSTDMap;     // for standard deviation

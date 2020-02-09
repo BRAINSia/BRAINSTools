@@ -50,9 +50,11 @@ case n:     PCn1         PCn2
 // First, for EACH landmark we compute the distance between its coordinates in each case,
 // Then, the average, variance and standard deviation of these distances are calculated over all n cases.
 
-#include "itkImage.h"
-#include <cmath>
 #include "Slicer3LandmarkIO.h"
+#include "itkImage.h"
+#include "math.h"
+#include <cmath>
+
 
 int
 main(int argc, char * argv[])
@@ -76,7 +78,7 @@ main(int argc, char * argv[])
   }
 
   unsigned int numNamedLandmarks = 0;
-  double       d0, d1, d2, dist;
+  double       d0 = NAN, d1 = NAN, d2 = NAN, dist = NAN;
   using LandmarksDistanceMapType = std::map<std::string, std::vector<double>>;
   LandmarksDistanceMapType      LandmarksDistanceMap;
   std::map<std::string, double> LandmarksAverageMap;  // for average

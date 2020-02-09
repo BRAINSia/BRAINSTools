@@ -69,7 +69,7 @@ extern "C"
     //   }
     // std::cerr << ")" << std::endl;
     auto buf = new char[txtlen + 1];
-    int  i;
+    int  i = 0;
 
     for (i = 0; i < txtlen; i++)
     {
@@ -124,7 +124,7 @@ AtlasDefinition::XMLStart(const char * el)
 double
 AtlasDefinition ::StrToD(const char * str, const char * message) const
 {
-  char * last;
+  char * last = nullptr;
   double rval = strtod(str, &last);
 
   if (str == static_cast<const char *>(last))
@@ -138,7 +138,7 @@ AtlasDefinition ::StrToD(const char * str, const char * message) const
 long
 AtlasDefinition ::StrToL(const char * str, const char * message) const
 {
-  char * last;
+  char * last = nullptr;
   long   rval = strtol(str, &last, 10);
 
   if (str == static_cast<const char *>(last))

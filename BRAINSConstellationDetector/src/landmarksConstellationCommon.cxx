@@ -134,7 +134,7 @@ ComputeMSP_Easy(SImageType::Pointer           image,
 void
 CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename)
 {
-  SImageType::PixelType low, high;
+  SImageType::PixelType low = 0, high = 0;
 
   setLowHigh<SImageType>(referenceImage, low, high, 0.01F);
 
@@ -166,7 +166,7 @@ CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
                       const RigidTransformType::Pointer MSPTransform,
                       const std::string &               debugfilename)
 {
-  SImageType::PixelType low, high;
+  SImageType::PixelType low = 0, high = 0;
 
   setLowHigh<SImageType>(referenceImage, low, high, 0.01F);
 

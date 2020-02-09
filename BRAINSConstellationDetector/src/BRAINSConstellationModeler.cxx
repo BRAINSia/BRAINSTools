@@ -62,6 +62,8 @@
 #include "GenericTransformImage.h"
 
 #include "itkOrthogonalize3DRotationMatrix.h"
+#include "math.h"
+
 
 // //////////////////////////////////////////////////////////////
 // Computes the unbiased sample variance of a set of n observations
@@ -119,7 +121,7 @@ main(int argc, char * argv[])
   globalResultsDir = resultsDir;
   globalImagedebugLevel = writedebuggingImagesLevel;
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue;
+  short BackgroundFillValue = 0;
   if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;
@@ -524,8 +526,8 @@ main(int argc, char * argv[])
   for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
   {
     // JOB1: RPPC_to_RPAC_angle and RPAC_over_RPPC
-    double curr_RPPC_to_RPAC_angle;
-    double curr_RPAC_over_RPPC;
+    double curr_RPPC_to_RPAC_angle = NAN;
+    double curr_RPAC_over_RPPC = NAN;
     decomposeRPAC(rp_InMSPAlignedSpace[currentDataset],
                   pc_InMSPAlignedSpace[currentDataset],
                   ac_InMSPAlignedSpace[currentDataset],
@@ -543,7 +545,7 @@ main(int argc, char * argv[])
   CMtoRPMean /= static_cast<float>(myModel.GetNumDataSets());
 
   // Now compute the average angle and average ratio
-  float RPPC_to_RPAC_angleMean, RPAC_over_RPPCMean;
+  float RPPC_to_RPAC_angleMean = NAN, RPAC_over_RPPCMean = NAN;
   {
     float dummy_mean(0.0);
     float dummy_var(0.0);

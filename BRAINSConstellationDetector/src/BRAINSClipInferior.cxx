@@ -81,7 +81,7 @@ main(int argc, char * argv[])
     return -1;
   }
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue;
+  short BackgroundFillValue = 0;
   if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;

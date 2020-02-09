@@ -90,7 +90,7 @@ main(int argc, char * argv[])
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  SImageType::PixelType BackgroundFillValue;
+  SImageType::PixelType BackgroundFillValue = 0;
   if (backgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;

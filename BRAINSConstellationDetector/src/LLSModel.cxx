@@ -19,6 +19,8 @@
 #include "LLSModel.h"
 
 #include "BRAINSConstellationDetectorVersion.h"
+#include "math.h"
+
 
 LLSModel ::LLSModel()
   : m_H5File(nullptr)
@@ -186,7 +188,7 @@ std::vector<double>
 LLSModel ::ReadVector(const std::string & DataSetName)
 {
   std::vector<double> vec;
-  hsize_t             dim;
+  hsize_t             dim = 0;
   H5::DataSet         vecSet = this->m_H5File->openDataSet(DataSetName);
   H5::DataSpace       Space = vecSet.getSpace();
 
@@ -233,7 +235,7 @@ LLSModel ::ReadMatrix(const std::string & DataSetName)
 double
 LLSModel ::ReadScalar(const std::string & DataSetName)
 {
-  hsize_t       dim;
+  hsize_t       dim = 0;
   H5::DataSet   scalarSet = this->m_H5File->openDataSet(DataSetName);
   H5::DataSpace Space = scalarSet.getSpace();
 
@@ -249,7 +251,7 @@ LLSModel ::ReadScalar(const std::string & DataSetName)
               << "in HDF5 File" << std::endl;
     ;
   }
-  double scalar;
+  double scalar = NAN;
   scalarSet.read(&scalar, H5::PredType::NATIVE_DOUBLE);
   scalarSet.close();
   return scalar;
@@ -258,7 +260,7 @@ LLSModel ::ReadScalar(const std::string & DataSetName)
 std::string
 LLSModel ::ReadString(const std::string & DataSetName)
 {
-  hsize_t     dim;
+  hsize_t     dim = 0;
   H5::DataSet strSet = this->m_H5File->openDataSet(DataSetName);
 
   H5::DataSpace Space = strSet.getSpace();

@@ -36,7 +36,7 @@ GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::str
   if (itpair == landmarks.end())
   {
     std::cout << "ERROR:  " << NamedPoint << " not found in list." << std::endl;
-    return SImageType::PointType();
+    return {};
   }
   return itpair->second;
 }

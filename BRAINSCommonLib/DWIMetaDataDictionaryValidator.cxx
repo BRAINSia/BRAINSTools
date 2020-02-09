@@ -34,7 +34,7 @@ DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator()
   this->m_dict.Clear();
 }
 
-DWIMetaDataDictionaryValidator::~DWIMetaDataDictionaryValidator() {}
+DWIMetaDataDictionaryValidator::~DWIMetaDataDictionaryValidator() = default;
 
 std::string
 DWIMetaDataDictionaryValidator::GetGradientKeyString(int index) const

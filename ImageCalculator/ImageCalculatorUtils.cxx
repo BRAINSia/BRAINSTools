@@ -29,7 +29,7 @@
 #include <iostream>
 
 void
-PrintDataTypeStrings(void)
+PrintDataTypeStrings()
 {
   // Prints the Input and output data type strings.
   std::cout << "UCHAR" << std::endl;

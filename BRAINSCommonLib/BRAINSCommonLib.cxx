@@ -21,7 +21,7 @@
 #include <iostream>
 
 void
-BRAINSRegisterAlternateIO(void)
+BRAINSRegisterAlternateIO()
 {}
 
 // If ITK was built with FFTWD and FFTWF, then use wisdom files

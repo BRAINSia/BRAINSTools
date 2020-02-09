@@ -93,7 +93,7 @@ BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
 }
 
 bool
-BRAINSConstellationDetectorPrimary::Compute(void)
+BRAINSConstellationDetectorPrimary::Compute()
 {
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(this->m_numberOfThreads);
 

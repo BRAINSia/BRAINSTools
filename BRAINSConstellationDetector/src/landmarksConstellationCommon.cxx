@@ -545,7 +545,7 @@ GetImageCenterPhysicalPoint(SImageType::Pointer & image)
 // INFO:  Currently hard-coded to 1.0^3 isotropic voxels in a 256^3 matrix
 // --outputVolumeSize 256,256,256 --outputVolumeSpacing 1.0,1.0,1.0
 SImageType::Pointer
-MakeIsoTropicReferenceImage(void)
+MakeIsoTropicReferenceImage()
 {
   SImageType::DirectionType Ident;
 

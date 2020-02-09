@@ -82,7 +82,7 @@ sample_variance(const std::vector<DType> & x, DType * mean, DType * var)
   DType                                             sum_of_sq = 0.0;
   DType                                             sum = 0.0;
   const typename std::vector<DType>::const_iterator theEnd = x.end();
-  for (typename std::vector<DType>::const_iterator it = x.begin(); it != theEnd; ++it)
+  for (auto it = x.begin(); it != theEnd; ++it)
   {
     const DType & value = *it;
     sum_of_sq += value * value;
@@ -359,7 +359,7 @@ main(int argc, char * argv[])
     }
 
     // Build template for each landmark
-    for (std::map<std::string, SImageType::PointType>::iterator it = mDef[currentDataset].begin();
+    for (auto it = mDef[currentDataset].begin();
          it != mDef[currentDataset].end();
          ++it)
     {

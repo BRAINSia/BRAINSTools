@@ -306,7 +306,7 @@ main(int argc, char * argv[])
     std::cout << outputPrefixColumnName << ", ";
   }
   std::cout << "Name, label, min, max, median, mean, stddev, var, sum, count" << std::endl;
-  for (ValidLabelValuesType::const_iterator vIt = statsFilter->GetValidLabelValues().begin();
+  for (auto vIt = statsFilter->GetValidLabelValues().begin();
        vIt != statsFilter->GetValidLabelValues().end();
        ++vIt)
   {

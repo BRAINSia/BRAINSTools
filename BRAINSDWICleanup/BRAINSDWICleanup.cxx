@@ -138,7 +138,7 @@ main(int argc, char * argv[])
   {
     NrrdImageType::PixelType inPix = inIt.Get();
     NrrdImageType::PixelType outpix(newGradientCount);
-    std::list<int>::iterator keepIt = keepIndices.begin();
+    auto keepIt = keepIndices.begin();
     for (unsigned int i = 0; i < newGradientCount; ++i, ++keepIt)
     {
       outpix[i] = inPix[*(keepIt)];
@@ -159,7 +159,7 @@ main(int argc, char * argv[])
   DWIMetaDataDictionaryValidator::GradientTableType outputGradTable(newGradientCount);
 
   // add the good gradients to the outputGradTable
-  std::list<int>::iterator keepIt = keepIndices.begin();
+  auto keepIt = keepIndices.begin();
   for (unsigned int i = 0; i < keepIndices.size(); ++i, ++keepIt)
   {
     outputGradTable[i] = inputGradTable[*keepIt];

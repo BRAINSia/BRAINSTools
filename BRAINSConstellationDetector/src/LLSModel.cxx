@@ -48,7 +48,7 @@ void
 LLSModel ::WriteVector(const std::string & path, const std::vector<double> & vec)
 {
   hsize_t  dim(vec.size());
-  double * buf(new double[dim]);
+  auto * buf(new double[dim]);
 
   for (unsigned i(0); i < dim; ++i)
   {
@@ -71,7 +71,7 @@ LLSModel ::WriteMatrix(const std::string & path, const MatrixType & matrix)
   dims[0] = matrix.rows();
   dims[1] = matrix.cols();
 
-  double * buffer = new double[dims[0] * dims[1]];
+  auto * buffer = new double[dims[0] * dims[1]];
   matrix.copy_out(buffer);
 
   H5::DataSpace matrixSpace(2, dims);
@@ -199,7 +199,7 @@ LLSModel ::ReadVector(const std::string & DataSetName)
   Space.getSimpleExtentDims(&dim, nullptr);
   vec.resize(dim);
 
-  double * buf = new double[dim];
+  auto * buf = new double[dim];
   vecSet.read(buf, H5::PredType::NATIVE_DOUBLE);
   for (unsigned i(0); i < dim; ++i)
   {

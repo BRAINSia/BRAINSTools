@@ -245,7 +245,7 @@ CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
     }
     if (rplaneIt.Get() > high * 0.5)
     {
-      SImageType::PixelType p = static_cast<SImageType::PixelType>((2.0 * rplaneIt.Get() + rasterIt.Get()) * 0.3333333);
+      auto p = static_cast<SImageType::PixelType>((2.0 * rplaneIt.Get() + rasterIt.Get()) * 0.3333333);
       rasterIt.Set(p);
     }
   }
@@ -437,7 +437,7 @@ extractArray(LinearInterpolatorType::Pointer                                imIn
              std::vector<float> &                                           result_array)
 {
   int q = 0;
-  for (landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin(); it != model.end();
+  for (auto it = model.begin(); it != model.end();
        ++it, ++q)
   {
     const SImageType::PointType & point = CenterPoint + *it;

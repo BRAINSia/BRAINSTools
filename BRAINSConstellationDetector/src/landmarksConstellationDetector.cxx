@@ -125,7 +125,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(SImageTy
     for (LandmarkConstIterator fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end();
          ++fixedIt)
     {
-      LandmarkConstIterator movingIt = updated_orig_lmks.find(fixedIt->first);
+      auto movingIt = updated_orig_lmks.find(fixedIt->first);
       if (movingIt != updated_orig_lmks.cend())
       {
         atlasLmks.push_back(fixedIt->second);
@@ -527,9 +527,9 @@ landmarksConstellationDetector::FindCandidatePoints(
     lmkTemplateImage->FillBuffer(0);
     templateMask->FillBuffer(0);
     // iterate over mean values for the current rotation angle
-    std::vector<float>::const_iterator mean_iter = TemplateMean[curr_rotationAngle].begin();
+    auto mean_iter = TemplateMean[curr_rotationAngle].begin();
     // Fill the lmk template image using the mean values
-    for (landmarksConstellationModelIO::IndexLocationVectorType::const_iterator it = model.begin(); it != model.end();
+    for (auto it = model.begin(); it != model.end();
          ++it, ++mean_iter)
     {
       FImageType3D::IndexType pixelIndex;

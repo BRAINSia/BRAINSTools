@@ -542,7 +542,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
 
             // Enable local search
-            if (1)
+            if (true)
             {
               // local search
               double cc_Max = 0;

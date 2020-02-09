@@ -175,9 +175,9 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
     OutputImagePointerType image = reader->GetOutput();
 
     itk::FixedArray<bool, 3> flipAxes;
-    flipAxes[0] = 0;
-    flipAxes[1] = 0;
-    flipAxes[2] = 1;
+    flipAxes[0] = false;
+    flipAxes[1] = false;
+    flipAxes[2] = true;
     OutputImagePointerType orientedImage = ChangeOrientOfImage<OutImageType>(image, flipAxes);
     if (i > 0)
     {

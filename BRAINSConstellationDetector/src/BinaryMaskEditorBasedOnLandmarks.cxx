@@ -147,7 +147,7 @@ CutBinaryVolumeByPointWithDirection(typename TImageType::Pointer * _imageVolume,
     SUPERIOR,
     INFERIOR,
     UNKOWN_DIRECTION
-  } myDirection = 0;
+  } myDirection = UNKOWN_DIRECTION;
 
   if (_direction == "ANTERIOR")
   {

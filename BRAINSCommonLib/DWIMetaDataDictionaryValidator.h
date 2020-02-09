@@ -84,7 +84,7 @@ protected:
 
   std::vector<std::string>
   GenericGetStringVector(const std::string & KeyBaseName,
-                         const size_t        numElemnents,
+                         const size_t        numElements,
                          const std::string   defaultValue) const;
 
   std::vector<double>

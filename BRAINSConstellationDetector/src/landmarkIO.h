@@ -86,7 +86,7 @@ WriteMRMLFile(std::string                                   outputMRML,
 // load linear least squares model for selected landmarks
 // .load from txt file
 extern void
-loadLLSModel(std::string                                     llsModel,
+loadLLSModel(std::string                                     llsModelFilename,
              std::map<std::string, std::vector<double>> &    llsMeans,
              std::map<std::string, LandmarkIO::MatrixType> & llsMatrices,
              std::map<std::string, double> &                 searchRadii);
@@ -114,8 +114,8 @@ readLLSModel(const std::string &                             modelName,
 
 // write out verification script
 extern void
-writeVerificationScript(std::string outputVerificationScript,
+writeVerificationScript(std::string outputVerificationScriptFilename,
                         std::string outputVolume,
-                        std::string saveOutputLandmarks);
+                        std::string saveOutputLandmarksFilename);
 
 #endif // __landmarkIO__h

@@ -271,7 +271,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(SImageTy
 }
 
 VersorTransformType::Pointer
-landmarksConstellationDetector::GetImageOrigToACPCVersorTransform(void) const
+landmarksConstellationDetector::GetImageOrigToACPCVersorTransform() const
 {
   return m_orig2msp_img_tfm;
 }

@@ -40,7 +40,7 @@
 
 // A little dummy function to make it easy to stop the debugger.
 void
-debug_catch(void)
+debug_catch()
 {
   std::cout << "HERE" << __FILE__ << " " << __LINE__ << std::endl;
 
@@ -256,7 +256,7 @@ DoHistogramEqualization(typename FixedImageType::Pointer &         inputFixedIma
 }
 
 void
-BRAINSFitHelper::Update(void)
+BRAINSFitHelper::Update()
 {
   // Do remove intensity outliers if requested
   if (m_RemoveIntensityOutliers > std::numeric_limits<float>::epsilon())

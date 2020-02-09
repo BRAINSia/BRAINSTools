@@ -72,7 +72,7 @@ main(int argc, char * argv[])
       std::cout << "ERROR: Missing weights" << std::endl;
       return EXIT_FAILURE;
     }
-    LandmarksMapType::const_iterator lmk1iter = landmarks1.begin();
+    auto lmk1iter = landmarks1.begin();
     bool                             allSame = true;
     while (lmk1iter != landmarks1.end())
     {

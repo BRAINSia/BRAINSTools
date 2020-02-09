@@ -80,7 +80,7 @@ bool ExtractTransform(typename itk::AffineTransform<TScalarType, 3>::Pointer & r
 
   using LocalAffineTransformType = itk::AffineTransform<TScalarType, 3>;
   using MatrixOffsetTransformType = typename LocalAffineTransformType::Superclass;
-  const MatrixOffsetTransformType * matBasePtr = dynamic_cast<const MatrixOffsetTransformType *>(source);
+  const auto * matBasePtr = dynamic_cast<const MatrixOffsetTransformType *>(source);
   if (matBasePtr == nullptr)
   {
     return false;
@@ -113,7 +113,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
   using TransTransformType = itk::TranslationTransform<TScalarType, 3>;
   if (IsClass(source, "TranslationTransform"))
   {
-    const TransTransformType *                    translationXfrm = dynamic_cast<const TransTransformType *>(source);
+    const auto *                    translationXfrm = dynamic_cast<const TransTransformType *>(source);
     typename TransTransformType::OutputVectorType offset = translationXfrm->GetOffset();
     result->SetOffset(offset);
     return true;
@@ -122,7 +122,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
   if (IsClass(source, "VersorTransform"))
   {
     using VersorTransformType = itk::VersorTransform<TScalarType>;
-    const VersorTransformType * versorXfrm = dynamic_cast<const VersorTransformType *>(source);
+    const auto * versorXfrm = dynamic_cast<const VersorTransformType *>(source);
 
     result->SetRotation(versorXfrm->GetVersor());
     result->SetCenter(versorXfrm->GetCenter());
@@ -150,7 +150,7 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
   using LocalVersorRigid3DTransformType = itk::VersorRigid3DTransform<TScalarType>;
   if (IsClass(source, "VersorRigid3DTransform"))
   {
-    const LocalVersorRigid3DTransformType * versorRigidXfrm =
+    const auto * versorRigidXfrm =
       dynamic_cast<const LocalVersorRigid3DTransformType *>(source);
     result->SetCenter(versorRigidXfrm->GetCenter());
     result->SetRotation(versorRigidXfrm->GetVersor());
@@ -187,7 +187,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform<TScalarType>::Pointer 
   using LocalScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TScalarType>;
   if (IsClass(source, "ScaleVersor3DTransform"))
   {
-    const LocalScaleVersor3DTransformType * scaleVersorXfrm =
+    const auto * scaleVersorXfrm =
       dynamic_cast<const LocalScaleVersor3DTransformType *>(source);
     result->SetCenter(scaleVersorXfrm->GetCenter());
     result->SetRotation(scaleVersorXfrm->GetVersor());
@@ -473,7 +473,7 @@ DoConversion(int argc, char * argv[])
       typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
       transformWriter->SetFileName(outputTransform);
       transformWriter->SetUseCompression(true);
-      for (typename itk::TransformFileReaderTemplate<TScalarType>::TransformListType::iterator it =
+      for (auto it =
              transformList->begin();
            it != transformList->end();
            ++it)

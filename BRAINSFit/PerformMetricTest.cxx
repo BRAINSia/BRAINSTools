@@ -151,7 +151,7 @@ main(int argc, char * argv[])
   using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;
 
-  const unsigned long sampleCount = static_cast<unsigned long>(std::ceil(1.0 / samplingPercentage));
+  const auto sampleCount = static_cast<unsigned long>(std::ceil(1.0 / samplingPercentage));
   // std::cout << "sample count: " << sampleCount << std::endl;
   unsigned long                                          count = sampleCount;
   itk::ImageRegionConstIteratorWithIndex<FixedImageType> It(fixedImage, fixedImage->GetBufferedRegion());

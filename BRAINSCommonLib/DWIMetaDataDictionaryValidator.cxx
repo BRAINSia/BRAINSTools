@@ -197,7 +197,7 @@ DWIMetaDataDictionaryValidator::SetGradientTable(GradientTableType & myGradientT
 void
 DWIMetaDataDictionaryValidator::DeleteGradientTable()
 {
-  for (itk::MetaDataDictionary::MetaDataDictionaryMapType::iterator it = m_dict.Begin(); it != m_dict.End(); ++it)
+  for (auto it = m_dict.Begin(); it != m_dict.End(); ++it)
   {
     // http://stackoverflow.com/questions/8234779/how-to-remove-from-a-map-while-iterating-it
     if ((*it).first.find("DWMRI_gradient_") != std::string::npos)

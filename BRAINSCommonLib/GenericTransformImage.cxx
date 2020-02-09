@@ -459,7 +459,7 @@ void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const M
   if (transformFileType ==
       "DisplacementFieldTransform") // if it's a displacement field transform, we write that as a float displacement
   {
-    const InputDisplacementFieldTransformType * dispXfrm =
+    const auto * dispXfrm =
       static_cast<const InputDisplacementFieldTransformType *>(MyTransform);
     using InputDisplacementFieldType = typename InputDisplacementFieldTransformType::DisplacementFieldType;
     typename InputDisplacementFieldType::ConstPointer inputDispField = dispXfrm->GetDisplacementField();

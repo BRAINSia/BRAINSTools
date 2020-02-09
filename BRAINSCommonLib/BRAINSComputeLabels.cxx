@@ -14,7 +14,7 @@ GetMinLabelCount(ByteImageType::Pointer & labelsImage, const vnl_vector<unsigned
 
   for (unsigned int iclass : PriorLabelCodeVector)
   {
-    const size_t labelValue = static_cast<size_t>(iclass);
+    const auto labelValue = static_cast<size_t>(iclass);
     if (labelStatisticsImageFilter->HasLabel(labelValue))
     {
       const size_t currentLabelCount = labelStatisticsImageFilter->GetCount(labelValue);

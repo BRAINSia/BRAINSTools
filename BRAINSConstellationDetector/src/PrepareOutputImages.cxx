@@ -31,7 +31,7 @@ namespace itk
 SImageType::PointType
 GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::string & NamedPoint)
 {
-  LandmarksMapType::const_iterator itpair = landmarks.find(NamedPoint);
+  auto itpair = landmarks.find(NamedPoint);
 
   if (itpair == landmarks.end())
   {
@@ -180,7 +180,7 @@ ApplyInverseOfTransformToLandmarks(VersorTransformType::ConstPointer lVersorTran
   }
 
   outputLmks.clear();
-  for (LandmarksMapType::const_iterator lit = inputLmks.begin(); lit != inputLmks.end(); ++lit)
+  for (auto lit = inputLmks.begin(); lit != inputLmks.end(); ++lit)
   {
     outputLmks[lit->first] = lInvVersorTransform->TransformPoint(GetNamedPointFromLandmarkList(inputLmks, lit->first));
   }

@@ -43,7 +43,7 @@ extern "C"
     //   std::cerr << attr[i] << "=" << attr[i+1];
     //   }
     // std::cerr << ")" << std::endl;
-    AtlasDefinition * _this = reinterpret_cast<AtlasDefinition *>(data);
+    auto * _this = reinterpret_cast<AtlasDefinition *>(data);
 
     _this->XMLStart(el);
   }
@@ -54,7 +54,7 @@ extern "C"
     // std::cerr << "End, El = ("
     //         << el
     //         << ")" << std::endl;
-    AtlasDefinition * _this = reinterpret_cast<AtlasDefinition *>(data);
+    auto * _this = reinterpret_cast<AtlasDefinition *>(data);
 
     _this->XMLEnd(el);
   }
@@ -76,7 +76,7 @@ extern "C"
       buf[i] = txt[i];
     }
     buf[i] = '\0';
-    AtlasDefinition * _this = reinterpret_cast<AtlasDefinition *>(data);
+    auto * _this = reinterpret_cast<AtlasDefinition *>(data);
     _this->XMLChar(buf);
     delete[] buf;
   }

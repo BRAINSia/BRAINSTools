@@ -40,7 +40,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git)
   #set(${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY ${git_protocol}://github.com/hjmjohnson/ITK.git)
-  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG strongly-typed-enums ) #20200207 - ITKv5 Enumerations
+  set(${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG cf1a71785dbdc1d606f5397c339ce05bd872ba74 ) #2020-03-12
 
   set(EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS)
 

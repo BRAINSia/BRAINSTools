@@ -291,7 +291,9 @@ DoConversion(int argc, char * argv[])
          ++it)
     {
       DisplacementFieldType::IndexType dispIndex = it.GetIndex();
-      DisplacementFieldType::PointType fixedPoint, movingPoint;
+      DisplacementFieldType::PointType fixedPoint;
+
+      DisplacementFieldType::PointType movingPoint;
       displacementField->TransformIndexToPhysicalPoint(dispIndex, fixedPoint);
       movingPoint = inputXfrm->TransformPoint(fixedPoint);
       VectorType displacement = movingPoint - fixedPoint;

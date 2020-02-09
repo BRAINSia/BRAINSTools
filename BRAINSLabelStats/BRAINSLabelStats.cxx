@@ -95,8 +95,20 @@ GetAntsLabelName(std::string fileName, int label)
   // Set default return value
   std::string labelName = "Error";
 
-  std::string value, txtLabel;
-  std::string x1, x2, y1, y2, z1, z2;
+  std::string value;
+
+  std::string txtLabel;
+  std::string x1;
+
+  std::string x2;
+
+  std::string y1;
+
+  std::string y2;
+
+  std::string z1;
+
+  std::string z2;
 
   std::ifstream labelFile(fileName.c_str());
 

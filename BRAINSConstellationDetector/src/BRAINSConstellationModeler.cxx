@@ -545,7 +545,9 @@ main(int argc, char * argv[])
   CMtoRPMean /= static_cast<float>(myModel.GetNumDataSets());
 
   // Now compute the average angle and average ratio
-  float RPPC_to_RPAC_angleMean = NAN, RPAC_over_RPPCMean = NAN;
+  float RPPC_to_RPAC_angleMean = NAN;
+
+  float RPAC_over_RPPCMean = NAN;
   {
     float dummy_mean(0.0);
     float dummy_var(0.0);

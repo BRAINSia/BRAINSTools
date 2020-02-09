@@ -79,8 +79,8 @@ main(int argc, char * argv[])
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   const bool debug = true;
-  bool       useTransform = (warpTransform.size() > 0);
-  const bool useDisplacementField = (deformationVolume.size() > 0);
+  bool       useTransform = (!warpTransform.empty());
+  const bool useDisplacementField = (!deformationVolume.empty());
 
   if (inputVolume.empty())
   {
@@ -146,7 +146,7 @@ main(int argc, char * argv[])
     TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
     ReaderType::Pointer refImageReader = ReaderType::New();
-    if (referenceVolume.size() > 0)
+    if (!referenceVolume.empty())
     {
       refImageReader->SetFileName(referenceVolume);
     }

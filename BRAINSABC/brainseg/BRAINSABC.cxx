@@ -206,7 +206,7 @@ main(int argc, char ** argv)
     muLogMacro(<< "Warning: --maxIterations set to 0, so only "
                << "initialization with priors will be completed." << std::endl);
   }
-  if (input_Volumes.size() == 0)
+  if (input_Volumes.empty())
   {
     muLogMacro(<< "ERROR: Must specify --inputVolumes" << std::endl);
     AllSimpleParameterChecksValid = false;
@@ -225,13 +225,13 @@ main(int argc, char ** argv)
                << " have the same number of elements" << std::endl);
     AllSimpleParameterChecksValid = false;
   }
-  if (atlasDefinition == "")
+  if (atlasDefinition.empty())
   {
     muLogMacro(<< "Error: "
                << "--atlasDefinition <xml atlas def> required" << std::endl);
     AllSimpleParameterChecksValid = false;
   }
-  if (outputDir == "")
+  if (outputDir.empty())
   {
     muLogMacro(<< "ERROR: "
                << "outputDir must be specified" << std::endl);
@@ -454,7 +454,7 @@ main(int argc, char ** argv)
     // muLogMacro(<< "Read template mask");
     const std::string templateMask =
       FindPathFromAtlasXML(atlasDefinitionParser.GetTemplateBrainMask(), atlasDefinitionPath);
-    if (templateMask.size() < 1)
+    if (templateMask.empty())
     {
       muLogMacro(<< "No template mask specified" << std::endl);
       return EXIT_FAILURE;
@@ -534,7 +534,7 @@ main(int argc, char ** argv)
         const std::string suffixstr = "";
         { // Read subject images needed for atlas registration
           // muLogMacro(<< "Read subject images");
-          if (input_Volumes.size() < 1)
+          if (input_Volumes.empty())
           {
             muLogMacro(<< "No data images specified" << std::endl);
             return EXIT_FAILURE;
@@ -695,7 +695,7 @@ main(int argc, char ** argv)
           atlasreg->SetAtlasOriginalImageList(atlasOriginalImageList);
 
           std::string atlasTransformFileName = "";
-          if (atlasToSubjectTransform != "")
+          if (!atlasToSubjectTransform.empty())
           {
             // If this final transform filename exists,
             // it will be just read in and will be used directly
@@ -744,7 +744,7 @@ main(int argc, char ** argv)
           return EXIT_FAILURE;
         }
 
-        if (atlasToSubjectInitialTransform != "")
+        if (!atlasToSubjectInitialTransform.empty())
         {
           muLogMacro(<< "atlasToSubjectInitialTransform specified." << std::endl);
           if (atlasToSubjectTransformType.compare("Identity") == 0)
@@ -1095,7 +1095,7 @@ main(int argc, char ** argv)
     {
       // If the final transform filename exists, it will be read in and will be used directly,
       // so no update is run during iterations.
-      if (atlasToSubjectTransform != "" && itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str()))
+      if (!atlasToSubjectTransform.empty() && itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str()))
       {
         segfilter->UpdateTransformationOff();
       }
@@ -1238,7 +1238,7 @@ main(int argc, char ** argv)
       // If this final transform filename exists, it has been used directly
       // with no pre-segmentation registration and no updating during iterations,
       // so there is no need to overwrite that.
-      if (atlasToSubjectTransform != "" && !itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str()))
+      if (!atlasToSubjectTransform.empty() && !itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str()))
       {
         const std::string postSegmentationTransformFileName = atlasToSubjectTransform;
         // NOTE:  Aliasing of smart-pointers up the polymorphic tree OK here
@@ -1261,7 +1261,7 @@ main(int argc, char ** argv)
 
       writer->SetInput(segfilter->GetOutput());
       std::string fn;
-      if (outputLabels == "")
+      if (outputLabels.empty())
       {
         fn = outputDir;
         fn += GetStrippedImageFileNameExtension(inputVolumeMap.begin()->second[0]);
@@ -1281,7 +1281,7 @@ main(int argc, char ** argv)
       ByteWriterType::Pointer writer = ByteWriterType::New();
 
       std::string fn;
-      if (outputLabels == "")
+      if (outputLabels.empty())
       {
         fn = outputDir;
         fn += GetStrippedImageFileNameExtension(inputVolumeMap.begin()->second[0]);
@@ -1337,7 +1337,7 @@ main(int argc, char ** argv)
     for (unsigned int probabilityIndex = 0; probabilityIndex < PriorNames.size(); probabilityIndex++)
     {
       std::string fn;
-      if (posteriorTemplate == "")
+      if (posteriorTemplate.empty())
       {
         fn = outputDir;
         fn += GetStrippedImageFileNameExtension(inputVolumeMap.begin()->second[0]);

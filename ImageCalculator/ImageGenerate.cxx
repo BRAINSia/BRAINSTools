@@ -188,7 +188,7 @@ ProcessArgs(int           argc,
     std::cerr << "Missing or incorrect dimensions:" << x << " " << y << " " << z << std::endl;
     return false;
   }
-  if (filename == "")
+  if (filename.empty())
   {
     std::cerr << "Missing filename parameter" << std::endl;
   }

@@ -77,7 +77,7 @@ main(int argc, char * argv[])
 
   // Set input transform
   TransformType::Pointer transform = TransformType::New();
-  if (inputBSplineTransform != "")
+  if (!inputBSplineTransform.empty())
   {
     std::cout << "Read transform file from the disk ..." << std::endl;
     itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();

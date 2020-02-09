@@ -167,14 +167,14 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  if (saveTransform == "")
+  if (saveTransform.empty())
   {
     std::cerr << "An output transform must be specified" << std::endl;
     return EXIT_FAILURE;
   }
 
-  if (((fixedLandmarks.size() > 0) && (fixedLandmarksFile != "")) ||
-      ((movingLandmarks.size() > 0) && (movingLandmarksFile != "")))
+  if (((!fixedLandmarks.empty()) && (!fixedLandmarksFile.empty())) ||
+      ((!movingLandmarks.empty()) && (!movingLandmarksFile.empty())))
   {
     std::cerr << "Program can accept landmark files with points, or directly specify points, but not both."
               << std::endl;
@@ -184,7 +184,7 @@ main(int argc, char * argv[])
   PointList fixedPoints(0);
   PointList movingPoints(0);
 
-  if (fixedLandmarks.size() > 0) //
+  if (!fixedLandmarks.empty()) //
   {
     fixedPoints.resize(fixedLandmarks.size());
     movingPoints.resize(movingLandmarks.size());
@@ -197,9 +197,9 @@ main(int argc, char * argv[])
   else
   {
     // Read fcsv files and make lists
-    if (fixedLandmarksFile != "" || movingLandmarksFile != "")
+    if (!fixedLandmarksFile.empty() || !movingLandmarksFile.empty())
     {
-      if (movingLandmarksFile == "" || fixedLandmarksFile == "")
+      if (movingLandmarksFile.empty() || fixedLandmarksFile.empty())
       {
         std::cerr << "Must supply both fixed and moving landmark files" << std::endl;
         return EXIT_FAILURE;
@@ -222,7 +222,7 @@ main(int argc, char * argv[])
     }
   }
 
-  if (fixedLandmarks.size() <= 0 || movingLandmarks.size() <= 0 || fixedLandmarks.size() != movingLandmarks.size())
+  if (fixedLandmarks.empty() || movingLandmarks.empty() || fixedLandmarks.size() != movingLandmarks.size())
   {
     std::cerr << "Fixed and moving landmark lists must be of the same size "
               << "and contain at least one point" << std::endl;

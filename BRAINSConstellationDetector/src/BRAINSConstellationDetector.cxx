@@ -87,7 +87,7 @@ main(int argc, char * argv[])
   }
 
   // set the llsModel to default
-  if (llsModel == "")
+  if (llsModel.empty())
   {
     std::string pathOut;
     std::string errorMsg;

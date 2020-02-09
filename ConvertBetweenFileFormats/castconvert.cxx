@@ -166,7 +166,7 @@ main(int argc, char * argv[])
     }
 
     /** Check outputPixelType. */
-    if (outputPixelComponentType != "" && outputPixelComponentType != "unsigned_char" &&
+    if (!outputPixelComponentType.empty() && outputPixelComponentType != "unsigned_char" &&
         outputPixelComponentType != "char" && outputPixelComponentType != "unsigned_short" &&
         outputPixelComponentType != "short" && outputPixelComponentType != "unsigned_int" &&
         outputPixelComponentType != "int" && outputPixelComponentType != "unsigned_long" &&
@@ -262,7 +262,7 @@ main(int argc, char * argv[])
     }
 
     /** Check outputPixelType. */
-    if (outputPixelComponentType == "")
+    if (outputPixelComponentType.empty())
     {
       /** In this case this option is not given, and by default
        * we set it to the inputPixelComponentType.

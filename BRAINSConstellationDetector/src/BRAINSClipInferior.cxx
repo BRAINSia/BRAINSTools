@@ -74,7 +74,7 @@ main(int argc, char * argv[])
     printf("outputVolume: %s\n", outputVolume.c_str());
     printf("acLowerBound: %f\n", acLowerBound);
   }
-  if (outputVolume == "")
+  if (outputVolume.empty())
   {
     std::cout << "ERROR:  Missing output file name." << std::endl;
     std::cout << "        Please specify -o <filename> or --outputVolume <filename>" << std::endl;

@@ -163,7 +163,7 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
       if (transformFileType == "VersorRigid3DTransform" || transformFileType == "ScaleVersor3DTransform" ||
           transformFileType == "ScaleSkewVersor3DTransform" || transformFileType == "AffineTransform")
       {
-        if (outputTransform.size() > 0) // Write out the transform
+        if (!outputTransform.empty()) // Write out the transform
         {
           itk::WriteTransformToDisk<TInputScalarType, TWriteScalarType>(genericComponent, outputTransform);
         }
@@ -174,18 +174,18 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
 
         const typename BSplineTransformType::ConstPointer tempInitializerITKTransform =
           static_cast<BSplineTransformType const *>(genericComponent.GetPointer());
-        if (strippedOutputTransform.size() > 0)
+        if (!strippedOutputTransform.empty())
         {
           std::cout << "ERROR:  The rigid component of a BSpline transform is not supported." << std::endl;
         }
-        if (outputTransform.size() > 0)
+        if (!outputTransform.empty())
         {
           itk::WriteTransformToDisk<TInputScalarType, TWriteScalarType>(tempInitializerITKTransform, outputTransform);
         }
       }
       else if (transformFileType == "displacementFieldTransform")
       {
-        if (outputTransform.size() > 0) // Write out the transform
+        if (!outputTransform.empty()) // Write out the transform
         {
           itk::WriteTransformToDisk<TInputScalarType, TWriteScalarType>(genericComponent, outputTransform);
         }
@@ -199,7 +199,7 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
         return -1;
       }
       // Should just write out the rigid transform here.
-      if (strippedOutputTransform.size() > 0)
+      if (!strippedOutputTransform.empty())
       {
         typename VersorRigid3DTransformType::Pointer versorRigid =
           itk::ComputeRigidTransformFromGeneric(genericComponent.GetPointer());
@@ -280,7 +280,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
 
   try
   {
-    if (initialTransform.size() > 0)
+    if (!initialTransform.empty())
     {
       std::cout << "Read ITK transform from file: " << initialTransform << std::endl;
 
@@ -288,7 +288,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
       transformListReader->Update();
 
       currentTransformList = *(transformListReader->GetTransformList());
-      if (currentTransformList.size() == 0)
+      if (currentTransformList.empty())
       {
         itkGenericExceptionMacro(<< "Number of currentTransformList = " << currentTransformList.size()
                                  << "FATAL ERROR: Failed to read transform" << initialTransform);

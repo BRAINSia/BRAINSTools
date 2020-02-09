@@ -123,17 +123,17 @@ int
 main(int argc, char * argv[])
 {
   PARSE_ARGS;
-  if (inputVolume == "")
+  if (inputVolume.empty())
   {
     std::cerr << "Missing input volume name" << std::endl;
     return 1;
   }
-  if (outputVolume == "")
+  if (outputVolume.empty())
   {
     std::cerr << "Missing output volume name" << std::endl;
     return 1;
   }
-  if (transform == "")
+  if (transform.empty())
   {
     std::cerr << "Missing transform file name" << std::endl;
     return 1;

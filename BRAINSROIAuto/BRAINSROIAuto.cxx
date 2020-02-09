@@ -144,7 +144,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  if (inputVolume == "")
+  if (inputVolume.empty())
   {
     std::cerr << argv[0] << ": Missing required --inputVolume parameter" << std::endl;
     return EXIT_FAILURE;
@@ -162,12 +162,12 @@ main(int argc, char * argv[])
   // const SOImageMaskType::Pointer maskWrapper = ROIFilter->GetSpatialObjectROI();
   VolumeMaskType::Pointer MaskImage = ROIFilter->GetOutput();
 
-  if (outputROIMaskVolume != "")
+  if (!outputROIMaskVolume.empty())
   {
     itkUtil::WriteImage<VolumeMaskType>(MaskImage, outputROIMaskVolume);
   }
 
-  if (outputVolume != "")
+  if (!outputVolume.empty())
   {
     //      std::cout << "=========== resampledImage :\n" <<
     // resampledImage->GetDirection() << std::endl;

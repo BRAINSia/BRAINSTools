@@ -35,7 +35,7 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
 {
   using ByteImageType = itk::Image<unsigned char, 3>;
   using StructElementType = itk::BinaryBallStructuringElement<unsigned char, 3>;
-  typedef itk::BinaryDilateImageFilter<ByteImageType, ByteImageType, StructElementType> DilateType;
+  using DilateType = itk::BinaryDilateImageFilter<ByteImageType, ByteImageType, StructElementType>;
   using ErodeType = itk::BinaryErodeImageFilter<ByteImageType, ByteImageType, StructElementType>;
   using FilterType = itk::ConnectedComponentImageFilter<ByteImageType, itk::Image<unsigned int, 3>>;
 

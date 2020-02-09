@@ -174,31 +174,31 @@ main(int argc, char * argv[])
     localTransformType.resize(0); // Set to zero length
     if (useRigid == true)
     {
-      localTransformType.push_back("Rigid");
+      localTransformType.emplace_back("Rigid");
     }
     if (useScaleVersor3D == true)
     {
-      localTransformType.push_back("ScaleVersor3D");
+      localTransformType.emplace_back("ScaleVersor3D");
     }
     if (useScaleSkewVersor3D == true)
     {
-      localTransformType.push_back("ScaleSkewVersor3D");
+      localTransformType.emplace_back("ScaleSkewVersor3D");
     }
     if (useAffine == true)
     {
-      localTransformType.push_back("Affine");
+      localTransformType.emplace_back("Affine");
     }
     if (useBSpline == true)
     {
-      localTransformType.push_back("BSpline");
+      localTransformType.emplace_back("BSpline");
     }
     if (useSyN == true)
     {
-      localTransformType.push_back("SyN");
+      localTransformType.emplace_back("SyN");
     }
     if (useComposite)
     {
-      localTransformType.push_back("Composite3D");
+      localTransformType.emplace_back("Composite3D");
     }
   }
   else if (!transformType.empty())

@@ -82,7 +82,13 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
 
   unsigned int             numNamedLandmarks = 0;
-  double                   d0 = NAN, d1 = NAN, d2 = NAN, dist = NAN;
+  double                   d0 = NAN;
+
+  double                   d1 = NAN;
+
+  double                   d2 = NAN;
+
+  double                   dist = NAN;
   LandmarksDistanceMapType LandmarksDistanceMap;
   LandmarksValueMapType    LandmarksAverageMap; // for average
   LandmarksValueMapType    LandmarksSTDMap;     // for standard deviation

@@ -145,7 +145,9 @@ main(int argc, char * argv[])
     bool        isDir = itksys::SystemTools::FileIsDirectory(input.c_str());
     bool        isVTI = (input.rfind(".vti") == (input.size() - 4));
     bool        isDICOM = false;
-    std::string inputFileName, inputDirectoryName;
+    std::string inputFileName;
+
+    std::string inputDirectoryName;
 
     if (exists && !isDir)
     {

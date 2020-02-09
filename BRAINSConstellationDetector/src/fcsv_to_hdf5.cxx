@@ -237,9 +237,9 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   }
 
   std::vector<std::pair<std::string, std::string>> subjects;
-  for (std::vector<std::string>::const_iterator file_iter = files.begin(); file_iter != files.end(); ++file_iter)
+  for (const auto & file : files)
   {
-    subjects.push_back(std::make_pair(get_subjectid(*file_iter), *file_iter));
+    subjects.push_back(std::make_pair(get_subjectid(file), file));
   }
   return subjects;
 }
@@ -290,9 +290,9 @@ get_landmark_types(const std::string & landmark_types_list_file)
     if (iter.size() != 2)
     {
       std::cout << "Row in " << landmark_types_list_file << " must have precisely two entries:" << std::endl;
-      for (unsigned int i = 0; i < iter.size(); i++)
+      for (const auto & i : iter)
       {
-        std::cout << iter[i] << " ";
+        std::cout << i << " ";
       }
       itkGenericExceptionMacro(<< "Row in " << landmark_types_list_file << " must have precisely two entries:");
     }
@@ -398,20 +398,20 @@ main(int argc, char * argv[])
   for (const auto & landmark_type : landmark_types)
   {
     std::vector<std::pair<std::string, vnl_matrix<double>>> perLandmarkMatrix;
-    for (auto lit = landmark_type.second.begin(); lit != landmark_type.second.end(); ++lit)
+    for (const auto & lit : landmark_type.second)
     {
-      landmarkNames.push_back(*lit);
+      landmarkNames.push_back(lit);
       vnl_matrix<double> CurrentLandmarkMatrix(allFileToLandmarkMap.size(), 3);
       int                subjCount = 0;
       for (const auto & fit : allFileToLandmarkMap)
       {
-        const itk::Point<double, 3> & currPoint = fit.second.find(*lit)->second;
+        const itk::Point<double, 3> & currPoint = fit.second.find(lit)->second;
         CurrentLandmarkMatrix[subjCount][0] = currPoint[0];
         CurrentLandmarkMatrix[subjCount][1] = currPoint[1];
         CurrentLandmarkMatrix[subjCount][2] = currPoint[2];
         subjCount++;
       }
-      perLandmarkMatrix.push_back(make_pair((*lit), CurrentLandmarkMatrix));
+      perLandmarkMatrix.push_back(make_pair(lit, CurrentLandmarkMatrix));
     }
     byClassLandmarkMatrix[landmark_type.first] = perLandmarkMatrix;
   }

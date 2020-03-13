@@ -85,6 +85,12 @@ if [[ ${DO_TESTING} -eq 1 ]]; then
   cat > "${TEST_DIR}/CMakeLists.txt" << EOF
 # Put this cmake file in a directory, run "cmake ."  finding TBB results in a FATAL_ERROR from cmake
 cmake_minimum_required(VERSION 3.0)
+
+project(TestFindingTBB
+       VERSION 0.0.0.1
+       LANGUAGES CXX C
+)
+
 # tbb;tbbmalloc;tbbmalloc_proxy
 find_package(TBB REQUIRED COMPONENTS tbbmalloc CONFIG)       #Find one component - test
 find_package(TBB REQUIRED COMPONENTS tbbmalloc_proxy CONFIG) #Find one component - test

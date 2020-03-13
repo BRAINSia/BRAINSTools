@@ -23,7 +23,7 @@ namespace itk
 itk::Matrix<double, 3, 3>
 Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
 {
-  vnl_svd<double>                             decomposition(rotator.GetVnlMatrix(), -1e-6);
+  vnl_svd<double>                             decomposition(rotator.GetVnlMatrix().as_matrix(), -1e-6);
   vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
 
   vnl_matrix<double> W(3, 3);

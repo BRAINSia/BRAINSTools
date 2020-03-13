@@ -125,7 +125,7 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransfor
                                              // in
     // this case, and not
     // Translation.
-    result.update(rotator.GetVnlMatrix(), 0, 0);
+    result.update(rotator.GetVnlMatrix().as_matrix(), 0, 0);
     for (unsigned int i = 0; i < 3; ++i)
     {
       result.put(i, 3, offset[i]);
@@ -407,7 +407,7 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                res
 inline Matrix3D
 orthogonalize(const Matrix3D rotator)
 {
-  vnl_svd<double>                             decomposition(rotator.GetVnlMatrix(), -1E-6);
+  vnl_svd<double>                             decomposition(rotator.GetVnlMatrix().as_matrix(), -1E-6);
   vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
 
   vnl_matrix<double> W(3, 3);

@@ -101,7 +101,7 @@ FastMarchingCostFunction ::GetValue(const ParametersType & parameters) const
 
   float initialCost;
 
-  CostIPType::ContinuousIndexType inputIndex, neighIndex;
+  CostIPType::ContinuousIndexType inputIndex;
 
   m_CostIP->SetInputImage(m_CostImage);
   CostImageRegionType costRegion = m_CostImage->GetLargestPossibleRegion();

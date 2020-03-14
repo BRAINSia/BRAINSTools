@@ -173,7 +173,6 @@ PhilipsDWIConverter::ExtractDWIData()
     this->m_DiffusionVectors.clear();
 
     itk::DCMTKSequence perFrameFunctionalGroup;
-    itk::DCMTKSequence innerSeq;
     double             dwbValue;
 
     this->m_Headers[0]->GetElementSQ(0x5200, 0x9230, perFrameFunctionalGroup);

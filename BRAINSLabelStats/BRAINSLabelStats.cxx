@@ -313,7 +313,6 @@ main(int argc, char * argv[])
   }
   statsFilter->UpdateLargestPossibleRegion();
 
-  using ValidLabelValuesType = StatsFilterType::ValidLabelValuesContainerType;
   using LabelPixelType = StatsFilterType::LabelPixelType;
   for (const auto & outputPrefixColumnName : outputPrefixColumnNames)
   {

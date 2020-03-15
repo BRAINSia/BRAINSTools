@@ -73,6 +73,8 @@ set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
+  # Ignore zlib fallthrough warnings
+  ".*zlib/inflate.c.*"
   #"vtkparse.tab.c"
   "Microsoft SDKs."
   "VC.include."
@@ -375,5 +377,6 @@ set(CTEST_CUSTOM_ERROR_EXCEPTION
   "ITKv4"
   "SlicerExecutionModel"
   "SimpleITK"
+  ".*zlib/inflate.c.*"
 
   )

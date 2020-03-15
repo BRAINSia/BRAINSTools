@@ -62,6 +62,11 @@ addons:
       - ninja
 #    - cmake
 #    update: false # do not update homebrew by default
+#
+#before_install:
+# # Install a supported cmake version (>= 3.4.3)
+# - wget -O cmake.sh https://cmake.org/files/v3.16/cmake-3.16.4-Linux-x86_64.sh
+# - sudo sh cmake.sh --skip-license --exclude-subdir --prefix=/usr/local
 
 # additional setup
 install:
@@ -73,7 +78,7 @@ install:
   # install recent cmake
   - |
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
-      CMAKE_URL="http://www.cmake.org/files/v3.10/cmake-3.10.2-Linux-x86_64.tar.gz"
+      CMAKE_URL="http://www.cmake.org/files/v3.16/cmake-3.16.2-Linux-x86_64.tar.gz"
       mkdir cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C cmake
       export PATH=${DEPS_DIR}/cmake/bin:${PATH}
     elif [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then

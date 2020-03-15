@@ -1,32 +1,172 @@
-# C/C++ with GCC
-# Build your C/C++ project with GCC using make.
-# Add steps that publish test results, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+# The file template originates from the instructions: https://github.com/InsightSoftwareConsortium/ITKModuleTemplate/README.md
+variables:
+  ITKGitTag: v5.1rc02       #Used for choosing branch of ITK to checkout
+  ITKPythonGitTag: v5.1rc02 #Used to identify the release name for the cached python build environmeent ITKPythonBuilds-linux.tar.zst
+  CMakeBuildType: Release
+
 trigger:
+  batch: true
   branches:
     include:
     - master
-    - release*
+#    - release*
+
 jobs:
-- job: Linux
+
+- job: 'Test'
+  displayName: "Build and test"
   timeoutInMinutes: 0
   cancelTimeoutInMinutes: 300
+
+  strategy:
+    matrix:
+#     Linux1604:
+#       imageName: 'ubuntu-16.04'
+#       cCompiler: gcc
+#       cxxCompiler: g++
+#       compilerInitialization: ''
+     Linux1804:
+       imageName: 'ubuntu-18.04'
+       cCompiler: gcc
+       cxxCompiler: g++
+       compilerInitialization: ''
+       #     macOS1015:
+       #       imageName: 'macos-10.15'
+       #       cCompiler: clang
+       #       cxxCompiler: clang++
+       #       compilerInitialization: ''
+#     macOS1014:
+#       imageName: 'macos-10.14'
+#       cCompiler: clang
+#       cxxCompiler: clang++
+#       compilerInitialization: ''
+#     Windows2017:
+#       imageName: 'vs2017-win2016'
+#       cCompiler: cl.exe
+#       cxxCompiler: cl.exe
+#       compilerInitialization: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+#     Windows2019:
+#       imageName: 'windows-2019'
+#       cCompiler: cl.exe
+#       cxxCompiler: cl.exe
+#       compilerInitialization: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: $(imageName)
+
   steps:
-    - script: |
-        set -x
+  - bash: |
+      set -x
+      if [ -n "$(System.PullRequest.SourceCommitId)" ]; then
+        git checkout $(System.PullRequest.SourceCommitId)
+      fi
+    displayName: 'Checkout pull request HEAD'
 
-        git clone -b dashboard --single-branch https://github.com/BRAINSia/BRAINSTools.git BRAINSTools-dashboard
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.7'
+      architecture: 'x64'
 
-        sudo pip3 install ninja
+  - script: |
+      python -m pip install --upgrade pip
+      python -m pip install --upgrade setuptools
+      python -m pip install scikit-ci-addons
+      python -m pip install ninja
+    displayName: 'Install build dependencies'
 
-        c++ --version
-        cmake --version
+  - bash: |
+      cat > dashboard.cmake << EOF
+      set(CTEST_SITE "Azure.\$ENV{AGENT_MACHINENAME}")
+      file(TO_CMAKE_PATH "\$ENV{AGENT_BUILDDIRECTORY}" CTEST_DASHBOARD_ROOT)
+      file(TO_CMAKE_PATH "\$ENV{BUILD_SOURCESDIRECTORY}" CTEST_SOURCE_DIRECTORY)
+      file(TO_CMAKE_PATH "\$ENV{AGENT_BUILDDIRECTORY}/build" CTEST_BINARY_DIRECTORY)
+      set(dashboard_source_name "$(Build.Repository.Name)")
+      if(DEFINED ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH})
+        set(branch "-\$ENV{SYSTEM_PULLREQUEST_SOURCEBRANCH}")
+        set(dashboard_model "Experimental")
+      elseif(ENV{BUILD_SOURCEBRANCHNAME} STREQUAL "master")
+        set(branch "-master")
+        set(dashboard_model "Continuous")
+      else()
+        set(branch "-\$ENV{BUILD_SOURCEBRANCHNAME}")
+        set(dashboard_model "Experimental")
+      endif()
+      if(DEFINED ENV{SYSTEM_PULLREQUEST_PULLREQUESTNUMBER})
+        set(pr "-PR\$ENV{SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}")
+      else()
+        set(pr "")
+      endif()
+      set(CTEST_BUILD_NAME "$(Build.Repository.Name)-$(Agent.OS)-Build$(Build.BuildId)\${pr}\${branch}")
+      set(CTEST_UPDATE_VERSION_ONLY 1)
+      set(CTEST_TEST_ARGS \${CTEST_TEST_ARGS} PARALLEL_LEVEL \${PARALLEL_LEVEL})
+      set(CTEST_BUILD_CONFIGURATION "Release")
+      set(CTEST_CMAKE_GENERATOR "Ninja")
+      set(CTEST_CUSTOM_WARNING_EXCEPTION
+        \${CTEST_CUSTOM_WARNING_EXCEPTION}
+        # macOS Azure Pipelines
+        "ld: warning: text-based stub file"
+        )
 
-        export BUILD_EXAMPLES=OFF
-        export CTEST_BUILD_CONFIGURATION=MinSizeRel
+      set(PARALLEL_LEVEL 2)
+      set(CTEST_TEST_ARGS ${CTEST_TEST_ARGS} PARALLEL_LEVEL ${PARALLEL_LEVEL})
 
-        ctest -S BRAINSTools-dashboard/azure_dashboard.cmake -VV -j 4
+      set(dashboard_no_clean 1)
+      set(ENV{CC} $(cCompiler))
+      set(ENV{CXX} $(cxxCompiler))
+      set(dashboard_cache "
+          BUILD_SHARED_LIBS:BOOL=OFF
+          BUILD_EXAMPLES:BOOL=ON
+          BRAINSTools_BUILD_DICOM_SUPPORT:BOOL=OFF
+          USE_DWIConvert:BOOL=OFF
+          USE_ANTS:BOOL=OFF
+          BRAINSTools_USE_CTKAPPLAUNCHER:BOOL=OFF
+          BRAINSTools_USE_QT:BOOL=OFF
+          USE_BRAINSDWICleanup:BOOL=OFF
+          USE_AutoWorkup:BOOL=OFF
+          USE_BRAINSInitializedControlPoints:BOOL=OFF
+          USE_BRAINSLabelStats:BOOL=OFF
+          USE_BRAINSSnapShotWriter:BOOL=OFF
+          USE_BRAINSSuperResolution:BOOL=OFF
+          USE_ReferenceAtlas:BOOL=OFF
+          BRAINSTools_REQUIRES_VTK:BOOL=OFF
+      ")
+      string(TIMESTAMP build_date "%Y-%m-%d")
+      message("CDash Build Identifier: \${build_date} \${CTEST_BUILD_NAME}")
+      message("CTEST_SITE = \${CTEST_SITE}")
+      include(\${CTEST_SCRIPT_DIRECTORY}/.azure_BRAINSTools_common.cmake)
+      EOF
+
+      cat dashboard.cmake
+    displayName: 'Configure CTest script'
+
+  - script: |
+      $(compilerInitialization)
+      git clone -b dashboard --single-branch https://github.com/BRAINSia/BRAINSTools.git BRAINSTools-dashboard
+
+      sudo pip3 install ninja
+
+      c++ --version
+      cmake --version
+
+      export BUILD_EXAMPLES=OFF
+      export CTEST_BUILD_CONFIGURATION=MinSizeRel
+      ctest -j 2 -VV -S BRAINSTools-dashboard/azure_dashboard.cmake
+      ctest -j 2 -VV -S dashboard.cmake
       displayName: Build and Test
       workingDirectory: $(Agent.BuildDirectory)
+    displayName: 'Build and test'
+
+  - script: |
+      sudo pip3 install --upgrade pip
+      sudo pip3 install --upgrade setuptools
+      sudo pip3 install scikit-ci-addons
+      ci_addons ctest_junit_formatter $(Agent.BuildDirectory)/build > $(Agent.BuildDirectory)/JUnitTestResults.xml
+    condition: succeededOrFailed()
+    displayName: 'Format CTest output in JUnit format'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: "$(Agent.BuildDirectory)/JUnitTestResults.xml"
+      testRunTitle: 'CTest $(Agent.OS)'
+    condition: succeededOrFailed()
+    displayName: 'Publish test results'

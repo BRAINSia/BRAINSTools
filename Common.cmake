@@ -311,10 +311,32 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   endif()
 endif()
 
+
+option(BUILD_COVERAGE "Build ${LOCAL_PROJECT_NAME} for coverage analysis" OFF)
+mark_as_advanced(BUILD_COVERAGE)
+
 option(BUILD_OPTIMIZED "Set compiler flags for native host building." OFF)
 mark_as_advanced(BUILD_OPTIMIZED)
 
-if(BUILD_OPTIMIZED)
+if(BUILD_COVERAGE)
+  if(BUILD_OPTIMIZED)
+    message(FATAL_ERROR "Can not build optimized when building for coverage, debug information needed")
+  endif()
+  if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+    message(FATAL_ERROR "BUILD_COVERAGE Requires Debug build")
+  endif()
+  if( CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set( COMP_COVERAGE_COMPILE_FLAGS "-g -O0 --coverage")
+    set( COMP_COVERAGE_LINK_FLAGS    "--coverage")
+    set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "CXX compiler flags" FORCE)
+    set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "C compiler flags" FORCE)
+    set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${COMP_COVERAGE_LINK_FLAGS}" CACHE STRING "Linker flags" FORCE)
+  else()
+    message(FATAL_ERROR "COVERAGE Requires GNU or Clang compilers.")
+  endif()
+endif()
+
+if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
   include(CheckCXXCompilerFlag)
   include(CheckCCompilerFlag)
   CHECK_CXX_COMPILER_FLAG("-march=native" CAN_BUILD_CXX_OPTIMIZED)
@@ -335,6 +357,9 @@ if(BUILD_OPTIMIZED)
   endif()
 endif()
 mark_as_superbuild(VARS BUILD_OPTIMIZED:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
+
+
+
 
 #-------------------------------------------------------------------------
 if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)

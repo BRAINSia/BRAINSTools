@@ -1,4 +1,4 @@
-# Adapated from ITKv4/CMake/PreventInBuildInstalls.cmake
+# Adapted from ITKv4/CMake/PreventInBuildInstalls.cmake
 string(TOLOWER "${CMAKE_INSTALL_PREFIX}" _PREFIX)
 string(TOLOWER "${${CMAKE_PROJECT_NAME}_BINARY_DIR}" _BUILD)
 if("${_PREFIX}" STREQUAL "${_BUILD}")

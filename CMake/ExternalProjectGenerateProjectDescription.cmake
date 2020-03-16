@@ -87,7 +87,7 @@ function(ExternalProject_GenerateProjectDescription_Step projectname)
   set(explicit_licenses 1)
 
   if(NOT _epgpd_LICENSE_FILES)
-    foreach(filename IN ITEMS NOTICE COPYRIGHT Copyright COPYING LICENSE License)
+    foreach(filename IN ITEMS LICENSE License license LICENCE Licence licence NOTICE COPYRIGHT Copyright copyright COPYING)
       foreach(ext IN ITEMS "" .md .rst .txt)
         list(APPEND _epgpd_LICENSE_FILES ${filename}${ext})
       endforeach()
@@ -151,7 +151,7 @@ endforeach()
 if(NOT license_found AND EXISTS \${SOURCE_DIR}/setup.py)
   # Extract string of the form 'License [:: <text> [...]]:: <license_name>'
   set(license_name )
-  file(STRINGS \${SOURCE_DIR}/setup.py content REGEX \"Lic ense :: (.*)\" LIMIT_COUNT 1)
+  file(STRINGS \${SOURCE_DIR}/setup.py content REGEX \"License :: (.*)\" LIMIT_COUNT 1)
   if(content)
     string(STRIP \${content} content)
     # Extract <license_name>

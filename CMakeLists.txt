@@ -51,14 +51,6 @@ set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild)
 include(ExternalProject)
 include(ExternalProjectDependency) #<-- Must be after SUPERBUILD_TOPLEVEL_PROJECT and EXTERNAL_PROJECT_DIR
 include(ExternalProjectGenerateProjectDescription)
-if(APPLE)
-  mark_as_superbuild(
-    VARS CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH CMAKE_OSX_DEPLOYMENT_TARGET:STRING
-    ALL_PROJECTS
-    )
-  set(CMAKE_MACOSX_RPATH 0)
-  mark_as_superbuild(VARS CMAKE_MACOSX_RPATH:BOOL ALL_PROJECTS)
-endif()
 if( IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/.git")
   #-----------------------------------------------------------------------------
   # Version strings need to be set outside of project so that

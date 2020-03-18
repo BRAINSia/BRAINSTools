@@ -1,3 +1,36 @@
+if(BUILD_COVERAGE)
+  if(BUILD_OPTIMIZED)
+    message(FATAL_ERROR "Can not build optimized when building for coverage, debug information needed")
+  endif()
+  if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
+    message(FATAL_ERROR "BUILD_COVERAGE Requires Debug build")
+  endif()
+  message(INFO "${CMAKE_CXX_COMPILER_ID}")
+  if( CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set( COMP_COVERAGE_COMPILE_FLAGS "-g -O0 --coverage ")
+    set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "CXX compiler flags" FORCE)
+    set( CMAKE_C_FLAGS    "${CMAKE_C_FLAGS}   ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "C compiler flags" FORCE)
+    set( COMP_COVERAGE_LINK_FLAGS    "--coverage ")
+    set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${COMP_COVERAGE_LINK_FLAGS}" CACHE STRING "Linker flags" FORCE)
+    set( CMAKE_MODULE_LINKER_FLAGS  "${CMAKE_MODULE_LINKER_FLAGS} ${COMP_COVERAGE_LINK_FLAGS}" CACHE STRING "Linker flags" FORCE)
+
+    string(REPLACE " " ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${${PROJECT_NAME}_C_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_C_WARNING_FLAGS}")
+    list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
+    string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
+    string(REPLACE " " ";" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${${PROJECT_NAME}_CXX_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_CXX_WARNING_FLAGS}")
+    list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+    string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  else()
+    message(FATAL_ERROR "COVERAGE Requires GNU or Clang compilers.")
+  endif()
+    message(INFO "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+    message(INFO "CMAKE_C_FLAGS: ${CMAKE_C_FLAGS}")
+    message(INFO "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
+    message(INFO "CMAKE_MODULE_LINKER_FLAGS: ${CMAKE_MODULE_LINKER_FLAGS}")
+endif()
+
+
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------

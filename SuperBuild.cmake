@@ -104,21 +104,6 @@ if(USE_BRAINSSuperResolution)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
 endif()
 
-#-----------------------------------------------------------------------------
-# Common external projects CMake variables
-#-----------------------------------------------------------------------------
-
-if(${LOCAL_PROJECT_NAME}_USE_QT)
-  mark_as_superbuild(
-    VARS
-      ${LOCAL_PROJECT_NAME}_USE_QT:BOOL
-      QT_QMAKE_EXECUTABLE:PATH
-      QT_MOC_EXECUTABLE:PATH
-      QT_UIC_EXECUTABLE:PATH
-    PROJECTS VTK ${LOCAL_PROJECT_NAME}
-    )
-endif()
-
 set(extProjName ${LOCAL_PROJECT_NAME})
 set(proj        ${LOCAL_PROJECT_NAME})
 
@@ -141,8 +126,24 @@ set(${LOCAL_PROJECT_NAME}_INSTALL_LIB_DIR ${${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DE
 #-----------------------------------------------------------------------------
 # Add external project CMake args
 #-----------------------------------------------------------------------------
-mark_as_superbuild(
+set(CMAKE_CXX_FLAGS ${ep_common_cxx_flags})
+set(CMAKE_C_FLAGS ${ep_common_c_flags})
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
+set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
+mark_as_superbuild( # ALL_PROJECTS
   VARS
+  # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
+    CMAKE_BUILD_TYPE:STRING
+    CMAKE_CXX_COMPILER:FILEPATH
+    CMAKE_C_COMPILER:FILEPATH
+    CMAKE_CXX_STANDARD:STRING
+    CMAKE_CXX_STANDARD_REQUIRED:BOOL
+    CMAKE_CXX_EXTENSIONS:BOOL
+    CMAKE_CXX_FLAGS:STRING
+    CMAKE_C_FLAGS:STRING
+    CMAKE_INSTALL_PREFIX:PATH
+    CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
+
     BUILD_EXAMPLES:BOOL
     BUILD_TESTING:BOOL
     BUILD_SHARED_LIBS:BOOL
@@ -158,6 +159,26 @@ mark_as_superbuild(
   ALL_PROJECTS
   )
 
+#-----------------------------------------------------------------------------
+# Common external projects CMake variables
+#-----------------------------------------------------------------------------
+
+if(${LOCAL_PROJECT_NAME}_USE_QT)
+  mark_as_superbuild(
+    VARS
+      ${LOCAL_PROJECT_NAME}_USE_QT:BOOL
+      QT_QMAKE_EXECUTABLE:PATH
+      QT_MOC_EXECUTABLE:PATH
+      QT_UIC_EXECUTABLE:PATH
+    PROJECTS VTK ${LOCAL_PROJECT_NAME}
+    )
+endif()
+
+#-------------------------------------------------------------------------
+if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
+  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
+endif()
+
 #
 # By default we want to build BRAINSTools stuff using the CMAKE_BUILD_TYPE of
 # the top level build, but build the support libraries in Release.
@@ -167,30 +188,27 @@ mark_as_superbuild(
 # since we use a macro to build the list of arguments, it's easier to modify the
 # list after it's built than try and conditionally change just the build type in the macro.
 set(BRAINSTools_LIBRARY_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-mark_as_superbuild(
-  VARS
-    USE_SYSTEM_SlicerExecutionModel:BOOL
-#    SlicerExecutionModel_DIR:PATH
-#    ITK_DIR:PATH
-    VTK_DIR:PATH
-    #BOOST_INCLUDE_DIR:PATH
 
+# These variables are written to the cache used to initialize this external project
+mark_as_superbuild( # Local project
+  VARS
+  #    ${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL
+    BUILD_OPTIMIZED:BOOL
+    BUILD_COVERAGE:BOOL
+    BUILD_STYLE_UTILS:BOOL
+
+    BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET:STRING
     BRAINSTools_LIBRARY_PATH:PATH
     BRAINSTools_MAX_TEST_LEVEL:STRING
-
-    ${LOCAL_PROJECT_NAME}_REQUIRES_VTK:BOOL
-    BUILD_STYLE_UTILS:BOOL
-    ${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT:BOOL
     BRAINS_DEBUG_IMAGE_WRITE:BOOL
-
     BRAINSTools_USE_CTKAPPLAUNCHER:BOOL
     BRAINSTools_USE_GIT_PROTOCOL:BOOL
-    EXTERNAL_PROJECT_BUILD_TYPE:STRING
 
+    #BOOST_INCLUDE_DIR:PATH
+    ${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT:BOOL
     USE_SYSTEM_DCMTK:BOOL
     USE_SYSTEM_ITK:BOOL
-    USE_SYSTEM_VTK:BOOL
-    VTK_GIT_REPOSITORY:STRING
+    ITK_DIR:PATH
 
     ${LOCAL_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
     ${LOCAL_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH
@@ -199,6 +217,7 @@ mark_as_superbuild(
     ${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
     ${LOCAL_PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION:PATH
 
+    USE_SYSTEM_SlicerExecutionModel:BOOL
     SlicerExecutionModel_DIR:PATH
     SlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH
     SlicerExecutionModel_DEFAULT_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
@@ -208,6 +227,16 @@ mark_as_superbuild(
     SlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:PATH
   PROJECTS ${LOCAL_PROJECT_NAME}
 )
+if(${LOCAL_PROJECT_NAME}_REQUIRES_VTK)
+  mark_as_superbuild( # Local project
+    VARS
+      ${LOCAL_PROJECT_NAME}_REQUIRES_VTK:BOOL
+      USE_SYSTEM_VTK:BOOL
+      VTK_DIR:PATH
+      VTK_GIT_REPOSITORY:STRING
+    PROJECTS ${LOCAL_PROJECT_NAME}
+  )
+endif()
 
 
 #------------------------------------------------------------------------------
@@ -229,7 +258,7 @@ string(REPLACE ";" " " WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
 string(REPLACE "CMAKE_CACHE_ARGS" "" WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
 string(REPLACE "LIST_SEPARATOR.*" "" WRITE_BRAINSTOOLS_ARGS "${WRITE_BRAINSTOOLS_ARGS}")
 
-set( WRITE_BRAINSTOOLS_ARGS " cmake -DBRAINSTools_SUPERBUILD:BOOL=OFF ${WRITE_BRAINSTOOLS_ARGS}")
+set( WRITE_BRAINSTOOLS_ARGS " cmake ${WRITE_BRAINSTOOLS_ARGS}")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/BRAINSToolsArgs.sh ${WRITE_BRAINSTOOLS_ARGS})
 #message(FATAL_ERROR "${cmd_string}")
 #message(FATAL_ERROR "\n${WRITE_BRAINSTOOLS_ARGS}\n")
@@ -246,21 +275,12 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     --no-warn-unused-cli    # HACK Only expected variables should be passed down.
-  ${MYBRAINSTools_EP_ARGS}  # All superbuild options should be passed by mark_as_superbuild
+    ${MYBRAINSTools_EP_ARGS}  # All superbuild options should be passed by mark_as_superbuild
   CMAKE_CACHE_ARGS
-    -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF #<-- Critical override
-      -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
-      -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
-      -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
-      -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD}
-      -DCMAKE_CXX_STANDARD_REQUIRED:BOOL=${CMAKE_CXX_STANDARD_REQUIRED}
-      -DCMAKE_CXX_EXTENSIONS:BOOL=${CMAKE_CXX_EXTENSIONS}
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
-      -DCMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL=OFF
-   INSTALL_COMMAND ""
-   LOG_CONFIGURE ON
-   LOG_BUILD ON
+    -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF  # This must be here
+  INSTALL_COMMAND ""
+  LOG_CONFIGURE ON
+  LOG_BUILD ON
 )
 
 if(CMAKE_CONFIGURATION_TYPES)

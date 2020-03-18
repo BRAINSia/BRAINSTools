@@ -107,11 +107,14 @@ target_link_libraries(tbb_test TBB::tbb)
 EOF
 
   cat > "${TEST_DIR}/test.cpp" << EOF
-#include <tbb/task_scheduler_init.h>
+//#include <tbb/task_scheduler_init.h> //deprecated
+#include "tbb/task_arena.h"
 #include <iostream>
 int main()
 {
-  std::cout << "Default number of threads: " << tbb::task_scheduler_init::default_num_threads() << std::endl;;
+  //std::cout << "Default number of threads: " << tbb::task_scheduler_init::default_num_threads() << std::endl;;
+  tbb::task_arena default_arena;
+  std::cout << " " <<  default_arena.max_concurrency() << std::endl;
   return 0;
 }
 EOF

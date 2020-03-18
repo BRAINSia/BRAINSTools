@@ -35,7 +35,7 @@ if(APPLE)
   #  17.x == Mac OSX 10.13 (High Sierra)
   #  18.x == Mac OSX 10.14 (Mojave)
   if (DARWIN_MAJOR_VERSION LESS "13")  #https://en.wikipedia.org/wiki/Darwin_(operating_system)
-    message(FATAL_ERROR "Only Mac OSX >= 10.9 are supported !")
+    message(FATAL_ERROR "Only Mac OSX >= 10.13 are supported !")
   endif()
 
   ## RPATH-RPATH-RPATH

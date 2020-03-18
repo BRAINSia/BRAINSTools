@@ -131,8 +131,8 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 
 #Set the global max TIMEOUT for CTest jobs.  This is very large for the moment
 #and should be revisted to reduce based on "LONG/SHORT" test times, set to 1 hr for now
-set(CTEST_TEST_TIMEOUT 1800 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
-set(DART_TESTING_TIMEOUT ${CTEST_TEST_TIMEOUT} CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
+# long tests should explicitly set the "TIMEOUT" property
+set(CTEST_TEST_TIMEOUT 60 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.

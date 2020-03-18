@@ -10,14 +10,11 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   mark_as_advanced(CMAKE_BUILD_TYPE)
   # Set the possible values of build type for cmake-gui
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
-
-  mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
 endif()
 #-----------------------------------------------------------------------------
 # Set a default external project build type if none was specified
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 set_property(CACHE EXTERNAL_PROJECT_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
-
 
 #-----------------------------------------------------------------------------
 if(APPLE)
@@ -61,13 +58,25 @@ if(APPLE)
   # which point to directories outside the build tree to the install RPATH
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-
   # the RPATH to be used when installing, but only if it's not a system directory
   list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
   if("${isSystemDir}" STREQUAL "-1")
      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
   endif("${isSystemDir}" STREQUAL "-1")
   ## RPATH-RPATH-RPATH
+  set(CMAKE_MACOSX_RPATH 0)
+  mark_as_superbuild(
+    VARS
+      CMAKE_SKIP_BUILD_RPATH:STRING
+      CMAKE_BUILD_WITH_INSTALL_RPATH:STRING
+      CMAKE_INSTALL_RPATH:STRING
+      CMAKE_INSTALL_RPATH_USE_LINK_PATH:STRING
+      CMAKE_OSX_ARCHITECTURES:STRING
+      CMAKE_OSX_SYSROOT:PATH
+      CMAKE_OSX_DEPLOYMENT_TARGET:STRING
+      CMAKE_MACOSX_RPATH:BOOL
+    ALL_PROJECTS
+  )
 endif()
 
 #-----------------------------------------------------------------------------
@@ -289,15 +298,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS}")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
 set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
-if(ITK_LEGACY_REMOVE)
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_DEBUG_DESIRED_FLAGS}" )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_DEBUG_DESIRED_FLAGS}")
-  else() # Release, or anything else
-    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${C_RELEASE_DESIRED_FLAGS}" )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_RELEASE_DESIRED_FLAGS}" )
-  endif()
-endif()
 
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
@@ -311,30 +311,11 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   endif()
 endif()
 
-
 option(BUILD_COVERAGE "Build ${LOCAL_PROJECT_NAME} for coverage analysis" OFF)
 mark_as_advanced(BUILD_COVERAGE)
 
 option(BUILD_OPTIMIZED "Set compiler flags for native host building." OFF)
 mark_as_advanced(BUILD_OPTIMIZED)
-
-if(BUILD_COVERAGE)
-  if(BUILD_OPTIMIZED)
-    message(FATAL_ERROR "Can not build optimized when building for coverage, debug information needed")
-  endif()
-  if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
-    message(FATAL_ERROR "BUILD_COVERAGE Requires Debug build")
-  endif()
-  if( CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set( COMP_COVERAGE_COMPILE_FLAGS "-g -O0 --coverage")
-    set( COMP_COVERAGE_LINK_FLAGS    "--coverage")
-    set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "CXX compiler flags" FORCE)
-    set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${COMP_COVERAGE_COMPILE_FLAGS}" CACHE STRING "C compiler flags" FORCE)
-    set( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${COMP_COVERAGE_LINK_FLAGS}" CACHE STRING "Linker flags" FORCE)
-  else()
-    message(FATAL_ERROR "COVERAGE Requires GNU or Clang compilers.")
-  endif()
-endif()
 
 if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
   include(CheckCXXCompilerFlag)
@@ -350,29 +331,25 @@ if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
     if(PREVIOUS_C_OPTIMIZED_SET LESS 0 )
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
     endif()
+    string(REPLACE " " ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${${PROJECT_NAME}_C_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_C_WARNING_FLAGS}")
+    list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
+    string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")
+
+    string(REPLACE " " ";" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${${PROJECT_NAME}_CXX_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_CXX_WARNING_FLAGS}")
+    list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+    string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
   else()
     message("WARNING: Requested optimized build, but -march=native flag not supported by"
             "${CMAKE_CXX_COMPILER}"
             "${CMAKE_C_COMPILER}")
   endif()
 endif()
-mark_as_superbuild(VARS BUILD_OPTIMIZED:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-
-
-
-
-#-------------------------------------------------------------------------
-if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
-  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
-endif()
-mark_as_superbuild(VARS BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET:STRING PROJECTS ${LOCAL_PROJECT_NAME} )
 
 if(NOT Slicer_BUILD_BRAINSTOOLS)
 
 ## Let Slicer use it
 mark_as_superbuild(
    VARS
-#--  The following are probably do not need to be propagated
 #--    CMAKE_BUILD_TYPE:STRING
 #--    CMAKE_CXX_FLAGS_DEBUG:STRING
 #--    CMAKE_CXX_FLAGS_MINSIZEREL:STRING
@@ -408,7 +385,6 @@ mark_as_superbuild(
 #--    CTEST_NEW_FORMAT:BOOL
 #--    MEMORYCHECK_COMMAND:PATH
 #--    MEMORYCHECK_COMMAND_OPTIONS:STRING
-#--   PROJECTS ANTs BRAINSTools
   ALL_PROJECTS
 )
 endif()

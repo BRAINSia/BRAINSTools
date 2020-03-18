@@ -44,8 +44,8 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_USE_QVTK_QTOPENGL:BOOL=${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT}
       -DVTK_Group_Qt:BOOL=${${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT} ##VTK6
       -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-      -DVTK_REQUIRED_OBJCXX_FLAGS:STRING="" # Should not be needed, but is always causing problems on mac
-                                            # This is to prevent the garbage collection errors from creeping back in
+      -DVTK_REQUIRED_OBJCXX_FLAGS:STRING= # Should not be needed, but is always causing problems on mac
+                                          # This is to prevent the garbage collection errors from creeping back in
       )
   else()
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS

@@ -100,9 +100,9 @@ if(USE_ANTS)
   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ANTs)
 endif()
 
-if(USE_BRAINSSuperResolution)
-  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
-endif()
+## RTK now part of ITK remote module if(USE_BRAINSSuperResolution)
+## RTK now part of ITK remote module   list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES RTK)
+## RTK now part of ITK remote module endif()
 
 set(extProjName ${LOCAL_PROJECT_NAME})
 set(proj        ${LOCAL_PROJECT_NAME})

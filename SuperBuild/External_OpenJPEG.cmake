@@ -50,6 +50,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli
     CMAKE_CACHE_ARGS
       ${${proj}_CMAKE_OPTIONS}
+      ${EXTERNAL_PROJECT_DEFAULTS}
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )

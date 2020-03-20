@@ -147,6 +147,7 @@ ExternalProject_Add(${proj}
   CMAKE_ARGS -Wno-dev --no-warn-unused-cli
   CMAKE_CACHE_ARGS
     ${${proj}_CMAKE_OPTIONS}
+    ${EXTERNAL_PROJECT_DEFAULTS}
   INSTALL_COMMAND ""
   DEPENDS "${${proj}_DEPENDENCIES}"
   )

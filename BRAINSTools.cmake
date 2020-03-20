@@ -130,13 +130,13 @@ endif()
 
 # Note: Projects (e.g. Slicer) integrating BRAINSTools as a subtree that want
 #       to disable BRAINSTools testing while managing their own test suite
-#       also using the option "BUILD_TESTING" can explicitly set the
+#       also using the option "${LOCAL_PROJECT_NAME}_BUILD_TESTING" can explicitly set the
 #       variable BRAINSTools_DISABLE_TESTING to 1.
 
 #-----------------------------------------------------------------------------
 # CTestCustom
 #-----------------------------------------------------------------------------
-if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
+if(${LOCAL_PROJECT_NAME}_BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   configure_file(
     CMake/CTestCustom.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake

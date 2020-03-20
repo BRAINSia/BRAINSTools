@@ -102,6 +102,11 @@ set(GENERATECLP_USE_MD5 ON)
 # Build option(s)
 #-----------------------------------------------------------------------------
 
+if(NOT Slicer_BUILD_BRAINSTOOLS AND BUILD_TESTING)
+  message(FATAL_ERROR "USE ${LOCAL_PROJECT_NAME}_BUILD_TESTING for controlling brainstools testing")
+endif()
+option(${LOCAL_PROJECT_NAME}_BUILD_TESTING "Control if BRAINSTools builds testing" ON)
+
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support"    OFF)
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK "Determine if tools depending on VTK need to be built." ON)
@@ -248,7 +253,7 @@ if(${LOCAL_PROJECT_NAME}_USE_QT) #//INFO:  BRAINSTools only indirectly needs QT!
   if(${LOCAL_PROJECT_NAME}_BUILD_I18N_SUPPORT)
     list(APPEND ${LOCAL_PROJECT_NAME}_REQUIRED_QT_MODULES LinguistTools) # no dll
   endif()
-  if(BUILD_TESTING)
+  if(${LOCAL_PROJECT_NAME}_BUILD_TESTING)
     list(APPEND ${LOCAL_PROJECT_NAME}_REQUIRED_QT_MODULES Test)
   endif()
   find_package(Qt5 COMPONENTS ${${LOCAL_PROJECT_NAME}_REQUIRED_QT_MODULES})

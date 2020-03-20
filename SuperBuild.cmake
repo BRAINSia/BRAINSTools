@@ -10,16 +10,6 @@ include(SlicerMacroGetOperatingSystemArchitectureBitness)
 set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_BINARY_DIR} ) #<-- Note same as default
 
 #-----------------------------------------------------------------------------
-# CTestCustom
-#-----------------------------------------------------------------------------
-if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
-  configure_file(
-    CMake/CTestCustom.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
-    @ONLY)
-endif()
-
-#-----------------------------------------------------------------------------
 # Git protocol option
 #-----------------------------------------------------------------------------
 option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
@@ -131,7 +121,6 @@ set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
 mark_as_superbuild( # ALL_PROJECTS
   VARS
   # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
-    CMAKE_BUILD_TYPE:STRING
     CMAKE_CXX_COMPILER:FILEPATH
     CMAKE_C_COMPILER:FILEPATH
     CMAKE_CXX_STANDARD:STRING
@@ -142,8 +131,6 @@ mark_as_superbuild( # ALL_PROJECTS
     CMAKE_INSTALL_PREFIX:PATH
     CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
 
-    BUILD_EXAMPLES:BOOL
-    BUILD_TESTING:BOOL
     BUILD_SHARED_LIBS:BOOL
 
     MAKECOMMAND:STRING
@@ -154,9 +141,20 @@ mark_as_superbuild( # ALL_PROJECTS
 
     SITE:STRING
     BUILDNAME:STRING
+
+    # NOTE: These are provided separately for each modules
+    #  CMAKE_BUILD_TYPE:STRING
+    #  BUILD_EXAMPLES:BOOL
+    #  BUILD_TESTING:BOOL
+
   ALL_PROJECTS
   )
 
+set( EXTERNAL_PROJECT_DEFAULTS
+  -DCMAKE_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE}
+  -DBUILD_EXAMPLES:BOOL=OFF
+  -DBUILD_TESTING:BOOL=OFF
+)
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
 #-----------------------------------------------------------------------------
@@ -276,6 +274,7 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
     ${MYBRAINSTools_EP_ARGS}  # All superbuild options should be passed by mark_as_superbuild
   CMAKE_CACHE_ARGS
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF  # This must be here
+    -DBUILD_TESTING:BOOL=${LOCAL_PROJECT_NAME}_BUILD_TESTING
   INSTALL_COMMAND ""
   LOG_CONFIGURE ON
   LOG_BUILD ON

@@ -15,8 +15,8 @@
 #
 #  include(CheckCompilerWarningFlags)
 #  check_compiler_warning_flags(C_WARNING_FLAGS CXX_WARNING_FLAGS)
-#  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${C_WARNING_FLAGS}")
-#  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_WARNING_FLAGS}")
+#  string(APPEND CMAKE_C_FLAGS " ${C_WARNING_FLAGS}")
+#  string(APPEND CMAKE_CXX_FLAGS " ${CXX_WARNING_FLAGS}")
 
 
 include(ITK_CheckCCompilerFlag)

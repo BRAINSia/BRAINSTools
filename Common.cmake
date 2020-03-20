@@ -293,21 +293,22 @@ SETIFEMPTY(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_D
 # Augment compiler flags
 #-------------------------------------------------------------------------
 include(ITKSetStandardCompilerFlags)
-set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} ${ITK_REQUIRED_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ITK_REQUIRED_CXX_FLAGS}")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
-set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${ITK_REQUIRED_LINK_FLAGS}")
+
+string(APPEND CMAKE_C_FLAGS  " ${ITK_REQUIRED_C_FLAGS}")
+string(APPEND CMAKE_CXX_FLAGS " ${ITK_REQUIRED_CXX_FLAGS}")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
+string(APPEND CMAKE_MODULE_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
 
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
 # suitable for linking with shared object libs.
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   if(NOT "${CMAKE_CXX_FLAGS}" MATCHES "-fPIC")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    string(APPEND CMAKE_CXX_FLAGS " -fPIC")
   endif()
   if(NOT "${CMAKE_C_FLAGS}" MATCHES "-fPIC")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+    string(APPEND CMAKE_C_FLAGS " -fPIC")
   endif()
 endif()
 
@@ -325,11 +326,11 @@ if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
   if(CAN_BUILD_CXX_OPTIMIZED AND CAN_BUILD_C_OPTIMIZED)
     string(FIND CMAKE_CXX_FLAGS "-march=native" PREVIOUS_CXX_OPTIMIZED_SET)
     if(PREVIOUS_CXX_OPTIMIZED_SET LESS 0)
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+      string(APPEND CMAKE_CXX_FLAGS " -march=native")
     endif()
     string(FIND CMAKE_C_FLAGS "-march=native" PREVIOUS_C_OPTIMIZED_SET)
     if(PREVIOUS_C_OPTIMIZED_SET LESS 0 )
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native")
+      string(APPEND CMAKE_C_FLAGS " -march=native")
     endif()
     string(REPLACE " " ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${${PROJECT_NAME}_C_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_C_WARNING_FLAGS}")
     list(REMOVE_DUPLICATES CMAKE_C_FLAGS)

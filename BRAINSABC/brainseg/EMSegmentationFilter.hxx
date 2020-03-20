@@ -1163,7 +1163,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
   const FloatingPrecision denom = std::pow(2 * itk::Math::pi, numModalities / 2.0) * std::sqrt(detcov) + itk::Math::eps;
   const FloatingPrecision invdenom = 1.0 / denom;
   CHECK_NAN(invdenom, __FILE__, __LINE__, "\n  denom:" << denom);
-  const MatrixType invcov = MatrixInverseType(currCovariance);
+  const MatrixType invcov{ MatrixInverseType(currCovariance).as_matrix() };
 
   typename TProbabilityImage::Pointer post = TProbabilityImage::New();
   post->CopyInformation(prior);

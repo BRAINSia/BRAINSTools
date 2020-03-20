@@ -506,7 +506,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
   std::vector<MatrixType> invCovars;
   for (unsigned int iclass = 0; iclass < numClasses; iclass++)
   {
-    invCovars.push_back(MatrixInverseType(this->m_ListOfClassStatistics[iclass].m_Covariance));
+    invCovars.push_back(MatrixInverseType(this->m_ListOfClassStatistics[iclass].m_Covariance).as_matrix());
   }
 
   // Create matrices and vectors
@@ -544,7 +544,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
       // Rfull.set_size(1, 1);
     }
     // NOTE: to get mxn Q from vnl_qr, Q'*Q = id nxn
-    basisT = m_Basis * MatrixInverseType(R);
+    basisT = m_Basis * MatrixInverseType(R).as_matrix();
   }
   basisT.inplace_transpose(); // basisT = Q'
 #else

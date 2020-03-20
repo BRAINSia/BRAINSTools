@@ -165,7 +165,8 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 #Set the global max TIMEOUT for CTest jobs.  This is very large for the moment
 #and should be revisted to reduce based on "LONG/SHORT" test times, set to 1 hr for now
 # long tests should explicitly set the "TIMEOUT" property
-set(CTEST_TEST_TIMEOUT 60 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
+# https://stackoverflow.com/questions/45009595/how-to-overwrite-ctest-default-timeout-1500-in-cmakelists-txt
+#HACK THIS DOES NOT CHANGE TEST TIMEOUTS set(CTEST_TEST_TIMEOUT 60 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.

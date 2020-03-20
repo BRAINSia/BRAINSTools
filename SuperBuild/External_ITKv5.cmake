@@ -46,7 +46,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   )
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    cf1a71785dbdc1d606f5397c339ce05bd872ba74
+    010effbe1d9fd98f937845502b424c330f9cd279 # 2020-03-20 update anonymous exception passing
     QUIET
     )
 

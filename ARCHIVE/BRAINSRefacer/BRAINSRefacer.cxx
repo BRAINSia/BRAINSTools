@@ -214,8 +214,7 @@ main(int argc, char ** argv)
   // Perform some kind of BSpline on Image
   constexpr int BSplineOrder = 3;
 
-  using Test = CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder>
-                          BSplineCreator; //, BSTransformType>;
+  using BSplineCreator = CreateRandomBSpline<ProcessImageType, ProcessPixelType, Dimension, BSplineOrder>;
   BSplineCreator::Pointer bSplineCreator = BSplineCreator::New();
   using BSTransformType = itk::BSplineTransform<ProcessPixelType, Dimension, BSplineOrder>;
   BSTransformType::Pointer bSpline = BSTransformType::New();

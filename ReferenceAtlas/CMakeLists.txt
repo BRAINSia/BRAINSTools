@@ -2,7 +2,7 @@ project(ReferenceAtlas)
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #------------------------------------------------------------------------------
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.

@@ -19,16 +19,6 @@ if(BUILD_COVERAGE)
 endif()
 
 
-#-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
-list(INSERT CMAKE_MODULE_PATH 0
-  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}
-  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
-  ${${PROJECT_NAME}_BINARY_DIR}/CMake
-  )
-
 set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}")
 if(DEFINED ${PROJECT_NAME}_VERSION_PATCH)
   set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION}.${${PROJECT_NAME}_VERSION_PATCH}")
@@ -156,9 +146,22 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 # https://stackoverflow.com/questions/45009595/how-to-overwrite-ctest-default-timeout-1500-in-cmakelists-txt
 #HACK THIS DOES NOT CHANGE TEST TIMEOUTS set(CTEST_TEST_TIMEOUT 60 CACHE STRING "Maximum seconds allowed before CTest will kill the test." FORCE)
 
+#-----------------------------------------------------------------------------
+# Update CMake module path
+#------------------------------------------------------------------------------
+set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
+message(INFO " :A::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
+list(INSERT CMAKE_MODULE_PATH 0
+  ${BRAINSCommonLib_BUILDSCRIPTS_DIR}
+  ${${PROJECT_NAME}_SOURCE_DIR}/CMake
+  ${${PROJECT_NAME}_BINARY_DIR}/CMake
+  )
+message(INFO  " :B::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
+
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.
 #-----------------------------------------------------------------------
+message(INFO ":C::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
 include(BRAINSToolsExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)

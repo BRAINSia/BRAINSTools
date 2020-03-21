@@ -22,7 +22,7 @@ FindITKUtil( DWIConvert_ITK
 #-----------------------------------------------------------------------------
 enable_testing()
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR})
 
 set(DWIConvertSupportLib_SRCS
 #  FSLToNrrd.cxx

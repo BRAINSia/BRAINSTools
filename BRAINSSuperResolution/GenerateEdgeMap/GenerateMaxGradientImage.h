@@ -186,7 +186,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
     */
 
     typename WindowRescalerType::Pointer intensityMapper = WindowRescalerType::New();
-    intensityMapper->SetInput(maskedStatistics->GetOutput());
+    intensityMapper->SetInput(gradientFilter->GetOutput());
     intensityMapper->SetOutputMinimum(minOutputRange);
     intensityMapper->SetOutputMaximum(maxOutputRange);
     intensityMapper->SetWindowMinimum(hist->Quantile(0, LowerPercentileMatching));

@@ -1,3 +1,16 @@
+find_package(BLAS REQUIRED)
+
+set(LINALG_VENDOR_FOUND ${BLAS_FOUND})
+set(LINALG_VENDOR "OpenBLAS")
+set(LINALG_INCLUDE_DIRS ${BLAS_INCLUDE_DIRS})
+if(OpenBLAS_HAS_PARALLEL_LIBRARIES)
+    # HACK!! set(LINALG_LIBRARIES ${OpenBLAS_PARALLEL_LIBRARIES})
+    set(LINALG_LIBRARIES ${BLAS_LIBRARIES})
+else()
+  set(LINALG_LIBRARIES ${BLAS_LIBRARIES})
+endif()
+
+
 ##==============================================================
 ## Switch based on the linear algebra optimized library to
 ## use.  Note that the first library successfully found

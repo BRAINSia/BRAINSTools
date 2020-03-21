@@ -4,25 +4,6 @@
 #-----------------------------------------------------------------------------
 # Dependencies.
 #
-
-#
-# ITK
-#
-
-FindITKUtil(BRAINSSuperResolution_ITK
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageGradient
-  ITKImageIntensity
-  ITKImageSources
-  ITKImageStatistics
-  ITKThresholding
-  ITKTransform
-  ITKImageCompare
-  ITKTestKernel
-)
-
 #-----------------------------------------------------------------------------
 # Output directories.
 #

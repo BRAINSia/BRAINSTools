@@ -188,9 +188,6 @@ bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image result
 ## Items that are archived.  May be usefult for compiler testing,
 ## but probably wont be useful for research work.
 
-cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
-mark_as_superbuild(VARS USE_ICCDEF:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-
 cmake_dependent_option(USE_BRAINSRefacer "BRAINSRefacer is still under development." ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 

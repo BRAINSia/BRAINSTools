@@ -214,7 +214,6 @@ set(brains_modulenames
 
 if(BUILD_ARCHIVE)
    list(APPEND brains_modulenames
-  ICCDEF
   BRAINSRefacer
   BRAINSTalairach
   DicomSignature

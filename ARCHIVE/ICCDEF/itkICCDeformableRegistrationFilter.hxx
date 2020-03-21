@@ -913,7 +913,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::
     str->Filter->ThreadedComputeLinearElastic(str->coeff, str->normalizer_Regularization, splitRegion, threadId);
   }
 
-  return ITK_THREAD_RETURN_VALUE;
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>
@@ -1004,7 +1004,7 @@ ICCDeformableRegistrationFilter<TFixedImage, TMovingImage, TDisplacementField>::
       str->inverse0, str->inverse1, str->normalizer_InverseConsistency, splitRegion, threadId);
   }
 
-  return ITK_THREAD_RETURN_VALUE;
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 template <typename TFixedImage, typename TMovingImage, typename TDisplacementField>

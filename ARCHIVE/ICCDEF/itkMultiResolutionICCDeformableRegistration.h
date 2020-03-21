@@ -31,7 +31,7 @@
 #include "itkImage.h"
 #include "itkDemonsRegistrationFilter.h"
 #include "itkMultiResolutionPyramidImageFilter.h"
-#include "itkVectorResampleImageFilter.h"
+#include "itkResampleImageFilter.h"
 #include "itkArray.h"
 
 #include <vector>
@@ -140,7 +140,7 @@ public:
   using MovingImagePyramidPointer = typename MovingImagePyramidType::Pointer;
 
   /** The deformation field expander type. */
-  using FieldExpanderType = VectorResampleImageFilter<DisplacementFieldType, DisplacementFieldType>;
+  using FieldExpanderType = ResampleImageFilter<DisplacementFieldType, DisplacementFieldType>;
   using FieldExpanderPointer = typename FieldExpanderType::Pointer;
 
   using NumberOfIterationsType = Array<unsigned int>;

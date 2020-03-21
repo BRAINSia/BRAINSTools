@@ -166,8 +166,6 @@ bt_option(USE_BRAINSCreateLabelMapFromProbabilityMaps "Build BRAINSCreateLabelMa
 bt_option(USE_BRAINSSuperResolution          "Build BRAINSSuperResolution"          ${BUILD_FOR_DASHBOARD})
 bt_option(USE_BRAINSMultiSTAPLE              "Build BRAINSMultiSTAPLE"              ${BUILD_FOR_DASHBOARD})
 
-cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 message(STATUS "BUILD_FOR_DASHBOARD: ${BUILD_FOR_DASHBOARD}")
 message(STATUS "${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT: ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT}")
 cmake_dependent_option(USE_GTRACT "Build GTRACT" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" ${${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT})
@@ -205,19 +203,13 @@ mark_as_superbuild(VARS USE_BRAINSRefacer:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-cmake_dependent_option(USE_BRAINSDemonWarp "Build BRAINSDemonWarp " ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK" OFF)
-mark_as_superbuild(VARS USE_BRAINSDemonWarp:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-
 cmake_dependent_option(USE_DicomSignature "Build DicomSignature is under development" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_DicomSignature:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
-cmake_dependent_option(USE_BRAINSCut "Build BRAINSCut is outdated" ${BUILD_FOR_DASHBOARD} "BUILD_ARCHIVE" OFF)
-mark_as_superbuild(VARS USE_BRAINSCut:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 #if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
 #  message("NOTE: Following toolkits are dependent to VTK:
 #      -GTRACT
-#      -BRAINSDemonWarp
 #      -BRAINSTalairach
 #      -DebugImageViewer
 #      -ITKMatlabIO

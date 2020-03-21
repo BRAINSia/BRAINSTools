@@ -219,10 +219,6 @@ if(BUILD_ARCHIVE)
   BRAINSRefacer
   BRAINSTalairach
   DicomSignature
-  BRAINSCut
-  BRAINSDemonWarp ## NOTE: This is off by default, but is valid for both ITKv3/4
-                  ##       This builds just fine with ITKv3/4, but test cases need
-                  ##       further review before trusting it.
 )
 
 endif()

@@ -29,7 +29,6 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
         KEY:
           [S|W]_BRAINSABCSupport
           [S|W]_BRAINSABCSupport
-          [S|W]_BRAINSCutSupport
           [S|W]_BCDSupport
           [S|W]_LabelMapsSupport
           [S|W]_ExtraSupport
@@ -42,13 +41,11 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
     valid_choices = [
         "S_BRAINSABCSupport",
         "S_BRAINSABCSupport",
-        "S_BRAINSCutSupport",
         "S_BCDSupport",
         "S_LabelMapsSupport",
         "S_ExtraSupport",
         "W_BRAINSABCSupport",
         "W_BRAINSABCSupport",
-        "W_BRAINSCutSupport",
         "W_BCDSupport",
         "W_LabelMapsSupport",
         "W_ExtraSupport",
@@ -66,30 +63,6 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
     if "W_BRAINSABCSupport" in atlasParts:
         atlas_file_names.extend(
             ["template_headregion.nii.gz", "ExtendedAtlasDefinition.xml"]
-        )
-    if "S_BRAINSCutSupport" in atlasParts:
-        atlas_file_names.extend(["modelFiles/trainModelFile.txtD0060NT0060.gz"])
-    if "W_BRAINSCutSupport" in atlasParts:
-        atlas_file_names.extend(
-            [
-                "hncma-atlas.nii.gz",
-                "template_t1_denoised_gaussian.nii.gz",
-                "probabilityMaps/l_accumben_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_accumben_ProbabilityMap.nii.gz",
-                "probabilityMaps/l_caudate_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_caudate_ProbabilityMap.nii.gz",
-                "probabilityMaps/l_globus_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_globus_ProbabilityMap.nii.gz",
-                "probabilityMaps/l_hippocampus_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_hippocampus_ProbabilityMap.nii.gz",
-                "probabilityMaps/l_putamen_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_putamen_ProbabilityMap.nii.gz",
-                "probabilityMaps/l_thalamus_ProbabilityMap.nii.gz",
-                "probabilityMaps/r_thalamus_ProbabilityMap.nii.gz",
-                "spatialImages/phi.nii.gz",
-                "spatialImages/rho.nii.gz",
-                "spatialImages/theta.nii.gz",
-            ]
         )
     if "S_BCDSupport" in atlasParts:
         atlas_file_names.extend(

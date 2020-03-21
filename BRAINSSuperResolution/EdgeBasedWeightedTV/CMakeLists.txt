@@ -19,7 +19,7 @@ endif()
 list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
 ## -message(STATUS "Looking for packages in : ${CMAKE_PREFIX_PATH}")
 
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake ${CMAKE_MODULE_PATH})
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 find_package(OpenMP QUIET)
 if (OPENMP_FOUND)
@@ -70,8 +70,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/../../CMake/LinAlgSelector.cmake)
 set(MODULE_FOLDER "Module-EdgeBaseWeightedTV")
 
 add_library(SR_support FFTWUpsample.cpp OpWeightedL2.cpp)
-# -- RTK now part of ITK remote modules target_link_libraries(SR_support ${ITK_LIBRARIES} ${RTK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
-target_link_libraries(SR_support ${ITK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
+# -- RTK now part of ITK remote modules target_link_libraries(SR_support ${BRAINSSuperResolution_ITK_LIBRARIES} ${RTK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(SR_support ${BRAINSSuperResolution_ITK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
 set_target_properties(SR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(TestSR SRmain.cpp)
@@ -102,6 +102,6 @@ target_link_libraries(SipmleSR_support SR_support)
 set_target_properties(SimpleSR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(SimpleSR SimpleSR.cpp)
-target_link_libraries(SimpleSR SimpleSR_support ${ITK_LIBRARIES} ${SimpleITK_LIBRARIES})
+target_link_libraries(SimpleSR SimpleSR_support ${BRAINSSuperResolution_ITK_LIBRARIES} ${SimpleBRAINSSuperResolution_ITK_LIBRARIES})
 set_target_properties(SimpleSR PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()

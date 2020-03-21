@@ -191,8 +191,6 @@ bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image result
 # BRAINSSurfaceTools does not compile with modern ITK, VTK, much work would be needed to ressurect these tools
 # -- does not compile cmake_dependent_option(USE_BRAINSSurfaceTools "Build BRAINSSurfaceTools" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 # -- mark_as_superbuild(VARS USE_BRAINSSurfaceTools:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
-cmake_dependent_option(USE_BRAINSContinuousClass          "Build BRAINSContinuousClass" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
-mark_as_superbuild(VARS USE_BRAINSContinuousClass:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
 cmake_dependent_option(USE_ICCDEF "Build ICCDEF" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_ICCDEF:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )

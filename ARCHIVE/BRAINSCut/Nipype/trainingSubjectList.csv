@@ -1,3 +1,0 @@
-siteID, subjectID, sessionID, imageDict(type_filename_paired), roiDict(roi_filename_paired), trainGroup
-PHD_054, 0284, 20715, "{'T1':'t1_average_BRAINSABC.nii.gz', 'T2':'t2_average_BRAINSABC.nii.gz', 'GadSG':'gadSG_Location.nii.gz'}", "{'l_caudate':'l_caudate_location.nii.gz'}"
-

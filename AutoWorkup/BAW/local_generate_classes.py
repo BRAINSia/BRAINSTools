@@ -43,8 +43,6 @@ all_known_modules_list = [
     "BRAINSClipInferior",
     "BRAINSConstellationDetector",
     "BRAINSConstellationModeler",
-    "BRAINSCut",
-    "BRAINSDemonWarp",
     "BRAINSEyeDetector",
     "BRAINSFit",
     "BRAINSMultiSTAPLE",
@@ -138,7 +136,6 @@ all_known_modules_list = [
     "STAPLEAnalysis",
     "TextureFromNoiseImageFilter",
     "TextureMeasureFilter",
-    "VBRAINSDemonWarp",
     "UKFTractography",
 ]
 

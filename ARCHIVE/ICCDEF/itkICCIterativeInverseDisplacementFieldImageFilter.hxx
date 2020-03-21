@@ -114,7 +114,7 @@ ICCIterativeInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::Comp
     str->Filter->ThreadedComputeInverse(str->inputPtr, str->outputPtr, splitRegion, threadId);
   }
 
-  return ITK_THREAD_RETURN_VALUE;
+  return itk::ITK_THREAD_RETURN_DEFAULT_VALUE;
 }
 
 template <typename TInputImage, typename TOutputImage>

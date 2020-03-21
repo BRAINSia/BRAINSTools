@@ -189,41 +189,11 @@ IccdefPreprocessor<TInputImage, TOutputImage>::Execute()
       const std::string firstNameOfClass = (*it)->GetNameOfClass();
       std::cout << "FIRST (and only) NameOfClass = " << firstNameOfClass << std::endl;
     }
-#if 0 // HACK TODO -- BSplineTransform doesn't have a bulk transform
-      // in ITKV4
-    else // Pick up what we presume was the bulk transform followed by a BSpline.
-      {
-      typename AffineTransformType::Pointer
-      BulkTransform = static_cast<AffineTransformType *>( ( *it ).GetPointer() );
-      const std::string firstNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "First (Bulk) NameOfClass = " << firstNameOfClass << std::endl;
-      ++it;
-      const std::string secondNameOfClass = ( *it )->GetNameOfClass();
-      std::cout << "SECOND NameOfClass = " << secondNameOfClass << std::endl;
-      baseTransform = ( *it ).GetPointer();
-      trsf = dynamic_cast<TransformType *>(baseTransform);
-      if( secondNameOfClass == "BSplineTransform" )
-        {
-        typename BSplineTransformType::Pointer
-        ITKTransform = static_cast<BSplineTransformType *>(baseTransform);
-        ITKTransform->SetBulkTransform( BulkTransform );
-        }
-      else
-        {
-        std::cout << "Number of transforms in transform file " << m_InitialTransformFilename
-                  <<
-          " > 1, but ValidationInputParser (for BRAINSDemonWarp) only handles a transform list when the second transform is in fact a BSplineTransform, not this "
-                  << secondNameOfClass << "." << std::endl;
-        exit(-1);
-        }
-      }
-#else
     else
     {
       std::cout << "ICCDef can't handle transform files containing more than one transform" << std::endl;
       exit(1);
     }
-#endif
     typename DisplacementFieldGeneratorType::Pointer defGenerator = DisplacementFieldGeneratorType::New();
     defGenerator->SetReferenceImage(m_InputFixedImage);
     defGenerator->SetTransform(trsf);

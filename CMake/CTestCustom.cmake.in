@@ -103,13 +103,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   "Swig.*note.*"
   "warning.*argument unused during compilation"
 
-  # Open-CV warnings:
-  ".*OpenCV-build.*warning.*"
-  ".*OpenCV-install.*warning.*"
-  ".*OpenCV.*"
-  "opencv"
-  "opencv2"
-
   # FFTW warnings:
   ".*fftw.*"
 
@@ -306,9 +299,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
 
   # Git
   "HEAD is now"
-
-  ## HACK: THIS SHOULD NOT BE SUPPRESSED, NEED TO FIX OPENCV!!
-  "BRAINSCutApplyModel.cxx.*warning.*increases required alignment"
 
   "ModuleFactory.*warning.*SymbolPointer"
 

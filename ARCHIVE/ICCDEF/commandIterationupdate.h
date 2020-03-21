@@ -38,7 +38,7 @@
 #include "itkMinimumMaximumImageCalculator.h"
 #include "itkWarpHarmonicEnergyCalculator.h"
 #include "itkGridForwardWarpImageFilter.h"
-#include "itkVectorCentralDifferenceImageFunction.h"
+#include "itkCentralDifferenceImageFunction.h"
 #include <getopt.h>
 #include <iostream>
 #include <fstream>
@@ -125,7 +125,7 @@ public:
 
   using HarmonicEnergyCalculatorType = itk::WarpHarmonicEnergyCalculator<DisplacementFieldType>;
 
-  using WarpGradientCalculatorType = itk::VectorCentralDifferenceImageFunction<DisplacementFieldType>;
+  using WarpGradientCalculatorType = itk::CentralDifferenceImageFunction<DisplacementFieldType>;
 
   using WarpGradientType = typename WarpGradientCalculatorType::OutputType;
 

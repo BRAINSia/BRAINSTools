@@ -128,8 +128,13 @@ IccdefRegistrator<TRealImage, TOutputImage, TFieldValue>::IccdefRegistrator()
 
   typename FieldInterpolatorType::Pointer VectorInterpolator21 = FieldInterpolatorType::New();
 
+#if 0 // HACK
   this->m_Registration->GetModifiableFieldExpander12()->SetInterpolator(VectorInterpolator12);
   this->m_Registration->GetModifiableFieldExpander21()->SetInterpolator(VectorInterpolator21);
+#else
+  std::cout << "ERROR THE ABOVE CODE IS REQUIRED TO BE INCLUDED, BUT NEEDS TO BE FIXED for ITKv5 " << std::endl;
+  exit(222);
+#endif
 
   // Default parameters
   this->m_NumberOfLevels = 1;

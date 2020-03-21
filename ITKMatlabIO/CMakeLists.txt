@@ -1,6 +1,6 @@
 project(ITKMatlabIO)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/CMake)
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/CMake)
 
 # -- NOTE: This test is not needed for MATLAB2014b with xcode.
 #Matlab Mex files require char16_t for mex files

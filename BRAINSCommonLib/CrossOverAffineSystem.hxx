@@ -59,8 +59,8 @@ template <typename TCoordinateType, unsigned int NDimensions>
 typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType
 Reciprocal(const typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType & Scale)
 {
-  typedef typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType VectorType;
-  VectorType                                                                       ReciprocalScale(Scale);
+  using VectorType = typename CrossOverAffineSystem<TCoordinateType, NDimensions>::VectorType;
+  VectorType ReciprocalScale(Scale);
   for (unsigned int i = 0; i < NDimensions; ++i)
   {
     ReciprocalScale[i] = 1.0 / ReciprocalScale[i];

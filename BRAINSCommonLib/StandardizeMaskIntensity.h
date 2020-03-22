@@ -59,12 +59,12 @@ ResampleImageWithIdentityTransform(const std::string &                          
     using BoundaryConditionType = typename itk::ConstantBoundaryCondition<ImageType>;
     static constexpr unsigned int WindowedSincHammingWindowRadius = 5;
     using WindowFunctionType = itk::Function::HammingWindowFunction<WindowedSincHammingWindowRadius, double, double>;
-    typedef typename itk::WindowedSincInterpolateImageFunction<ImageType,
-                                                               WindowedSincHammingWindowRadius,
-                                                               WindowFunctionType,
-                                                               BoundaryConditionType,
-                                                               double>
-                                                   WindowedSincInterpolatorType;
+    using WindowedSincInterpolatorType =
+      typename itk::WindowedSincInterpolateImageFunction<ImageType,
+                                                         WindowedSincHammingWindowRadius,
+                                                         WindowFunctionType,
+                                                         BoundaryConditionType,
+                                                         double>;
     typename WindowedSincInterpolatorType::Pointer windowInt = WindowedSincInterpolatorType::New();
     resampler->SetInterpolator(windowInt);
   }

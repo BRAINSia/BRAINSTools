@@ -41,11 +41,15 @@ class landmarksConstellationTrainingDefinitionIO : public landmarksConstellation
                                          // variable
 {
 private:
-  typedef enum
+  using err_flags = enum
+
   {
+
     eof,
+
     bad
-  } err_flags;
+
+  };
 
 public:
   landmarksConstellationTrainingDefinitionIO() {}

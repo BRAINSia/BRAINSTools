@@ -38,8 +38,8 @@ protected:
   GenerateData() override
   {
     // resample LabelImage
-    typedef itk::NearestNeighborInterpolateImageFunction<TAtlas, double> NN_InterpolatorType;
-    typename NN_InterpolatorType::Pointer                                NN_interpolator = NN_InterpolatorType::New();
+    using NN_InterpolatorType = itk::NearestNeighborInterpolateImageFunction<TAtlas, double>;
+    typename NN_InterpolatorType::Pointer NN_interpolator = NN_InterpolatorType::New();
 
     constexpr int Dimension = 3;
     using IdentityTransformType = itk::IdentityTransform<double, Dimension>;

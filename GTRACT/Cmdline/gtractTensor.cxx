@@ -191,8 +191,8 @@ main(int argc, char * argv[])
   /* Process Invidual B-value Images and Reassemble the Vector Image */
   using TensorFilterType =
     itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType, TensorPixelType>;
-  typedef TensorFilterType::GradientDirectionContainerType DirectionContainerType;
-  DirectionContainerType::Pointer                          gradientDirectionContainer = DirectionContainerType::New();
+  using DirectionContainerType = TensorFilterType::GradientDirectionContainerType;
+  DirectionContainerType::Pointer gradientDirectionContainer = DirectionContainerType::New();
 
   using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();

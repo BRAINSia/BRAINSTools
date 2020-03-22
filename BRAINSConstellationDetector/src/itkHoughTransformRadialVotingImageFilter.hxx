@@ -179,8 +179,8 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   using GaussianFunctionPointer = typename GaussianFunctionType::Pointer;
 
   using DoGFunctionType = GaussianDerivativeImageFunction<InputImageType, InputCoordType>;
-  typedef typename DoGFunctionType::Pointer    DoGFunctionPointer;
-  typedef typename DoGFunctionType::VectorType DoGVectorType;
+  using DoGFunctionPointer = typename DoGFunctionType::Pointer;
+  using DoGVectorType = typename DoGFunctionType::VectorType;
 
   DoGFunctionPointer DoGFunction = DoGFunctionType::New();
   DoGFunction->SetUseImageSpacing(true);
@@ -321,7 +321,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
 
 
   using GaussianFilterType = DiscreteGaussianImageFilter<InternalImageType, InternalImageType>;
-  typedef typename GaussianFilterType::Pointer GaussianFilterPointer;
+  using GaussianFilterPointer = typename GaussianFilterType::Pointer;
 
   /** Blur the accumulator in order to find the maximum */
   GaussianFilterPointer gaussianFilter = GaussianFilterType::New();

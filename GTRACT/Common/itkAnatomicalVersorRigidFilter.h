@@ -101,8 +101,8 @@ public:
 
   using RegistrationType = itk::ImageRegistrationMethod<RegisterImageType, RegisterImageType>;
 
-  typedef itk::CenteredTransformInitializer<TransformType, RegisterImageType, RegisterImageType>
-    TransformInitializerType;
+  using TransformInitializerType =
+    itk::CenteredTransformInitializer<TransformType, RegisterImageType, RegisterImageType>;
   using TransformTypePointer = TransformType::Pointer;
   using VersorType = TransformType::VersorType;
   using VectorType = VersorType::VectorType;

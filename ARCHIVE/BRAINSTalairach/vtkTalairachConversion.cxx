@@ -136,7 +136,7 @@ vtkTalairachConversion::SetHemisphereModeRight()
 }
 
 int
-vtkTalairachConversion::GetHemisphereMode()
+vtkTalairachConversion::GetHemisphereMode() const
 {
   return this->HemisphereMode;
 }
@@ -160,7 +160,7 @@ vtkTalairachConversion::SetSegmentationModeOff()
 }
 
 bool
-vtkTalairachConversion::GetSegmentationMode()
+vtkTalairachConversion::GetSegmentationMode() const
 {
   return this->SegmentationMode;
 }

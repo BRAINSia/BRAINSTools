@@ -122,7 +122,7 @@ public:
   /* Description:
    * Get the Mode for Talairach Box Generation */
   int
-  GetHemisphereMode();
+  GetHemisphereMode() const;
 
   /* Description:
    * Set the Mode for Expanded Segmentation Mode Boxes */
@@ -138,7 +138,7 @@ public:
   /* Description:
    * Get the Mode for Talairach Box Generation */
   bool
-  GetSegmentationMode();
+  GetSegmentationMode() const;
 
   /* Description:
    * Returns the number of boxes in the list */

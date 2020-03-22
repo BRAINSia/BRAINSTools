@@ -90,8 +90,8 @@ protected:
   };
 
 private:
-  MaskFromLabelMapFilter(const Self &); // purposely not implemented
+  MaskFromLabelMapFilter(const Self &) = delete; // purposely not implemented
   void
-  operator=(const Self &); // purposely not implemented
+  operator=(const Self &) = delete; // purposely not implemented
 };
 #endif // BRAINSTOOLS_MASKFROMLABELMAPFILTER_H

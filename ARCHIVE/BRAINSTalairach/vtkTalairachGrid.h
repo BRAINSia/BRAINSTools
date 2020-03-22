@@ -175,9 +175,9 @@ private:
   /* The data extent */
   int Extent[6];
 
-  vtkTalairachGrid(const vtkTalairachGrid &); /* Not implemented. */
+  vtkTalairachGrid(const vtkTalairachGrid &) = delete; /* Not implemented. */
   void
-  operator=(const vtkTalairachGrid &); /* Not implemented. */
+  operator=(const vtkTalairachGrid &) = delete; /* Not implemented. */
 };
 
 #endif

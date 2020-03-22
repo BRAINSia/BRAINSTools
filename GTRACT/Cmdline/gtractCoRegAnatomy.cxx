@@ -107,25 +107,25 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputVolume.size() == 0)
+  if (inputVolume.empty())
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if (inputAnatomicalVolume.size() == 0)
+  if (inputAnatomicalVolume.empty())
   {
     violated = true;
     std::cout << "  --inputAnatomicalVolume Required! " << std::endl;
   }
   if (transformType == "Bspline")
   {
-    if (inputRigidTransform.size() == 0)
+    if (inputRigidTransform.empty())
     {
       violated = true;
       std::cout << "  --inputRigidTransform Required! " << std::endl;
     }
   }
-  if (outputTransformName.size() == 0)
+  if (outputTransformName.empty())
   {
     violated = true;
     std::cout << "  --outputTransform Required! " << std::endl;
@@ -275,7 +275,7 @@ main(int argc, char * argv[])
     registerImageFilter->SetProjectedGradientTolerance(gradientTolerance);
     registerImageFilter->SetMaxBSplineDisplacement(maxBSplineDisplacement);
     registerImageFilter->SetInitializeTransformMode(localInitializeTransformMode);
-    if (inputRigidTransform.size() > 0)
+    if (!inputRigidTransform.empty())
     {
       TransformType::Pointer          inputTransform = itk::ReadTransformFromDisk(inputRigidTransform);
       CompositeTransformType::Pointer inputCompositeTransform =

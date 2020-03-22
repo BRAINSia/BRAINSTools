@@ -83,22 +83,22 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (movingVolume.size() == 0)
+  if (movingVolume.empty())
   {
     violated = true;
     std::cout << "  --movingVolume Required! " << std::endl;
   }
-  if (fixedVolume.size() == 0)
+  if (fixedVolume.empty())
   {
     violated = true;
     std::cout << "  --fixedVolume Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
   }
-  if (outputTransform.size() == 0)
+  if (outputTransform.empty())
   {
     violated = true;
     std::cout << "  --outputTransform Required! " << std::endl;
@@ -256,7 +256,7 @@ main(int argc, char * argv[])
     }
     using GenericTransformType = itk::Transform<double, 3, 3>;
     // restore writing out transform if specified on command line.
-    if (outputTransform.size() != 0)
+    if (!outputTransform.empty())
     {
       GenericTransformType::Pointer transform = registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
       itk::TransformFileWriter::Pointer xfrmWriter = itk::TransformFileWriter::New();

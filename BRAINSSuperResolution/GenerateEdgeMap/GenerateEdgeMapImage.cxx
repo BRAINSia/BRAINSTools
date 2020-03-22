@@ -53,7 +53,7 @@ main(int argc, char * argv[])
   }
 
   std::vector<std::string> inputMRFileNames;
-  if (inputMRVolumes.size() > 0)
+  if (!inputMRVolumes.empty())
   {
     inputMRFileNames = inputMRVolumes;
   }

@@ -106,17 +106,17 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputVolume.size() == 0)
+  if (inputVolume.empty())
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if (inputTransform.size() == 0 && warpDWITransform.size() == 0)
+  if (inputTransform.empty() && warpDWITransform.empty())
   {
     violated = true;
     std::cout << "  --inputTransform or --warpDWITransform Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
@@ -158,7 +158,7 @@ main(int argc, char * argv[])
   NrrdImageType::Pointer resampleImage = imageReader->GetOutput();
   // NOT USED: NrrdImageType::DirectionType  myDirection = resampleImage->GetDirection();
   GenericTransformType::Pointer baseTransform = nullptr;
-  if (inputTransform == "ID" || inputTransform == "Identity" || inputTransform.size() == 0)
+  if (inputTransform == "ID" || inputTransform == "Identity" || inputTransform.empty())
   {
     RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
     LocalRigidTransform->SetIdentity();
@@ -178,7 +178,7 @@ main(int argc, char * argv[])
   }
 
   GenericTransformType::Pointer warpDWIXFRM = nullptr;
-  if (warpDWITransform.size() > 0)
+  if (!warpDWITransform.empty())
   {
     if (warpDWITransform.find(".nii") != std::string::npos)
     {
@@ -286,7 +286,7 @@ main(int argc, char * argv[])
   // If --writeOutputMetaData ./metaData.csv is specified on the command line,
   // then write out the output image measurement frame and diffusion gradient directions in a simple CSV file.
   // This helps to verify the output image meta data in TestSuite.
-  if (writeOutputMetaData != "")
+  if (!writeOutputMetaData.empty())
   {
     std::ofstream outputMetaDataFile;
     outputMetaDataFile.open(writeOutputMetaData.c_str());
@@ -402,7 +402,7 @@ main(int argc, char * argv[])
   }
   paddedImage->Update();
 
-  if (referenceVolume != "")
+  if (!referenceVolume.empty())
   {
     // For each component, extract, resample to list, and finally compose back into a vector image.
     using ReferenceFileReaderType = itk::ImageFileReader<SingleComponentImageType>;

@@ -675,7 +675,7 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderN
   std::string outputFSLBValFilename;
   //
   const size_t extensionPos = this->has_valid_nifti_extension(outputVolumeHeaderName);
-  if (outputBValues == "")
+  if (outputBValues.empty())
   {
     outputFSLBValFilename = outputVolumeHeaderName.substr(0, extensionPos);
     outputFSLBValFilename += ".bval";
@@ -685,7 +685,7 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderN
     outputFSLBValFilename = outputBValues;
   }
   std::string outputFSLBVecFilename;
-  if (outputBVectors == "")
+  if (outputBVectors.empty())
   {
     outputFSLBVecFilename = outputVolumeHeaderName.substr(0, extensionPos);
     outputFSLBVecFilename += ".bvec";

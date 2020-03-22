@@ -47,27 +47,27 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if (inputCompositeT1Volume == "")
+  if (inputCompositeT1Volume.empty())
   {
     std::cerr << "Missing required Composite T1 Volume "
               << "use --inputCompositeT1Volume flag to specify" << std::endl;
     return 1;
   }
-  if (inputLabelVolume.size() <= 0)
+  if (inputLabelVolume.empty())
   {
     std::cerr << "Missing input label volumes "
               << "use --inputLabelVolume <name> to add a label volume" << std::endl;
     return 1;
   }
 
-  if (inputTransform.size() > 0 && (inputLabelVolume.size() != inputTransform.size()))
+  if (!inputTransform.empty() && (inputLabelVolume.size() != inputTransform.size()))
   {
     std::cerr << "Transform list should have same number of" << std::endl
               << "members as as the input label volumes list" << std::endl;
     return 1;
   }
 
-  if (outputMultiSTAPLE == "")
+  if (outputMultiSTAPLE.empty())
   {
     std::cerr << "Missing outputMultiSTAPLE image file name" << std::endl;
     return 1;
@@ -123,7 +123,7 @@ main(int argc, char * argv[])
 
     TransformListType inputTransforms;
 
-    if (inputTransform.size() > 0)
+    if (!inputTransform.empty())
     {
       for (std::vector<std::string>::const_iterator it = inputTransform.begin(); it != inputTransform.end(); ++it)
       {
@@ -209,7 +209,7 @@ main(int argc, char * argv[])
         return 1;
       }
       std::cout << " done." << std::endl;
-      if (resampledVolumePrefix != "")
+      if (!resampledVolumePrefix.empty())
       {
         std::string namePart(itksys::SystemTools::GetFilenameName((*nameIt)));
         std::string resampledName = resampledVolumePrefix;
@@ -269,7 +269,7 @@ main(int argc, char * argv[])
     return 1;
   }
 
-  if (outputConfusionMatrix != "")
+  if (!outputConfusionMatrix.empty())
   {
     std::cout << "Writing " << outputConfusionMatrix << std::endl;
     std::ofstream out(outputConfusionMatrix.c_str());

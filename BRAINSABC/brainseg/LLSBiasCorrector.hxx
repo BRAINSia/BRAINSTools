@@ -83,7 +83,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CheckInputs()
   // if (m_MaxDegree == 0)
   // itkExceptionMacro(<< "Max bias degree is zero" << std::endl );
 
-  if (m_InputImages.size() == 0)
+  if (m_InputImages.empty())
   {
     itkExceptionMacro(<< "No input image specified" << std::endl);
   }
@@ -93,7 +93,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CheckInputs()
     itkExceptionMacro(<< "Input dimension invalid: only supports 3D images" << std::endl);
   }
 
-  if (m_BiasPosteriors.size() < 1)
+  if (m_BiasPosteriors.empty())
   {
     itkExceptionMacro(<< "Must have one or more class probabilities" << std::endl);
   }
@@ -165,7 +165,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::SetMaxDegree(unsigned int n)
     this->Initialize();
   }
 #if 1 // HACK
-  if (m_BiasPosteriors.size() > 0)
+  if (!m_BiasPosteriors.empty())
   {
     this->SetProbabilities(m_BiasPosteriors, this->m_CandidateRegions);
   }
@@ -181,7 +181,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::SetSampleSpacing(double s)
   m_SampleSpacing = s;
 
 #if 1 // HACK
-  if (m_BiasPosteriors.size() > 0)
+  if (!m_BiasPosteriors.empty())
   {
     this->SetProbabilities(m_BiasPosteriors, this->m_CandidateRegions);
   }
@@ -393,7 +393,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::SetProbabilities(
 {
   muLogMacro(<< "SetProbabilities" << std::endl);
 
-  if (probs.size() < 1)
+  if (probs.empty())
   {
     itkExceptionMacro(<< "Need one or more probabilities" << std::endl);
   }

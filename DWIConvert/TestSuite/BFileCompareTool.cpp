@@ -70,7 +70,7 @@ convertBufferIntoVector(char * buffer)
       lineData.push_back(dataValue);
       p = nextNoneSpacePointer(p);
     }
-    if (lineData.size() > 0)
+    if (!lineData.empty())
       ColumnData.push_back(lineData);
     if ('\0' != *p)
       ++p;

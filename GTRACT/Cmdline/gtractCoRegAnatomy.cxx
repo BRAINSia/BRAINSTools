@@ -266,7 +266,7 @@ main(int argc, char * argv[])
 
   if (transformType == "Bspline")
   {
-    transformTypes.push_back("BSpline");
+    transformTypes.emplace_back("BSpline");
 
     registerImageFilter->SetSamplingPercentage(1.0 / spatialScale);
     registerImageFilter->SetNumberOfHistogramBins(numberOfHistogramBins);
@@ -291,7 +291,7 @@ main(int argc, char * argv[])
 
   if (transformType == "Rigid")
   {
-    transformTypes.push_back("ScaleVersor3D");
+    transformTypes.emplace_back("ScaleVersor3D");
     std::vector<double> minStepLength;
     minStepLength.push_back((double)minimumStepSize);
     registerImageFilter->SetTranslationScale(translationScale);

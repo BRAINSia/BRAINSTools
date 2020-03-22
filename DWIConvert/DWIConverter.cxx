@@ -244,7 +244,7 @@ DWIConverter::ReadGradientInformation(const std::string & inputBValues,
     if (!baseDirectory.empty())
     {
       pathElements.push_back(baseDirectory);
-      pathElements.push_back("/");
+      pathElements.emplace_back("/");
     }
     pathElements.push_back(itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bval");
     _inputBValues = itksys::SystemTools::JoinPath(pathElements);
@@ -258,7 +258,7 @@ DWIConverter::ReadGradientInformation(const std::string & inputBValues,
     if (!baseDirectory.empty())
     {
       pathElements.push_back(baseDirectory);
-      pathElements.push_back("/");
+      pathElements.emplace_back("/");
     }
     pathElements.push_back(itksys::SystemTools::GetFilenameWithoutExtension(inputVolumeNameTemplate) + ".bvec");
     _inputBVectors = itksys::SystemTools::JoinPath(pathElements);

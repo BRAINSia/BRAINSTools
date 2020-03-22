@@ -47,8 +47,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::FindCenterOfBrainFilter()
 }
 
 template <typename TInputImage, typename TMaskImage>
-FindCenterOfBrainFilter<TInputImage, TMaskImage>::~FindCenterOfBrainFilter()
-{}
+FindCenterOfBrainFilter<TInputImage, TMaskImage>::~FindCenterOfBrainFilter() = default;
 
 template <typename TInputImage, typename TMaskImage>
 void

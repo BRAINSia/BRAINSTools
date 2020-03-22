@@ -142,7 +142,7 @@ public:
 #endif
 protected:
   GridForwardWarpImageFilterNew();
-  ~GridForwardWarpImageFilterNew() override {}
+  ~GridForwardWarpImageFilterNew() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

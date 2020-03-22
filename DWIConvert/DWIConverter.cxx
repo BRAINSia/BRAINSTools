@@ -15,7 +15,7 @@ DWIConverter::DWIConverter(const FileNamesContainer & inputFileNames)
   m_thickness = 0;
 }
 
-DWIConverter::~DWIConverter() {}
+DWIConverter::~DWIConverter() = default;
 
 DWIConverter::RotationMatrixType
 DWIConverter::GetSpacingMatrix() const

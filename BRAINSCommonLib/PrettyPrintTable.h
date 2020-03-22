@@ -46,7 +46,7 @@ private:
   bool         m_rightJustify{ false };
 
 public:
-  PrettyPrintTable() {}
+  PrettyPrintTable() = default;
 
   void
   setTablePad(unsigned int pad)

@@ -126,7 +126,7 @@ public:
 
 protected:
   InvertBSplineFilter();
-  ~InvertBSplineFilter() override {}
+  ~InvertBSplineFilter() override = default;
 
 private:
   /*** Input and Output Objects ***/

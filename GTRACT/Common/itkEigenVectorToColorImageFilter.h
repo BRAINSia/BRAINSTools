@@ -116,7 +116,7 @@ public:
 
 protected:
   EigenVectorToColorImageFilter();
-  ~EigenVectorToColorImageFilter() override {}
+  ~EigenVectorToColorImageFilter() override = default;
 
 private:
   // Input and Output Image

@@ -15,7 +15,7 @@ SiemensDWIConverter::SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector 
   , m_HasCSAHeader(false)
 {}
 
-SiemensDWIConverter::~SiemensDWIConverter() {}
+SiemensDWIConverter::~SiemensDWIConverter() = default;
 
 
 void

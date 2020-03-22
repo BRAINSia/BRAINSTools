@@ -53,8 +53,7 @@ const unsigned long TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>
  * Constructor
  */
 template <typename TInputImage, typename TCoordRep>
-TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::TensorLinearInterpolateImageFunction()
-{}
+TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::TensorLinearInterpolateImageFunction() = default;
 
 /**
  * PrintSelf

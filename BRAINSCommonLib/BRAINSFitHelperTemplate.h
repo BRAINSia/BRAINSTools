@@ -262,7 +262,7 @@ public:
 
 protected:
   BRAINSFitHelperTemplate();
-  ~BRAINSFitHelperTemplate() override {}
+  ~BRAINSFitHelperTemplate() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

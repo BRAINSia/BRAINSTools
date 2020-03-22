@@ -22,7 +22,7 @@
 #include "math.h"
 
 
-LLSModel ::LLSModel() {}
+LLSModel ::LLSModel() = default;
 
 LLSModel ::~LLSModel()
 {

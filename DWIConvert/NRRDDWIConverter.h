@@ -14,7 +14,7 @@ class NRRDDWIConverter : public DWIConverter
 public:
   NRRDDWIConverter(const DWIConverter::FileNamesContainer & inputFileNames);
 
-  ~NRRDDWIConverter() override {}
+  ~NRRDDWIConverter() override = default;
 
   void
   AddFlagsToDictionary() override;

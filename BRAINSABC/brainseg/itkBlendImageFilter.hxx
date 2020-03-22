@@ -30,7 +30,7 @@ namespace itk
 template <typename TInputImage, typename TOutputImage>
 BlendImageFilter<TInputImage, TOutputImage>::BlendImageFilter()
 
-{}
+  = default;
 
 /**
  * GenerateData Performs the accumulation

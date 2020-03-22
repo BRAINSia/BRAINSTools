@@ -201,7 +201,7 @@ public:
   // void Update();
 protected:
   DtiTrackingFilterBase();
-  ~DtiTrackingFilterBase() override {}
+  ~DtiTrackingFilterBase() override = default;
 
 private:
 protected:

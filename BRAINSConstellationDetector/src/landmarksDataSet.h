@@ -63,7 +63,7 @@ public:
   using PointType = itk::Point<double, 3>;
   using Superclass = std::map<std::string, PointType>;
 
-  landmarksDataSet() {}
+  landmarksDataSet() = default;
 
   // Constructor for use by
   // landmarksConstellationTrainingDefinitionIO::ReadFile(const std::string)

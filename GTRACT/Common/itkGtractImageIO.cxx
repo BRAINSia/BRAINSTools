@@ -43,7 +43,7 @@
 
 namespace itk
 {
-GtractImageIO ::GtractImageIO() {}
+GtractImageIO ::GtractImageIO() = default;
 
 void
 GtractImageIO::SetDicomDirectory(char * dicomDir)

@@ -43,8 +43,8 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,
 }
 
 template <typename TInputImage, typename TOutputImage>
-MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::~MultiModeHistogramThresholdBinaryImageFilter()
-{}
+MultiModeHistogramThresholdBinaryImageFilter<TInputImage,
+                                             TOutputImage>::~MultiModeHistogramThresholdBinaryImageFilter() = default;
 
 template <typename TInputImage, typename TOutputImage>
 void

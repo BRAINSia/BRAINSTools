@@ -514,7 +514,7 @@ public:
 
 protected:
   MultiModal3DMutualRegistrationHelper();
-  ~MultiModal3DMutualRegistrationHelper() override {}
+  ~MultiModal3DMutualRegistrationHelper() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

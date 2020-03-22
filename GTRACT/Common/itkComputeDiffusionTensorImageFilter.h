@@ -145,7 +145,7 @@ public:
 
 protected:
   ComputeDiffusionTensorImageFilter();
-  ~ComputeDiffusionTensorImageFilter() override {}
+  ~ComputeDiffusionTensorImageFilter() override = default;
 
 private:
   void

@@ -86,7 +86,7 @@ public:
 protected:
   /** Constructor and Destructor */
   GtractParameterIO();
-  ~GtractParameterIO() override {}
+  ~GtractParameterIO() override = default;
 
 private:
   TMatrix     m_Directions;

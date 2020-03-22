@@ -127,9 +127,9 @@ public:
   }
 
 protected:
-  TensorInterpolateImageFunction() {}
+  TensorInterpolateImageFunction() = default;
 
-  ~TensorInterpolateImageFunction() override {}
+  ~TensorInterpolateImageFunction() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override

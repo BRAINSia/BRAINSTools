@@ -159,7 +159,7 @@ public:
 
 protected:
   IntegrityMetricMembershipFunction();
-  virtual ~IntegrityMetricMembershipFunction() {}
+  virtual ~IntegrityMetricMembershipFunction() = default;
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 

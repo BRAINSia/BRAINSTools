@@ -32,7 +32,8 @@ private:
 
 protected:
   MaskFromLabelMapFilter() { this->SetInput(TImage::New()); };
-  ~MaskFromLabelMapFilter() override{};
+  ~MaskFromLabelMapFilter() override = default;
+  ;
 
   void
   GenerateData() override

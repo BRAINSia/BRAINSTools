@@ -29,7 +29,7 @@ public:
                   const std::string                        inputBValues,
                   const std::string                        inputBVectors);
 
-  ~FSLDWIConverter() override {}
+  ~FSLDWIConverter() override = default;
 
   void
   AddFlagsToDictionary() override;

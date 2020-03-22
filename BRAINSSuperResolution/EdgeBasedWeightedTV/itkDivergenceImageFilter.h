@@ -278,7 +278,7 @@ public:
 
 protected:
   DivergenceImageFilter();
-  virtual ~DivergenceImageFilter() {}
+  virtual ~DivergenceImageFilter() = default;
 
   /** Do any necessary casting/copying of the input data.  Input pixel types
      whose value types are not real number types must be cast to real number

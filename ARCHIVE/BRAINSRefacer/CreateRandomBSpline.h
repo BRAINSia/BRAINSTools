@@ -69,7 +69,8 @@ protected:
     this->m_Generator = GeneratorType::New();
     this->m_Generator->Initialize();
   };
-  ~CreateRandomBSpline() override{};
+  ~CreateRandomBSpline() override = default;
+  ;
 
   void
   GenerateData() override

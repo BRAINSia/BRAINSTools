@@ -176,7 +176,7 @@ public:
 
   /** Method Compute the Modified Time based on changed to the components. */
   unsigned long
-  GetMTime(void) const override;
+  GetMTime() const override;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */

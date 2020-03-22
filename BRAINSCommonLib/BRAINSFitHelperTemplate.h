@@ -243,7 +243,7 @@ public:
 
   /** Method that initiates the registration. */
   void
-  Update(void);
+  Update();
 
   itkSetMacro(SamplingStrategy, SamplingStrategyType);
   itkGetConstMacro(SamplingStrategy, SamplingStrategyType);

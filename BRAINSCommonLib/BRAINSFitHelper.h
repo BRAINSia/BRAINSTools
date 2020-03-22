@@ -237,7 +237,7 @@ public:
 
   /** Method that initiates the registration. */
   void
-  Update(void);
+  Update();
 
   void
   PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const;

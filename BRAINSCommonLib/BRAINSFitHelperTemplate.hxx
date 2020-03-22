@@ -669,7 +669,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
 
 template <typename FixedImageType, typename MovingImageType>
 void
-BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update(void)
+BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
 {
   using MaskImageType = itk::Image<unsigned char, 3>;
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;

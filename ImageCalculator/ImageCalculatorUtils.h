@@ -23,7 +23,7 @@
 
 // This function prints the valid pixel types.
 extern void
-PrintDataTypeStrings(void);
+PrintDataTypeStrings();
 
 // This function replaces a substring with another substring
 extern void

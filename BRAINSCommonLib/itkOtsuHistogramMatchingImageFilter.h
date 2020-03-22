@@ -125,7 +125,7 @@ public:
   }
 
   const InputImageType *
-  GetSourceImage(void)
+  GetSourceImage()
   {
     return this->GetInput();
   }
@@ -135,7 +135,7 @@ public:
   SetReferenceImage(const InputImageType * reference);
 
   const InputImageType *
-  GetReferenceImage(void);
+  GetReferenceImage();
 
   itkSetObjectMacro(SourceMask, SpatialObjectType);
   itkSetObjectMacro(ReferenceMask, SpatialObjectType);

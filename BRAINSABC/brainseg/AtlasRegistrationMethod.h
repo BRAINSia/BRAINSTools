@@ -308,11 +308,11 @@ public:
 
 protected:
   void
-  RegisterIntraSubjectImages(void);
+  RegisterIntraSubjectImages();
   void
-  AverageIntraSubjectRegisteredImages(void);
+  AverageIntraSubjectRegisteredImages();
   void
-  RegisterAtlasToSubjectImages(void);
+  RegisterAtlasToSubjectImages();
 
   AtlasRegistrationMethod();
   ~AtlasRegistrationMethod();

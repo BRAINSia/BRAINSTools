@@ -173,7 +173,7 @@ public:
   //
   //  itkGetMacro(WarpedAtlasImages,std::vector<InputImagePointer>);
   MapOfInputImageVectors
-  GenerateWarpedAtlasImages(void);
+  GenerateWarpedAtlasImages();
 
   itkSetMacro(TemplateBrainMask, ByteImagePointer);
   itkGetMacro(TemplateBrainMask, ByteImagePointer);
@@ -185,7 +185,7 @@ public:
   SetPriorWeights(VectorType w);
 
   IntVectorType
-  GetPriorLabelCodeVector(void) const
+  GetPriorLabelCodeVector() const
   {
     return m_PriorLabelCodeVector;
   }
@@ -194,7 +194,7 @@ public:
   SetPriorLabelCodeVector(IntVectorType n);
 
   BoolVectorType
-  GetPriorUseForBiasVector(void) const
+  GetPriorUseForBiasVector() const
   {
     return m_PriorUseForBiasVector;
   }
@@ -203,7 +203,7 @@ public:
   SetPriorUseForBiasVector(const BoolVectorType & n);
 
   BoolVectorType
-  GetPriorIsForegroundPriorVector(void) const
+  GetPriorIsForegroundPriorVector() const
   {
     return m_PriorIsForegroundPriorVector;
   }
@@ -218,19 +218,19 @@ public:
   }
 
   std::vector<std::string>
-  GetPriorNames(void) const
+  GetPriorNames() const
   {
     return this->m_PriorNames;
   }
 
   ByteImagePointer
-  GetOutput(void);
+  GetOutput();
 
   ByteImagePointer
-  GetCleanedOutput(void);
+  GetCleanedOutput();
 
   ByteImagePointer
-  GetThresholdedOutput(void);
+  GetThresholdedOutput();
 
   ProbabilityImageVectorType
   GetPosteriors();
@@ -284,17 +284,17 @@ public:
   }
 
 protected:
-  EMSegmentationFilter(void);
-  ~EMSegmentationFilter(void);
+  EMSegmentationFilter();
+  ~EMSegmentationFilter();
 
   void
-  CheckInput(void);
+  CheckInput();
 
   FloatingPrecision
-  ComputeLogLikelihood(void) const;
+  ComputeLogLikelihood() const;
 
   void
-  EMLoop(void);
+  EMLoop();
 
   void
   UpdateTransformation(const unsigned int CurrentEMIteration);
@@ -341,10 +341,10 @@ private:
                             const unsigned int             CurrentEMIteration) const;
 
   unsigned int
-  ComputePriorLookupTable(void);
+  ComputePriorLookupTable();
 
   void
-  InitializePosteriors(void);
+  InitializePosteriors();
 
   void
   kNNCore(SampleType *                          trainMatrix,

@@ -87,7 +87,7 @@ public:
   ////////////////////////
   // Mandatory metric functions
   void
-  Initialize(void) throw(itk::ExceptionObject) override
+  Initialize() throw(itk::ExceptionObject) override
   {
     ParametersType params;
     params.set_size(SpaceDimension);
@@ -183,7 +183,7 @@ public:
   }
 
   unsigned int
-  GetNumberOfParameters(void) const override
+  GetNumberOfParameters() const override
   {
     return SpaceDimension;
   }
@@ -318,7 +318,7 @@ public:
 
 
   RigidTransformType::Pointer
-  GetTransformToMSP(void) const
+  GetTransformToMSP() const
   {
     // Here we try to make MSP plane as the mid slice of the output image voxel lattice
     SImageType::Pointer image = GetResampledImageToOutputBox(this->m_params);
@@ -381,7 +381,7 @@ public:
 
   /* -- */
   SImageType::PixelType
-  GetBackgroundValue(void) const
+  GetBackgroundValue() const
   {
     return this->m_BackgroundValue;
   }
@@ -404,7 +404,7 @@ public:
   }
 
   void
-  CreateResamplerReferenceImage(void)
+  CreateResamplerReferenceImage()
   {
     SImageType::SizeType  outputImageSize;
     SImageType::PointType outputImageOrigin;
@@ -549,7 +549,7 @@ public:
   }
 
   SImageType::Pointer
-  GetMSPCenteredImage(void)
+  GetMSPCenteredImage()
   {
     using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
     StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
@@ -565,7 +565,7 @@ public:
   }
 
   double
-  GetCC(void) const
+  GetCC() const
   {
     return this->m_cc;
   }

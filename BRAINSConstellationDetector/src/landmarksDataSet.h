@@ -151,7 +151,7 @@ public:
   }
 
   std::string
-  GetImageFilename(void) const
+  GetImageFilename() const
   {
     return m_ImageFilename;
   }
@@ -163,7 +163,7 @@ public:
   }
 
   std::string
-  GetLandmarkFilename(void) const
+  GetLandmarkFilename() const
   {
     return m_LandmarkFilename;
   }

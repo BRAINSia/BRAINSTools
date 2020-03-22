@@ -21,7 +21,7 @@ public:
   using InputNamesGeneratorType = itk::DCMTKSeriesFileNames;
   using DCMTKFileVector = std::vector<itk::DCMTKFileReader *>;
 
-  DWIDICOMConverterBase(const DCMTKFileVector &    allHeaders,
+  DWIDICOMConverterBase(DCMTKFileVector            allHeaders,
                         const FileNamesContainer & inputFileNames,
                         const bool                 useBMatrixGradientDirections);
 

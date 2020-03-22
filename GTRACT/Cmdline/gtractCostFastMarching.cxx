@@ -73,9 +73,12 @@ public:
   ShowProgress()
   {
     std::cout << "Progress " << m_Process->GetProgress() << std::endl;
+    _dummy++; // Only here to prevent this function from being marked const
   }
-
   itk::ProcessObject::Pointer m_Process;
+
+private:
+  int _dummy{ 0 };
 };
 } // end namespace
 

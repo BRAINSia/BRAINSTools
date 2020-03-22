@@ -317,7 +317,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
     ++NRit;
   }
 
-  if (1) // Now check that enough samples are chosen for each label code
+  if (true) // Now check that enough samples are chosen for each label code
   {
     for (size_t i = 0; i < labelClasses.size(); ++i)
     {

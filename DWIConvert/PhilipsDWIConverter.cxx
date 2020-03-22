@@ -146,7 +146,7 @@ PhilipsDWIConverter::ExtractDWIData()
       }
       else if (StringContains(DiffusionDirectionality, "DIRECTIONAL") ||
                (DiffusionDirectionality == "NONE") // Some new Philips data does not specify "DIRECTIONAL"
-               || (DiffusionDirectionality == ""))
+               || (DiffusionDirectionality.empty()))
       { // Deal with gradient direction images
         this->m_BValues.push_back(b);
         this->m_DiffusionVectors.push_back(vect3d);

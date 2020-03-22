@@ -682,7 +682,7 @@ template <typename TInputImage, typename TProbabilityImage>
 void
 EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckInput()
 {
-  if (m_WarpedPriors.size() < 1)
+  if (m_WarpedPriors.empty())
   {
     itkExceptionMacro(<< "Must have one or more class probabilities" << std::endl);
   }
@@ -809,7 +809,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetInputImages(const MapOf
 {
   muLogMacro(<< "SetInputImages" << std::endl);
 
-  if (newInputImages.size() == 0)
+  if (newInputImages.empty())
   {
     itkExceptionMacro(<< "No input images" << std::endl);
   }
@@ -826,7 +826,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetRawInputImages(const Ma
 {
   muLogMacro(<< "SetRawInputImages" << std::endl);
 
-  if (newInputImages.size() == 0)
+  if (newInputImages.empty())
   {
     itkExceptionMacro(<< "No input images" << std::endl);
   }
@@ -844,7 +844,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetOriginalAtlasImages(
 {
   muLogMacro(<< "SetAtlasImages" << std::endl);
 
-  if (newAtlasImages.size() == 0)
+  if (newAtlasImages.empty())
   {
     itkExceptionMacro(<< "No template images" << std::endl);
   }
@@ -938,7 +938,7 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorLabelCodeVector(IntVectorType ng)
 {
   muLogMacro(<< "SetPriorLabelCodeVector" << std::endl);
-  if (ng.size() == 0)
+  if (ng.empty())
   {
     itkExceptionMacro(<< "Number of clusters info invalid" << std::endl);
   }
@@ -961,7 +961,7 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorUseForBiasVector(const BoolVectorType & ng)
 {
   muLogMacro(<< "SetPriorUseForBiasVector" << std::endl);
-  if (ng.size() == 0)
+  if (ng.empty())
   {
     itkExceptionMacro(<< "Vector size for PriorUseForBiasVector info invalid" << std::endl);
   }
@@ -984,7 +984,7 @@ void
 EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorIsForegroundPriorVector(const BoolVectorType & ng)
 {
   muLogMacro(<< "SetPriorIsForegroundPriorVector" << std::endl);
-  if (ng.size() == 0)
+  if (ng.empty())
   {
     itkExceptionMacro(<< "Vector size for PriorIsForegroundPriorVector info invalid" << std::endl);
   }

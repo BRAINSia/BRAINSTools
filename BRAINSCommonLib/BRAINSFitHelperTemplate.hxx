@@ -769,13 +769,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       m_FixedBinaryVolume, m_MovingBinaryVolume, initialITKTransform, m_MaskInferiorCutOffFromCenter);
 
     { // Write out some debugging information if requested
-      if ((!this->m_FixedBinaryVolume.IsNull()) && (m_OutputFixedVolumeROI != ""))
+      if ((!this->m_FixedBinaryVolume.IsNull()) && (!m_OutputFixedVolumeROI.empty()))
       {
         const MaskImageType::ConstPointer tempOutputFixedVolumeROI =
           ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_FixedBinaryVolume.GetPointer());
         itkUtil::WriteConstImage<MaskImageType>(tempOutputFixedVolumeROI, m_OutputFixedVolumeROI);
       }
-      if ((!this->m_MovingBinaryVolume.IsNull()) && (m_OutputMovingVolumeROI != ""))
+      if ((!this->m_MovingBinaryVolume.IsNull()) && (!m_OutputMovingVolumeROI.empty()))
       {
         const MaskImageType::ConstPointer tempOutputMovingVolumeROI =
           ExtractConstPointerToImageMaskFromImageSpatialObject(this->m_MovingBinaryVolume.GetPointer());
@@ -1600,7 +1600,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       }
       else
       {
-        if (this->m_SaveState != "")
+        if (!this->m_SaveState.empty())
         {
           // Write the state to the disk
           if (internalSyNSavedState.IsNotNull())

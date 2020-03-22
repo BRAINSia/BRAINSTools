@@ -82,7 +82,7 @@ main(int argc, char * argv[])
     violated = true;
     std::cout << " at least one --inputVolume is required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;

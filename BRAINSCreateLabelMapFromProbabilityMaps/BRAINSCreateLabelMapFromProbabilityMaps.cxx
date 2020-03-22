@@ -35,7 +35,7 @@ main(int argc, char * argv[])
   using BoolVectorType = std::vector<bool>;
   using UnsignedIntVectorType = vnl_vector<unsigned int>;
 
-  if (inputProbabilityVolume.size() < 1)
+  if (inputProbabilityVolume.empty())
   {
     std::cerr << "Missing probability volume list" << std::endl;
     return 1;
@@ -61,7 +61,7 @@ main(int argc, char * argv[])
     Posteriors.push_back(current);
   }
 
-  if (priorLabelCodes.size() < 1)
+  if (priorLabelCodes.empty())
   {
     std::cerr << "Missing prior label codes" << std::endl;
   }
@@ -73,7 +73,7 @@ main(int argc, char * argv[])
     priorLabels[i] = priorLabelCodes[i];
   }
 
-  if (foregroundPriors.size() < 1)
+  if (foregroundPriors.empty())
   {
     std::cerr << "Missing prior label codes" << std::endl;
   }
@@ -85,7 +85,7 @@ main(int argc, char * argv[])
   }
 
   ByteImageType::Pointer nonAirVolume;
-  if (nonAirRegionMask == "")
+  if (nonAirRegionMask.empty())
   {
     nonAirVolume = ByteImageType::New();
     ByteImageType::RegionType region = Posteriors[0]->GetLargestPossibleRegion();
@@ -126,7 +126,7 @@ main(int argc, char * argv[])
     return 1;
   }
 
-  if (dirtyLabelVolume != "")
+  if (!dirtyLabelVolume.empty())
   {
     try
     {
@@ -138,7 +138,7 @@ main(int argc, char * argv[])
       return 1;
     }
   }
-  if (cleanLabelVolume != "")
+  if (!cleanLabelVolume.empty())
   {
     try
     {

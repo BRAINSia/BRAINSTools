@@ -58,7 +58,7 @@ main(int argc, char * argv[])
 
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  if (inputVolumes.size() < 1)
+  if (inputVolumes.empty())
   {
     std::cerr << argv[0] << ": Missing required --inputVolumes parameter" << std::endl;
     return EXIT_FAILURE;
@@ -71,7 +71,7 @@ main(int argc, char * argv[])
   ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
 
   MaskImageType::Pointer RegionMaskVolume = nullptr;
-  if (inputMaskVolume != "")
+  if (!inputMaskVolume.empty())
   {
     RegionMaskVolume = itkUtil::ReadImage<MaskImageType>(inputMaskVolume);
   }
@@ -113,12 +113,12 @@ main(int argc, char * argv[])
   // clipping.
   MaskImageType::Pointer MaskImage = thresholdRegionFinder->GetOutput();
 
-  if (outputROIMaskVolume != "")
+  if (!outputROIMaskVolume.empty())
   {
     itkUtil::WriteImage<MaskImageType>(MaskImage, outputROIMaskVolume);
   }
 
-  if (outputClippedVolumeROI != "")
+  if (!outputClippedVolumeROI.empty())
   {
     std::cout << "WARNING:  This feature is not yet implemented! " << std::endl;
     //    itkUtil::WriteImage<unsigned char>(,MaskImage,outputClippedVolumeROI);

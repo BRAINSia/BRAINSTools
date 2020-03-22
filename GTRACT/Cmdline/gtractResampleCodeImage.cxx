@@ -68,22 +68,22 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputCodeVolume.size() == 0)
+  if (inputCodeVolume.empty())
   {
     violated = true;
     std::cout << "  --inputCodeVolume Required! " << std::endl;
   }
-  if (inputReferenceVolume.size() == 0)
+  if (inputReferenceVolume.empty())
   {
     violated = true;
     std::cout << "  --inputReferenceVolume Required! " << std::endl;
   }
-  if (inputTransform.size() == 0)
+  if (inputTransform.empty())
   {
     violated = true;
     std::cout << "  --inputTransform Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;

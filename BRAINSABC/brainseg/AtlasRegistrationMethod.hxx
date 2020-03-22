@@ -578,7 +578,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
         std::vector<double>      minimumStepSize;
         std::vector<std::string> transformType;
         // Do full registration at first iteration level if InitialTransform not given
-        if (atlasToSubjectInitialTransformName == "") // If no initial transform, then do full multi-step
+        if (atlasToSubjectInitialTransformName.empty()) // If no initial transform, then do full multi-step
         // registration.
         {
           minimumStepSize.push_back(0.0025);
@@ -635,7 +635,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
         {
           atlasToSubjectRegistrationHelper->SetRestoreState(m_RestoreState);
         }
-        else if (atlasToSubjectInitialTransformName == "") // If no initial transform, then do full multi-step
+        else if (atlasToSubjectInitialTransformName.empty()) // If no initial transform, then do full multi-step
         // registration.
         {
           minimumStepSize.push_back(0.0025);

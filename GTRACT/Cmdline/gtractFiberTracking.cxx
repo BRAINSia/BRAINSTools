@@ -159,7 +159,7 @@ main(int argc, char * argv[])
   using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
   using TensorImageType = itk::Image<TensorPixelType, 3>;
   using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
-  if (inputTensorVolume == "")
+  if (inputTensorVolume.empty())
   {
     std::cerr << "Missing Filename for input Tensor Volume (--inputTensorVolume)" << std::endl;
     return EXIT_FAILURE;
@@ -182,7 +182,7 @@ main(int argc, char * argv[])
   AdaptOriginAndDirection<TensorImageType>(tensorImage);
 
   // std::cout <<  "Tensor Image : " << tensorImage << std::endl;
-  if (inputAnisotropyVolume == "")
+  if (inputAnisotropyVolume.empty())
   {
     std::cerr << "Missing filename for input Anisotropy Volume (--inputAnisotropyVolume)" << std::endl;
     return EXIT_FAILURE;
@@ -208,7 +208,7 @@ main(int argc, char * argv[])
   AdaptOriginAndDirection<AnisotropyImageType>(anisotropyImage);
   // std::cout << "Anisotropy Image Updated: " << anisotropyImage << std::endl;
 
-  if (inputStartingSeedsLabelMapVolume == "")
+  if (inputStartingSeedsLabelMapVolume.empty())
   {
     std::cerr << "Missing filename for input Starting Seeds Label Map Volume (--inputStartingSeedsLabelMapVolume)"
               << std::endl;
@@ -245,7 +245,7 @@ main(int argc, char * argv[])
 
   if (trackingMethod != "Free")
   {
-    if (inputEndingSeedsLabelMapVolume == "")
+    if (inputEndingSeedsLabelMapVolume.empty())
     {
       std::cerr << "Missing filename for input Ending Seeds Label Map (--inputEndingSeedsLabelMapVolume)" << std::endl;
       return EXIT_FAILURE;
@@ -278,7 +278,7 @@ main(int argc, char * argv[])
   if (trackingMethod == "Guided")
   {
     vtkPolyData * guideFiber;
-    if (inputTract == "")
+    if (inputTract.empty())
     {
       std::cerr << "Missing Input Guide Tract (--inputTract)" << std::endl;
       return EXIT_FAILURE;

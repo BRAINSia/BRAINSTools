@@ -286,7 +286,8 @@ public:
     //             location.
     std::string debugOutputDirectory("");
     if (optimizer->GetCurrentIteration() < 5 // Only do first 4 of each iteration
-        && itksys::SystemTools::GetEnv("DEBUG_JOINTHISTOGRAM_DIR", debugOutputDirectory) && debugOutputDirectory != "")
+        && itksys::SystemTools::GetEnv("DEBUG_JOINTHISTOGRAM_DIR", debugOutputDirectory) &&
+        !debugOutputDirectory.empty())
     {
       // Special BUG work around for MMI metric
       // that does not work in multi-threaded mode

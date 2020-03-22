@@ -67,22 +67,22 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputAnisotropyVolume.size() == 0)
+  if (inputAnisotropyVolume.empty())
   {
     violated = true;
     std::cout << "  --inputAnisotropyVolume Required! " << std::endl;
   }
-  if (inputAnatomicalVolume.size() == 0)
+  if (inputAnatomicalVolume.empty())
   {
     violated = true;
     std::cout << "  --inputAnatomicalVolume Required! " << std::endl;
   }
-  if (inputTransform.size() == 0)
+  if (inputTransform.empty())
   {
     violated = true;
     std::cout << "  --inputTransform Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;

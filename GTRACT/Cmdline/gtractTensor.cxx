@@ -98,12 +98,12 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputVolume.size() == 0)
+  if (inputVolume.empty())
   {
     violated = true;
     std::cout << "  --inputVolume Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;
@@ -156,7 +156,7 @@ main(int argc, char * argv[])
   }
   else if (maskProcessingMode == "ROI")
   {
-    if (maskVolume == "")
+    if (maskVolume.empty())
     {
       std::cerr << "Error: missing mask Volume needed for ROI mask Processing" << std::endl;
       return EXIT_FAILURE;

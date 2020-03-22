@@ -58,7 +58,7 @@ DWIConverterFactory::New()
 
   DWIConverter * converter(nullptr);
   // nothing at all found?
-  if (m_InputFileNames.size() < 1)
+  if (m_InputFileNames.empty())
   {
     std::cerr << "Error: no DICOMfiles found in inputDirectory: " << m_DicomDirectory << std::endl;
     return nullptr;

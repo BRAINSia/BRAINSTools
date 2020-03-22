@@ -74,12 +74,12 @@ main(int argc, char * argv[])
   }
 
   bool violated = false;
-  if (inputTensorVolume.size() == 0)
+  if (inputTensorVolume.empty())
   {
     violated = true;
     std::cout << "  --inputTensorVolume Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;

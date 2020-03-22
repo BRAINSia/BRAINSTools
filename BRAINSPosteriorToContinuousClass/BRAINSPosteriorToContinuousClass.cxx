@@ -32,42 +32,42 @@ main(int argc, char ** argv)
   BRAINSRegisterAlternateIO();
 
   bool violated = false;
-  if (inputWhiteVolume.size() == 0)
+  if (inputWhiteVolume.empty())
   {
     violated = true;
     std::cout << "  --inputWhiteVolume Required! " << std::endl;
   }
-  if (inputBasalGmVolume.size() == 0)
+  if (inputBasalGmVolume.empty())
   {
     violated = true;
     std::cout << "  --inputBasalGmVolume Required! " << std::endl;
   }
-  if (inputSurfaceGmVolume.size() == 0)
+  if (inputSurfaceGmVolume.empty())
   {
     violated = true;
     std::cout << "  --inputSurfaceGmVolume Required! " << std::endl;
   }
-  if (inputCsfVolume.size() == 0)
+  if (inputCsfVolume.empty())
   {
     violated = true;
     std::cout << "  --inputCsfVolume Required! " << std::endl;
   }
-  if (inputVbVolume.size() == 0)
+  if (inputVbVolume.empty())
   {
     violated = true;
     std::cout << "  --inputVbVolume Required! " << std::endl;
   }
-  if (inputCrblGmVolume.size() == 0)
+  if (inputCrblGmVolume.empty())
   {
     violated = true;
     std::cout << "  --inputCrblGmVolume Required! " << std::endl;
   }
-  if (inputCrblWmVolume.size() == 0)
+  if (inputCrblWmVolume.empty())
   {
     violated = true;
     std::cout << "  --inputCrblWmVolume Required! " << std::endl;
   }
-  if (outputVolume.size() == 0)
+  if (outputVolume.empty())
   {
     violated = true;
     std::cout << "  --outputVolume Required! " << std::endl;

@@ -197,7 +197,7 @@ public:
                   bool                useBMatrixGradientDirections,
                   bool                useIdentityMeaseurementFrame,
                   double              smallGradientThreshold,
-                  const std::string   conversionMode) const;
+                  const std::string   inputFileType) const;
 
   void
   ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string commentstring) const;

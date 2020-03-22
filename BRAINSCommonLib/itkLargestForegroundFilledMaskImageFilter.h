@@ -138,7 +138,7 @@ private:
   SetLowHigh(InputPixelType & low, InputPixelType & high);
 
   void
-  ImageMinMax(InputPixelType & min, InputPixelType & max) const;
+  ImageMinMax(InputPixelType & imageMin, InputPixelType & imageMax) const;
 
   // No longer used  double m_OtsuPercentileThreshold;
   double           m_OtsuPercentileLowerThreshold;

@@ -118,7 +118,7 @@ public:
   EncloseInCentering(const PointType & EncodeCenter, const PointType & DecodeCenter);
 
   void
-  EncloseInAffineTransforms(AffineTransformPointer EncodeAffineTransform, AffineTransformPointer DecodeAffineTransform);
+  EncloseInAffineTransforms(AffineTransformPointer Encode, AffineTransformPointer Decode);
 
 protected:
   /** Set the four coordinated AffineTransform conversions. */

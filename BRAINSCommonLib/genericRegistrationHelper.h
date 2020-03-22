@@ -508,7 +508,7 @@ public:
    * output. */
   using Superclass::MakeOutput;
   virtual DataObjectPointer
-  MakeOutput(unsigned int idx);
+  MakeOutput(unsigned int output);
 
   /** Method to return the latest modified time of this object or
    * any of its cached ivars */

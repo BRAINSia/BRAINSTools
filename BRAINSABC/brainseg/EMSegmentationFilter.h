@@ -168,7 +168,7 @@ public:
   SetRawInputImages(const MapOfInputImageVectors newInputImages);
 
   void
-  SetOriginalAtlasImages(const MapOfInputImageVectors newTemplateImages);
+  SetOriginalAtlasImages(const MapOfInputImageVectors newAtlasImages);
 
   //
   //  itkGetMacro(WarpedAtlasImages,std::vector<InputImagePointer>);
@@ -179,7 +179,7 @@ public:
   itkGetMacro(TemplateBrainMask, ByteImagePointer);
 
   void
-  SetPriors(ProbabilityImageVectorType probs);
+  SetPriors(ProbabilityImageVectorType priors);
 
   void
   SetPriorWeights(VectorType w);
@@ -191,7 +191,7 @@ public:
   }
 
   void
-  SetPriorLabelCodeVector(IntVectorType n);
+  SetPriorLabelCodeVector(IntVectorType ng);
 
   BoolVectorType
   GetPriorUseForBiasVector() const
@@ -200,7 +200,7 @@ public:
   }
 
   void
-  SetPriorUseForBiasVector(const BoolVectorType & n);
+  SetPriorUseForBiasVector(const BoolVectorType & ng);
 
   BoolVectorType
   GetPriorIsForegroundPriorVector() const
@@ -209,7 +209,7 @@ public:
   }
 
   void
-  SetPriorIsForegroundPriorVector(const BoolVectorType & n);
+  SetPriorIsForegroundPriorVector(const BoolVectorType & ng);
 
   void
   SetPriorNames(const std::vector<std::string> & newPriorNames)
@@ -303,7 +303,7 @@ protected:
   UpdateIntensityBasedClippingOfPriors(const unsigned int                 CurrentEMIteration,
                                        const MapOfInputImageVectors &     intensityList,
                                        const ProbabilityImageVectorType & WarpedPriorsList,
-                                       ByteImagePointer &                 NonAirRegion);
+                                       ByteImagePointer &                 ForegroundBrainRegion);
 
   ByteImageVectorType
   ForceToOne(ProbabilityImageVectorType & WarpedPriorsList);
@@ -319,7 +319,7 @@ private:
   WriteDebugHeadRegion(const unsigned int CurrentEMIteration) const;
 
   void
-  WriteDebugPosteriors(const unsigned int                 CurrentEMIteration,
+  WriteDebugPosteriors(const unsigned int                 ComputeIterationID,
                        const std::string                  ClassifierID,
                        const ProbabilityImageVectorType & Posteriors) const;
 
@@ -333,7 +333,7 @@ private:
   WriteDebugWarpedAtlasImages(const unsigned int CurrentEMIteration) const;
 
   void
-  WriteDebugForegroundMask(const ByteImageType::Pointer & currForegroundMask,
+  WriteDebugForegroundMask(const ByteImageType::Pointer & currForgroundBrainMask,
                            const unsigned int             CurrentEMIteration) const;
 
   void
@@ -347,7 +347,7 @@ private:
   InitializePosteriors();
 
   void
-  kNNCore(SampleType *                          trainMatrix,
+  kNNCore(SampleType *                          trainSampleSet,
           const vnl_vector<FloatingPrecision> & labelVector,
           const vnl_matrix<FloatingPrecision> & testMatrix,
           vnl_matrix<FloatingPrecision> &       liklihoodMatrix,
@@ -358,8 +358,8 @@ private:
 
   std::vector<typename TProbabilityImage::Pointer>
   ComputekNNPosteriors(const ProbabilityImageVectorType & Priors,
-                       const MapOfInputImageVectors &     IntensityImages,
-                       ByteImagePointer &                 CleanedLabels,
+                       const MapOfInputImageVectors &     intensityImages,
+                       ByteImagePointer &                 labelsImage,
                        const IntVectorType &              labelClasses,
                        const std::vector<bool> &          priorIsForegroundPriorVector);
 

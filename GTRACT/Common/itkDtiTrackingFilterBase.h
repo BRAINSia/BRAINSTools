@@ -218,7 +218,7 @@ protected:
   MMToContinuousIndex(PointType & p, ContinuousIndexType & index);
 
   void
-  MMToContinuousIndex(double * p, ContinuousIndexType & index);
+  MMToContinuousIndex(double * pt, ContinuousIndexType & index);
 
   void
   StepIndexInPointSpace(ContinuousIndexType & newIndex, ContinuousIndexType & oldIndex, TVector & vec);

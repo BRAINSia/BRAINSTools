@@ -179,7 +179,7 @@ public:
 
   /** Set method to add a gradient direction and its corresponding image. */
   void
-  AddGradientImage(const GradientDirectionType &, const GradientImageType * image);
+  AddGradientImage(const GradientDirectionType &, const GradientImageType * gradientImage);
 
   /** Another set method to add a gradient directions and its corresponding
    * image. The image here is a VectorImage. The user is expected to pass the
@@ -188,7 +188,7 @@ public:
    * VectorImage.  For the baseline image, a vector of all zeros
    * should be set. */
   void
-  SetGradientImage(GradientDirectionContainerType *, const GradientImagesType * image);
+  SetGradientImage(GradientDirectionContainerType *, const GradientImagesType * gradientImage);
 
   /** Set method to set the reference image. */
   void

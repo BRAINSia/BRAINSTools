@@ -228,7 +228,7 @@ public:
   SetAtlasOriginalImageList(MapOfFloatImageVectors & NewAtlasList);
 
   void
-  SetIntraSubjectOriginalImageList(MapOfFloatImageVectors & NewImageList);
+  SetIntraSubjectOriginalImageList(MapOfFloatImageVectors & NewIntraSubjectOriginalImageList);
 
   // itkSetMacro( IntraSubjectTransformFileNames, std::vector<std::string> );
   itkSetMacro(AtlasToSubjectTransformFileName, std::string);

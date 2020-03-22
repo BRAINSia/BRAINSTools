@@ -88,7 +88,7 @@ protected:
 
 private:
   void
-  ImageMinMax(InputPixelType & min, InputPixelType & max);
+  ImageMinMax(InputPixelType & ImageMin, InputPixelType & ImageMax);
 
   InputImagePointer            m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;

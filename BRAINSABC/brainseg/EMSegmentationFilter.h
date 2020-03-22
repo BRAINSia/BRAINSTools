@@ -285,7 +285,7 @@ public:
 
 protected:
   EMSegmentationFilter();
-  ~EMSegmentationFilter();
+  ~EMSegmentationFilter() override;
 
   void
   CheckInput();

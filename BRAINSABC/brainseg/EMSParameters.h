@@ -43,7 +43,7 @@ public:
   virtual bool
   CheckValues() const;
 
-  virtual void
+  void
   PrintSelf(std::ostream & os, itk::Indent) const override;
 
   itkGetConstMacro(Suffix, std::string);
@@ -116,7 +116,7 @@ public:
   itkGetConstMacro(ImageLinearMapType, std::string);
   itkSetMacro(ImageLinearMapType, std::string);
 
-  virtual ~EMSParameters() = default;
+  ~EMSParameters() override = default;
 
 protected:
   EMSParameters();

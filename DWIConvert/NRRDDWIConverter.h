@@ -40,7 +40,7 @@ public:
 
 private:
   Volume4DType::Pointer
-              CreateVolume(VectorVolumeType::Pointer & inputVol);
+              CreateVolume(VectorVolumeType::Pointer & vector3DVolume);
   std::string m_inputBValues;
   std::string m_inputBVectors;
 };

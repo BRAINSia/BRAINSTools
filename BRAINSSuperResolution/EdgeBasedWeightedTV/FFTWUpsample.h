@@ -15,13 +15,13 @@ extern HalfHermetianImageType::Pointer
 GetLowPassFilterFFT(FloatImageType::Pointer inputImage, itk::ImageBase<3>::Pointer referenceImageBase);
 
 extern HalfHermetianImageType::Pointer
-A_fhp(FloatImageType::Pointer inHRRealImage, itk::ImageBase<3>::Pointer desiredOutputRes);
+A_fhp(FloatImageType::Pointer inHRRealImage, itk::ImageBase<3>::Pointer desiredOutputRef);
 extern FloatImageType::Pointer
 At_fhp(HalfHermetianImageType::Pointer inLRCoeffs,
        const bool                      inputFirstDimIsOdd,
        itk::ImageBase<3>::Pointer      desiredOutputRef);
 extern FloatImageType::Pointer
-IdentityResampleByFFT(FloatImageType::Pointer inputImage, itk::ImageBase<3>::Pointer referenceImageBase);
+IdentityResampleByFFT(FloatImageType::Pointer inOriginalImage, itk::ImageBase<3>::Pointer desiredOutputRef);
 
 extern HalfHermetianImageType::Pointer CreateZeroFFTCoefficients(itk::ImageBase<3>::Pointer referenceImageBase);
 extern void
@@ -29,7 +29,7 @@ FFTWInit(const std::string path_for_wisdom);
 extern HalfHermetianImageType::Pointer
 GetForwardFFT(FloatImageType::Pointer inputImage, PrecisionType FFTScaler = 1.0);
 extern FloatImageType::Pointer
-GetInverseFFT(HalfHermetianImageType::Pointer inputImage,
+GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCoeffs,
               const bool                      referenceImageBase_ActualXDimensionIsOdd,
               PrecisionType                   FFTScaler = 1.0);
 

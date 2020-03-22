@@ -257,7 +257,7 @@ protected:
 private:
   template <typename TLocalCostMetric>
   void
-  SetupRegistration(GenericMetricType * localCostMetric);
+  SetupRegistration(GenericMetricType * costMetric);
 
   template <typename TLocalCostMetric>
   void

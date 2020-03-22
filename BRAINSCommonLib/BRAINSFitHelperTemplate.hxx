@@ -549,7 +549,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   , m_FinalMetricValue(0.0)
   , m_ObserveIterations(false)
   , m_CostMetricObject(nullptr)
-  , m_UseROIBSpline(0)
+  , m_UseROIBSpline(false)
   , m_SamplingStrategy(AffineRegistrationType::NONE)
   , m_InitializeRegistrationByCurrentGenericTransform(true)
   , m_MaximumNumberOfEvaluations(900)

@@ -2,6 +2,9 @@
 // Created by Johnson, Hans J on 11/24/16.
 //
 
+#include <utility>
+
+
 #include "DWIDICOMConverterBase.h"
 
 /**
@@ -14,12 +17,12 @@ DWIDICOMConverterBase::GetCommonDicomFieldsMap() const
   return this->m_CommonDicomFieldsMap;
 }
 
-DWIDICOMConverterBase::DWIDICOMConverterBase(const DCMTKFileVector &    allHeaders,
+DWIDICOMConverterBase::DWIDICOMConverterBase(DCMTKFileVector            allHeaders,
                                              const FileNamesContainer & inputFileNames,
                                              const bool                 useBMatrixGradientDirections)
   : DWIConverter(inputFileNames)
   , m_UseBMatrixGradientDirections(useBMatrixGradientDirections)
-  , m_Headers(allHeaders)
+  , m_Headers(std::move(allHeaders))
   , m_MultiSliceVolume(false)
   , m_SliceOrderIS(true)
   , m_IsInterleaved(false)

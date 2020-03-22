@@ -87,7 +87,7 @@ public:
   using PointType = itk::Vector<double, 3>;
 
   using CommonDicomFieldMapType = std::map<std::string, std::string>;
-  DWIConverter(const FileNamesContainer & inputFileNames);
+  DWIConverter(FileNamesContainer inputFileNames);
 
   virtual ~DWIConverter();
 

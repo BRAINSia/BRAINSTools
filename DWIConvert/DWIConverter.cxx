@@ -2,10 +2,13 @@
 // Created by Johnson, Hans J on 12/3/16.
 //
 
+#include <utility>
+
+
 #include "DWIConverter.h"
 #include "itkFlipImageFilter.h"
-DWIConverter::DWIConverter(const FileNamesContainer & inputFileNames)
-  : m_InputFileNames(inputFileNames)
+DWIConverter::DWIConverter(FileNamesContainer inputFileNames)
+  : m_InputFileNames(std::move(inputFileNames))
   , m_SlicesPerVolume(0)
   , m_NSlice(0)
   , m_NVolume(0)

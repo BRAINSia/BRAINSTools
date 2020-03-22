@@ -573,12 +573,12 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   typename CompositeTransformType::Pointer & initialITKTransform)
 {
   // FitCommonCode
-  typedef typename itk::MultiModal3DMutualRegistrationHelper<TransformType,
-                                                             OptimizerType,
-                                                             FixedImageType,
-                                                             MovingImageType,
-                                                             FitCommonCodeMetricType>
-    MultiModal3DMutualRegistrationHelperType;
+  using MultiModal3DMutualRegistrationHelperType =
+    typename itk::MultiModal3DMutualRegistrationHelper<TransformType,
+                                                       OptimizerType,
+                                                       FixedImageType,
+                                                       MovingImageType,
+                                                       FitCommonCodeMetricType>;
 
   typename MultiModal3DMutualRegistrationHelperType::Pointer appMutualRegistration =
     MultiModal3DMutualRegistrationHelperType::New();

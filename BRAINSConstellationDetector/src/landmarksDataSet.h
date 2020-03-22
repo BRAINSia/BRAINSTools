@@ -47,12 +47,17 @@ class landmarksDataSet
     public std::map<std::string, itk::Point<double, 3>>
 {
 private:
-  typedef enum
+  using err_flags = enum
+
   {
+
     eof,
+
     bad,
+
     shortLine
-  } err_flags;
+
+  };
 
 public:
   using PointType = itk::Point<double, 3>;

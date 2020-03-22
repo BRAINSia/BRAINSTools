@@ -50,16 +50,16 @@ using PointType = AffineTransformType::InputPointType;
 using VectorType = AffineTransformType::OutputVectorType;
 
 using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-typedef VersorRigid3DTransformType::Pointer        VersorRigid3DTransformPointer;
-typedef VersorRigid3DTransformType::ParametersType VersorRigid3DParametersType;
+using VersorRigid3DTransformPointer = VersorRigid3DTransformType::Pointer;
+using VersorRigid3DParametersType = VersorRigid3DTransformType::ParametersType;
 
 using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
 using ScaleVersor3DTransformPointer = ScaleVersor3DTransformType::Pointer;
-typedef ScaleVersor3DTransformType::ParametersType ScaleVersor3DParametersType;
+using ScaleVersor3DParametersType = ScaleVersor3DTransformType::ParametersType;
 
 using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
-typedef ScaleSkewVersor3DTransformType::Pointer        ScaleSkewVersor3DTransformPointer;
-typedef ScaleSkewVersor3DTransformType::ParametersType ScaleSkewVersor3DParametersType;
+using ScaleSkewVersor3DTransformPointer = ScaleSkewVersor3DTransformType::Pointer;
+using ScaleSkewVersor3DParametersType = ScaleSkewVersor3DTransformType::ParametersType;
 
 /**
  * AffineTransformPointer  :=  AffineTransformPointer

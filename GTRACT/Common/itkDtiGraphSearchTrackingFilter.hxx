@@ -95,8 +95,8 @@ template <typename TTensorImageType, typename TAnisotropyImageType, typename TMa
 void
 DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::Update()
 {
-  typedef typename Self::TensorImageType::PixelType::EigenValuesArrayType   EigenValuesArrayType;
-  typedef typename Self::TensorImageType::PixelType::EigenVectorsMatrixType EigenVectorsMatrixType;
+  using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
+  using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
   float   anisotropy, anisotropySum;
   TVector vin(3), vout(3);

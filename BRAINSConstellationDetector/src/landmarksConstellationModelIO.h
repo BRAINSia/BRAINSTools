@@ -78,11 +78,15 @@ class landmarksConstellationModelIO : public landmarksConstellationModelBase
 private:
   using Self = landmarksConstellationModelIO;
   using ioErr = enum { readFail, writeFail };
-  typedef enum
+  using fileSig = enum
+
   {
+
     file_signature = 0x12345678,
+
     swapped_file_signature = 0x78563412
-  } fileSig;
+
+  };
 
 public:
   using IndexLocationVectorType = std::vector<SImageType::PointType::VectorType>;

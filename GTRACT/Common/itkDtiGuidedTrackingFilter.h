@@ -77,7 +77,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  typedef vtkPolyData * GuideFiberType;
+  using GuideFiberType = vtkPolyData *;
 
   /** Standard New method. */
   itkNewMacro(Self);

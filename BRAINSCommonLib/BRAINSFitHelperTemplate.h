@@ -163,11 +163,15 @@ public:
 
   // INFO:  This should be converted to use the
   //       interpolation mechanisms from GenericTransform
-  typedef enum
+  using InterpolationType = enum
+
   {
+
     LINEAR_INTERP = 0,
+
     WINDOWSINC_INTERP = 1
-  } InterpolationType;
+
+  };
 
   itkSetMacro(SamplingPercentage, RealType);
   itkGetConstMacro(SamplingPercentage, RealType);

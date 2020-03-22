@@ -92,7 +92,7 @@ main(int argc, char * argv[])
   }
 
   // Invert the deformationfield field
-  typedef itk::GtractInverseDisplacementFieldImageFilter<DisplacementFieldType, DisplacementFieldType> FilterType;
+  using FilterType = itk::GtractInverseDisplacementFieldImageFilter<DisplacementFieldType, DisplacementFieldType>;
 
   FilterType::Pointer inverseFilter = FilterType::New();
   inverseFilter->SetOutputSpacing(scalarReader->GetOutput()->GetSpacing());

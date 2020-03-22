@@ -55,7 +55,7 @@
 
 #define ITK_TEST_DIMENSION_MAX 6
 
-typedef int (*MainFuncPointer)(int, char *[]);
+using MainFuncPointer = int (*)(int, char **);
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
 #define REGISTER_TEST(test)                                                                                            \

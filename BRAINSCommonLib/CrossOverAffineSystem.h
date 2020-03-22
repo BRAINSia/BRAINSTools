@@ -72,7 +72,7 @@ public:
   /** Type of the scalar representing coordinate and vector elements. */
   using ScalarType = TCoordinateType;
 
-  typedef vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions + 1> VnlTransformMatrixType44;
+  using VnlTransformMatrixType44 = vnl_matrix_fixed<TCoordinateType, NDimensions + 1, NDimensions + 1>;
   // typedef vnl_matrix_fixed<TCoordinateType, NDimensions+1, NDimensions+1>
   //  VnlTransformMatrixType33;
 
@@ -90,16 +90,16 @@ public:
   using VersorParametersType = typename VersorTransformType::ParametersType;
 
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<TCoordinateType>;
-  typedef typename VersorRigid3DTransformType::Pointer        VersorRigid3DTransformPointer;
-  typedef typename VersorRigid3DTransformType::ParametersType VersorRigid3DParametersType;
+  using VersorRigid3DTransformPointer = typename VersorRigid3DTransformType::Pointer;
+  using VersorRigid3DParametersType = typename VersorRigid3DTransformType::ParametersType;
 
   using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TCoordinateType>;
-  typedef typename ScaleVersor3DTransformType::Pointer        ScaleVersor3DTransformPointer;
-  typedef typename ScaleVersor3DTransformType::ParametersType ScaleVersor3DParametersType;
+  using ScaleVersor3DTransformPointer = typename ScaleVersor3DTransformType::Pointer;
+  using ScaleVersor3DParametersType = typename ScaleVersor3DTransformType::ParametersType;
 
   using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<TCoordinateType>;
-  typedef typename ScaleSkewVersor3DTransformType::Pointer        ScaleSkewVersor3DTransformPointer;
-  typedef typename ScaleSkewVersor3DTransformType::ParametersType ScaleSkewVersor3DParametersType;
+  using ScaleSkewVersor3DTransformPointer = typename ScaleSkewVersor3DTransformType::Pointer;
+  using ScaleSkewVersor3DParametersType = typename ScaleSkewVersor3DTransformType::ParametersType;
 
   /** Get the four coordinated AffineTransform conversions. */
   itkGetMacro(InhaleEncodeConversion, AffineTransformPointer);

@@ -39,7 +39,7 @@ main(int argc, char * argv[])
   using AbsValDiffFilterType = itk::AbsoluteValueDifferenceImageFilter<ImageType, ImageType, ImageType>;
   using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
 
-  typedef itk::NearestNeighborInterpolateImageFunction<ImageType, double> NN_InterpolatorType;
+  using NN_InterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
   using IdentityTransformType = itk::IdentityTransform<double, Dimension>;
   using labelResamplerType = itk::ResampleImageFilter<ImageType, ImageType>;
 

@@ -43,13 +43,19 @@
 /**
  * @brief enumeration for selecting different FCSV file formats.
  */
-typedef enum
+using SLICER_LANDMARK_FILE_TYPE = enum
+
 {
+
   SLICER_FCSV_BEGIN = 0,
+
   SLICER_V3_FCSV = 1,
+
   SLICER_V4_FCSV = 2,
+
   SLICER_FCSV_END = 3
-} SLICER_LANDMARK_FILE_TYPE;
+
+};
 
 /*
  * Read lmk weights

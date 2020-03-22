@@ -156,7 +156,7 @@ public:
   itkNewMacro(Self);
 
   using OptimizerType = TOptimizer;
-  typedef const OptimizerType * OptimizerPointer;
+  using OptimizerPointer = const OptimizerType *;
 
   using OptimizerParametersType = const typename OptimizerType::ParametersType;
 
@@ -406,7 +406,7 @@ public:
    *  the Transform to be passed in the data pipeline */
   using TransformOutputType = DataObjectDecorator<TransformType>;
   using TransformOutputPointer = typename TransformOutputType::Pointer;
-  typedef typename TransformOutputType::ConstPointer TransformOutputConstPointer;
+  using TransformOutputConstPointer = typename TransformOutputType::ConstPointer;
 
   /** Constants for the image dimensions */
   static constexpr unsigned int FixedImageDimension = FixedImageType::ImageDimension;

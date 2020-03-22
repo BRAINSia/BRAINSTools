@@ -155,7 +155,7 @@ public:
 
   using MaskImageType = Image<MaskPixelType, 3>;
 
-  typedef typename Superclass::OutputImageRegionType OutputImageRegionType;
+  using OutputImageRegionType = typename Superclass::OutputImageRegionType;
 
   /** Typedef defining one (of the many) gradient images.  */
   using GradientImageType = Image<GradientPixelType, 3>;
@@ -277,12 +277,17 @@ protected:
 
   /** enum to indicate if the gradient image is specified as a single multi-
    * component image or as several separate images */
-  typedef enum
+  using GradientImageTypeEnumeration = enum
+
   {
+
     GradientIsInASingleImage = 1,
+
     GradientIsInManyImages,
+
     Else
-  } GradientImageTypeEnumeration;
+
+  };
 
 private:
   /* Tensor basis coeffs */

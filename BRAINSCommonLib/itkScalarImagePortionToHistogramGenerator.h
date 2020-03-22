@@ -131,10 +131,10 @@ private:
   HistogramPointer m_Histogram;
   GeneratorPointer m_HistogramGenerator;
 
-  ScalarImagePortionToHistogramGenerator(const Self &); // purposely not
-                                                        // implemented
+  ScalarImagePortionToHistogramGenerator(const Self &) = delete; // purposely not
+                                                                 // implemented
   void
-  operator=(const Self &); // purposely not
+  operator=(const Self &) = delete; // purposely not
 
   // implemented
 };

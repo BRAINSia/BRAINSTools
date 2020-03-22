@@ -204,10 +204,10 @@ protected:
   PrepareKernelBaseSpline();
 
 private:
-  GtractInverseDisplacementFieldImageFilter(const Self &); // purposely not
-                                                           // implemented
+  GtractInverseDisplacementFieldImageFilter(const Self &) = delete; // purposely not
+                                                                    // implemented
   void
-  operator=(const Self &); // purposely not
+  operator=(const Self &) = delete; // purposely not
 
   // implemented
 

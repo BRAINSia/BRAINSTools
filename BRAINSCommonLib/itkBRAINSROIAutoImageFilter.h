@@ -175,10 +175,10 @@ protected:
   GenerateData() override;
 
 private:
-  double           m_OtsuPercentileThreshold;
-  double           m_ThresholdCorrectionFactor;
-  double           m_ClosingSize;
-  double           m_DilateSize;
+  double           m_OtsuPercentileThreshold{ 0.01 };
+  double           m_ThresholdCorrectionFactor{ 1.0 };
+  double           m_ClosingSize{ 9.0 };
+  double           m_DilateSize{ 0.0 };
   ImageMaskPointer m_ResultMaskPointer;
 };
 } // end namespace itk

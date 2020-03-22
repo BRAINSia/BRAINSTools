@@ -98,7 +98,7 @@ private:
   LLSMeansType              m_LLSMeans;
   LLSMatricesType           m_LLSMatrices;
   LLSSearchRadiiType        m_LLSSearchRadii;
-  H5::H5File *              m_H5File;
+  H5::H5File *              m_H5File{ nullptr };
   static const char * const m_LLSVersionGroupName;
   static const char * const m_LLSMeansGroupName;
   static const char * const m_LLSMatricesGroupName;

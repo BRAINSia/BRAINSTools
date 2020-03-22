@@ -126,17 +126,17 @@ protected:
   GenerateData() override;
 
 private:
-  bool         m_Maximize;
-  unsigned int m_Axis;
-  double       m_OtsuPercentileThreshold;
-  unsigned int m_ClosingSize;
-  double       m_HeadSizeLimit;
-  double       m_HeadSizeEstimate;
+  bool         m_Maximize{ true };
+  unsigned int m_Axis{ 2 };
+  double       m_OtsuPercentileThreshold{ 0.001 };
+  unsigned int m_ClosingSize{ 7 };
+  double       m_HeadSizeLimit{ 1000 };
+  double       m_HeadSizeEstimate{ 0 };
   PixelType    m_BackgroundValue;
   PointType    m_CenterOfBrain;
   //
   // DEBUGGING
-  bool m_GenerateDebugImages;
+  bool m_GenerateDebugImages{ false };
   /** The foreground mask, computed automatically if not specified
    * on the command line. **/
   typename TMaskImage::ConstPointer m_ImageMask;

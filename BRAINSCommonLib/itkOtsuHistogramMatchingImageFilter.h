@@ -214,8 +214,8 @@ protected:
                      const THistogramMeasurement               maxValue);
 
 private:
-  unsigned long m_NumberOfHistogramLevels;
-  unsigned long m_NumberOfMatchPoints;
+  unsigned long m_NumberOfHistogramLevels{ 256 };
+  unsigned long m_NumberOfMatchPoints{ 1 };
   bool          m_ThresholdAtMeanIntensity;
 
   InputPixelType  m_SourceIntensityThreshold;
@@ -241,8 +241,8 @@ private:
 
   using GradientArrayType = vnl_vector<double>;
   GradientArrayType m_Gradients;
-  double            m_LowerGradient;
-  double            m_UpperGradient;
+  double            m_LowerGradient{ 0.0 };
+  double            m_UpperGradient{ 0.0 };
 
   typename SpatialObjectType::Pointer m_SourceMask;
   typename SpatialObjectType::Pointer m_ReferenceMask;

@@ -295,48 +295,48 @@ private:
   std::string               m_OutputFixedVolumeROI;
   std::string               m_OutputMovingVolumeROI;
 
-  RealType     m_SamplingPercentage;
-  unsigned int m_NumberOfHistogramBins;
-  bool         m_HistogramMatch;
-  float        m_RemoveIntensityOutliers;
-  unsigned int m_NumberOfMatchPoints;
+  RealType     m_SamplingPercentage{ 1 };
+  unsigned int m_NumberOfHistogramBins{ 50 };
+  bool         m_HistogramMatch{ false };
+  float        m_RemoveIntensityOutliers{ 0.00 };
+  unsigned int m_NumberOfMatchPoints{ 10 };
 
   // INFO:  Would be better to have unsigned int
   std::vector<int>             m_NumberOfIterations;
-  double                       m_MaximumStepLength;
+  double                       m_MaximumStepLength{ 0.2 };
   std::vector<double>          m_MinimumStepLength;
-  double                       m_RelaxationFactor;
-  double                       m_TranslationScale;
-  double                       m_ReproportionScale;
-  double                       m_SkewScale;
-  double                       m_BackgroundFillValue;
+  double                       m_RelaxationFactor{ 0.5 };
+  double                       m_TranslationScale{ 1000.0 };
+  double                       m_ReproportionScale{ 1.0 };
+  double                       m_SkewScale{ 1.0 };
+  double                       m_BackgroundFillValue{ 0.0 };
   std::vector<std::string>     m_TransformType;
   std::string                  m_InitializeTransformMode;
-  double                       m_MaskInferiorCutOffFromCenter;
+  double                       m_MaskInferiorCutOffFromCenter{ 1000 };
   std::vector<int>             m_SplineGridSize;
-  double                       m_CostFunctionConvergenceFactor;
-  double                       m_ProjectedGradientTolerance;
-  double                       m_MaxBSplineDisplacement;
-  unsigned int                 m_ActualNumberOfIterations;
-  unsigned int                 m_PermittedNumberOfIterations;
-  unsigned int                 m_DebugLevel;
+  double                       m_CostFunctionConvergenceFactor{ 1e+9 };
+  double                       m_ProjectedGradientTolerance{ 1e-5 };
+  double                       m_MaxBSplineDisplacement{ 0.0 };
+  unsigned int                 m_ActualNumberOfIterations{ 0 };
+  unsigned int                 m_PermittedNumberOfIterations{ 0 };
+  unsigned int                 m_DebugLevel{ 0 };
   CompositeTransformPointer    m_CurrentGenericTransform;
   CompositeTransformPointer    m_RestoreState;
-  bool                         m_DisplayDeformedImage;
-  bool                         m_PromptUserAfterDisplay;
-  double                       m_FinalMetricValue;
-  bool                         m_ObserveIterations;
+  bool                         m_DisplayDeformedImage{ false };
+  bool                         m_PromptUserAfterDisplay{ false };
+  double                       m_FinalMetricValue{ 0.0 };
+  bool                         m_ObserveIterations{ false };
   typename MetricType::Pointer m_CostMetricObject;
-  bool                         m_UseROIBSpline;
+  bool                         m_UseROIBSpline{ false };
   SamplingStrategyType         m_SamplingStrategy;
-  bool                         m_InitializeRegistrationByCurrentGenericTransform;
-  int                          m_MaximumNumberOfEvaluations;
-  int                          m_MaximumNumberOfCorrections;
+  bool                         m_InitializeRegistrationByCurrentGenericTransform{ true };
+  int                          m_MaximumNumberOfEvaluations{ 900 };
+  int                          m_MaximumNumberOfCorrections{ 12 };
   std::string                  m_SyNMetricType;
   std::string                  m_SaveState;
-  bool                         m_SyNFull;
+  bool                         m_SyNFull{ true };
   // DEBUG OPTION:
-  int m_ForceMINumberOfThreads;
+  int m_ForceMINumberOfThreads{ -1 };
 }; // end BRAINSFitHelperTemplate class
 } // end namespace itk
 

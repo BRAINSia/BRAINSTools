@@ -93,9 +93,9 @@ private:
   InputImagePointer            m_Image;
   typename TMaskImage::Pointer m_BinaryPortionImage;
 
-  double       m_QuantileLowerThreshold;
-  double       m_QuantileUpperThreshold;
-  unsigned int m_NumberOfValidHistogramsEntries;
+  double       m_QuantileLowerThreshold{ 0.0 };
+  double       m_QuantileUpperThreshold{ 1.0 };
+  unsigned int m_NumberOfValidHistogramsEntries{ 0 };
 
   typename TInputImage::PixelType m_ImageMin;
   typename TInputImage::PixelType m_ImageMax;

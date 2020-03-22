@@ -40,11 +40,7 @@ namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 BRAINSROIAutoImageFilter<TInputImage, TOutputImage>::BRAINSROIAutoImageFilter()
-  : m_OtsuPercentileThreshold(0.01)
-  , m_ThresholdCorrectionFactor(1.0)
-  , m_ClosingSize(9.0)
-  , m_DilateSize(0.0)
-  , m_ResultMaskPointer(nullptr)
+  : m_ResultMaskPointer(nullptr)
 {
   // this filter requires two input images
   this->SetNumberOfRequiredInputs(1);

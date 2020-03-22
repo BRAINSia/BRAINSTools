@@ -253,23 +253,23 @@ protected:
 
   InputCoordType       m_MinimumRadius;
   InputCoordType       m_MaximumRadius;
-  double               m_Threshold;
+  double               m_Threshold{ 0 };
   InputCoordType       m_GradientThreshold;
   InternalPixelType    m_OutputThreshold;
-  double               m_SigmaGradient;
-  double               m_Variance;
+  double               m_SigmaGradient{ 1 };
+  double               m_Variance{ 1 };
   InputCoordType       m_VotingRadiusRatio;
   InputCoordType       m_SphereRadiusRatio;
-  double               m_SamplingRatio;
+  double               m_SamplingRatio{ 1.0 };
   InternalImagePointer m_RadiusImage;
   InternalImagePointer m_AccumulatorImage;
   SpheresListType      m_SpheresList;
-  unsigned int         m_NumberOfSpheres;
-  unsigned int         m_NbOfThreads;
-  bool                 m_AllSeedsProcessed;
+  unsigned int         m_NumberOfSpheres{ 1 };
+  unsigned int         m_NbOfThreads{ 1 };
+  bool                 m_AllSeedsProcessed{ false };
 
   // -- Add by Wei Lu
-  int m_HoughEyeDetectorMode;
+  int m_HoughEyeDetectorMode{ 0 };
 
   /** Method for evaluating the implicit function over the image. */
   void

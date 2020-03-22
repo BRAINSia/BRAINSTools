@@ -340,19 +340,16 @@ public:
 
 protected:
   CommandIterationUpdate()
-    : m_DisplayDeformedImage(false)
-    , m_PromptUserAfterDisplay(false)
-    , m_PrintParameters(false)
-    , m_MovingImage(nullptr)
+    : m_MovingImage(nullptr)
     , m_FixedImage(nullptr)
     , m_Transform(nullptr)
     , m_ObserverCostMetricObject(nullptr)
   {}
 
 private:
-  bool m_DisplayDeformedImage;
-  bool m_PromptUserAfterDisplay;
-  bool m_PrintParameters;
+  bool m_DisplayDeformedImage{ false };
+  bool m_PromptUserAfterDisplay{ false };
+  bool m_PrintParameters{ false };
 
   typename TImage::Pointer     m_MovingImage;
   typename TImage::Pointer     m_FixedImage;
@@ -542,25 +539,25 @@ private:
 
   typename MetricType::Pointer m_CostMetricObject;
 
-  double       m_SamplingPercentage;
-  unsigned int m_NumberOfHistogramBins;
-  unsigned int m_NumberOfIterations;
-  double       m_RelaxationFactor;
-  double       m_MaximumStepLength;
-  double       m_MinimumStepLength;
-  double       m_TranslationScale;
-  double       m_ReproportionScale;
-  double       m_SkewScale;
-  double       m_BackgroundFillValue;
-  unsigned int m_ActualNumberOfIterations;
-  bool         m_DisplayDeformedImage;
-  bool         m_PromptUserAfterDisplay;
-  double       m_FinalMetricValue;
-  bool         m_ObserveIterations;
+  double       m_SamplingPercentage{ 1 };
+  unsigned int m_NumberOfHistogramBins{ 200 };
+  unsigned int m_NumberOfIterations{ 0 };
+  double       m_RelaxationFactor{ 0.5 };
+  double       m_MaximumStepLength{ 0.2000 };
+  double       m_MinimumStepLength{ 0.0001 };
+  double       m_TranslationScale{ 1000.0 };
+  double       m_ReproportionScale{ 25.0 };
+  double       m_SkewScale{ 25.0 };
+  double       m_BackgroundFillValue{ 0.0 };
+  unsigned int m_ActualNumberOfIterations{ 0 };
+  bool         m_DisplayDeformedImage{ false };
+  bool         m_PromptUserAfterDisplay{ false };
+  double       m_FinalMetricValue{ 0 };
+  bool         m_ObserveIterations{ true };
 
   SamplingStrategyType m_SamplingStrategy;
 
-  ModifiedTimeType m_InternalTransformTime;
+  ModifiedTimeType m_InternalTransformTime{ 0 };
 };
 } // end namespace itk
 

@@ -94,7 +94,7 @@ protected:
 private:
   ThresholdArrayType m_QuantileLowerThreshold;
   ThresholdArrayType m_QuantileUpperThreshold;
-  double             m_LinearQuantileThreshold;
+  double             m_LinearQuantileThreshold{ 0.01 };
 
   typename IntegerImageType::Pointer m_BinaryPortionImage;
 

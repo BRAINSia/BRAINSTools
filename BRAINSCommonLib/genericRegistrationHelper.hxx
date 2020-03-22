@@ -88,23 +88,8 @@ MultiModal3DMutualRegistrationHelper<TTransformType,
   , // has to be provided by
     // this->Initialize().
   m_CostMetricObject(nullptr)
-  , m_SamplingPercentage(1)
-  , m_NumberOfHistogramBins(200)
-  , m_NumberOfIterations(0)
-  , m_RelaxationFactor(0.5)
-  , m_MaximumStepLength(0.2000)
-  , m_MinimumStepLength(0.0001)
-  , m_TranslationScale(1000.0)
-  , m_ReproportionScale(25.0)
-  , m_SkewScale(25.0)
-  , m_BackgroundFillValue(0.0)
-  , m_ActualNumberOfIterations(0)
-  , m_DisplayDeformedImage(false)
-  , m_PromptUserAfterDisplay(false)
-  , m_FinalMetricValue(0)
-  , m_ObserveIterations(true)
   , m_SamplingStrategy(AffineRegistrationType::NONE)
-  , m_InternalTransformTime(0)
+
 {
   this->SetNumberOfRequiredOutputs(1); // for the Transform
 

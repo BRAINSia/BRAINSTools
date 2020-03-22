@@ -64,12 +64,8 @@ public:
     , m_OriginalImage(nullptr)
     , m_ResamplerReferenceImage(nullptr)
     , m_CenterOfHeadMass()
-    , m_CenterOfHeadMassIsSet(false)
-    , m_BackgroundValue(0)
-    , m_DoPowell(true)
     , m_imInterp(nullptr)
-    , m_cc(0.0)
-    , m_HasLocalSupport(false)
+
   {
     this->m_Optimizer = OptimizerType::New();
     this->m_Optimizer->SetMetric(&(*this));
@@ -626,13 +622,13 @@ private:
   SImageType::Pointer             m_OriginalImage;
   SImageType::Pointer             m_ResamplerReferenceImage;
   SImageType::PointType           m_CenterOfHeadMass;
-  bool                            m_CenterOfHeadMassIsSet;
-  SImageType::PixelType           m_BackgroundValue;
+  bool                            m_CenterOfHeadMassIsSet{ false };
+  SImageType::PixelType           m_BackgroundValue{ 0 };
   OptimizerPointer                m_Optimizer;
-  bool                            m_DoPowell;
+  bool                            m_DoPowell{ true };
   LinearInterpolatorType::Pointer m_imInterp;
-  double                          m_cc;
-  bool                            m_HasLocalSupport;
+  double                          m_cc{ 0.0 };
+  bool                            m_HasLocalSupport{ false };
 };
 
 #ifndef ITK_MANUAL_INSTANTIATION

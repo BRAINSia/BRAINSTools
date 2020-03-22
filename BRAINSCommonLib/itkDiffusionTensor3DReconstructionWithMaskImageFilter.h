@@ -299,10 +299,10 @@ private:
   GradientDirectionContainerType::Pointer m_GradientDirectionContainer;
 
   /** Number of gradient measurements */
-  unsigned int m_NumberOfGradientDirections;
+  unsigned int m_NumberOfGradientDirections{ 0 };
 
   /** Number of baseline images */
-  unsigned int m_NumberOfBaselineImages;
+  unsigned int m_NumberOfBaselineImages{ 1 };
 
   /** Threshold on the reference image data */
   ReferencePixelType m_Threshold;

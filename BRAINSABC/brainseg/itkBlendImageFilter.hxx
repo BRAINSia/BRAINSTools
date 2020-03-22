@@ -29,8 +29,7 @@ namespace itk
  */
 template <typename TInputImage, typename TOutputImage>
 BlendImageFilter<TInputImage, TOutputImage>::BlendImageFilter()
-  : m_Blend1(1.0)
-  , m_Blend2(1.0)
+
 {}
 
 /**

@@ -169,10 +169,10 @@ main(int argc, char * argv[])
   minStepLength.push_back((double)minimumStepSize);
 
   std::vector<std::string> rigidTransformTypes;
-  rigidTransformTypes.push_back("ScaleVersor3D");
+  rigidTransformTypes.emplace_back("ScaleVersor3D");
 
   std::vector<std::string> affineTransformTypes;
-  affineTransformTypes.push_back("Affine");
+  affineTransformTypes.emplace_back("Affine");
 
   std::vector<int> iterations;
   iterations.push_back(numberOfIterations);

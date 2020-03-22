@@ -1110,7 +1110,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeDistributions(
       multiplyFilter->SetInput2(SubjectCandidateRegions[iclass]);
       multiplyFilter->Update();
 
-      distributionsCandidateRegions.push_back(multiplyFilter->GetOutput());
+      distributionsCandidateRegions.emplace_back(multiplyFilter->GetOutput());
     }
     else
     {
@@ -2729,7 +2729,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned
         multiplyFilter->SetInput2(CandidateRegions[iclass]);
         multiplyFilter->Update();
 
-        biasCandidateRegions.push_back(multiplyFilter->GetOutput());
+        biasCandidateRegions.emplace_back(multiplyFilter->GetOutput());
       }
       else
       {

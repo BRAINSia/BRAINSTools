@@ -579,11 +579,11 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
         // registration.
         {
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("Rigid");
+          transformType.emplace_back("Rigid");
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("ScaleVersor3D");
+          transformType.emplace_back("ScaleVersor3D");
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("ScaleSkewVersor3D");
+          transformType.emplace_back("ScaleSkewVersor3D");
         }
         else if (atlasToSubjectInitialTransformName != "AffineTransform")
         {
@@ -591,7 +591,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
                             << " type for m_AtlasLinearTransformChoice of type Affine");
         }
         minimumStepSize.push_back(0.0025);
-        transformType.push_back("Affine");
+        transformType.emplace_back("Affine");
         atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
         atlasToSubjectRegistrationHelper->SetTransformType(transformType);
       }
@@ -636,19 +636,19 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
         // registration.
         {
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("Rigid");
+          transformType.emplace_back("Rigid");
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("ScaleVersor3D");
+          transformType.emplace_back("ScaleVersor3D");
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("ScaleSkewVersor3D");
+          transformType.emplace_back("ScaleSkewVersor3D");
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("Affine");
+          transformType.emplace_back("Affine");
         }
         else if (atlasToSubjectInitialTransformName == "AffineTransform") // If initial Transform is Affine, then
         // update the affine stage
         {
           minimumStepSize.push_back(0.0025);
-          transformType.push_back("Affine");
+          transformType.emplace_back("Affine");
         }
         else if (atlasToSubjectInitialTransformName != "SyN" &&
                  atlasToSubjectInitialTransformName != "BSplineTransform" &&
@@ -658,7 +658,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
                             << " type for m_AtlasLinearTransformChoice of type SyN");
         }
         minimumStepSize.push_back(0.0025);
-        transformType.push_back("SyN");
+        transformType.emplace_back("SyN");
         atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
         atlasToSubjectRegistrationHelper->SetTransformType(transformType);
         atlasToSubjectRegistrationHelper->SetSyNFull(runSyNFull);

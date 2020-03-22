@@ -85,13 +85,7 @@ extern "C"
 } // namespace
 
 AtlasDefinition::AtlasDefinition()
-  : m_LastWeight(0.0)
-  , m_LastLower(0.0)
-  , m_LastUpper(0.0)
-  , m_LastGaussianClusterCount(0)
-  , m_LastLabelCode(0)
-  , m_LastUseForBias(false)
-  , m_LastIsForegroundPrior(false)
+
 {
   this->m_TissueTypes.resize(0);
 }

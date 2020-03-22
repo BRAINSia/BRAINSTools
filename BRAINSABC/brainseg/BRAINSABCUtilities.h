@@ -161,7 +161,7 @@ public:
   RegionStats()
     : m_Means()
     , m_Covariance()
-    , m_Weighting(0.0)
+
   {}
 
   void
@@ -171,10 +171,10 @@ public:
     this->m_Means.clear();
   }
 
-  MeanMapType m_Means;           // One measure per image channel type;
-  MatrixType  m_Covariance;      // Matrix of covariances of class by image
-                                 // channel
-  FloatingPrecision m_Weighting; // The strength of this class.
+  MeanMapType m_Means;                  // One measure per image channel type;
+  MatrixType  m_Covariance;             // Matrix of covariances of class by image
+                                        // channel
+  FloatingPrecision m_Weighting{ 0.0 }; // The strength of this class.
 };
 
 #include "BRAINSABCUtilities.hxx"

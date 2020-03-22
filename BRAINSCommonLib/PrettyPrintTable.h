@@ -42,14 +42,11 @@ private:
   using tableType = std::vector<rowType>;
 
   tableType    m_Table;
-  unsigned int m_Pad;
-  bool         m_rightJustify;
+  unsigned int m_Pad{ 1 };
+  bool         m_rightJustify{ false };
 
 public:
-  PrettyPrintTable()
-    : m_Pad(1)
-    , m_rightJustify(false)
-  {}
+  PrettyPrintTable() {}
 
   void
   setTablePad(unsigned int pad)

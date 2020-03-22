@@ -22,9 +22,7 @@
 #include "math.h"
 
 
-LLSModel ::LLSModel()
-  : m_H5File(nullptr)
-{}
+LLSModel ::LLSModel() {}
 
 LLSModel ::~LLSModel()
 {

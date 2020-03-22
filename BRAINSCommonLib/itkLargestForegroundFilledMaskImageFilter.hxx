@@ -46,11 +46,7 @@ namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
 LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::LargestForegroundFilledMaskImageFilter()
-  : m_OtsuPercentileLowerThreshold(0.01)
-  , m_OtsuPercentileUpperThreshold(1.0 - 0.01)
-  , m_ThresholdCorrectionFactor(1.0)
-  , m_ClosingSize(9.0)
-  , m_DilateSize(0.0)
+  : m_OtsuPercentileUpperThreshold(1.0 - 0.01)
   , m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue())
   , m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
 {}

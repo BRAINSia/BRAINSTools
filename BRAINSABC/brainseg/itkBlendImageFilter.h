@@ -97,7 +97,7 @@ protected:
   ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
 private:
-  double m_Blend1, m_Blend2;
+  double m_Blend1{ 1.0 }, m_Blend2{ 1.0 };
 };
 } // end namespace itk
 

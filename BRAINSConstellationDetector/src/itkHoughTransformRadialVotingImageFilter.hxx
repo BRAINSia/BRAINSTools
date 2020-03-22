@@ -72,21 +72,14 @@ template <typename TInputImage, typename TOutputImage>
 HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::HoughTransformRadialVotingImageFilter()
   : m_MinimumRadius(0)
   , m_MaximumRadius(10) // by default
-  , m_Threshold(0)      // by default
   , m_GradientThreshold(0)
   , m_OutputThreshold(0.0)
-  , m_SigmaGradient(1)
-  , m_Variance(1) // Scale of the DoG filter
   , m_VotingRadiusRatio(0.5)
   , m_SphereRadiusRatio(1)
-  , m_SamplingRatio(1.0)
   , m_RadiusImage(nullptr)
   , m_AccumulatorImage(nullptr)
   , m_SpheresList()
-  , m_NumberOfSpheres(1)
-  , m_NbOfThreads(1)
-  , m_AllSeedsProcessed(false)
-  , m_HoughEyeDetectorMode(0)
+
 {
   // Limiting the Hough Filter to run with single thread.
   // In a single threaded status, the increment of run time for this filter is not tremendous in compare with

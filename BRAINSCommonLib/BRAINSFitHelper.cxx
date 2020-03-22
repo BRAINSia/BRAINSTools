@@ -102,52 +102,19 @@ BRAINSFitHelper::BRAINSFitHelper()
   , // For multi-modal SyN
   m_OutputFixedVolumeROI("")
   , m_OutputMovingVolumeROI("")
-  , m_SamplingPercentage(1.0)
-  , // instead or number of samples, sampling% should be used that is a number between 0 and 1.
-  m_NumberOfHistogramBins(50)
-  , m_HistogramMatch(false)
-  , m_RemoveIntensityOutliers(0.00)
-  , m_NumberOfMatchPoints(10)
   , m_NumberOfIterations(1, 1500)
-  , m_MaximumStepLength(0.2)
   , m_MinimumStepLength(1, 0.005)
-  , m_RelaxationFactor(0.5)
-  , m_TranslationScale(1000.0)
-  , m_ReproportionScale(1.0)
-  , m_SkewScale(1.0)
-  , m_BackgroundFillValue(0.0)
   , m_TransformType(1, "Rigid")
   , m_InitializeTransformMode("Off")
-  , m_MaskInferiorCutOffFromCenter(1000)
   , m_SplineGridSize(3, 10)
-  , m_CostFunctionConvergenceFactor(1e+9)
-  , m_ProjectedGradientTolerance(1e-5)
-  , m_MaxBSplineDisplacement(0.0)
-  , m_ActualNumberOfIterations(0)
-  , m_PermittedNumberOfIterations(0)
-  ,
-  // m_AccumulatedNumberOfIterationsForAllLevels(0),
-  m_DebugLevel(0)
   , m_CurrentGenericTransform(nullptr)
   , m_RestoreState(nullptr)
-  ,
-  // m_GenericTransformList(0),
-  m_DisplayDeformedImage(false)
-  , m_PromptUserAfterDisplay(false)
-  , m_FinalMetricValue(0.0)
-  , m_ObserveIterations(true)
   , m_CostMetricName("MMI")
   , // Default to Mattes Mutual Information Metric
   m_SaveState("")
-  , m_UseROIBSpline(false)
   , m_Helper(nullptr)
   , m_SamplingStrategy(AffineRegistrationType::NONE)
-  , m_NormalizeInputImages(false)
-  , m_InitializeRegistrationByCurrentGenericTransform(true)
-  , m_MaximumNumberOfEvaluations(900)
-  , m_MaximumNumberOfCorrections(12)
-  , m_SyNFull(true)
-  , m_WriteOutputTransformInFloat(false)
+
 {
   vnl_sample_reseed(20181112); // Trying to get random number generation consistent
   m_SplineGridSize[0] = 14;

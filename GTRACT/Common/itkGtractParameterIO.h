@@ -90,8 +90,8 @@ protected:
 
 private:
   TMatrix     m_Directions;
-  float       m_Bvalue;
-  int         m_NumberOfDirections;
+  float       m_Bvalue{ 0.0 };
+  int         m_NumberOfDirections{ 0 };
   std::string m_FileName;
 };
 } // namespace itk

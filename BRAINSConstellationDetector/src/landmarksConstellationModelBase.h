@@ -27,14 +27,7 @@ protected:
   using ValMapIterator = ValMapType::iterator;
 
 public:
-  landmarksConstellationModelBase()
-    : m_NumDataSets(0)
-    , m_SearchboxDims(0)
-    , m_ResolutionUnits(1.0)
-    , m_InitialRotationAngle(0.0)
-    , m_InitialRotationStep(0.0)
-    , m_NumRotationSteps(0)
-  {}
+  landmarksConstellationModelBase() {}
 
   virtual ~landmarksConstellationModelBase() {}
 
@@ -153,14 +146,14 @@ public:
   }
 
 protected:
-  unsigned int m_NumDataSets;
-  unsigned int m_SearchboxDims;
-  float        m_ResolutionUnits;
+  unsigned int m_NumDataSets{ 0 };
+  unsigned int m_SearchboxDims{ 0 };
+  float        m_ResolutionUnits{ 1.0 };
   ValMapType   m_Height;
   ValMapType   m_Radius;
-  float        m_InitialRotationAngle;
-  float        m_InitialRotationStep;
-  unsigned int m_NumRotationSteps;
+  float        m_InitialRotationAngle{ 0.0 };
+  float        m_InitialRotationStep{ 0.0 };
+  unsigned int m_NumRotationSteps{ 0 };
 };
 
 #endif // _landmarksConstellationModelBase_h

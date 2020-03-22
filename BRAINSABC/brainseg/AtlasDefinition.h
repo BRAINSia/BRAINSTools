@@ -38,10 +38,7 @@ public:
   class BoundsType
   {
   public:
-    BoundsType()
-      : m_Low(0)
-      , m_High(0)
-    {}
+    BoundsType() {}
 
     void
     SetLower(const double v)
@@ -75,8 +72,8 @@ public:
     }
 
   private:
-    double m_Low;
-    double m_High;
+    double m_Low{ 0 };
+    double m_High{ 0 };
   };
   using BoundsMapType = std::map<std::string, BoundsType>;
 
@@ -272,13 +269,7 @@ private:
   class Prior
   {
   public:
-    Prior()
-      : m_Weight(0.0)
-      , m_GaussianClusterCount(0)
-      , m_LabelCode(0)
-      , m_UseForBias(false)
-      , m_IsForegroundPrior(false)
-    {}
+    Prior() {}
 
     const std::string &
     GetFilename() const
@@ -396,11 +387,11 @@ private:
 
   private:
     std::string   m_Filename;
-    double        m_Weight;
-    int           m_GaussianClusterCount;
-    int           m_LabelCode;
-    bool          m_UseForBias;
-    bool          m_IsForegroundPrior;
+    double        m_Weight{ 0.0 };
+    int           m_GaussianClusterCount{ 0 };
+    int           m_LabelCode{ 0 };
+    bool          m_UseForBias{ false };
+    bool          m_IsForegroundPrior{ false };
     BoundsMapType m_BoundsMap;
   };
   using PriorMapType = std::map<std::string, Prior>;
@@ -413,14 +404,14 @@ private:
   std::string            m_LastType;
   std::list<std::string> m_XMLElementStack;
 
-  double m_LastWeight;
-  double m_LastLower;
-  double m_LastUpper;
+  double m_LastWeight{ 0.0 };
+  double m_LastLower{ 0.0 };
+  double m_LastUpper{ 0.0 };
 
-  int           m_LastGaussianClusterCount;
-  int           m_LastLabelCode;
-  bool          m_LastUseForBias;
-  bool          m_LastIsForegroundPrior;
+  int           m_LastGaussianClusterCount{ 0 };
+  int           m_LastLabelCode{ 0 };
+  bool          m_LastUseForBias{ false };
+  bool          m_LastIsForegroundPrior{ false };
   BoundsMapType m_LastPriorBounds;
 };
 

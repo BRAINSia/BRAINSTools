@@ -149,22 +149,22 @@ private:
 
   std::string m_inputVolume;
   std::string m_inputDicomDirectory;
-  std::string m_inputBValues;           // default: ""  for FSL file
-  std::string m_inputBVectors;          // default: ""  for FSL file
-  std::string m_gradientVectorFile;     // deprecated
-  double      m_smallGradientThreshold; // default = 0.2
+  std::string m_inputBValues;                  // default: ""  for FSL file
+  std::string m_inputBVectors;                 // default: ""  for FSL file
+  std::string m_gradientVectorFile;            // deprecated
+  double      m_smallGradientThreshold{ 0.2 }; // default = 0.2
 
-  bool m_fMRIOutput;                   // default: false
-  bool m_allowLossyConversion;         // defualt: false
-  bool m_useIdentityMeasurementFrame;  // default: false
-  bool m_useBMatrixGradientDirections; // default: false
+  bool m_fMRIOutput{ false };                   // default: false
+  bool m_allowLossyConversion{ false };         // defualt: false
+  bool m_useIdentityMeasurementFrame{ false };  // default: false
+  bool m_useBMatrixGradientDirections{ false }; // default: false
 
   std::string m_outputVolume;
   std::string m_outputDirectory; // default: "."
   std::string m_outputBValues;   // default: ""  for FSL file
   std::string m_outputBVectors;  // default: ""  for FSL file
 
-  DWIConverter * m_converter;
+  DWIConverter * m_converter{ nullptr };
 };
 
 

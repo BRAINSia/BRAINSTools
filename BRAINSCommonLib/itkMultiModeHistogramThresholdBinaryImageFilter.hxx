@@ -35,7 +35,6 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage,
   , // temporarily estimate how many SetInput images
     // there are
   m_QuantileUpperThreshold(1)
-  , m_LinearQuantileThreshold(0.01)
   , m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue())
   , m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
 {

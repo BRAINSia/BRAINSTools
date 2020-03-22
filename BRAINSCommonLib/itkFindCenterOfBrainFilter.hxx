@@ -31,14 +31,7 @@ namespace itk
 {
 template <typename TInputImage, typename TMaskImage>
 FindCenterOfBrainFilter<TInputImage, TMaskImage>::FindCenterOfBrainFilter()
-  : m_Maximize(true)
-  , m_Axis(2)
-  , m_OtsuPercentileThreshold(0.001)
-  , m_ClosingSize(7)
-  , m_HeadSizeLimit(1000)
-  , m_HeadSizeEstimate(0)
-  , m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::ZeroValue())
-  , m_GenerateDebugImages(false)
+  : m_BackgroundValue(NumericTraits<typename ImageType::PixelType>::ZeroValue())
   , m_ImageMask(nullptr)
   , m_ClippedImageMask(nullptr)
   , m_TrimmedImage(nullptr)

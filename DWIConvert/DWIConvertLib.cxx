@@ -21,19 +21,14 @@ DWIConvert::DWIConvert()
   , m_inputBValues{}
   , m_inputBVectors{}
   , m_gradientVectorFile{} // deprecated
-  , m_smallGradientThreshold{ 0.2 }
+  ,
 
-  , m_fMRIOutput{ false }
-  , m_allowLossyConversion{ false }
-  , m_useIdentityMeasurementFrame{ false }
-  , m_useBMatrixGradientDirections{ false }
-
-  , m_outputVolume{}
+  m_outputVolume{}
   , m_outputDirectory{ "." }
   , m_outputBValues{}
   , m_outputBVectors{}
 
-  , m_converter{ nullptr }
+
 {}
 
 DWIConvert::DWIConvert(std::string inputVolume, std::string outputVolume)

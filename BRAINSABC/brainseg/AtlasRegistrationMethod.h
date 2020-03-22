@@ -345,12 +345,14 @@ private:
   MapOfTransformLists           m_IntraSubjectTransforms;
   InternalImagePointer          m_KeySubjectImage; // The image to be used for intra-subject registration
 
-  bool m_UseNonLinearInterpolation;
-  bool m_DoneRegistration;
-  bool m_RegistrationUpdateNeeded; // INFO: KENT: The m_RegistrationUpdateNeeded is a hack to replicate the behavior
-                                   // that should come from using the modified times of the itk::Object class
-                                   //            All the Get/Set functions should use the itkSetMacro so that the
-                                   // itk::Object->Modified times are updated correctly, then we can just use that
+  bool m_UseNonLinearInterpolation{ true };
+  bool m_DoneRegistration{ false };
+  bool m_RegistrationUpdateNeeded{
+    true
+  }; // INFO: KENT: The m_RegistrationUpdateNeeded is a hack to replicate the behavior
+     // that should come from using the modified times of the itk::Object class
+     //            All the Get/Set functions should use the itkSetMacro so that the
+     // itk::Object->Modified times are updated correctly, then we can just use that
   //            modify status to determine when re-running is necessary.
 
   std::string m_AtlasLinearTransformChoice;
@@ -359,7 +361,7 @@ private:
   std::string               m_SaveState;
   CompositeTransformPointer m_RestoreState;
 
-  unsigned int m_DebugLevel;
+  unsigned int m_DebugLevel{ 0 };
 };
 
 #ifndef MU_MANUAL_INSTANTIATION

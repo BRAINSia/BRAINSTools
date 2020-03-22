@@ -34,8 +34,6 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<
   TGradientImagePixelType,
   TTensorPixelType>::DiffusionTensor3DReconstructionWithMaskImageFilter()
   : m_GradientDirectionContainer(nullptr)
-  , m_NumberOfGradientDirections(0)
-  , m_NumberOfBaselineImages(1)
   , m_Threshold(NumericTraits<ReferencePixelType>::min())
   , m_BValue(1.0)
   , m_GradientImageTypeEnumeration(Else)

@@ -46,15 +46,11 @@ namespace itk
  */
 template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>::OtsuHistogramMatchingImageFilter()
-  : m_NumberOfHistogramLevels(256)
-  , m_NumberOfMatchPoints(1)
-  , m_SourceMinValue(0)
+  : m_SourceMinValue(0)
   , m_ReferenceMinValue(0)
   , m_SourceHistogram(HistogramType::New())
   , m_ReferenceHistogram(HistogramType::New())
   , m_OutputHistogram(HistogramType::New())
-  , m_LowerGradient(0.0)
-  , m_UpperGradient(0.0)
   , m_SourceMask(nullptr)
   , m_ReferenceMask(nullptr)
 {

@@ -315,7 +315,7 @@ protected:
   RegisterAtlasToSubjectImages();
 
   AtlasRegistrationMethod();
-  ~AtlasRegistrationMethod();
+  ~AtlasRegistrationMethod() override;
 
   OutputImagePointer
   CopyOutputImage(InternalImagePointer img);

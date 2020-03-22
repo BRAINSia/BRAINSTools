@@ -37,7 +37,7 @@ public:
     : m_Message("")
   {}
 
-  ~Exception() throw() = default;
+  ~Exception() throw() override = default;
 
   void
   SetMessage(const char * s)

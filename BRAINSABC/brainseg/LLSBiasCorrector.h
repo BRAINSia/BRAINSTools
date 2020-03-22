@@ -174,7 +174,7 @@ public:
 
 protected:
   LLSBiasCorrector();
-  ~LLSBiasCorrector();
+  ~LLSBiasCorrector() override;
 
   void
   CheckInputs();

@@ -192,7 +192,7 @@ public:
   BRAINSHoughEyeDetector(const Self &) = delete;
   void
   operator=(const Self &) = delete;
-  virtual ~BRAINSHoughEyeDetector() = default;
+  ~BRAINSHoughEyeDetector() override = default;
 
 protected:
   BRAINSHoughEyeDetector();

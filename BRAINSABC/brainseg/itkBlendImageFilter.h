@@ -88,12 +88,12 @@ public:
 
 protected:
   BlendImageFilter();
-  virtual ~BlendImageFilter() = default;
+  ~BlendImageFilter() override = default;
 
-  virtual void
+  void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
-  virtual void
+  void
   ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
 
 private:

@@ -352,7 +352,7 @@ public:
   }
 
   void
-  PrintHeaderInfo(void)
+  PrintHeaderInfo()
   {
     //
     //

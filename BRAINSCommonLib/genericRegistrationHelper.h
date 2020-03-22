@@ -437,11 +437,11 @@ public:
 
   /** Initialize by setting the interconnects between the components. */
   virtual void
-  Initialize(void); // throw ( ExceptionObject );
+  Initialize(); // throw ( ExceptionObject );
 
   /** Method that initiates the registration. */
   void
-  Update(void) override;
+  Update() override;
 
   /** Set/Get the Fixed image. */
   void
@@ -474,7 +474,7 @@ public:
   /** Set/Get the Transfrom. */
   itkSetObjectMacro(Transform, TransformType);
   typename CompositeTransformType::Pointer
-  GetTransform(void);
+  GetTransform();
 
   itkSetObjectMacro(CostMetricObject, MetricType);
   itkGetConstObjectMacro(CostMetricObject, MetricType);

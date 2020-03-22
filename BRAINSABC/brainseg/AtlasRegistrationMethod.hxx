@@ -46,7 +46,7 @@
 // #include "itkIO.h"
 
 itk::Transform<double, 3, 3>::Pointer
-MakeRigidIdentity(void)
+MakeRigidIdentity()
 {
   // Also append identity matrix for each image
   itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();

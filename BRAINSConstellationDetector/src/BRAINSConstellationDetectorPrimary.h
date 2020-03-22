@@ -312,19 +312,19 @@ public:
   }
 
   const LandmarksMapType &
-  GetOutputLandmarksInInputSpace(void)
+  GetOutputLandmarksInInputSpace()
   {
     return this->m_outputLandmarksInInputSpaceMap;
   }
 
   const LandmarksMapType &
-  GetOutputLandmarksInACPCAlignedSpace(void)
+  GetOutputLandmarksInACPCAlignedSpace()
   {
     return this->m_outputLandmarksInACPCAlignedSpaceMap;
   }
 
   bool
-  Compute(void);
+  Compute();
 
 private:
   static std::vector<float> &

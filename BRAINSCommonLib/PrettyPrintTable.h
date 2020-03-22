@@ -58,13 +58,13 @@ public:
   }
 
   void
-  leftJustify(void)
+  leftJustify()
   {
     m_rightJustify = false;
   }
 
   void
-  rightJustify(void)
+  rightJustify()
   {
     m_rightJustify = true;
   }

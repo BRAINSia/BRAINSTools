@@ -52,7 +52,7 @@
 #include "itkImageMomentsCalculator.h"
 
 extern void
-debug_catch(void);
+debug_catch();
 
 namespace itk
 {
@@ -125,8 +125,8 @@ template <typename TTransformType,
           typename TMovingImage,
           typename MetricType>
 void
-MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::Initialize(
-  void) // throw ( ExceptionObject )
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::
+  Initialize() // throw ( ExceptionObject )
 {
   if (!m_FixedImage)
   {
@@ -405,7 +405,7 @@ template <typename TTransformType,
           typename TMovingImage,
           typename MetricType>
 void
-MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::Update(void)
+MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::Update()
 {
   if (this->m_Transform.IsNotNull())
   {
@@ -648,8 +648,8 @@ template <typename TTransformType,
           typename MetricType>
 typename MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::
   CompositeTransformType::Pointer
-  MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::GetTransform(
-    void)
+  MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TMovingImage, MetricType>::
+    GetTransform()
 {
   return this->m_CompositeTransform;
 }

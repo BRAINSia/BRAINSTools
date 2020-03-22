@@ -68,7 +68,7 @@ public:
     }
 
     void
-    Print(void) const
+    Print() const
     {
       itk::NumberToString<double> ds;
       std::cout << "RANGE:  [" << ds(m_Low) << "," << ds(m_High) << "]" << std::endl;

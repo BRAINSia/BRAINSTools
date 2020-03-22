@@ -113,7 +113,7 @@ public:
   // NOTE:  This will generate a new spatial object each time it is called, and
   // not return the previous spatial object
   ImageMaskPointer
-  GetSpatialObjectROI(void)
+  GetSpatialObjectROI()
   {
     if (m_ResultMaskPointer.IsNull()) // This is a cheap way to only create
                                       // the mask once, note that this is made

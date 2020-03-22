@@ -1004,7 +1004,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorIsForegroundPriorV
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImagePointer
-EMSegmentationFilter<TInputImage, TProbabilityImage>::GetThresholdedOutput(void)
+EMSegmentationFilter<TInputImage, TProbabilityImage>::GetThresholdedOutput()
 {
   // INFO:  This assumes that GetOutput was already called.  This should be made
   // more intelligent
@@ -1013,7 +1013,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::GetThresholdedOutput(void)
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImagePointer
-EMSegmentationFilter<TInputImage, TProbabilityImage>::GetCleanedOutput(void)
+EMSegmentationFilter<TInputImage, TProbabilityImage>::GetCleanedOutput()
 {
   // INFO:  This assumes that GetOutput was already called.  This should be made
   // more intelligent
@@ -1022,7 +1022,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::GetCleanedOutput(void)
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::ByteImagePointer
-EMSegmentationFilter<TInputImage, TProbabilityImage>::GetOutput(void)
+EMSegmentationFilter<TInputImage, TProbabilityImage>::GetOutput()
 {
   this->Update();
   return m_DirtyLabels;
@@ -1674,7 +1674,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugWarpedAtlasImage
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
-EMSegmentationFilter<TInputImage, TProbabilityImage>::GenerateWarpedAtlasImages(void)
+EMSegmentationFilter<TInputImage, TProbabilityImage>::GenerateWarpedAtlasImages()
 {
   this->m_WarpedAtlasImages = this->WarpImageList(
     this->m_OriginalAtlasImages, GetMapVectorFirstElement(this->m_InputImages), this->m_TemplateGenericTransform);

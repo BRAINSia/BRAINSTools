@@ -327,7 +327,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateOu
  */
 template <typename TInputImage, typename TOutputImage>
 unsigned long
-GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GetMTime(void) const
+GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GetMTime() const
 {
   unsigned long latestTime = Object::GetMTime();
 

@@ -98,7 +98,7 @@ public:
   }
 
   double
-  GetOtsuPercentileThreshold(void) const
+  GetOtsuPercentileThreshold() const
   {
     return this->GetOtsuPercentileLowerThreshold();
   }

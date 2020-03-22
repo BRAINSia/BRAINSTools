@@ -89,8 +89,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::HoughTransform
 }
 
 template <typename TInputImage, typename TOutputImage>
-HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::~HoughTransformRadialVotingImageFilter()
-{}
+HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::~HoughTransformRadialVotingImageFilter() = default;
 
 template <typename TInputImage, typename TOutputImage>
 void

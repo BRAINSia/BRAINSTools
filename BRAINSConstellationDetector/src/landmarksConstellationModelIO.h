@@ -111,7 +111,7 @@ public:
     m_RPAC_over_RPPCMean = 0;
   }
 
-  ~landmarksConstellationModelIO() override {}
+  ~landmarksConstellationModelIO() override = default;
 
   void
   SetCMtoRPMean(const SImageType::PointType::VectorType & CMtoRPMean)

@@ -136,7 +136,7 @@ public:
 
 protected:
   TensorToAnisotropyImageFilter();
-  ~TensorToAnisotropyImageFilter() override {}
+  ~TensorToAnisotropyImageFilter() override = default;
 
 private:
   void

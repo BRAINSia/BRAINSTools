@@ -9,7 +9,7 @@ GEDWIConverter::GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeade
                                const bool                               useBMatrixGradientDirections)
   : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
 {}
-GEDWIConverter::~GEDWIConverter() {}
+GEDWIConverter::~GEDWIConverter() = default;
 void
 GEDWIConverter::LoadDicomDirectory()
 {

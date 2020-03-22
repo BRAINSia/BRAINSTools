@@ -145,7 +145,7 @@ public:
 protected:
   /** Constructor and Destructor */
   GtractImageIO();
-  ~GtractImageIO() override {}
+  ~GtractImageIO() override = default;
 
 private:
   Short3dImageType::Pointer m_Short3dImage;

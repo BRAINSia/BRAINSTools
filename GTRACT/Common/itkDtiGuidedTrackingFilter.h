@@ -100,7 +100,7 @@ public:
 
 protected:
   DtiGuidedTrackingFilter();
-  ~DtiGuidedTrackingFilter() override {}
+  ~DtiGuidedTrackingFilter() override = default;
 
 private:
   bool

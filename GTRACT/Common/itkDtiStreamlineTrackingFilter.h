@@ -90,7 +90,7 @@ public:
 
 protected:
   DtiStreamlineTrackingFilter();
-  ~DtiStreamlineTrackingFilter() override {}
+  ~DtiStreamlineTrackingFilter() override = default;
 
 private:
   double m_CurvatureThreshold;

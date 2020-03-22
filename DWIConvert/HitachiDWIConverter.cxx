@@ -11,7 +11,7 @@ HitachiDWIConverter::HitachiDWIConverter(DWIDICOMConverterBase::DCMTKFileVector 
   : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
 {}
 
-HitachiDWIConverter::~HitachiDWIConverter() {}
+HitachiDWIConverter::~HitachiDWIConverter() = default;
 /* load dicom directory -- no postprocessing necessary after letting
  * superclass do its thing.
  */

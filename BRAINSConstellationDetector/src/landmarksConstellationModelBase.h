@@ -27,9 +27,9 @@ protected:
   using ValMapIterator = ValMapType::iterator;
 
 public:
-  landmarksConstellationModelBase() {}
+  landmarksConstellationModelBase() = default;
 
-  virtual ~landmarksConstellationModelBase() {}
+  virtual ~landmarksConstellationModelBase() = default;
 
   virtual unsigned int
   GetNumDataSets() const

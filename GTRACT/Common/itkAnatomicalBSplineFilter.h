@@ -177,7 +177,7 @@ public:
 
 protected:
   AnatomicalBSplineFilter();
-  ~AnatomicalBSplineFilter() override {}
+  ~AnatomicalBSplineFilter() override = default;
 
 private:
   /*** Input and Output Objects ***/

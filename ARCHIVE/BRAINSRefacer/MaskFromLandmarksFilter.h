@@ -33,7 +33,8 @@ public:
     this->m_Verbose = false;
     this->m_Debug = false;
   }
-  ~MaskFromLandmarksFilter() override{};
+  ~MaskFromLandmarksFilter() override = default;
+  ;
 
   void
   GenerateData() override

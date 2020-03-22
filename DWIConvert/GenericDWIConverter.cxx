@@ -13,7 +13,7 @@ GenericDWIConverter::LoadFromDisk()
   itkGenericExceptionMacro(<< " LoadFromDisk not relevant" << std::endl);
 }
 
-GenericDWIConverter::~GenericDWIConverter() {}
+GenericDWIConverter::~GenericDWIConverter() = default;
 
 void
 GenericDWIConverter::ExtractDWIData()

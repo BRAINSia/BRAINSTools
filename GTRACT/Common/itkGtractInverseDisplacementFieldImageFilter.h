@@ -185,7 +185,7 @@ public:
 #endif
 protected:
   GtractInverseDisplacementFieldImageFilter();
-  ~GtractInverseDisplacementFieldImageFilter() override {}
+  ~GtractInverseDisplacementFieldImageFilter() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

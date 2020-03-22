@@ -88,7 +88,7 @@ public:
 
 protected:
   BlendImageFilter();
-  virtual ~BlendImageFilter() {}
+  virtual ~BlendImageFilter() = default;
 
   virtual void
   PrintSelf(std::ostream & os, Indent indent) const override;

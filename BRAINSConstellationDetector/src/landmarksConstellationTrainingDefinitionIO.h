@@ -52,7 +52,7 @@ private:
   };
 
 public:
-  landmarksConstellationTrainingDefinitionIO() {}
+  landmarksConstellationTrainingDefinitionIO() = default;
 
   explicit landmarksConstellationTrainingDefinitionIO(const std::string & filename) { this->ReadFile(filename); }
 

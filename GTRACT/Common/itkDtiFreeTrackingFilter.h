@@ -89,7 +89,7 @@ public:
 
 protected:
   DtiFreeTrackingFilter();
-  ~DtiFreeTrackingFilter() override {}
+  ~DtiFreeTrackingFilter() override = default;
 
 private:
   double m_CurvatureThreshold;

@@ -9,7 +9,7 @@ PhilipsDWIConverter::PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector 
   : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
 {}
 
-PhilipsDWIConverter::~PhilipsDWIConverter() {}
+PhilipsDWIConverter::~PhilipsDWIConverter() = default;
 
 void
 PhilipsDWIConverter::LoadDicomDirectory()

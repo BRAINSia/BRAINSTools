@@ -52,8 +52,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::LargestForegr
 {}
 
 template <typename TInputImage, typename TOutputImage>
-LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::~LargestForegroundFilledMaskImageFilter()
-{}
+LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::~LargestForegroundFilledMaskImageFilter() = default;
 
 template <typename TInputImage, typename TOutputImage>
 void

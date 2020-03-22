@@ -42,8 +42,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::ComputeHistogramQua
 {}
 
 template <typename TInputImage, typename TMaskImage>
-ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::~ComputeHistogramQuantileThresholds()
-{}
+ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::~ComputeHistogramQuantileThresholds() = default;
 
 template <typename TInputImage, typename TMaskImage>
 void

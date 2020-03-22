@@ -147,7 +147,8 @@ public:
 
 protected:
   ResampleInPlaceImageFilter();
-  ~ResampleInPlaceImageFilter() override{};
+  ~ResampleInPlaceImageFilter() override = default;
+  ;
 
   void
   GenerateData() override;

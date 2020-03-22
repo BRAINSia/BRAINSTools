@@ -675,8 +675,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMSegmentationFilter()
 }
 
 template <typename TInputImage, typename TProbabilityImage>
-EMSegmentationFilter<TInputImage, TProbabilityImage>::~EMSegmentationFilter()
-{}
+EMSegmentationFilter<TInputImage, TProbabilityImage>::~EMSegmentationFilter() = default;
 
 template <typename TInputImage, typename TProbabilityImage>
 void

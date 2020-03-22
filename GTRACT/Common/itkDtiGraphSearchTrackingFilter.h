@@ -101,7 +101,7 @@ public:
 
 protected:
   DtiGraphSearchTrackingFilter();
-  ~DtiGraphSearchTrackingFilter() override {}
+  ~DtiGraphSearchTrackingFilter() override = default;
 
 private:
   RandomGeneratorPointer m_RandomGenerator;

@@ -133,7 +133,7 @@ public:
 
 protected:
   DtiFastMarchingTrackingFilter();
-  ~DtiFastMarchingTrackingFilter() override {}
+  ~DtiFastMarchingTrackingFilter() override = default;
 
 private:
   void

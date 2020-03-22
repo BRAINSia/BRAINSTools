@@ -126,7 +126,7 @@ public:
 protected:
   FastMarchingCostFunction();
   // virtual ~FastMarchingCostFunction(){};
-  ~FastMarchingCostFunction() override {}
+  ~FastMarchingCostFunction() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;

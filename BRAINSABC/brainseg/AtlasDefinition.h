@@ -38,7 +38,7 @@ public:
   class BoundsType
   {
   public:
-    BoundsType() {}
+    BoundsType() = default;
 
     void
     SetLower(const double v)
@@ -269,7 +269,7 @@ private:
   class Prior
   {
   public:
-    Prior() {}
+    Prior() = default;
 
     const std::string &
     GetFilename() const

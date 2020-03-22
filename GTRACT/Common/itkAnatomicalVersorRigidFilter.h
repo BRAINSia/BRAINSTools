@@ -139,7 +139,7 @@ public:
 
 protected:
   AnatomicalVersorRigidFilter();
-  ~AnatomicalVersorRigidFilter() override {}
+  ~AnatomicalVersorRigidFilter() override = default;
 
 private:
   // Input and Output Image

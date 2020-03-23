@@ -65,8 +65,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrintSelf(
   os << indent << "OutputOrigin:      " << m_OutputOrigin << std::endl;
   os << indent << "KernelTransform:   " << m_KernelTransform.GetPointer() << std::endl;
   os << indent << "SubsamplingFactor: " << m_SubsamplingFactor << std::endl;
-
-  return;
 }
 
 /**
@@ -257,8 +255,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
     ++outIt;
     progress.CompletedPixel();
   }
-
-  return;
 }
 
 /**
@@ -287,8 +283,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateIn
   InputImageRegionType inputRegion;
   inputRegion = inputPtr->GetLargestPossibleRegion();
   inputPtr->SetRequestedRegion(inputRegion);
-
-  return;
 }
 
 /**
@@ -318,8 +312,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateOu
   outputPtr->SetSpacing(m_OutputSpacing);
   outputPtr->SetOrigin(m_OutputOrigin);
   outputPtr->SetDirection(m_OutputDirection);
-
-  return;
 }
 
 /**

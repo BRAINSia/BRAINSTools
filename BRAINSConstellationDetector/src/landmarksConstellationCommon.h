@@ -226,7 +226,6 @@ normalizeVector(std::vector<ValuesType> & x)
   {
     *it /= norm;
   }
-  return;
 }
 
 // ///////////////////////////////////////////////////////

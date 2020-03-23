@@ -48,9 +48,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::CrossOverAffineSystem()
  */
 template <typename TCoordinateType, unsigned int NDimensions>
 CrossOverAffineSystem<TCoordinateType, NDimensions>::~CrossOverAffineSystem()
-{
-  return;
-}
+{}
 
 /**
  * Utility function not provided in general vector implementations.

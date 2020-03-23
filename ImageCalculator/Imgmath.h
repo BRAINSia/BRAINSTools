@@ -189,7 +189,6 @@ ImageSqrtValue(typename ImageType::Pointer Output, const typename ImageType::Poi
   }
 
   Output = image;
-  return;
 }
 
 template <typename ImageType>

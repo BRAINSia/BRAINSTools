@@ -26,7 +26,6 @@ printUsage(char * argv0)
             << "--tag \"space direction\" --section 2 --subsection 2  --v 6  --numtype 1 will check whether "
                "5.999994770777341 is consistent with 6."
             << std::endl;
-  return;
 }
 
 int

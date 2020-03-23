@@ -566,7 +566,6 @@ statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
     }
     std::cout << std::endl;
   }
-  return;
 }
 
 /*This function is called when the user wants to write the ouput image to a file. The output image is typecasted to the

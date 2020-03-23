@@ -307,7 +307,6 @@ DWIConverter::ReadGradientInformation(const std::string & inputBValues,
   }
   this->m_DiffusionVectors = BVecs;
   this->m_BValues = BVals;
-  return;
 }
 
 void
@@ -503,7 +502,6 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
     }
   }
   header.close();
-  return;
 }
 
 Volume4DType::Pointer

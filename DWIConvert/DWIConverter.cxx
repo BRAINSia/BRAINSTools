@@ -425,7 +425,7 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
 
   header << "endian: little" << std::endl;
   header << "encoding: raw" << std::endl;
-  header << "space units: \"mm\" \"mm\" \"mm\"" << std::endl;
+  header << R"(space units: "mm" "mm" "mm")" << std::endl;
 
   const DWIConverter::Volume3DUnwrappedType::PointType ImageOrigin = this->GetOrigin();
   header << "space origin: "

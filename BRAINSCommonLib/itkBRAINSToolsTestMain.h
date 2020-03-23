@@ -228,7 +228,7 @@ main(int ac, char * av[])
         }
 
         // output the matching baseline
-        std::cout << "<DartMeasurement name=\"BaselineImageName\" type=\"text/string\">";
+        std::cout << R"(<DartMeasurement name="BaselineImageName" type="text/string">)";
         std::cout << itksys::SystemTools::GetFilenameName(bestBaseline);
         std::cout << "</DartMeasurement>" << std::endl;
 
@@ -369,7 +369,7 @@ RegressionTestImage(const char *         testImageFilename,
     WriterType::Pointer writer = WriterType::New();
     writer->SetInput(extract->GetOutput());
 
-    std::cout << "<DartMeasurement name=\"ImageError\" type=\"numeric/double\">";
+    std::cout << R"(<DartMeasurement name="ImageError" type="numeric/double">)";
     std::cout << status;
     std::cout << "</DartMeasurement>" << std::endl;
 
@@ -404,7 +404,7 @@ RegressionTestImage(const char *         testImageFilename,
       std::cerr << "Error during write of " << diffName.str() << std::endl;
     }
 
-    std::cout << "<DartMeasurementFile name=\"DifferenceImage\" type=\"image/png\">";
+    std::cout << R"(<DartMeasurementFile name="DifferenceImage" type="image/png">)";
     std::cout << diffName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
 
@@ -439,7 +439,7 @@ RegressionTestImage(const char *         testImageFilename,
       std::cerr << "Error during write of " << baseName.str() << std::endl;
     }
 
-    std::cout << "<DartMeasurementFile name=\"BaselineImage\" type=\"image/png\">";
+    std::cout << R"(<DartMeasurementFile name="BaselineImage" type="image/png">)";
     std::cout << baseName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
 
@@ -474,7 +474,7 @@ RegressionTestImage(const char *         testImageFilename,
       std::cerr << "Error during write of " << testName.str() << std::endl;
     }
 
-    std::cout << "<DartMeasurementFile name=\"TestImage\" type=\"image/png\">";
+    std::cout << R"(<DartMeasurementFile name="TestImage" type="image/png">)";
     std::cout << testName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
   }

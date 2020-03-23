@@ -37,7 +37,7 @@ SiemensDWIConverter::DecodeCSAHeader(CSAHeader & header, const std::string & inf
   {
     offset = 0;
   }
-  const itk::uint32_t numberOfTags = this->CSAExtractFromString<itk::uint32_t>(info + offset);
+  const auto numberOfTags = this->CSAExtractFromString<itk::uint32_t>(info + offset);
   offset += sizeof(itk::uint32_t); // skip numberOfTags;
   offset += sizeof(itk::uint32_t); // skip unused2
 
@@ -46,7 +46,7 @@ SiemensDWIConverter::DecodeCSAHeader(CSAHeader & header, const std::string & inf
     // tag name is 64 bytes null terminated.
     std::string tagName = info + offset;
     offset += 64; // skip tag name
-    itk::uint32_t vm = this->CSAExtractFromString<itk::uint32_t>(info + offset);
+    auto vm = this->CSAExtractFromString<itk::uint32_t>(info + offset);
     offset += sizeof(itk::uint32_t);
 
     CSAItem current(vm);
@@ -63,14 +63,14 @@ SiemensDWIConverter::DecodeCSAHeader(CSAHeader & header, const std::string & inf
     offset += 4; // after VR
     offset += 4; // skip syngodt
 
-    const itk::int32_t nItems = this->CSAExtractFromString<itk::int32_t>(info + offset);
+    const auto nItems = this->CSAExtractFromString<itk::int32_t>(info + offset);
     offset += 4;
     offset += 4; // skip xx
 
     for (int j = 0; j < nItems; ++j)
     {
       // 4 items in XX, first being item length
-      const itk::int32_t itemLength = this->CSAExtractFromString<itk::int32_t>(info + offset);
+      const auto itemLength = this->CSAExtractFromString<itk::int32_t>(info + offset);
       offset += 16;
       std::string valueString;
       valueString = info + offset;
@@ -406,7 +406,7 @@ SiemensDWIConverter::ExtractDWIData()
   // test gradients. It is OK for one or more guide images to have
   // zero gradients, but all gradients == 0 is an error. It means
   // that the gradient data is missing.
-  DWIMetaDataDictionaryValidator::GradientTableType::iterator nonZ =
+  auto nonZ =
     std::find_if(this->m_DiffusionVectors.begin(), this->m_DiffusionVectors.end(), SiemensDWIConverter::IsZeroMag);
   if (nonZ == this->m_DiffusionVectors.end())
   {
@@ -683,17 +683,17 @@ SiemensDWIConverter::AddFlagsToDictionary()
   0019; 1027;  B_matrix
   0019; 1028;  Bandwidth Per Pixel Phase Encode
    */
-  DcmDictEntry * SiemensMosiacParameters =
+  auto * SiemensMosiacParameters =
     new DcmDictEntry(0x0051, 0x100b, DcmVR(EVR_IS), "Mosiac Matrix Size", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * SiemensDictNMosiac =
+  auto * SiemensDictNMosiac =
     new DcmDictEntry(0x0019, 0x100a, DcmVR(EVR_US), "Number of Images In Mosaic", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * SiemensDictBValue = new DcmDictEntry(
+  auto * SiemensDictBValue = new DcmDictEntry(
     0x0019, 0x100c, DcmVR(EVR_IS), "B Value of diffusion weighting", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * SiemensDictDiffusionDirection =
+  auto * SiemensDictDiffusionDirection =
     new DcmDictEntry(0x0019, 0x100e, DcmVR(EVR_FD), "Diffusion Gradient Direction", 3, 3, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * SiemensDictDiffusionMatrix =
+  auto * SiemensDictDiffusionMatrix =
     new DcmDictEntry(0x0019, 0x1027, DcmVR(EVR_FD), "Diffusion Matrix", 6, 6, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * SiemensDictShadowInfo =
+  auto * SiemensDictShadowInfo =
     new DcmDictEntry(0x0029, 0x1010, DcmVR(EVR_OB), "Siemens DWI Info", 1, 1, nullptr, true, "dicomtonrrd");
 
   // relevant Siemens private tags

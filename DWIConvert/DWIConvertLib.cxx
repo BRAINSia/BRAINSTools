@@ -84,7 +84,7 @@ DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    FSLDWIConverter * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors);
+    auto * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors);
     try
     {
       FSLconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -107,7 +107,7 @@ DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    NRRDDWIConverter * NRRDconverter = new NRRDDWIConverter(filesList);
+    auto * NRRDconverter = new NRRDDWIConverter(filesList);
     try
     {
       NRRDconverter->SetAllowLossyConversion(m_allowLossyConversion);

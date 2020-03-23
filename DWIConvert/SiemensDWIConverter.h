@@ -60,7 +60,7 @@ public:
     operator=(const CSAItem & other)
     {
       this->resize(0);
-      for (CSAItem::const_iterator it = other.begin(); it != other.end(); ++it)
+      for (auto it = other.begin(); it != other.end(); ++it)
       {
         this->push_back(*it);
       }
@@ -91,7 +91,7 @@ public:
     {
       std::cerr << "  VM = " << this->vm << " VR = " << this->vr << std::endl << "    ";
       bool firstTime(false);
-      for (CSAItem::const_iterator it = this->begin(); it != this->end(); ++it)
+      for (auto it = this->begin(); it != this->end(); ++it)
       {
         if (firstTime)
         {
@@ -113,7 +113,7 @@ public:
     void
     DebugPrint() const
     {
-      for (CSAHeader::const_iterator it = this->begin(); it != this->end(); ++it)
+      for (auto it = this->begin(); it != this->end(); ++it)
       {
         std::cerr << it->first << std::endl;
         it->second.DebugPrint();

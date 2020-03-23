@@ -188,8 +188,8 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   ImageRegionConstIteratorWithIndex<InputImageType> image_it(inputImage, windowRegion);
   image_it.GoToBegin();
 
-  const unsigned int sampling = static_cast<unsigned int>(1. / m_SamplingRatio);
-  unsigned int       counter = 1;
+  const auto   sampling = static_cast<unsigned int>(1. / m_SamplingRatio);
+  unsigned int counter = 1;
 
   InternalRegionType region;
   while (!image_it.IsAtEnd())
@@ -355,7 +355,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     InternalIndexType end;
     for (unsigned int i = 0; i < ImageDimension; i++)
     {
-      const InternalIndexValueType rad =
+      const auto rad =
         static_cast<InternalIndexValueType>(m_SphereRadiusRatio * Sphere->GetRadiusInObjectSpace()[i] / spacing[i]);
 
       if (idx[i] > static_cast<InternalIndexValueType>(rad))

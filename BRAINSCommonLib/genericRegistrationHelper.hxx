@@ -418,7 +418,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
     throw err;
   }
 
-  OptimizerPointer optimizer = dynamic_cast<OptimizerPointer>(m_Registration->GetOptimizer());
+  auto optimizer = dynamic_cast<OptimizerPointer>(m_Registration->GetOptimizer());
   if (optimizer == nullptr)
   {
     itkExceptionMacro(<< "Failed to convert pointer to Optimizer type");

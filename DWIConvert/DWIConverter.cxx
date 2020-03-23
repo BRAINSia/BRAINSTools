@@ -447,9 +447,7 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
            << DoubleConvert(MeasurementFrame[2][2]) << ")" << std::endl;
   }
 
-  for (std::map<std::string, std::string>::const_iterator it = this->m_CommonDicomFieldsMap.begin();
-       it != this->m_CommonDicomFieldsMap.end();
-       ++it)
+  for (auto it = this->m_CommonDicomFieldsMap.begin(); it != this->m_CommonDicomFieldsMap.end(); ++it)
   {
     header << it->first << ":=" << it->second << std::endl;
   }

@@ -58,7 +58,7 @@ public:
   virtual float
   GetRadius(const std::string & PointName) const
   {
-    ValMapConstIterator it(m_Radius.find(PointName));
+    auto it(m_Radius.find(PointName));
 
     if (it == m_Radius.end())
     {
@@ -70,7 +70,7 @@ public:
   virtual float
   GetHeight(const std::string & PointName) const
   {
-    ValMapConstIterator it(m_Height.find(PointName));
+    auto it(m_Height.find(PointName));
 
     if (it == m_Height.end())
     {

@@ -90,7 +90,7 @@ GEDWIConverter::ExtractDWIData()
         }
       }
     }
-    float b = static_cast<float>(intb);
+    auto b = static_cast<float>(intb);
     for (unsigned elementNum = 0x10bb; elementNum <= 0x10bd; ++elementNum)
     {
       int vecI(elementNum - 0x10bb);
@@ -139,13 +139,13 @@ GEDWIConverter::AddFlagsToDictionary()
   // a malloc error after main exits.
 
   // relevant GE tags
-  DcmDictEntry * GEDictBValue = new DcmDictEntry(
+  auto * GEDictBValue = new DcmDictEntry(
     0x0043, 0x1039, DcmVR(EVR_IS), "B Value of diffusion weighting", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * GEDictXGradient = new DcmDictEntry(
+  auto * GEDictXGradient = new DcmDictEntry(
     0x0019, 0x10bb, DcmVR(EVR_DS), "X component of gradient direction", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * GEDictYGradient = new DcmDictEntry(
+  auto * GEDictYGradient = new DcmDictEntry(
     0x0019, 0x10bc, DcmVR(EVR_DS), "Y component of gradient direction", 1, 1, nullptr, true, "dicomtonrrd");
-  DcmDictEntry * GEDictZGradient = new DcmDictEntry(
+  auto * GEDictZGradient = new DcmDictEntry(
     0x0019, 0x10bd, DcmVR(EVR_DS), "Z component of gradient direction", 1, 1, nullptr, true, "dicomtonrrd");
 
   itk::DCMTKFileReader::AddDictEntry(GEDictBValue);

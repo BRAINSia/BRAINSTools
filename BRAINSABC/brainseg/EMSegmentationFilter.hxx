@@ -227,8 +227,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
   InputImageVector             inputImagesVector;
   InputImageInterpolatorVector inputImageNNInterpolatorsVector;
 
-  for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImages.begin(); mapIt != intensityImages.end();
-       ++mapIt)
+  for (auto mapIt = intensityImages.begin(); mapIt != intensityImages.end(); ++mapIt)
   {
     const size_t numCurModality = mapIt->second.size();
     muLogMacro(<< "Number of modality images for (" << mapIt->first << ") is: " << numCurModality << std::endl);
@@ -342,7 +341,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
   unsigned int rowIndx = 0;
   for (typename LabelMapSamplesType::const_iterator it = SampledLabelsMap.begin(); it != SampledLabelsMap.end(); ++it)
   {
-    for (typename IndexVectorType::const_iterator vit = it->second.begin(); vit != it->second.end(); ++vit)
+    for (auto vit = it->second.begin(); vit != it->second.end(); ++vit)
     {
       // Fill label vector with the (index corresponding to) label code of the sampled voxel
       const unsigned int currLabelIndex = reverseLabelToIndex[it->first];
@@ -509,8 +508,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
             typename InputImageType::PointType currTestPoint;
             GetMapVectorFirstElement(intensityImages)->TransformIndexToPhysicalPoint(currTestIndex, currTestPoint);
 
-            unsigned int                                          colIndex = 0;
-            typename InputImageInterpolatorVector::const_iterator interpIt = inputImageNNInterpolatorsVector.begin();
+            unsigned int colIndex = 0;
+            auto         interpIt = inputImageNNInterpolatorsVector.begin();
             while ((interpIt != inputImageNNInterpolatorsVector.end()) && (colIndex < numOfInputImages))
             {
               // input images are aligned in physical space but not necessarily in voxel space
@@ -736,11 +735,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckInput()
 
   const InputImageSizeType size = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
 
-  for (typename MapOfInputImageVectors::iterator mapIt = this->m_InputImages.begin();
-       mapIt != this->m_InputImages.end();
-       ++mapIt)
+  for (auto mapIt = this->m_InputImages.begin(); mapIt != this->m_InputImages.end(); ++mapIt)
   {
-    for (typename InputImageVector::iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
+    for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
     {
       if ((*imIt)->GetImageDimension() != 3)
       {
@@ -764,11 +761,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckInput()
   }
 
   const InputImageSizeType atlasSize = this->GetFirstOriginalAtlasImage()->GetLargestPossibleRegion().GetSize();
-  for (typename MapOfInputImageVectors::iterator mapIt = this->m_OriginalAtlasImages.begin();
-       mapIt != this->m_OriginalAtlasImages.end();
-       ++mapIt)
+  for (auto mapIt = this->m_OriginalAtlasImages.begin(); mapIt != this->m_OriginalAtlasImages.end(); ++mapIt)
   {
-    for (typename InputImageVector::iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
+    for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
     {
       if ((*imIt)->GetImageDimension() != 3)
       {
@@ -784,9 +779,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckInput()
     }
   }
 
-  for (typename ProbabilityImageVectorType::iterator imIt = this->m_OriginalSpacePriors.begin();
-       imIt != this->m_OriginalSpacePriors.end();
-       ++imIt)
+  for (auto imIt = this->m_OriginalSpacePriors.begin(); imIt != this->m_OriginalSpacePriors.end(); ++imIt)
   {
     if ((*imIt)->GetImageDimension() != 3)
     {
@@ -1171,8 +1164,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
 
   // create a map of input image interpolators
   MapOfInputImageInterpolatorVectors inputImageNNInterpolatorsList;
-  for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImages.begin(); mapIt != intensityImages.end();
-       ++mapIt)
+  for (auto mapIt = intensityImages.begin(); mapIt != intensityImages.end(); ++mapIt)
   {
     const size_t numCurModality = mapIt->second.size();
     for (unsigned m = 0; m < numCurModality; ++m)
@@ -1225,13 +1217,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
 
             MatrixType    X(numModalities, 1);
             unsigned long zz = 0;
-            for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImages.begin();
-                 mapIt != intensityImages.end();
-                 ++mapIt, ++zz)
+            for (auto mapIt = intensityImages.begin(); mapIt != intensityImages.end(); ++mapIt, ++zz)
             {
               double       curAvg(0.0);
               const double curMean = currMeans.at(mapIt->first);
-              const double numCurModality = static_cast<double>(mapIt->second.size());
+              const auto   numCurModality = static_cast<double>(mapIt->second.size());
               for (unsigned xx = 0; xx < numCurModality; ++xx)
               {
                 // Input images should be evaluated in physical space
@@ -1264,7 +1254,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
             //       http://en.wikipedia.org/wiki/Maximum_likelihood_estimation
             const FloatingPrecision likelihood = std::exp(-0.5 * mahalo) * invdenom;
 
-            const typename TProbabilityImage::PixelType currentPosterior =
+            const auto currentPosterior =
               static_cast<typename TProbabilityImage::PixelType>((priorScale * priorValue * likelihood));
             CHECK_NAN(currentPosterior,
                       __FILE__,
@@ -1469,11 +1459,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugCorrectedImages(
   }
   std::stringstream CurrentEMIteration_stream("");
   CurrentEMIteration_stream << CurrentEMIteration;
-  for (typename MapOfInputImageVectors::const_iterator mapIt = correctImageList.begin();
-       mapIt != correctImageList.end();
-       ++mapIt)
+  for (auto mapIt = correctImageList.begin(); mapIt != correctImageList.end(); ++mapIt)
   {
-    for (typename InputImageVector::const_iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
+    for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
     {
       using WriterType = itk::ImageFileWriter<InputImageType>;
       typename WriterType::Pointer writer = WriterType::New();
@@ -1611,9 +1599,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WarpImageList(MapOfInputIm
 
   MapOfInputImageVectors warpedList;
 
-  for (typename MapOfInputImageVectors::iterator mapIt = originalList.begin(); mapIt != originalList.end(); ++mapIt)
+  for (auto mapIt = originalList.begin(); mapIt != originalList.end(); ++mapIt)
   {
-    for (typename InputImageVector::iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
+    for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
     {
       typename ResamplerType::Pointer warper = ResamplerType::New();
       warper->SetInput(*imIt);
@@ -1646,12 +1634,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugWarpedAtlasImage
     CurrentEMIteration_stream << CurrentEMIteration;
     if (this->m_DebugLevel > 9)
     {
-      for (typename MapOfInputImageVectors::const_iterator mapIt = this->m_WarpedAtlasImages.begin();
-           mapIt != this->m_WarpedAtlasImages.end();
-           ++mapIt)
+      for (auto mapIt = this->m_WarpedAtlasImages.begin(); mapIt != this->m_WarpedAtlasImages.end(); ++mapIt)
       {
-        for (typename InputImageVector::const_iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end();
-             ++imIt)
+        for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
         {
           using WriterType = itk::ImageFileWriter<InputImageType>;
           typename WriterType::Pointer writer = WriterType::New();
@@ -1762,12 +1747,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
           // INFO:  Need to define PortionMaskImage from deformed probspace
           thresholdRegionFinder->SetBinaryPortionImage(ForegroundBrainRegion);
           unsigned int modeIndex = 0;
-          for (typename MapOfInputImageVectors::const_iterator mapIt = intensityImagesList.begin();
-               mapIt != intensityImagesList.end();
-               ++mapIt)
+          for (auto mapIt = intensityImagesList.begin(); mapIt != intensityImagesList.end(); ++mapIt)
           {
-            for (typename InputImageVector::const_iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end();
-                 ++imIt, ++modeIndex)
+            for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt, ++modeIndex)
             {
               thresholdRegionFinder->SetInput(modeIndex, (*imIt));
               const std::string imageType = mapIt->first;
@@ -2095,12 +2077,10 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
       << "WARNING: WARNING: WARNING: WARNING:  Doing warping even though it was turned off from the command line"
       << std::endl);
   }
-  for (typename MapOfInputImageVectors::iterator imMapIt = this->m_CorrectedImages.begin();
-       imMapIt != this->m_CorrectedImages.end();
-       ++imMapIt)
+  for (auto imMapIt = this->m_CorrectedImages.begin(); imMapIt != this->m_CorrectedImages.end(); ++imMapIt)
   {
-    typename InputImageVector::iterator imIt = imMapIt->second.begin();
-    typename InputImageVector::iterator atIt = this->m_OriginalAtlasImages[imMapIt->first].begin();
+    auto imIt = imMapIt->second.begin();
+    auto atIt = this->m_OriginalAtlasImages[imMapIt->first].begin();
     for (; imIt != imMapIt->second.end() && atIt != this->m_OriginalAtlasImages[imMapIt->first].end(); ++imIt, ++atIt)
     {
       using HelperType = itk::BRAINSFitHelper;
@@ -2260,9 +2240,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WritePartitionTable(const 
   PrettyPrintTable EMIterationTable;
   {
     unsigned int ichan = 0;
-    for (typename MapOfInputImageVectors::const_iterator mapIt = this->m_InputImages.begin();
-         mapIt != this->m_InputImages.end();
-         ++mapIt)
+    for (auto mapIt = this->m_InputImages.begin(); mapIt != this->m_InputImages.end(); ++mapIt)
     {
       EMIterationTable.add(0, ichan + 2, mapIt->first);
       ++ichan;
@@ -2273,8 +2251,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WritePartitionTable(const 
     unsigned int ichan = 0;
     EMIterationTable.add(iclass + 1, 0, std::string("Class ") + this->m_PriorNames[iclass] + " mean ");
     EMIterationTable.add(iclass + 1, 1, std::string(": "));
-    for (typename RegionStats::MeanMapType::const_iterator classIt =
-           this->m_ListOfClassStatistics[iclass].m_Means.begin();
+    for (auto classIt = this->m_ListOfClassStatistics[iclass].m_Means.begin();
          classIt != this->m_ListOfClassStatistics[iclass].m_Means.end();
          ++classIt)
     {

@@ -84,7 +84,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
     typename MaskImageType::SizeType maskSize = this->m_MaskImage->GetLargestPossibleRegion().GetSize();
     if (m_GradientImageTypeEnumeration == GradientIsInManyImages)
     {
-      ReferenceImageType * refImage = static_cast<ReferenceImageType *>(this->ProcessObject::GetInput(0));
+      auto * refImage = static_cast<ReferenceImageType *>(this->ProcessObject::GetInput(0));
       typename ReferenceImageType::RegionType::SizeType refSize = refImage->GetLargestPossibleRegion().GetSize();
       if (refSize != maskSize)
       {
@@ -94,7 +94,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
     }
     else if (m_GradientImageTypeEnumeration == GradientIsInASingleImage)
     {
-      GradientImagesType * gradientImagePointer = static_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
+      auto * gradientImagePointer = static_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
       typename GradientImagesType::RegionType::SizeType gradSize =
         gradientImagePointer->GetLargestPossibleRegion().GetSize();
       if (gradSize != maskSize)
@@ -147,8 +147,8 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
   if (m_GradientImageTypeEnumeration == GradientIsInManyImages)
   {
     using ItType = ImageRegionConstIterator<ReferenceImageType>;
-    ReferenceImageType * refImage = static_cast<ReferenceImageType *>(this->ProcessObject::GetInput(0));
-    ItType               it(refImage, outputRegionForThread);
+    auto * refImage = static_cast<ReferenceImageType *>(this->ProcessObject::GetInput(0));
+    ItType it(refImage, outputRegionForThread);
     it.GoToBegin();
 
     using GradientIteratorType = ImageRegionConstIterator<GradientImageType>;
@@ -164,7 +164,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
         itkGenericExceptionMacro(<< "Failed conversion to Gradient Image");
       }
 
-      GradientIteratorType * git = new GradientIteratorType(gradientImagePointer, outputRegionForThread);
+      auto * git = new GradientIteratorType(gradientImagePointer, outputRegionForThread);
       git->GoToBegin();
       gradientItContainer.push_back(git);
     }

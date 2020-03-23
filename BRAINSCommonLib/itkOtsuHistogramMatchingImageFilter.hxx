@@ -303,7 +303,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
       this->UpdateProgress((float)i / (float)totalPixels);
     }
 
-    const double srcValue = static_cast<double>(inIter.Get());
+    const auto srcValue = static_cast<double>(inIter.Get());
 
     {
       unsigned int j = 0;

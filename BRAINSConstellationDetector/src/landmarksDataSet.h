@@ -131,7 +131,7 @@ public:
   PointType
   GetNamedPoint(const std::string & NamedPoint) const
   {
-    landmarksDataSet::const_iterator it = this->find(NamedPoint);
+    auto it = this->find(NamedPoint);
 
     //
     // originally, no check at all for missing points.  Next best thing,

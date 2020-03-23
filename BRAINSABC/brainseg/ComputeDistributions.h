@@ -118,16 +118,13 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
           SubjectCandidateRegions[iclass].GetPointer();
         ListOfClassStatistics[iclass].m_Means.clear();
 
-        for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
-             mapIt != InputImageMap.end();
-             ++mapIt)
+        for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)
         {
           unsigned meanIndex(0);
 
           ListOfClassStatistics[iclass].m_Means[mapIt->first] = 0.0;
 
-          for (typename InputImageVector::const_iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end();
-               ++imIt, ++meanIndex)
+          for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt, ++meanIndex)
           {
             typename TInputImage::Pointer                   im1 = *imIt;
             typename InputImageNNInterpolationType::Pointer im1Interp = InputImageNNInterpolationType::New();
@@ -224,22 +221,16 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
         // the Class Statistics object after this is computed.
         orderedmap<std::string, orderedmap<std::string, double>> TypeCovariance;
         // initialize -- no easy way since it is a map of maps
-        for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
-             mapIt != InputImageMap.end();
-             ++mapIt)
+        for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)
         {
-          for (typename MapOfInputImageVectors::const_iterator mapIt2 = InputImageMap.begin();
-               mapIt2 != InputImageMap.end();
-               ++mapIt2)
+          for (auto mapIt2 = InputImageMap.begin(); mapIt2 != InputImageMap.end(); ++mapIt2)
           {
             TypeCovariance[mapIt->first][mapIt2->first] = 0.0;
           }
         }
         //
         // compute per-Image Type covariance
-        for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
-             mapIt != InputImageMap.end();
-             ++mapIt)
+        for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)
         {
           const double mu1 = ListOfClassStatistics[iclass].m_Means[mapIt->first];
 
@@ -251,8 +242,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
             bool first_through_inner_loop(true);
 
-            for (typename MapOfInputImageVectors::const_iterator mapIt2 = mapIt; mapIt2 != InputImageMap.end();
-                 ++mapIt2)
+            for (auto mapIt2 = mapIt; mapIt2 != InputImageMap.end(); ++mapIt2)
             {
               size_t j = 0;
               if (first_through_inner_loop)
@@ -340,14 +330,10 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
         // and copy to vnl matrix
         MatrixType   covtmp(numModalities, numModalities, 0.0);
         unsigned int i = 0;
-        for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin();
-             mapIt != InputImageMap.end();
-             ++mapIt, ++i)
+        for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt, ++i)
         {
           unsigned int j = 0;
-          for (typename MapOfInputImageVectors::const_iterator mapIt2 = InputImageMap.begin();
-               mapIt2 != InputImageMap.end();
-               ++mapIt2, ++j)
+          for (auto mapIt2 = InputImageMap.begin(); mapIt2 != InputImageMap.end(); ++mapIt2, ++j)
           {
             covtmp(i, j) = TypeCovariance[mapIt->first][mapIt2->first] /
                            static_cast<double>(mapIt->second.size() * mapIt2->second.size());
@@ -363,8 +349,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
     for (LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++)
     {
       unsigned ichan = 0;
-      for (typename MapOfInputImageVectors::const_iterator mapIt = InputImageMap.begin(); mapIt != InputImageMap.end();
-           ++mapIt)
+      for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)
       {
         muLogMacro(<< "DEBUG MEAN (channel " << ichan << ", class " << iclass << "): \n"
                    << ListOfClassStatistics[iclass].m_Means[mapIt->first] << " \n"

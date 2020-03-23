@@ -182,7 +182,7 @@ vectorNorm(const std::vector<ValuesType> & x)
 {
   ValuesType norm = 0.0;
 
-  for (typename std::vector<ValuesType>::const_iterator it = x.begin(); it != x.end(); ++it)
+  for (auto it = x.begin(); it != x.end(); ++it)
   {
     const ValuesType value = *it;
     norm += value * value;
@@ -222,7 +222,7 @@ normalizeVector(std::vector<ValuesType> & x)
     std::cout << "WARNING:  ZERO NORM VECTOR." << __FILE__ << __LINE__ << std::endl;
     return;
   }
-  for (typename std::vector<ValuesType>::iterator it = x.begin(); it != x.end(); ++it)
+  for (auto it = x.begin(); it != x.end(); ++it)
   {
     *it /= norm;
   }
@@ -264,7 +264,7 @@ removeVectorMean(std::vector<ValuesType> & x)
 {
   const ValuesType n = x.size();
   const ValuesType mean = std::accumulate(x.begin(), x.end(), static_cast<ValuesType>(0.0)) / n;
-  for (typename std::vector<ValuesType>::iterator it = x.begin(); it != x.end(); ++it)
+  for (auto it = x.begin(); it != x.end(); ++it)
   {
     *it -= mean;
   }

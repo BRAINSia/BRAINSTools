@@ -101,7 +101,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::Calculate()
 
   histogramGenerator->Compute();
   using HistogramType = typename HistogramGeneratorType::HistogramType;
-  HistogramType * histogram = const_cast<HistogramType *>(histogramGenerator->GetOutput());
+  auto * histogram = const_cast<HistogramType *>(histogramGenerator->GetOutput());
   //  If the number of non-zero bins is <= 2, then it is a binary image, and
   // Otsu won't do:
   //

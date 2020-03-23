@@ -238,7 +238,7 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
          it != fixedList.end();
          ++it)
     {
-      const float value = static_cast<float>(*it);
+      const auto value = static_cast<float>(*it);
       if (value <= maxValue && value >= minValue)
       {
         sum += value;

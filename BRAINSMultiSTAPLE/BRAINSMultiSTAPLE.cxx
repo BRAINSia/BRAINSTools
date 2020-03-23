@@ -186,7 +186,7 @@ main(int argc, char * argv[])
 
       std::cout << "Resampling " << (*nameIt) << std::flush;
 
-      const ResampleFilterType::TransformType * curTransform =
+      const auto * curTransform =
         dynamic_cast<const ResampleFilterType::TransformType *>(curTransformBase.GetPointer());
       if (curTransform == nullptr)
       {

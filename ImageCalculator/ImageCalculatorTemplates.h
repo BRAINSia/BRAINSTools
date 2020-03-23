@@ -616,7 +616,9 @@ private:
   void
   init(const std::string & input, const char * const sep = " ")
   {
-    std::string::size_type start, _end = 0;
+    std::string::size_type start;
+
+    std::string::size_type _end = 0;
     int                    i = 0;
 
     while ((start = input.find_first_not_of(sep, _end)) != std::string::npos)

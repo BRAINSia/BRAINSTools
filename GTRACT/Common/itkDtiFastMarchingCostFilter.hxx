@@ -465,13 +465,17 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::InitializeTrialPoints(
   AxisNodeType node;
 
   // using TVector = vnl_vector_fixed<float,dimension>;
-  TVector distance, normal;
+  TVector distance;
+
+  TVector normal;
 
   distance.fill(0);
   normal.fill(0);
   OutputSpacingType spacing = this->GetOutput()->GetSpacing();
-  PixelType         outputPixel, priorOutputPixel;
-  double            solution(0.0);
+  PixelType         outputPixel;
+
+  PixelType priorOutputPixel;
+  double    solution(0.0);
 
   double outputSpeedPixel;
 
@@ -859,7 +863,9 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     if (m_LabelImage->GetPixel(eigIndex) == AlivePoint)
     {
       eigoffset = eigNeighborIt.GetOffset(i);
-      TVector neighOffset, normal;
+      TVector neighOffset;
+
+      TVector normal;
       neighOffset.fill(0);
       normal.fill(0);
       // New Normal calculation n=r-r', where r' is AlivePoint in neighborhood

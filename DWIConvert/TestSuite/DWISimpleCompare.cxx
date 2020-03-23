@@ -127,10 +127,11 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   }
   firstImage->SetSpacing(firstSpacing);
 #if 1
-  itk::ImageRegionConstIterator<ImageType> firstIt(firstImage, firstImage->GetLargestPossibleRegion()),
-    secondIt(secondImage, secondImage->GetLargestPossibleRegion());
-  unsigned count = 0;
-  unsigned errCount = 0;
+  itk::ImageRegionConstIterator<ImageType> firstIt(firstImage, firstImage->GetLargestPossibleRegion());
+
+  itk::ImageRegionConstIterator<ImageType> secondIt(secondImage, secondImage->GetLargestPossibleRegion());
+  unsigned                                 count = 0;
+  unsigned                                 errCount = 0;
   for (firstIt.GoToBegin(), secondIt.GoToBegin(); !firstIt.IsAtEnd() && !secondIt.IsAtEnd();
        ++firstIt, ++secondIt, ++count)
   {
@@ -187,7 +188,9 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   {
     return rval;
   }
-  double bVal1, bVal2;
+  double bVal1;
+
+  double bVal2;
   if (RecoverBValue<ImageType>(firstImage, bVal1) != EXIT_SUCCESS)
   {
     std::cerr << "Missing BValue in " << inputVolume1 << std::endl;

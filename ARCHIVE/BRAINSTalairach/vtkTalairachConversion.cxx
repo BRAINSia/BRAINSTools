@@ -232,9 +232,15 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     /***************************************************/
     /*          START PROCESSING Y DIRECTION           */
     /***************************************************/
-    double yStart1, yStart2;
-    double yEnd1, yEnd2;
-    int    yGridStartIndex(-1), yGridEndIndex(-1);
+    double yStart1;
+
+    double yStart2;
+    double yEnd1;
+
+    double yEnd2;
+    int    yGridStartIndex(-1);
+
+    int yGridEndIndex(-1);
 
     /* Determine y direction grid indices */
     std::string yStart = tokens[0].substr(0, 1);
@@ -402,9 +408,15 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     /***************************************************/
     /*          START PROCESSING X DIRECTION           */
     /***************************************************/
-    double xStart1, xStart2;
-    double xEnd1, xEnd2;
-    int    xGridStartIndex(-1), xGridEndIndex(-1);
+    double xStart1;
+
+    double xStart2;
+    double xEnd1;
+
+    double xEnd2;
+    int    xGridStartIndex(-1);
+
+    int xGridEndIndex(-1);
 
     std::string xStart = tokens[2].substr(0, 1);
     // std::cout << "XStart: " << xStart << std::endl;
@@ -564,9 +576,15 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     /***************************************************/
     /*          START PROCESSING Z DIRECTION           */
     /***************************************************/
-    double zStart1, zStart2;
-    double zEnd1, zEnd2;
-    int    zGridStartIndex, zGridEndIndex;
+    double zStart1;
+
+    double zStart2;
+    double zEnd1;
+
+    double zEnd2;
+    int    zGridStartIndex;
+
+    int zGridEndIndex;
 
     size_t      pos = tokens[4].find(".");
     std::string zEnd = tokens[4].substr(0, pos);

@@ -93,10 +93,18 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
 
   // ////////////////////////////////////////////////////////////////////////
   // Initialize some parameters
-  float   anisotropy, anisotropySum(0);
-  TVector vin(3), vout(3), vguide(3);
+  float anisotropy;
 
-  typename Self::ContinuousIndexType index, tmpIndex;
+  float   anisotropySum(0);
+  TVector vin(3);
+
+  TVector vout(3);
+
+  TVector vguide(3);
+
+  typename Self::ContinuousIndexType index;
+
+  typename Self::ContinuousIndexType tmpIndex;
   bool                               stop;
   int                                count = 0;
 
@@ -338,7 +346,9 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
 
   float minDist = MaxDist;
 
-  typename Self::PointType p1, p3;
+  typename Self::PointType p1;
+
+  typename Self::PointType p3;
   // this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index,p2);
   // std::cout << "Current Point " << index << std::endl;
   for (int i = 0; i < centerFiber->GetNumberOfPoints(); i++)

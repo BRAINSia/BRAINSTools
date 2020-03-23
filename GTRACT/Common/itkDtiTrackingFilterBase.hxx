@@ -117,7 +117,9 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::S
   typename Self::ContinuousIndexType & oldIndex,
   TVector &                            vec)
 {
-  PointType oldpt, newpt;
+  PointType oldpt;
+
+  PointType newpt;
 
   this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(oldIndex, oldpt);
   // std::cerr << "Converted " << oldIndex << " to " << oldpt << std::endl;
@@ -175,7 +177,9 @@ bool
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::IsLoop(vtkPoints * fiber,
                                                                                       double      tolerance)
 {
-  double p1[3], p2[3];
+  double p1[3];
+
+  double p2[3];
 
   const double tol2 = tolerance * tolerance;
   const int    numPts = fiber->GetNumberOfPoints();

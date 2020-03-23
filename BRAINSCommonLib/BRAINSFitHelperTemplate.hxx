@@ -1654,7 +1654,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
                                << currentTransformIndex + 1 << " of " << m_TransformType.size() << "). ");
     }
   }
-  return;
 }
 
 template <typename FixedImageType, typename MovingImageType>

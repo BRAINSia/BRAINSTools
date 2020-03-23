@@ -884,7 +884,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugPosteriors(
       writer->Update();
     }
   }
-  return;
 }
 
 template <typename TInputImage, typename TProbabilityImage>

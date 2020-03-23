@@ -146,7 +146,6 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::Calculate()
                 << std::endl;
     }
   }
-  return;
 }
 } // namespace itk
 #endif // __itkComputeHistogramQuantileThresholds_hxx

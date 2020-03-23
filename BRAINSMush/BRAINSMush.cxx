@@ -601,7 +601,6 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   LFF->SetClosingSize(5);
   LFF->Update();
   resultImage = LFF->GetOutput();
-  return;
 }
 
 /*

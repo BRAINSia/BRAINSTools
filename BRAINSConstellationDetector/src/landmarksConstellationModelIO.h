@@ -190,19 +190,19 @@ public:
     for (unsigned int q = 0; q < output.size(); q++)
     {
       output[q].resize(input[0][0].size());
-      for (FloatVectorIterator oit = output[q].begin(); oit != output[q].end(); ++oit)
+      for (auto oit = output[q].begin(); oit != output[q].end(); ++oit)
       {
         *oit = 0;
       }
     }
-    for (ConstFloat3DVectorIterator curr_dataset = input.begin(); curr_dataset != input.end(); ++curr_dataset)
+    for (auto curr_dataset = input.begin(); curr_dataset != input.end(); ++curr_dataset)
     {
-      ConstFloat2DVectorIterator input_angleit = curr_dataset->begin();
-      Float2DVectorIterator      output_angleit = output.begin();
+      auto input_angleit = curr_dataset->begin();
+      auto output_angleit = output.begin();
       while (input_angleit != curr_dataset->end() && output_angleit != output.end())
       {
-        ConstFloatVectorIterator init = input_angleit->begin();
-        FloatVectorIterator      outit = output_angleit->begin();
+        auto init = input_angleit->begin();
+        auto outit = output_angleit->begin();
         while (init != input_angleit->end() && outit != output_angleit->end())
         {
           *outit += *init;
@@ -218,7 +218,7 @@ public:
     const float inv_size = 1.0 / input.size();
     for (unsigned int q = 0; q < output.size(); q++)
     {
-      for (FloatVectorIterator oit = output[q].begin(); oit != output[q].end(); ++oit)
+      for (auto oit = output[q].begin(); oit != output[q].end(); ++oit)
       {
         *oit *= inv_size;
       }
@@ -536,7 +536,7 @@ public:
   {
     debugImageDescriptor DID(this->m_TemplateMeans[name], this->GetRadius(name), this->GetHeight(name), "");
 
-    Float2DVectorType::iterator meanIt = DID.mean.begin();
+    auto meanIt = DID.mean.begin();
 
     for (int j = 0; meanIt != DID.mean.end(); ++meanIt, j++)
     {
@@ -566,7 +566,7 @@ public:
 
       IndexLocationVectorType::const_iterator locIt = DID.locations.begin();
       IndexLocationVectorType::const_iterator locItEnd = DID.locations.end();
-      for (FloatVectorType::iterator floatIt = (*meanIt).begin(); locIt != locItEnd; ++floatIt, ++locIt)
+      for (auto floatIt = (*meanIt).begin(); locIt != locItEnd; ++floatIt, ++locIt)
       {
         FloatImageType::IndexType ind;
         for (unsigned k = 0; k < 3; k++)
@@ -764,9 +764,9 @@ private:
   void
   Write(std::ofstream & f, const Float2DVectorType & vec)
   {
-    for (ConstFloat2DVectorIterator it1 = vec.begin(); it1 != vec.end(); ++it1)
+    for (auto it1 = vec.begin(); it1 != vec.end(); ++it1)
     {
-      for (ConstFloatVectorIterator it2 = it1->begin(); it2 != it1->end(); ++it2)
+      for (auto it2 = it1->begin(); it2 != it1->end(); ++it2)
       {
         this->Write<float>(f, *it2);
       }
@@ -776,9 +776,9 @@ private:
   void
   Read(std::ifstream & f, Float2DVectorType & vec)
   {
-    for (Float2DVectorIterator it1 = vec.begin(); it1 != vec.end(); ++it1)
+    for (auto it1 = vec.begin(); it1 != vec.end(); ++it1)
     {
-      for (FloatVectorIterator it2 = it1->begin(); it2 != it1->end(); ++it2)
+      for (auto it2 = it1->begin(); it2 != it1->end(); ++it2)
       {
         this->Read<float>(f, *it2);
       }

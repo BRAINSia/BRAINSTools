@@ -288,7 +288,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
 
       [](const tbb::blocked_range<IterType> &        r,
          vnl_vector_fixed<unsigned long long int, 3> init) -> vnl_vector_fixed<unsigned long long int, 3> {
-        for (IterType currIndex = r.begin(); currIndex != r.end(); ++currIndex)
+        for (auto currIndex = r.begin(); currIndex != r.end(); ++currIndex)
         {
           init[0] = init[0] + (*currIndex)[0];
           init[1] = init[1] + (*currIndex)[1];
@@ -748,7 +748,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
          mapIt != this->m_InputImages.end();
          ++mapIt, ++ichan)
     {
-      for (typename InputImageVector::const_iterator imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
+      for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt)
       {
         InternalImagePointer curOutput = InternalImageType::New();
         curOutput->CopyInformation((*imIt));

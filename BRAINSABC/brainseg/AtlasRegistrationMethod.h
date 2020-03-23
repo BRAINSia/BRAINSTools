@@ -216,7 +216,7 @@ public:
   InternalImagePointer
   GetSecondModalityAtlasOriginalImage(const std::string & type)
   {
-    MapOfFloatImageVectors::iterator test_map_location = this->m_AtlasOriginalImageList.find(type);
+    auto test_map_location = this->m_AtlasOriginalImageList.find(type);
     if (test_map_location == this->m_AtlasOriginalImageList.end())
     {
       return nullptr;

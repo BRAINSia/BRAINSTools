@@ -373,7 +373,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
     }
 
     InputIndexType indexEye1;
-    SphereIterator itSpheres = spheres.begin();
+    auto           itSpheres = spheres.begin();
     for (unsigned int i = 0; i < Dimension; ++i)
     {
       indexEye1[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);

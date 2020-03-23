@@ -49,7 +49,7 @@ AverageImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const Output
   const unsigned int numberOfInputFiles = this->GetNumberOfInputs();
 
   //  create and initialize all input image iterators
-  IteratorType * it = new IteratorType[numberOfInputFiles];
+  auto * it = new IteratorType[numberOfInputFiles];
   for (unsigned int i = 0; i < numberOfInputFiles; ++i)
   {
     it[i] = IteratorType(this->GetInput(i), outputRegionForThread);

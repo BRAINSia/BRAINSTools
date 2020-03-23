@@ -80,8 +80,8 @@ void
 PrintAvailableTests()
 {
   std::cout << "Available tests:\n";
-  std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.begin();
-  int                                              i = 0;
+  auto j = StringToTestFunctionMap.begin();
+  int  i = 0;
 
   while (j != StringToTestFunctionMap.end())
   {
@@ -124,8 +124,8 @@ main(int ac, char * av[])
     std::cout << "To run a test, enter the test number: ";
     int testNum = 0;
     std::cin >> testNum;
-    std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.begin();
-    int                                              i = 0;
+    auto j = StringToTestFunctionMap.begin();
+    int  i = 0;
     while (j != StringToTestFunctionMap.end() && i < testNum)
     {
       ++i;
@@ -186,7 +186,7 @@ main(int ac, char * av[])
       }
     }
   }
-  std::map<std::string, MainFuncPointer>::iterator j = StringToTestFunctionMap.find(testToRun);
+  auto j = StringToTestFunctionMap.find(testToRun);
   if (j != StringToTestFunctionMap.end())
   {
     MainFuncPointer f = j->second;
@@ -198,12 +198,12 @@ main(int ac, char * av[])
       // Make a list of possible baselines
       for (int i = 0; i < static_cast<int>(compareList.size()); i++)
       {
-        char *                               baselineFilename = compareList[i].first;
-        char *                               testFilename = compareList[i].second;
-        std::map<std::string, int>           baselines = RegressionTestBaselines(baselineFilename);
-        std::map<std::string, int>::iterator baseline = baselines.begin();
-        std::string                          bestBaseline;
-        int                                  bestBaselineStatus = itk::NumericTraits<int>::max();
+        char *                     baselineFilename = compareList[i].first;
+        char *                     testFilename = compareList[i].second;
+        std::map<std::string, int> baselines = RegressionTestBaselines(baselineFilename);
+        auto                       baseline = baselines.begin();
+        std::string                bestBaseline;
+        int                        bestBaselineStatus = itk::NumericTraits<int>::max();
         while (baseline != baselines.end())
         {
           baseline->second = RegressionTestImage(

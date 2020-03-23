@@ -14,7 +14,7 @@ DWIConverterFactory::DWIConverterFactory(const std::string DicomDirectory,
 
 DWIConverterFactory::~DWIConverterFactory()
 {
-  for (std::vector<itk::DCMTKFileReader *>::iterator it = this->m_Headers.begin(); it != this->m_Headers.end(); ++it)
+  for (auto it = this->m_Headers.begin(); it != this->m_Headers.end(); ++it)
   {
     delete (*it);
   }
@@ -112,7 +112,7 @@ DWIConverterFactory::New()
     int headerCount = 0;
     for (unsigned i = 0; i < m_InputFileNames.size(); ++i)
     {
-      itk::DCMTKFileReader * curReader = new itk::DCMTKFileReader;
+      auto * curReader = new itk::DCMTKFileReader;
       curReader->SetFileName(m_InputFileNames[i]);
       try
       {

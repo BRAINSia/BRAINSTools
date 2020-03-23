@@ -144,9 +144,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
        mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.end();
        ++mapOfModalImageListsIt)
   {
-    FloatImageVector::iterator currModeImageListIt = mapOfModalImageListsIt->second.begin();
-    FloatImageVector::iterator intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
-    StringVector::iterator isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
+    auto currModeImageListIt = mapOfModalImageListsIt->second.begin();
+    auto intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
+    auto isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
     this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].clear(); // Ensure that pushing onto clean list
     while (currModeImageListIt != mapOfModalImageListsIt->second.end())
     {
@@ -339,8 +339,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::AverageIntraSubjectReg
   this->m_ModalityAveragedOfIntraSubjectImages.clear();   // Ensure that pushing onto clean list
   this->m_ModalityAveragedOfIntraSubjectImages.resize(0); // Ensure that pushing onto clean list
 
-  for (MapOfFloatImageVectors::iterator mapOfRegisteredModalImageListsIt =
-         this->m_RegisteredIntraSubjectImagesList.begin();
+  for (auto mapOfRegisteredModalImageListsIt = this->m_RegisteredIntraSubjectImagesList.begin();
        mapOfRegisteredModalImageListsIt != this->m_RegisteredIntraSubjectImagesList.end();
        ++mapOfRegisteredModalImageListsIt)
   {
@@ -355,9 +354,8 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::AverageIntraSubjectReg
     }
     else if (numbOfImagesPerModality == 1)
     {
-      FloatImageVector::iterator intraImIt =
-        this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first]
-          .begin(); // each intra subject image
+      auto intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first]
+                         .begin(); // each intra subject image
       this->m_ModalityAveragedOfIntraSubjectImages.push_back((*intraImIt).GetPointer());
     }
     else

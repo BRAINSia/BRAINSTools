@@ -123,7 +123,7 @@ ComputeDiffusionTensorImageFilter ::Update()
   {
     /* Get the index & value for B0 */
     ADC_It.GoToBeginOfLine();
-    float ADC0 = (float)ADC_It.Get();
+    auto ADC0 = (float)ADC_It.Get();
     ADCIndex = ADC_It.GetIndex();
     for (int i = 0; i < 3; i++)
     {

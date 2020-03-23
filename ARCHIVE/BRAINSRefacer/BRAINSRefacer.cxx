@@ -267,7 +267,7 @@ main(int argc, char ** argv)
     }
     const TransformReaderType::TransformListType * transforms = transformReader->GetTransformList();
     using ReadCompositeTransformType = itk::CompositeTransform<double, 3>;
-    TransformReaderType::TransformListType::const_iterator comp_it = transforms->begin();
+    auto comp_it = transforms->begin();
     if (strcmp((*comp_it)->GetNameOfClass(), "BSplineTransform") != 0)
     {
       std::cerr << "Invalid transform given" << std::endl;

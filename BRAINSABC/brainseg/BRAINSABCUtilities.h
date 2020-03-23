@@ -266,7 +266,7 @@ void
 PrintMapOfImageVectors(const TMap & map)
 {
   muLogMacro(<< "Map size: " << map.size() << std::endl);
-  for (typename TMap::const_iterator mapIt = map.begin(); mapIt != map.end(); ++mapIt)
+  for (auto mapIt = map.begin(); mapIt != map.end(); ++mapIt)
   {
     muLogMacro(<< "  " << mapIt->first << "(" << mapIt->second.size() << "):" << std::endl);
     for (unsigned i = 0; i < mapIt->second.size(); ++i)
@@ -282,10 +282,9 @@ unsigned int
 TotalMapSize(const TMap & map)
 {
   unsigned int rval = 0;
-  for (typename TMap::const_iterator mapIt = map.begin(); mapIt != map.end(); ++mapIt)
+  for (auto mapIt = map.begin(); mapIt != map.end(); ++mapIt)
   {
-    for (typename TMap::mapped_type::const_iterator listIt = mapIt->second.begin(); listIt != mapIt->second.end();
-         ++listIt)
+    for (auto listIt = mapIt->second.begin(); listIt != mapIt->second.end(); ++listIt)
     {
       ++rval;
     }

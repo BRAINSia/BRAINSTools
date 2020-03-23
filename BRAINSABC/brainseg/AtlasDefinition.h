@@ -110,7 +110,7 @@ public:
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -128,7 +128,7 @@ public:
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -146,7 +146,7 @@ public:
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -165,7 +165,7 @@ public:
       std::cout << "MISSING LABEL CODE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -183,7 +183,7 @@ public:
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -201,7 +201,7 @@ public:
       std::cout << "MISSING IsForegroungPrior IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -219,7 +219,7 @@ public:
       std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
       throw;
     }
-    PriorMapType::const_iterator mit = m_PriorMap.find(tissueType);
+    auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
       // HACK:  Should throw and exception here with line number and file
@@ -346,7 +346,7 @@ private:
     const BoundsType &
     GetBounds(const std::string & Modality) const
     {
-      BoundsMapType::const_iterator bit = m_BoundsMap.find(Modality);
+      auto bit = m_BoundsMap.find(Modality);
 
       if (bit == m_BoundsMap.end())
       {

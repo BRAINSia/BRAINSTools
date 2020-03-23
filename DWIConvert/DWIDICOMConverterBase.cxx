@@ -128,7 +128,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     // less computation.
     for (unsigned int k = 0; k < this->m_NSlice; ++k)
     {
-      std::map<std::string, int>::iterator it = sliceLocations.find(sliceLocationStrings[k]);
+      auto it = sliceLocations.find(sliceLocationStrings[k]);
       sliceLocationIndicator[k] = distance(sliceLocations.begin(), it);
     }
 

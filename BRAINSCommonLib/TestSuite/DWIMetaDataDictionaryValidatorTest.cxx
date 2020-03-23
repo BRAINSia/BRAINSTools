@@ -20,8 +20,7 @@
 static std::string
 ForceConvert(const itk::MetaDataObjectBase * myMetaDataObjectBase)
 {
-  const itk::MetaDataObject<std::string> * myMetaDataObject =
-    dynamic_cast<const itk::MetaDataObject<std::string> *>(myMetaDataObjectBase);
+  const auto * myMetaDataObject = dynamic_cast<const itk::MetaDataObject<std::string> *>(myMetaDataObjectBase);
   if (myMetaDataObject)
   {
     // const std::string temp  =myMetaDataObject->GetMetaDataObjectTypeName();
@@ -32,8 +31,7 @@ ForceConvert(const itk::MetaDataObjectBase * myMetaDataObjectBase)
   else
   {
     // double type for thickness field
-    const itk::MetaDataObject<double> * doubleMetaDataObject =
-      dynamic_cast<const itk::MetaDataObject<double> *>(myMetaDataObjectBase);
+    const auto * doubleMetaDataObject = dynamic_cast<const itk::MetaDataObject<double> *>(myMetaDataObjectBase);
     if (doubleMetaDataObject)
     {
       const std::string temp("double");
@@ -56,14 +54,14 @@ static void
 PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
 {
   std::cout << "----------------" << std::endl;
-  itk::MetaDataDictionary::ConstIterator end = dictPrint.End();
-  for (itk::MetaDataDictionary::ConstIterator it = dictPrint.Begin(); it != end; ++it)
+  auto end = dictPrint.End();
+  for (auto it = dictPrint.Begin(); it != end; ++it)
   {
     if (it->first.find("NRRD_measurement frame") != std::string::npos)
     {
       std::cout << ' ' << it->first << ":=" << std::endl;
       using msrFrameType = std::vector<std::vector<double>>;
-      const itk::MetaDataObject<msrFrameType> * msrFrameMetaDataObject =
+      const auto * msrFrameMetaDataObject =
         dynamic_cast<const itk::MetaDataObject<msrFrameType> *>(it->second.GetPointer());
       const msrFrameType outMsr = msrFrameMetaDataObject->GetMetaDataObjectValue();
       for (size_t i = 0; i < outMsr.size(); ++i)

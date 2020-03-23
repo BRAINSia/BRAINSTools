@@ -749,7 +749,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   // point)
   for (int i = 0; i < dimension; i++)
   {
-    long int val = static_cast<long int>(neighOffset[i] / itk::Math::abs(spacing[i]));
+    auto val = static_cast<long int>(neighOffset[i] / itk::Math::abs(spacing[i]));
     neighIndex[i] += val;
   }
 
@@ -891,7 +891,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   (before was Trial Point index, now it is Alive Point index)*/
   for (int i = 0; i < dimension; i++)
   {
-    long int val = static_cast<long int>(aliveOffset[i] / itk::Math::abs(spacing[i]));
+    auto val = static_cast<long int>(aliveOffset[i] / itk::Math::abs(spacing[i]));
     neighIndex[i] += val;
   }
 

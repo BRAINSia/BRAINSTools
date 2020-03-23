@@ -72,10 +72,16 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  float   anisotropy, anisotropySum(0);
-  TVector vin(3), vout(3);
+  float anisotropy;
 
-  typename Self::ContinuousIndexType index, tmpIndex;
+  float   anisotropySum(0);
+  TVector vin(3);
+
+  TVector vout(3);
+
+  typename Self::ContinuousIndexType index;
+
+  typename Self::ContinuousIndexType tmpIndex;
   bool                               stop;
   bool                               addFiber;
 

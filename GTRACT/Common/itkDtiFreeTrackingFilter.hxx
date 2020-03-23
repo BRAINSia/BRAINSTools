@@ -87,11 +87,17 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  float anisotropy(0), anisotropySum(0);
+  float anisotropy(0);
 
-  TVector vin(3), vout(3);
+  float anisotropySum(0);
 
-  typename Self::ContinuousIndexType index, tmpIndex;
+  TVector vin(3);
+
+  TVector vout(3);
+
+  typename Self::ContinuousIndexType index;
+
+  typename Self::ContinuousIndexType tmpIndex;
   bool                               stop;
 
   const float inRadians = this->pi / 180.0;

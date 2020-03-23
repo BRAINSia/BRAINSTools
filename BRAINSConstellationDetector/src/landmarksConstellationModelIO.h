@@ -654,7 +654,9 @@ public:
     {
       return true;
     }
-    double absa(fabs(a)), absb(fabs(b));
+    double absa(fabs(a));
+
+    double absb(fabs(b));
     double absdiff(fabs(absa - absb));
     double avg((absa + absb) / 2.0);
     if (absdiff > (avg / 1000.0))

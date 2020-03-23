@@ -98,10 +98,16 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  float   anisotropy, anisotropySum;
-  TVector vin(3), vout(3);
+  float anisotropy;
 
-  typename Self::ContinuousIndexType index, tmpIndex;
+  float   anisotropySum;
+  TVector vin(3);
+
+  TVector vout(3);
+
+  typename Self::ContinuousIndexType index;
+
+  typename Self::ContinuousIndexType tmpIndex;
   bool                               stop;
   typename Self::BranchListType      branchList;
   typename Self::SeedListType        newSeeds;
@@ -361,7 +367,11 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
 
             // std::cout << "Random Walk Direction: " << v << std::endl;
 
-            double x, y, z;
+            double x;
+
+            double y;
+
+            double z;
             x = (0.5 - this->m_RandomGenerator->GetVariateWithOpenRange()) * 2.0;
             y = (0.5 - this->m_RandomGenerator->GetVariateWithOpenRange()) * 2.0;
             z = (0.5 - this->m_RandomGenerator->GetVariateWithOpenRange()) * 2.0;

@@ -124,7 +124,9 @@ void FastMarchingCostFunction // < TCostImage>
 {
   float initialCost;
 
-  CostIPType::ContinuousIndexType inputIndex, neighIndex;
+  CostIPType::ContinuousIndexType inputIndex;
+
+  CostIPType::ContinuousIndexType neighIndex;
 
   m_CostIP->SetInputImage(m_CostImage);
   CostImageRegionType costRegion = m_CostImage->GetLargestPossibleRegion();

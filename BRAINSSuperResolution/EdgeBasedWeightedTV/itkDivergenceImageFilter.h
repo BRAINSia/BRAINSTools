@@ -311,8 +311,14 @@ protected:
   TRealType
   NonPCEvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
-    unsigned  i, j;
-    TRealType dx, sum, accum;
+    unsigned i;
+
+    unsigned  j;
+    TRealType dx;
+
+    TRealType sum;
+
+    TRealType accum;
 
     accum = NumericTraits<TRealType>::ZeroValue();
     for (i = 0; i < ImageDimension; ++i)
@@ -332,7 +338,9 @@ protected:
   EvaluateAtNeighborhood3D(const ConstNeighborhoodIteratorType & it) const
   {
     // WARNING:  ONLY CALL THIS METHOD WHEN PROCESSING A 3D IMAGE
-    unsigned int i, j;
+    unsigned int i;
+
+    unsigned int j;
     double       Lambda[3];
     double       CharEqn[3];
     double       ans;
@@ -445,7 +453,9 @@ protected:
   TRealType
   EvaluateAtNeighborhood(const ConstNeighborhoodIteratorType & it) const
   {
-    unsigned int i, j;
+    unsigned int i;
+
+    unsigned int j;
 
     vnl_matrix<TRealType>                        g(ImageDimension, ImageDimension);
     vnl_vector_fixed<TRealType, VectorDimension> d_phi_du[TInputImage::ImageDimension];

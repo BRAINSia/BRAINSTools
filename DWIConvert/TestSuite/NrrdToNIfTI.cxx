@@ -105,7 +105,11 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
   VectorImageType::Pointer img;
-  std::string              inputName(argv[1]), outputName(argv[2]), outputName3D(argv[3]);
+  std::string              inputName(argv[1]);
+
+  std::string outputName(argv[2]);
+
+  std::string outputName3D(argv[3]);
 
   ReadVectorVolume<VectorImageType>(img, inputName, false);
   std::cout << "input directions" << std::endl << img->GetDirection() << std::endl;

@@ -55,7 +55,13 @@ My_lsf(TVector x, TVector y)
   {
     throw;
   }
-  float a, b, c, d;
+  float a;
+
+  float b;
+
+  float c;
+
+  float d;
   a = b = c = d = 0;
   for (unsigned int i = 0; i < N; i++)
   {

@@ -75,11 +75,11 @@ public:
       m_Table.resize(row + 1);
     }
     // For each row, make sure that it now has enough columns.
-    for (unsigned int q = 0; q < m_Table.size(); ++q)
+    for (auto & q : m_Table)
     {
-      if (m_Table[q].size() <= column)
+      if (q.size() <= column)
       {
-        m_Table[q].resize(column + 1, std::string(""));
+        q.resize(column + 1, std::string(""));
       }
     }
     m_Table[row][column] = s;
@@ -134,33 +134,33 @@ public:
     using ColWidthsType = std::vector<unsigned int>;
     ColWidthsType colWidths(m_Table[0].size(), 0);
     // find largest columns
-    for (unsigned i = 0; i < m_Table.size(); ++i)
+    for (auto & i : m_Table)
     {
-      for (unsigned j = 0; j < m_Table[i].size(); ++j)
+      for (unsigned j = 0; j < i.size(); ++j)
       {
-        if (colWidths[j] < m_Table[i][j].size())
+        if (colWidths[j] < i[j].size())
         {
-          colWidths[j] = m_Table[i][j].size();
+          colWidths[j] = i[j].size();
         }
       }
     }
-    for (unsigned i = 0; i < m_Table.size(); ++i)
+    for (auto & i : m_Table)
     {
-      for (unsigned j = 0; j < m_Table[i].size(); ++j)
+      for (unsigned j = 0; j < i.size(); ++j)
       {
         // if right justify, output leading blanks
         if (m_rightJustify)
         {
-          int count = colWidths[j] - m_Table[i][j].size();
+          int count = colWidths[j] - i[j].size();
           while (count--)
           {
             output << " ";
           }
         }
         unsigned int k(0);
-        for (k = 0; k < m_Table[i][j].size(); ++k)
+        for (k = 0; k < i[j].size(); ++k)
         {
-          output << m_Table[i][j][k];
+          output << i[j][k];
         }
         unsigned int limit;
         // if right justify, just output pad

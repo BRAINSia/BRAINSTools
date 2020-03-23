@@ -196,10 +196,10 @@ main(int ac, char * av[])
       // Invoke the test's "main" function.
       result = (*f)(ac - 1, av + 1);
       // Make a list of possible baselines
-      for (int i = 0; i < static_cast<int>(compareList.size()); i++)
+      for (auto & i : compareList)
       {
-        char *                     baselineFilename = compareList[i].first;
-        char *                     testFilename = compareList[i].second;
+        char *                     baselineFilename = i.first;
+        char *                     testFilename = i.second;
         std::map<std::string, int> baselines = RegressionTestBaselines(baselineFilename);
         auto                       baseline = baselines.begin();
         std::string                bestBaseline;

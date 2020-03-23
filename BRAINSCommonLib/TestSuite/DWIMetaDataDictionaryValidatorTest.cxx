@@ -64,12 +64,12 @@ PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
       const auto * msrFrameMetaDataObject =
         dynamic_cast<const itk::MetaDataObject<msrFrameType> *>(it->second.GetPointer());
       const msrFrameType outMsr = msrFrameMetaDataObject->GetMetaDataObjectValue();
-      for (size_t i = 0; i < outMsr.size(); ++i)
+      for (const auto & i : outMsr)
       {
         std::cout << "  ";
-        for (size_t j = 0; j < outMsr[i].size(); ++j)
+        for (size_t j = 0; j < i.size(); ++j)
         {
-          std::cout << outMsr[i][j] << " ";
+          std::cout << i[j] << " ";
         }
         std::cout << std::endl;
       }
@@ -183,9 +183,9 @@ main(int argc, char * argv[])
       if (tempCenterings != outCenterings)
       {
         std::cout << "ERROR: outCenterings not preserved" << std::endl;
-        for (size_t i = 0; i < outCenterings.size(); ++i)
+        for (const auto & outCentering : outCenterings)
         {
-          std::cout << "Out outCenterings " << outCenterings[i] << std::endl;
+          std::cout << "Out outCenterings " << outCentering << std::endl;
         }
         allTestPass = false;
       }
@@ -225,9 +225,9 @@ main(int argc, char * argv[])
       if (thicknessPass == false)
       {
         std::cout << "ERROR: outThicknesses not preserved" << std::endl;
-        for (size_t i = 0; i < outThicknesses.size(); ++i)
+        for (double outThicknesse : outThicknesses)
         {
-          std::cout << "Output Thicknesses " << outThicknesses[i] << std::endl;
+          std::cout << "Output Thicknesses " << outThicknesse << std::endl;
         }
         allTestPass = false;
       }
@@ -332,11 +332,11 @@ main(int argc, char * argv[])
       if (GradientTable != outGT)
       {
         std::cout << "ERROR: outGT not preserved! Output outGT:" << std::endl;
-        for (size_t i = 0; i < outGT.size(); ++i)
+        for (const auto & i : outGT)
         {
-          for (size_t j = 0; j < outGT[i].size(); ++j)
+          for (size_t j = 0; j < i.size(); ++j)
           {
-            std::cout << outGT[i][j] << " ";
+            std::cout << i[j] << " ";
           }
           std::cout << std::endl;
         }

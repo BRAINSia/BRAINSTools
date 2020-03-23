@@ -245,10 +245,9 @@ RecoverBValues(const TImage *                                            inputVo
   {
     return EXIT_FAILURE;
   }
-  for (unsigned i = 0; i < bVectors.size(); ++i)
+  for (const auto & bVector : bVectors)
   {
-    double norm = std::sqrt((bVectors[i][0] * bVectors[i][0]) + (bVectors[i][1] * bVectors[i][1]) +
-                            (bVectors[i][2] * bVectors[i][2]));
+    double norm = std::sqrt((bVector[0] * bVector[0]) + (bVector[1] * bVector[1]) + (bVector[2] * bVector[2]));
     if (std::abs(1.0 - norm) < 0.05) // Asssume norm is 1 if with 5% of 1 to stablize NRRD->FSL->NRRD numerical
                                      // stability.
     {

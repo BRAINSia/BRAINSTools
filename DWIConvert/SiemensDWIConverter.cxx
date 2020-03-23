@@ -638,13 +638,11 @@ SiemensDWIConverter::CheckCSAHeaderAvailable()
       static const std::string list_temp[] = { "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08",
                                                "B09", "B10", "B11", "B12", "B13", "B14", "B15" };
       std::vector<std::string> badSiemensVersionsRequiringCSAHeader(list_temp, list_temp + 12);
-      for (std::vector<std::string>::const_iterator it = badSiemensVersionsRequiringCSAHeader.begin();
-           it != badSiemensVersionsRequiringCSAHeader.end();
-           ++it)
+      for (const auto & it : badSiemensVersionsRequiringCSAHeader)
       {
-        if (softwareVersion.find(*it) != std::string::npos)
+        if (softwareVersion.find(it) != std::string::npos)
         {
-          std::cout << "Found a known non-compliant Siemens scan version " << *it
+          std::cout << "Found a known non-compliant Siemens scan version " << it
                     << " so using private "
                        "CSAHeader"
                     << std::endl;

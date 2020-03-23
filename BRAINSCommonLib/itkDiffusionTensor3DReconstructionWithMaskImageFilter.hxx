@@ -284,9 +284,9 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
 
       typename NumericTraits<ReferencePixelType>::AccumulateType b0 = NumericTraits<ReferencePixelType>::ZeroValue();
       // Average the baseline image pixels
-      for (unsigned int i = 0; i < baselineind.size(); ++i)
+      for (unsigned int & i : baselineind)
       {
-        b0 += b[baselineind[i]];
+        b0 += b[i];
       }
       b0 /= this->m_NumberOfBaselineImages;
 

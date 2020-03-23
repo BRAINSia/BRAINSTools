@@ -294,9 +294,9 @@ main(int argc, char * argv[])
     gradientDir[2] = tmpDir[2];
 
     bool useIndex = true;
-    for (unsigned int j = 0; j < ignoreIndex.size(); j++)
+    for (int j : ignoreIndex)
     {
-      if (ignoreIndex.at(j) == static_cast<int>(i))
+      if (j == static_cast<int>(i))
       {
         useIndex = false;
       }

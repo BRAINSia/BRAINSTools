@@ -469,10 +469,10 @@ DWIDICOMConverterBase::getDicomSpacing(double * const spacing) const
     0x9229, // check for Shared Functional Group Sequence first
     0x9230, // check the Per-frame Functional Groups Sequence
   };
-  for (unsigned i = 0; i < 2; ++i)
+  for (unsigned short candidateSequence : candidateSequences)
   {
     itk::DCMTKSequence spacingSequence;
-    rval = m_Headers[0]->GetElementSQ(0x5200, candidateSequences[i], spacingSequence, false);
+    rval = m_Headers[0]->GetElementSQ(0x5200, candidateSequence, spacingSequence, false);
     if (rval == EXIT_SUCCESS)
     {
       itk::DCMTKItem item;

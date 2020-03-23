@@ -105,9 +105,9 @@ DWIConverter::OrientForFSLConventions(const bool toFSL)
         (DicomDesiredDirectionFlipsWRTLPS[i] * direction(i, i) < -0.5); // i.e. a negative magnitude greater than 0.5
     }
     // This is necesssary to ensure that the BVEC file is consistent with FSL orientation assumptions
-    for (size_t g = 0; g < this->m_DiffusionVectors.size(); ++g)
+    for (auto & m_DiffusionVector : this->m_DiffusionVectors)
     {
-      this->m_DiffusionVectors[g][i] *= (arrayAxisFlip[i] ? -1 : 1);
+      m_DiffusionVector[i] *= (arrayAxisFlip[i] ? -1 : 1);
     }
   }
   /* Debugging information for identifying orientation!
@@ -316,7 +316,7 @@ DWIConverter::ConvertBVectorsToIdentityMeasurementFrame()
   DWIMetaDataDictionaryValidator::GradientTableType gradientVectors;
   const vnl_matrix_fixed<double, 3, 3>              InverseMeasurementFrame = this->GetMeasurementFrame().GetInverse();
   // grab the diffusion vectors.
-  for (unsigned int k = 0; k < this->m_DiffusionVectors.size(); ++k)
+  for (auto & m_DiffusionVector : this->m_DiffusionVectors)
   {
     DWIMetaDataDictionaryValidator::GradientDirectionType vec;
     // For scanners, the measurement frame for the gradient directions is the same as the
@@ -333,7 +333,7 @@ DWIConverter::ConvertBVectorsToIdentityMeasurementFrame()
     // In order to compare two different scans to determine if the same protocol was prosribed,
     // it is necessary to multiply each of the recorded diffusion gradient directions by
     // the inverse of the LPSDirCos.
-    vnl_vector_fixed<double, 3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * (this->m_DiffusionVectors[k]);
+    vnl_vector_fixed<double, 3> RotatedScaledDiffusionVectors = InverseMeasurementFrame * m_DiffusionVector;
     for (unsigned ind = 0; ind < 3; ++ind)
     {
       vec[ind] = RotatedScaledDiffusionVectors[ind];
@@ -447,9 +447,9 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
            << DoubleConvert(MeasurementFrame[2][2]) << ")" << std::endl;
   }
 
-  for (auto it = this->m_CommonDicomFieldsMap.begin(); it != this->m_CommonDicomFieldsMap.end(); ++it)
+  for (const auto & it : this->m_CommonDicomFieldsMap)
   {
-    header << it->first << ":=" << it->second << std::endl;
+    header << it.first << ":=" << it.second << std::endl;
   }
 
   header << "modality:=DWMRI" << std::endl;
@@ -717,11 +717,11 @@ double
 DWIConverter::ComputeMaxBvalue(const std::vector<double> & bValues) const
 {
   double maxBvalue(0.0);
-  for (unsigned int k = 0; k < bValues.size(); ++k)
+  for (double bValue : bValues)
   {
-    if (bValues[k] > maxBvalue)
+    if (bValue > maxBvalue)
     {
-      maxBvalue = bValues[k];
+      maxBvalue = bValue;
     }
   }
   return maxBvalue;
@@ -732,9 +732,9 @@ DWIConverter::has_valid_nifti_extension(std::string outputVolumeHeaderName) cons
 {
   constexpr size_t   NUMEXT = 2;
   const char * const extList[NUMEXT] = { ".nii.gz", ".nii" };
-  for (size_t i = 0; i < NUMEXT; ++i)
+  for (auto i : extList)
   {
-    const size_t extensionPos = outputVolumeHeaderName.find(extList[i]);
+    const size_t extensionPos = outputVolumeHeaderName.find(i);
     if (extensionPos != std::string::npos)
     {
       return extensionPos;

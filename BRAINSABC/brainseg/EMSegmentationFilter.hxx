@@ -318,12 +318,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
 
   if (true) // Now check that enough samples are chosen for each label code
   {
-    for (size_t i = 0; i < labelClasses.size(); ++i)
+    for (unsigned int labelClasse : labelClasses)
     {
-      if (SampledLabelsMap[labelClasses[i]].size() < KNN_SamplesPerLabel)
+      if (SampledLabelsMap[labelClasse].size() < KNN_SamplesPerLabel)
       {
-        muLogMacro(<< "WARNING: Not enough samples for label class: " << labelClasses[i] << ". Only "
-                   << SampledLabelsMap[labelClasses[i]].size() << " samples were picked. " << KNN_SamplesPerLabel
+        muLogMacro(<< "WARNING: Not enough samples for label class: " << labelClasse << ". Only "
+                   << SampledLabelsMap[labelClasse].size() << " samples were picked. " << KNN_SamplesPerLabel
                    << " needed!" << std::endl);
       }
     }

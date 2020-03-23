@@ -42,11 +42,11 @@ main(int argc, char * argv[])
   }
 
   ProbabilityImageVectorType Posteriors;
-  for (unsigned i = 0; i < inputProbabilityVolume.size(); ++i)
+  for (auto & i : inputProbabilityVolume)
   {
     using ImageReaderType = itk::ImageFileReader<ProbabilityImageType>;
     ImageReaderType::Pointer reader = ImageReaderType::New();
-    reader->SetFileName(inputProbabilityVolume[i]);
+    reader->SetFileName(i);
     ProbabilityImageType::Pointer current;
     try
     {
@@ -79,9 +79,9 @@ main(int argc, char * argv[])
   }
 
   BoolVectorType priorIsForeground;
-  for (unsigned i = 0; i < foregroundPriors.size(); ++i)
+  for (int foregroundPrior : foregroundPriors)
   {
-    priorIsForeground.push_back(foregroundPriors[i]);
+    priorIsForeground.push_back(foregroundPrior);
   }
 
   ByteImageType::Pointer nonAirVolume;

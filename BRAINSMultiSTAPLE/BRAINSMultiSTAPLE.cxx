@@ -77,13 +77,13 @@ main(int argc, char * argv[])
 
   using ImageList = std::vector<USImageType::Pointer>;
   ImageList inputLabelVolumes;
-  for (std::vector<std::string>::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end(); ++it)
+  for (const auto & it : inputLabelVolume)
   {
     USImageType::Pointer labelVolume;
-    std::cout << "Reading " << (*it) << std::endl;
+    std::cout << "Reading " << it << std::endl;
     try
     {
-      labelVolume = itkUtil::ReadImage<USImageType>((*it));
+      labelVolume = itkUtil::ReadImage<USImageType>(it);
     }
     catch (itk::ExceptionObject & err)
     {
@@ -99,9 +99,9 @@ main(int argc, char * argv[])
   // the input Composite volume.
   if (skipResampling)
   {
-    for (ImageList::const_iterator it = inputLabelVolumes.begin(); it != inputLabelVolumes.end(); ++it)
+    for (const auto & inputLabelVolume : inputLabelVolumes)
     {
-      transformedLabelVolumes.push_back((*it));
+      transformedLabelVolumes.push_back(inputLabelVolume);
     }
   }
   else
@@ -125,13 +125,13 @@ main(int argc, char * argv[])
 
     if (!inputTransform.empty())
     {
-      for (std::vector<std::string>::const_iterator it = inputTransform.begin(); it != inputTransform.end(); ++it)
+      for (const auto & it : inputTransform)
       {
         itk::TransformFileReader::TransformPointer curTransform;
 
         itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();
-        std::cout << "Reading " << (*it) << std::endl;
-        reader->SetFileName((*it));
+        std::cout << "Reading " << it << std::endl;
+        reader->SetFileName(it);
         try
         {
           reader->Update();
@@ -239,9 +239,9 @@ main(int argc, char * argv[])
   {
     STAPLEFilter->SetLabelForUndecidedPixels(labelForUndecidedPixels);
   }
-  for (ImageList::const_iterator it = transformedLabelVolumes.begin(); it != transformedLabelVolumes.end(); ++it)
+  for (const auto & transformedLabelVolume : transformedLabelVolumes)
   {
-    STAPLEFilter->PushBackInput((*it));
+    STAPLEFilter->PushBackInput(transformedLabelVolume);
   }
 
   std::cout << "Running MultiLabel Staple filter " << std::flush;

@@ -14,9 +14,9 @@ DWIConverterFactory::DWIConverterFactory(const std::string DicomDirectory,
 
 DWIConverterFactory::~DWIConverterFactory()
 {
-  for (auto it = this->m_Headers.begin(); it != this->m_Headers.end(); ++it)
+  for (auto & m_Header : this->m_Headers)
   {
-    delete (*it);
+    delete m_Header;
   }
 }
 
@@ -25,9 +25,9 @@ DWIConverterFactory::isNIIorNrrd(const std::string & filename)
 {
   constexpr size_t NUMEXT = 4;
   const char *     extensions[NUMEXT] = { ".nii", ".nii.gz", ".nhdr", ".nrrd" };
-  for (size_t i = 0; i < NUMEXT; ++i)
+  for (auto & extension : extensions)
   {
-    if (filename.find(extensions[i]) != std::string::npos)
+    if (filename.find(extension) != std::string::npos)
     {
       return true; // Return true if one of the valid extensions found
     }
@@ -110,17 +110,17 @@ DWIConverterFactory::New()
     // modified by HuiXie
     m_Headers.clear();
     int headerCount = 0;
-    for (unsigned i = 0; i < m_InputFileNames.size(); ++i)
+    for (auto & m_InputFileName : m_InputFileNames)
     {
       auto * curReader = new itk::DCMTKFileReader;
-      curReader->SetFileName(m_InputFileNames[i]);
+      curReader->SetFileName(m_InputFileName);
       try
       {
         curReader->LoadFile();
       }
       catch (...)
       {
-        std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
+        std::cerr << "Error reading slice" << m_InputFileName << std::endl;
         delete curReader;
         curReader = nullptr;
       }

@@ -187,19 +187,19 @@ public:
   {
     // First allocate the output mememory
     output.resize(input[0].size());
-    for (unsigned int q = 0; q < output.size(); q++)
+    for (auto & q : output)
     {
-      output[q].resize(input[0][0].size());
-      for (auto oit = output[q].begin(); oit != output[q].end(); ++oit)
+      q.resize(input[0][0].size());
+      for (auto oit = q.begin(); oit != q.end(); ++oit)
       {
         *oit = 0;
       }
     }
-    for (auto curr_dataset = input.begin(); curr_dataset != input.end(); ++curr_dataset)
+    for (const auto & curr_dataset : input)
     {
-      auto input_angleit = curr_dataset->begin();
+      auto input_angleit = curr_dataset.begin();
       auto output_angleit = output.begin();
-      while (input_angleit != curr_dataset->end() && output_angleit != output.end())
+      while (input_angleit != curr_dataset.end() && output_angleit != output.end())
       {
         auto init = input_angleit->begin();
         auto outit = output_angleit->begin();
@@ -216,9 +216,9 @@ public:
     }
     // Now divide by number of data sets
     const float inv_size = 1.0 / input.size();
-    for (unsigned int q = 0; q < output.size(); q++)
+    for (auto & q : output)
     {
-      for (auto oit = output[q].begin(); oit != output[q].end(); ++oit)
+      for (auto oit = q.begin(); oit != q.end(); ++oit)
       {
         *oit *= inv_size;
       }
@@ -764,9 +764,9 @@ private:
   void
   Write(std::ofstream & f, const Float2DVectorType & vec)
   {
-    for (auto it1 = vec.begin(); it1 != vec.end(); ++it1)
+    for (const auto & it1 : vec)
     {
-      for (auto it2 = it1->begin(); it2 != it1->end(); ++it2)
+      for (auto it2 = it1.begin(); it2 != it1.end(); ++it2)
       {
         this->Write<float>(f, *it2);
       }
@@ -776,9 +776,9 @@ private:
   void
   Read(std::ifstream & f, Float2DVectorType & vec)
   {
-    for (auto it1 = vec.begin(); it1 != vec.end(); ++it1)
+    for (auto & it1 : vec)
     {
-      for (auto it2 = it1->begin(); it2 != it1->end(); ++it2)
+      for (auto it2 = it1.begin(); it2 != it1.end(); ++it2)
       {
         this->Read<float>(f, *it2);
       }

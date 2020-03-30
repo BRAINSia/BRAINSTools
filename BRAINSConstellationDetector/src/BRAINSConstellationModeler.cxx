@@ -361,9 +361,7 @@ main(int argc, char * argv[])
     }
 
     // Build template for each landmark
-    for (auto it = mDef[currentDataset].begin();
-         it != mDef[currentDataset].end();
-         ++it)
+    for (auto it = mDef[currentDataset].begin(); it != mDef[currentDataset].end(); ++it)
     {
       std::cout << "Training template for " << it->first << std::endl;
       const SImageType::PointType origPoint = it->second;

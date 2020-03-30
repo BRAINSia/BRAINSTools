@@ -19,7 +19,7 @@
 #include "blas.h"
 
 int
-dscal_( int * n, double * sa, double * sx, int * incx )
+dscal_(int * n, double * sa, double * sx, int * incx)
 {
   long int i, nn, iincx;
   double   ssa;
@@ -35,12 +35,12 @@ dscal_( int * n, double * sa, double * sx, int * incx )
   iincx = *incx;
   ssa = *sa;
 
-  if ( nn > 0 && iincx > 0 )
+  if (nn > 0 && iincx > 0)
   {
-    if ( iincx == 1 ) /* code for increment equal to 1 */
+    if (iincx == 1) /* code for increment equal to 1 */
     {
       long int m = nn - 4;
-      for ( i = 0; i < m; i += 5 )
+      for (i = 0; i < m; i += 5)
       {
         sx[i] = ssa * sx[i];
         sx[i + 1] = ssa * sx[i + 1];
@@ -48,13 +48,13 @@ dscal_( int * n, double * sa, double * sx, int * incx )
         sx[i + 3] = ssa * sx[i + 3];
         sx[i + 4] = ssa * sx[i + 4];
       }
-      for ( ; i < nn; ++i ) /* clean-up loop */
+      for (; i < nn; ++i) /* clean-up loop */
         sx[i] = ssa * sx[i];
     }
     else /* code for increment not equal to 1 */
     {
       long int nincx = nn * iincx;
-      for ( i = 0; i < nincx; i += iincx )
+      for (i = 0; i < nincx; i += iincx)
         sx[i] = ssa * sx[i];
     }
   }

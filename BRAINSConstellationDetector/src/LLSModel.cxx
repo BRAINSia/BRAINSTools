@@ -49,8 +49,8 @@ const char * const LLSModel::m_LLSSearchRadiiGroupName = "LLSSearchRadii";
 void
 LLSModel ::WriteVector(const std::string & path, const std::vector<double> & vec)
 {
-  hsize_t  dim(vec.size());
-  auto * buf(new double[dim]);
+  hsize_t dim(vec.size());
+  auto *  buf(new double[dim]);
 
   for (unsigned i(0); i < dim; ++i)
   {

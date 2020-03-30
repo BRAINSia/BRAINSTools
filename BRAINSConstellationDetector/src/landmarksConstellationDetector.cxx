@@ -531,8 +531,7 @@ landmarksConstellationDetector::FindCandidatePoints(
     // iterate over mean values for the current rotation angle
     auto mean_iter = TemplateMean[curr_rotationAngle].begin();
     // Fill the lmk template image using the mean values
-    for (auto it = model.begin(); it != model.end();
-         ++it, ++mean_iter)
+    for (auto it = model.begin(); it != model.end(); ++it, ++mean_iter)
     {
       FImageType3D::IndexType pixelIndex;
       pixelIndex[0] = (*it)[0] + height;

@@ -73,7 +73,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
     auto lmk1iter = landmarks1.begin();
-    bool                             allSame = true;
+    bool allSame = true;
     while (lmk1iter != landmarks1.end())
     {
       const LandmarksMapType::const_iterator       lmk2iter = landmarks2.find(lmk1iter->first);

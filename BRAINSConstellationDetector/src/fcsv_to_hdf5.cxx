@@ -255,9 +255,7 @@ get_allFileToLandmarkMap(const std::vector<std::pair<std::string, std::string>> 
   FileToLandmarksMapType allLandmarks;
 
   // Process all subjects
-  for (auto subject_iter = subjects.begin();
-       subject_iter != subjects.end();
-       ++subject_iter)
+  for (auto subject_iter = subjects.begin(); subject_iter != subjects.end(); ++subject_iter)
   {
     std::cout << "Processing " << subject_iter->second << "(" << subject_iter->first << ")" << std::endl;
     allLandmarks[subject_iter->first] = ReadSlicer3toITKLmk(subject_iter->second);

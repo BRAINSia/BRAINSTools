@@ -136,3 +136,9 @@ silenced
 9 - Run silly tests that don't have much untility
 set(BRAINSTools_MAX_TEST_LEVEL 3 CACHE STRING "Testing level for managing test burden")
 ```
+
+The codebase should conform to clang-format defined standards that are similar to ITK's defintion.
+```
+git filter-branch -f --tree-filter \
+   "~/Dashboard/src/ITK/Utilities/Maintenance/clang-format.bash --clang-format ~/local/clang-format-8.0.0-macosx  --tracked"  HEAD..
+```

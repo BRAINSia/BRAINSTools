@@ -113,7 +113,7 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
   using TransTransformType = itk::TranslationTransform<TScalarType, 3>;
   if (IsClass(source, "TranslationTransform"))
   {
-    const auto *                    translationXfrm = dynamic_cast<const TransTransformType *>(source);
+    const auto *                                  translationXfrm = dynamic_cast<const TransTransformType *>(source);
     typename TransTransformType::OutputVectorType offset = translationXfrm->GetOffset();
     result->SetOffset(offset);
     return true;
@@ -150,8 +150,7 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
   using LocalVersorRigid3DTransformType = itk::VersorRigid3DTransform<TScalarType>;
   if (IsClass(source, "VersorRigid3DTransform"))
   {
-    const auto * versorRigidXfrm =
-      dynamic_cast<const LocalVersorRigid3DTransformType *>(source);
+    const auto * versorRigidXfrm = dynamic_cast<const LocalVersorRigid3DTransformType *>(source);
     result->SetCenter(versorRigidXfrm->GetCenter());
     result->SetRotation(versorRigidXfrm->GetVersor());
     result->SetTranslation(versorRigidXfrm->GetTranslation());
@@ -187,8 +186,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform<TScalarType>::Pointer 
   using LocalScaleVersor3DTransformType = itk::ScaleVersor3DTransform<TScalarType>;
   if (IsClass(source, "ScaleVersor3DTransform"))
   {
-    const auto * scaleVersorXfrm =
-      dynamic_cast<const LocalScaleVersor3DTransformType *>(source);
+    const auto * scaleVersorXfrm = dynamic_cast<const LocalScaleVersor3DTransformType *>(source);
     result->SetCenter(scaleVersorXfrm->GetCenter());
     result->SetRotation(scaleVersorXfrm->GetVersor());
     result->SetTranslation(scaleVersorXfrm->GetTranslation());
@@ -475,10 +473,7 @@ DoConversion(int argc, char * argv[])
       typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
       transformWriter->SetFileName(outputTransform);
       transformWriter->SetUseCompression(true);
-      for (auto it =
-             transformList->begin();
-           it != transformList->end();
-           ++it)
+      for (auto it = transformList->begin(); it != transformList->end(); ++it)
       {
         typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>((*it).GetPointer());
         transformWriter->AddTransform(outXfrm);

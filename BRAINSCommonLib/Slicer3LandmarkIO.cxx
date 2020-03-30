@@ -121,8 +121,9 @@ WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const Land
       // NOTE: Slicer3 use RAS coordinate system to represent landmarks
       // but ITK landmarks are in LPS, so we need to negate the first two
       // component of the landmark points.
-      lmkPointStream << landmark.first << "," << doubleConvert(-(landmark.second[0])) << "," << doubleConvert(-(landmark.second[1]))
-                     << "," << doubleConvert(+(landmark.second[2])) << ",1,1\n"; // Note the last two columns are
+      lmkPointStream << landmark.first << "," << doubleConvert(-(landmark.second[0])) << ","
+                     << doubleConvert(-(landmark.second[1])) << "," << doubleConvert(+(landmark.second[2]))
+                     << ",1,1\n"; // Note the last two columns are
       // ,visible,editable
       ++numNamedLandmarks;
     }
@@ -351,4 +352,4 @@ WriteITKtoSlicer3Lmk(const std::string &             landmarksFilename,
       itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (No Match): " << slicerLmkType);
       break;
   }
-  }
+}

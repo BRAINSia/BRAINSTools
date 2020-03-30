@@ -46,7 +46,7 @@ ReplaceSubWithSub(std::string & s, const char * o, const char * n)
 {
   if (!s.empty())
   {
-    std::string            from(o);
+    std::string from(o);
 
     std::string            to(n);
     std::string::size_type start = 0;

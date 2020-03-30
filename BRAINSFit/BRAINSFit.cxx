@@ -219,8 +219,7 @@ main(int argc, char * argv[])
   // options need to available
   std::string localOutputTransform;
   if ((!linearTransform.empty() && !bsplineTransform.empty()) ||
-      (!linearTransform.empty() && !outputTransform.empty()) ||
-      (!outputTransform.empty() && !bsplineTransform.empty()))
+      (!linearTransform.empty() && !outputTransform.empty()) || (!outputTransform.empty() && !bsplineTransform.empty()))
   {
     std::cout << "Error:  user can only specify one output transform type." << std::endl;
     return EXIT_FAILURE;

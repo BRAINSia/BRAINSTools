@@ -51,8 +51,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPoi
 {
   using MaskImageType = itk::Image<unsigned char, 3>;
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
-  auto const * const temp =
-    dynamic_cast<ImageMaskSpatialObjectType const *>(inputSpatialObject.GetPointer());
+  auto const * const temp = dynamic_cast<ImageMaskSpatialObjectType const *>(inputSpatialObject.GetPointer());
 
   if (temp == nullptr)
   {

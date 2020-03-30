@@ -399,9 +399,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   // Save landmarks in input/output or original/aligned space
   this->m_outputLandmarksInACPCAlignedSpaceMap = constellation2->GetAlignedPoints();
 
-  for (auto lit = constellation2->GetAlignedPoints().begin();
-       lit != constellation2->GetAlignedPoints().end();
-       ++lit)
+  for (auto lit = constellation2->GetAlignedPoints().begin(); lit != constellation2->GetAlignedPoints().end(); ++lit)
   {
     const VersorTransformType::OutputPointType transformedPoint =
       constellation2->GetOrigToACPCVersorTransform()->TransformPoint(lit->second);

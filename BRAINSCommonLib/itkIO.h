@@ -321,8 +321,8 @@ PreserveCast(const typename InputImageType::Pointer image)
   const typename InputImageType::PixelType  inputmax = itk::NumericTraits<typename InputImageType::PixelType>::max();
   const typename OutputImageType::PixelType outputmin = itk::NumericTraits<typename OutputImageType::PixelType>::min();
   const typename OutputImageType::PixelType outputmax = itk::NumericTraits<typename OutputImageType::PixelType>::max();
-  if ((static_cast<double>(inputmin) >= static_cast<double>(outputmin))
-      && (static_cast<double>(inputmax) <= static_cast<double>(outputmax) ))
+  if ((static_cast<double>(inputmin) >= static_cast<double>(outputmin)) &&
+      (static_cast<double>(inputmax) <= static_cast<double>(outputmax)))
   {
     return TypeCast<InputImageType, OutputImageType>(image);
   }

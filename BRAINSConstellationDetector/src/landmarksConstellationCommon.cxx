@@ -441,8 +441,7 @@ extractArray(LinearInterpolatorType::Pointer                                imIn
              std::vector<float> &                                           result_array)
 {
   int q = 0;
-  for (auto it = model.begin(); it != model.end();
-       ++it, ++q)
+  for (auto it = model.begin(); it != model.end(); ++it, ++q)
   {
     const SImageType::PointType & point = CenterPoint + *it;
     if (imInterp->IsInsideBuffer(point))

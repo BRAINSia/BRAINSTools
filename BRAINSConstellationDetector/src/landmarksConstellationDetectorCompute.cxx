@@ -29,7 +29,7 @@ lmk_check_differences(const LandmarksMapType & ref,
   std::cerr << "===" << lineno << " " << filename << std::endl;
   constexpr float landmark_sameness_tolerence = 0.001;
   bool            ref_lmks_same_in_cmp = true;
-  for (const auto &lmk : ref)
+  for (const auto & lmk : ref)
   {
     const auto cmp_lmk_iter = cmp.find(lmk.first);
     if (cmp_lmk_iter == cmp.end())

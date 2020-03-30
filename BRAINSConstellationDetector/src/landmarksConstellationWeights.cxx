@@ -81,12 +81,12 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  unsigned int             numNamedLandmarks = 0;
-  double                   d0 = NAN;
+  unsigned int numNamedLandmarks = 0;
+  double       d0 = NAN;
 
-  double                   d1 = NAN;
+  double d1 = NAN;
 
-  double                   d2 = NAN;
+  double d2 = NAN;
 
   double                   dist = NAN;
   LandmarksDistanceMapType LandmarksDistanceMap;

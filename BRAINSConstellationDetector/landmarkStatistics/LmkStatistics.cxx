@@ -80,11 +80,11 @@ main(int argc, char * argv[])
   unsigned int numNamedLandmarks = 0;
   double       d0 = NAN;
 
-  double       d1 = NAN;
+  double d1 = NAN;
 
-  double       d2 = NAN;
+  double d2 = NAN;
 
-  double       dist = NAN;
+  double dist = NAN;
   using LandmarksDistanceMapType = std::map<std::string, std::vector<double>>;
   LandmarksDistanceMapType      LandmarksDistanceMap;
   std::map<std::string, double> LandmarksAverageMap;  // for average

@@ -257,14 +257,14 @@ main(int argc, char ** argv)
   std::string filename;
   int         x = -1;
 
-  int         y = -1;
+  int y = -1;
 
-  int         z = -1;
+  int z = -1;
 
-  int         t = -1;
-  PixelTypes  PType(Crap);
-  double      value = 0.0;
-  int         numdims = -1;
+  int        t = -1;
+  PixelTypes PType(Crap);
+  double     value = 0.0;
+  int        numdims = -1;
   if (!ProcessArgs(argc, argv, filename, x, y, z, t, PType, value, numdims))
   {
     return EXIT_FAILURE;

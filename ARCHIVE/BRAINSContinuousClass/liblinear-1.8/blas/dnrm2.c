@@ -20,7 +20,7 @@
 #include "blas.h"
 
 double
-dnrm2_( int * n, double * x, int * incx )
+dnrm2_(int * n, double * x, int * incx)
 {
   long int nn, iincx;
   double   norm;
@@ -38,11 +38,11 @@ dnrm2_( int * n, double * x, int * incx )
   nn = *n;
   iincx = *incx;
 
-  if ( nn > 0 && iincx > 0 )
+  if (nn > 0 && iincx > 0)
   {
-    if ( nn == 1 )
+    if (nn == 1)
     {
-      norm = fabs( x[0] );
+      norm = fabs(x[0]);
     }
     else
     {
@@ -54,16 +54,16 @@ dnrm2_( int * n, double * x, int * incx )
 
       {
         long int ix;
-        for ( ix = ( nn - 1 ) * iincx; ix >= 0; ix -= iincx )
+        for (ix = (nn - 1) * iincx; ix >= 0; ix -= iincx)
         {
-          if ( x[ix] != 0.0 )
+          if (x[ix] != 0.0)
           {
-            long int absxi = fabs( x[ix] );
+            long int absxi = fabs(x[ix]);
             long int temp;
-            if ( scale < absxi )
+            if (scale < absxi)
             {
               temp = scale / absxi;
-              ssq = ssq * ( temp * temp ) + 1.0;
+              ssq = ssq * (temp * temp) + 1.0;
               scale = absxi;
             }
             else
@@ -74,7 +74,7 @@ dnrm2_( int * n, double * x, int * incx )
           }
         }
       }
-      norm = scale * sqrt( ssq );
+      norm = scale * sqrt(ssq);
     }
   }
   else

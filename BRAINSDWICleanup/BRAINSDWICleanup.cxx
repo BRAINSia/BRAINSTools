@@ -138,7 +138,7 @@ main(int argc, char * argv[])
   {
     NrrdImageType::PixelType inPix = inIt.Get();
     NrrdImageType::PixelType outpix(newGradientCount);
-    auto keepIt = keepIndices.begin();
+    auto                     keepIt = keepIndices.begin();
     for (unsigned int i = 0; i < newGradientCount; ++i, ++keepIt)
     {
       outpix[i] = inPix[*(keepIt)];

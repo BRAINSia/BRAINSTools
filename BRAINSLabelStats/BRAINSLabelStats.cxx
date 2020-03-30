@@ -319,9 +319,7 @@ main(int argc, char * argv[])
     std::cout << outputPrefixColumnName << ", ";
   }
   std::cout << "Name, label, min, max, median, mean, stddev, var, sum, count" << std::endl;
-  for (auto vIt = statsFilter->GetValidLabelValues().begin();
-       vIt != statsFilter->GetValidLabelValues().end();
-       ++vIt)
+  for (auto vIt = statsFilter->GetValidLabelValues().begin(); vIt != statsFilter->GetValidLabelValues().end(); ++vIt)
   {
     if (statsFilter->HasLabel(*vIt))
     {

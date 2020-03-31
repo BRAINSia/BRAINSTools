@@ -156,6 +156,7 @@ matrix:
         - ls -alrthd ${PROJ_BUILD_DIR}/*
         - ninja
         - cd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build
+        - ninja clean
         - ls -alrthd ${PROJ_BUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${BUILD_TYPE}-build/*
         - ctest -D ExperimentalStart
         - ctest -D ExperimentalConfigure

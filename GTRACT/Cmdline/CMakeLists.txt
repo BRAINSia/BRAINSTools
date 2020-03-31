@@ -57,5 +57,5 @@ foreach(prog ${ALL_PROGS_LIST})
 endforeach()
 
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
-   add_subdirectory(TestSuite)
+  add_subdirectory(TestSuite)
 endif()

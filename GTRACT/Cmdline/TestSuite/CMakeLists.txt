@@ -99,6 +99,7 @@ target_link_libraries( gtractConcatDwiTests BRAINSCommonLib GTRACTCommon DWIConv
 set_target_properties(gtractConcatDwiTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractConcatDwiTests PROPERTIES FOLDER ${MODULE_FOLDER})
 add_dependencies(gtractConcatDwiTests gtractConcatDwi)
+add_dependencies(gtractConcatDwiTests DWIConvert)  #Needed to enforce data dependancies
 
 set(GTRACTTestName GTRACTTest_gtractConcatDwi)
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
@@ -114,7 +115,8 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 )
 
 # add the directory containing DWI Dicom NiFTI files
-set(DWITestFileDir ${PROJECT_BINARY_DIR}/../DWIConvert)
+set(DWITestFileDir ${DWIConvert_BINARY_DIR})
+
 # in order to make sure the origin are same of concating images, we use same images to concatenate
 
 # new added test case for GTRACT to support NifTI
@@ -134,6 +136,7 @@ add_test(NAME ${GTRACTTestName}_Concat_Dicom
         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.dicom.test.nrrd
         )
 
+if(USE_DWIConvert)  #dependancy needed for data creation
 # new added test case for GTRACT to support multi Dicom
 add_test(NAME ${GTRACTTestName}_Concat_multi_Dicom
         COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
@@ -141,7 +144,8 @@ add_test(NAME ${GTRACTTestName}_Concat_multi_Dicom
         --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.multidicom.test.nrrd
         )
-
+set_property(TEST ${GTRACTTestName}_Concat_multi_Dicom APPEND PROPERTY DEPENDS Uncompress_PhilipsAchieva1.tar.gz)
+endif()
 
 ## A set of tests for gtractResampleDWIInPlace
 add_executable( gtractResampleDWIInPlaceTests gtractResampleDWIInPlaceTests.cxx )

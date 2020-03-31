@@ -236,10 +236,10 @@ endif()
 # below.
 ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
    PROJECT_VAR proj
-   #   EP_ARGS_VAR MYBRAINSTools_EP_ARGS
+   EP_ARGS_VAR MYBRAINSTools_EP_ARGS ## Get mark_as_superbuild items for writing to cache file BRAINSTools-prefix/tmp/BRAINSTools-cache-Debug.cmake
    DEPENDS_VAR ${LOCAL_PROJECT_NAME}_DEPENDENCIES
 )
-
+#message(FATAL_ERROR "MYBRAINSTools_EP_ARGS:${MYBRAINSTools_EP_ARGS}:")
 #------------------------------------------------------------------------------
 # Write values to a file for demonstrating the config options
 #set(WRITE_BRAINSTOOLS_ARGS "${MYBRAINSTools_EP_ARGS}")
@@ -267,10 +267,11 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     --no-warn-unused-cli    # HACK Only expected variables should be passed down.
-    #${MYBRAINSTools_EP_ARGS}  # All superbuild options should be passed by mark_as_superbuild
+
   CMAKE_CACHE_ARGS
     -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF  # This must be here
     -DBUILD_TESTING:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
+  ${MYBRAINSTools_EP_ARGS}  # This appends the "mark_as_superbuild" variables to the written out cache for clion use
   INSTALL_COMMAND ""
   LOG_CONFIGURE ON
   LOG_BUILD ON

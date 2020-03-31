@@ -43,8 +43,7 @@
 /**
  * @brief enumeration for selecting different FCSV file formats.
  */
-using SLICER_LANDMARK_FILE_TYPE = enum SLICER_LANDMARK_FILE_ENUMERATION
-{
+using SLICER_LANDMARK_FILE_TYPE = enum SLICER_LANDMARK_FILE_ENUMERATION {
   SLICER_FCSV_BEGIN = 0,
   SLICER_V3_FCSV = 1,
   SLICER_V4_FCSV = 2,

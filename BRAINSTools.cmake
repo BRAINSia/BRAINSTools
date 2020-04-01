@@ -150,18 +150,15 @@ mark_as_advanced(ENABLE_EXTENDED_TESTING)
 # Update CMake module path
 #------------------------------------------------------------------------------
 set(BRAINSCommonLib_BUILDSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/BRAINSCommonLib/BuildScripts)
-message(INFO " :A::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
 list(INSERT CMAKE_MODULE_PATH 0
   ${BRAINSCommonLib_BUILDSCRIPTS_DIR}
   ${${PROJECT_NAME}_SOURCE_DIR}/CMake
   ${${PROJECT_NAME}_BINARY_DIR}/CMake
   )
-message(INFO  " :B::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
 
 #-----------------------------------------------------------------------
 # Setup locations to find externally maintained test data.
 #-----------------------------------------------------------------------
-message(INFO ":C::CMAKE_MODULE_PATH::${CMAKE_MODULE_PATH}::")
 include(BRAINSToolsExternalData)
 
 set(TestData_DIR ${CMAKE_CURRENT_SOURCE_DIR}/TestData)

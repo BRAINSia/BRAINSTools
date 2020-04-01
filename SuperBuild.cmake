@@ -261,21 +261,23 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
 ExternalProject_Add(${LOCAL_PROJECT_NAME}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-  BINARY_DIR ${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build
-  DOWNLOAD_COMMAND ""
-  UPDATE_COMMAND ""
-  CMAKE_GENERATOR ${gen}
-  CMAKE_ARGS
-    --no-warn-unused-cli    # HACK Only expected variables should be passed down.
+        BINARY_DIR ${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build
+        DOWNLOAD_COMMAND ""
+        UPDATE_COMMAND ""
+        CMAKE_GENERATOR ${gen}
+        CMAKE_ARGS
+        --no-warn-unused-cli    # HACK Only expected variables should be passed down.
 
-  CMAKE_CACHE_ARGS
-    -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF  # This must be here
-    -DBUILD_TESTING:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
-  ${MYBRAINSTools_EP_ARGS}  # This appends the "mark_as_superbuild" variables to the written out cache for clion use
-  INSTALL_COMMAND ""
-  LOG_CONFIGURE ON
-  LOG_BUILD ON
-)
+        CMAKE_CACHE_ARGS
+        -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF  # This must be here
+        -DBUILD_TESTING:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
+        -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+        -DBUILD_EXAMPLES:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
+        ${MYBRAINSTools_EP_ARGS}  # This appends the "mark_as_superbuild" variables to the written out cache for clion use
+        INSTALL_COMMAND ""
+        LOG_CONFIGURE ON
+        LOG_BUILD ON
+        )
 
 if(CMAKE_CONFIGURATION_TYPES)
   set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-prefix/src/${LOCAL_PROJECT_NAME}-stamp/${CMAKE_CFG_INTDIR}/${LOCAL_PROJECT_NAME}-build")

@@ -491,7 +491,7 @@ main(int argc, char ** argv)
     if (ti != tm.end())
     {
       temp = ti->second;
-      std::cerr << "STATUS:  Atlas image of type: " << elem.first << " added with filename: " << temp << std::endl;
+      std::cout << "STATUS:  Atlas image of type: " << elem.first << " added with filename: " << temp << std::endl;
     }
     else if (elem.first.compare("IDWI") == 0) // do not throw when IDWI is an input type
     {

@@ -45,9 +45,6 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                              const unsigned int DebugLevel,
                              const bool         logConvertValues)
 {
-  using InputImageVector = std::vector<typename TInputImage::Pointer>;
-  using MapOfInputImageVectors = orderedmap<std::string, InputImageVector>;
-
   using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction<TInputImage, double>;
 
   const LOOPITERTYPE numClasses = PosteriorsList.size();

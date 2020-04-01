@@ -1866,7 +1866,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
         std::cout << "^^^^^^^^^^^^^^^^" << std::endl;
         std::cout << "^^^^^^^^^^^^^^^^" << std::endl;
         std::cout << "^^^^^^^^^^^^^^^^" << std::endl;
-        std::cout << "Locations with no candidate regions specified!" << AllZeroCounts << std::endl;
+        std::cout << "WARNING: Locations with no candidate regions specified!   Number of all voxels where most likely "
+                     "is choosen:"
+                  << AllZeroCounts << std::endl;
         std::cout << "^^^^^^^^^^^^^^^^" << std::endl;
         std::cout << "^^^^^^^^^^^^^^^^" << std::endl;
       }

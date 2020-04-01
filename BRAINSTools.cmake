@@ -211,9 +211,7 @@ set(brains_modulenames
 
 if(BUILD_ARCHIVE)
    list(APPEND brains_modulenames
-  BRAINSRefacer
   BRAINSTalairach
-  DicomSignature
 )
 
 endif()

@@ -30,7 +30,6 @@ cmake \
     -DUSE_BRAINSLabelStats:BOOL=OFF \
     -DUSE_BRAINSLandmarkInitializer:BOOL=OFF \
     -DUSE_BRAINSROIAuto:BOOL=OFF \
-    -DUSE_BRAINSRefacer:BOOL=OFF \
     -DUSE_BRAINSResample:BOOL=OFF \
     -DUSE_BRAINSSnapShotWriter:BOOL=OFF \
     -DUSE_BRAINSStripRotation:BOOL=OFF \

@@ -34,12 +34,15 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
                                    itk::Image<unsigned char, 3>::Pointer inputLabelImage)
 {
   using ByteImageType = itk::Image<unsigned char, 3>;
-  using StructElementType = itk::BinaryBallStructuringElement<unsigned char, 3>;
-  using DilateType = itk::BinaryDilateImageFilter<ByteImageType, ByteImageType, StructElementType>;
-  using ErodeType = itk::BinaryErodeImageFilter<ByteImageType, ByteImageType, StructElementType>;
-  using FilterType = itk::ConnectedComponentImageFilter<ByteImageType, itk::Image<unsigned int, 3>>;
+  using CCImageType = itk::Image<unsigned int, 3>;
+  using FilterType = itk::ConnectedComponentImageFilter<ByteImageType, CCImageType>;
+  FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
+  //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
+  //  watcher.QuietOn();
 
-  ByteImageType::Pointer errodedImage = Mask;
+  using StructElementType = itk::BinaryBallStructuringElement<unsigned char, 3>;
+  using ErodeType = itk::BinaryErodeImageFilter<ByteImageType, ByteImageType, StructElementType>;
+
   if (openingSize > 0)
   {
     // Binary Erode
@@ -51,17 +54,18 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
     erode->SetKernel(openStruct);
     erode->SetInput(Mask);
     erode->Update();
-    errodedImage = erode->GetOutput();
+    labelConnectedComponentsFilter->SetInput(erode->GetOutput());
+  }
+  else
+  {
+    labelConnectedComponentsFilter->SetInput(Mask);
   }
 
-  FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
-  //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
-  //  watcher.QuietOn();
-  labelConnectedComponentsFilter->SetInput(errodedImage);
-
-  using RelabelType = itk::RelabelComponentImageFilter<itk::Image<unsigned int, 3>, ByteImageType>;
+  using RelabelType = itk::RelabelComponentImageFilter<CCImageType, CCImageType>;
   RelabelType::Pointer relabel = RelabelType::New();
+  labelConnectedComponentsFilter->Update();
   relabel->SetInput(labelConnectedComponentsFilter->GetOutput());
+  relabel->SetMinimumObjectSize(1);
   try
   {
     relabel->Update();
@@ -72,7 +76,7 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
     std::cerr << excep << std::endl;
   }
 
-  using BinaryThresholdFilter = itk::BinaryThresholdImageFilter<ByteImageType, ByteImageType>;
+  using BinaryThresholdFilter = itk::BinaryThresholdImageFilter<CCImageType, ByteImageType>;
   BinaryThresholdFilter::Pointer labelThreshold = BinaryThresholdFilter::New();
   labelThreshold->SetInput(relabel->GetOutput());
   labelThreshold->SetInsideValue(1);
@@ -82,10 +86,10 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
   labelThreshold->Update();
 
   ByteImageType::Pointer largestLabel = labelThreshold->GetOutput();
-
   ByteImageType::Pointer dilateImage = largestLabel;
   if (closingSize > 0)
   {
+    using DilateType = itk::BinaryDilateImageFilter<ByteImageType, ByteImageType, StructElementType>;
     // Dilate mask
     StructElementType closeStruct;
     closeStruct.SetRadius(openingSize + closingSize);

@@ -22,8 +22,9 @@
 #include <vector>
 #include <list>
 #include <map>
-#define EXPP(x) std::exp((x))
-#define LOGP(x) std::log((x))
+
+#define EXPP(x) std::exp((x)-1.0)
+#define LOGP(x) std::log((x + 1.0))
 
 using ByteImageType = itk::Image<unsigned char, 3>;
 using CompensatedSummationType = itk::CompensatedSummation<double>;

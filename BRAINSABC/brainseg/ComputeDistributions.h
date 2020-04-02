@@ -33,15 +33,8 @@ void
 CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> & SubjectCandidateRegions,
                              const orderedmap<std::string, std::vector<typename TInputImage::Pointer>> & InputImageMap,
                              const std::vector<typename TProbabilityImage::Pointer> &                    PosteriorsList,
-                             std::vector<RegionStats> & ListOfClassStatistics, //
-                                                                               //
-                                                                               // This
-                                                                               //
-                                                                               // is
-                                                                               //
-                                                                               // an
-                                                                               //
-                                                                               // output!
+                             std::vector<RegionStats> & ListOfClassStatistics,
+                             // ListOfClassStatistics is an output!
                              const unsigned int DebugLevel,
                              const bool         logConvertValues)
 {
@@ -73,7 +66,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
         const typename ByteImageType::ConstPointer     currentCandidateRegion =
           SubjectCandidateRegions[iclass].GetPointer();
 
-        // NOTE:  itk::Math:eps is too small itk::Math::eps;
+        // NOTE:                                     itk::Math:eps
         CompensatedSummationType tmp_accumC = tbb::parallel_reduce(
           tbb::blocked_range3d<long>(0, size[2], 1, 0, size[1], size[1] / 2, 0, size[0], 512),
           CompensatedSummationType(),
@@ -229,6 +222,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
         // compute per-Image Type covariance
         for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)
         {
+          //(or log(mu1) if logConvertValues )
           const double mu1 = ListOfClassStatistics[iclass].m_Means[mapIt->first];
 
           for (unsigned i = 0; i < mapIt->second.size(); ++i)
@@ -241,7 +235,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
             for (auto mapIt2 = mapIt; mapIt2 != InputImageMap.end(); ++mapIt2)
             {
-              size_t j = 0;
+              size_t j = 0; // TODO:  Should be j = i
               if (first_through_inner_loop)
               {
                 j = i;
@@ -287,8 +281,8 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
                             if (logConvertValues)
                             {
-                              const double diff1 = LOGP(inputValue1) - mu1;
-                              const double diff2 = LOGP(inputValue2) - mu2;
+                              const double diff1 = LOGP(inputValue1) - mu1; // NOTE: mu1 is really 1/N * sum(log(X))
+                              const double diff2 = LOGP(inputValue2) - mu2; // NOTE: mu2 is really 1/N * sum(log(X))
                               var += currentProbValue * (diff1 * diff2);
                             }
                             else
@@ -342,7 +336,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
   if (DebugLevel > 9)
   {
-    std::cout << "=================================================" << std::endl;
+    std::cout << "=MANUAL COVARIANCE COMPUTATIONS================================================" << std::endl;
     for (LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++)
     {
       unsigned ichan = 0;

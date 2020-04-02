@@ -129,15 +129,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::ComputeDistributions()
   CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(this->m_CandidateRegions,
                                                                            m_InputImages,
                                                                            m_BiasPosteriors,
-                                                                           this->m_ListOfClassStatistics, //
-                                                                                                          //
-                                                                                                          // This
-                                                                                                          //
-                                                                                                          // is
-                                                                                                          //
-                                                                                                          // an
-                                                                                                          //
-                                                                                                          // output!
+                                                                           this->m_ListOfClassStatistics,
+                                                                           // ListOfClassStatistics is an output!
                                                                            this->m_DebugLevel,
                                                                            true);
 }
@@ -756,7 +749,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
         curOutput->Allocate();
         curOutput->FillBuffer(0);
 
-        // Compute the std::log transformed bias field
+        // Compute the LOGP transformed bias field
         InternalImagePointer biasIntensityScaleFactor = InternalImageType::New();
         biasIntensityScaleFactor->CopyInformation(curOutput);
         biasIntensityScaleFactor->SetRegions(curOutput->GetLargestPossibleRegion());

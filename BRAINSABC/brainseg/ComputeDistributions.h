@@ -23,21 +23,29 @@
 #include <list>
 #include <map>
 
-#define EXPP(x) std::exp((x)-1.0)
-#define LOGP(x) std::log((x + 1.0))
+// As defined in svn --username anonymous --password anonymous checkout https://www.nitrc.org/svn/abc
+// trunk/Engine/bias/LLSBiasCorrector.txx:#define LOGP(x) (logf((x)+1))
+inline double
+EXPP(double x)
+{
+  return std::exp(x) - 1.0;
+}
+inline double
+LOGP(double x)
+{
+  return std::log(x + 1.0);
+}
 
 using ByteImageType = itk::Image<unsigned char, 3>;
 using CompensatedSummationType = itk::CompensatedSummation<double>;
 
 template <typename TInputImage, typename TProbabilityImage, typename MatrixType>
-void
+std::vector<RegionStats>
 CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> & SubjectCandidateRegions,
                              const orderedmap<std::string, std::vector<typename TInputImage::Pointer>> & InputImageMap,
                              const std::vector<typename TProbabilityImage::Pointer> &                    PosteriorsList,
-                             std::vector<RegionStats> & ListOfClassStatistics,
-                             // ListOfClassStatistics is an output!
-                             const unsigned int DebugLevel,
-                             const bool         logConvertValues)
+                             const unsigned int                                                          DebugLevel,
+                             const bool logConvertValues)
 {
   using InputImageNNInterpolationType = itk::NearestNeighborInterpolateImageFunction<TInputImage, double>;
 

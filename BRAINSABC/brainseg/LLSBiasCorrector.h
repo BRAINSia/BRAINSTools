@@ -127,15 +127,6 @@ public:
 
   itkGetMacro(SampleSpacing, double);
 
-  // Spacing for determining which voxels need to be updated
-  // if correction is not done at full resolution
-  itkSetMacro(WorkingSpacing, double);
-  itkGetMacro(WorkingSpacing, double);
-
-  // Bias field max magnitude
-  // itkSetMacro(MaximumBiasMagnitude, double);
-  // itkGetMacro(MaximumBiasMagnitude, double);
-
   void
   Initialize();
 
@@ -200,9 +191,6 @@ private:
   unsigned int m_MaxDegree;
 
   double m_SampleSpacing;
-  double m_WorkingSpacing;
-
-  // double m_MaximumBiasMagnitude;
 
   std::vector<RegionStats> m_ListOfClassStatistics;
   MatrixType               m_Basis;

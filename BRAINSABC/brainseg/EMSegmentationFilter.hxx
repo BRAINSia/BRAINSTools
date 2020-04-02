@@ -1078,7 +1078,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeDistributions(
   std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
   const ProbabilityImageVectorType & probabilityMaps = probAllDistributions;
 
-  std::vector<RegionStats>            outputStats;
   std::vector<ByteImageType::Pointer> distributionsCandidateRegions;
 
   // resample the PurePlugsMask to the voxel lattice of the CandidateRegions
@@ -1110,8 +1109,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeDistributions(
     }
   }
 
-  CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(
-    distributionsCandidateRegions, this->m_CorrectedImages, probabilityMaps, outputStats, this->m_DebugLevel, false);
+  std::vector<RegionStats> outputStats = CombinedComputeDistributions<TInputImage, TProbabilityImage, MatrixType>(
+    distributionsCandidateRegions, this->m_CorrectedImages, probabilityMaps, this->m_DebugLevel, false);
 
   return outputStats;
 }

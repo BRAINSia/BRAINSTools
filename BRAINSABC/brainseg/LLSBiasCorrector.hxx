@@ -499,7 +499,10 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
   std::vector<MatrixType> invCovars;
   for (unsigned int iclass = 0; iclass < numClasses; iclass++)
   {
-    invCovars.push_back(MatrixInverseType(this->m_ListOfClassStatistics[iclass].m_Covariance).as_matrix());
+    std::cout << this->m_ListOfClassStatistics[iclass].m_Covariance << std::endl;
+    MatrixInverseType inverse_temp(this->m_ListOfClassStatistics[iclass].m_Covariance);
+    MatrixType        temp = inverse_temp.as_matrix();
+    invCovars.push_back(temp);
   }
 
   // Create matrices and vectors

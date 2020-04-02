@@ -156,8 +156,6 @@ public:
   SetProbabilities(const std::vector<ProbabilityImagePointer> &         probs,
                    const std::vector<typename ByteImageType::Pointer> & candidateRegions);
 
-  void
-  SetListOfClassStatistics(const std::vector<RegionStats> & regionStats);
 
   // Set/Get the Debugging level for filter verboseness
   itkSetMacro(DebugLevel, unsigned int);

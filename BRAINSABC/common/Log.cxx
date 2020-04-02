@@ -58,26 +58,21 @@ Log ::CloseFile()
   }
 }
 
+
 void
-Log ::SetOutputFileName(const char * s)
+Log ::SetOutputFileName(const std::string s)
 {
   if (m_Output.is_open())
   {
     m_Output.close();
   }
 
-  m_Output.open(s);
+  m_Output.open(s.c_str());
 
   if (m_Output.fail())
   {
     muExceptionMacro(<< "[Log::SetOutputFileName] Failed to open " << s);
   }
-}
-
-void
-Log ::SetOutputFileName(const std::string & s)
-{
-  this->SetOutputFileName(s.c_str());
 }
 
 void

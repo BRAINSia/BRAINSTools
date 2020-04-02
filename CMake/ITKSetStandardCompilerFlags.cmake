@@ -166,14 +166,14 @@ function(check_compiler_optimization_flags c_optimization_flags_var cxx_optimiza
     set(cxx_flags "")
 
     # Check this list on both C and C++ compilers
-    set(InstructionSetOptimizationFlags
-       # https://gcc.gnu.org/onlinedocs/gcc-4.8.0/gcc/i386-and-x86_002d64-Options.html
-       # NOTE the corei7 release date was 2008
-       -mtune=native # Tune the code for the computer used to compile this package, but allow running on generic cpu archetectures defined by -march
-       -march=corei7-avx # Use ABI settings to support corei7 (circa 2008 ABI feature sets, corei7-avx circa 2013)
-       )
+#    set(InstructionSetOptimizationFlags
+#       # https://gcc.gnu.org/onlinedocs/gcc-4.8.0/gcc/i386-and-x86_002d64-Options.html
+#       # NOTE the corei7 release date was 2008
+#       -mtune=native # Tune the code for the computer used to compile this package, but allow running on generic cpu archetectures defined by -march
+#       -march=corei7-avx # Use ABI settings to support corei7 (circa 2008 ABI feature sets, corei7-avx circa 2013)
+#       )
   endif()
-  set(c_and_cxx_flags ${InstructionSetOptimizationFlags})
+  # set(c_and_cxx_flags ${InstructionSetOptimizationFlags})
 
   check_c_compiler_flags(    CMAKE_C_WARNING_FLAGS ${c_and_cxx_flags} ${c_flags})
   check_cxx_compiler_flags(CMAKE_CXX_WARNING_FLAGS ${c_and_cxx_flags} ${cxx_flags})

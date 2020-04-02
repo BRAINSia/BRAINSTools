@@ -181,10 +181,13 @@ CreateTypedMap(const AtlasRegType::StringVector & keys, const AtlasRegType::Stri
 
 // For the BRAINSABC program, we also need to minimize num threads used by TBB
 #include "tbb/task_scheduler_init.h"
-
+#include "itkFloatingPointExceptions.h"
 int
 main(int argc, char ** argv)
 {
+  itk::FloatingPointExceptions::Enable();
+  std::cout << "Has floating point exceptions: " << itk::FloatingPointExceptions::HasFloatingPointExceptionsSupport()
+            << std::endl;
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);

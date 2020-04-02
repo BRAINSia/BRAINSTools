@@ -418,7 +418,6 @@ private:
               const ByteImageType::Pointer       currentForegroundMask,
               const ProbabilityImageVectorType & probImages,
               const BoolVectorType &             probUseForBias,
-              const FloatingPrecision            sampleSpacing,
               const int                          DebugLevel,
               const std::string &                OutputDebugDir);
 

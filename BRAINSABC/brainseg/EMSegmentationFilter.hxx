@@ -2422,7 +2422,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                                         this->m_NonAirRegion,
                                         this->m_WarpedPriors,
                                         this->m_PriorUseForBiasVector,
-                                        this->m_SampleSpacing,
                                         this->m_DebugLevel,
                                         this->m_OutputDebugDir);
   WriteDebugCorrectedImages(this->m_CorrectedImages, 0);
@@ -2502,7 +2501,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                                           this->m_NonAirRegion,
                                           this->m_Posteriors,
                                           this->m_PriorUseForBiasVector,
-                                          this->m_SampleSpacing,
                                           this->m_DebugLevel,
                                           this->m_OutputDebugDir);
     WriteDebugCorrectedImages(this->m_CorrectedImages, CurrentEMIteration);
@@ -2621,7 +2619,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                                           this->m_NonAirRegion,
                                           this->m_Posteriors,
                                           this->m_PriorUseForBiasVector,
-                                          this->m_SampleSpacing,
                                           this->m_DebugLevel,
                                           this->m_OutputDebugDir);
     WriteDebugCorrectedImages(this->m_CorrectedImages, CurrentEMIteration + 100);
@@ -2637,7 +2634,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                                              this->m_NonAirRegion,
                                              this->m_Posteriors,
                                              this->m_PriorUseForBiasVector,
-                                             this->m_SampleSpacing,
                                              this->m_DebugLevel,
                                              this->m_OutputDebugDir);
   }
@@ -2658,7 +2654,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned
                                                                   const ByteImageType::Pointer currentForegroundMask,
                                                                   const ProbabilityImageVectorType & probImages,
                                                                   const BoolVectorType &             probUseForBias,
-                                                                  const FloatingPrecision            sampleSpacing,
                                                                   const int                          DebugLevel,
                                                                   const std::string &                OutputDebugDir)
 {
@@ -2722,10 +2717,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned
 
   BiasCorrectorPointer biascorr = BiasCorrectorType::New();
   biascorr->SetMaxDegree(degree);
-  // biascorr->SetMaximumBiasMagnitude(5.0);
-  // biascorr->SetSampleSpacing(2.0*SampleSpacing);
   biascorr->SetSampleSpacing(1);
-  biascorr->SetWorkingSpacing(sampleSpacing);
   biascorr->SetForegroundBrainMask(currentBrainMask);
   biascorr->SetAllTissueMask(currentForegroundMask);
   biascorr->SetProbabilities(biasPosteriors, biasCandidateRegions);

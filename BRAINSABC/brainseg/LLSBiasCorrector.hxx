@@ -57,9 +57,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::LLSBiasCorrector()
   m_DebugLevel = 0;
   m_OutputDebugDir = "";
   m_SampleSpacing = 4.0;
-  m_WorkingSpacing = 1.0;
-
-  // m_MaximumBiasMagnitude = .1;
 
   m_XMu[0] = 0.0;
   m_XMu[1] = 0.0;
@@ -413,65 +410,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
   // Compute means and variances
   this->ComputeDistributions();
 
-  // sampleofft and workingofft are not used!
-  /*
-  #ifdef USE_HALF_RESOLUTION
-    // Compute skips along each dimension
-    const InputImageSpacingType spacing = this->GetFirstInputImage()->GetSpacing();
-
-    unsigned int sampleofft[3];
-    sampleofft[0] = (unsigned int)std::floor(m_SampleSpacing / spacing[0]);
-    sampleofft[1] = (unsigned int)std::floor(m_SampleSpacing / spacing[1]);
-    sampleofft[2] = (unsigned int)std::floor(m_SampleSpacing / spacing[2]);
-
-    if( sampleofft[0] < MIN_SKIP_SIZE )
-      {
-      sampleofft[0] = MIN_SKIP_SIZE;
-      }
-    if( sampleofft[1] < MIN_SKIP_SIZE )
-      {
-      sampleofft[1] = MIN_SKIP_SIZE;
-      }
-    if( sampleofft[2] < MIN_SKIP_SIZE )
-      {
-      sampleofft[2] = MIN_SKIP_SIZE;
-      }
-
-    muLogMacro(
-      << "Sample offsets: " << sampleofft[0] << " x " << sampleofft[1] << " x " << sampleofft[2] << std::endl);
-  #else
-    const unsigned int sampleofft[3] = {1, 1, 1};
-  #endif
-
-  #ifdef USE_HALF_RESOLUTION  // Need more accurate value the downsampling was
-    // causing images with zeros to be produced, and the
-    // bspline registrations were not doing very much
-    // because of this.
-    unsigned int workingofft[3];
-    workingofft[0] = (unsigned int)std::floor(m_WorkingSpacing / spacing[0]);
-    workingofft[1] = (unsigned int)std::floor(m_WorkingSpacing / spacing[1]);
-    workingofft[2] = (unsigned int)std::floor(m_WorkingSpacing / spacing[2]);
-
-    if( workingofft[0] < MIN_SKIP_SIZE )
-      {
-      workingofft[0] = MIN_SKIP_SIZE;
-      }
-    if( workingofft[1] < MIN_SKIP_SIZE )
-      {
-      workingofft[1] = MIN_SKIP_SIZE;
-      }
-    if( workingofft[2] < MIN_SKIP_SIZE )
-      {
-      workingofft[2] = MIN_SKIP_SIZE;
-      }
-    muLogMacro(<< "Working offsets: "
-               << workingofft[0] << " x "
-               << workingofft[1] << " x "
-               << workingofft[2] << std::endl);
-  #else
-    //  const unsigned int workingofft[3] ={ {1,1,1} };
-  #endif
-  */
   unsigned int numModalities = this->m_InputImages.size();
 
   const unsigned int numClasses = m_BiasPosteriors.size();

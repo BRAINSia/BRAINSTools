@@ -57,7 +57,12 @@ pushd "${BUILD_CACHE}"
 
 export CXX=${CXX}
 export CC=${CC}
-CXX=${CXX} CC=${CC} python3 "${SRC_DIR}/build/build.py"  \
+if [ "x$(uname -s)" = "xDarwin" ]; then
+  # Building TBB on mac is incredibly frustrating!!
+  export CFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) ${CFLAGS}"
+  export CXXFLAGS="-isysroot $(xcrun --sdk macosx --show-sdk-path) ${CXXFLAGS}"
+fi
+CFLAGS=${CFLAGS} CXXFLAGS=${CXXFLAGS} CXX=${CXX} CC=${CC} python3 "${SRC_DIR}/build/build.py"  \
        --tbbroot "${SRC_DIR}" \
        --prefix "${INSTALL_PREFIX}" \
        --install-libs --install-devel --install-docs \

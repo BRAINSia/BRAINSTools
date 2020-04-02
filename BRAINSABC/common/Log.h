@@ -54,17 +54,14 @@ public:
     m_EchoFlag = true;
   }
 
-  inline void
-  EchoOff()
-  {
-    m_EchoFlag = false;
-  }
+  //  inline void
+  //  EchoOff()
+  //  {
+  //    m_EchoFlag = false;
+  //  }
 
   void
-  SetOutputFileName(const char * s);
-
-  void
-  SetOutputFileName(const std::string & s);
+  SetOutputFileName(std::string s);
 
   void
   WriteString(const char * s);
@@ -72,11 +69,11 @@ public:
   void
   WriteString(const std::string & s);
 
-  std::ofstream &
-  GetFileObject()
-  {
-    return m_Output;
-  }
+  //  std::ofstream &
+  //  GetFileObject()
+  //  {
+  //    return m_Output;
+  //  }
 
 private:
   // Restrict access to constructors
@@ -94,10 +91,10 @@ private:
 
 // Allows declarations such as: muLogMacro(<< "Message: " << 1.1234);
 #define muLogMacro(x)                                                                                                  \
+  do                                                                                                                   \
   {                                                                                                                    \
     std::ostringstream outss;                                                                                          \
     outss << "" x << std::ends;                                                                                        \
     (mu::Log::GetInstance())->WriteString(outss.str().c_str());                                                        \
-  }
-
+  } while (0)
 #endif

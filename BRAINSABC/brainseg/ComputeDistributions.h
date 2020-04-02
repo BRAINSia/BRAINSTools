@@ -138,19 +138,22 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                       if (currentCandidateRegion->GetPixel(currIndex))
                       {
                         const double currentProbValue = currentProbImage->GetPixel(currIndex);
-                        // input volumes may have a different voxel lattice than the probability image
-                        double currentInputValue = 1;
-                        if (im1Interp->IsInsideBuffer(currPoint))
+                        if (currentProbValue > FLT_EPSILON)
                         {
-                          currentInputValue = im1Interp->Evaluate(currPoint);
-                        }
-                        if (logConvertValues)
-                        {
-                          muSum += currentProbValue * LOGP(currentInputValue);
-                        }
-                        else
-                        {
-                          muSum += currentProbValue * (currentInputValue);
+                          // input volumes may have a different voxel lattice than the probability image
+                          double currentInputValue = 1;
+                          if (im1Interp->IsInsideBuffer(currPoint))
+                          {
+                            currentInputValue = im1Interp->Evaluate(currPoint);
+                            if (logConvertValues && currentInputValue > FLT_EPSILON)
+                            {
+                              muSum += currentProbValue * LOGP(currentInputValue);
+                            }
+                            else
+                            {
+                              muSum += currentProbValue * (currentInputValue);
+                            }
+                          }
                         }
                       }
                     }
@@ -324,10 +327,16 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
         for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt, ++i)
         {
           unsigned int j = 0;
+          const auto   first_size = static_cast<double>(mapIt->second.size());
           for (auto mapIt2 = InputImageMap.begin(); mapIt2 != InputImageMap.end(); ++mapIt2, ++j)
           {
-            covtmp(i, j) = TypeCovariance[mapIt->first][mapIt2->first] /
-                           static_cast<double>(mapIt->second.size() * mapIt2->second.size());
+            const auto second_size = static_cast<double>(mapIt2->second.size());
+            const auto numerator = TypeCovariance[mapIt->first][mapIt2->first];
+            covtmp(i, j) = numerator / (first_size * second_size);
+            if (std::isnan(covtmp(i, j)))
+            {
+              itkGenericExceptionMacro(<< " ERROR:  Covariance matrix with nan values.")
+            }
           }
         }
         ListOfClassStatistics[iclass].m_Covariance = covtmp;

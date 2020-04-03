@@ -812,7 +812,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                                     std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
                                     logFitValue = 0.0;
                                   }
-                                  const double multiplicitiveBiasCorrectionFactor = 1.0 / EXPP(logFitValue);
+                                  const double denom = EXPP(logFitValue);
+                                  const double multiplicitiveBiasCorrectionFactor = 1.0 / denom;
                                   if (maskValue != 0)
                                   {
                                     if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask)

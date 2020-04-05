@@ -99,9 +99,9 @@ main(int argc, char * argv[])
   // the input Composite volume.
   if (skipResampling)
   {
-    for (const auto & inputLabelVolume : inputLabelVolumes)
+    for (const auto & l_inputLabelVolume : inputLabelVolumes)
     {
-      transformedLabelVolumes.push_back(inputLabelVolume);
+      transformedLabelVolumes.push_back(l_inputLabelVolume);
     }
   }
   else

@@ -298,23 +298,80 @@ endif()
 option(BUILD_COVERAGE "Build ${LOCAL_PROJECT_NAME} for coverage analysis" OFF)
 mark_as_advanced(BUILD_COVERAGE)
 
+# ------ duplicate from ITK
+function(check_compiler_optimization_flags c_optimization_flags_var cxx_optimization_flags_var)
+  set(${c_optimization_flags_var} "" PARENT_SCOPE)
+  set(${cxx_optimization_flags_var} "" PARENT_SCOPE)
+
+  if(MSVC)
+    check_avx_flags(InstructionSetOptimizationFlags)
+    if("${CMAKE_SIZEOF_VOID_P}" EQUAL "4")
+       list(APPEND InstructionSetOptimizationFlags
+            /arch:SSE /arch:SSE2)
+    endif()
+  elseif(NOT EMSCRIPTEN)
+    if (${CMAKE_C_COMPILER} MATCHES "icc.*$")
+      set(USING_INTEL_ICC_COMPILER TRUE)
+    endif()
+    if (${CMAKE_CXX_COMPILER} MATCHES "icpc.*$")
+      set(USING_INTEL_ICC_COMPILER TRUE)
+    endif()
+    if(USING_INTEL_ICC_COMPILER)
+      set(InstructionSetOptimizationFlags "")
+    else()
+      set(InstructionSetOptimizationFlags "")
+    endif ()
+
+    # Check this list on C compiler only
+    set(c_flags "")
+
+    # Check this list on C++ compiler only
+    set(cxx_flags "")
+
+    # Check this list on both C and C++ compilers
+    set(InstructionSetOptimizationFlags
+       # https://gcc.gnu.org/onlinedocs/gcc-4.8.0/gcc/i386-and-x86_002d64-Options.html
+       # NOTE the corei7 release date was 2008
+       -mtune=native # Tune the code for the computer used compile ITK, but allow running on generic cpu archetectures
+       ## use corei7-avx for ARGON cluster builds
+       -march=native # Use ABI settings to support corei7 (circa 2008 ABI feature sets, corei7-avx circa 2013)
+       )
+  endif()
+  set(c_and_cxx_flags ${InstructionSetOptimizationFlags})
+
+  check_c_compiler_flags(    CMAKE_C_WARNING_FLAGS ${c_and_cxx_flags} ${c_flags})
+  check_cxx_compiler_flags(CMAKE_CXX_WARNING_FLAGS ${c_and_cxx_flags} ${cxx_flags})
+
+  set(${c_optimization_flags_var} "${CMAKE_C_WARNING_FLAGS}" PARENT_SCOPE)
+  set(${cxx_optimization_flags_var} "${CMAKE_CXX_WARNING_FLAGS}" PARENT_SCOPE)
+endfunction()
+if(NOT BRAINSToools_C_OPTIMIZATION_FLAGS OR NOT BRAINSToools_CXX_OPTIMIZATION_FLAGS ) # Only check once if not explicitly set on command line
+  #-----------------------------------------------------------------------------
+  #Check the set of warning flags the compiler supports
+  check_compiler_optimization_flags(C_OPTIMIZATION_FLAGS CXX_OPTIMIZATION_FLAGS)
+endif()
+if(NOT BRAINSToools_C_OPTIMIZATION_FLAGS) #Not set on cmake command line option -DBRAINSToools_C_OPTIMIZATION_FLAGS:STRING=""
+  set(BRAINSToools_C_OPTIMIZATION_FLAGS ${C_OPTIMIZATION_FLAGS} CACHE STRING "ITK C Compiler ABI/Optimization flags, Use '-march=native' to maximize performance, but break portabilitly.")
+else()
+  set(BRAINSToools_C_OPTIMIZATION_FLAGS ${BRAINSToools_C_OPTIMIZATION_FLAGS} CACHE STRING "ITK C Compiler ABI/Optimization flags, Use '-march=native' to maximize performance, but break portabilitly.")
+endif()
+if(NOT BRAINSToools_CXX_OPTIMIZATION_FLAGS) #Not set on cmake command line option -DBRAINSToools_CXX_OPTIMIZATION_FLAGS:STRING=""
+  set(BRAINSToools_CXX_OPTIMIZATION_FLAGS ${CXX_OPTIMIZATION_FLAGS} CACHE STRING "ITK CXX Compiler ABI/Optimization flags, Use '-march=native' to maximize performance, but break portabilitly.")
+else()
+  set(BRAINSToools_CXX_OPTIMIZATION_FLAGS ${BRAINSToools_CXX_OPTIMIZATION_FLAGS} CACHE STRING "ITK CXX Compiler ABI/Optimization flags, Use '-march=native' to maximize performance, but break portabilitly.")
+endif()
+mark_as_advanced(BRAINSToools_CXX_OPTIMIZATION_FLAGS)
+mark_as_advanced(BRAINSToools_C_OPTIMIZATION_FLAGS)
+unset(C_OPTIMIZATION_FLAGS)
+unset(CXX_OPTIMIZATION_FLAGS)
+
 option(BUILD_OPTIMIZED "Set compiler flags for native host building." OFF)
 mark_as_advanced(BUILD_OPTIMIZED)
 
 if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
-  include(CheckCXXCompilerFlag)
-  include(CheckCCompilerFlag)
-  CHECK_CXX_COMPILER_FLAG("-march=native" CAN_BUILD_CXX_OPTIMIZED)
-  CHECK_C_COMPILER_FLAG("-march=native" CAN_BUILD_C_OPTIMIZED)
   if(CAN_BUILD_CXX_OPTIMIZED AND CAN_BUILD_C_OPTIMIZED)
-    string(FIND CMAKE_CXX_FLAGS "-march=native" PREVIOUS_CXX_OPTIMIZED_SET)
-    if(PREVIOUS_CXX_OPTIMIZED_SET LESS 0)
-      string(APPEND CMAKE_CXX_FLAGS " -march=native")
-    endif()
-    string(FIND CMAKE_C_FLAGS "-march=native" PREVIOUS_C_OPTIMIZED_SET)
-    if(PREVIOUS_C_OPTIMIZED_SET LESS 0 )
-      string(APPEND CMAKE_C_FLAGS " -march=native")
-    endif()
+    string(APPEND CMAKE_CXX_FLAGS ${BRAINSToools_CXX_OPTIMIZATION_FLAGS})
+    string(APPEND CMAKE_C_FLAGS ${BRAINSToools_CXX_OPTIMIZATION_FLAGS})
     string(REPLACE " " ";" CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${${PROJECT_NAME}_C_OPTIMIZATION_FLAGS} ${${PROJECT_NAME}_C_WARNING_FLAGS}")
     list(REMOVE_DUPLICATES CMAKE_C_FLAGS)
     string(REPLACE ";" " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}")

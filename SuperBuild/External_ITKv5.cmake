@@ -43,15 +43,17 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "git")
   endif()
 
+  # HINT: -DUSE BRAINSTools_ITKv5_GIT_REPOSITORY:STRING=git@github.com:hjmjohnson/ITK.git to override
+  # HINT: -DUSE BRAINSTools_ITKv5_GIT_TAG:STRING=fix-some-error-pr-request
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
      ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
-    #${git_protocol}://github.com/hjmjohnson/ITK.git
      QUIET
   )
+
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    010effbe1d9fd98f937845502b424c330f9cd279 # 2020-03-20 update anonymous exception passing
+    7e5e1759c8aa271c058bde7c6f0f7e44514e6de2
     QUIET
     )
 

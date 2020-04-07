@@ -156,10 +156,9 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                         if (currentProbValue > FLT_EPSILON) // Zero probability items should not contribute to variance.
                         {
                           // input volumes may have a different voxel lattice than the probability image
-                          double currentInputValue;
                           if (im1Interp->IsInsideBuffer(currPoint))
                           {
-                            currentInputValue = im1Interp->Evaluate(currPoint);
+                            const double currentInputValue = im1Interp->Evaluate(currPoint);
                             if (logConvertValues && currentInputValue > FLT_EPSILON)
                             {
                               muSum += currentProbValue * LOGP(currentInputValue);

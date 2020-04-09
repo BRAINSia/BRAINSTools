@@ -10,36 +10,35 @@ set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "The requested build type" FORC
 set(BUILD_EXAMPLES OFF CACHE BOOL "If examples are built" FORCE)
 set(BUILD_TESTING ON CACHE BOOL "If testing is used" FORCE)
 
+#clang 10 new warnings -Wtautological-bitwise-compare
+#clang 10 new warnings -Wbitwise-conditional-parentheses
+#clang 10 new warnings -Wmisleading-indentation
+#clang 10 new warnings -Wc99-designator
+#clang 10 new warnings -Wreorder-init-list
+#clang 10 new warnings -Wsizeof-array-div
+#clang 10 new warnings -Wxor-used-as-pow
+#clang 10 new warnings -Wfinal-dtor-non-final-class
+
 set(BRAINSToools_C_OPTIMIZATION_FLAGS
+        -glldb
+
         -fno-omit-frame-pointer
         -fno-optimize-sibling-calls
 
         -mtune=native -march=native
         -Wtautological-overlap-compare -Wtautological-compare
-        -Wtautological-bitwise-compare
-        -Wbitwise-conditional-parentheses
         -Wrange-loop-analysis
-        -Wmisleading-indentation
-        -Wc99-designator -Wreorder-init-list
-        -Wsizeof-array-div
-        -Wxor-used-as-pow
-        -Wfinal-dtor-non-final-class
         CACHE STRING "ITK optimation flags for C compiler" FORCE)
 
 set(BRAINSToools_CXX_OPTIMIZATION_FLAGS
+        -glldb
+
         -fno-omit-frame-pointer
         -fno-optimize-sibling-calls
 
         -mtune=native -march=native
         -Wtautological-overlap-compare -Wtautological-compare
-        -Wtautological-bitwise-compare
-        -Wbitwise-conditional-parentheses
         -Wrange-loop-analysis
-        -Wmisleading-indentation
-        -Wc99-designator -Wreorder-init-list
-        -Wsizeof-array-div
-        -Wxor-used-as-pow
-        -Wfinal-dtor-non-final-class
         CACHE STRING "ITK optimation flags for CXX compiler" FORCE)
 
 set(BRAINSTools_REQUIRES_VTK OFF CACHE BOOL "bld optional component" FORCE)

@@ -174,7 +174,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   std::cout << "Computing Sampled Distance Computations\n" << std::endl;
   constexpr double samplingDistanceMM = 3.0;
   // Only look in 3mm regions
-  const double samplingDistanceCM = samplingDistanceMM * 0.1;
+  constexpr double samplingDistanceCM = samplingDistanceMM * 0.1;
   // Only look in 3mm regions
   constexpr double rectangularGridRadius = 150.0;
   // How big of region around COM are we going to look for?

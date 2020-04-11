@@ -19,9 +19,13 @@ else()
   set(TBB_COMPILERID "${CMAKE_CXX_COMPILER_ID}")
 endif()
 
-# https://github.com/01org/tbb.git
-set(${proj}_REPOSITORY ${git_protocol}://github.com/01org/tbb.git)
-set(${proj}_GIT_TAG     2020_U1)  # 2020-01-21
+
+# Outdated by intel https://github.com/01org/tbb.git
+# New verions https://github.com/oneapi-src/oneTBB
+# HJ private fixes git@github.com:hjmjohnson/oneTBB.git
+set(${proj}_REPOSITORY ${git_protocol}://github.com/hjmjohnson/oneTBB.git)
+set(${proj}_GIT_TAG     2020_U2_20200411)  # 2020-04-01
+
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}

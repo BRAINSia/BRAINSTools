@@ -180,7 +180,21 @@ CreateTypedMap(const AtlasRegType::StringVector & keys, const AtlasRegType::Stri
 }
 
 // For the BRAINSABC program, we also need to minimize num threads used by TBB
-#include "tbb/task_scheduler_init.h"
+#include "tbb/global_control.h"
+// From tbb/examples/common/utility/get_default_num_threads.h
+namespace tbb_utility
+{
+inline int
+get_default_num_threads()
+{
+#if __TBB_MIC_OFFLOAD
+#  pragma offload target(mic) out(default_num_threads)
+#endif // __TBB_MIC_OFFLOAD
+  static size_t default_num_threads = tbb::global_control::active_value(tbb::global_control::max_allowed_parallelism);
+  return static_cast<int>(default_num_threads);
+}
+} // namespace tbb_utility
+
 #include "itkFloatingPointExceptions.h"
 int
 main(int argc, char ** argv)
@@ -192,7 +206,18 @@ main(int argc, char ** argv)
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   // Construct TBB task scheduler with matching threads to ITK threads
-  tbb::task_scheduler_init init(itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads());
+  // https://software.intel.com/en-us/node/589744
+  // Total parallelism that TBB can utilize
+  // is limited by the current active global_control object
+  // for the dynamic extension of the given scope.
+  // ( instantiation of "global_control" object pushes the
+  //   value onto active head of the FIFO stack for 'parameter'
+  //   type, and destruction of the "global_control" object pops
+  //   the 'parameter' type and returns the active value
+  //   to it's original state.
+  tbb::global_control BRAINSABC_tbb_global_context(
+    tbb::global_control::max_allowed_parallelism,
+    std::min<int>(tbb_utility::get_default_num_threads(), itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads()));
 
   // INFO:  Need to figure out how to conserve memory better during the running
   // of this application:  itk::DataObject::GlobalReleaseDataFlagOn();

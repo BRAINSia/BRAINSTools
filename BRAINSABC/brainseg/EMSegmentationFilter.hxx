@@ -75,7 +75,7 @@
 #include "itkKdTreeGenerator.h"
 #include "itkImageRandomNonRepeatingConstIteratorWithIndex.h"
 
-#include <tbb/mutex.h>
+#include <mutex>
 
 static const FloatingPrecision KNN_InclusionThreshold = 0.85F;
 
@@ -1685,7 +1685,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
 
   { // StartValid Regions Section
 
-    tbb::mutex stdoutMutex;
+    std::mutex stdoutMutex;
     tbb::parallel_for(
       tbb::blocked_range<LOOPITERTYPE>(0, WarpedPriorsList.size(), 1),
       [=, &stdoutMutex, &subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> & r) {
@@ -1810,7 +1810,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
           multFilter->Update();
           subjectCandidateRegions[i] = multFilter->GetOutput();
           {
-            tbb::mutex::scoped_lock lock(stdoutMutex); // Implements locking this entire section to one thread at a time
+            std::lock_guard<std::mutex> guard(
+              stdoutMutex); // Implements locking this entire section to one thread at a time
             muLogMacro(<< "\n==" << this->m_PriorNames[i] << "=========================\n"
                        << logMessage.str() << std::endl);
             // lock implicity released when it goes out of scope

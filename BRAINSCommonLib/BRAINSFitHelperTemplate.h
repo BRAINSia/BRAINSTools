@@ -236,8 +236,8 @@ public:
   itkSetMacro(HistogramMatch, bool);
   itkGetConstMacro(HistogramMatch, bool);
 
-  itkSetMacro(RemoveIntensityOutliers, bool);
-  itkGetConstMacro(RemoveIntensityOutliers, bool);
+  itkSetMacro(RemoveIntensityOutliers, double);
+  itkGetConstMacro(RemoveIntensityOutliers, double);
 
   /** BRAINSFit uses ANTs to run only 3 levels of SyN registration unless SyNFull flag is false!
    * In that case only a single level SyN registration is run.

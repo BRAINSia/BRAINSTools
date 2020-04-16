@@ -111,6 +111,10 @@ option(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT "Build Dicom Support" 
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK "Determine if tools depending on VTK need to be built." ON)
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB "Determine if tools depending on TBB need to be built." ON)
+mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB)
+option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_FFTW "Determine if tools depending on FFTW need to be built." ON)
+mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_FFTW)
 
 cmake_dependent_option(${LOCAL_PROJECT_NAME}_USE_QT
       "Find and use Qt with VTK to build GUI Tools" OFF

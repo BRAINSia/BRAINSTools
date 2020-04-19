@@ -337,7 +337,7 @@ SiemensDWIConverter::ExtractDWIData()
         // it's the gradient direction and trace of the matrix is the b-value
 
         // UNC comments: Computing the decomposition
-        vnl_svd<double> svd(bMatrix);
+        vnl_svd<double> svd(bMatrix.as_matrix());
 
         // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
         gradient[0] = svd.U(0, 0);

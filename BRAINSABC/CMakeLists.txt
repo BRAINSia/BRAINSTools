@@ -7,29 +7,10 @@
 #
 # ITK
 #
-FindITKUtil(BRAINSABC_ITK
-  ITKAnisotropicSmoothing
-  ITKDistanceMap
-  ITKOptimizersv4
-  ITKMetricsv4
-  ITKRegistrationMethodsv4
-  ITKRegionGrowing
-  ITKBinaryMathematicalMorphology
-  ITKConnectedComponents
-  ITKCurvatureFlow
-  ITKImageFilterBase
-  ITKImageFunction
-  ITKImageGrid
-  ITKImageIntensity
-  ITKImageStatistics
-  ITKMathematicalMorphology
-  ITKRegistrationCommon
-  ITKSmoothing
-  ITKStatistics
-  ITKTestKernel
-  ITKThresholding
-  ITKTransform
-  ITKImageCompare)
+find_package(ITK 5.1 REQUIRED)
+include(${ITK_USE_FILE})
+set(BRAINSABC_ITK_LIBRARIES ${ITK_LIBRARIES})
+include_directories( ${ITK_INCLUDE_DIRS})
 
 #-----------------------------------------------------------------------------
 # Output directories.

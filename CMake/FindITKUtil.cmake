@@ -18,45 +18,46 @@ macro(FindITKUtil ITK_VAR_PREFIX )
   unset(ITK_FIND_COMPONENTS)
   unset(ITK_MODULES_REQUESTED)
   unset(ITK_FOUND)
-  set( ITK_INCLUSION_MODULES
-    # Everything needs ITKCommon
-    ITKCommon
-    # Common depends on these modules
-    ITKVNLInstantiation
-    ITKKWSys
-    ITKDoubleConversion
-    ITKVNLInstantiation
-    ITKVNL
-    # IO Components
-    ITKIOImageBase
-    ITKIOBMP
-    ITKIOBioRad
-    ITKIOGDCM
-    ITKIOGIPL
-    ITKIOJPEG
-    ITKIOJPEG2000
-    ITKIOLSM
-    ITKIOMeta
-    ITKIONIFTI
-    ITKIONRRD
-    ITKIOPNG
-    ITKIOStimulate
-    ITKIOTIFF
-    ITKIOTransformInsightLegacy
-    ITKIOVTK
-    ITKIOMRC
-    ITKIOSpatialObjects
-    ITKIOTransformBase
-    ITKIOHDF5
-    ITKIOTransformMatlab
-    ITKIOTransformHDF5
-    ITKIOGE
-    MGHIO
-    # other modules specific to the current directory
-    ${ARGN}
-    )
-  list(REMOVE_DUPLICATES ITK_INCLUSION_MODULES)
-  find_package(ITK 4.5 COMPONENTS ${ITK_INCLUSION_MODULES} REQUIRED)
+  #  set( ITK_INCLUSION_MODULES
+  #    # Everything needs ITKCommon
+  #    ITKCommon
+  #    # Common depends on these modules
+  #    ITKVNLInstantiation
+  #    ITKKWSys
+  #    ITKDoubleConversion
+  #    ITKVNLInstantiation
+  #    ITKVNL
+  #    # IO Components
+  #    ITKIOImageBase
+  #    ITKIOBMP
+  #    ITKIOBioRad
+  #    ITKIOGDCM
+  #    ITKIOGIPL
+  #    ITKIOJPEG
+  #    ITKIOJPEG2000
+  #    ITKIOLSM
+  #    ITKIOMeta
+  #    ITKIONIFTI
+  #    ITKIONRRD
+  #    ITKIOPNG
+  #    ITKIOStimulate
+  #    ITKIOTIFF
+  #    ITKIOTransformInsightLegacy
+  #    ITKIOVTK
+  #    ITKIOMRC
+  #    ITKIOSpatialObjects
+  #    ITKIOTransformBase
+  #    ITKIOHDF5
+  #    ITKIOTransformMatlab
+  #    ITKIOTransformHDF5
+  #    ITKIOGE
+  #    MGHIO
+  #    # other modules specific to the current directory
+  #    ${ARGN}
+  #    )
+  #  list(REMOVE_DUPLICATES ITK_INCLUSION_MODULES)
+  #find_package(ITK 5.1 COMPONENTS ${ITK_INCLUSION_MODULES} REQUIRED)
+  find_package(ITK 5.1 REQUIRED)
   #itk_module_config(${ITK_VAR_PREFIX} ${ITK_INCLUSION_MODULES})
 
   include(${ITK_USE_FILE})

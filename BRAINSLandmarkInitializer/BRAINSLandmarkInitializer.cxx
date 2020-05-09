@@ -18,6 +18,7 @@
  *=========================================================================*/
 #include "itkLandmarkBasedTransformInitializer.h"
 #include "itkVersorRigid3DTransform.h"
+#include "itkSimilarity3DTransform.h"
 #include "itkAffineTransform.h"
 #include "itkBSplineTransform.h"
 #include "itkImage.h"
@@ -219,6 +220,11 @@ main(int argc, char * argv[])
   {
     using VersorRigid3DTransformType = itk::VersorRigid3DTransform<ParameterValueType>;
     return InitializeTransform<VersorRigid3DTransformType>(argc, argv);
+  }
+    else if (outputTransformType == "Similarity3DTransform")
+  {
+    using Similarity3DTransformType = itk::Similarity3DTransform<ParameterValueType>;
+    return InitializeTransform<Similarity3DTransformType>(argc, argv);
   }
   else
   {

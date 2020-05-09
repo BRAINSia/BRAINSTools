@@ -24,6 +24,7 @@
 #include <itkVersorRigid3DTransform.h>
 #include "itkScaleVersor3DTransform.h"
 #include "itkScaleSkewVersor3DTransform.h"
+#include "itkSimilarity3DTransform.h"
 #include "itkMacro.h"
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_inverse.h>
@@ -60,6 +61,10 @@ using ScaleVersor3DParametersType = ScaleVersor3DTransformType::ParametersType;
 using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 using ScaleSkewVersor3DTransformPointer = ScaleSkewVersor3DTransformType::Pointer;
 using ScaleSkewVersor3DParametersType = ScaleSkewVersor3DTransformType::ParametersType;
+
+using Similarity3DTransformType = itk::Similarity3DTransform<double>;
+using Similarity3DTransformPointer = Similarity3DTransformType::Pointer;
+using Similarity3DParametersType = Similarity3DTransformType::ParametersType;
 
 /**
  * AffineTransformPointer  :=  AffineTransformPointer
@@ -314,6 +319,27 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
   {
     std::cout << "Error missing Pointer data, assigning"
               << " ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer." << std::endl;
+    throw;
+  }
+}
+
+/**
+ * *VersorRigid3DTransformPointer  :=  VersorRigid3DTransformPointer
+ */
+
+inline void
+AssignConvertedTransform(Similarity3DTransformPointer &                result,
+                         const Similarity3DTransformType::ConstPointer similarity3D)
+{
+  if (result.IsNotNull() && similarity3D.IsNotNull())
+  {
+    result->SetParameters(similarity3D->GetParameters());
+    result->SetFixedParameters(similarity3D->GetFixedParameters());
+  }
+  else
+  {
+    std::cout << "Error missing Pointer data, assigning"
+              << " VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer." << std::endl;
     throw;
   }
 }

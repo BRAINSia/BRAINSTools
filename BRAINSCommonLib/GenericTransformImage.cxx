@@ -37,6 +37,7 @@
 #include "itkScaleTransform.h"
 #include "itkScaleVersor3DTransform.h"
 #include "itkSimilarity2DTransform.h"
+#include "itkSimilarity3DTransform.h"
 #include "itkTranslationTransform.h"
 #include "itkVersorRigid3DTransform.h"
 #include "itkVersorTransform.h"
@@ -266,6 +267,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
   using ScaleSkewVersor3DTransformType = typename itk::ScaleSkewVersor3DTransform<TScalarType>;
   using VersorRigid3DTransformType = typename itk::VersorRigid3DTransform<TScalarType>;
   using AffineTransformType = typename itk::AffineTransform<TScalarType, 3>;
+  using Similarity3DTransformType = typename itk::Similarity3DTransform<TScalarType>;
   using BSplineTransformType = typename itk::BSplineTransform<TScalarType, 3, 3>;
   using BRAINSCompositeTransformType = typename itk::CompositeTransform<TScalarType, 3>;
   using TransformFileReaderType = typename itk::TransformFileReaderTemplate<TScalarType>;
@@ -349,6 +351,14 @@ ReadTransformFromDisk(const std::string & initialTransform)
       const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<AffineTransformType const *>((*(currentTransformList.begin())).GetPointer());
       typename AffineTransformType::Pointer tempCopy = AffineTransformType::New();
+      AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
+      genericTransform = tempCopy.GetPointer();
+    }
+    else if (transformFileType == "Similarity3DTransform")
+    {
+      const typename Similarity3DTransformType::ConstPointer tempInitializerITKTransform =
+        static_cast<Similarity3DTransformType const *>((*(currentTransformList.begin())).GetPointer());
+      typename Similarity3DTransformType::Pointer tempCopy = Similarity3DTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }

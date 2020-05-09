@@ -52,8 +52,10 @@
      <description>The target transformation type. </description>
      <default>AffineTransform</default>
      <element>AffineTransform</element>
-     <element>BSplineTransform</element>
+     <element>Similarity3DTransform</element>
      <element>VersorRigid3DTransform</element>
+     <element>BSplineTransform</element>
+
    </string-enumeration>
 
    <image>

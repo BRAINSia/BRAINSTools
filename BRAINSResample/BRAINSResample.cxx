@@ -232,11 +232,28 @@ main(int argc, char * argv[])
             return EXIT_FAILURE;
           }
         }
+
+        else if (transformFileType == "Similarity3DTransform")
+        {
+          using Similarity3DTransformType = itk::Similarity3DTransform<double>;
+          const Similarity3DTransformType::ConstPointer similarityTransform =
+            static_cast<Similarity3DTransformType const *>(genericTransform.GetPointer());
+
+          Similarity3DTransformType::Pointer Local_inverseTransform = Similarity3DTransformType::New();
+          similarityTransform->GetInverse(Local_inverseTransform);
+          genericTransform = Local_inverseTransform;
+          if (genericTransform.IsNull())
+          {
+            std::cout << "Error in type conversion " << __FILE__ << __LINE__ << std::endl;
+            return EXIT_FAILURE;
+          }
+        }
         else
         {
           std::cout << "*** ERROR ***" << std::endl
-                    << " The transform type of " << transformFileType << " does NOT support inverse transformation"
-                    << std::endl;
+                    << " The transform type of " << transformFileType
+                    << " does NOT support inverse transformation"
+                    << " from BRAINSResample tool." << std::endl;
         }
       }
     }

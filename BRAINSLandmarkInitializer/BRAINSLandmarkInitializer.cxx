@@ -31,6 +31,16 @@
 
 #include "BRAINSLandmarkInitializerCLP.h"
 
+using ParameterValueType = double;
+using PixelType = double;
+constexpr unsigned int Dimension = 3;
+using ImageType = itk::Image<PixelType, Dimension>;
+
+using LandmarkWeightType = std::vector<double>;
+using LandmarkWeightConstIterator = LandmarkWeightType::const_iterator;
+using LandmarkPointType = itk::Point<double, Dimension>;
+using LandmarkPointContainer = std::vector<LandmarkPointType>;
+
 
 static void
 CheckLandmarks(const LandmarksMapType & ldmk, const LandmarksWeightMapType & weightMap)
@@ -67,12 +77,43 @@ CheckLandmarks(const LandmarksMapType & ldmk, const LandmarksWeightMapType & wei
   }
 }
 
-template <typename TTransformType>
-int
-InitializeTransform(int argc, char * argv[])
+double ComputeIsotropicScaleFactor(
+  const LandmarkPointContainer & fixedLmks,
+  const LandmarkPointContainer & movingLmks,
+  const LandmarkWeightType & landmarkWgts
+  )
 {
-  PARSE_ARGS;
-  BRAINSRegisterAlternateIO();
+  double isotropic_scale_factor=1.0;
+  const size_t numLmks =fixedLmks.size();
+
+  const bool has_lmk_weights = ( landmarkWgts.size() == numLmks);
+
+  double fix_dist_sum = 0.0;
+  double mov_dist_sum = 0.0;
+  const auto & fix_ref = fixedLmks[0];
+  const auto & mov_ref = movingLmks[0];
+  for(size_t i = 1; i < numLmks; ++i)
+  {
+    double weight = ( has_lmk_weights) ? landmarkWgts[i] : 1.0;
+    fix_dist_sum += weight*fix_ref.EuclideanDistanceTo(fixedLmks[i]);
+    mov_dist_sum += weight*mov_ref.EuclideanDistanceTo(movingLmks[i]);
+  }
+  isotropic_scale_factor = fix_dist_sum/mov_dist_sum;
+  return isotropic_scale_factor;
+}
+
+void
+PreProcessLandmarkFiles(std::string              inputFixedLandmarkFilename,
+                        std::string              inputMovingLandmarkFilename,
+                        std::string              inputWeightFilename,
+                        LandmarkPointContainer & fixedLmks,
+                        LandmarkPointContainer & movingLmks,
+                        LandmarkWeightType &     landmarkWgts
+                        )
+{
+  fixedLmks.clear();
+  movingLmks.clear();
+  landmarkWgts.clear();
 
 
   /** read in *fcsv file */
@@ -93,44 +134,6 @@ InitializeTransform(int argc, char * argv[])
     CheckLandmarks(movingLandmarks, landmarkWeightMap);
   }
 
-  /** Landmark Initializaer */
-  using PixelType = double;
-  constexpr unsigned int Dimension = 3;
-
-  using ImageType = itk::Image<PixelType, Dimension>;
-
-  ImageType::Pointer referenceImage = nullptr;
-  if (!inputReferenceImageFilename.empty())
-  {
-    using ReaderType = itk::ImageFileReader<ImageType>;
-    ReaderType::Pointer reader = ReaderType::New();
-    reader->SetFileName(inputReferenceImageFilename);
-    try
-    {
-      reader->Update();
-      referenceImage = reader->GetOutput();
-    }
-    catch (itk::ExceptionObject & err)
-    {
-      std::cout << "Exception Object caught: " << std::endl;
-      std::cout << err << std::endl;
-      throw;
-    }
-  }
-
-  using LocalTransformType = TTransformType;
-  typename LocalTransformType::Pointer transform = LocalTransformType::New();
-
-  using LandmarkBasedInitializerType = itk::LandmarkBasedTransformInitializer<LocalTransformType, ImageType, ImageType>;
-
-  typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
-
-  using LandmarkWeightContainerType = typename LandmarkBasedInitializerType::LandmarkWeightType;
-  LandmarkWeightContainerType landmarkWgts;
-
-  using LandmarkContainerType = typename LandmarkBasedInitializerType::LandmarkPointContainer;
-  LandmarkContainerType fixedLmks;
-  LandmarkContainerType movingLmks;
   using LandmarkConstIterator = LandmarksMapType::const_iterator;
   for (LandmarkConstIterator fixedIt = fixedLandmarks.begin(); fixedIt != fixedLandmarks.end(); ++fixedIt)
   {
@@ -140,7 +143,7 @@ InitializeTransform(int argc, char * argv[])
       fixedLmks.push_back(fixedIt->second);
       movingLmks.push_back(movingIt->second);
 
-      if (!inputWeightFilename.empty())
+      if (!landmarkWeightMap.empty())
       {
         if (landmarkWeightMap.find(fixedIt->first) != landmarkWeightMap.end())
         {
@@ -155,8 +158,29 @@ InitializeTransform(int argc, char * argv[])
       }
     }
   }
+}
+
+
+template <typename TTransformType>
+typename TTransformType::Pointer
+InitializeTransform(const LandmarkPointContainer & fixedLmks,
+                    const LandmarkPointContainer & movingLmks,
+                    LandmarkWeightType &           landmarkWgts,
+                    ImageType::Pointer             referenceImage,
+                    int                            bsplineNumberOfControlPoints)
+{
+  /** Landmark Initializaer */
+
+  using LocalTransformType = TTransformType;
+  typename LocalTransformType::Pointer transform = LocalTransformType::New();
+
+  using LandmarkBasedInitializerType = itk::LandmarkBasedTransformInitializer<LocalTransformType, ImageType, ImageType>;
+
+  typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+
+
   /** set weights */
-  if (!inputWeightFilename.empty())
+  if (!landmarkWgts.empty())
   {
     landmarkBasedInitializer->SetLandmarkWeight(landmarkWgts);
   }
@@ -180,11 +204,7 @@ InitializeTransform(int argc, char * argv[])
     std::cout << err << std::endl;
     throw;
   }
-
-  std::cout << "Writing output transform file to disk: " << outputTransformFilename << std::endl;
-  itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
-
-  return EXIT_SUCCESS;
+  return transform;
 }
 
 //////////////////// M A I N /////////////////////////////////////////////////
@@ -202,29 +222,76 @@ main(int argc, char * argv[])
     exit(EXIT_FAILURE);
   }
 
-  using ParameterValueType = double;
-  constexpr unsigned int Dimension = 3;
+  ImageType::Pointer referenceImage = nullptr;
+  if (!inputReferenceImageFilename.empty())
+  {
+    using ReaderType = itk::ImageFileReader<ImageType>;
+    ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(inputReferenceImageFilename);
+    try
+    {
+      reader->Update();
+      referenceImage = reader->GetOutput();
+    }
+    catch (itk::ExceptionObject & err)
+    {
+      std::cout << "Exception Object caught: " << std::endl;
+      std::cout << err << std::endl;
+      throw;
+    }
+  }
+
+
+  LandmarkPointContainer fixedLmks;
+  LandmarkPointContainer movingLmks;
+  LandmarkWeightType     landmarkWgts;
+
+  PreProcessLandmarkFiles(
+    inputFixedLandmarkFilename, inputMovingLandmarkFilename, inputWeightFilename, fixedLmks, movingLmks, landmarkWgts);
+
+  // =================
 
   if (outputTransformType == "AffineTransform")
   {
     using AffineTransformType = itk::AffineTransform<ParameterValueType, Dimension>;
-    return InitializeTransform<AffineTransformType>(argc, argv);
+
+    auto transform = InitializeTransform<AffineTransformType>(
+      fixedLmks, movingLmks, landmarkWgts, referenceImage, bsplineNumberOfControlPoints);
+    std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+    itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
   }
   else if (outputTransformType == "BSplineTransform")
   {
     constexpr static unsigned int SplineOrder = 3;
     using BSplineTransformType = itk::BSplineTransform<ParameterValueType, Dimension, SplineOrder>;
-    return InitializeTransform<BSplineTransformType>(argc, argv);
+    auto transform = InitializeTransform<BSplineTransformType>(
+      fixedLmks, movingLmks, landmarkWgts, referenceImage, bsplineNumberOfControlPoints);
+    std::cout << "Writing output transform file to disk: " << outputTransformFilename << std::endl;
+    itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
   }
-  else if (outputTransformType == "VersorRigid3DTransform")
+  else if (outputTransformType == "VersorRigid3DTransform" || outputTransformType == "Similarity3DTransform")
   {
     using VersorRigid3DTransformType = itk::VersorRigid3DTransform<ParameterValueType>;
-    return InitializeTransform<VersorRigid3DTransformType>(argc, argv);
-  }
-    else if (outputTransformType == "Similarity3DTransform")
-  {
-    using Similarity3DTransformType = itk::Similarity3DTransform<ParameterValueType>;
-    return InitializeTransform<Similarity3DTransformType>(argc, argv);
+    auto transform = InitializeTransform<VersorRigid3DTransformType>(
+      fixedLmks, movingLmks, landmarkWgts, referenceImage, bsplineNumberOfControlPoints);
+
+    if (outputTransformType == "Similarity3DTransform")
+    { // Now Add isotropic scaling
+      using Similarity3DTransformType = itk::Similarity3DTransform<ParameterValueType>;
+      Similarity3DTransformType::Pointer simTransform = Similarity3DTransformType::New();
+
+      simTransform->SetMatrix(transform->GetMatrix());
+      const double isotropic_scale_factor= ComputeIsotropicScaleFactor(fixedLmks, movingLmks, landmarkWgts);
+      std::cout << "Using isotropic scale factor: " << isotropic_scale_factor << std::endl;
+      //simTransform->SetScale(isotropic_scale_factor);
+      std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+      itk::WriteTransformToDisk<double>(simTransform, outputTransformFilename);
+    }
+    else
+    {
+      std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+      itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
+    }
   }
   else
   {

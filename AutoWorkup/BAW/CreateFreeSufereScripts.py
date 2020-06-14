@@ -723,6 +723,7 @@ for thisSubject in all_subjects:
             if not os.path.exists(candiate_file):  ##If any files missing, break
                 print(("MISSING: {0}".format(candiate_file)))
                 file_missing = True
+                break
             else:
                 print(("OK: {0}".format(candiate_file)))
 

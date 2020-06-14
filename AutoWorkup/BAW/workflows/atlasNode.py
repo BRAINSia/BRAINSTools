@@ -40,11 +40,9 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
 
     valid_choices = [
         "S_BRAINSABCSupport",
-        "S_BRAINSABCSupport",
         "S_BCDSupport",
         "S_LabelMapsSupport",
         "S_ExtraSupport",
-        "W_BRAINSABCSupport",
         "W_BRAINSABCSupport",
         "W_BCDSupport",
         "W_LabelMapsSupport",

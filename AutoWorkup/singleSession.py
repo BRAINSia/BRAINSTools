@@ -296,7 +296,7 @@ def create_and_run(
 
             if master_config["workflow_phase"] == "atlas-based-reference":
                 atlasDirectory = os.path.join(
-                    master_config["atlascache"], "spatialImages", "rho.nii.gz"
+                    master_config["atlascache"], "20141004_BCD", "T1_50Lmks.mdl"
                 )
                 sentinal_file_list.append(atlasDirectory)
             else:
@@ -320,20 +320,8 @@ def create_and_run(
                 print(("SKIPPING: {0} prerequisites missing".format(session)))
                 continue
 
-            ## Use different sentinal file if segmentation specified.
-            from BAW.workflows.baseline import determine_if_segmentation_should_be_done
-
-            do_BRAINSCut_Segmentation = determine_if_segmentation_should_be_done(
-                master_config
-            )
-            if do_BRAINSCut_Segmentation:
-                sentinal_file_list.append(
-                    os.path.join(
-                        sentinal_file_basedir,
-                        "CleanedDenoisedRFSegmentations",
-                        "allLabels_seg.nii.gz",
-                    )
-                )
+            assert "segmentation" not in master_config[
+              "components"], "ERROR, segmentation (aka BRAINSCut) no longer supported"
 
             def all_paths_exists(list_of_paths):
                 """
@@ -346,6 +334,7 @@ def create_and_run(
                     if not os.path.exists(ff):
                         is_missing = True
                         print(("MISSING: {0}".format(ff)))
+                        break
                 return not is_missing
 
             if useSentinal and all_paths_exists(sentinal_file_list):

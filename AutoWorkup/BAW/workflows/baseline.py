@@ -23,7 +23,7 @@ Description:
 Author:
     Hans J. Johnson
     David Welch
-    
+
 Usage:
 
 """
@@ -79,27 +79,6 @@ def get_list_element(nestedList, index):
     :return:
     """
     return nestedList[index]
-
-
-def determine_if_segmentation_should_be_done(master_config):
-    """ This function is in a trival state right now, but
-    more complicated rulesets may be necessary in the furture
-    to determine when segmentation should be run.
-    This is being left so that anticipated future
-    changes are easier to implement.
-
-    :param master_config:
-    :return:
-    """
-    do_BRAINSCut_Segmentation = False
-    if master_config["workflow_phase"] == "atlas-based-reference":
-        if "segmentation" in master_config["components"]:
-            do_BRAINSCut_Segmentation = True
-    elif master_config["workflow_phase"] == "subject-based-reference":
-        if "segmentation" in master_config["components"]:
-            do_BRAINSCut_Segmentation = True
-    return do_BRAINSCut_Segmentation
-
 
 def get_all_t1s_length(allT1s):
     """
@@ -415,12 +394,6 @@ def generate_single_session_template_wf(
                 )
             ]
         )
-        ## Needed for both segmentation and template building prep
-        atlasBCUTNode_W = make_atlas_node(
-            atlas_warped_directory,
-            "BBCUTAtlas_W{0}".format(sessionid),
-            ["W_BRAINSCutSupport"],
-        )
 
     elif master_config["workflow_phase"] == "subject-based-reference":
         PostACPCAlignToAtlas = True  # Use this subjects atlas image to align landmarks
@@ -428,69 +401,6 @@ def generate_single_session_template_wf(
         atlas_warped_directory = os.path.join(
             master_config["previousresult"], subjectid, "Atlas"
         )
-
-        atlasBCUTNode_W = pe.Node(
-            interface=nio.DataGrabber(
-                infields=["subject"],
-                outfields=[
-                    "l_accumben_ProbabilityMap",
-                    "r_accumben_ProbabilityMap",
-                    "l_caudate_ProbabilityMap",
-                    "r_caudate_ProbabilityMap",
-                    "l_globus_ProbabilityMap",
-                    "r_globus_ProbabilityMap",
-                    "l_hippocampus_ProbabilityMap",
-                    "r_hippocampus_ProbabilityMap",
-                    "l_putamen_ProbabilityMap",
-                    "r_putamen_ProbabilityMap",
-                    "l_thalamus_ProbabilityMap",
-                    "r_thalamus_ProbabilityMap",
-                    "phi",
-                    "rho",
-                    "theta",
-                ],
-            ),
-            name="PerSubject_atlasBCUTNode_W",
-        )
-        atlasBCUTNode_W.inputs.base_directory = master_config["previousresult"]
-        atlasBCUTNode_W.inputs.subject = subjectid
-        atlasBCUTNode_W.inputs.field_template = {
-            "l_accumben_ProbabilityMap": "%s/Atlas/AVG_l_accumben_ProbabilityMap.nii.gz",
-            "r_accumben_ProbabilityMap": "%s/Atlas/AVG_r_accumben_ProbabilityMap.nii.gz",
-            "l_caudate_ProbabilityMap": "%s/Atlas/AVG_l_caudate_ProbabilityMap.nii.gz",
-            "r_caudate_ProbabilityMap": "%s/Atlas/AVG_r_caudate_ProbabilityMap.nii.gz",
-            "l_globus_ProbabilityMap": "%s/Atlas/AVG_l_globus_ProbabilityMap.nii.gz",
-            "r_globus_ProbabilityMap": "%s/Atlas/AVG_r_globus_ProbabilityMap.nii.gz",
-            "l_hippocampus_ProbabilityMap": "%s/Atlas/AVG_l_hippocampus_ProbabilityMap.nii.gz",
-            "r_hippocampus_ProbabilityMap": "%s/Atlas/AVG_r_hippocampus_ProbabilityMap.nii.gz",
-            "l_putamen_ProbabilityMap": "%s/Atlas/AVG_l_putamen_ProbabilityMap.nii.gz",
-            "r_putamen_ProbabilityMap": "%s/Atlas/AVG_r_putamen_ProbabilityMap.nii.gz",
-            "l_thalamus_ProbabilityMap": "%s/Atlas/AVG_l_thalamus_ProbabilityMap.nii.gz",
-            "r_thalamus_ProbabilityMap": "%s/Atlas/AVG_r_thalamus_ProbabilityMap.nii.gz",
-            "phi": "%s/Atlas/AVG_phi.nii.gz",
-            "rho": "%s/Atlas/AVG_rho.nii.gz",
-            "theta": "%s/Atlas/AVG_theta.nii.gz",
-        }
-        atlasBCUTNode_W.inputs.template_args = {
-            "l_accumben_ProbabilityMap": [["subject"]],
-            "r_accumben_ProbabilityMap": [["subject"]],
-            "l_caudate_ProbabilityMap": [["subject"]],
-            "r_caudate_ProbabilityMap": [["subject"]],
-            "l_globus_ProbabilityMap": [["subject"]],
-            "r_globus_ProbabilityMap": [["subject"]],
-            "l_hippocampus_ProbabilityMap": [["subject"]],
-            "r_hippocampus_ProbabilityMap": [["subject"]],
-            "l_putamen_ProbabilityMap": [["subject"]],
-            "r_putamen_ProbabilityMap": [["subject"]],
-            "l_thalamus_ProbabilityMap": [["subject"]],
-            "r_thalamus_ProbabilityMap": [["subject"]],
-            "phi": [["subject"]],
-            "rho": [["subject"]],
-            "theta": [["subject"]],
-        }
-        atlasBCUTNode_W.inputs.template = "*"
-        atlasBCUTNode_W.inputs.sort_filelist = True
-        atlasBCUTNode_W.inputs.raise_on_empty = True
 
         template_DG = pe.Node(
             interface=nio.DataGrabber(
@@ -1130,149 +1040,7 @@ def generate_single_session_template_wf(
     del dsName
 
     ###########################
-    do_BRAINSCut_Segmentation = determine_if_segmentation_should_be_done(master_config)
-    if do_BRAINSCut_Segmentation:
-
-        from workflows.segmentation import segmentation
-        from workflows.WorkupT1T2BRAINSCut import generate_wf_name
-
-        sname = "segmentation"
-        segWF = segmentation(
-            projectid, subjectid, sessionid, master_config, onlyT1, pipeline_name=sname
-        )
-
-        baw201.connect(
-            [
-                (
-                    inputsSpec,
-                    segWF,
-                    [
-                        (
-                            "template_t1_denoised_gaussian",
-                            "inputspec.template_t1_denoised_gaussian",
-                        )
-                    ],
-                )
-            ]
-        )
-        baw201.connect(
-            [
-                (
-                    atlasBCUTNode_W,
-                    segWF,
-                    [
-                        ("rho", "inputspec.rho"),
-                        ("phi", "inputspec.phi"),
-                        ("theta", "inputspec.theta"),
-                        (
-                            "l_caudate_ProbabilityMap",
-                            "inputspec.l_caudate_ProbabilityMap",
-                        ),
-                        (
-                            "r_caudate_ProbabilityMap",
-                            "inputspec.r_caudate_ProbabilityMap",
-                        ),
-                        (
-                            "l_hippocampus_ProbabilityMap",
-                            "inputspec.l_hippocampus_ProbabilityMap",
-                        ),
-                        (
-                            "r_hippocampus_ProbabilityMap",
-                            "inputspec.r_hippocampus_ProbabilityMap",
-                        ),
-                        (
-                            "l_putamen_ProbabilityMap",
-                            "inputspec.l_putamen_ProbabilityMap",
-                        ),
-                        (
-                            "r_putamen_ProbabilityMap",
-                            "inputspec.r_putamen_ProbabilityMap",
-                        ),
-                        (
-                            "l_thalamus_ProbabilityMap",
-                            "inputspec.l_thalamus_ProbabilityMap",
-                        ),
-                        (
-                            "r_thalamus_ProbabilityMap",
-                            "inputspec.r_thalamus_ProbabilityMap",
-                        ),
-                        (
-                            "l_accumben_ProbabilityMap",
-                            "inputspec.l_accumben_ProbabilityMap",
-                        ),
-                        (
-                            "r_accumben_ProbabilityMap",
-                            "inputspec.r_accumben_ProbabilityMap",
-                        ),
-                        (
-                            "l_globus_ProbabilityMap",
-                            "inputspec.l_globus_ProbabilityMap",
-                        ),
-                        (
-                            "r_globus_ProbabilityMap",
-                            "inputspec.r_globus_ProbabilityMap",
-                        ),
-                    ],
-                )
-            ]
-        )
-
-        atlasBCUTNode_S = make_atlas_node(
-            atlas_static_directory,
-            "BBCUTAtlas_S{0}".format(sessionid),
-            ["S_BRAINSCutSupport"],
-        )
-        baw201.connect(
-            atlasBCUTNode_S,
-            "trainModelFile_txtD0060NT0060_gz",
-            segWF,
-            "inputspec.trainModelFile_txtD0060NT0060_gz",
-        )
-
-        ## baw201_outputspec = baw201.get_node('outputspec')
-        baw201.connect(
-            [
-                (
-                    myLocalTCWF,
-                    segWF,
-                    [
-                        ("outputspec.t1_average", "inputspec.t1_average"),
-                        (
-                            "outputspec.atlasToSubjectRegistrationState",
-                            "inputspec.atlasToSubjectRegistrationState",
-                        ),
-                        ("outputspec.outputLabels", "inputspec.inputLabels"),
-                        ("outputspec.posteriorImages", "inputspec.posteriorImages"),
-                        ("outputspec.outputHeadLabels", "inputspec.inputHeadLabels"),
-                    ],
-                ),
-                (
-                    myLocalLMIWF,
-                    segWF,
-                    [
-                        (
-                            "outputspec.atlasToSubjectTransform",
-                            "inputspec.LMIatlasToSubject_tx",
-                        )
-                    ],
-                ),
-                (
-                    FixWMNode,
-                    segWF,
-                    [("UpdatedPosteriorsList", "inputspec.UpdatedPosteriorsList")],
-                ),
-            ]
-        )
-        if not onlyT1:
-            baw201.connect(
-                [
-                    (
-                        myLocalTCWF,
-                        segWF,
-                        [("outputspec.t2_average", "inputspec.t2_average")],
-                    )
-                ]
-            )
+    assert "segmentation" not in master_config["components"], "ERROR, segmentation (aka BRAINSCut) no longer supported"
 
     if "warp_atlas_to_subject" in master_config["components"]:
         ##
@@ -1285,8 +1053,6 @@ def generate_single_session_template_wf(
         # !--pixelType short
         ##
         ##
-
-        ## TODO : SHOULD USE BRAINSCut transform that was refined even further!
 
         from collections import (
             OrderedDict,
@@ -1361,61 +1127,6 @@ def generate_single_session_template_wf(
                 "referenceVolume",
             )
             baw201.connect(inputsSpec, atlasImage, BResample[atlasImage], "inputVolume")
-            baw201.connect(
-                myLocalTCWF,
-                "outputspec.atlasToSubjectTransform",
-                BResample[atlasImage],
-                "warpTransform",
-            )
-            baw201.connect(
-                BResample[atlasImage],
-                "outputVolume",
-                DataSinkSegmentation,
-                "WarpedAtlas2Subject.@" + atlasImage,
-            )
-
-        BRAINSCutAtlasImages = [
-            "rho",
-            "phi",
-            "theta",
-            "l_caudate_ProbabilityMap",
-            "r_caudate_ProbabilityMap",
-            "l_hippocampus_ProbabilityMap",
-            "r_hippocampus_ProbabilityMap",
-            "l_putamen_ProbabilityMap",
-            "r_putamen_ProbabilityMap",
-            "l_thalamus_ProbabilityMap",
-            "r_thalamus_ProbabilityMap",
-            "l_accumben_ProbabilityMap",
-            "r_accumben_ProbabilityMap",
-            "l_globus_ProbabilityMap",
-            "r_globus_ProbabilityMap",
-        ]
-        for atlasImage in BRAINSCutAtlasImages:
-            BResample[atlasImage] = pe.Node(
-                interface=BRAINSResample(), name="BCUTBRAINSResample_" + atlasImage
-            )
-            BResample[atlasImage].plugin_args = {
-                "qsub_args": modify_qsub_args(master_config["queue"], 1, 1, 1),
-                "overwrite": True,
-            }
-            BResample[atlasImage].inputs.pixelType = "float"
-            BResample[
-                atlasImage
-            ].inputs.interpolationMode = (
-                "Linear"
-            )  ## Conversion to distance map, so use linear to resample distance map
-            BResample[atlasImage].inputs.outputVolume = atlasImage + ".nii.gz"
-
-            baw201.connect(
-                myLocalTCWF,
-                "outputspec.t1_average",
-                BResample[atlasImage],
-                "referenceVolume",
-            )
-            baw201.connect(
-                atlasBCUTNode_W, atlasImage, BResample[atlasImage], "inputVolume"
-            )
             baw201.connect(
                 myLocalTCWF,
                 "outputspec.atlasToSubjectTransform",
@@ -1918,209 +1629,5 @@ def generate_single_session_template_wf(
         reconall.inputs.inputspec.subjects_dir = subject_dir
         reconall.inputs.inputspec.num_threads = num_threads
         reconall.inputs.inputspec.subject_id = "FreeSurfer"
-
-        if "edge_prediction" in master_config["components"]:
-            from logismosb.maclearn.workflows import (
-                create_logismosb_machine_learning_workflow,
-            )
-
-            gm_classifier_file = master_config["gm_edge_classifier"]
-            wm_classifier_file = master_config["wm_edge_classifier"]
-
-            edge_prediction_workflow = create_logismosb_machine_learning_workflow(
-                plugin_args={
-                    "qsub_args": modify_qsub_args(
-                        queue=master_config["queue"],
-                        memoryGB=8,
-                        minThreads=16,
-                        maxThreads=16,
-                    ),
-                    "overwrite": True,
-                }
-            )
-            edge_prediction_workflow.inputs.input_spec.gm_classifier_file = (
-                gm_classifier_file
-            )
-            edge_prediction_workflow.inputs.input_spec.wm_classifier_file = (
-                wm_classifier_file
-            )
-
-            select_t1_node = pe.Node(
-                Function(["file_list"], ["first_file"], select_first_file),
-                "SelectSingleT1MacLearn",
-            )
-            baw201.connect(inputsSpec, "T1s", select_t1_node, "file_list")
-
-            baw201.connect(
-                [
-                    (
-                        atlasBCUTNode_W,
-                        edge_prediction_workflow,
-                        [
-                            ("rho", "input_spec.rho"),
-                            ("theta", "input_spec.theta"),
-                            ("phi", "input_spec.phi"),
-                        ],
-                    ),
-                    (
-                        myLocalTCWF,
-                        edge_prediction_workflow,
-                        [
-                            ("outputspec.posteriorImages", "input_spec.posteriors"),
-                            ("outputspec.t1_average", "input_spec.t1_file"),
-                            ("outputspec.t2_average", "input_spec.t2_file"),
-                        ],
-                    ),
-                    (
-                        myLocalBrainStemWF,
-                        edge_prediction_workflow,
-                        [
-                            (
-                                "outputspec.ouputTissuelLabelFilename",
-                                "input_spec.abc_file",
-                            )
-                        ],
-                    ),
-                    (
-                        select_t1_node,
-                        edge_prediction_workflow,
-                        [("first_file", "input_spec.orig_t1")],
-                    ),
-                    (
-                        BResample["hncma_atlas"],
-                        edge_prediction_workflow,
-                        [("outputVolume", "input_spec.hncma_file")],
-                    ),
-                    (
-                        myLocalLMIWF,
-                        edge_prediction_workflow,
-                        [("outputspec.outputTransform", "input_spec.acpc_transform")],
-                    ),
-                    (
-                        reconall,
-                        edge_prediction_workflow,
-                        [
-                            ("outputspec.lh_white", "input_spec.lh_white_surface_file"),
-                            ("outputspec.rh_white", "input_spec.rh_white_surface_file"),
-                        ],
-                    ),
-                ]
-            )
-            baw201.connect(
-                [
-                    (
-                        edge_prediction_workflow,
-                        DataSink,
-                        [
-                            (
-                                "output_spec.lh_gmsurface_file",
-                                "EdgePrediction.@lh_gm_surface_file",
-                            ),
-                            (
-                                "output_spec.lh_wmsurface_file",
-                                "EdgePrediction.@lh_wm_surface_file",
-                            ),
-                            (
-                                "output_spec.rh_gmsurface_file",
-                                "EdgePrediction.@rh_gm_surface_file",
-                            ),
-                            (
-                                "output_spec.rh_wmsurface_file",
-                                "EdgePrediction.@rh_wm_surface_file",
-                            ),
-                        ],
-                    )
-                ]
-            )
-
-        if "logismosb" in master_config["components"]:
-            # this workflow assumes that the input t1 and t2 files are in the same space!!!
-            from logismosb import create_fs_logb_workflow_for_both_hemispheres
-
-            myLocalFSLOGISMOSBWF = create_fs_logb_workflow_for_both_hemispheres(
-                plugin_args={
-                    "qsub_args": modify_qsub_args(
-                        queue=master_config["queue"],
-                        memoryGB=8,
-                        minThreads=16,
-                        maxThreads=16,
-                    ),
-                    "overwrite": True,
-                }
-            )
-            baw201.connect(
-                [
-                    (
-                        reconall,
-                        myLocalFSLOGISMOSBWF,
-                        [
-                            ("outputspec.aseg_presurf", "inputspec.aseg_presurf"),
-                            ("outputspec.rawavg", "inputspec.rawavg"),
-                            ("outputspec.t2_raw", "inputspec.t2_raw"),
-                            ("outputspec.lh_white", "inputspec.lh_white"),
-                            ("outputspec.rh_white", "inputspec.rh_white"),
-                        ],
-                    )
-                ]
-            )
-            # before connecting to the fs_logb workflow, the hncma needs to be resampled to the original space
-            select_t1_node = pe.Node(
-                Function(["file_list"], ["first_file"], select_first_file),
-                "SelectSingleT1",
-            )
-            baw201.connect(inputsSpec, "T1s", select_t1_node, "file_list")
-
-            resample_hncma = pe.Node(BRAINSResample(), name="ResampleHNCMA")
-
-            baw201.connect(
-                BResample["hncma_atlas"], "outputVolume", resample_hncma, "inputVolume"
-            )
-            baw201.connect(
-                myLocalLMIWF,
-                "outputspec.outputTransform",
-                resample_hncma,
-                "warpTransform",
-            )
-            baw201.connect(
-                select_t1_node, "first_file", resample_hncma, "referenceVolume"
-            )
-            resample_hncma.inputs.outputVolume = "hncma_in_original_space.nii.gz"
-            resample_hncma.inputs.pixelType = "short"
-            resample_hncma.inputs.interpolationMode = "NearestNeighbor"
-            resample_hncma.inputs.inverseTransform = True
-
-            baw201.connect(
-                resample_hncma,
-                "outputVolume",
-                myLocalFSLOGISMOSBWF,
-                "inputspec.hncma_atlas",
-            )
-
-            baw201.connect(
-                [
-                    (
-                        myLocalFSLOGISMOSBWF,
-                        DataSink,
-                        [
-                            (
-                                "outputspec.lh_gm_surf_file",
-                                "LOGISMOSB.FreeSurfer.@lh_gm_surface_file",
-                            ),
-                            (
-                                "outputspec.lh_wm_surf_file",
-                                "LOGISMOSB.FreeSurfer.@lh_wm_surface_file",
-                            ),
-                            (
-                                "outputspec.rh_gm_surf_file",
-                                "LOGISMOSB.FreeSurfer.@rh_gm_surface_file",
-                            ),
-                            (
-                                "outputspec.rh_wm_surf_file",
-                                "LOGISMOSB.FreeSurfer.@rh_wm_surface_file",
-                            ),
-                        ],
-                    )
-                ]
-            )
 
     return baw201

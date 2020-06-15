@@ -61,7 +61,6 @@ void
 landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 {
   bool forced_landmark_compare_are_same = true;
-  ;
   std::cout << "\nEstimating MSP..." << std::endl;
 
   VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
@@ -72,7 +71,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
   {
     LandmarksMapType eyeFixed_lmks;
     eyeFixed_lmks["CM"] = eyeFixed_lmk_CenterOfHeadMass;
-    const std::string roughlyAlignedCHMName(this->m_ResultsDir + "/eyeFixed_lmks.fcsv");
+    const std::string roughlyAlignedCHMName(this->m_ResultsDir + "/CM_VolumeRoughAlignedWithHoughEye_lmks.fcsv");
     WriteITKtoSlicer3Lmk(roughlyAlignedCHMName, eyeFixed_lmks);
 
     const std::string roughlyAlignedVolumeName(this->m_ResultsDir + "/VolumeRoughAlignedWithHoughEye.nrrd");

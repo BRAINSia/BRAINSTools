@@ -300,32 +300,30 @@ landmarksConstellationDetector::FindCandidatePoints(
   maskInterp->SetInputImage(mask_LR);
 
   // Final location is initialized with the center of search area
-  SImageType::PointType GuessPoint;
-  GuessPoint[0] = CenterOfSearchArea[0];
-  GuessPoint[1] = CenterOfSearchArea[1];
-  GuessPoint[2] = CenterOfSearchArea[2];
+  const SImageType::PointType InitialGuessPoint{CenterOfSearchArea};
 
   // Boundary check
   {
-    SImageType::PointType boundaryL(GuessPoint);
+    SImageType::PointType boundaryL(InitialGuessPoint);
     boundaryL[0] += LR_restrictions;
-    SImageType::PointType boundaryR(GuessPoint);
+    SImageType::PointType boundaryR(InitialGuessPoint);
     boundaryR[0] -= LR_restrictions;
-    SImageType::PointType boundaryP(GuessPoint);
+    SImageType::PointType boundaryP(InitialGuessPoint);
     boundaryP[1] += PA_restrictions;
-    SImageType::PointType boundaryA(GuessPoint);
+    SImageType::PointType boundaryA(InitialGuessPoint);
     boundaryA[1] -= PA_restrictions;
-    SImageType::PointType boundaryS(GuessPoint);
+    SImageType::PointType boundaryS(InitialGuessPoint);
     boundaryS[2] += SI_restrictions;
-    SImageType::PointType boundaryI(GuessPoint);
+    SImageType::PointType boundaryI(InitialGuessPoint);
     boundaryI[2] -= SI_restrictions;
     if ((!maskInterp->IsInsideBuffer(boundaryL)) || (!maskInterp->IsInsideBuffer(boundaryR)) ||
         (!maskInterp->IsInsideBuffer(boundaryP)) || (!maskInterp->IsInsideBuffer(boundaryA)) ||
         (!maskInterp->IsInsideBuffer(boundaryS)) || (!maskInterp->IsInsideBuffer(boundaryI)))
     {
-      std::cout << "WARNING: search region outside of the image region." << std::endl;
-      std::cout << "The detection has probably large error!" << std::endl;
-      return GuessPoint;
+      std::cout << "WARNING: search region outside of the image region for " << mapID << "." << std::endl;
+      std::cout << "The detection has probably large error!" <<
+        "\nUsing point " << InitialGuessPoint << " for " << mapID << std::endl;
+      return InitialGuessPoint;
     }
   }
 
@@ -456,7 +454,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   if (labelStatisticsImageFilter->GetNumberOfLabels() != 1)
   {
-    itkGenericExceptionMacro(<< "The bounding box mask should be connected.");
+    itkGenericExceptionMacro(<< "The bounding box mask should be connected for " << mapID << ".");
   }
 
   using LabelPixelType = LabelStatisticsImageFilterType::LabelPixelType;
@@ -474,8 +472,18 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   if (std::sqrt(ROIcount * ROIvar) < std::numeric_limits<double>::epsilon())
   {
-    itkGenericExceptionMacro(<< "Zero norm for bounding area.");
-  }
+    if (globalImagedebugLevel > 8)
+    {
+      std::string bbmask(this->m_ResultsDir + "/bbmaks_" + itksys::SystemTools::GetFilenameName(mapID) + ".nii.gz");
+      itkUtil::WriteImage<SImageType>(roiMask, bbmask);
+    }
+    std::cerr << "WARNING: search region has no variance (uniform values), or i size 0: " << mapID << "." << std::endl;
+    std::cerr << "The detection has probably large error!" << std::endl;
+    std::cerr<< "Zero norm for bounding area for " << mapID << ".\n"
+                             << "ROI Pixel Count: " << ROIcount << " ROIvariance: " << ROIvar << std::endl;
+
+    return InitialGuessPoint;
+     }
   const double normInv = 1 / (std::sqrt(ROIcount * ROIvar));
 
   using MultiplyImageFilterType = itk::MultiplyImageFilter<FImageType3D, FImageType3D, FImageType3D>;
@@ -524,6 +532,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   //  and template mean values for different angle rotations
   //
   double cc_rotation_max = 0.0;
+  SImageType::PointType TransformedGuessPoint = InitialGuessPoint;
   for (unsigned int curr_rotationAngle = 0; curr_rotationAngle < TemplateMean.size(); curr_rotationAngle++)
   {
     lmkTemplateImage->FillBuffer(0);
@@ -581,7 +590,8 @@ landmarksConstellationDetector::FindCandidatePoints(
       cc_rotation_max = cc;
       // Where maximum happens
       FImageType3D::IndexType maximumCorrelationPatchCenter = minimumMaximumImageCalculatorFilter->GetIndexOfMaximum();
-      correlationFilter->GetOutput()->TransformIndexToPhysicalPoint(maximumCorrelationPatchCenter, GuessPoint);
+      correlationFilter->GetOutput()->TransformIndexToPhysicalPoint(maximumCorrelationPatchCenter,
+                                                                    TransformedGuessPoint);
     }
   }
   cc_Max = cc_rotation_max;
@@ -589,9 +599,9 @@ landmarksConstellationDetector::FindCandidatePoints(
   if (LMC::globalverboseFlag)
   {
     std::cout << "cc max: " << cc_Max << std::endl;
-    std::cout << "guessed point in physical space: " << GuessPoint << std::endl;
+    std::cout << "guessed point in physical space: " << InitialGuessPoint << std::endl;
   }
-  return GuessPoint;
+  return InitialGuessPoint;
 }
 
 void

@@ -81,7 +81,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
   // Compute the estimated MSP transform, and aligned image from eye centers data.
   double c_c = 0;
   ComputeMSP(this->m_eyeFixed_img,
-             this->m_test_orig2msp_img_tfm,
+             this->m_eyeFixed2msp_img_tfm,
              this->m_msp_img,
              eyeFixed_lmk_CenterOfHeadMass,
              this->m_mspQualityLevel,
@@ -137,15 +137,15 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
   if (globalImagedebugLevel > 2)
   {
-    const std::string MSP_ImagePlaneForOrig(this->m_ResultsDir + "/MSP_PLANE_For_Orig.nii.gz");
-    CreatedebugPlaneImage(this->m_eyeFixed_img, MSP_ImagePlaneForOrig);
+    const std::string MSP_ImagePlaneForEyeFixed(this->m_ResultsDir + "/MSP_PLANE_eyeFixed.nii.gz");
+    CreatedebugPlaneImage(this->m_eyeFixed_img, MSP_ImagePlaneForEyeFixed);
     const std::string MSP_ImagePlane(this->m_ResultsDir + "/MSP_PLANE.nii.gz");
     CreatedebugPlaneImage(this->m_msp_img, MSP_ImagePlane);
   }
 
   // INFO: Compute Center of Head Mass differently
-  VersorTransformType::Pointer eyeFixed2msp_lmk_tfm = VersorTransformType::New();
-  this->m_test_orig2msp_img_tfm->GetInverse(eyeFixed2msp_lmk_tfm);
+  VersorTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorTransformType::New();
+  this->m_eyeFixed2msp_img_tfm->GetInverse(local_eyeFixed2msp_lmk_tfm);
 
   SImageType::PointType temppnt = m_test_orig2msp_img_tfm->TransformPoint(m_orig_lmks_forced.at("CM"));
   temppnt[0] = 0; // Search starts on the estimated MSP
@@ -169,14 +169,15 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       if (mapHasKey(m_orig_lmks_forced, "RP"))
       {
         std::cout << "Skip estimation of RP, directly forced by command line." << std::endl;
-        msp_lmks_algo_found["RP"] = eyeFixed2msp_lmk_tfm->TransformPoint(
-          orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("RP")));
+        msp_lmks_algo_found["RP"] = local_eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("RP")));
       }
       else
       {
         // The search radius of RP is set to 5 times larger than its template
         // radius in SI direction.
         // It's large because some scans have extra contents of neck or shoulder
+
         msp_lmks_algo_found["RP"] = FindCandidatePoints(this->m_msp_img,
                                                         this->m_msp_img,
                                                         searchRadiusLR,
@@ -232,10 +233,10 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       std::cout << "Processing 4VN..." << std::endl;
       {
         SImageType::PointType       mspSpaceCEC;
-        const SImageType::PointType msp_LE = eyeFixed2msp_lmk_tfm->TransformPoint(
-          orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("LE")));
-        const SImageType::PointType msp_RE = eyeFixed2msp_lmk_tfm->TransformPoint(
-          orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("RE")));
+        const SImageType::PointType msp_LE = local_eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("LE")));
+        const SImageType::PointType msp_RE = local_eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("RE")));
 
         mspSpaceCEC.SetToMidPoint(msp_LE, msp_RE);
         mspSpaceCEC[0] = 0; // Search starts on the estimated MSP
@@ -251,8 +252,8 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       if (mapHasKey(m_orig_lmks_forced, "VN4"))
       {
         std::cout << "Skip estimation of VN4, directly forced by command line." << std::endl;
-        msp_lmks_algo_found["VN4"] = eyeFixed2msp_lmk_tfm->TransformPoint(
-          orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("VN4")));
+        msp_lmks_algo_found["VN4"] = local_eyeFixed2msp_lmk_tfm->TransformPoint(
+          orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("VN4")));
       }
       else
       {
@@ -286,7 +287,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       if (mapHasKey(m_orig_lmks_forced, "AC"))
       {
         std::cout << "Skip estimation of AC , directly forced by command line." << std::endl;
-        msp_lmks_algo_found["AC"] = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["AC"] = local_eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("AC")));
       }
       else
@@ -321,7 +322,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       if (mapHasKey(m_orig_lmks_forced, "PC"))
       {
         std::cout << "Skip estimation of PC, directly forced by command line." << std::endl;
-        msp_lmks_algo_found["PC"] = eyeFixed2msp_lmk_tfm->TransformPoint(
+        msp_lmks_algo_found["PC"] = local_eyeFixed2msp_lmk_tfm->TransformPoint(
           orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_forced.at("PC")));
       }
       else
@@ -382,33 +383,26 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
       if (!mapHasKey(m_orig_lmks_forced, "RP"))
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint(msp_lmks_algo_found["RP"]);
-
-        this->m_orig_lmks_updated["RP"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(tempLoc);
+        this->m_orig_lmks_updated["RP"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(
+          this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found["RP"]));
       }
 
       if (!mapHasKey(m_orig_lmks_forced, "VN4"))
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint(msp_lmks_algo_found["VN4"]);
-
-        this->m_orig_lmks_updated["VN4"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(tempLoc);
+        this->m_orig_lmks_updated["VN4"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(
+          this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found["VN4"]));
       }
 
       if (!mapHasKey(m_orig_lmks_forced, "AC"))
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint(msp_lmks_algo_found["AC"]);
-
-        this->m_orig_lmks_updated["AC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(tempLoc);
-        std::cout << "msp_lmk_AC:         " << msp_lmks_algo_found["AC"] << std::endl;
-        std::cout << "tempLoc eyeFixed?:  " << tempLoc << std::endl;
-        std::cout << "orig AC:            " << this->m_orig_lmks_updated["AC"] << std::endl;
+        this->m_orig_lmks_updated["AC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(
+          this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found["AC"]));
       }
 
       if (!mapHasKey(m_orig_lmks_forced, "PC"))
       {
-        const SImagePointType tempLoc = this->m_test_orig2msp_img_tfm->TransformPoint(msp_lmks_algo_found["PC"]);
-
-        this->m_orig_lmks_updated["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(tempLoc);
+        this->m_orig_lmks_updated["PC"] = this->m_orig2eyeFixed_img_tfm->TransformPoint(
+          this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found["PC"]));
       }
 
       this->m_orig_lmks_updated["CM"] = this->m_orig_lmks_forced.at("CM");
@@ -536,7 +530,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
             this->m_orig_lmks_updated[LlsMatrix_name] = this->m_orig2msp_img_tfm->TransformPoint(
               msp_lmks_computed_iteratively_using_orig_lmks.at(LlsMatrix_name));
 
-            msp_lmks_algo_found[LlsMatrix_name] = eyeFixed2msp_lmk_tfm->TransformPoint(
+            msp_lmks_algo_found[LlsMatrix_name] = local_eyeFixed2msp_lmk_tfm->TransformPoint(
               orig2eyeFixed_lmk_tfm->TransformPoint(this->m_orig_lmks_updated.at(LlsMatrix_name)));
 
 
@@ -559,7 +553,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
               // Update landmarks in input and ACPC-aligned space
               this->m_orig_lmks_updated[LlsMatrix_name] =
-                this->m_test_orig2msp_img_tfm->TransformPoint(msp_lmks_algo_found.at(LlsMatrix_name));
+                this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found.at(LlsMatrix_name));
               {
                 this->m_orig_lmks_updated[LlsMatrix_name] =
                   this->m_orig2eyeFixed_img_tfm->TransformPoint(this->m_orig_lmks_updated.at(LlsMatrix_name));

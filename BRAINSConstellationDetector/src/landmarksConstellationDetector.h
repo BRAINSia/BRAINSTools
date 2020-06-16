@@ -111,8 +111,8 @@ public:
   {
     RigidTransformType::Pointer value = RigidTransformType::New();
 
-    value->SetFixedParameters(this->m_test_orig2msp_img_tfm->GetFixedParameters());
-    value->SetParameters(this->m_test_orig2msp_img_tfm->GetParameters());
+    value->SetFixedParameters(this->m_eyeFixed2msp_img_tfm->GetFixedParameters());
+    value->SetParameters(this->m_eyeFixed2msp_img_tfm->GetParameters());
     return value;
   }
 
@@ -278,7 +278,7 @@ private:
   // name list of the landmarks that should be treated as midline landmarks
   std::vector<std::string> m_MidlinePointsList;
 
-  RigidTransformType::Pointer  m_test_orig2msp_img_tfm;
+  RigidTransformType::Pointer  m_eyeFixed2msp_img_tfm;
   VersorTransformType::Pointer m_orig2msp_img_tfm;
 
   VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;

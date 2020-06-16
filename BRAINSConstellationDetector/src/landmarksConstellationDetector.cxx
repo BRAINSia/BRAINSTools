@@ -620,7 +620,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   if (LMC::globalverboseFlag)
   {
     std::cout << "cc max: " << cc_Max << std::endl;
-    std::cout << "guessed point in physical space: " << InitialGuessPoint << std::endl;
+    std::cout << mapID << " guessed point in MSP aligned physical space: " << InitialGuessPoint << std::endl;
   }
   return InitialGuessPoint;
 }

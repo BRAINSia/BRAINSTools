@@ -270,7 +270,12 @@ BRAINSConstellationDetectorPrimary::Compute()
 
     orig_lmks["LE"] = houghEyeDetector->Getorig_lmk_LE();
     orig_lmks["RE"] = houghEyeDetector->Getorig_lmk_RE();
+    if (globalImagedebugLevel > 2)
+    {
 
+      const std::string hough_eye_landmarks_fn( "./orig_lmks_cm_eyes_HoughDetector.fcsv");
+      WriteITKtoSlicer3Lmk(hough_eye_landmarks_fn, eyeFixed_lmks);
+    }
     eyeFixed_img = itk::RigidResampleInPlayByVersor3D<SImageType, SImageType>(orig_img, orig2eyeFixed_img_tfm);
   }
 

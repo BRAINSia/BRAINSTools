@@ -142,10 +142,10 @@ MakeLabelImage(SImageType::Pointer           in,
                const std::string &           fname);
 
 extern void
-ComputeMSP(SImageType::Pointer           image,
+ComputeMSP(SImageType::Pointer           input_image,
            RigidTransformType::Pointer & output_transform,
            SImageType::Pointer &         transformedImage,
-           const SImageType::PointType & orig_lmk_CenterOfHeadMass,
+           const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
            double &                      cc);
 

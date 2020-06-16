@@ -90,10 +90,10 @@ DoMultiQualityReflection(SImageType::Pointer &                  image,
 }
 
 void
-ComputeMSP(SImageType::Pointer           image,
+ComputeMSP(SImageType::Pointer           input_image,
            RigidTransformType::Pointer & output_transform,
            SImageType::Pointer &         transformedImage,
-           const SImageType::PointType & orig_lmk_CenterOfHeadMass,
+           const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
            double &                      cc)
 {
@@ -104,16 +104,16 @@ ComputeMSP(SImageType::Pointer           image,
     output_transform->SetIdentity();
 
     itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
-    MSP->SetInputImage(image);
+    MSP->SetInputImage(input_image);
     MSP->Update();
     transformedImage = MSP->GetOutput();
   }
   else
   {
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
-    reflectionFunctor->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
+    reflectionFunctor->Setorig_lmk_CenterOfHeadMass(input_image_center_of_mass);
 
-    DoMultiQualityReflection(image, output_transform, qualityLevel, reflectionFunctor);
+    DoMultiQualityReflection(input_image, output_transform, qualityLevel, reflectionFunctor);
 
     transformedImage = reflectionFunctor->GetMSPCenteredImage();
     cc = reflectionFunctor->GetCC();

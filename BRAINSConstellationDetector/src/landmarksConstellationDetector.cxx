@@ -348,11 +348,11 @@ landmarksConstellationDetector::FindCandidatePoints(
   // to be expanded by the template size.
   //
   const double LeftToRight_BEGIN = CenterOfSearchArea[0] - LR_restrictions - height / 2;
-  const double AnteriorToPostierior_BEGIN = CenterOfSearchArea[1] - PA_restrictions - radii;
+  const double AnteriorToPosterior_BEGIN = CenterOfSearchArea[1] - PA_restrictions - radii;
   const double InferiorToSuperior_BEGIN = CenterOfSearchArea[2] - SI_restrictions - radii;
 
   const double LeftToRight_END = CenterOfSearchArea[0] + LR_restrictions + height / 2;
-  const double AnteriorToPostierior_END = CenterOfSearchArea[1] + PA_restrictions + radii;
+  const double AnteriorToPosterior_END = CenterOfSearchArea[1] + PA_restrictions + radii;
   const double InferiorToSuperior_END = CenterOfSearchArea[2] + SI_restrictions + radii;
 
   // Now bounding area will be converted to an image
@@ -361,13 +361,13 @@ landmarksConstellationDetector::FindCandidatePoints(
   // origin
   SImageType::PointType roiOrigin;
   roiOrigin[0] = LeftToRight_BEGIN;
-  roiOrigin[1] = AnteriorToPostierior_BEGIN;
+  roiOrigin[1] = AnteriorToPosterior_BEGIN;
   roiOrigin[2] = InferiorToSuperior_BEGIN;
   roiImage->SetOrigin(roiOrigin);
   // size
   SImageType::SizeType roiSize;
   roiSize[0] = (LeftToRight_END - LeftToRight_BEGIN) / (volumeMSP->GetSpacing()[0]) + 1;
-  roiSize[1] = (AnteriorToPostierior_END - AnteriorToPostierior_BEGIN) / (volumeMSP->GetSpacing()[1]) + 1;
+  roiSize[1] = (AnteriorToPosterior_END - AnteriorToPosterior_BEGIN) / (volumeMSP->GetSpacing()[1]) + 1;
   roiSize[2] = (InferiorToSuperior_END - InferiorToSuperior_BEGIN) / (volumeMSP->GetSpacing()[2]) + 1;
   // start index
   SImageType::IndexType roiStart;
@@ -404,10 +404,10 @@ landmarksConstellationDetector::FindCandidatePoints(
   for (double LeftToRight = LeftToRight_BEGIN; LeftToRight < LeftToRight_END; LeftToRight += deltaLR)
   {
     currentPointLocation[0] = LeftToRight;
-    for (double AnteriorToPostierior = AnteriorToPostierior_BEGIN; AnteriorToPostierior < AnteriorToPostierior_END;
-         AnteriorToPostierior += deltaAP)
+    for (double AnteriorToPosterior = AnteriorToPosterior_BEGIN; AnteriorToPosterior < AnteriorToPosterior_END;
+         AnteriorToPosterior += deltaAP)
     {
-      currentPointLocation[1] = AnteriorToPostierior;
+      currentPointLocation[1] = AnteriorToPosterior;
       for (double InferiorToSuperior = InferiorToSuperior_BEGIN; InferiorToSuperior < InferiorToSuperior_END;
            InferiorToSuperior += deltaIS)
       {
@@ -493,18 +493,6 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   FImageType3D::Pointer normalizedRoiImage = multiplyImageFilter->GetOutput();
   /////////////// End of normalization of roiImage //////////////
-
-  if (globalImagedebugLevel > 8)
-  {
-    std::string normalized_roiImage_name(this->m_ResultsDir + "/NormalizedRoiImage_" +
-                                         itksys::SystemTools::GetFilenameName(mapID) + ".nii.gz");
-    itkUtil::WriteImage<FImageType3D>(normalizedRoiImage, normalized_roiImage_name);
-
-    std::string roiMask_name(this->m_ResultsDir + "/roiMask_" + itksys::SystemTools::GetFilenameName(mapID) +
-                             ".nii.gz");
-    itkUtil::WriteImage<SImageType>(roiMask, roiMask_name);
-  }
-
   // Now each landmark template should be converted to a moving template image
   //
   FImageType3D::Pointer lmkTemplateImage = FImageType3D::New();
@@ -533,12 +521,13 @@ landmarksConstellationDetector::FindCandidatePoints(
   //
   double cc_rotation_max = 0.0;
   SImageType::PointType TransformedGuessPoint = InitialGuessPoint;
-  for (unsigned int curr_rotationAngle = 0; curr_rotationAngle < TemplateMean.size(); curr_rotationAngle++)
+  for (unsigned int curr_rotationAngle_index = 0; curr_rotationAngle_index < TemplateMean.size();
+       curr_rotationAngle_index++)
   {
     lmkTemplateImage->FillBuffer(0);
     templateMask->FillBuffer(0);
     // iterate over mean values for the current rotation angle
-    auto mean_iter = TemplateMean[curr_rotationAngle].begin();
+    auto mean_iter = TemplateMean[curr_rotationAngle_index].begin();
     // Fill the lmk template image using the mean values
     for (auto it = model.begin(); it != model.end(); ++it, ++mean_iter)
     {
@@ -548,16 +537,6 @@ landmarksConstellationDetector::FindCandidatePoints(
       pixelIndex[2] = (*it)[2] + radii;
       lmkTemplateImage->SetPixel(pixelIndex, *mean_iter);
       templateMask->SetPixel(pixelIndex, 1);
-    }
-    if (globalImagedebugLevel > 8)
-    {
-      std::string tmpImageName(this->m_ResultsDir + "/lmkTemplateImage_" + itksys::SystemTools::GetFilenameName(mapID) +
-                               "_" + local_to_string(curr_rotationAngle) + ".nii.gz");
-      itkUtil::WriteImage<FImageType3D>(lmkTemplateImage, tmpImageName);
-
-      std::string tmpMaskName(this->m_ResultsDir + "/templateMask_" + itksys::SystemTools::GetFilenameName(mapID) +
-                              "_" + local_to_string(curr_rotationAngle) + ".nii.gz");
-      itkUtil::WriteImage<SImageType>(templateMask, tmpMaskName);
     }
 
     // Finally NCC is calculated in frequency domain
@@ -573,8 +552,25 @@ landmarksConstellationDetector::FindCandidatePoints(
     correlationFilter->Update();
     if (globalImagedebugLevel > 8)
     {
-      std::string ncc_output_name(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle) + ".nii.gz");
+      const std::string ncc_output_name_fixed(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                  "_" + local_to_string(curr_rotationAngle_index) + "_fixed.nii.gz");
+      itkUtil::WriteImage<FImageType3D>(normalizedRoiImage, ncc_output_name_fixed);
+
+      const std::string ncc_output_name_fixedmask(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                  "_" + local_to_string(curr_rotationAngle_index) + "_fixedmask.nii.gz");
+      itkUtil::WriteImage<SImageType>(roiMask, ncc_output_name_fixedmask);
+
+      const std::string ncc_output_name_moving(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                  "_" + local_to_string(curr_rotationAngle_index) + "_moving.nii.gz");
+      itkUtil::WriteImage<FImageType3D>(lmkTemplateImage, ncc_output_name_moving);
+
+      const std::string ncc_output_name_movingmask(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                  "_" + local_to_string(curr_rotationAngle_index) + "_movingmask.nii.gz");
+      itkUtil::WriteImage<SImageType>(templateMask, ncc_output_name_movingmask);
+
+
+      const std::string ncc_output_name(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                  "_" + local_to_string(curr_rotationAngle_index) + ".nii.gz");
       itkUtil::WriteImage<FImageType3D>(correlationFilter->GetOutput(), ncc_output_name);
     }
 

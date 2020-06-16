@@ -162,6 +162,7 @@ public:
     itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
 
     duplicator->SetInputImage(original_space_image);
+    duplicator->Update();
     SImageType::Pointer taggedImage = duplicator->GetOutput();
 
     SImageType::PixelType low = 0;

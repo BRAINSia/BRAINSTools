@@ -147,9 +147,10 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
   VersorTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorTransformType::New();
   this->m_eyeFixed2msp_img_tfm->GetInverse(local_eyeFixed2msp_lmk_tfm);
 
-  SImageType::PointType temppnt = m_test_orig2msp_img_tfm->TransformPoint(m_orig_lmks_forced.at("CM"));
-  temppnt[0] = 0; // Search starts on the estimated MSP
-  const SImageType::PointType msp_lmk_CenterOfHeadMass_zeroed_x = temppnt;
+  SImageType::PointType msp_center_of_head_mass =
+    local_eyeFixed2msp_lmk_tfm->TransformPoint(orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("CM")));
+  msp_center_of_head_mass[0] = 0; // Search starts on the estimated MSP
+  const SImageType::PointType msp_lmk_CenterOfHeadMass_zeroed_x = msp_center_of_head_mass;
   {
     std::cout << "\nPerforming morpohmetric search + local search..." << std::endl;
 

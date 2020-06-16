@@ -300,7 +300,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   maskInterp->SetInputImage(mask_LR);
 
   // Final location is initialized with the center of search area
-  const SImageType::PointType InitialGuessPoint{CenterOfSearchArea};
+  const SImageType::PointType InitialGuessPoint{ CenterOfSearchArea };
 
   // Boundary check
   {
@@ -321,117 +321,114 @@ landmarksConstellationDetector::FindCandidatePoints(
         (!maskInterp->IsInsideBuffer(boundaryS)) || (!maskInterp->IsInsideBuffer(boundaryI)))
     {
       std::cout << "WARNING: search region outside of the image region for " << mapID << "." << std::endl;
-      std::cout << "The detection has probably large error!" <<
-        "\nUsing point " << InitialGuessPoint << " for " << mapID << std::endl;
+      std::cout << "The detection has probably large error!"
+                << "\nUsing point " << InitialGuessPoint << " for " << mapID << std::endl;
       return InitialGuessPoint;
     }
   }
 
   // height and radius of the moving template
   const double height = this->m_InputTemplateModel.GetHeight(mapID);
-  double       radii = this->m_InputTemplateModel.GetRadius(mapID);
-
   // HACK:
   // When, rmpj, rac, rpc and rvn4 are used, they help to increase the bounding box
   // restrictions; however, we do not want that landmark template image be affected
   // by that.
-  if (mapID == "RP" || mapID == "AC" || mapID == "PC" || mapID == "VN4")
-  {
-    if (radii > 5)
-    {
-      radii = 5;
-    }
-  }
+  const double radii = ((mapID == "RP" || mapID == "AC" || mapID == "PC" || mapID == "VN4") &&
+                        this->m_InputTemplateModel.GetRadius(mapID) > 5.0)
+                         ? 5.0
+                         : this->m_InputTemplateModel.GetRadius(mapID);
+
+  constexpr double deltaLR = 1; // in mm
+  constexpr double deltaPA = 1; // in mm
+  constexpr double deltaSI = 1; // in mm
 
   // Bounding box around the center point.
   // To compute the correlation for the border points, the bounding box needs
   // to be expanded by the template size.
   //
-  const double LeftToRight_BEGIN = CenterOfSearchArea[0] - LR_restrictions - height / 2;
-  const double AnteriorToPosterior_BEGIN = CenterOfSearchArea[1] - PA_restrictions - radii;
-  const double InferiorToSuperior_BEGIN = CenterOfSearchArea[2] - SI_restrictions - radii;
+  SImageType::PointType LPS_BEGIN;
+  LPS_BEGIN[0] = CenterOfSearchArea[0] - LR_restrictions - height / 2;
+  LPS_BEGIN[1] = CenterOfSearchArea[1] - PA_restrictions - radii;
+  LPS_BEGIN[2] = CenterOfSearchArea[2] - SI_restrictions - radii;
 
-  const double LeftToRight_END = CenterOfSearchArea[0] + LR_restrictions + height / 2;
-  const double AnteriorToPosterior_END = CenterOfSearchArea[1] + PA_restrictions + radii;
-  const double InferiorToSuperior_END = CenterOfSearchArea[2] + SI_restrictions + radii;
+  SImageType::PointType LPS_END;
+  LPS_END[0] = CenterOfSearchArea[0] + LR_restrictions + height / 2;
+  LPS_END[1] = CenterOfSearchArea[1] + PA_restrictions + radii;
+  LPS_END[2] = CenterOfSearchArea[2] + SI_restrictions + radii;
 
   // Now bounding area will be converted to an image
   //
   SImageType::Pointer roiImage = SImageType::New();
-  // origin
-  SImageType::PointType roiOrigin;
-  roiOrigin[0] = LeftToRight_BEGIN;
-  roiOrigin[1] = AnteriorToPosterior_BEGIN;
-  roiOrigin[2] = InferiorToSuperior_BEGIN;
-  roiImage->SetOrigin(roiOrigin);
-  // size
-  SImageType::SizeType roiSize;
-  roiSize[0] = (LeftToRight_END - LeftToRight_BEGIN) / (volumeMSP->GetSpacing()[0]) + 1;
-  roiSize[1] = (AnteriorToPosterior_END - AnteriorToPosterior_BEGIN) / (volumeMSP->GetSpacing()[1]) + 1;
-  roiSize[2] = (InferiorToSuperior_END - InferiorToSuperior_BEGIN) / (volumeMSP->GetSpacing()[2]) + 1;
-  // start index
-  SImageType::IndexType roiStart;
-  roiStart.Fill(0);
-  // region
-  SImageType::RegionType roiRegion(roiStart, roiSize);
-  roiImage->SetRegions(roiRegion);
-  // spacing
-  roiImage->SetSpacing(volumeMSP->GetSpacing());
-  // direction
-  roiImage->SetDirection(volumeMSP->GetDirection());
-  roiImage->Allocate();
-  roiImage->FillBuffer(0);
+  {
+    // origin
+    SImageType::PointType roiOrigin;
+    roiOrigin[0] = LPS_BEGIN[0];
+    roiOrigin[1] = LPS_BEGIN[1];
+    roiOrigin[2] = LPS_BEGIN[2];
+    roiImage->SetOrigin(roiOrigin);
+  }
+  {
+    // size
+    SImageType::SizeType roiSize;
+    roiSize[0] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[0] - LPS_BEGIN[0]);
+    roiSize[1] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[1] - LPS_BEGIN[1]);
+    roiSize[2] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[2] - LPS_BEGIN[2]);
+    // start index
+    SImageType::IndexType roiStart;
+    roiStart.Fill(0);
+    // region
+    SImageType::RegionType roiRegion(roiStart, roiSize);
+    roiImage->SetRegions(roiRegion);
+  }
+  { // Default to spacing of 1 and size identity direction cosine
+    SImageType::SpacingType spacing;
+    spacing[0] = deltaLR;
+    spacing[1] = deltaPA;
+    spacing[2] = deltaSI;
+    // roiImage->SetSpacing(volumeMSP->GetSpacing());  // spacing
+    // roiImage->SetDirection(volumeMSP->GetDirection());  // direction
+  }
+  roiImage->Allocate(true); // true implies roiImage->FillBuffer(0);
 
   // Since the actual bounding box is a rounded area, a Roi mask is also needed.
   //
   SImageType::Pointer roiMask = SImageType::New();
   roiMask->CopyInformation(roiImage);
   roiMask->SetRegions(roiImage->GetLargestPossibleRegion());
-  roiMask->Allocate();
-  roiMask->FillBuffer(0);
+  roiMask->Allocate(true); // true implies roiMask->FillBuffer(0);
 
   // roiImage is filled with values from volumeMSP
   //
-  SImageType::PointType currentPointLocation;
-  currentPointLocation[0] = CenterOfSearchArea[0];
-  currentPointLocation[1] = CenterOfSearchArea[1];
-  currentPointLocation[2] = CenterOfSearchArea[2];
-
-  constexpr double deltaLR = 1; // in mm
-  constexpr double deltaAP = 1; // in mm
-  constexpr double deltaIS = 1; // in mm
-
-  for (double LeftToRight = LeftToRight_BEGIN; LeftToRight < LeftToRight_END; LeftToRight += deltaLR)
   {
-    currentPointLocation[0] = LeftToRight;
-    for (double AnteriorToPosterior = AnteriorToPosterior_BEGIN; AnteriorToPosterior < AnteriorToPosterior_END;
-         AnteriorToPosterior += deltaAP)
+    SImageType::PointType currentPointLocation;
+    for (currentPointLocation[0] = LPS_BEGIN[0]; currentPointLocation[0] < LPS_END[0];
+         currentPointLocation[0] += deltaLR)
     {
-      currentPointLocation[1] = AnteriorToPosterior;
-      for (double InferiorToSuperior = InferiorToSuperior_BEGIN; InferiorToSuperior < InferiorToSuperior_END;
-           InferiorToSuperior += deltaIS)
+      for (currentPointLocation[1] = LPS_BEGIN[1]; currentPointLocation[1] < LPS_END[1];
+           currentPointLocation[1] += deltaPA)
       {
-        currentPointLocation[2] = InferiorToSuperior;
-
-        // Is current point within the input mask
-        if (maskInterp->Evaluate(currentPointLocation) > 0.5)
+        for (currentPointLocation[2] = LPS_BEGIN[2]; currentPointLocation[2] < LPS_END[2];
+             currentPointLocation[2] += deltaSI)
         {
-          // Is current point inside the boundary box
-          const SImageType::PointType::VectorType temp =
-            currentPointLocation.GetVectorFromOrigin() - CenterOfSearchArea;
-          const double inclusionDistance = temp.GetNorm();
-          if ((inclusionDistance < (SI_restrictions + radii)) && (std::abs(temp[1]) < (PA_restrictions + radii)))
+          // Is current point within the input mask
+          if (maskInterp->Evaluate(currentPointLocation) > 0.5)
           {
-            SImageType::IndexType index3D;
-            roiImage->TransformPhysicalPointToIndex(currentPointLocation, index3D);
-            roiImage->SetPixel(index3D, imInterp->Evaluate(currentPointLocation));
-            roiMask->SetPixel(index3D, 1);
+            // Is current point inside the boundary box
+            const SImageType::PointType::VectorType temp =
+              currentPointLocation.GetVectorFromOrigin() - CenterOfSearchArea;
+            const double inclusionDistance = temp.GetNorm();
+            if ((inclusionDistance < (SI_restrictions + radii)) && (std::abs(temp[1]) < (PA_restrictions + radii)))
+            {
+              SImageType::IndexType index3D;
+              roiImage->TransformPhysicalPointToIndex(currentPointLocation, index3D);
+              roiImage->SetPixel(index3D, imInterp->Evaluate(currentPointLocation));
+              roiMask->SetPixel(index3D, 1);
+            }
           }
         }
       }
     }
   }
-
   ////////
   // Now we need to normalize only bounding region inside the roiImage
   ///////
@@ -479,11 +476,11 @@ landmarksConstellationDetector::FindCandidatePoints(
     }
     std::cerr << "WARNING: search region has no variance (uniform values), or i size 0: " << mapID << "." << std::endl;
     std::cerr << "The detection has probably large error!" << std::endl;
-    std::cerr<< "Zero norm for bounding area for " << mapID << ".\n"
-                             << "ROI Pixel Count: " << ROIcount << " ROIvariance: " << ROIvar << std::endl;
+    std::cerr << "Zero norm for bounding area for " << mapID << ".\n"
+              << "ROI Pixel Count: " << ROIcount << " ROIvariance: " << ROIvar << std::endl;
 
     return InitialGuessPoint;
-     }
+  }
   const double normInv = 1 / (std::sqrt(ROIcount * ROIvar));
 
   using MultiplyImageFilterType = itk::MultiplyImageFilter<FImageType3D, FImageType3D, FImageType3D>;
@@ -519,7 +516,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   // Fill the template moving image based on the vector index locations
   //  and template mean values for different angle rotations
   //
-  double cc_rotation_max = 0.0;
+  double                cc_rotation_max = 0.0;
   SImageType::PointType TransformedGuessPoint = InitialGuessPoint;
   for (unsigned int curr_rotationAngle_index = 0; curr_rotationAngle_index < TemplateMean.size();
        curr_rotationAngle_index++)
@@ -552,25 +549,53 @@ landmarksConstellationDetector::FindCandidatePoints(
     correlationFilter->Update();
     if (globalImagedebugLevel > 8)
     {
-      const std::string ncc_output_name_fixed(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle_index) + "_fixed.nii.gz");
+
+      LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
+      msp_lmks_algo_found["CenterOfSearchArea"] = CenterOfSearchArea;
+      msp_lmks_algo_found["LPS_BEGIN"] =  LPS_BEGIN;
+      msp_lmks_algo_found["LPS_END"] =  LPS_END;
+      const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" +
+                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                      local_to_string(curr_rotationAngle_index) + "_markers.fcsv");
+      WriteITKtoSlicer3Lmk(pointsName, msp_lmks_algo_found);
+
+      // Print the name of the file that is the master volume, the fixed image sample should
+      // be aligned with this!
+      const std::string volumeMSPName(this->m_ResultsDir + "/NCCOutput_" +
+                                              itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                              local_to_string(curr_rotationAngle_index) + "_volumeMSP.nii.gz");
+      itkUtil::WriteImage<SImageType>(volumeMSP, volumeMSPName);
+
+
+      const std::string mask_LRName(this->m_ResultsDir + "/NCCOutput_" +
+                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                      local_to_string(curr_rotationAngle_index) + "_mask_LRName.nii.gz");
+      itkUtil::WriteImage<SImageType>(mask_LR, mask_LRName);
+
+      const std::string ncc_output_name_fixed(this->m_ResultsDir + "/NCCOutput_" +
+                                              itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                              local_to_string(curr_rotationAngle_index) + "_fixed.nii.gz");
       itkUtil::WriteImage<FImageType3D>(normalizedRoiImage, ncc_output_name_fixed);
 
-      const std::string ncc_output_name_fixedmask(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle_index) + "_fixedmask.nii.gz");
+      const std::string ncc_output_name_fixedmask(this->m_ResultsDir + "/NCCOutput_" +
+                                                  itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                                  local_to_string(curr_rotationAngle_index) + "_fixedmask.nii.gz");
       itkUtil::WriteImage<SImageType>(roiMask, ncc_output_name_fixedmask);
 
-      const std::string ncc_output_name_moving(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle_index) + "_moving.nii.gz");
+      const std::string ncc_output_name_moving(this->m_ResultsDir + "/NCCOutput_" +
+                                               itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                               local_to_string(curr_rotationAngle_index) + "_moving.nii.gz");
       itkUtil::WriteImage<FImageType3D>(lmkTemplateImage, ncc_output_name_moving);
 
-      const std::string ncc_output_name_movingmask(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle_index) + "_movingmask.nii.gz");
+      const std::string ncc_output_name_movingmask(this->m_ResultsDir + "/NCCOutput_" +
+                                                   itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                                   local_to_string(curr_rotationAngle_index) + "_movingmask.nii.gz");
       itkUtil::WriteImage<SImageType>(templateMask, ncc_output_name_movingmask);
 
 
-      const std::string ncc_output_name(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
-                                  "_" + local_to_string(curr_rotationAngle_index) + ".nii.gz");
+      const std::string ncc_output_name(this->m_ResultsDir + "/NCCOutput_" +
+                                        itksys::SystemTools::GetFilenameName(mapID) + "_" +
+                                        local_to_string(curr_rotationAngle_index) + ".nii.gz");
       itkUtil::WriteImage<FImageType3D>(correlationFilter->GetOutput(), ncc_output_name);
     }
 

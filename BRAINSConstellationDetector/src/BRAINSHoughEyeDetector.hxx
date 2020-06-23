@@ -211,22 +211,23 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
                                                                           float                  max_si)
 {
   // Eye width in degrees~=15
-  static constexpr float min_width_degrees = 5.0;
+  static constexpr float min_width_degrees = 5.0F;
 
   // default_maximum_radius
   // The spread of angle (rad) of the shell-like RoI.
   // 4885 scan session analyzed across 50 scanners, (-39.8, 37.9) was measured range in the si ,
   // so add small margin for errors
   // mean=-9.219245 stddev = 8.672305
-  static constexpr float ThetaDown{ (-39.8 - min_width_degrees) * 1.05 *
-                                    itk::Math::pi_over_180 }; // 0.785398 = 45degree chin down//
-  static constexpr float ThetaUp{ (37.9 + min_width_degrees) * 1.05 *
-                                  itk::Math::pi_over_180 }; // 1.047 = 60degree chin up direction
+  static constexpr float float_pi_over_180 = static_cast<float>(itk::Math::pi_over_180);
+  static constexpr float ThetaDown{ (-39.8F - min_width_degrees) *
+	                            1.05F * float_pi_over_180 }; // 0.785398 = 45degree chin down//
+  static constexpr float ThetaUp{   (37.9F + min_width_degrees) *
+	                            1.05F * float_pi_over_180 }; // 1.047 = 60degree chin up direction
   // -0.527797 22.314781   min=-37.5, max=34.8
   // mean LE =  31.572420 stddev_RE=1.459590  min=30.1  max=34.8
   // mean RE = -31.812798 stddev_RE=1.641007  min=-37.5 max= -30.1
-  constexpr float minLRAngle{ (5) * itk::Math::pi_over_180 };
-  constexpr float maxLRAngle{ (35. + min_width_degrees) * 1.05 * itk::Math::pi_over_180 };
+  constexpr float minLRAngle{  5.0F * float_pi_over_180 };
+  constexpr float maxLRAngle{ (35.0F + min_width_degrees) * 1.05F * float_pi_over_180 };
 
 
   const InputRegionType region = image->GetLargestPossibleRegion();

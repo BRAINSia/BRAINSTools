@@ -59,6 +59,7 @@ main(int argc, char * argv[])
   houghFilter->SetNbOfThreads(64);
   houghFilter->SetSamplingRatio(.2);
   houghFilter->SetHoughEyeDetectorMode(1);
+  houghFilter->SetWritedebuggingAccumulatorImageLevel(0);
 
   try
   {

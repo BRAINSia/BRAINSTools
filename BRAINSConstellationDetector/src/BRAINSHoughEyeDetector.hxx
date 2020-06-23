@@ -323,6 +323,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
   houghFilter->SetNbOfThreads(this->m_NbOfThreads);
   houghFilter->SetSamplingRatio(this->m_SamplingRatio);
   houghFilter->SetHoughEyeDetectorMode(this->m_HoughEyeDetectorMode);
+  houghFilter->SetWritedebuggingAccumulatorImageLevel(this->m_WritedebuggingImagesLevel);
+  houghFilter->SetResultsDir(this->m_ResultsDir);
   try
   {
     houghFilter->Update();

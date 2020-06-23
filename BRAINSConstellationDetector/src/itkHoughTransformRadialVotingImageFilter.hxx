@@ -327,9 +327,9 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     dupFilter->SetInputImage(gaussianFilter->GetOutput());
     dupFilter->Update();
   }
-  InternalImagePointer accumulatorSearchSpace = dupFilter->GetOutput();
-  const InternalSpacingType  spacing = accumulatorSearchSpace->GetSpacing();
-  const InternalSizeType     size = accumulatorSearchSpace->GetRequestedRegion().GetSize();
+  InternalImagePointer      accumulatorSearchSpace = dupFilter->GetOutput();
+  const InternalSpacingType spacing = accumulatorSearchSpace->GetSpacing();
+  const InternalSizeType    size = accumulatorSearchSpace->GetRequestedRegion().GetSize();
 
   MinMaxCalculatorPointer minMaxCalculator = MinMaxCalculatorType::New();
   minMaxCalculator->SetImage(accumulatorSearchSpace);
@@ -361,6 +361,27 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     InternalIndexType end;
     for (unsigned int i = 0; i < ImageDimension; i++)
     {
+      if (this->m_WritedebuggingAccumulatorImageLevel > 1)
+      {
+        using WriterType = ImageFileWriter<InternalImageType>;
+        {
+          // Write debug accumulator image
+          typename WriterType::Pointer writer = WriterType::New();
+          writer->SetFileName(this->m_ResultsDir + std::string("/HoughEyeAccumulator_circle_number_") +
+                              std::to_string(circles) + std::string("_Eye.nii.gz"));
+          writer->SetInput(accumulatorSearchSpace);
+          writer->SetUseCompression(true);
+          try
+          {
+            writer->Update();
+          }
+          catch (itk::ExceptionObject & excep)
+          {
+            std::cerr << "Cannot write the " << circles << " accumulator search ROI image!" << std::endl;
+            std::cerr << excep << std::endl;
+          }
+        }
+      }
       const auto rad =
         static_cast<InternalIndexValueType>(m_SphereRadiusRatio * Sphere->GetRadiusInObjectSpace()[i] / spacing[i]);
 
@@ -384,20 +405,50 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
       sizeOfROI[i] = end[i] - start[i] + 1;
     }
 
-    InternalRegionType region;
-    region.SetSize(sizeOfROI);
-    region.SetIndex(start);
 
-    ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, region);
+    //** Now modify the accumulator image and zero out invalid regions
+    { // Zero out sphere around current found eye in accumulator image so that it is not double counted
+      InternalRegionType region;
+      region.SetSize(sizeOfROI);
+      region.SetIndex(start);
 
-    It.GoToBegin();
-    while (!It.IsAtEnd())
+      ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, region);
+      It.GoToBegin();
+      while (!It.IsAtEnd())
+      {
+        It.Set(0);
+        ++It;
+      }
+    }
     {
-      It.Set(0);
-      ++It;
+      typename InternalImageType::PointType firstEyeCenter;
+      accumulatorSearchSpace->TransformIndexToPhysicalPoint(idx, firstEyeCenter);
+      // Limit area where second eye is searched for.
+      ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, accumulatorSearchSpace->GetBufferedRegion());
+      It.GoToBegin();
+      typename InternalImageType::PointType currPnt;
+      constexpr float                       max_eye_radius = 13.;
+      // From empirical measurements.
+      constexpr float si_min_max_eye_offset = 12. + max_eye_radius;
+      constexpr float pa_min_max_eye_offset = 12. + max_eye_radius;
+      while (!It.IsAtEnd())
+      {
+        constexpr double mindistance_IPD = 51.0;
+        constexpr double maxdistance_IPD = 77.0;
+        accumulatorSearchSpace->TransformIndexToPhysicalPoint(It.GetIndex(), currPnt);
+        if (std::abs(currPnt[2] - firstEyeCenter[2]) > si_min_max_eye_offset ||
+            std::abs(currPnt[1] - firstEyeCenter[1]) > pa_min_max_eye_offset ||
+            std::abs(currPnt[0] - firstEyeCenter[0]) < mindistance_IPD - 2. * max_eye_radius ||
+            std::abs(currPnt[0] - firstEyeCenter[0]) > maxdistance_IPD + 2. * max_eye_radius)
+        {
+          It.Set(0);
+        }
+        ++It;
+      }
     }
     ++circles;
   } while (circles < m_NumberOfSpheres);
+
   return m_SpheresList;
 }
 

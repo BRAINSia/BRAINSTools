@@ -247,6 +247,9 @@ public:
   itkConceptMacro(OutputDividedByIntCheck, (Concept::DivisionOperators<OutputPixelType, int>));
   /** End concept checking */
 #endif
+  /** Set the write debug image level */
+  itkSetMacro(WritedebuggingAccumulatorImageLevel, unsigned int);
+  itkSetMacro(ResultsDir, std::string);
 protected:
   HoughTransformRadialVotingImageFilter();
   ~HoughTransformRadialVotingImageFilter() override;
@@ -267,6 +270,10 @@ protected:
   unsigned int         m_NumberOfSpheres{ 1 };
   unsigned int         m_NbOfThreads{ 1 };
   bool                 m_AllSeedsProcessed{ false };
+
+  // Debug settings
+  std::string  m_ResultsDir;
+  unsigned int m_WritedebuggingAccumulatorImageLevel{ 0 };
 
   // -- Add by Wei Lu
   int m_HoughEyeDetectorMode{ 0 };

@@ -311,22 +311,28 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
 {
   m_SpheresList.clear();
 
+  using AccumDuplicatorFilterType = typename itk::ImageDuplicator<InternalImageType>;
+  using AccumDuplicatorFilterPointer = typename AccumDuplicatorFilterType::Pointer;
+  AccumDuplicatorFilterPointer dupFilter = AccumDuplicatorFilterType::New();
+  {
+    using GaussianFilterType = DiscreteGaussianImageFilter<InternalImageType, InternalImageType>;
+    using GaussianFilterPointer = typename GaussianFilterType::Pointer;
 
-  using GaussianFilterType = DiscreteGaussianImageFilter<InternalImageType, InternalImageType>;
-  using GaussianFilterPointer = typename GaussianFilterType::Pointer;
+    /** Blur the accumulator in order to find the maximum */
+    GaussianFilterPointer gaussianFilter = GaussianFilterType::New();
+    gaussianFilter->SetInput(this->m_AccumulatorImage.GetPointer()); // the output is the accumulator image
+    gaussianFilter->SetVariance(m_Variance);
+    gaussianFilter->Update();
 
-  /** Blur the accumulator in order to find the maximum */
-  GaussianFilterPointer gaussianFilter = GaussianFilterType::New();
-  gaussianFilter->SetInput(this->m_AccumulatorImage.GetPointer()); // the output is the accumulator image
-  gaussianFilter->SetVariance(m_Variance);
-  gaussianFilter->Update();
-
-  const InternalImagePointer postProcessImage = gaussianFilter->GetOutput();
-  const InternalSpacingType  spacing = postProcessImage->GetSpacing();
-  const InternalSizeType     size = postProcessImage->GetRequestedRegion().GetSize();
+    dupFilter->SetInputImage(gaussianFilter->GetOutput());
+    dupFilter->Update();
+  }
+  InternalImagePointer accumulatorSearchSpace = dupFilter->GetOutput();
+  const InternalSpacingType  spacing = accumulatorSearchSpace->GetSpacing();
+  const InternalSizeType     size = accumulatorSearchSpace->GetRequestedRegion().GetSize();
 
   MinMaxCalculatorPointer minMaxCalculator = MinMaxCalculatorType::New();
-  minMaxCalculator->SetImage(postProcessImage);
+  minMaxCalculator->SetImage(accumulatorSearchSpace);
 
   unsigned int circles = 0;
   // Find maxima
@@ -382,7 +388,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     region.SetSize(sizeOfROI);
     region.SetIndex(start);
 
-    ImageRegionIterator<InternalImageType> It(postProcessImage, region);
+    ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, region);
 
     It.GoToBegin();
     while (!It.IsAtEnd())

@@ -64,7 +64,8 @@ public:
   using InputImageConstIterator = ImageRegionConstIterator<TInputImage>;
 
   /** Output image type alias */
-  using OutputImagePointer = typename TOutputImage::Pointer;
+  using OutputImageType = TOutputImage;
+  using OutputImagePointer = typename OutputImageType::Pointer;
   using OutputPixelType = typename TOutputImage::PixelType;
   using OutputImageRegionType = typename TOutputImage::RegionType;
   using OutputPointType = typename TOutputImage::PointType;
@@ -231,8 +232,12 @@ protected:
   // mean=81.467760 std=4.448509
 
   // Interior radius (mm), exterior radius (mm), of the shell-like RoI
-  static constexpr double m_R1{ 64.98 - 1.25*default_maximum_radius }; // was 30
-  static constexpr double m_R2{ 101.7 + 1.25*default_maximum_radius }; // was 120
+  static constexpr double m_R1{ 64.98 - 1.25 * default_maximum_radius }; // was 30
+  static constexpr double m_R2{ 101.7 + 1.25 * default_maximum_radius }; // was 120
+
+private:
+  OutputImagePointer
+  MakeROICandiadteRegion(InputImageConstPointer image, float min_si = -52., float max_si = +52.);
 };
 } // end namespace itk
 

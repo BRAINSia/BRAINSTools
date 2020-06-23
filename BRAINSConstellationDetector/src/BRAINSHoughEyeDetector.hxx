@@ -205,8 +205,10 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
 }
 
 template <typename TInputImage, typename TOutputImage>
-void
-BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
+typename BRAINSHoughEyeDetector<TInputImage, TOutputImage>::OutputImagePointer
+BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputImageConstPointer image,
+                                                                          float                  min_si,
+                                                                          float                  max_si)
 {
   // Eye width in degrees~=15
   static constexpr float min_width_degrees = 5.0;
@@ -223,217 +225,228 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
   // -0.527797 22.314781   min=-37.5, max=34.8
   // mean LE =  31.572420 stddev_RE=1.459590  min=30.1  max=34.8
   // mean RE = -31.812798 stddev_RE=1.641007  min=-37.5 max= -30.1
-  constexpr float minLRAngle{ (5)  * itk::Math::pi_over_180 };
+  constexpr float minLRAngle{ (5) * itk::Math::pi_over_180 };
   constexpr float maxLRAngle{ (35. + min_width_degrees) * 1.05 * itk::Math::pi_over_180 };
 
-  const InputImageConstPointer image(this->GetInput());
-  const InputRegionType        region = image->GetLargestPossibleRegion();
+
+  const InputRegionType region = image->GetLargestPossibleRegion();
+  /*
+   * Set RoI of the input image
+   */
+  OutputImagePointer localROIImage = OutputImageType::New();
+  localROIImage->CopyInformation(image);
+  localROIImage->SetRegions(region);
+  localROIImage->Allocate(true);
   {
-    /*
-     * Set RoI of the input image
-     */
-    this->m_RoIImage->CopyInformation(image);
-    this->m_RoIImage->SetRegions(image->GetLargestPossibleRegion());
-    this->m_RoIImage->Allocate(true);
     {
+      constexpr size_t        LR_INDEX = 0;
+      constexpr size_t        PA_INDEX = 1;
+      constexpr size_t        SI_INDEX = 2;
+      InputImageConstIterator ImageIter(image, region);
+      ImageIter.GoToBegin();
+      OutputImageIteratorWithIndex ROIIter(localROIImage, region);
+      ROIIter.GoToBegin();
+
+      InputPointType currPt;
+      while (!(ImageIter.IsAtEnd() || ROIIter.IsAtEnd()))
       {
-        constexpr size_t        LR_INDEX = 0;
-        constexpr size_t        PA_INDEX = 1;
-        constexpr size_t        SI_INDEX = 2;
-        InputImageConstIterator ImageIter(image, region);
-        ImageIter.GoToBegin();
-        OutputImageIteratorWithIndex ROIIter(this->m_RoIImage, region);
-        ROIIter.GoToBegin();
+        image->TransformIndexToPhysicalPoint(ROIIter.GetIndex(), currPt);
+        // Center of head mass to current vector
+        const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
 
-        InputPointType currPt;
-        while (!(ImageIter.IsAtEnd() || ROIIter.IsAtEnd()))
+        if (CMtoCurrVec[PA_INDEX] < 0 && CMtoCurrVec[SI_INDEX] > min_si &&
+            CMtoCurrVec[SI_INDEX] < max_si) // currPt must be anterior to cm point
         {
-          image->TransformIndexToPhysicalPoint(ROIIter.GetIndex(), currPt);
-          // Center of head mass to current vector
-          const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
-          // CMToCurrVec[SI_INDEX] mean=-26.03 std = 13
-          if (CMtoCurrVec[PA_INDEX] < 0 && CMtoCurrVec[SI_INDEX] > -52 && CMtoCurrVec[SI_INDEX] < 52) // currPt must be anterior to cm point
+          // norm of CMtoCurrVec
+          const float CMtoCurrHypotenuse = CMtoCurrVec.GetNorm();
+          if ((CMtoCurrHypotenuse > this->m_R1) && (CMtoCurrHypotenuse < this->m_R2))
           {
-            // norm of CMtoCurrVec
-            const float CMtoCurrHypotenuse = CMtoCurrVec.GetNorm();
-            if ((CMtoCurrHypotenuse > this->m_R1) && (CMtoCurrHypotenuse < this->m_R2))
+            // angle in the SI direction
+            // posterior/anterior component of the vector
+            const float currSITheta = asin(CMtoCurrVec[SI_INDEX] / CMtoCurrHypotenuse);
+            if ((currSITheta > ThetaDown) && (currSITheta < ThetaUp))
             {
-              // angle in the SI direction
-              // posterior/anterior component of the vector
-              const float currSITheta = asin(CMtoCurrVec[SI_INDEX] / CMtoCurrHypotenuse);
-              if ((currSITheta > ThetaDown) && (currSITheta < ThetaUp))
-              {
-                // angle in the LR direction
+              // angle in the LR direction
 
-                const float currLRTheta = asin(CMtoCurrVec[LR_INDEX] / CMtoCurrHypotenuse);
-                if ((std::abs(currLRTheta) > minLRAngle) && (std::abs(currLRTheta) < maxLRAngle))
-                {
-                  ROIIter.Set(ImageIter.Get());
-                }
+              const float currLRTheta = asin(CMtoCurrVec[LR_INDEX] / CMtoCurrHypotenuse);
+              if ((std::abs(currLRTheta) > minLRAngle) && (std::abs(currLRTheta) < maxLRAngle))
+              {
+                ROIIter.Set(ImageIter.Get());
               }
             }
           }
-
-          // save max/min pixel value info
-          if (ImageIter.Get() < this->m_MinInputPixelValue)
-          {
-            this->m_MinInputPixelValue = ImageIter.Get();
-          }
-          else if (ImageIter.Get() > this->m_MaxInputPixelValue)
-          {
-            this->m_MaxInputPixelValue = ImageIter.Get();
-          }
-          ++ImageIter;
-          ++ROIIter;
         }
-      }
-    }
 
-    /*
-     * Sphere detection with Hough transform radial voting filter
-     */
-    HoughFilterPointer houghFilter = HoughFilterType::New();
-    {
-      houghFilter->SetInput(this->m_RoIImage);
-    }
-
-    houghFilter->SetNumberOfSpheres(this->m_NumberOfSpheres);
-    houghFilter->SetMinimumRadius(this->m_MinimumRadius);
-    houghFilter->SetMaximumRadius(this->m_MaximumRadius);
-    houghFilter->SetSigmaGradient(this->m_SigmaGradient);
-    houghFilter->SetVariance(this->m_Variance);
-    houghFilter->SetSphereRadiusRatio(this->m_SphereRadiusRatio);
-    houghFilter->SetVotingRadiusRatio(this->m_VotingRadiusRatio);
-    houghFilter->SetThreshold(this->m_Threshold);
-    houghFilter->SetOutputThreshold(this->m_OutputThreshold);
-    houghFilter->SetGradientThreshold(this->m_GradientThreshold);
-    houghFilter->SetNbOfThreads(this->m_NbOfThreads);
-    houghFilter->SetSamplingRatio(this->m_SamplingRatio);
-    houghFilter->SetHoughEyeDetectorMode(this->m_HoughEyeDetectorMode);
-    try
-    {
-      houghFilter->Update();
-    }
-    catch (itk::ExceptionObject & excep)
-    {
-      std::cerr << "Failed houghFilter " << std::endl;
-      std::cerr << excep << std::endl;
-    }
-    catch (...)
-    {
-      std::cout << "Failed on houghFilter exception occured" << std::endl;
-    }
-    this->m_AccumulatorImage = houghFilter->GetOutput();
-
-    /*
-     * Write debug image
-     */
-    if (this->m_WritedebuggingImagesLevel > 1)
-    {
-      {
-        // Write debug ROI image
-        typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName(this->m_ResultsDir + "/HoughEyeROI.nii.gz");
-        writer->SetInput(this->m_RoIImage);
-        writer->SetUseCompression(true);
-        try
+        // save max/min pixel value info
+        if (ImageIter.Get() < this->m_MinInputPixelValue)
         {
-          writer->Update();
+          this->m_MinInputPixelValue = ImageIter.Get();
         }
-        catch (itk::ExceptionObject & excep)
+        else if (ImageIter.Get() > this->m_MaxInputPixelValue)
         {
-          std::cerr << "Cannot write the ROI image!" << std::endl;
-          std::cerr << excep << std::endl;
+          this->m_MaxInputPixelValue = ImageIter.Get();
         }
-      }
-
-      {
-        // Write debug accumulator image
-        typename WriterType::Pointer writer = WriterType::New();
-        writer->SetFileName(this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz");
-        writer->SetInput(this->m_AccumulatorImage);
-        writer->SetUseCompression(true);
-        try
-        {
-          writer->Update();
-        }
-        catch (itk::ExceptionObject & excep)
-        {
-          std::cerr << "Cannot write the ROI image!" << std::endl;
-          std::cerr << excep << std::endl;
-        }
+        ++ImageIter;
+        ++ROIIter;
       }
     }
-
-    /*
-     * Computing eye centers by finding the points with highest
-     * accumulated PDF
-     */
-    // Get some basic information of the image
-
-    const SpheresListType spheres = houghFilter->GetSpheres();
-    if (spheres.size() < 2)
-    {
-      std::cerr << "Error: The number of detected spheres is less than 2!" << std::endl;
-      std::cerr << "The program will continue to run for generating some debug output for GUI corrector." << std::endl;
-      std::cerr << "Make sure you set the debug level > 4." << std::endl;
-      this->m_Failure = true;
-      return;
-    }
-
-    InputIndexType indexEye1;
-    auto           itSpheres = spheres.begin();
-    for (unsigned int i = 0; i < Dimension; ++i)
-    {
-      indexEye1[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
-    }
-
-    ++itSpheres;
-
-    InputIndexType indexEye2;
-    for (unsigned int i = 0; i < Dimension; ++i)
-    {
-      indexEye2[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
-    }
-
-    InputPointType physicalEye1;
-    InputPointType physicalEye2;
-    {
-      image->TransformIndexToPhysicalPoint(indexEye1, physicalEye1);
-      image->TransformIndexToPhysicalPoint(indexEye2, physicalEye2);
-    }
-
-    // We will determine the left and right of the eyes
-    // Assuming that the degradation of the image does not
-    // change their relative positions.
-    if (physicalEye1[0] > physicalEye2[0]) // eye1 is on the left
-    {
-      for (unsigned int i = 0; i < Dimension; ++i)
-      {
-        this->m_orig_lmk_LE[i] = physicalEye1[i];
-        this->m_orig_lmk_RE[i] = physicalEye2[i];
-      }
-    }
-    else
-    {
-      for (unsigned int i = 0; i < Dimension; ++i)
-      {
-        this->m_orig_lmk_LE[i] = physicalEye2[i]; // eye2 is on the left
-        this->m_orig_lmk_RE[i] = physicalEye1[i];
-      }
-    }
-
-    /*
-     * Metrics Collection
-     */
-
-    this->m_orig2eyeFixedTransform =
-      ResampleFromEyePoints<TInputImage, TOutputImage>(this->m_orig_lmk_LE, this->m_orig_lmk_RE, image);
-    auto output_resampled_image =
-      RigidResampleInPlayByVersor3D<TInputImage, TOutputImage>(image, this->m_orig2eyeFixedTransform);
-    this->GraftOutput(output_resampled_image);
   }
+  return localROIImage;
 }
+
+template <typename TInputImage, typename TOutputImage>
+void
+BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
+{
+  const InputImageConstPointer image = this->GetInput();
+  // CMToCurrVec[SI_INDEX] mean=-26.03 std = 13
+  this->m_RoIImage = MakeROICandiadteRegion(image, -52., +52);
+
+  /*
+   * Sphere detection with Hough transform radial voting filter
+   */
+  HoughFilterPointer houghFilter = HoughFilterType::New();
+  {
+    houghFilter->SetInput(this->m_RoIImage);
+  }
+
+  houghFilter->SetNumberOfSpheres(this->m_NumberOfSpheres);
+  houghFilter->SetMinimumRadius(this->m_MinimumRadius);
+  houghFilter->SetMaximumRadius(this->m_MaximumRadius);
+  houghFilter->SetSigmaGradient(this->m_SigmaGradient);
+  houghFilter->SetVariance(this->m_Variance);
+  houghFilter->SetSphereRadiusRatio(this->m_SphereRadiusRatio);
+  houghFilter->SetVotingRadiusRatio(this->m_VotingRadiusRatio);
+  houghFilter->SetThreshold(this->m_Threshold);
+  houghFilter->SetOutputThreshold(this->m_OutputThreshold);
+  houghFilter->SetGradientThreshold(this->m_GradientThreshold);
+  houghFilter->SetNbOfThreads(this->m_NbOfThreads);
+  houghFilter->SetSamplingRatio(this->m_SamplingRatio);
+  houghFilter->SetHoughEyeDetectorMode(this->m_HoughEyeDetectorMode);
+  try
+  {
+    houghFilter->Update();
+  }
+  catch (itk::ExceptionObject & excep)
+  {
+    std::cerr << "Failed houghFilter " << std::endl;
+    std::cerr << excep << std::endl;
+  }
+  catch (...)
+  {
+    std::cout << "Failed on houghFilter exception occured" << std::endl;
+  }
+  this->m_AccumulatorImage = houghFilter->GetOutput();
+
+  /*
+   * Write debug image
+   */
+  if (this->m_WritedebuggingImagesLevel > 1)
+  {
+    {
+      // Write debug ROI image
+      typename WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(this->m_ResultsDir + "/HoughEyeROI.nii.gz");
+      writer->SetInput(this->m_RoIImage);
+      writer->SetUseCompression(true);
+      try
+      {
+        writer->Update();
+      }
+      catch (itk::ExceptionObject & excep)
+      {
+        std::cerr << "Cannot write the ROI image!" << std::endl;
+        std::cerr << excep << std::endl;
+      }
+    }
+
+    {
+      // Write debug accumulator image
+      typename WriterType::Pointer writer = WriterType::New();
+      writer->SetFileName(this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz");
+      writer->SetInput(this->m_AccumulatorImage);
+      writer->SetUseCompression(true);
+      try
+      {
+        writer->Update();
+      }
+      catch (itk::ExceptionObject & excep)
+      {
+        std::cerr << "Cannot write the ROI image!" << std::endl;
+        std::cerr << excep << std::endl;
+      }
+    }
+  }
+
+  /*
+   * Computing eye centers by finding the points with highest
+   * accumulated PDF
+   */
+  // Get some basic information of the image
+
+  const SpheresListType spheres = houghFilter->GetSpheres();
+  if (spheres.size() < 2)
+  {
+    std::cerr << "Error: The number of detected spheres is less than 2!" << std::endl;
+    std::cerr << "The program will continue to run for generating some debug output for GUI corrector." << std::endl;
+    std::cerr << "Make sure you set the debug level > 4." << std::endl;
+    this->m_Failure = true;
+    return;
+  }
+
+  InputIndexType indexEye1;
+  auto           itSpheres = spheres.begin();
+  for (unsigned int i = 0; i < Dimension; ++i)
+  {
+    indexEye1[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
+  }
+
+  ++itSpheres;
+
+  InputIndexType indexEye2;
+  for (unsigned int i = 0; i < Dimension; ++i)
+  {
+    indexEye2[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
+  }
+
+  InputPointType physicalEye1;
+  InputPointType physicalEye2;
+  {
+    image->TransformIndexToPhysicalPoint(indexEye1, physicalEye1);
+    image->TransformIndexToPhysicalPoint(indexEye2, physicalEye2);
+  }
+
+  // We will determine the left and right of the eyes
+  // Assuming that the degradation of the image does not
+  // change their relative positions.
+  if (physicalEye1[0] > physicalEye2[0]) // eye1 is on the left
+  {
+    for (unsigned int i = 0; i < Dimension; ++i)
+    {
+      this->m_orig_lmk_LE[i] = physicalEye1[i];
+      this->m_orig_lmk_RE[i] = physicalEye2[i];
+    }
+  }
+  else
+  {
+    for (unsigned int i = 0; i < Dimension; ++i)
+    {
+      this->m_orig_lmk_LE[i] = physicalEye2[i]; // eye2 is on the left
+      this->m_orig_lmk_RE[i] = physicalEye1[i];
+    }
+  }
+
+  /*
+   * Metrics Collection
+   */
+
+  this->m_orig2eyeFixedTransform =
+    ResampleFromEyePoints<TInputImage, TOutputImage>(this->m_orig_lmk_LE, this->m_orig_lmk_RE, image);
+  auto output_resampled_image =
+    RigidResampleInPlayByVersor3D<TInputImage, TOutputImage>(image, this->m_orig2eyeFixedTransform);
+  this->GraftOutput(output_resampled_image);
+}
+
 
 template <typename TInputImage, typename TOutputImage>
 void
@@ -454,8 +467,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, 
   os << "Gradient Threshold: " << this->m_GradientThreshold << std::endl;
   os << "NbOfThreads: " << this->m_NbOfThreads << std::endl;
   os << "Sampling Ratio: " << this->m_SamplingRatio << std::endl;
-  //  os << "Interior Radius of RoI: " << this->m_R1 << std::endl;
-  //  os << "Exterior Radius of RoI: " << this->m_R2 << std::endl;
-  //  os << "Spread Angle of RoI: " << this->m_ThetaUp << std::endl;
+  os << "Interior Radius of RoI: " << this->m_R1 << std::endl;
+  os << "Exterior Radius of RoI: " << this->m_R2 << std::endl;
 }
 } // namespace itk

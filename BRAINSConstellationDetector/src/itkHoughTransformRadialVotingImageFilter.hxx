@@ -64,7 +64,7 @@
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkGaussianDerivativeImageFunction.h"
 #include "itkGaussianDistribution.h"
-
+#include "itkImageFileWriter.h"
 
 namespace itk
 {
@@ -363,7 +363,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     {
       if (this->m_WritedebuggingAccumulatorImageLevel > 1)
       {
-        using WriterType = ImageFileWriter<InternalImageType>;
+        using WriterType = itk::ImageFileWriter<InternalImageType>;
         {
           // Write debug accumulator image
           typename WriterType::Pointer writer = WriterType::New();

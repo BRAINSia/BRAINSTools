@@ -140,15 +140,6 @@ public:
   /** Set the center of head mass of the image */
   itkSetMacro(orig_lmk_CenterOfHeadMass, InputPointType);
 
-  /** Set the interior radius of the shell-like RoI */
-  itkSetMacro(R1, double);
-
-  /** Set the exterior radius of the shell-like RoI */
-  itkSetMacro(R2, double);
-
-  /** Set the spread angle of the shell-like RoI */
-  itkSetMacro(Theta, double);
-
   /** Get the left eye center coordinate */
   itkGetMacro(orig_lmk_LE, InputPointType);
 
@@ -216,12 +207,6 @@ protected:
   int            m_HoughEyeDetectorMode;
   InputPointType m_orig_lmk_CenterOfHeadMass;
 
-  // Interior radius (mm), exterior radius (mm), and spread
-  // angle (rad) of the shell-like RoI.
-  double m_R1;
-  double m_R2;
-  double m_Theta;
-
   // Debug settings
   std::string  m_ResultsDir;
   unsigned int m_WritedebuggingImagesLevel;
@@ -236,6 +221,18 @@ protected:
   OutputPixelType    m_MinInputPixelValue;
 
   VersorTransformType::Pointer m_orig2eyeFixedTransform;
+
+  // Eye Radius rages from 11-13 mm
+  static constexpr double default_minimum_radius = 11.0; // mm
+  static constexpr double default_maximum_radius = 13.0; // mm
+  // After evaluating over 9000 T1 weighted space scans from the PREDICT HD project
+  // 4885 scans across 50 scanners evaluated the radius enclosing the eye
+  // center was 68 and max was (101.7,  64.98)
+  // mean=81.467760 std=4.448509
+
+  // Interior radius (mm), exterior radius (mm), of the shell-like RoI
+  static constexpr double m_R1{ 64.98 - 1.25*default_maximum_radius }; // was 30
+  static constexpr double m_R2{ 101.7 + 1.25*default_maximum_radius }; // was 120
 };
 } // end namespace itk
 

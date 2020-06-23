@@ -170,8 +170,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
   /** Input Parameters */
   // Note the default parameter set is designed for the IXI database
   this->m_NumberOfSpheres = 2;
-  this->m_MinimumRadius = 11.;
-  this->m_MaximumRadius = 13.;
+  this->m_MinimumRadius = default_minimum_radius;
+  this->m_MaximumRadius = default_maximum_radius;
   this->m_SigmaGradient = 1.;
   this->m_Variance = 1.;
   this->m_SphereRadiusRatio = 1.;
@@ -184,10 +184,6 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
   this->m_HoughEyeDetectorMode = 1; // for T1-weighted image
   this->m_orig_lmk_CenterOfHeadMass.Fill(-9999.87654321);
 
-  this->m_R1 = 30;
-  this->m_R2 = 120;
-  this->m_Theta = 1.04719755; // 120 degrees 0.785398163;   //
-                              // spread angle = 90 deg
   this->m_ResultsDir = ".";
   this->m_WritedebuggingImagesLevel = 0;
 
@@ -212,6 +208,24 @@ template <typename TInputImage, typename TOutputImage>
 void
 BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
 {
+  // Eye width in degrees~=15
+  static constexpr float min_width_degrees = 5.0;
+
+  // default_maximum_radius
+  // The spread of angle (rad) of the shell-like RoI.
+  // 4885 scan session analyzed across 50 scanners, (-39.8, 37.9) was measured range in the si ,
+  // so add small margin for errors
+  // mean=-9.219245 stddev = 8.672305
+  static constexpr float ThetaDown{ (-39.8 - min_width_degrees) * 1.05 *
+                                    itk::Math::pi_over_180 }; // 0.785398 = 45degree chin down//
+  static constexpr float ThetaUp{ (37.9 + min_width_degrees) * 1.05 *
+                                  itk::Math::pi_over_180 }; // 1.047 = 60degree chin up direction
+  // -0.527797 22.314781   min=-37.5, max=34.8
+  // mean LE =  31.572420 stddev_RE=1.459590  min=30.1  max=34.8
+  // mean RE = -31.812798 stddev_RE=1.641007  min=-37.5 max= -30.1
+  constexpr float minLRAngle{ (5)  * itk::Math::pi_over_180 };
+  constexpr float maxLRAngle{ (35. + min_width_degrees) * 1.05 * itk::Math::pi_over_180 };
+
   const InputImageConstPointer image(this->GetInput());
   const InputRegionType        region = image->GetLargestPossibleRegion();
   {
@@ -220,56 +234,57 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
      */
     this->m_RoIImage->CopyInformation(image);
     this->m_RoIImage->SetRegions(image->GetLargestPossibleRegion());
-    this->m_RoIImage->Allocate();
-    this->m_RoIImage->FillBuffer(0);
-
+    this->m_RoIImage->Allocate(true);
     {
-      // A unit vector pointing to the anterior direction
-      typename InputPointType::VectorType unitVectorAnterior;
-      unitVectorAnterior[0] = 0.;
-      unitVectorAnterior[1] = -1.;
-      unitVectorAnterior[2] = 0.;
-
-      if ((this->m_R1 > 0) && (this->m_R2 > this->m_R1) && (this->m_Theta > 0))
       {
-        InputImageConstIterator It0(image, region);
-        It0.GoToBegin();
-        OutputImageIteratorWithIndex It1(this->m_RoIImage, region);
-        It1.GoToBegin();
+        constexpr size_t        LR_INDEX = 0;
+        constexpr size_t        PA_INDEX = 1;
+        constexpr size_t        SI_INDEX = 2;
+        InputImageConstIterator ImageIter(image, region);
+        ImageIter.GoToBegin();
+        OutputImageIteratorWithIndex ROIIter(this->m_RoIImage, region);
+        ROIIter.GoToBegin();
 
-        while (!(It0.IsAtEnd() || It1.IsAtEnd()))
+        InputPointType currPt;
+        while (!(ImageIter.IsAtEnd() || ROIIter.IsAtEnd()))
         {
-          InputPointType currPt;
-          image->TransformIndexToPhysicalPoint(It1.GetIndex(), currPt);
-
+          image->TransformIndexToPhysicalPoint(ROIIter.GetIndex(), currPt);
           // Center of head mass to current vector
           const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
-
-          // posterior/anterior component of the vector
-          const float CMtoCurrPA = CMtoCurrVec * unitVectorAnterior;
-
-          // norm of CMtoCurrVec
-          const float CMtoCurrNorm = CMtoCurrVec.GetNorm();
-
-          // angle between current vector and unitVectorAnterior
-          const float currTheta = acos(CMtoCurrPA / CMtoCurrNorm);
-
-          if ((CMtoCurrNorm > this->m_R1) && (CMtoCurrNorm < this->m_R2) && (currTheta < this->m_Theta))
+          // CMToCurrVec[SI_INDEX] mean=-26.03 std = 13
+          if (CMtoCurrVec[PA_INDEX] < 0 && CMtoCurrVec[SI_INDEX] > -52 && CMtoCurrVec[SI_INDEX] < 52) // currPt must be anterior to cm point
           {
-            It1.Set(It0.Get());
+            // norm of CMtoCurrVec
+            const float CMtoCurrHypotenuse = CMtoCurrVec.GetNorm();
+            if ((CMtoCurrHypotenuse > this->m_R1) && (CMtoCurrHypotenuse < this->m_R2))
+            {
+              // angle in the SI direction
+              // posterior/anterior component of the vector
+              const float currSITheta = asin(CMtoCurrVec[SI_INDEX] / CMtoCurrHypotenuse);
+              if ((currSITheta > ThetaDown) && (currSITheta < ThetaUp))
+              {
+                // angle in the LR direction
+
+                const float currLRTheta = asin(CMtoCurrVec[LR_INDEX] / CMtoCurrHypotenuse);
+                if ((std::abs(currLRTheta) > minLRAngle) && (std::abs(currLRTheta) < maxLRAngle))
+                {
+                  ROIIter.Set(ImageIter.Get());
+                }
+              }
+            }
           }
 
           // save max/min pixel value info
-          if (It0.Get() < this->m_MinInputPixelValue)
+          if (ImageIter.Get() < this->m_MinInputPixelValue)
           {
-            this->m_MinInputPixelValue = It0.Get();
+            this->m_MinInputPixelValue = ImageIter.Get();
           }
-          else if (It0.Get() > this->m_MaxInputPixelValue)
+          else if (ImageIter.Get() > this->m_MaxInputPixelValue)
           {
-            this->m_MaxInputPixelValue = It0.Get();
+            this->m_MaxInputPixelValue = ImageIter.Get();
           }
-          ++It0;
-          ++It1;
+          ++ImageIter;
+          ++ROIIter;
         }
       }
     }
@@ -278,16 +293,10 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
      * Sphere detection with Hough transform radial voting filter
      */
     HoughFilterPointer houghFilter = HoughFilterType::New();
-    if ((this->m_R1 > 0) && (this->m_R2 > this->m_R1) && (this->m_Theta > 0))
     {
       houghFilter->SetInput(this->m_RoIImage);
     }
-    else
-    {
-      std::cout << "Warning: RoI parameters are not valid"
-                << "Set to ( default ) entire image" << std::endl;
-      houghFilter->SetInput(image);
-    }
+
     houghFilter->SetNumberOfSpheres(this->m_NumberOfSpheres);
     houghFilter->SetMinimumRadius(this->m_MinimumRadius);
     houghFilter->SetMaximumRadius(this->m_MaximumRadius);
@@ -445,8 +454,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::PrintSelf(std::ostream & os, 
   os << "Gradient Threshold: " << this->m_GradientThreshold << std::endl;
   os << "NbOfThreads: " << this->m_NbOfThreads << std::endl;
   os << "Sampling Ratio: " << this->m_SamplingRatio << std::endl;
-  os << "Interior Radius of RoI: " << this->m_R1 << std::endl;
-  os << "Exterior Radius of RoI: " << this->m_R2 << std::endl;
-  os << "Spread Angle of RoI: " << this->m_Theta << std::endl;
+  //  os << "Interior Radius of RoI: " << this->m_R1 << std::endl;
+  //  os << "Exterior Radius of RoI: " << this->m_R2 << std::endl;
+  //  os << "Spread Angle of RoI: " << this->m_ThetaUp << std::endl;
 }
 } // namespace itk

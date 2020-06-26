@@ -65,9 +65,34 @@ main(int argc, char * argv[])
   ReaderType::TransformListType * transformList = reader->GetModifiableTransformList();
 
   using BRAINSCompositeTransformType = itk::CompositeTransform<double, 3>;
+  BRAINSCompositeTransformType::Pointer inputCompTrans = BRAINSCompositeTransformType::New();
 
-  BRAINSCompositeTransformType::Pointer inputCompTrans =
-    dynamic_cast<BRAINSCompositeTransformType *>(transformList->front().GetPointer());
+  if(transformList->size() != 1)
+  {
+    std::cerr << "ERROR: Only one transform allowed." << std::endl;
+  }
+  auto transformIterator = transformList->begin();
+  //const std::string nameOfTransformClass { (*transformIterator)->GetNameOfClass() };
+  if (!strcmp((*transformIterator)->GetNameOfClass(), "CompositeTransform"))
+  {
+    inputCompTrans = static_cast<BRAINSCompositeTransformType *>((*transformIterator).GetPointer());
+  }
+  else if (!strcmp((*transformIterator)->GetNameOfClass(), "VersorRigid3DTransform"))
+  {
+    itk::VersorRigid3DTransform<double>::Pointer temp =
+      static_cast<itk::VersorRigid3DTransform<double> *>((*transformIterator).GetPointer());
+    if (inputCompTrans.IsNull())
+    {
+      std::cerr << "The input transform should be a composite transform." << std::endl;
+      return EXIT_FAILURE;
+    }
+    inputCompTrans->AddTransform(temp);
+  }
+  else
+  {
+    std::cerr << "Transform type not supported: " << (*transformIterator)->GetNameOfClass()  << std::endl;
+    return EXIT_FAILURE;
+  }
   if (inputCompTrans.IsNull())
   {
     std::cerr << "The input transform should be a composite transform." << std::endl;

@@ -92,6 +92,23 @@ BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
   return orig_lmk_CenterOfHeadMass;
 }
 
+static std::string
+local_replace(const std::string & in, const std::string & oldstr, const std::string & newstr)
+{
+  const size_t oldstrlen = oldstr.size();
+  std::string  output{ in };
+  /* Locate the substring to replace. */
+  size_t index { output.find(oldstr, 0) };
+  while (index != std::string::npos)
+  {
+    /* Make the replacement. */
+    output.replace(index, oldstrlen, newstr);
+    /* Advance index forward, then find so the next iteration doesn't pick up  what was just inserted. */
+    index = output.find(oldstr, index + oldstrlen);
+  }
+  return output;
+}
+
 bool
 BRAINSConstellationDetectorPrimary::Compute()
 {
@@ -166,16 +183,26 @@ BRAINSConstellationDetectorPrimary::Compute()
         root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension(potentialLandmarkFileName);
     }
     potentialLandmarkFileName += fcsv_extension;
+
+
+    std::string output_sidecar = local_replace ( this->m_outputLandmarksInInputSpace, ".fcsv", "_fixed.fcsv");
     if (itksys::SystemTools::FileExists(potentialLandmarkFileName, true))
     {
       std::cerr << "NOTE: Using the side-car landmark override file to pre-load landmarks!: "
                 << "\n         " << potentialLandmarkFileName << std::endl;
       this->orig_lmks_filename = potentialLandmarkFileName;
     }
+    else if (itksys::SystemTools::FileExists(output_sidecar, true))
+    {
+      std::cerr << "NOTE: Using alternate side-car landmark override file to pre-load landmarks!: "
+                << "\n         " << output_sidecar << std::endl;
+      this->orig_lmks_filename = output_sidecar;
+    }
     else
     {
       std::cerr << "NOTE: Side-car landmark file not found to pre-load landmarks!"
-                << "\n         " << potentialLandmarkFileName << std::endl;
+                << "\n         " << potentialLandmarkFileName
+                << "\n         " << output_sidecar << std::endl;
       // Now looking for file encoded as meta data in header.
       const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
       itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
@@ -273,7 +300,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (globalImagedebugLevel > 2)
     {
 
-      const std::string hough_eye_landmarks_fn( "./orig_lmks_cm_eyes_HoughDetector.fcsv");
+      const std::string hough_eye_landmarks_fn("./orig_lmks_cm_eyes_HoughDetector.fcsv");
       WriteITKtoSlicer3Lmk(hough_eye_landmarks_fn, orig_lmks);
     }
     eyeFixed_img = itk::RigidResampleInPlayByVersor3D<SImageType, SImageType>(orig_img, orig2eyeFixed_img_tfm);

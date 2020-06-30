@@ -6,7 +6,7 @@
       This utility program estimates the affine transform to align the fixed landmarks to the moving landmarks, and then generate the resampled moving image to the same physical space as that of the reference image.
     </description>
 
-    <version>5.2.0</version>
+    <version>5.3.0</version>
     <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>
     <parameters>
         <file fileExtensions=".fcsv">

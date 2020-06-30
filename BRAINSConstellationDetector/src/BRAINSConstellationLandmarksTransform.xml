@@ -5,7 +5,7 @@
   <description>
   This program converts the original landmark file to the target landmark file using the input transform.
   </description>
-  <version>5.2.0</version>
+  <version>5.3.0</version>
   <documentation-url> </documentation-url>
   <license> </license>
   <contributor>Ali Ghayoor</contributor>

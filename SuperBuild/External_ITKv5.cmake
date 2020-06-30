@@ -57,7 +57,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    7900a8b6d63ec8201405eff3b46c8d2a4e563c45 # 2020-05-07 Fix MI double scaling bug
+    eea1a81e6fdacd5113604785c3063fbf1e2f931b # 2020-06-28
     QUIET
     )
 

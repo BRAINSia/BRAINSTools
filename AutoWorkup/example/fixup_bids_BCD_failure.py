@@ -1,6 +1,63 @@
+# HINT:
+# Setup Slicer Starup script for being in the Markups module
+# echo "slicer.util.selectModule('Markups')" >>  ~/.slicerrc.py
 from pathlib import Path
+
+do_rsync: bool = True  # Should rsync be done?
+only_rsync: bool = False  # continue after rsync to prep data
+do_bcd: bool = True  #
+do_final_review: bool = False
+
+SLICER_BIN = "/home/johnsonhj/local/apps/Slicer3D/4.11.0.20200627/Slicer"
+BINDIR = Path("/home/johnsonhj/src/BT-bld/BRAINSTools-Release-EPRelease-build/bin")
+
+BIDSDIR = Path('/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/')
+BCDDIR = Path('/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/derivatives/BCD')
+
+REVIEW_FILE = "/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/derivatives/BCD/bin/202006291219-reproc-report.json"
+
+
 import subprocess
 import json
+import pandas
+
+
+def subset_lmks(
+  input_filename, output_filename, keep_list=["AC", "PC", "VN4", "CM", "RE", "LE"]
+):
+  """
+  reads in a landmark file, filters the keep_list landmarks, and writes the output landmark file.
+  """
+  names = [
+    "id",
+    "x",
+    "y",
+    "z",
+    "ow",
+    "ox",
+    "oy",
+    "oz",
+    "vis",
+    "sel",
+    "lock",
+    "label",
+    "desc",
+    "associatedNodeID",
+  ]
+  data_frame = pandas.read_csv(
+    input_filename, header=None, names=names, comment="#", float_precision="high"
+  )
+  data_frame = data_frame[data_frame["label"].isin(keep_list)]
+  with open(output_filename, mode="w") as output_file:
+    lines = [
+      "# Markups fiducial file version = 4.6\n",
+      "# CoordinateSystem = 0\n",
+      "# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID\n",
+    ]
+    output_file.writelines(lines)
+  data_frame.to_csv(
+    output_filename, float_format="%.17f", header=False, index=False, mode="a"
+  )
 
 
 def query_if_lmks_ok():
@@ -29,18 +86,6 @@ def run_it(cmd, display_output: bool, echo_input: bool):
   return process.returncode
 
 
-do_rsync: bool = True  # Should rsync be done?
-only_rsync: bool = True  # continue after rsync to prep data
-do_bcd: bool = False  #
-do_final_review: bool = False
-
-SLICER_BIN = "/home/johnsonhj/local/apps/Slicer3D/4.11.0.20200627/Slicer"
-BINDIR = Path("/home/johnsonhj/src/BT-bld/BRAINSTools-Release-EPRelease-build/bin")
-
-BIDSDIR = Path('/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/')
-BCDDIR = Path('/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/derivatives/BCD')
-
-REVIEW_FILE = "/Shared/sinapse/chdi_bids/PREDICTHD_BIDS/derivatives/BCD/bin/202006291219-reproc-report.json"
 REVIEWS_NEEDED = []
 with open(REVIEW_FILE, 'r') as fid:
   all_reviews = json.load(fid)
@@ -84,12 +129,19 @@ for run_info in REVIEWS_NEEDED:
       assert acpc_lmk.is_file()
       assert acpc_t1w.is_file()
 
+    # first copy current acpc_lmk
+    failed_lmks: Path = Path(str(acpc_lmk).replace(".fcsv","_fixme.fcsv"))
+    if acpc_fixedlmk.is_file() and failed_lmks.is_file():
+      failed_lmks.unlink()
     if not acpc_fixedlmk.is_file():
-      # first copy current acpc_lmk
-      cmd = [f"{SLICER_BIN}", str(acpc_lmk), str(acpc_t1w)]
+      subset_lmks( acpc_lmk, failed_lmks)
+      cmd = [f"{SLICER_BIN}", str(failed_lmks), str(acpc_t1w)]
       run_it(cmd, False, True)
+      if failed_lmks.is_file():
+        failed_lmks.unlink()
     else:
       print(f"Skipping visual inspection: Fixed ACPC found existing: {acpc_fixedlmk}")
+
     if not acpc_fixedlmk.is_file():
       query_if_lmks_ok()
       if review_file.is_file():
@@ -103,45 +155,47 @@ for run_info in REVIEWS_NEEDED:
                "-o",
                str(orig_fixedlmk)]
         run_it(cmd, True, True)
+        # -- clean up files from previous run
+        if acpc_lmk.is_file():
+          acpc_lmk.unlink()
+        if orig_lmk.is_file():
+          orig_lmk.unlink()
+        if acpc_t1w.is_file():
+          acpc_t1w.unlink()
+        if to_orig.is_file():
+          to_orig.unlink()
+        if brandedpng.is_file():
+          brandedpng.unlink()
 
       assert orig_fixedlmk.is_file()
 
-      # -- clean up files from previous run
-      if acpc_lmk.is_file():
-        acpc_lmk.unlink()
-      if orig_lmk.is_file():
-        orig_lmk.unlink()
-      if acpc_t1w.is_file():
-        acpc_t1w.unlink()
-      if to_orig.is_file():
-        to_orig.unlink()
-      if brandedpng.is_file():
-        brandedpng.unlink()
 
-      cmd = [
-        str(BINDIR / "BRAINSConstellationDetector"),
-        "--LLSModel", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/LLSModel_50Lmks.h5",
-        "--inputTemplateModel", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/T1_50Lmks.mdl",
-        "--atlasLandmarkWeights", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/template_weights_50Lmks.wts",
-        "--atlasLandmarks", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/template_landmarks_50Lmks.fcsv",
-        "--acLowerBound", "80.000000",
-        "--houghEyeDetectorMode", "1",
-        "--interpolationMode", "Linear",
-        "--outputLandmarksInACPCAlignedSpace", acpc_lmk,
-        "--outputLandmarksInInputSpace", orig_lmk,
-        "--outputResampledVolume", acpc_t1w,
-        "--outputTransform", to_orig,
-        "--writeBranded2DImage", brandedpng,
-        "--inputVolume", orig_t1w
-      ]
-      run_it(cmd, True, True)
+      if not acpc_lmk.is_file() or not acpc_t1w.is_file():
+        cmd = [
+          str(BINDIR / "BRAINSConstellationDetector"),
+          "--LLSModel", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/LLSModel_50Lmks.h5",
+          "--inputTemplateModel", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/T1_50Lmks.mdl",
+          "--atlasLandmarkWeights", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/template_weights_50Lmks.wts",
+          "--atlasLandmarks", f"{BINDIR}/Atlas/Atlas_20131115/20141004_BCD/template_landmarks_50Lmks.fcsv",
+          "--acLowerBound", "80.000000",
+          "--houghEyeDetectorMode", "1",
+          "--interpolationMode", "Linear",
+          "--outputLandmarksInACPCAlignedSpace", acpc_lmk,
+          "--outputLandmarksInInputSpace", orig_lmk,
+          "--outputResampledVolume", acpc_t1w,
+          "--outputTransform", to_orig,
+          "--writeBranded2DImage", brandedpng,
+          "--inputVolume", orig_t1w
+        ]
+        run_it(cmd, True, True)
 
-      assert acpc_lmk.is_file()
-      assert acpc_t1w.is_file()
+        assert acpc_lmk.is_file()
+        assert acpc_t1w.is_file()
 
-      print("----------------- Final Fiducial Inspection -----------------")
-      # # Review original space landmarks, not always necessary
-      cmd = ["/home/johnsonhj/Downloads/Slicer-4.11.0-2020-06-12-linux-amd64/Slicer", str(acpc_lmk), str(acpc_t1w)]
-      run_it(cmd, False, True)
+      if do_final_review:
+        print("----------------- Final Fiducial Inspection -----------------")
+        # # Review original space landmarks, not always necessary
+        cmd = ["/home/johnsonhj/Downloads/Slicer-4.11.0-2020-06-12-linux-amd64/Slicer", str(acpc_lmk), str(acpc_t1w)]
+        run_it(cmd, False, True)
 
-      query_if_lmks_ok()
+        query_if_lmks_ok()

@@ -456,6 +456,50 @@ computeTmspFromPoints(SImageType::PointType RP,
                       SImageType::PointType PC,
                       SImageType::PointType DesiredCenter)
 {
+
+  PointList orig;
+  orig.emplace_back(RP);
+  orig.emplace_back(AC);
+  orig.emplace_back(PC);
+  SImagePointType NEWAC = DesiredCenter;
+//  NEWAC[0] = 0.0;
+//  NEWAC[1] = 0.0;
+//  NEWAC[2] = 0.0;
+  SImagePointType NEWPC;
+  NEWPC[0] = 0.0;
+  SImageType::PointType::VectorType ACPC = PC - AC;
+  NEWPC[1] = ACPC.GetNorm();
+  NEWPC[2] = 0.0;
+
+  // https://en.wikipedia.org/wiki/Vector_projection
+  SImageType::PointType::VectorType ACRP = RP - AC;
+
+  SImagePointType NEWRP;
+  NEWRP[0] = 0;
+  auto ACRPnorm = ACRP;
+  ACRPnorm.Normalize();
+  NEWRP[1] = dot_product(ACPC.GetVnlVector(), ACRPnorm.GetVnlVector());
+  // double theta = ACPC/
+  const auto a = ACPC.GetVnlVector();
+  const auto b = ACRP.GetVnlVector();
+  const auto rej = a - ( (dot_product(a, b) / dot_product(b, b)) * b);
+  NEWRP[2] = -rej.magnitude();
+
+  PointList final;
+  final.emplace_back(NEWRP);
+  final.emplace_back(NEWAC);
+  final.emplace_back(NEWPC);
+
+  //Now convert the result to a Euler Transform.
+  auto versorBaseTransform =  DoIt_Rigid(final, orig);
+  RigidTransformType::Pointer result = RigidTransformType::New();
+  result->SetIdentity();
+  result->SetCenter(versorBaseTransform->GetCenter());
+  result->SetMatrix(versorBaseTransform->GetMatrix());
+  result->SetTranslation(versorBaseTransform->GetTranslation());
+  return result;
+
+#if 0
   // a variable to store correlation coefficient values
   SImageType::PointType::VectorType ACPC = PC - AC;
 

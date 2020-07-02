@@ -2,7 +2,7 @@
 <executable>
   <category>Utilities.BRAINS</category>
   <title>Align Mid Saggital Brain (BRAINS)</title>
-  <description>Resample an image into ACPC alignement ACPCDetect</description>
+  <description>Resample an image into ACPC alignment ACPCDetect</description>
   <parameters>
     <image>
       <name>inputVolume</name>
@@ -11,10 +11,20 @@
       <longflag>inputVolume</longflag>
       <default></default>
       <description>
-        The Image to be resampled
+        The image to be resampled
       </description>
       <channel>input</channel>
     </image>
+    <file fileExtensions=".fcsv">
+      <name>LandmarkPoints</name>
+      <label>Known Landmark Points</label>
+      <longflag>LandmarkPoints</longflag>
+      <default></default>
+      <description>
+        [OPTIONAL] The filename for the new subject-specific landmark definition file in the same format produced by Slicer3 (.fcsv) with the landmarks in the image space.
+      </description>
+      <channel>output</channel>
+    </file>
     <image>
       <name>resampleMSP</name>
       <label>resampleMSP</label>
@@ -26,6 +36,16 @@
       </description>
       <channel>output</channel>
     </image>
+    <file fileExtensions=".fcsv">
+      <name>resampleMSPLandmarkPoints</name>
+      <label>Landmarks in MSP Space Points</label>
+      <longflag>outputLandmarks</longflag>
+      <default></default>
+      <description>
+        The landmarks to be output in the same format produced by Slicer3 (.fcsv) with the landmarks in the MSP space.
+      </description>
+      <channel>output</channel>
+    </file>
     <boolean>
       <name>verbose</name>
       <label>verbose</label>
@@ -63,7 +83,7 @@
       <longflag>mspQualityLevel</longflag>
       <flag>q</flag>
       <description>
-          Flag cotrols how agressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).
+          Flag controls how aggressive the MSP is estimated.  0=quick estimate (9 seconds), 1=normal estimate (11 seconds), 2=great estimate (22 seconds), 3=best estimate (58 seconds).
       </description>
       <default>2</default>
      <constraints>

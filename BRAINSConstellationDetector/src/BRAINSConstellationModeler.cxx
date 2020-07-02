@@ -283,11 +283,25 @@ main(int argc, char * argv[])
 
     // original input volume from the training set
     // transforms image to MSP aligned voxel lattice
-    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = RigidTransformType::New();
-    SImageType::Pointer         volumeMSP;
+
     double                      c_c = 0;
 
-    ComputeMSP(image, eyeFixed2msp_lmk_tfm, volumeMSP, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
+    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
+    const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
+      using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
+      StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      statisticsFilter->SetInput(im);
+      statisticsFilter->Update();
+      SImageType::PixelType minPixelValue = statisticsFilter->GetMinimum();
+    }(image);
+
+    SImageType::Pointer volumeMSP =
+      TransformResample<SImageType, SImageType>(image.GetPointer(),
+                                                MakeIsoTropicReferenceImage().GetPointer(),
+                                                minPixelValue,
+                                                GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                eyeFixed2msp_lmk_tfm.GetPointer());
+
 
     if (globalImagedebugLevel > 2)
     {

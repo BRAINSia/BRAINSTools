@@ -80,12 +80,26 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
   // Compute the estimated MSP transform, and aligned image from eye centers data.
   double c_c = 0;
-  ComputeMSP(this->m_eyeFixed_img,
-             this->m_eyeFixed2msp_img_tfm,
-             this->m_msp_img,
+  this->m_eyeFixed2msp_img_tfm = ComputeMSP(this->m_eyeFixed_img,
              eyeFixed_lmk_CenterOfHeadMass,
              this->m_mspQualityLevel,
              c_c);
+  {
+    const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
+      using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
+      StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      statisticsFilter->SetInput(im);
+      statisticsFilter->Update();
+      return statisticsFilter->GetMinimum();
+    }(this->m_eyeFixed_img);
+
+    this->m_msp_img =
+      TransformResample<SImageType, SImageType>(this->m_eyeFixed_img.GetPointer(),
+                                                MakeIsoTropicReferenceImage().GetPointer(),
+                                                minPixelValue,
+                                                GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
+                                                this->m_eyeFixed2msp_img_tfm.GetPointer());
+  }
 
   std::cout << "\n=============================================================" << std::endl;
 

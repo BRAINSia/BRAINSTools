@@ -544,22 +544,6 @@ public:
     return cc;
   }
 
-  SImageType::Pointer
-  GetMSPCenteredImage()
-  {
-    using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
-    StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
-    statisticsFilter->SetInput(this->m_OriginalImage);
-    statisticsFilter->Update();
-    SImageType::PixelType minPixelValue = statisticsFilter->GetMinimum();
-
-    return TransformResample<SImageType, SImageType>(this->m_OriginalImage.GetPointer(),
-                                                     MakeIsoTropicReferenceImage().GetPointer(),
-                                                     minPixelValue,
-                                                     GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
-                                                     GetTransformToMSP().GetPointer());
-  }
-
   double
   GetCC() const
   {

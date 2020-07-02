@@ -28,9 +28,9 @@ namespace itk
  * This component converts transform formats required for
  * input and output for use in registration.
  *
- * The preprocessing is activatived by method ExecuteInput().
+ * The preprocessing is activated by method ExecuteInput().
  *
- * The postprocessing is activatived by method ExecuteOutput().
+ * The postprocessing is activated by method ExecuteOutput().
  *
  * Inputs:
  *    - pointer to original fixed image

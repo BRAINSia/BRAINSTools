@@ -31,7 +31,6 @@
       <channel>output</channel>
       <description>Output landmark file (.fcsv)</description>
     </file>
-
   </parameters>
 
 </executable>

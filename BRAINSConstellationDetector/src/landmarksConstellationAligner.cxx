@@ -25,10 +25,8 @@
 // I N C L U D E S ////////////////////////////////////////////////////////////
 
 #include "itksys/SystemTools.hxx"
-#include "BRAINSThreadControl.h"
 #include "Slicer3LandmarkIO.h"
 
-#include "itkCommand.h"
 #include "itkImage.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 
@@ -36,7 +34,6 @@
 
 #include <cstdio>
 #include <iostream>
-#include <fstream>
 #include <cstring>
 #include <map>
 #include <vnl/vnl_cross.h>
@@ -45,21 +42,6 @@
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 using ImagePointType = SImageType::PointType;
-
-// F U N C T I O N S //////////////////////////////////////////////////////////
-RigidTransformType::Pointer
-GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
-{
-  SImageType::PointType ZeroCenter;
-
-  ZeroCenter.Fill(0.0);
-  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
-    computeTmspFromPoints(GetNamedPointFromLandmarkList(landmarks, "RP"),
-                          GetNamedPointFromLandmarkList(landmarks, "AC"),
-                          GetNamedPointFromLandmarkList(landmarks, "PC"),
-                          ZeroCenter);
-  return landmarkDefinedACPCAlignedToZeroTransform;
-}
 
 // M A I N ////////////////////////////////////////////////////////////////////
 int
@@ -111,6 +93,5 @@ main(int argc, char * argv[])
     WriteITKtoSlicer3Lmk(outputLandmarksPaired, alignedLandmarks);
     std::cout << "The acpc-aligned landmark list file is written." << std::endl;
   }
-
   return 0;
 }

@@ -54,30 +54,26 @@
 #include "itkIO.h"
 #include "BRAINSAlignMSPCLP.h"
 #include "GenericTransformImage.h"
-
+template <typename TInputImagePixelType>
 int
-main(int argc, char * argv[])
+DoIt(std::string      inputVolume,
+     std::string      LandmarkPoints,
+     std::string      resampleMSP,
+     std::string      resampleMSPLandmarkPoints,
+     int              mspQualityLevel,
+     bool             rescaleIntensities,
+     double           trimRescaledIntensities,
+     std::vector<int> rescaleIntensitiesOutputRange,
+     std::string      backgroundFillValueString,
+     std::string      interpolationMode)
 {
-  std::cout.precision(10);
-
-  // /////////////////////////////////////////////////////////////////////////////////////////////
-  PARSE_ARGS;
-  BRAINSRegisterAlternateIO();
-
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-
-  LMC::globalverboseFlag = verbose;
-
-  globalResultsDir = resultsDir;
-  globalImagedebugLevel = writedebuggingImagesLevel;
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, allocate some memories, and
   // initialize some variables
 
   // Since these are oriented images, the reorientation should not be necessary.
   using LOCALImageType = SImageType;
-  using FloatImageType = itk::Image<float, 3>;
-  FloatImageType::Pointer volOrig = itkUtil::ReadImage<FloatImageType>(inputVolume);
+  typename TInputImagePixelType::Pointer volOrig = itkUtil::ReadImage<TInputImagePixelType>(inputVolume);
   if (volOrig.IsNull())
   {
     printf("\nCould not open image %s, aborting ...\n\n", inputVolume.c_str());
@@ -85,8 +81,8 @@ main(int argc, char * argv[])
   }
 
   LOCALImageType::Pointer internal_image = [=]() -> LOCALImageType::Pointer {
-    itk::RescaleIntensityImageFilter<FloatImageType, LOCALImageType>::Pointer remapIntensityFilter =
-      itk::RescaleIntensityImageFilter<FloatImageType, LOCALImageType>::New();
+    typename itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::Pointer remapIntensityFilter =
+      itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::New();
     remapIntensityFilter->SetInput(volOrig);
     remapIntensityFilter->SetOutputMaximum(std::numeric_limits<LOCALImageType::PixelType>::max());
     remapIntensityFilter->SetOutputMinimum(std::numeric_limits<LOCALImageType::PixelType>::min());
@@ -135,7 +131,7 @@ main(int argc, char * argv[])
     }
 
     LandmarksMapType transformedLandmarks;
-    for ( const auto & elem : constant_orig_lmks)
+    for (const auto & elem : constant_orig_lmks)
     {
       transformedLandmarks[elem.first] = orig2msp_lmk_tfm->TransformPoint(elem.second);
     }
@@ -153,16 +149,16 @@ main(int argc, char * argv[])
     return std::stoi(backgroundFillValueString.c_str());
   }();
 
-  //Now write out the resampled image
+  // Now write out the resampled image
   {
-    LOCALImageType::Pointer image;
+    typename TInputImagePixelType::Pointer image;
     if (rescaleIntensities)
     {
-      itk::StatisticsImageFilter<FloatImageType>::Pointer stats = itk::StatisticsImageFilter<FloatImageType>::New();
+      typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats = itk::StatisticsImageFilter<TInputImagePixelType>::New();
       stats->SetInput(volOrig);
       stats->Update();
-      FloatImageType::PixelType minPixel(stats->GetMinimum());
-      FloatImageType::PixelType maxPixel(stats->GetMaximum());
+      typename TInputImagePixelType::PixelType minPixel(stats->GetMinimum());
+      typename TInputImagePixelType::PixelType maxPixel(stats->GetMaximum());
 
       if (trimRescaledIntensities > 0.0)
       {
@@ -191,12 +187,12 @@ main(int argc, char * argv[])
         double trimBound(variationBound - trimRescaledIntensities);
         if (trimBound > 0.0)
         {
-          maxPixel = static_cast<FloatImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
+          maxPixel = static_cast<typename TInputImagePixelType::PixelType>(maxPixel - trimBound * sigmaOrig);
         }
       }
 
-      itk::IntensityWindowingImageFilter<FloatImageType, LOCALImageType>::Pointer remapIntensityFilter =
-        itk::IntensityWindowingImageFilter<FloatImageType, LOCALImageType>::New();
+      typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer remapIntensityFilter =
+        itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
       remapIntensityFilter->SetOutputMinimum(rescaleIntensitiesOutputRange[0]);
@@ -208,27 +204,28 @@ main(int argc, char * argv[])
     }
     else
     {
-      itk::CastImageFilter<FloatImageType, LOCALImageType >::Pointer caster = itk::CastImageFilter<FloatImageType, LOCALImageType >::New();
+      typename itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer caster =
+        itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       caster->SetInput(volOrig);
       caster->Update();
       image = caster->GetOutput();
     }
-    LOCALImageType::Pointer interpImage;
-    if(interpolationMode == "ResampleInPlace")
+    typename TInputImagePixelType::Pointer interpImage;
+    if (interpolationMode == "ResampleInPlace")
     {
-      using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<SImageType , SImageType>;
-      using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
+      using ResampleIPFilterType = typename itk::ResampleInPlaceImageFilter<TInputImagePixelType, TInputImagePixelType>;
+      using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 
       VersorRigid3DTransformType::Pointer result = VersorRigid3DTransformType::New();
       result->SetIdentity();
-//      result->SetCenter(orig2msp_img_tfm->GetCenter());
-//      result->SetMatrix(orig2msp_img_tfm->GetMatrix());
-//      result->SetTranslation(orig2msp_img_tfm->GetTranslation());
+      //      result->SetCenter(orig2msp_img_tfm->GetCenter());
+      //      result->SetMatrix(orig2msp_img_tfm->GetMatrix());
+      //      result->SetTranslation(orig2msp_img_tfm->GetTranslation());
       result->Compose(orig2msp_img_tfm);
       ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
-      resampleIPFilter->SetInputImage(image);
+      resampleIPFilter->SetInputImage(volOrig);
       resampleIPFilter->SetRigidTransform(result);
       resampleIPFilter->Update();
       interpImage = resampleIPFilter->GetOutput();
@@ -236,14 +233,14 @@ main(int argc, char * argv[])
     else
     {
       // Remember:  the Data is Moving's, the shape is Fixed's.
-      interpImage = TransformResample<LOCALImageType, LOCALImageType>(
+      interpImage = TransformResample<TInputImagePixelType, TInputImagePixelType>(
         image.GetPointer(),
         image.GetPointer(),
         BackgroundFillValue,
-        GetInterpolatorFromString<LOCALImageType>(interpolationMode).GetPointer(),
+        GetInterpolatorFromString<TInputImagePixelType>(interpolationMode).GetPointer(),
         orig2msp_img_tfm.GetPointer());
     }
-    itkUtil::WriteImage<LOCALImageType>(interpImage, resampleMSP);
+    itkUtil::WriteImage<TInputImagePixelType>(interpImage, resampleMSP);
   }
   if (globalImagedebugLevel > 3)
   {
@@ -251,5 +248,202 @@ main(int argc, char * argv[])
                                       itksys::SystemTools::GetFilenameName(inputVolume));
     CreatedebugPlaneImage(internal_image, orig2msp_img_tfm, ORIG_ImagePlane);
   }
-  return 0;
+  return EXIT_SUCCESS;
+}
+
+
+int
+main(int argc, char * argv[])
+{
+  std::cout.precision(10);
+
+  // /////////////////////////////////////////////////////////////////////////////////////////////
+  PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
+
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+
+  LMC::globalverboseFlag = verbose;
+  globalResultsDir = resultsDir;
+  globalImagedebugLevel = writedebuggingImagesLevel;
+
+  // https://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
+  itk::ImageIOBase::Pointer imageIO =
+    itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::FileModeType::ReadMode);
+
+  imageIO->SetFileName(inputVolume);
+  imageIO->ReadImageInformation();
+  using IOPixelType = itk::ImageIOBase::IOPixelType;
+  const IOPixelType pixelType = imageIO->GetPixelType();
+  std::cout << "Pixel Type is " << itk::ImageIOBase::GetPixelTypeAsString(pixelType) << std::endl;
+
+  using IOComponentType = itk::ImageIOBase::IOComponentType;
+  const IOComponentType componentType = imageIO->GetComponentType();
+  std::cout << "Component Type is " << imageIO->GetComponentTypeAsString(componentType) << std::endl;
+  const unsigned int imageDimension = imageIO->GetNumberOfDimensions();
+  std::cout << "Image Dimension is " << imageDimension << std::endl;
+  if (pixelType == itk::ImageIOBase::SCALAR)
+  {
+    constexpr int VDimension = 3;
+    if (imageDimension == VDimension)
+    {
+      switch (componentType)
+      {
+        case itk::ImageIOBase::UCHAR: {
+          using PixelType = unsigned char;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::CHAR: {
+          using PixelType = char;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::USHORT: {
+          using PixelType = unsigned short;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::SHORT: {
+          using PixelType = short;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::UINT: {
+          using PixelType = unsigned int;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::INT: {
+          using PixelType = int;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::ULONG: {
+          using PixelType = unsigned long;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::LONG: {
+          using PixelType = long;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::FLOAT: {
+          using PixelType = float;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+        case itk::ImageIOBase::DOUBLE: {
+          using PixelType = double;
+          using ImageType = itk::Image<PixelType, VDimension>;
+          return DoIt<ImageType>(inputVolume,
+                                 LandmarkPoints,
+                                 resampleMSP,
+                                 resampleMSPLandmarkPoints,
+                                 mspQualityLevel,
+                                 rescaleIntensities,
+                                 trimRescaledIntensities,
+                                 rescaleIntensitiesOutputRange,
+                                 backgroundFillValueString,
+                                 interpolationMode);
+        }
+
+        default:
+        case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+          std::cerr << "Unknown and unsupported component type!" << std::endl;
+          return EXIT_FAILURE;
+      }
+    }
+    else
+    {
+      itkGenericExceptionMacro(<< "Error dimension not yet implemented.")
+    }
+  }
+  else
+  {
+    std::cerr << "not implemented yet!" << std::endl;
+    return EXIT_FAILURE;
+  }
 }

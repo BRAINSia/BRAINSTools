@@ -22,8 +22,17 @@
  * University of Iowa Health Care 2010
  */
 
+#include <vnl/vnl_cross.h>
+#include <map>
+#include <cstring>
+#include <iostream>
+#include "PrepareOutputImages.h"
+#include "itkImage.h"
+#include "itkCommand.h"
+#include "Slicer3LandmarkIO.h"
+#include "BRAINSThreadControl.h"
+#include "itksys/SystemTools.hxx"
 #include "itkIO.h"
-#include <itkImageMomentsCalculator.h>
 #include "itkRecursiveGaussianImageFilter.h"
 
 #include "itkReflectiveCorrelationCenterToImageMetric.h"
@@ -46,9 +55,8 @@ using reflectionFunctorType = Rigid3DCenterReflectorFunctor<itk::PowellOptimizer
 
 using GaussianFilterType = itk::RecursiveGaussianImageFilter<SImageType, SImageType>;
 
-void
+static RigidTransformType::Pointer
 DoMultiQualityReflection(SImageType::Pointer &                  image,
-                         RigidTransformType::Pointer &          eyeFixed2msp_lmk_tfm,
                          const int                              qualityLevel,
                          const reflectionFunctorType::Pointer & reflectionFunctor)
 {
@@ -86,49 +94,31 @@ DoMultiQualityReflection(SImageType::Pointer &                  image,
     reflectionFunctor->Update();
   }
   reflectionFunctor->SetDownSampledReferenceImage(image);
-  eyeFixed2msp_lmk_tfm = reflectionFunctor->GetTransformToMSP();
+  return reflectionFunctor->GetTransformToMSP();
 }
 
-void
+RigidTransformType::Pointer
 ComputeMSP(SImageType::Pointer           input_image,
-           RigidTransformType::Pointer & output_transform,
-           SImageType::Pointer &         transformedImage,
            const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
            double &                      cc)
 {
-  if (qualityLevel == -1) // Assume image was pre-aligned outside of the
-                          // program
+  RigidTransformType::Pointer output_transform;
+  if (qualityLevel == -1) // Assume image was pre-aligned outside of the program
   {
     output_transform = RigidTransformType::New();
     output_transform->SetIdentity();
-
-    itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
-    MSP->SetInputImage(input_image);
-    MSP->Update();
-    transformedImage = MSP->GetOutput();
+    cc = -654.321;
   }
   else
   {
     reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
     reflectionFunctor->Setorig_lmk_CenterOfHeadMass(input_image_center_of_mass);
 
-    DoMultiQualityReflection(input_image, output_transform, qualityLevel, reflectionFunctor);
-
-    transformedImage = reflectionFunctor->GetMSPCenteredImage();
+    output_transform = DoMultiQualityReflection(input_image, qualityLevel, reflectionFunctor);
     cc = reflectionFunctor->GetCC();
   }
-}
-
-void
-ComputeMSP_Easy(SImageType::Pointer           image,
-                RigidTransformType::Pointer & eyeFixed2msp_lmk_tfm,
-                const SImageType::PointType & orig_lmk_CenterOfHeadMass,
-                const int                     qualityLevel)
-{
-  reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
-  reflectionFunctor->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
-  DoMultiQualityReflection(image, eyeFixed2msp_lmk_tfm, qualityLevel, reflectionFunctor);
+  return output_transform;
 }
 
 void
@@ -334,6 +324,128 @@ GetCenterOfHeadMass(SImageType::Pointer volume)
   return CenterOfMass;
 }
 
+namespace
+{
+
+//// Function to convert a point from std::vector to itk::Point
+//// this also performs the RAS -> LPS conversion necessary
+//// from slicer -> ITK
+//static itk::Point<double, 3>
+//convertStdVectorToITKPoint(const std::vector<float> & vec)
+//{
+//  itk::Point<double, 3> p;
+//
+//  // convert RAS to LPS
+//  p[0] = -vec[0];
+//  p[1] = -vec[1];
+//  p[2] = vec[2];
+//  return p;
+//}
+
+// Operator to compute the squared distance between two points
+class SquaredPointDistance
+{
+public:
+  explicit SquaredPointDistance(const itk::Point<double, 3> & ctr)
+    : m_Point(ctr)
+  {}
+
+  double
+  operator()(const itk::Point<double, 3> & p)
+  {
+    return (p - m_Point).GetSquaredNorm();
+  }
+
+private:
+  itk::Point<double, 3> m_Point;
+};
+
+// Function to compute the scaling factor between two sets of points.
+// This is the symmetric form given by
+//    Berthold K. P. Horn (1987),
+//    "Closed-form solution of absolute orientation using unit quaternions,"
+//    Journal of the Optical Society of America A, 4:629-642
+static double
+computeSymmetricScale(const std::vector<itk::Point<double, 3>> & fixedPoints,
+                      const std::vector<itk::Point<double, 3>> & movingPoints,
+                      const itk::Point<double, 3> &              fixedcenter,
+                      const itk::Point<double, 3> &              movingcenter)
+{
+  std::vector<double> centeredFixedPoints(fixedPoints.size(), 0.0);
+  std::vector<double> centeredMovingPoints(movingPoints.size(), 0.0);
+
+  std::transform(
+    fixedPoints.begin(), fixedPoints.end(), centeredFixedPoints.begin(), SquaredPointDistance(fixedcenter));
+
+  std::transform(
+    movingPoints.begin(), movingPoints.end(), centeredMovingPoints.begin(), SquaredPointDistance(movingcenter));
+
+  const double fixedmag = std::accumulate(centeredFixedPoints.begin(), centeredFixedPoints.end(), 0.0);
+
+  const double movingmag = std::accumulate(centeredMovingPoints.begin(), centeredMovingPoints.end(), 0.0);
+
+  return sqrt(movingmag / fixedmag);
+}
+} // namespace
+
+SimilarityTransformType::Pointer
+DoIt_Similarity(PointList fixedPoints, PointList movingPoints)
+{
+  // Our input into landmark based initialize will be of this form
+  // The format for saving to slicer is defined later
+  SimilarityTransformType::Pointer similarityTransform = SimilarityTransformType::New();
+
+  similarityTransform->SetIdentity();
+  // workaround a bug in older versions of ITK
+  similarityTransform->SetScale(1.0);
+
+  using InitializerType =
+    itk::LandmarkBasedTransformInitializer<SimilarityTransformType, itk::Image<short, 3>, itk::Image<short, 3>>;
+  InitializerType::Pointer initializer = InitializerType::New();
+
+  // This expects a VersorRigid3D.  The similarity transform works because
+  // it derives from that class
+  initializer->SetTransform(similarityTransform);
+
+  initializer->SetFixedLandmarks(fixedPoints);
+  initializer->SetMovingLandmarks(movingPoints);
+  initializer->InitializeTransform();
+
+  // Compute the scaling factor and add that in
+  itk::Point<double, 3> fixedCenter(similarityTransform->GetCenter());
+  itk::Point<double, 3> movingCenter(similarityTransform->GetCenter() + similarityTransform->GetTranslation());
+
+  const double s = computeSymmetricScale(fixedPoints, movingPoints, fixedCenter, movingCenter);
+  similarityTransform->SetScale(s);
+  return similarityTransform;
+}
+
+
+VersorRigidTransformType::Pointer
+DoIt_Rigid(PointList fixedPoints, PointList movingPoints)
+{
+  // Our input into landmark based initialize will be of this form
+  // The format for saving to slicer is defined later
+  VersorRigidTransformType::Pointer rigidTransform = VersorRigidTransformType::New();
+
+  rigidTransform->SetIdentity();
+
+  using InitializerType =
+    itk::LandmarkBasedTransformInitializer<VersorRigidTransformType, itk::Image<short, 3>, itk::Image<short, 3>>;
+  InitializerType::Pointer initializer = InitializerType::New();
+
+  // This expects a VersorRigid3D.  The similarity transform works because
+  // it derives from that class
+  initializer->SetTransform(rigidTransform);
+
+  initializer->SetFixedLandmarks(fixedPoints);
+  initializer->SetMovingLandmarks(movingPoints);
+  initializer->InitializeTransform();
+
+  return rigidTransform;
+}
+
+
 //
 //
 //
@@ -398,8 +510,23 @@ computeTmspFromPoints(SImageType::PointType RP,
     std::cout << "============================\n" << std::endl;
   }
   return AlignMSPTransform;
+#endif
 }
 
+// F U N C T I O N S //////////////////////////////////////////////////////////
+RigidTransformType::Pointer
+GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
+{
+  SImageType::PointType ZeroCenter;
+
+  ZeroCenter.Fill(0.0);
+  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
+    computeTmspFromPoints(GetNamedPointFromLandmarkList(landmarks, "RP"),
+                          GetNamedPointFromLandmarkList(landmarks, "AC"),
+                          GetNamedPointFromLandmarkList(landmarks, "PC"),
+                          ZeroCenter);
+  return landmarkDefinedACPCAlignedToZeroTransform;
+}
 
 //
 //

@@ -65,6 +65,8 @@
 #include <itkScalarImageToHistogramGenerator.h>
 
 #include "GenericTransformImage.h"
+#include "itkLandmarkBasedTransformInitializer.h"
+#include "itkSimilarity3DTransform.h"
 
 #include "Slicer3LandmarkIO.h"
 
@@ -141,19 +143,11 @@ MakeLabelImage(SImageType::Pointer           in,
                const SImageType::PointType & VN4,
                const std::string &           fname);
 
-extern void
+extern RigidTransformType::Pointer
 ComputeMSP(SImageType::Pointer           input_image,
-           RigidTransformType::Pointer & output_transform,
-           SImageType::Pointer &         transformedImage,
            const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
            double &                      cc);
-
-extern void
-ComputeMSP_Easy(SImageType::Pointer           image,
-                RigidTransformType::Pointer & eyeFixed2msp_lmk_tfm,
-                const SImageType::PointType & orig_lmk_CenterOfHeadMass,
-                const int                     qualityLevel);
 
 extern SImageType::Pointer
 CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
@@ -168,6 +162,9 @@ computeTmspFromPoints(SImageType::PointType RP,
                       SImageType::PointType AC,
                       SImageType::PointType PC,
                       SImageType::PointType DesiredCenter);
+
+extern RigidTransformType::Pointer
+GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks);
 
 extern SImageType::PointType
 GetCenterOfHeadMass(SImageType::Pointer volume);
@@ -363,5 +360,17 @@ setLowHigh(typename SImageType::Pointer &   image,
   high = static_cast<typename SImageType::PixelType>(histogram->Quantile(0, 1.0F - percent));
   return static_cast<typename SImageType::PixelType>(otsuThresholds[0]);
 }
+
+
+using ImagePointType = itk::Point<double, 3>;
+using PointList = std::vector<ImagePointType>;
+using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
+using SimilarityTransformType = itk::Similarity3DTransform<double>;
+
+extern SimilarityTransformType::Pointer
+DoIt_Similarity(PointList fixedPoints, PointList movingPoints);
+
+extern VersorRigidTransformType::Pointer
+DoIt_Rigid(PointList fixedPoints, PointList movingPoints);
 
 #endif //__landmarksConstellationCommon_h

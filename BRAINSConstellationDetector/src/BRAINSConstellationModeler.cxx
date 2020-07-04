@@ -292,7 +292,8 @@ main(int argc, char * argv[])
       StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);
       statisticsFilter->Update();
-      SImageType::PixelType minPixelValue = statisticsFilter->GetMinimum();
+      const SImageType::PixelType local_minPixelValue = statisticsFilter->GetMinimum();
+      return local_minPixelValue;
     }(image);
 
     SImageType::Pointer volumeMSP =

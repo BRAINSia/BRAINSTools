@@ -44,7 +44,7 @@
 using LOOPITERTYPE = unsigned int;
 
 //  std::isnan(value) || std::isinf(value) )
-#if 1 // Runtime performance penalty that can be used to find faulty code
+#if 0 // Runtime performance penalty that can be used to find faulty code
       // during debugging.
 #  define CHECK_NAN(XXXTESTXXX, srcfile, srcline, extra_print)                                                         \
     {                                                                                                                  \

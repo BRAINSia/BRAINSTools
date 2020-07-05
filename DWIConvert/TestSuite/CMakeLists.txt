@@ -67,6 +67,8 @@ foreach( curr_tarball ${ALL_DICOM_TARBALLS} )
     WORKING_DIRECTORY ${DWIConvert_BINARY_DIR}
     COMMAND  ${CMAKE_COMMAND} -E tar xzf DATA{${curr_tarball}}
   )
+  ## Large tarballs need to be run serially (slowly :( to avoid girder timeouts)
+  set_tests_properties(${test_name} PROPERTIES RUN_SERIAL TRUE)
   list(APPEND DWITarDownloadTestNames ${test_name})
 endforeach()
 

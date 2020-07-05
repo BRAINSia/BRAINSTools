@@ -23,6 +23,10 @@
 #include <list>
 #include <map>
 
+#include <tbb/parallel_reduce.h>
+#include <tbb/parallel_for.h>
+
+
 // As defined in svn --username anonymous --password anonymous checkout https://www.nitrc.org/svn/abc
 // trunk/Engine/bias/LLSBiasCorrector.txx:#define LOGP(x) (logf((x)+1))
 //#define EXPP(x) std::exp((x) - 1.0)

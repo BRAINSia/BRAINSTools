@@ -31,8 +31,9 @@
 #include "itkTimeProbe.h"
 #include "ComputeDistributions.h"
 
+#include "tbb/blocked_range2d.h"
 #include "tbb/parallel_reduce.h"
-#include "tbb/tbb.h"
+
 
 #define USE_HALF_RESOLUTION 1
 #define MIN_SKIP_SIZE 2

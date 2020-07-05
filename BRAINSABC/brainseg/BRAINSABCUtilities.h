@@ -39,6 +39,8 @@
 #include <csignal>
 #include <algorithm>
 
+#include "tbb/blocked_range.h"
+
 using LOOPITERTYPE = unsigned int;
 
 //  std::isnan(value) || std::isinf(value) )

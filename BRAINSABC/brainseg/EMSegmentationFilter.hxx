@@ -120,8 +120,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::kNNCore(SampleType *      
   const signed int threadsToUse = std::max<signed int>(1, (maxNumThreads * 2.0 - baseMemoryNeeded) / 2.0);
   // i.e. 10 cores = 20GB available - 10 base requireed= 10/2 = 5 threads can run.
   const size_t minGrainSize = numTest / threadsToUse;
-  tbb::parallel_for(tbb::blocked_range<size_t>(0, numTest, minGrainSize),
-                    [=, &liklihoodMatrix](const tbb::blocked_range<size_t> & r) {
+  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(static_cast<LOOPITERTYPE>(0), static_cast<LOOPITERTYPE>(numTest), minGrainSize),
+                    [=, &liklihoodMatrix](const tbb::blocked_range<LOOPITERTYPE> & r) {
                       // each test case is a query point
                       MeasurementVectorType queryPoint(numFeatures);
                       // Now we should find K labels correspondence to K neighbors

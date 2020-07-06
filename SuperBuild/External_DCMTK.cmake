@@ -62,7 +62,6 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS
       ${EXTERNAL_PROJECT_DEFAULTS}
-      -DBUILD_SHARED_LIBS:BOOL=OFF
       -DBUILD_APPS:BOOL=OFF
       -DDCMTK_ENABLE_CXX11:BOOL=ON
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
@@ -78,14 +77,14 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS}
       # macOS
       -DCMAKE_MACOSX_RPATH:BOOL=0
-    INSTALL_COMMAND ""
+      #INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
   )
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(DCMTK_DIR ${EP_BINARY_DIR})
+  set(DCMTK_DIR ${CMAKE_INSTALL_PREFIX})
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

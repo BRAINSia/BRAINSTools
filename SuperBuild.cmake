@@ -1,3 +1,6 @@
+# This file contains content that is only used for not BRAINSTools superbuild
+# configuration
+
 #-----------------------------------------------------------------------------
 include(SlicerMacroGetOperatingSystemArchitectureBitness)
 
@@ -110,51 +113,6 @@ set(${LOCAL_PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION  lib)
 
 set(${LOCAL_PROJECT_NAME}_INSTALL_LIB_DIR ${${LOCAL_PROJECT_NAME}_CLI_LIBRARY_DESTINATION} )
 
-#-----------------------------------------------------------------------------
-# Add external project CMake args
-#-----------------------------------------------------------------------------
-string(APPEND CMAKE_CXX_FLAGS " ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS} ${BRAINSTools_C_OPTIMIZATION_FLAGS} ${BRAINSTools_C_WARNING_FLAGS}")
-string(APPEND CMAKE_C_FLAGS "  ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} ${BRAINSTools_CXX_OPTIMIZATION_FLAGS} ${BRAINSTools_CXX_WARNING_FLAGS}")
-
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
-set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
-mark_as_superbuild( # ALL_PROJECTS
-  VARS
-  # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
-    CMAKE_CXX_COMPILER:FILEPATH
-    CMAKE_C_COMPILER:FILEPATH
-    CMAKE_CXX_STANDARD:STRING
-    CMAKE_CXX_STANDARD_REQUIRED:BOOL
-    CMAKE_CXX_EXTENSIONS:BOOL
-    CMAKE_CXX_FLAGS:STRING
-    CMAKE_C_FLAGS:STRING
-    CMAKE_INSTALL_PREFIX:PATH
-    CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
-
-    BUILD_SHARED_LIBS:BOOL
-
-    MAKECOMMAND:STRING
-
-    INSTALL_RUNTIME_DESTINATION:STRING
-    INSTALL_LIBRARY_DESTINATION:STRING
-    INSTALL_ARCHIVE_DESTINATION:STRING
-
-    SITE:STRING
-    BUILDNAME:STRING
-
-    # NOTE: These are provided separately for each modules
-    #  CMAKE_BUILD_TYPE:STRING
-    #  BUILD_EXAMPLES:BOOL
-    #  BUILD_TESTING:BOOL
-
-  ALL_PROJECTS
-  )
-
-set( EXTERNAL_PROJECT_DEFAULTS
-  -DCMAKE_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE}
-  -DBUILD_EXAMPLES:BOOL=OFF
-  -DBUILD_TESTING:BOOL=OFF
-)
 #-----------------------------------------------------------------------------
 # Common external projects CMake variables
 #-----------------------------------------------------------------------------

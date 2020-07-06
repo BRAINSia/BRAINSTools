@@ -13,9 +13,10 @@ endif()
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
+
+
 ### --- Project specific additions here
 set(${proj}_CMAKE_OPTIONS
-  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DITK_DIR:PATH=${ITK_DIR}
   -DUSE_VTK:BOOL=OFF
@@ -148,12 +149,13 @@ ExternalProject_Add(${proj}
   CMAKE_CACHE_ARGS
     ${${proj}_CMAKE_OPTIONS}
     ${EXTERNAL_PROJECT_DEFAULTS}
-  INSTALL_COMMAND ""
+  #INSTALL_COMMAND ""
   DEPENDS "${${proj}_DEPENDENCIES}"
   )
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
-set(${proj}_LIBRARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
+set(${proj}_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+#${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
 
 mark_as_superbuild(
   VARS

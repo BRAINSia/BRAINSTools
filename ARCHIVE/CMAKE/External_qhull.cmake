@@ -24,9 +24,10 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
       -DBUILD_TESTS:BOOL=OFF
-      -DBUILD_SHARED_LIBS:BOOL=OFF
+      #-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+      -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_BUILD_SHARED_LIBS}
   )
 
   ### --- End Project specific additions

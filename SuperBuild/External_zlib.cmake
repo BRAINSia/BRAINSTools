@@ -27,7 +27,8 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  #  set(EP_INSTALL_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
+  set(EP_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
@@ -51,7 +52,7 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     CMAKE_CACHE_ARGS
       ${EXTERNAL_PROJECT_DEFAULTS}
       -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
-      -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+      #-DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
@@ -64,7 +65,11 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   if(WIN32)
     set(ZLIB_LIBRARY ${zlib_DIR}/lib/zlib.lib)
   else()
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
+    if(BUILD_SHARED_LIBS)
+      set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.so)
+    else()
+      set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
+    endif()
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,

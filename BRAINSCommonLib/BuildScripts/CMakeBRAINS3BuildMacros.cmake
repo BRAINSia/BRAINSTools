@@ -28,23 +28,10 @@ if(NOT StandardBRAINSBuildMacro)
       "${multiValueArgs}"
       ${ARGN}
       )
-  ## NOT USED if(NOT INTEGRATE_WITH_SLICER AND NOT BUILD_SHARED_LIBS)
-  ## NOT USED   set(BRAINSTools_BUILD_STATIC_LIBRARY BUILD_STATIC_LIBRARY)
-  ## NOT USED endif()
-
-  if( NOT INTEGRATE_WITH_SLICER AND NOT BUILD_TESTING )
-    ## The testing framework requires the shared lib infrastructure.
-    ## to avoid building the executables twice.
-    set(BRAINSTools_EXECUTABLE_ONLY EXECUTABLE_ONLY)
-  endif()
-  if ( ${BRAINS_SEM_EXECUTABLE_ONLY} )
-    set(BRAINSTools_EXECUTABLE_ONLY EXECUTABLE_ONLY)
-  endif()
 
     SEMMacroBuildCLI(
       NAME "${BRAINS_SEM_NAME}"
-        ${BRAINSTools_EXECUTABLE_ONLY}
-        ## NOT USED ${BRAINSTools_BUILD_STATIC_LIBRARY}
+        EXECUTABLE_ONLY
         ADDITIONAL_SRCS "${BRAINS_SEM_ADDITIONAL_SRCS}"
         LOGO_HEADER "${BRAINSCommonLib_BUILDSCRIPTS_DIR}/BRAINSLogo.h"
         TARGET_LIBRARIES "${BRAINS_SEM_TARGET_LIBRARIES}"

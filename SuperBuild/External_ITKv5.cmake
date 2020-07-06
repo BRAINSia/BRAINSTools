@@ -132,9 +132,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DModule_MGHIO:BOOL=ON
       -DModule_ITKIOMINC:BOOL=ON
       -DModule_ITKReview:BOOL=ON
-      -DBUILD_SHARED_LIBS:BOOL=OFF
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
-      -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
+      -DITK_WRAPPING:BOOL=OFF # HACK:  QUICK CHANGE
       -DITK_WRAP_PYTHON:BOOL=OFF
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
       # VTK
@@ -156,14 +155,15 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       # TBB
       -DModule_ITKTBB:BOOL=${${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB}
       -DTBB_DIR:PATH=${TBB_DIR}
-    INSTALL_COMMAND ""
+      #INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(ITK_DIR ${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
+  set(ITK_DIR ${CMAKE_INSTALL_PREFIX})
+  #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

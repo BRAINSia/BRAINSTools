@@ -38,39 +38,9 @@ if(APPLE)
     message(FATAL_ERROR "Only Mac OSX >= 10.13 are supported !")
   endif()
 
-  ## RPATH-RPATH-RPATH
-  ## https://cmake.org/Wiki/CMake_RPATH_handling
-  ## Always full RPATH
-  # In many cases you will want to make sure that the required libraries are
-  # always found independent from LD_LIBRARY_PATH and the install location. Then
-  # you can use these settings:
-
-  # use, i.e. don't skip the full RPATH for the build tree
-  set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-
-  # when building, don't use the install RPATH already
-  # (but later on when installing)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-
-  # add the automatically determined parts of the RPATH
-  # which point to directories outside the build tree to the install RPATH
-  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-  # the RPATH to be used when installing, but only if it's not a system directory
-  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-  if("${isSystemDir}" STREQUAL "-1")
-     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  endif("${isSystemDir}" STREQUAL "-1")
-  ## RPATH-RPATH-RPATH
   set(CMAKE_MACOSX_RPATH 0)
   mark_as_superbuild(
     VARS
-      CMAKE_SKIP_BUILD_RPATH:STRING
-      CMAKE_BUILD_WITH_INSTALL_RPATH:STRING
-      CMAKE_INSTALL_RPATH:STRING
-      CMAKE_INSTALL_RPATH_USE_LINK_PATH:STRING
       CMAKE_OSX_ARCHITECTURES:STRING
       CMAKE_OSX_SYSROOT:PATH
       CMAKE_OSX_DEPLOYMENT_TARGET:STRING
@@ -78,7 +48,6 @@ if(APPLE)
     ALL_PROJECTS
   )
 endif()
-
 #-----------------------------------------------------------------------------
 # Sanity checks
 #------------------------------------------------------------------------------
@@ -91,7 +60,9 @@ include(CMakeParseArguments)
 
 #------------------------------------------------------------------------------
 if(NOT Slicer_BUILD_BRAINSTOOLS)
-   set(BUILD_SHARED_LIBS OFF) ## Build everything static for non-slicer builds
+  ## HACK Force all shared libraries
+  set(BUILD_SHARED_LIBS ON) ## Build everything static for non-slicer builds
+  set(EXTERNAL_BUILD_SHARED_LIBS ON) ## Build external projects shared
 endif()
 #------------------------------------------------------------------------------
 
@@ -250,6 +221,7 @@ if(NOT COMMAND SETIFEMPTY)
     endif()
   endmacro()
 endif()
+
 
 #-----------------------------------------------------------------------------
 SETIFEMPTY(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
@@ -421,6 +393,7 @@ function(check_compiler_optimization_flags c_optimization_flags_var cxx_optimiza
   set(${c_optimization_flags_var} "${CMAKE_C_WARNING_FLAGS}" PARENT_SCOPE)
   set(${cxx_optimization_flags_var} "${CMAKE_CXX_WARNING_FLAGS}" PARENT_SCOPE)
 endfunction()
+
 if(NOT BRAINSToools_C_OPTIMIZATION_FLAGS OR NOT BRAINSToools_CXX_OPTIMIZATION_FLAGS ) # Only check once if not explicitly set on command line
   #-----------------------------------------------------------------------------
   #Check the set of warning flags the compiler supports
@@ -462,11 +435,11 @@ if(BUILD_OPTIMIZED AND NOT BUILD_COVERAGE)
   endif()
 endif()
 
-if(NOT Slicer_BUILD_BRAINSTOOLS)
-
-## Let Slicer use it
-mark_as_superbuild(
-   VARS
+#--if(NOT Slicer_BUILD_BRAINSTOOLS)
+#--
+#--## Let Slicer use it
+#--mark_as_superbuild(
+#--   VARS
 #--    CMAKE_BUILD_TYPE:STRING
 #--    CMAKE_CXX_FLAGS_DEBUG:STRING
 #--    CMAKE_CXX_FLAGS_MINSIZEREL:STRING
@@ -483,10 +456,6 @@ mark_as_superbuild(
 #--    CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO:STRING
 #--    CMAKE_EXTRA_GENERATOR:STRING
 #--    CMAKE_GENERATOR:STRING
-    CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH
-    CMAKE_BUNDLE_OUTPUT_DIRECTORY:PATH
-    CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH
-    CMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH
 #--    CMAKE_MODULE_PATH:PATH
 #--    CMAKE_SHARED_LINKER_FLAGS:STRING
 #--    CMAKE_SHARED_LINKER_FLAGS_DEBUG:STRING
@@ -497,9 +466,102 @@ mark_as_superbuild(
 #--    CTEST_NEW_FORMAT:BOOL
 #--    MEMORYCHECK_COMMAND:PATH
 #--    MEMORYCHECK_COMMAND_OPTIONS:STRING
-  ALL_PROJECTS
-)
+#--  ALL_PROJECTS
+#--)
+#--endif()
+
+#----------------------------------------------------------------------------
+# Always full RPATH
+# https://cmake.org/Wiki/CMake_RPATH_handling
+# Always full RPATH
+# In many cases you will want to make sure that the required libraries are
+# always found independent from LD_LIBRARY_PATH and the install location. Then
+# you can use these settings:
+
+if(NOT Slicer_BUILD_BRAINSTOOLS)
+  # use, i.e. don't skip the full RPATH for the build tree
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+
+  # when building, don't use the install RPATH already
+  # (but later on when installing)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+
+  # add the automatically determined parts of the RPATH
+  # which point to directories outside the build tree to the install RPATH
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+  # the RPATH to be used when installing, but only if it's not a system directory
+  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+  if("${isSystemDir}" STREQUAL "-1")
+      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  endif("${isSystemDir}" STREQUAL "-1")
+
+  mark_as_superbuild(
+    VARS
+      CMAKE_INSTALL_PREFIX:PATH
+      CMAKE_SKIP_BUILD_RPATH:BOOL
+      CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL
+      CMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL
+      CMAKE_INSTALL_RPATH:PATH
+
+      CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH
+      CMAKE_BUNDLE_OUTPUT_DIRECTORY:PATH
+      CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH
+      CMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH
+    ALL_PROJECTS
+  )
 endif()
+
+#-----------------------------------------------------------------------------
+# Add external project CMake args
+#-----------------------------------------------------------------------------
+string(APPEND CMAKE_CXX_FLAGS " ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS} ${BRAINSTools_C_OPTIMIZATION_FLAGS} ${BRAINSTools_C_WARNING_FLAGS}")
+string(APPEND CMAKE_C_FLAGS "  ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} ${BRAINSTools_CXX_OPTIMIZATION_FLAGS} ${BRAINSTools_CXX_WARNING_FLAGS}")
+
+set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
+mark_as_superbuild( # ALL_PROJECTS
+  VARS
+  # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
+    CMAKE_CXX_COMPILER:FILEPATH
+    CMAKE_C_COMPILER:FILEPATH
+    CMAKE_CXX_STANDARD:STRING
+    CMAKE_CXX_STANDARD_REQUIRED:BOOL
+    CMAKE_CXX_EXTENSIONS:BOOL
+    CMAKE_CXX_FLAGS:STRING
+    CMAKE_C_FLAGS:STRING
+    CMAKE_INSTALL_PREFIX:PATH
+    CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
+
+    BUILD_SHARED_LIBS:BOOL
+
+    MAKECOMMAND:STRING
+
+    INSTALL_RUNTIME_DESTINATION:STRING
+    INSTALL_LIBRARY_DESTINATION:STRING
+    INSTALL_ARCHIVE_DESTINATION:STRING
+
+    SITE:STRING
+    BUILDNAME:STRING
+
+    # NOTE: These are provided separately for each modules
+    #  CMAKE_BUILD_TYPE:STRING
+    #  BUILD_EXAMPLES:BOOL
+    #  BUILD_TESTING:BOOL
+
+  ALL_PROJECTS
+  )
+
+set( EXTERNAL_PROJECT_DEFAULTS
+  -DCMAKE_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE}
+  -DBUILD_EXAMPLES:BOOL=OFF
+  -DBUILD_TESTING:BOOL=OFF
+  #-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+  -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
+  -DBUILD_SHARED_LIBS:BOOL=${EXTERNAL_BUILD_SHARED_LIBS}
+)
+
 
 #------------------------------------------------------------------------------
 # Configure and build

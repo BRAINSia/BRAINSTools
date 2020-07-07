@@ -6,7 +6,7 @@ endmacro()
 
 set( _GIT_VERSION_MAJOR "5" )
 set( _GIT_VERSION_MINOR "3" )
-_set_if_not_empty( _GIT_VERSION_PATCH "0" )
+_set_if_not_empty( _GIT_VERSION_PATCH "1" )
 _set_if_not_empty( _GIT_VERSION_TWEAK "" )
 _set_if_not_empty( _GIT_VERSION_RC "" )
 ## DO NOT SET THE CONSTANTLY CHANGING VERSION_POST for DISTRIBUTION RELEASES

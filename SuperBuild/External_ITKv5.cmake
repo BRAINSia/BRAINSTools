@@ -57,8 +57,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    refine-installed-resources
-    #481c31af68242fe84d37c06a6eb6841b9f0c1d6c # 20200704 Fix nifti sform improvement
+    9e0d33cd1ed4a52fc4c55cdaf9e0550690ce4d6f # 20200707 Shared library install directories
     QUIET
     )
 

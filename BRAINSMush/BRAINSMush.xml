@@ -5,7 +5,7 @@
   <description>
   This program: 1) generates a weighted mixture image optimizing the mean and variance and 2) produces a mask of the brain volume
   </description>
-  <version>5.3.0</version>
+  <version>5.3.1</version>
   <documentation-url>http:://mri.radiology.uiowa.edu</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>

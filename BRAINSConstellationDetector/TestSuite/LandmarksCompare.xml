@@ -5,7 +5,7 @@
   <description>
     Compares two .fcsv or .wts text files and verifies that they are identicle.  Used for testing landmarks files.
   </description>
-  <version>5.3.0</version>
+  <version>5.3.1</version>
   <documentation-url> </documentation-url>
   <license> </license>
   <contributor>Ali Ghayoor</contributor>

@@ -57,7 +57,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    481c31af68242fe84d37c06a6eb6841b9f0c1d6c # 20200704 Fix nifti sform improvement
+    refine-installed-resources
+    #481c31af68242fe84d37c06a6eb6841b9f0c1d6c # 20200704 Fix nifti sform improvement
     QUIET
     )
 

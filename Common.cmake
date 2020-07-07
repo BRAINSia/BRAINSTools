@@ -16,6 +16,12 @@ endif()
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 set_property(CACHE EXTERNAL_PROJECT_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 
+if(NOT CMAKE_INSTALL_PREFIX_SET )
+  set(CMAKE_INSTALL_PREFIX_SET TRUE)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-${PROJECT_VERSION}"
+      CACHE PATH "Install directory used by install" FORCE)
+endif()
+
 #-----------------------------------------------------------------------------
 if(APPLE)
 #-----------------------------------------------------------------------------

@@ -58,7 +58,8 @@ ExternalProject_Add(${proj}
   ${${proj}_DEPENDENCIES}
   )
 
-set(TBB_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}-install/lib/cmake/tbb)
+#set(TBB_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}-install/lib/cmake/tbb)
+set(TBB_DIR ${CMAKE_INSTALL_PREFIX}cmake/tbb)
 
 #if( APPLE )
 #  set( TBB_MIN_VERSION "2019.0") ## Actually 2019.0.11002 is needed for when OSX MIN version < 10.12

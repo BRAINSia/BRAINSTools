@@ -16,7 +16,7 @@ endif()
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 set_property(CACHE EXTERNAL_PROJECT_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 
-if(NOT CMAKE_INSTALL_PREFIX_SET )
+if(NOT CMAKE_INSTALL_PREFIX_SET)
   set(CMAKE_INSTALL_PREFIX_SET TRUE)
   set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-${PROJECT_VERSION}"
       CACHE PATH "Install directory used by install" FORCE)
@@ -476,15 +476,23 @@ endif()
 #--)
 #--endif()
 
-#----------------------------------------------------------------------------
-# Always full RPATH
-# https://cmake.org/Wiki/CMake_RPATH_handling
-# Always full RPATH
-# In many cases you will want to make sure that the required libraries are
-# always found independent from LD_LIBRARY_PATH and the install location. Then
-# you can use these settings:
+#-----------------------------------------------------------------------------
+# Add external project CMake args
+#-----------------------------------------------------------------------------
+string(APPEND CMAKE_CXX_FLAGS " ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS} ${BRAINSTools_C_OPTIMIZATION_FLAGS} ${BRAINSTools_C_WARNING_FLAGS}")
+string(APPEND CMAKE_C_FLAGS "  ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} ${BRAINSTools_CXX_OPTIMIZATION_FLAGS} ${BRAINSTools_CXX_WARNING_FLAGS}")
+
 
 if(NOT Slicer_BUILD_BRAINSTOOLS)
+  set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
+  #----------------------------------------------------------------------------
+  # Always full RPATH
+  # https://cmake.org/Wiki/CMake_RPATH_handling
+  # Always full RPATH
+  # In many cases you will want to make sure that the required libraries are
+  # always found independent from LD_LIBRARY_PATH and the install location. Then
+  # you can use these settings:
+
   # use, i.e. don't skip the full RPATH for the build tree
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
@@ -516,48 +524,35 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
       # Do not pollute projects CMAKE_BUNDLE_OUTPUT_DIRECTORY:PATH
       # Do not pollute projects CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH
       # Do not pollute projects CMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH
+
+      # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
+      CMAKE_CXX_COMPILER:FILEPATH
+      CMAKE_C_COMPILER:FILEPATH
+      CMAKE_CXX_STANDARD:STRING
+      CMAKE_CXX_STANDARD_REQUIRED:BOOL
+      CMAKE_CXX_EXTENSIONS:BOOL
+      CMAKE_CXX_FLAGS:STRING
+      CMAKE_C_FLAGS:STRING
+      CMAKE_INSTALL_PREFIX:PATH
+      CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
+
+      BUILD_SHARED_LIBS:BOOL
+
+      MAKECOMMAND:STRING
+
+      INSTALL_RUNTIME_DESTINATION:STRING
+      INSTALL_LIBRARY_DESTINATION:STRING
+      INSTALL_ARCHIVE_DESTINATION:STRING
+
+      SITE:STRING
+      BUILDNAME:STRING
+      # NOTE: These are provided separately for each modules
+      #  CMAKE_BUILD_TYPE:STRING
+      #  BUILD_EXAMPLES:BOOL
+      #  BUILD_TESTING:BOOL
     ALL_PROJECTS
   )
 endif()
-
-#-----------------------------------------------------------------------------
-# Add external project CMake args
-#-----------------------------------------------------------------------------
-string(APPEND CMAKE_CXX_FLAGS " ${CMAKE_C_FLAGS_INIT} ${ADDITIONAL_C_FLAGS} ${BRAINSTools_C_OPTIMIZATION_FLAGS} ${BRAINSTools_C_WARNING_FLAGS}")
-string(APPEND CMAKE_C_FLAGS "  ${CMAKE_CXX_FLAGS_INIT} ${ADDITIONAL_CXX_FLAGS} ${BRAINSTools_CXX_OPTIMIZATION_FLAGS} ${BRAINSTools_CXX_WARNING_FLAGS}")
-
-set(CMAKE_INCLUDE_DIRECTORIES_BEFORE OFF)
-mark_as_superbuild( # ALL_PROJECTS
-  VARS
-  # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
-    CMAKE_CXX_COMPILER:FILEPATH
-    CMAKE_C_COMPILER:FILEPATH
-    CMAKE_CXX_STANDARD:STRING
-    CMAKE_CXX_STANDARD_REQUIRED:BOOL
-    CMAKE_CXX_EXTENSIONS:BOOL
-    CMAKE_CXX_FLAGS:STRING
-    CMAKE_C_FLAGS:STRING
-    CMAKE_INSTALL_PREFIX:PATH
-    CMAKE_INCLUDE_DIRECTORIES_BEFORE:BOOL
-
-    BUILD_SHARED_LIBS:BOOL
-
-    MAKECOMMAND:STRING
-
-    INSTALL_RUNTIME_DESTINATION:STRING
-    INSTALL_LIBRARY_DESTINATION:STRING
-    INSTALL_ARCHIVE_DESTINATION:STRING
-
-    SITE:STRING
-    BUILDNAME:STRING
-
-    # NOTE: These are provided separately for each modules
-    #  CMAKE_BUILD_TYPE:STRING
-    #  BUILD_EXAMPLES:BOOL
-    #  BUILD_TESTING:BOOL
-
-  ALL_PROJECTS
-  )
 
 set( EXTERNAL_PROJECT_DEFAULTS
   -DCMAKE_BUILD_TYPE:STRING=${EXTERNAL_PROJECT_BUILD_TYPE}

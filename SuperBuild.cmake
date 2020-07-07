@@ -236,8 +236,10 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
         -DBUILD_TESTING:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DBUILD_EXAMPLES:BOOL=${${LOCAL_PROJECT_NAME}_BUILD_TESTING}
+        -DCMAKE_INSTALL_PREFIX_SET:BOOL=TRUE
+        -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
         ${MYBRAINSTools_EP_ARGS}  # This appends the "mark_as_superbuild" variables to the written out cache for clion use
-        INSTALL_COMMAND ""
+        #INSTALL_COMMAND ""
         LOG_CONFIGURE ON
         LOG_BUILD ON
         )

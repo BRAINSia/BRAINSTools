@@ -16,11 +16,14 @@ endif()
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 set_property(CACHE EXTERNAL_PROJECT_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo")
 
+#-----------------------------------------------------------------------------
+# Change the default install prefix for superbuild packages
 if(NOT CMAKE_INSTALL_PREFIX_SET)
-  set(CMAKE_INSTALL_PREFIX_SET TRUE)
   set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-${PROJECT_VERSION}"
       CACHE PATH "Install directory used by install" FORCE)
 endif()
+set(CMAKE_INSTALL_PREFIX_SET TRUE
+      CACHE BOOL "TAG indicating that INSTALL_PREFIX_WAS_SET" FORCE )
 
 #-----------------------------------------------------------------------------
 if(APPLE)

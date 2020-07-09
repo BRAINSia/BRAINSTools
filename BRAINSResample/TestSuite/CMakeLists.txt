@@ -108,7 +108,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
   --referenceVolume DATA{${TestData_DIR}/applyWarp1.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/applyWarp_test1.nii.gz
   --deformationVolume DATA{${TestData_DIR}/OutDefField.nii.gz}
-  --pixelType short --interpolationMode NearestNeighbor
+  --pixelType input --interpolationMode NearestNeighbor
   )
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ValidateBRAINSResampleTest2_nii
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSResampleTestDriver>

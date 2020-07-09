@@ -50,7 +50,7 @@
       <name>pixelType</name>
       <longflag>pixelType</longflag>
       <label>Pixel Type</label>
-      <description>Specifies the pixel type for the input/output images.  The "binary" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk.</description>
+      <description>Specifies the pixel type for the input/output images.  If the type is "input", then infer from the input image.  The "binary" pixel type uses a modified algorithm whereby the image is read in as unsigned char, a signed distance map is created, signed distance map is resampled, and then a thresholded image of type unsigned char is written to disk.</description>
       <default>float</default>
       <element>float</element>
       <element>short</element>
@@ -59,6 +59,7 @@
       <element>uint</element>
       <element>uchar</element>
       <element>binary</element>
+      <element>input</element>
     </string-enumeration>
 
   </parameters>

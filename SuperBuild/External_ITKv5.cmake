@@ -57,7 +57,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    9e0d33cd1ed4a52fc4c55cdaf9e0550690ce4d6f # 20200707 Shared library install directories
+    ab7a9e378c8eeb6f3bc9280c634d9316be906d95 # 20200709 Fixed up fftw installs
     QUIET
     )
 

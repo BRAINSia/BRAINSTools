@@ -23,13 +23,13 @@ include(ProjectSourceVersion)
 #-- DON"T OVERRIDE project() set(${PROJECT_NAME}_VERSION_TWEAK ${_GIT_VERSION_TWEAK})
 ### SEE ---- NOTE  --- ABOVE --- FOR CONSISTENT -- TAGGING
 if(NOT "${${PROJECT_NAME}_VERSION_MAJOR}" EQUAL "${_GIT_VERSION_MAJOR}")
-  message(WARNING "VERSION_MAJOR from project not match git tag version: \"${${PROJECT_NAME}_VERSION_MAJOR}\" EQUAL \"${_GIT_VERSION_MAJOR}\"")
+  message(WARNING "VERSION_MAJOR from project not match git tag (${_GIT_TAG}) version: \"${${PROJECT_NAME}_VERSION_MAJOR}\" EQUAL \"${_GIT_VERSION_MAJOR}\"")
 endif()
 if(NOT "${${PROJECT_NAME}_VERSION_MINOR}" EQUAL "${_GIT_VERSION_MINOR}")
-  message(WARNING "VERSION_MINOR from project not match git tag version: \"${${PROJECT_NAME}_VERSION_MINOR}\" EQUAL \"${_GIT_VERSION_MINOR}\"")
+  message(WARNING "VERSION_MINOR from project not match git tag ${_GIT_TAG} version: \"${${PROJECT_NAME}_VERSION_MINOR}\" EQUAL \"${_GIT_VERSION_MINOR}\"")
 endif()
 if(NOT "${${PROJECT_NAME}_VERSION_PATCH}" EQUAL "${_GIT_VERSION_PATCH}")
-  message(WARNING "VERSION_PATCH from project not match git tag version: \"${${PROJECT_NAME}_VERSION_PATCH}\" EQUAL \"${_GIT_VERSION_PATCH}\"")
+  message(WARNING "VERSION_PATCH from project not match git tag ${_GIT_TAG} version: \"${${PROJECT_NAME}_VERSION_PATCH}\" EQUAL \"${_GIT_VERSION_PATCH}\"")
 endif()
 
 # pre-release codes are defined based on suffix of most recent tags.

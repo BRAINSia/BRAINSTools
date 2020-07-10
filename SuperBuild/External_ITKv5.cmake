@@ -4,7 +4,6 @@ set(proj ITKv5)
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB)
-  message(STATUS "Building against TBB_DIR:${TBB_DIR}:")
   list(APPEND ${proj}_DEPENDENCIES "TBB")
 endif()
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)

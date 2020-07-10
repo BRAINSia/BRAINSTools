@@ -25,6 +25,9 @@ endif()
 set(CMAKE_INSTALL_PREFIX_SET TRUE
       CACHE BOOL "TAG indicating that INSTALL_PREFIX_WAS_SET" FORCE )
 
+if(NOT Slicer_BUILD_BRAINSTOOLS)
+  set(BRAINSTOOLS_MACOSX_RPATH ON)
+endif()
 #-----------------------------------------------------------------------------
 if(APPLE)
 #-----------------------------------------------------------------------------
@@ -47,7 +50,7 @@ if(APPLE)
     message(FATAL_ERROR "Only Mac OSX >= 10.13 are supported !")
   endif()
 
-  set(CMAKE_MACOSX_RPATH 0)
+  set(CMAKE_MACOSX_RPATH ${BRAINSTOOLS_MACOSX_RPATH})
   mark_as_superbuild(
     VARS
       CMAKE_OSX_ARCHITECTURES:STRING
@@ -522,7 +525,7 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
   # the RPATH to be used when installing, but only if it's not a system directory
   if(APPLE)
     #TODO set @rpath settings correctly, use full path for now
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "${CMAKE_INSTALL_PREFIX}/lib" "${CMAKE_INSTALL_PREFIX}/lib/ITK-5.2")
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../lib" "@executable_path/../lib/ITK-5.2" "@executable_path/ITK-5.2")
   else()
     list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib" "\$ORIGIN/../lib/ITK-5.2" "\$ORIGIN/ITK-5.2")
     #          Relative for binaries FROM:  /bin/prog.bin     /bin/prog.bin             /lib/libitkXXXX.so

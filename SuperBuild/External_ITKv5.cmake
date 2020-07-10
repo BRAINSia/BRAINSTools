@@ -159,6 +159,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       ${${proj}_DEPENDENCIES}
     )
 
+  message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
   set(ITK_DIR ${CMAKE_INSTALL_PREFIX})

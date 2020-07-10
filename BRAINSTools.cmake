@@ -84,6 +84,7 @@ if(USE_BRAINSABC)
   find_package(TBB ${TBB_MIN_VERSION} REQUIRED
 #               COMPONENTS tbb tbbmalloc
                NO_MODULE PATHS ${TBB_DIR} )
+#message(FATAL_ERROR "${TBB_DIR}")
 
   # set(VTK_SMP_IMPLEMENTATION_LIBRARIES ${tbb_LIBRARY})
   include_directories(${tbb_INCLUDE_DIRS})

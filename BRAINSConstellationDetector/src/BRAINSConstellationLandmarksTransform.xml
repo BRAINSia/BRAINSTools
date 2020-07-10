@@ -8,9 +8,8 @@
   <version>5.3.1</version>
   <documentation-url> </documentation-url>
   <license> </license>
-  <contributor>Ali Ghayoor</contributor>
-<acknowledgements>
-</acknowledgements>
+  <contributor>Ali Ghayoor and Hans J. Johnson</contributor>
+  <acknowledgements></acknowledgements>
 
   <parameters>
     <label>IO</label>
@@ -31,7 +30,18 @@
       <longflag>inputTransformFile</longflag>
       <label>Input transform file</label>
       <channel>input</channel>
-      <description>input composite transform file (.h5,.hdf5)</description>
+      <default></default>
+      <description>Input transform file (.h5,.hdf5) appropriate for pushing landmarks (no inverse needed to appy to points)</description>
+    </transform>
+
+    <transform fileExtensions=".h5,.hdf5">
+      <name>inputImageTransformFile</name>
+      <flag>d</flag>
+      <longflag>inputImageTransformFile</longflag>
+      <label>Input image transform file</label>
+      <channel>input</channel>
+      <default></default>
+      <description>Input transform file (.h5,.hdf5) appropriate for pulling points (i.e. inverse needed to push point)</description>
     </transform>
 
     <file fileExtensions=".fcsv">
@@ -44,5 +54,4 @@
     </file>
 
   </parameters>
-
 </executable>

@@ -43,48 +43,70 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  if (inputLandmarksFile.empty() || inputTransformFile.empty() || outputLandmarksFile.empty())
+  if (inputLandmarksFile.empty() || outputLandmarksFile.empty() ||
+      (inputImageTransformFile.empty() && inputTransformFile.empty()) ||
+      (!inputImageTransformFile.empty() && !inputTransformFile.empty()))
   {
     std::cerr << "Input and output file names should be given by commandline. " << std::endl;
     std::cerr << "Usage:\n"
               << "~/BRAINSConstellationLandmarksTransform\n"
               << "--inputLandmarksFile (-i)\n"
-              << "--inputTransformFile (-t)\n"
-              << "--outputLandmarksFile (-o)" << std::endl;
+              << "--outputLandmarksFile (-o)\n"
+              << "< --inputTransformFile (-t) | --inputImageTransformFile (-d)>\n"
+              << std::endl;
     return EXIT_FAILURE;
   }
+
 
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksFile);
   LandmarksMapType transformedLandmarks;
 
-  using ReaderType = itk::TransformFileReader;
-  ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(inputTransformFile);
-  reader->Update();
-
-  ReaderType::TransformListType * transformList = reader->GetModifiableTransformList();
-  if(transformList->size() != 1)
+  itk::Transform<double, 3, 3>::Pointer lmk_transform = nullptr;
   {
-    std::cerr << "ERROR: Only one transform allowed." << std::endl;
-    return EXIT_FAILURE;
+    const bool isLandmarkTransform = !inputTransformFile.empty();
+
+    using ReaderType = itk::TransformFileReader;
+    ReaderType::Pointer reader = ReaderType::New();
+    if (isLandmarkTransform)
+    {
+      reader->SetFileName(inputTransformFile);
+    }
+    else
+    {
+      reader->SetFileName(inputImageTransformFile);
+    }
+    reader->Update();
+    ReaderType::TransformListType * transformList = reader->GetModifiableTransformList();
+    if (transformList->size() != 1)
+    {
+      std::cerr << "ERROR: Only one transform allowed." << std::endl;
+      return EXIT_FAILURE;
+    }
+    auto transformIterator = transformList->begin();
+    auto disk_transform = dynamic_cast<itk::Transform<double, 3, 3> *>((*transformIterator).GetPointer());
+
+    if (isLandmarkTransform)
+    {
+      lmk_transform = disk_transform;
+    }
+    else
+    {
+      lmk_transform = disk_transform->GetInverseTransform().GetPointer();
+    }
   }
-
-  auto transformIterator = transformList->begin();
-  itk::Transform<double,3,3>::Pointer generic_transform = dynamic_cast<itk::Transform<double,3,3> *>((*transformIterator).GetPointer());
-  if( generic_transform.IsNull())
+  if (lmk_transform.IsNull())
   {
-    std::cerr << "The input transform not castable to  Transform<double,3,3> baseclass type." << std::endl;
+    std::cerr << "The input transform not invertable or castable to  Transform<double,3,3> baseclass type."
+              << std::endl;
     return EXIT_FAILURE;
   }
 
   LandmarksMapType::const_iterator it = origLandmarks.begin();
   for (; it != origLandmarks.end(); it++)
   {
-    transformedLandmarks[it->first] = generic_transform->TransformPoint(it->second);
+    transformedLandmarks[it->first] = lmk_transform->TransformPoint(it->second);
   }
-
   WriteITKtoSlicer3Lmk(outputLandmarksFile, transformedLandmarks);
   std::cout << "The transformed landmarks file is written." << std::endl;
-
   return EXIT_SUCCESS;
 }

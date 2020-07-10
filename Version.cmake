@@ -10,12 +10,15 @@
 include(ProjectSourceVersion)
 
 ## NOTE:    NEED TO MANUALLY UPDATE ALL XML FILES
-##          vim $(git grep  -l "<version>" -- *.xml)
-##          :%s/< *version *> *[^<]*</<version>5.3.1</g
-##          git commit
-##          git tag -a v5.3.1
-##          git push origin v5.3.1
-##          git push origin --tags  ## DON'T forget to do this!
+##       -  vim $(git grep  -l "<version>" -- *.xml)
+##                     :%s/< *version *> *[^<]*</<version>5.3.2</g
+##       -  manually modify CMakeList.txt to update version in project() command
+##       -  manually edit CMake/ProjectSourceVersionVars.cmake and change version defaults
+##       -  Change values in this file
+##       -  git commit -a -m"ENH: Updating version to v5.3.2"
+##       -  git tag -a v5.3.2 -m"ENH: Tagging v5.3.2"
+##       -  git push origin v5.3.2
+##       -  git push origin --tags  ## DON'T forget to do this!
 ## See note above for updating versions
 #-- DON'T OVERRIDE projcet() set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})
 #-- DON'T OVERRIDE project() set(${PROJECT_NAME}_VERSION_MINOR ${_GIT_VERSION_MINOR})

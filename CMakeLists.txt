@@ -37,7 +37,7 @@ set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often ma
 project(${LOCAL_PROJECT_NAME}
    LANGUAGES  C CXX
    DESCRIPTION "BRAINSTools see github at https://github.com/BRAINSia/BRAINSTools" #<-- cmake version 3.9 or greater
-   VERSION 5.3.1
+   VERSION 5.3.2
 )
 #-- The project() command stores the version number and its components in variables
 #-- PROJECT_VERSION, <PROJECT-NAME>_VERSION

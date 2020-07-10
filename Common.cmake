@@ -491,29 +491,52 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
   #----------------------------------------------------------------------------
   # Always full RPATH
   # https://cmake.org/Wiki/CMake_RPATH_handling
+  # https://gitlab.kitware.com/cmake/community/-/wikis/doc/cmake/RPATH-handling
   # Always full RPATH
   # In many cases you will want to make sure that the required libraries are
   # always found independent from LD_LIBRARY_PATH and the install location. Then
   # you can use these settings:
 
+  # Note: 'build' is different than 'install'.  The 'build' binaries
+  #       are used for running the test suite. The 'install' binaries
+  #       will have their RPATH values changed to be appropriate
+  #       for running from the final install locations.
+
   # use, i.e. don't skip the full RPATH for the build tree
+  # build tree binaries will have RPATH set
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
-  # when building, don't use the install RPATH already
-  # (but later on when installing)
-  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  # Create relative path references for the build path
+  set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+  # when building for build tree, don't use the 'install' RPATH values
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
   # add the automatically determined parts of the RPATH
   # which point to directories outside the build tree to the install RPATH
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+  # Specifying these internally with $ORIGIN or @rpath allows the entire install directory
+  # to be redistributed while maintaining relative pathing so that the proper shared libs
+  # are found and used.
   # the RPATH to be used when installing, but only if it's not a system directory
-  list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-  if("${isSystemDir}" STREQUAL "-1")
-      set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-  endif("${isSystemDir}" STREQUAL "-1")
+  if(APPLE)
+    #TODO set @rpath settings correctly, use full path for now
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "${CMAKE_INSTALL_PREFIX}/lib" "${CMAKE_INSTALL_PREFIX}/lib/ITK-5.2")
+  else()
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib" "\$ORIGIN/../lib/ITK-5.2" "\$ORIGIN/ITK-5.2")
+    #          Relative for binaries FROM:  /bin/prog.bin     /bin/prog.bin             /lib/libitkXXXX.so
+  endif()
+  foreach(CANDIDATE_RPATH ${CANDIDATE_PATHS_TO_INCLUDE})
+    list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CANDIDATE_RPATH}" isSystemDir)
+    #message(STATUS "------------------------- #${isSystemDir}#")
+    if("${isSystemDir}" STREQUAL "-1")
+      list(APPEND NON_SYS_RPATHS "${CANDIDATE_RPATH}")
+    endif()
+    list(JOIN NON_SYS_RPATHS ":" CMAKE_INSTALL_RPATH)
+    #message(STATUS "HACK^CANDIDATE_RPATH^${CANDIDATE_RPATH}^\nNON_SYS_RPATHS^${NON_SYS_RPATHS}^\nCMAKE_INSTALL_RPATH^${CMAKE_INSTALL_RPATH}^\nCMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES^${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES}")
+  endforeach()
+
 
   mark_as_superbuild(
     VARS

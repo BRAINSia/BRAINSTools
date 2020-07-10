@@ -530,8 +530,16 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
     #TODO set @rpath settings correctly, use full path for now
     list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../lib" "@executable_path/../lib/ITK-5.2" "@executable_path/ITK-5.2")
   else()
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib" "\$ORIGIN/../lib/ITK-5.2" "\$ORIGIN/ITK-5.2")
-    #          Relative for binaries FROM:  /bin/prog.bin     /bin/prog.bin             /lib/libitkXXXX.so
+    # Most libararies are installed in ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
+    # ITK install path puts FFTW in lib subdirectory ITK-5.2
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/ITK-5.2" "\$ORIGIN/ITK-5.2")
+    #          Relative for binaries FROM:  /bin/prog.bin                                /lib/libitkXXXX.so
+    # TBB install path is always "${CMAKE_INSTALL_PREFIX}/lib" even on rhel7
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib")
+
+    # Now remove possible duplicates
+    list(REMOVE_DUPLICATES CANDIDATE_PATHS_TO_INCLUDE)
   endif()
   foreach(CANDIDATE_RPATH ${CANDIDATE_PATHS_TO_INCLUDE})
     list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CANDIDATE_RPATH}" isSystemDir)
@@ -539,10 +547,10 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
     if("${isSystemDir}" STREQUAL "-1")
       list(APPEND NON_SYS_RPATHS "${CANDIDATE_RPATH}")
     endif()
+    list(REMOVE_DUPLICATES NON_SYS_RPATHS)
     list(JOIN NON_SYS_RPATHS ":" CMAKE_INSTALL_RPATH)
     #message(STATUS "HACK^CANDIDATE_RPATH^${CANDIDATE_RPATH}^\nNON_SYS_RPATHS^${NON_SYS_RPATHS}^\nCMAKE_INSTALL_RPATH^${CMAKE_INSTALL_RPATH}^\nCMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES^${CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES}")
   endforeach()
-
 
   mark_as_superbuild(
     VARS

@@ -72,3 +72,5 @@ add_custom_target(InstallReferenceAtlas
                   DEPENDS AtlasNIFTI AtlasNRRD AtlasTxt AtlasCtbl AtlasFcsv AtlasCsv AtlasProb
                           AtlasBCD AtlasBCDSHA512)
 set_target_properties(InstallReferenceAtlas PROPERTIES FOLDER ${MODULE_FOLDER})
+
+install(DIRECTORY ${ATLAS_INSTALL_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/Atlas)

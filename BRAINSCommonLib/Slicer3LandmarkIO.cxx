@@ -26,6 +26,21 @@
 #include "itkNumberToString.h"
 #include "itkImageFileReaderException.h"
 #include <cctype>
+#include <regex>
+
+// COPIED FROM Slicer3D
+/// Coordinate system options
+/// LPS coordinate system is used the most commonly in medical image computing.
+///   Slicer is moving towards using this coordinate system in all files by default
+///   (while keep using RAS coordinate system internally).
+/// RAS coordinate system is used in Slicer internally. For many years, Slicer used
+///   this coordinate system in files that it created, too.
+enum
+{
+  CoordinateSystemRAS = 0,
+  CoordinateSystemLPS = 1,
+};
+
 
 // https://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start (in place)
@@ -182,7 +197,7 @@ WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const Landmar
   std::stringstream lmksStream;
   // Write the .fcvs header information.
   lmksStream << "# Markups fiducial file version = 4.6" << std::endl;
-  lmksStream << "# CoordinateSystem = 0" << std::endl;
+  lmksStream << "# CoordinateSystem = 0" << std::endl; // 0=RAS 1=LPS
   lmksStream << "# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID" << std::endl;
   lmksStream << lmkPointStream.str();
 
@@ -215,10 +230,51 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
+  bool useLPS = false;
+  std::string version_major_str = "unknown";
+  std::string version_minor_str = "unknown";
+  std::string coordinate_str = "RAS"; // Match old slicer version RAS strings
   std::string line;
   while (getline(myfile, line))
   {
-    if (line.compare(0, 1, "#") != 0) // Skip lines starting with a #
+    if (line.compare(0, 1, "#") == 0) // Process header lines
+    {
+      // Process comment files
+      if (line.find("version") != std::string::npos)
+      {
+        // Extract version number
+        std::regex  re("# *Markups *fiducial *file *version *= (.*)");
+        std::smatch match;
+        if (std::regex_search(line, match, re) && match.size() > 1)
+        {
+          version_major_str = match.str(1);
+          version_minor_str = match.str(2);
+        }
+      }
+      else if (line.find("CoordinateSystem") != std::string::npos)
+      {
+        // extract coordinate system.
+        std::regex  re("# *CoordinateSystem *= *(.*)");
+        std::smatch match;
+        if (std::regex_search(line, match, re) && match.size() > 1)
+        {
+          coordinate_str = match.str(1);
+        }
+        if( coordinate_str.find("LPS") != std::string::npos  || coordinate_str.find("1") != std::string::npos)
+        {
+          useLPS=true;
+        }
+        else if( coordinate_str.find("RAS") != std::string::npos|| coordinate_str.find("0") != std::string::npos)
+        {
+          useLPS=false;
+        }
+        else // Unkonwn coordinate stsystem
+        {
+          useLPS=false;
+        }
+      }
+    }
+    else // Process landmark lines
     {
       size_t            pos1 = line.find(',', 0);
       const std::string name = line.substr(0, pos1);
@@ -227,7 +283,7 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       {
         const size_t pos2 = line.find(',', pos1 + 1);
         labelPos[i] = std::stod(line.substr(pos1 + 1, pos2 - pos1 - 1).c_str());
-        if (i < 2) // Negate first two components for RAS -> LPS
+        if (!useLPS && i < 2) // Negate first two components for RAS -> LPS is the file is NOT an LPS file
         {
           labelPos[i] *= -1;
         }
@@ -235,6 +291,7 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       }
       landmarks[name] = labelPos;
     }
+
   }
 
   myfile.close();
@@ -270,18 +327,67 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
+  bool useLPS = false;
+  std::string version_major_str = "unknown";
+  std::string version_minor_str = "unknown";
+  std::string coordinate_str = "RAS"; // Match old slicer version RAS strings
   std::string line;
   while (getline(myfile, line))
   {
-    if (line.compare(0, 1, "#") != 0) // Skip lines starting with a #
+    if (line.compare(0, 1, "#") == 0) // Process header lines
+    {
+      // Process comment files
+      if (line.find("version") != std::string::npos)
+      {
+        // Extract version number
+        std::regex  re("# *Markups *fiducial *file *version *= ([0-9]*)\\.([0-9]*)");
+        std::smatch match;
+        if (std::regex_search(line, match, re) && match.size() > 1)
+        {
+          version_major_str = match.str(1);
+          version_minor_str = match.str(2);
+        }
+      }
+      else if (line.find("CoordinateSystem") != std::string::npos)
+      {
+        // extract coordinate system.
+        std::regex  re("# *CoordinateSystem *= *(.*)");
+        std::smatch match;
+        if (std::regex_search(line, match, re) && match.size() > 1)
+        {
+          coordinate_str = match.str(1);
+        }
+        if( coordinate_str.find("LPS") != std::string::npos  || coordinate_str.find("1") != std::string::npos)
+        {
+          useLPS=true;
+        }
+        else if( coordinate_str.find("RAS") != std::string::npos|| coordinate_str.find("0") != std::string::npos)
+        {
+          useLPS=false;
+        }
+        else // Unkonwn coordinate system
+        {
+          useLPS=false;
+        }
+      }
+    }
+    else // Process landmark lines
     {
       //             0 1 2 3  4  5  6  7   8   9   10    11   12               13
       //# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
       std::vector<std::string> asTokens = split(line, ',');
       const std::string        name = asTokens[11]; // 11 position is label name
       LandmarkPointType        labelPos;
-      labelPos[0] = -atof(asTokens[1].c_str()); // L -> R (-)
-      labelPos[1] = -atof(asTokens[2].c_str()); // P -> A (-)
+      if( useLPS)
+      {
+        labelPos[0] = +atof(asTokens[1].c_str()); // L -> L (+)
+        labelPos[1] = +atof(asTokens[2].c_str()); // P -> P (+)
+      }
+      else
+      {
+        labelPos[0] = -atof(asTokens[1].c_str()); // R -> L (-)
+        labelPos[1] = -atof(asTokens[2].c_str()); // A -> P (-)
+      }
       labelPos[2] = +atof(asTokens[3].c_str()); // S -> S (+)
       landmarks[name] = labelPos;
     }

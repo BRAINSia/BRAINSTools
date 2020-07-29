@@ -128,6 +128,8 @@ bt_option(USE_ImageCalculator                "Build ImageCalculator"            
 bt_option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
 bt_option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)
 bt_option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
+bt_option(USE_BRAINSDeface                   "Build BRAINSDeface"                   ON)
+bt_option(USE_BRAINSIntensityNormalize       "Build BRAINSIntensityNormalize"       ON)
 
 cmake_dependent_option(USE_BRAINSConstellationDetectorGUI
               "Build BRAINSConstellationDetectorGUI" OFF

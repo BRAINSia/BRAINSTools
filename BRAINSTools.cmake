@@ -208,6 +208,8 @@ set(brains_modulenames
   BRAINSMultiSTAPLE
   BRAINSStripRotation
   BRAINSSuperResolution
+  BRAINSDeface
+  BRAINSIntensityNormalize
 )
 
 if(BUILD_ARCHIVE)

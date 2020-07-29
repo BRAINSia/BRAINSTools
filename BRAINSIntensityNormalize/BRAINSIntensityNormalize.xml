@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+    <category>IntensityTransform</category>
+    <title>Percentile Rescaling</title>
+    <description>
+        Computes the percentile rescaling of an image
+    </description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license></license>
+    <contributor>Alexander B. Powers and Hans J. Johnson</contributor>
+
+    <parameters>
+        <label>
+            Percentile Rescaling Parameters
+        </label>
+        <description>
+            Parameters for percentile based rescaling. A reimplementation of (https://docs.monai.io/en/latest/transforms.html#scaleintensityrangepercentiles) in C++.
+        </description>
+
+        <double>
+            <name>upperPercentile</name>
+            <longflag>upperPercentile</longflag>
+            <description>Upper Intensity Percentile (0.99 default)</description>
+            <label>Upper Percentile</label>
+            <default>0.99</default>
+            <constraints>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <step>.001</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>lowerPercentile</name>
+            <longflag>lowerPercentile</longflag>
+            <description>Lower Intensity Percentile (0.01 default)</description>
+            <label>Lower Percentile</label>
+            <default>0.01</default>
+            <constraints>
+                <minimum>0.0</minimum>
+                <maximum>1.0</maximum>
+                <step>.001</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>upperOutputIntensity</name>
+            <longflag>upperOutputIntensity</longflag>
+            <description>Upper Output Intensity</description>
+            <label>Upper Output Intensity</label>
+            <default>255</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>255</maximum>
+                <step>.1</step>
+            </constraints>
+        </double>
+
+        <double>
+            <name>lowerOutputIntensity</name>
+            <longflag>lowerOutputIntensity</longflag>
+            <description>Lower Output Intensity</description>
+            <label>Lower Output Intensity</label>
+            <default>0</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>255</maximum>
+                <step>.1</step>
+            </constraints>
+        </double>
+
+        <boolean>
+            <name>no_clip</name>
+            <longflag>no_clip</longflag>
+            <description>Do not clip Values outside of this range to be the "Outside Value"</description>
+            <label>Upper Output Intensity</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
+
+        <boolean>
+            <name>no_relative</name>
+            <longflag>no_relative</longflag>
+            <description>Do not scale to the relative percentiles of the output scale</description>
+            <label>Relative Scaling</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
+    </parameters>
+
+    <parameters>
+        <label>IO</label>
+        <description>Input/Output parameters</description>
+        <image>
+            <name>inputVolume</name>
+            <label>Input Volume</label>
+            <longflag>inputVolume</longflag>
+            <channel>input</channel>
+            <description>Input volume to be filtered</description>
+        </image>
+        <image>
+            <name>outputVolume</name>
+            <label>Output Volume</label>
+            <longflag>outputVolume</longflag>
+            <channel>output</channel>
+            <description>Output filtered</description>
+        </image>
+    </parameters>
+
+</executable>

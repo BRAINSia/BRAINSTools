@@ -67,16 +67,15 @@ else
   export CFLAGS="-std=c11 ${CFLAGS} -DTBB_DEPRECATED=0 -DTBB_USE_CAPTURED_EXCEPTION=0"
   export CXXFLAGS="-std=c++11 ${CXXFLAGS} -DTBB_DEPRECATED=0 -DTBB_USE_CAPTURED_EXCEPTION=0"
 fi
-
 python3 "${SRC_DIR}/build/build.py"  \
        --tbbroot "${SRC_DIR}" \
        --prefix "${INSTALL_PREFIX}" \
        --install-libs --install-devel --install-docs \
        --build-args "compiler='${TBB_COMPILERID}' CFLAGS='${CFLAGS}' CXXFLAGS='${CXXFLAGS}' CXX='${CXX}' CC='${CC}'" \
-  > /tmp/tbb_logger 2>&1
+  > ${BUILD_CACHE}/tbb_logger 2>&1
 python_build_status=$?
 if [ $python_build_status -ne 0 ]; then
-  cat /tmp/tbb_logger
+  cat ${BUILD_CACHE}/tbb_logger
   exit ${python_build_status}
 fi
 

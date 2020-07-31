@@ -14,6 +14,7 @@
 #include <itkIO.h>
 #include <Slicer3LandmarkIO.h>
 #include <BRAINSIntensityTransform.h>
+#include "itkMaskImageFilter.h"
 
 /*
  * This program takes in a landmark file with at least LE, RE, AC point defined, and series of ACPC aligned data
@@ -34,7 +35,7 @@ main(int argc, char * argv[])
   // STEP 1: Using all the anatomical images for this session, generate a label mask defining
   // regions that are 0= in all the images
   //                  1= part of the face region
-  //                  2= 80mm below the ac point
+  //                  2= 80mm below the ac point --> altered to remove this region by resampling
   //                  3= Outside FOV for at least 1 image
   using InternalImageType = itk::Image<float, 3>;
 
@@ -50,7 +51,7 @@ main(int argc, char * argv[])
   MaskImageType::Pointer mask_labels = MaskImageType::New();
   {
     const MaskImageType::RegionType::IndexType starting_index{ 0, 0, 0 };
-    const MaskImageType::RegionType::SizeType  img_size{ 512, 512, 512 };
+    const MaskImageType::RegionType::SizeType  img_size{ 512, 512, 352 }; // 512 - 160 (80mm @ 0.5 spacing)
     MaskImageType::RegionType                  region;
     region.SetSize(img_size);
     region.SetIndex(starting_index);
@@ -67,7 +68,7 @@ main(int argc, char * argv[])
 
     // Empirically chosen origin voxel based on standard center of brain
     // -128.0, -114.0, -132.0
-    const double origin[3] = { -128.0, -114.0, -132.0 };
+    const double origin[3] = { -128.0, -114.0, -52.0 }; // removing 80mm inferior
     mask_labels->SetOrigin(origin);
     mask_labels->Allocate(true);
     // mask->FillBuffer(0);
@@ -80,7 +81,7 @@ main(int argc, char * argv[])
   not_face_region->FillBuffer(1.0);
 
   const auto               lmks = ReadSlicer3toITKLmk(inputLandmarks);
-  MaskImageType::PointType AC_pnt = lmks.at("AC");
+//  MaskImageType::PointType AC_pnt = lmks.at("AC");
   MaskImageType::PointType RE_pnt = lmks.at("RE");
   MaskImageType::PointType LE_pnt = lmks.at("LE");
 
@@ -110,11 +111,11 @@ main(int argc, char * argv[])
           mit.Set(outside_fov);
           fit.Set(0.0);
         }
-        else if (maskpnt[SI] < AC_pnt[SI] - 80.0)
-        {
-          mit.Set(below_ac);
-          fit.Set(0.0);
-        }
+//        else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
+//        {
+//          mit.Set(below_ac);
+//          fit.Set(0.0);
+//        }
         else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
                  (maskpnt[SI] < RE_pnt[SI] || maskpnt[SI] < LE_pnt[SI]))
         {
@@ -194,7 +195,17 @@ main(int argc, char * argv[])
     }
   }
 
-  // STEP 3 Generate intensity normalized images from the clippings.
+  // STEP 3 apply mask to images
+  // TODO: create a new list to stored the defaced output
+  for (size_t i = 0; i < inputVolume.size(); ++i)
+  {
+    const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);
+    // TODO: apply ITK MaskImageFilter https://itk.org/Doxygen/html/classitk_1_1MaskImageFilter.html
+    // SIMILAR TO: https://itk.org/ITKExamples/src/Filtering/LabelMap/MaskOneImageGivenLabelMap/Documentation.html
+  }
+
+  // TODO: iterate over defaced output instead of input images
+  // STEP 4 Generate intensity normalized images from the clippings.
   for (size_t i = 0; i < inputVolume.size(); ++i)
   {
     const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);

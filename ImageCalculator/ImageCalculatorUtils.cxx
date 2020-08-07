@@ -236,6 +236,13 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
   command.SetOptionLongTag("IHisteq", "ifhisteq");
   command.AddOptionField("IHisteq", "constant", MetaCommand::INT, false, "");
 
+  // If the accumulator buffer is not empty, then every subsequent image is resampled to the current
+  // accumulator buffer.
+  command.SetOption(
+    "IResample", "", false, "IResample resamples each image to the current accumulator buffer after reading. 0-NearestNeighbor, 1=Linear, 2=WindowedSinc");
+  command.SetOptionLongTag("IResample", "ifresample");
+  command.AddOptionField("IResample", "constant", MetaCommand::INT, true, "1");
+
   // Square the input image pixel values.
   command.SetOption("ISqr", "", false, "Square Accumulator Image After reading");
   command.SetOptionLongTag("ISqr", "ifsqr");

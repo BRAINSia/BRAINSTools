@@ -69,12 +69,14 @@ namespace itk
  * \endcode
  */
 template <typename TInputScalarType, typename TWriteScalarType>
-extern void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const MyTransform,
-                                 const std::string &                                  TransformFilename);
+extern void
+WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const MyTransform,
+                     const std::string &                                  TransformFilename);
 
 template <typename TScalarType>
-extern void WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const MyTransform,
-                                 const std::string &                             TransformFilename);
+extern void
+WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const MyTransform,
+                     const std::string &                             TransformFilename);
 
 /**
  * \author Hans J. Johnson
@@ -166,13 +168,15 @@ WriteStrippedRigidTransformToDisk(
  */
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
-TransformResample(typename InputImageType::ConstPointer                                 inputImage,
-                  typename itk::ImageBase<InputImageType::ImageDimension>::ConstPointer ReferenceImage,
-                  const typename InputImageType::PixelType                              defaultValue,
-                  typename itk::InterpolateImageFunction<
-                    InputImageType,
-                    typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
-                  typename itk::Transform<double, 3, 3>::ConstPointer                                   transform);
+TransformResample(
+  typename InputImageType::ConstPointer                                 inputImage,
+  typename itk::ImageBase<InputImageType::ImageDimension>::ConstPointer ReferenceImage,
+  const typename InputImageType::PixelType                              defaultValue,
+  typename itk::InterpolateImageFunction<
+    InputImageType,
+    typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
+  typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
+    transform);
 
 /**
  * \author Hans J. Johnson
@@ -181,15 +185,43 @@ TransformResample(typename InputImageType::ConstPointer                         
  */
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
-GenericTransformImage(InputImageType const * const                           OperandImage,
-                      const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
-                      typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer genericTransform,
-                      typename InputImageType::PixelType                  suggestedDefaultValue, // NOTE:  This is
-                                                                                                 // ignored in the
-                                                                                                 // case of binary
-                                                                                                 // image!
-                      const std::string & interpolationMode,
-                      const bool          binaryFlag);
+GenericTransformImage(
+  InputImageType const * const                           OperandImage,
+  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
+                                     genericTransform,
+  typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
+                                                            // ignored in the
+                                                            // case of binary
+                                                            // image!
+  const std::string & interpolationMode,
+  const bool          binaryFlag);
+
+/**
+ * This function is needed to work in TD because of issues with Versor3D use for ResampleInPlace
+ * @tparam InputImageType
+ * @tparam OutputImageType
+ * @param OperandImage
+ * @param ReferenceImage
+ * @param genericTransform
+ * @param suggestedDefaultValue
+ * @param interpolationMode
+ * @param binaryFlag
+ * @return
+ */
+template <typename InputImageType, typename OutputImageType>
+typename OutputImageType::Pointer
+SimpleGenericTransformImage(
+  InputImageType const * const                           OperandImage,
+  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
+                                     genericTransform,
+  typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
+  // ignored in the
+  // case of binary
+  // image!
+  const std::string & interpolationMode,
+  const bool          binaryFlag);
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #  include "GenericTransformImage.hxx"

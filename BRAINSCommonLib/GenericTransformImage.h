@@ -176,29 +176,14 @@ TransformResample(typename InputImageType::ConstPointer                         
 
 /**
  * \author Hans J. Johnson
- * \brief A class to transform images
- */
-template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
-typename OutputImageType::Pointer
-TransformWarp(InputImageType const * const                           inputImage,
-              const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
-              typename InputImageType::PixelType                     defaultValue,
-              typename itk::InterpolateImageFunction<
-                InputImageType,
-                typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
-              typename DisplacementImageType::Pointer                                               displacementField);
-
-/**
- * \author Hans J. Johnson
  * \brief A class to transform images.  Only one of genericTransform or
  *DisplacementField can be non-null.
  */
-template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 GenericTransformImage(InputImageType const * const                           OperandImage,
                       const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
-                      // typename DisplacementImageType::Pointer DisplacementField,
-                      typename itk::Transform<double, 3, 3>::ConstPointer genericTransform,
+                      typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer genericTransform,
                       typename InputImageType::PixelType                  suggestedDefaultValue, // NOTE:  This is
                                                                                                  // ignored in the
                                                                                                  // case of binary

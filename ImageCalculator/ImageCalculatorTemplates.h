@@ -713,39 +713,39 @@ ImageCalculatorReadWrite(MetaCommand & command)
       EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
       SubSequentImage = DoHisteq<ImageType>(AccImage, SubSequentImage, NumOfMatchPoints);
     }
-//
-//    /*If the accumulator buffer is not empty, then every subsequent image is resampled to the current
-//  accumulator buffer.*/
-//    if (!command.GetValueAsString("IResample", "constant").empty() && AccImage.IsNotNull())
-//    {
-//      const int   InterpMode = static_cast<int>(command.GetValueAsInt("IResample", "constant"));
-//      std::string interpolationMode{ "UNKOWNN" };
-//      switch (InterpMode)
-//      {
-//        case 0:
-//          interpolationMode = "NearestNeighbor";
-//          break;
-//        case 1:
-//          interpolationMode = "Linear";
-//          break;
-//        case 2:
-//          interpolationMode = "WindowedSinc";
-//          break;
-//        default:
-//          itkGenericExceptionMacro("Unkown interpolation mode specified");
-//      }
-//
-//      // auto interpolator = GetInterpolatorFromString<ImageType>(interpolationMode).GetPointer();
-//      EffectiveInputFilters << "-ifresample " << static_cast<int>(InterpMode) << " ";
-//      ImageType * const inimgptr = SubSequentImage.GetPointer();
-//      ImageType * const refimgptr = AccImage.GetPointer();
-//      typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension>::ConstPointer defaulttfm =
-//        dynamic_cast<typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension> *>(
-//          id_tfm.GetPointer());
-//      const bool isbinary = command.GetValueAsBool("Ifbin", "ifbin");
-//      SubSequentImage =
-//        GenericTransformImage<ImageType, ImageType>(inimgptr, refimgptr, defaulttfm, 0, interpolationMode, isbinary);
-//    }
+
+    /*If the accumulator buffer is not empty, then every subsequent image is resampled to the current
+  accumulator buffer.*/
+    if (!command.GetValueAsString("IResample", "constant").empty() && AccImage.IsNotNull())
+    {
+      const int   InterpMode = static_cast<int>(command.GetValueAsInt("IResample", "constant"));
+      std::string interpolationMode{ "UNKOWNN" };
+      switch (InterpMode)
+      {
+        case 0:
+          interpolationMode = "NearestNeighbor";
+          break;
+        case 1:
+          interpolationMode = "Linear";
+          break;
+        case 2:
+          interpolationMode = "WindowedSinc";
+          break;
+        default:
+          itkGenericExceptionMacro("Unkown interpolation mode specified");
+      }
+
+      // auto interpolator = GetInterpolatorFromString<ImageType>(interpolationMode).GetPointer();
+      EffectiveInputFilters << "-ifresample " << static_cast<int>(InterpMode) << " ";
+      ImageType * const inimgptr = SubSequentImage.GetPointer();
+      ImageType * const refimgptr = AccImage.GetPointer();
+      typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension>::ConstPointer defaulttfm =
+        dynamic_cast<typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension> *>(
+          id_tfm.GetPointer());
+      const bool isbinary = command.GetValueAsBool("Ifbin", "ifbin");
+      SubSequentImage = SimpleGenericTransformImage<ImageType, ImageType>(
+        inimgptr, refimgptr, defaulttfm, 0, interpolationMode, isbinary);
+    }
 
 
     typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);

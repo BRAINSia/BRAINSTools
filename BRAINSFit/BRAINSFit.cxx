@@ -538,11 +538,7 @@ main(int argc, char * argv[])
     }
 
     {
-      using VectorComponentType = float;
-      using VectorPixelType = itk::Vector<VectorComponentType, 3>;
-      using DisplacementFieldType = itk::Image<VectorPixelType, 3>;
-
-      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType, DisplacementFieldType>(
+      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType>(
         preprocessedMovingVolume,
         extractFixedVolume,
         currentGenericTransform.GetPointer(),

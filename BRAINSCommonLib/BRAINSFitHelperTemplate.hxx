@@ -1363,11 +1363,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           std::cout << "\nMoving image is warped by initial transform, "
                     << "before it is passed to the BSpline registration.\n"
                     << std::endl;
-          using VectorComponentType = float;
-          using VectorPixelType = itk::Vector<VectorComponentType, 3>;
-          using DisplacementFieldType = itk::Image<VectorPixelType, 3>;
           typename MovingImageType::Pointer warpedMoving1 =
-            GenericTransformImage<MovingImageType, MovingImageType, DisplacementFieldType>(
+            GenericTransformImage<MovingImageType, MovingImageType>(
               this->m_MovingVolume,
               this->m_FixedVolume,
               this->m_CurrentGenericTransform.GetPointer(),
@@ -1379,7 +1376,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (m_MovingVolume2.IsNotNull())
           {
             typename MovingImageType::Pointer warpedMoving2 =
-              GenericTransformImage<MovingImageType, MovingImageType, DisplacementFieldType>(
+              GenericTransformImage<MovingImageType, MovingImageType>(
                 this->m_MovingVolume2,
                 this->m_FixedVolume2,
                 this->m_CurrentGenericTransform.GetPointer(),
@@ -1409,7 +1406,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (movingMask.IsNotNull())
           {
             typename MaskImageType::Pointer warpedMovingMaskImage =
-              GenericTransformImage<MaskImageType, MaskImageType, DisplacementFieldType>(
+              GenericTransformImage<MaskImageType, MaskImageType>(
                 ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
                 this->m_FixedVolume,
                 this->m_CurrentGenericTransform.GetPointer(),

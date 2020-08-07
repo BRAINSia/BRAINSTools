@@ -58,39 +58,6 @@ TransformResample(typename InputImageType::ConstPointer                         
   return returnval;
 }
 
-template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
-typename OutputImageType::Pointer
-TransformWarp(InputImageType const * const                           inputImage,
-              const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
-              typename InputImageType::PixelType                     defaultValue,
-              typename itk::InterpolateImageFunction<
-                InputImageType,
-                typename itk::NumericTraits<typename InputImageType::PixelType>::RealType>::Pointer interp,
-              typename DisplacementImageType::Pointer                                               displacementField)
-{
-  using WarpImageFilter = typename itk::WarpImageFilter<InputImageType, OutputImageType, DisplacementImageType>;
-  typename WarpImageFilter::Pointer warp = WarpImageFilter::New();
-  warp->SetInput(inputImage);
-  warp->SetDisplacementField(displacementField);
-  warp->SetInterpolator(interp);
-
-  if (ReferenceImage != nullptr)
-  {
-    warp->SetOutputParametersFromImage(ReferenceImage);
-  }
-  else
-  {
-    std::cout << "Alert:  missing Reference Volume information default image size set to displacementField"
-              << std::endl;
-    warp->SetOutputParametersFromImage(displacementField);
-  }
-  warp->SetEdgePaddingValue(defaultValue);
-  warp->Update();
-  typename OutputImageType::Pointer returnval = warp->GetOutput();
-  // returnval->DisconnectPipeline();
-  return returnval;
-}
-
 template <typename InputImageType>
 typename itk::InterpolateImageFunction<
   InputImageType,
@@ -194,12 +161,11 @@ GetInterpolatorFromString(const std::string & interpolationMode)
   return nullptr;
 }
 
-template <typename InputImageType, typename OutputImageType, typename DisplacementImageType>
+template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 GenericTransformImage(InputImageType const * const                           OperandImage,
                       const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
-                      // typename DisplacementImageType::Pointer DisplacementField,
-                      typename itk::Transform<double, 3, 3>::ConstPointer genericTransform,
+                      typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer genericTransform,
                       typename InputImageType::PixelType                  suggestedDefaultValue, // NOTE:  This is
                                                                                                  // ignored in the
                                                                                                  // case of binary

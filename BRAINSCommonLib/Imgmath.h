@@ -16,21 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-/*=========================================================================
- *
- *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile$
- *  Language:  C++
- *
- *  Copyright (c) Insight Software Consortium. All rights reserved.
- *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
- *
- *  This software is distributed WITHOUT ANY WARRANTY; without even
- *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the above copyright notices for more information.
- *
- *  =========================================================================*/
-
 #ifndef __Imgmath_h
 #define __Imgmath_h
 
@@ -218,9 +203,9 @@ template <typename ImageType>
 typename ImageType::Pointer
 ImageMultiplyConstant(const typename ImageType::Pointer input, const double scalevalue)
 {
-  using MultFilterType = typename itk::MultiplyImageFilter<ImageType, itk::Image<double, 3>, ImageType>;
-  using MultFilterPointer = typename MultFilterType::Pointer;
-  MultFilterPointer filt = MultFilterType::New();
+  using MultFilterType =
+    typename itk::MultiplyImageFilter<ImageType, itk::Image<double, ImageType::ImageDimension>, ImageType>;
+  typename MultFilterType::Pointer filt = MultFilterType::New();
   filt->SetInput(input);
   filt->SetConstant(scalevalue);
   filt->Update();

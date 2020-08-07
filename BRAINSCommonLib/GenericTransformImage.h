@@ -179,6 +179,14 @@ TransformResample(
     transform);
 
 /**
+ * Check the combination of values to ensure meaningful elements are used
+ * @param binaryFlag
+ * @param interpolationMode
+ */
+extern void
+sanitiy_check_binary_interpolation(const bool binaryFlag, const std::string & interpolationMode);
+
+/**
  * \author Hans J. Johnson
  * \brief A class to transform images.  Only one of genericTransform or
  *DisplacementField can be non-null.
@@ -186,8 +194,8 @@ TransformResample(
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 GenericTransformImage(
-  InputImageType const * const                           OperandImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  InputImageType const * const                                 OperandImage,
+  const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is
@@ -212,8 +220,8 @@ GenericTransformImage(
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 SimpleGenericTransformImage(
-  InputImageType const * const                           OperandImage,
-  const itk::ImageBase<InputImageType::ImageDimension> * ReferenceImage,
+  InputImageType const * const                                 OperandImage,
+  const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,
   typename InputImageType::PixelType suggestedDefaultValue, // NOTE:  This is

@@ -627,5 +627,18 @@ WriteTransformToDisk<double>(itk::Transform<double, 3, 3> const * const MyTransf
 template void
 WriteTransformToDisk<float>(itk::Transform<float, 3, 3> const * const MyTransform,
                             const std::string &                       TransformFilename);
-
 } // end namespace itk
+
+void
+sanitiy_check_binary_interpolation(const bool binaryFlag, const std::string & interpolationMode)
+{
+  if (binaryFlag && interpolationMode == "NearestNeighbor")
+  {
+    std::cerr << "WARNING:  Using NearestNeighbor and SignedDistance" << std::endl
+              << "          for binary images is an unlikely combination." << std::endl
+              << "          you probably want Linear interpolationMode for" << std::endl
+              << "          the signed distance map implied by your choice" << std::endl
+              << "          of pixelType binary." << std::endl;
+  }
+  return;
+}

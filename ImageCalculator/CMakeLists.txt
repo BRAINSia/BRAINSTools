@@ -26,11 +26,11 @@ add_executable(ImageCalculator
   ImageCalculatorProcess2D.cxx
   ImageCalculatorProcess3D.cxx
   ImageCalculatorUtils.cxx)
-target_link_libraries(ImageCalculator ${ImageCalculator_ITK_LIBRARIES} )
+target_link_libraries(ImageCalculator ${ImageCalculator_ITK_LIBRARIES} BRAINSCommonLib)
 set_target_properties(ImageCalculator PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(ImageGenerate ImageGenerate.cxx )
-target_link_libraries(ImageGenerate ${ImageCalculator_ITK_LIBRARIES})
+target_link_libraries(ImageGenerate ${ImageCalculator_ITK_LIBRARIES} BRAINSCommonLib)
 set_target_properties(ImageGenerate PROPERTIES FOLDER ${MODULE_FOLDER})
 
 install(TARGETS ImageCalculator ImageGenerate

@@ -633,18 +633,79 @@ private:
   }
 };
 
+template <typename ImageType>
+typename ImageType::Pointer
+DoResampleStep(int                         interpCode,
+               typename ImageType::Pointer ref_space,
+               bool                        isbinary,
+               typename ImageType::Pointer imageToResample)
+{
+  static typename itk::IdentityTransform<double, ImageType::ImageDimension>::Pointer id_tfm =
+    itk::IdentityTransform<double, ImageType::ImageDimension>::New();
+  if (ref_space.IsNull())
+  {
+    return imageToResample;
+  }
+
+  /*If the accumulator buffer is not empty, then every subsequent image is resampled to the current
+  accumulator buffer.*/
+  std::string interpolationMode{ "UNKOWNN" };
+  switch (interpCode)
+  {
+    case 0:
+      interpolationMode = "NearestNeighbor";
+      break;
+    case 1:
+      interpolationMode = "Linear";
+      break;
+    case 2:
+      interpolationMode = "WindowedSinc";
+      break;
+    default:
+      itkGenericExceptionMacro("Unkown interpolation mode specified");
+  }
+
+  ImageType * const inimgptr = imageToResample.GetPointer();
+  ImageType * const refimgptr = ref_space.GetPointer();
+  typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension>::ConstPointer defaulttfm =
+    dynamic_cast<typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension> *>(
+      id_tfm.GetPointer());
+  imageToResample =
+    SimpleGenericTransformImage<ImageType>(inimgptr, refimgptr, defaulttfm, 0, interpolationMode, isbinary);
+  return imageToResample;
+}
+
+
 /*This function reads in the input images and writes the output image ,
  * delegating the computations to other functions*/
 template <typename ImageType>
 void
 ImageCalculatorReadWrite(MetaCommand & command)
 {
-  itk::IdentityTransform<double, 3>::Pointer id_tfm = itk::IdentityTransform<double, 3>::New();
   // Replace backslash blank with a unique string
   std::string tempFilenames = command.GetValueAsString("in");
 
-  ReplaceSubWithSub(tempFilenames, "\\ ", "BACKSLASH_BLANK");
 
+  const bool isbinary = command.GetValueAsBool("Ifbin", "ifbin");
+
+  const bool interp_mode_set = command.GetOptionWasSet("IResample");
+  const int  interpCode = (interp_mode_set) ? static_cast<int>(command.GetValueAsInt("IResample", "constant")) : -1;
+  if (interp_mode_set)
+  {
+    EffectiveInputFilters << "-ifresample " << static_cast<int>(interpCode) << " ";
+  }
+
+  const bool        reference_resample_set = command.GetOptionWasSet("IResampleRef");
+  const std::string ref_space_filename =
+    (reference_resample_set) ? command.GetValueAsString("IResampleRef", "constant") : "";
+  if (reference_resample_set)
+  {
+    EffectiveInputFilters << "-ifresampleref " << ref_space_filename << " ";
+  }
+  typename ImageType::Pointer ref_space =
+    (reference_resample_set) ? itkUtil::ReadImage<ImageType>(ref_space_filename) : nullptr;
+
+  ReplaceSubWithSub(tempFilenames, "\\ ", "BACKSLASH_BLANK");
   // Now split into separate filenames
   string_tokenizer InputList(tempFilenames, " ");
   // Finally, return the blanks to the filenames
@@ -658,9 +719,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   // Read the first Image
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(InputList.at(0).c_str());
-
   std::cout << "Reading 1st Image..." << InputList.at(0).c_str() << std::endl;
-
   try
   {
     reader->Update();
@@ -670,9 +729,9 @@ ImageCalculatorReadWrite(MetaCommand & command)
     std::cerr << "Error reading the series " << excp << std::endl;
     throw;
   }
-
   // Create an Accumulator Image.
   typename ImageType::Pointer AccImage = Ifilters<ImageType>(reader->GetOutput(), command);
+  AccImage = DoResampleStep<ImageType>(interpCode, ref_space, isbinary, AccImage);
 
   /*For variance image first step is to square the input image.*/
   typename ImageType::Pointer SqrImageSum;
@@ -699,12 +758,6 @@ ImageCalculatorReadWrite(MetaCommand & command)
     typename ImageType::Pointer SubSequentImage = reader2->GetOutput();
     reader2 = nullptr;
 
-    // Check whether the image dimensions and the spacing are the same.
-    if ((AccImage->GetLargestPossibleRegion().GetSize() != SubSequentImage->GetLargestPossibleRegion().GetSize()))
-    {
-      itkGenericExceptionMacro(<< "Error:: The size of the images don't match.");
-    }
-
     /*If the accumulator buffer is not empty, then every subsequent image is histogram equalized to the current
       accumulator buffer.*/
     if (!command.GetValueAsString("IHisteq", "constant").empty() && AccImage.IsNotNull())
@@ -713,40 +766,13 @@ ImageCalculatorReadWrite(MetaCommand & command)
       EffectiveInputFilters << "-ifhisteq " << static_cast<int>(NumOfMatchPoints) << " ";
       SubSequentImage = DoHisteq<ImageType>(AccImage, SubSequentImage, NumOfMatchPoints);
     }
+    SubSequentImage = DoResampleStep<ImageType>(interpCode, ref_space, isbinary, SubSequentImage);
 
-    /*If the accumulator buffer is not empty, then every subsequent image is resampled to the current
-  accumulator buffer.*/
-    if (!command.GetValueAsString("IResample", "constant").empty() && AccImage.IsNotNull())
+    // Check whether the image dimensions and the spacing are the same.
+    if ((AccImage->GetLargestPossibleRegion().GetSize() != SubSequentImage->GetLargestPossibleRegion().GetSize()))
     {
-      const int   InterpMode = static_cast<int>(command.GetValueAsInt("IResample", "constant"));
-      std::string interpolationMode{ "UNKOWNN" };
-      switch (InterpMode)
-      {
-        case 0:
-          interpolationMode = "NearestNeighbor";
-          break;
-        case 1:
-          interpolationMode = "Linear";
-          break;
-        case 2:
-          interpolationMode = "WindowedSinc";
-          break;
-        default:
-          itkGenericExceptionMacro("Unkown interpolation mode specified");
-      }
-
-      // auto interpolator = GetInterpolatorFromString<ImageType>(interpolationMode).GetPointer();
-      EffectiveInputFilters << "-ifresample " << static_cast<int>(InterpMode) << " ";
-      ImageType * const inimgptr = SubSequentImage.GetPointer();
-      ImageType * const refimgptr = AccImage.GetPointer();
-      typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension>::ConstPointer defaulttfm =
-        dynamic_cast<typename itk::Transform<double, ImageType::ImageDimension, ImageType::ImageDimension> *>(
-          id_tfm.GetPointer());
-      const bool isbinary = command.GetValueAsBool("Ifbin", "ifbin");
-      SubSequentImage = SimpleGenericTransformImage<ImageType, ImageType>(
-        inimgptr, refimgptr, defaulttfm, 0, interpolationMode, isbinary);
+      itkGenericExceptionMacro(<< "Error:: The size of the images don't match.");
     }
-
 
     typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);
 

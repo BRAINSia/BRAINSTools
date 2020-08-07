@@ -538,7 +538,7 @@ main(int argc, char * argv[])
     }
 
     {
-      resampledImage = GenericTransformImage<MovingVolumeType, FixedVolumeType>(
+      resampledImage = GenericTransformImage<MovingVolumeType>(
         preprocessedMovingVolume,
         extractFixedVolume,
         currentGenericTransform.GetPointer(),

@@ -386,7 +386,7 @@ main(int argc, char * argv[])
     }
 
     TBRAINSResampleInternalImageType::Pointer TransformedImage =
-      GenericTransformImage<TBRAINSResampleInternalImageType, TBRAINSResampleInternalImageType>(
+      GenericTransformImage<TBRAINSResampleInternalImageType>(
         PrincipalOperandImage,
         ReferenceImage,
         // DisplacementField,

@@ -91,7 +91,7 @@ main(int argc, char * argv[])
 
   constexpr int valid_inside_pixel = 0;
   constexpr int face_rm = 1;
-  constexpr int below_ac = 2;
+  // constexpr int below_ac = 2;
   constexpr int outside_fov = 3;
   // Find all the out of FOV spaces fro the mask image
   MaskImageType::PointType     maskpnt;

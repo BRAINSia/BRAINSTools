@@ -381,9 +381,7 @@ GenericTransformImage(
   }
 
   // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
-  typename InputImageType::Pointer FinalTransformedImage =
-    (binaryFlag) ? _FromDistanceMap<InputImageType>(FinalTransformedImage, ReferenceImage) : TransformedImage;
-  return FinalTransformedImage;
+  return (binaryFlag) ? _FromDistanceMap<InputImageType>(TransformedImage, ReferenceImage) : TransformedImage;
 }
 
 template <typename InputImageType>
@@ -426,9 +424,7 @@ SimpleGenericTransformImage(
     }
   }
   // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
-  typename InputImageType::Pointer FinalTransformedImage =
-    (binaryFlag) ? _FromDistanceMap<InputImageType>(FinalTransformedImage, ReferenceImage) : TransformedImage;
-  return FinalTransformedImage;
+  return (binaryFlag) ? _FromDistanceMap<InputImageType>(TransformedImage, ReferenceImage) : TransformedImage;
 }
 
 #endif

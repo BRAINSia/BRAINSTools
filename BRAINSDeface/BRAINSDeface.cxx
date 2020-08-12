@@ -14,7 +14,6 @@
 #include <itkIO.h>
 #include <Slicer3LandmarkIO.h>
 #include <BRAINSIntensityTransform.h>
-#include "itkMaskImageFilter.h"
 
 /*
  * This program takes in a landmark file with at least LE, RE, AC point defined, and series of ACPC aligned data
@@ -175,7 +174,7 @@ main(int argc, char * argv[])
         {
           // Pass
         }
-        else if (mask_value == face_rm)
+        else if (mask_value == face_rm && doBlur) // && doBlur accounts for defaceMode == "zero"
         {
           const auto blur_image_value = blur_image->GetPixel(curr_index);
           const auto curr_value = static_cast<FadeMapType::PixelType>(iit.Get());
@@ -195,17 +194,7 @@ main(int argc, char * argv[])
     }
   }
 
-  // STEP 3 apply mask to images
-  // TODO: create a new list to stored the defaced output
-  for (size_t i = 0; i < inputVolume.size(); ++i)
-  {
-    const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);
-    // TODO: apply ITK MaskImageFilter https://itk.org/Doxygen/html/classitk_1_1MaskImageFilter.html
-    // SIMILAR TO: https://itk.org/ITKExamples/src/Filtering/LabelMap/MaskOneImageGivenLabelMap/Documentation.html
-  }
-
-  // TODO: iterate over defaced output instead of input images
-  // STEP 4 Generate intensity normalized images from the clippings.
+  // STEP 3 Generate intensity normalized images from the clippings.
   for (size_t i = 0; i < inputVolume.size(); ++i)
   {
     const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);

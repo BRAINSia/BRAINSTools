@@ -172,7 +172,7 @@ main(int argc, char * argv[])
         {
           // Pass
         }
-        else if (mask_value == face_rm && doBlur) // && doBlur accounts for defaceMode == "zero"
+        else if (doBlur && mask_value == face_rm) // && doBlur accounts for defaceMode == "zero"
         {
           const auto blur_image_value = blur_image->GetPixel(curr_index);
           const auto curr_value = static_cast<FadeMapType::PixelType>(iit.Get());

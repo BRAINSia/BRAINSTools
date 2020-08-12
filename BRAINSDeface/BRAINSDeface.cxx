@@ -79,8 +79,8 @@ main(int argc, char * argv[])
   not_face_region->Allocate();
   not_face_region->FillBuffer(1.0);
 
-  const auto               lmks = ReadSlicer3toITKLmk(inputLandmarks);
-//  MaskImageType::PointType AC_pnt = lmks.at("AC");
+  const auto lmks = ReadSlicer3toITKLmk(inputLandmarks);
+  //  MaskImageType::PointType AC_pnt = lmks.at("AC");
   MaskImageType::PointType RE_pnt = lmks.at("RE");
   MaskImageType::PointType LE_pnt = lmks.at("LE");
 
@@ -110,11 +110,11 @@ main(int argc, char * argv[])
           mit.Set(outside_fov);
           fit.Set(0.0);
         }
-//        else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
-//        {
-//          mit.Set(below_ac);
-//          fit.Set(0.0);
-//        }
+        //        else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
+        //        {
+        //          mit.Set(below_ac);
+        //          fit.Set(0.0);
+        //        }
         else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
                  (maskpnt[SI] < RE_pnt[SI] || maskpnt[SI] < LE_pnt[SI]))
         {

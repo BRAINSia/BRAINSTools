@@ -70,7 +70,6 @@ main(int argc, char * argv[])
     const double origin[3] = { -128.0, -114.0, -52.0 }; // removing 80mm inferior
     mask_labels->SetOrigin(origin);
     mask_labels->Allocate(true);
-    // mask->FillBuffer(0);
   }
   using FadeMapType = itk::Image<float, 3>;
   FadeMapType::Pointer not_face_region = FadeMapType::New();
@@ -80,7 +79,6 @@ main(int argc, char * argv[])
   not_face_region->FillBuffer(1.0);
 
   const auto lmks = ReadSlicer3toITKLmk(inputLandmarks);
-  //  MaskImageType::PointType AC_pnt = lmks.at("AC");
   MaskImageType::PointType RE_pnt = lmks.at("RE");
   MaskImageType::PointType LE_pnt = lmks.at("LE");
 

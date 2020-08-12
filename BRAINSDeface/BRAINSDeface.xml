@@ -24,7 +24,7 @@
             <name>inputLandmarks</name>
             <flag>l</flag>
             <longflag>inputLandmarks</longflag>
-            <description>Input Landmark File with LE, RE, AC points defined in physical locations</description>
+            <description>Input Landmark File with LE, and RE points defined in physical locations</description>
             <label>Landmarks File</label>
             <default></default>
             <channel>input</channel>

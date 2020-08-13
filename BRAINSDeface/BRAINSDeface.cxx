@@ -17,7 +17,7 @@
 #include "itkMaskImageFilter.h"
 
 /*
- * This program takes in a landmark file with at least LE, RE, AC point defined, and series of ACPC aligned data
+ * This program takes in a landmark file with at least LE, and RE points defined, and series of ACPC aligned data
  * (i.e. AC at ~(0,0,0) and PC at ~(0,X,0) to generate "defaced" or "face-obscured" data as a de-identification
  * process.
  *
@@ -68,10 +68,9 @@ main(int argc, char * argv[])
 
     // Empirically chosen origin voxel based on standard center of brain
     // -128.0, -114.0, -132.0
-    const double origin[3] = { -128.0, -114.0, -52.0 }; // removing 80mm inferior
+    const double origin[3] = { -128.0, -114.0, -52.0 }; // -132 + 80 removing 80mm inferior
     mask_labels->SetOrigin(origin);
     mask_labels->Allocate(true);
-    // mask->FillBuffer(0);
   }
   using FadeMapType = itk::Image<float, 3>;
   FadeMapType::Pointer not_face_region = FadeMapType::New();
@@ -195,17 +194,7 @@ main(int argc, char * argv[])
     }
   }
 
-  // STEP 3 apply mask to images
-  // TODO: create a new list to stored the defaced output
-  for (size_t i = 0; i < inputVolume.size(); ++i)
-  {
-    const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);
-    // TODO: apply ITK MaskImageFilter https://itk.org/Doxygen/html/classitk_1_1MaskImageFilter.html
-    // SIMILAR TO: https://itk.org/ITKExamples/src/Filtering/LabelMap/MaskOneImageGivenLabelMap/Documentation.html
-  }
-
-  // TODO: iterate over defaced output instead of input images
-  // STEP 4 Generate intensity normalized images from the clippings.
+  // STEP 3 Generate intensity normalized images from the clippings.
   for (size_t i = 0; i < inputVolume.size(); ++i)
   {
     const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);

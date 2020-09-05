@@ -71,7 +71,7 @@ public:
   using Self = LargestForegroundFilledMaskImageFilter;
   using Superclass = ImageToImageFilter<InputImageType, OutputImageType>;
   using Pointer = SmartPointer<Self>;
-  using IntegerImageType = Image<unsigned short, OutputImageType::ImageDimension>;
+  using IntegerImageType = Image<unsigned int, OutputImageType::ImageDimension>;
   using IntegerPixelType = typename IntegerImageType::PixelType;
 
   /** Method for creation through the object factory. */

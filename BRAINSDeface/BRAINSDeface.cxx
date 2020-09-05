@@ -218,18 +218,6 @@ main(int argc, char * argv[])
     }
   }
 
-  // If outputMask has path elements, then do not use outputDirectory.
-  if (! outputMask.empty() )
-  {
-    if (outputMask.find('/') == std::string::npos)
-    {
-      const std::vector<std::string> output_fn_components{ outputDirectory, "/", outputMask };
-      const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);
-      outputMask = itksys::SystemTools::JoinPath(output_fn_components);
-    }
-    std::cout << "Writing output mask filename: " << outputMask << std::endl;
-    itkUtil::WriteImage<MaskImageType>(mask_labels, outputMask);
-  }
   if (debugLevel >= 5)
   {
     std::cout << "Writing output distanceMapSeed" << std::endl;
@@ -384,6 +372,19 @@ main(int argc, char * argv[])
       img_list[i], lowerPercentile, upperPercentile, lowerOutputIntensity, upperOutputIntensity, clip, relative);
     std::cout << "Writing output filename: " << output_fn << std::endl;
     itkUtil::WriteImage<OutputImageType>(intensity_normalized_output, output_fn);
+  }
+  // Write out mask as the last element after used for images
+  // If outputMask has path elements, then do not use outputDirectory.
+  if (! outputMask.empty() )
+  {
+    if (outputMask.find('/') == std::string::npos)
+    {
+      const std::vector<std::string> output_fn_components{ outputDirectory, "/", outputMask };
+      const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);
+      outputMask = itksys::SystemTools::JoinPath(output_fn_components);
+    }
+    std::cout << "Writing output mask filename: " << outputMask << std::endl;
+    itkUtil::WriteImage<MaskImageType>(mask_labels, outputMask);
   }
   return EXIT_SUCCESS;
 }

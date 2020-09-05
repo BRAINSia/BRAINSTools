@@ -142,5 +142,18 @@
             <label>Relative Scaling</label>
             <!-- The default for boolean parameters is always set to false.-->
         </boolean>
+
+        <integer>
+            <name>debugLevel</name>
+            <longflag>debugLevel</longflag>
+            <description>Level of Debugging (0=None)</description>
+            <label>Debug Level</label>
+            <default>0</default>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>10</maximum>
+                <step>1</step>
+            </constraints>
+        </integer>
     </parameters>
 </executable>

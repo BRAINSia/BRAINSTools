@@ -14,7 +14,12 @@
 #include <itkIO.h>
 #include <Slicer3LandmarkIO.h>
 #include <BRAINSIntensityTransform.h>
+#include <itkBRAINSROIAutoImageFilter.h>
 #include "itkMaskImageFilter.h"
+#include "itkSignedMaurerDistanceMapImageFilter.h"
+#include "itkConstantPadImageFilter.h"
+#include "BRAINSCommonLib.h"
+
 
 /*
  * This program takes in a landmark file with at least LE, and RE points defined, and series of ACPC aligned data
@@ -25,6 +30,7 @@
  * 0,0,0.
  *
  */
+
 
 int
 main(int argc, char * argv[])
@@ -38,6 +44,17 @@ main(int argc, char * argv[])
   //                  2= 80mm below the ac point --> altered to remove this region by resampling
   //                  3= Outside FOV for at least 1 image
   using InternalImageType = itk::Image<float, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
+
+  const auto lmks = ReadSlicer3toITKLmk(inputLandmarks);
+
+  MaskImageType::PointType AC_pnt = lmks.at("AC");
+  MaskImageType::PointType RE_pnt = lmks.at("RE");
+  MaskImageType::PointType LE_pnt = lmks.at("LE");
+
+  constexpr size_t LR = 0;
+  constexpr size_t PA = 1;
+  constexpr size_t SI = 2;
 
   std::vector<InternalImageType::Pointer> img_list;
   for (const auto & im_fn : inputVolume)
@@ -45,33 +62,33 @@ main(int argc, char * argv[])
     img_list.emplace_back(itkUtil::ReadImage<InternalImageType>(im_fn));
   }
 
-  using MaskImageType = itk::Image<unsigned char, 3>;
-
   // Make a 1/2 mm masked volume
   MaskImageType::Pointer mask_labels = MaskImageType::New();
   {
+    const double                               spacing[3] = { 0.5, 0.5, 0.5 };
     const MaskImageType::RegionType::IndexType starting_index{ 0, 0, 0 };
-    const MaskImageType::RegionType::SizeType  img_size{ 512, 512, 352 }; // 512 - 160 (80mm @ 0.5 spacing)
-    MaskImageType::RegionType                  region;
+    const MaskImageType::RegionType::SizeType  img_size{ 512, 512, 352 };
+    // 512 - 160 (80mm @ 0.5 spacing) = 352
+    // 512 + 80 (40 mm @ 0.5 spacing) = 592
+    // Empirically chosen origin voxel based on standard center of brain  WRONG:   ->  -128.0, -114.0, -132.0
+    const double origin[3] = { AC_pnt[LR] - 128.0, AC_pnt[PA] - 128.0, AC_pnt[SI] - 80.0 };
+    // -132 + 80  = 52 removing 80mm inferior
+    // -114 - 40 = -154 adding 40mm anterior
+
+    MaskImageType::RegionType region;
     region.SetSize(img_size);
     region.SetIndex(starting_index);
-
     mask_labels->SetRegions(region);
 
     MaskImageType::DirectionType id;
     id.SetIdentity();
     mask_labels->SetDirection(id);
 
-    const double spacing[3] = { 0.5, 0.5, 0.5 };
     mask_labels->SetSpacing(spacing);
-
-
-    // Empirically chosen origin voxel based on standard center of brain
-    // -128.0, -114.0, -132.0
-    const double origin[3] = { -128.0, -114.0, -52.0 }; // -132 + 80 removing 80mm inferior
     mask_labels->SetOrigin(origin);
     mask_labels->Allocate(true);
   }
+
   using FadeMapType = itk::Image<float, 3>;
   FadeMapType::Pointer not_face_region = FadeMapType::New();
   not_face_region->CopyInformation(mask_labels);
@@ -79,50 +96,124 @@ main(int argc, char * argv[])
   not_face_region->Allocate();
   not_face_region->FillBuffer(1.0);
 
-  const auto               lmks = ReadSlicer3toITKLmk(inputLandmarks);
-//  MaskImageType::PointType AC_pnt = lmks.at("AC");
-  MaskImageType::PointType RE_pnt = lmks.at("RE");
-  MaskImageType::PointType LE_pnt = lmks.at("LE");
+  MaskImageType::Pointer binaryDistanceMapSeed = MaskImageType::New();
+  binaryDistanceMapSeed->CopyInformation(mask_labels);
+  binaryDistanceMapSeed->SetRegions(mask_labels->GetLargestPossibleRegion());
+  binaryDistanceMapSeed->Allocate();
+  binaryDistanceMapSeed->FillBuffer(0.0);
 
-  // constexpr size_t LR=0;
-  constexpr size_t PA = 1;
-  constexpr size_t SI = 2;
+  // ROIAuto declaration
+  using ROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, MaskImageType>;
+
 
   constexpr int valid_inside_pixel = 0;
   constexpr int face_rm = 1;
-  // constexpr int below_ac = 2;
+  constexpr int below_ac = 2;
   constexpr int outside_fov = 3;
+  constexpr int auto_roi_background = 4;
+  constexpr int eye_boxes_code = 5;
   // Find all the out of FOV spaces fro the mask image
   MaskImageType::PointType     maskpnt;
   InternalImageType::IndexType imgindex;
+  constexpr double             max_smoothing_size = 0.0; // Try 10.0 for very safe margins
   for (auto & curr_img : img_list)
   {
+//    MaskImageType::Pointer roi = [](InternalImageType::Pointer current_image) -> MaskImageType::Pointer {
+//      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+//      ROIFilter->SetClosingSize(20);                                  // close 10mm holes
+//      ROIFilter->SetDilateSize(static_cast<int>(max_smoothing_size)); // 55 mm ~ IPD ~ tip of the nose
+//
+//      // pre-compute ROIAuto
+//      ROIFilter->SetInput(current_image);
+//      ROIFilter->Update();
+//
+//      return ROIFilter->GetOutput();
+//    }(curr_img);
+//    itk::NearestNeighborInterpolateImageFunction<MaskImageType>::Pointer roiAutoInterpolator =
+//      itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
+//    roiAutoInterpolator->SetInputImage(roi);
+//    if (debugLevel >= 2)
+//    {
+//      itkUtil::WriteImage<MaskImageType>(roi, outputDirectory + "/roi.nii.gz");
+//    }
     {
       itk::ImageRegionIteratorWithIndex<MaskImageType> mit(mask_labels, mask_labels->GetLargestPossibleRegion());
       itk::ImageRegionIteratorWithIndex<FadeMapType> fit(not_face_region, not_face_region->GetLargestPossibleRegion());
+      itk::ImageRegionIteratorWithIndex<MaskImageType> dit(binaryDistanceMapSeed,
+                                                           not_face_region->GetLargestPossibleRegion());
+      constexpr double                                 approx_eye_radius = 9; // Size of eyes
       while (!mit.IsAtEnd())
       {
-        mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
+        if (mit.Value() == 0) // Only change if not yet set.
+        {
+          mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
+          const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
+          if (!isInside)
+          {
+            mit.Set(outside_fov);
+            fit.Set(0.0);
+            dit.Set(1);
+          }
+          else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
+          {
+            mit.Set(below_ac);
+            fit.Set(0.0);
+          }
+          // blur nose region
+          else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
+                   (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
+          {
+            mit.Set(face_rm);
+            fit.Set(0.0);
+            dit.Set(1);
+          }
+          // blur Cheak region
+          else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
+                   (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
+          {
+            mit.Set(face_rm);
+            fit.Set(0.0);
+            dit.Set(1);
+          }
 
-        const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
-        if (!isInside)
-        {
-          mit.Set(outside_fov);
-          fit.Set(0.0);
-        }
-//        else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
-//        {
-//          mit.Set(below_ac);
-//          fit.Set(0.0);
-//        }
-        else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
-                 (maskpnt[SI] < RE_pnt[SI] || maskpnt[SI] < LE_pnt[SI]))
-        {
-          mit.Set(face_rm);
-          fit.Set(0.0);
+          else if ((
+                     // Now remove RE eye boxes
+                     (maskpnt[PA] < (RE_pnt[PA] + approx_eye_radius)) && // anterior to back of eye
+                     (maskpnt[SI] < (RE_pnt[SI] + approx_eye_radius)) && // in si eye region
+                     (maskpnt[LR] < (RE_pnt[LR] + approx_eye_radius))    // lateral to eye
+                     ) ||
+                   (
+                     // Now remove LE eye boxes
+                     (maskpnt[PA] < (RE_pnt[PA] + approx_eye_radius)) && // anterior to back of eye
+                     (maskpnt[SI] < (RE_pnt[SI] + approx_eye_radius)) && // in si eye region
+                     (maskpnt[LR] > (LE_pnt[LR] - approx_eye_radius)))   // lateral to eye
+          )
+          {
+            mit.Set(eye_boxes_code);
+            fit.Set(0.0);
+            dit.Set(1);
+          }
+          // Now try to remove eyebrows/forehead
+          else if ((maskpnt[PA] < (RE_pnt[PA] - approx_eye_radius * 3) ||
+                    maskpnt[PA] < (LE_pnt[PA] - approx_eye_radius * 3))
+                   //                   && (maskpnt[SI] < (RE_pnt[SI] + approx_eye_radius * 5) ||
+                   //                    maskpnt[SI] < (LE_pnt[SI] + approx_eye_radius * 5))
+          )
+          {
+            mit.Set(face_rm);
+            fit.Set(0.0);
+            dit.Set(1);
+          }
+//          else if (roiAutoInterpolator->Evaluate(maskpnt) != 1)
+//          {
+//            mit.Set(auto_roi_background);
+//            fit.Set(0.0);
+//            dit.Set(1);
+//          }
         }
         ++mit;
         ++fit;
+        ++dit;
       }
     }
   }
@@ -132,54 +223,138 @@ main(int argc, char * argv[])
   {
     const std::vector<std::string> output_fn_components{ outputDirectory, "/", outputMask };
     const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);
-    ;
     outputMask = itksys::SystemTools::JoinPath(output_fn_components);
   }
-  std::cout << "Writing output mask filename: " << outputMask << std::endl;
-  itkUtil::WriteImage<MaskImageType>(mask_labels, outputMask);
-
+  if (debugLevel >= 1)
+  {
+    std::cout << "Writing output mask filename: " << outputMask << std::endl;
+    itkUtil::WriteImage<MaskImageType>(mask_labels, outputMask);
+  }
+  if (debugLevel >= 5)
+  {
+    std::cout << "Writing output distanceMapSeed" << std::endl;
+    itkUtil::WriteImage<MaskImageType>(binaryDistanceMapSeed, outputDirectory + "/dist_map_seed.nii.gz");
+  }
 
   // STEP 2: Deface the image values
-  const bool           doBlur = (defaceMode == "blur");
-  FadeMapType::Pointer blur_image = not_face_region;
-  if (doBlur)
-  {
-    // This creates a gradual fading rather than a sudden edge.
-    using BlurFilter = itk::SmoothingRecursiveGaussianImageFilter<FadeMapType, FadeMapType>;
-    BlurFilter::Pointer blur = BlurFilter::New();
-    blur->SetInput(not_face_region);
-    blur->SetSigma(3);                    // 3mm smoothing
-    blur->SetNormalizeAcrossScale(false); // If true, negative values can result
-    blur->Update();
-    blur_image = blur->GetOutput();
-  }
-  // DEBUG
-  // itkUtil::WriteImage<FadeMapType>(blur_image,"/tmp/blur_img.nii.gz");
-
-  itk::NearestNeighborInterpolateImageFunction<MaskImageType>::Pointer interp =
+  itk::NearestNeighborInterpolateImageFunction<MaskImageType>::Pointer maskInterpolator =
     itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
-  interp->SetInputImage(mask_labels);
-  InternalImageType::PointType imgpnt;
+  maskInterpolator->SetInputImage(mask_labels);
+
+  // pad the distance map
+  MaskImageType::SizeType lowerPadBound;
+  lowerPadBound.Fill(80); // 40 mm @ 0.5 mm spacing
+  MaskImageType::SizeType upperPadBound;
+  upperPadBound.Fill(80); // 40 mm @ 0.5 mm spacing
+
+  itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::Pointer padImageFilter =
+    itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::New();
+  padImageFilter->SetInput(binaryDistanceMapSeed);
+  padImageFilter->SetPadLowerBound(lowerPadBound);
+  padImageFilter->SetPadUpperBound(upperPadBound);
+  padImageFilter->SetConstant(face_rm);
+  padImageFilter->Update();
+  if (debugLevel >= 5)
+  {
+    itkUtil::WriteImage<MaskImageType>(padImageFilter->GetOutput(), outputDirectory + "/padded.nii.gz");
+  }
+  // compute the distance map
+  itk::SignedMaurerDistanceMapImageFilter<MaskImageType, InternalImageType>::Pointer signedDistanceMap =
+    itk::SignedMaurerDistanceMapImageFilter<MaskImageType, InternalImageType>::New();
+  signedDistanceMap->SetInput(padImageFilter->GetOutput());
+  signedDistanceMap->SetInsideIsPositive(true);
+  signedDistanceMap->Update();
+  InternalImageType::Pointer distanceMap = signedDistanceMap->GetOutput();
+  for (itk::ImageRegionIterator<InternalImageType> diit(distanceMap, distanceMap->GetLargestPossibleRegion());
+       !diit.IsAtEnd();
+       ++diit)
+  {
+    const auto &                           refvalue = diit.Value();
+    constexpr InternalImageType::PixelType allowed_blurring_area = -2.0; // Allow blurring if distance from edge
+    if (refvalue < allowed_blurring_area)
+    {
+      diit.Set(0.0);
+    }
+    else
+    {
+      diit.Set(std::abs(refvalue));
+    }
+  }
+  if (debugLevel >= 2)
+  {
+    itkUtil::WriteImage<InternalImageType>(distanceMap, outputDirectory + "/dist_img.nii.gz");
+  }
+  itk::LinearInterpolateImageFunction<InternalImageType>::Pointer distanceMapInterpolator =
+    itk::LinearInterpolateImageFunction<InternalImageType>::New();
+  distanceMapInterpolator->SetInputImage(distanceMap);
+
+
+  // blur config
+  //  const int    numSigmas = 2;
+  //  const double sigmas[numSigmas] = { 1.0, 1.1};
+  constexpr size_t numSigmas = 10;
+  // constexpr size_t lastSigmaIndex = numSigmas - 1;
+  constexpr double sigmas[numSigmas] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 };
+  //, 9.0, 10.0, 11.0, 12.0, 13.0  };
+
   for (auto & curr_img : img_list)
   {
+    // pre-compute different levels of gaussian blur
+    InternalImageType::Pointer                                      blurredImages[numSigmas];
+    itk::LinearInterpolateImageFunction<InternalImageType>::Pointer blurredImageInterpolators[numSigmas];
+    using BlurFilter = itk::SmoothingRecursiveGaussianImageFilter<FadeMapType, FadeMapType>;
+    for (size_t i = 0; i < numSigmas; ++i)
+    {
+      BlurFilter::Pointer blur = BlurFilter::New();
+      blur->SetInput(curr_img);
+      blur->SetSigma(sigmas[i]);
+      blur->Update();
+      blurredImages[i] = blur->GetOutput();
+      blurredImageInterpolators[i] = itk::LinearInterpolateImageFunction<InternalImageType>::New();
+      blurredImageInterpolators[i]->SetInputImage(blurredImages[i]);
+      if (debugLevel >= 5)
+      {
+        itkUtil::WriteImage<InternalImageType>(blur->GetOutput(),
+                                               outputDirectory + "/blur_img_" + std::to_string(i) + ".nii.gz");
+      }
+    }
+
+    InternalImageType::PointType                         imgpnt;
     itk::ImageRegionIteratorWithIndex<InternalImageType> iit(curr_img, curr_img->GetLargestPossibleRegion());
     while (!iit.IsAtEnd())
     {
       const auto & curr_index{ iit.GetIndex() };
       curr_img->TransformIndexToPhysicalPoint<double>(curr_index, imgpnt);
-      if (interp->IsInsideBuffer(imgpnt))
+      if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
       {
-        const MaskImageType::PixelType mask_value = interp->Evaluate(imgpnt);
+        const MaskImageType::PixelType mask_value = maskInterpolator->Evaluate(imgpnt);
         if (mask_value == valid_inside_pixel)
         {
           // Pass
         }
-        else if (mask_value == face_rm)
+        else if (mask_value == face_rm || mask_value == auto_roi_background || mask_value == eye_boxes_code)
         {
-          const auto blur_image_value = blur_image->GetPixel(curr_index);
-          const auto curr_value = static_cast<FadeMapType::PixelType>(iit.Get());
-          const auto new_value = static_cast<InternalImageType::PixelType>(blur_image_value * curr_value);
-          iit.Set(new_value);
+          const InternalImageType::PixelType distanceValue = distanceMapInterpolator->Evaluate(imgpnt);
+          // determine the correct blur value
+          int              sigmaIndex = 0;
+          constexpr double sigma_distance_ratio = 1.0; // Factor of sigma smoothing to distance ratio
+          for (size_t i = 0; i < numSigmas; ++i)
+          {
+            if (sigmas[i] * sigma_distance_ratio < distanceValue)
+            {
+              sigmaIndex = i;
+            }
+          }
+          if (blurredImageInterpolators[sigmaIndex]->IsInsideBuffer(imgpnt))
+          {
+            const InternalImageType::PixelType blurredValue = blurredImageInterpolators[sigmaIndex]->Evaluate(imgpnt);
+            iit.Set(blurredValue);
+            // iit.Set(sigmas[sigmaIndex]* 100);
+          }
+          else
+          {
+            iit.Set(0);
+          }
         }
         else
         {

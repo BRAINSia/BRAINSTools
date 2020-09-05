@@ -22,17 +22,19 @@ endif()
 
 # Outdated by intel https://github.com/01org/tbb.git
 # New verions https://github.com/oneapi-src/oneTBB
+#set(${proj}_REPOSITORY ${git_protocol}://github.com/oneapi-src/oneTBB.git)
+#set(${proj}_GIT_TAG     v2020.3)  # 2020-09-04
 # HJ private fixes git@github.com:hjmjohnson/oneTBB.git
 set(${proj}_REPOSITORY ${git_protocol}://github.com/hjmjohnson/oneTBB.git)
-set(${proj}_GIT_TAG     2020_U2_20200411)  # 2020-04-01
+set(${proj}_GIT_TAG     v2020.3_20200905)  # 2020-09-04
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
-  BINARY_DIR ${SOURCE_DOWNLOAD_CACHE}/${${proj}_GIT_TAG}
-  #DOWNLOAD_COMMAND  "" #, no download
+  # BINARY_DIR ${SOURCE_DOWNLOAD_CACHE}/${${proj}_GIT_TAG}
+  # DOWNLOAD_COMMAND  "" #, no download
   CONFIGURE_COMMAND "" #, no config
   BUILD_COMMAND
     ${CMAKE_CURRENT_LIST_DIR}/build_tbb.sh

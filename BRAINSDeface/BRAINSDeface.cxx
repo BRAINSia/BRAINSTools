@@ -219,14 +219,14 @@ main(int argc, char * argv[])
   }
 
   // If outputMask has path elements, then do not use outputDirectory.
-  if (outputMask.find('/') == std::string::npos)
+  if (! outputMask.empty() )
   {
-    const std::vector<std::string> output_fn_components{ outputDirectory, "/", outputMask };
-    const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);
-    outputMask = itksys::SystemTools::JoinPath(output_fn_components);
-  }
-  if (debugLevel >= 1)
-  {
+    if (outputMask.find('/') == std::string::npos)
+    {
+      const std::vector<std::string> output_fn_components{ outputDirectory, "/", outputMask };
+      const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);
+      outputMask = itksys::SystemTools::JoinPath(output_fn_components);
+    }
     std::cout << "Writing output mask filename: " << outputMask << std::endl;
     itkUtil::WriteImage<MaskImageType>(mask_labels, outputMask);
   }

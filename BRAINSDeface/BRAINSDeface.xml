@@ -39,6 +39,14 @@
             <channel>input</channel>
         </image>
 
+        <image>
+            <name>inputMask</name>
+            <longflag>inputMask</longflag>
+            <description>Optional pre-generated mask to use.</description>
+            <label>Optional Mask</label>
+            <channel>input</channel>
+        </image>
+
         <string-enumeration>
             <name>defaceMode</name>
             <longflag>defaceMode</longflag>
@@ -70,6 +78,19 @@
             <channel>output</channel>
             <default>/tmp</default>
         </directory>
+    </parameters>
+
+    <parameters>
+        <label>Run Mode</label>
+        <description>Modify the program to only generate a mask</description>
+
+        <boolean>
+            <name>noMaskApplication</name>
+            <longflag>noMaskApplication</longflag>
+            <description>Do not apply the mask to the input images used to generate the mask</description>
+            <label>No Mask Application</label>
+            <!-- The default for boolean parameters is always set to false.-->
+        </boolean>
     </parameters>
 
     <parameters>

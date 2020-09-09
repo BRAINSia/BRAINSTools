@@ -36,15 +36,13 @@
 int
 main(int argc, char * argv[])
 {
-  PARSE_ARGS; // <-- this is not really used yet TODO: Make argument parsing SEM compatible.
-
-
+  PARSE_ARGS;
   // usage check
   if (!inputMask.empty() && noMaskApplication)
   {
     std::cout << "A mask has been provided, but the noMaskApplication flag has been set.\nThis program will do nothing "
                  "in this configuration.";
-    // TODO exit
+    exit(-1);
   }
 
   // STEP 1: Using all the anatomical images for this session, generate a label mask defining
@@ -65,11 +63,15 @@ main(int argc, char * argv[])
   constexpr size_t PA = 1;
   constexpr size_t SI = 2;
 
+  // First add images used for mask generation
   std::vector<InternalImageType::Pointer> img_list;
+  std::vector<std::string>                img_filenames;
   for (const auto & im_fn : inputVolume)
   {
     img_list.emplace_back(itkUtil::ReadImage<InternalImageType>(im_fn));
+    img_filenames.emplace_back(im_fn);
   }
+  inputVolume.clear();
 
   constexpr int valid_inside_pixel = 0;
   constexpr int face_rm = 1;
@@ -210,7 +212,6 @@ main(int argc, char * argv[])
     }
   }
 
-
   // lambdas for the other two regions based on the mask values
   using MaskLabelToDistanceMapSeedFilter = typename itk::UnaryGeneratorImageFilter<MaskImageType, MaskImageType>;
   MaskLabelToDistanceMapSeedFilter::Pointer maskLabelToDistanceMapSeedFilter = MaskLabelToDistanceMapSeedFilter::New();
@@ -309,7 +310,14 @@ main(int argc, char * argv[])
     constexpr size_t numSigmas = 10;
     // constexpr size_t lastSigmaIndex = numSigmas - 1;
     constexpr double sigmas[numSigmas] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 };
-    //, 9.0, 10.0, 11.0, 12.0, 13.0  };
+
+    // Second add images that are also used for defacing
+    for (const auto & passive_im_fn : passiveVolume)
+    {
+      img_list.emplace_back(itkUtil::ReadImage<InternalImageType>(passive_im_fn));
+      img_filenames.emplace_back(passive_im_fn);
+    }
+    passiveVolume.clear();
 
     for (auto & curr_img : img_list)
     {
@@ -333,6 +341,7 @@ main(int argc, char * argv[])
         }
       }
 
+      const bool                                           use_zeros_face = (defaceMode == "zero");
       InternalImageType::PointType                         imgpnt;
       itk::ImageRegionIteratorWithIndex<InternalImageType> iit(curr_img, curr_img->GetLargestPossibleRegion());
       while (!iit.IsAtEnd())
@@ -361,7 +370,11 @@ main(int argc, char * argv[])
             }
             if (blurredImageInterpolators[sigmaIndex]->IsInsideBuffer(imgpnt))
             {
-              const InternalImageType::PixelType blurredValue = blurredImageInterpolators[sigmaIndex]->Evaluate(imgpnt);
+              const InternalImageType::PixelType blurredValue{
+                use_zeros_face
+                  ? 0.0F
+                  : static_cast<InternalImageType::PixelType>(blurredImageInterpolators[sigmaIndex]->Evaluate(imgpnt))
+              };
               iit.Set(blurredValue);
               // iit.Set(sigmas[sigmaIndex]* 100);
             }
@@ -383,10 +396,12 @@ main(int argc, char * argv[])
       }
     }
 
+
+
     // STEP 3 Generate intensity normalized images from the clippings.
-    for (size_t i = 0; i < inputVolume.size(); ++i)
+    for (size_t i = 0; i < img_filenames.size(); ++i)
     {
-      const auto input_fn = itksys::SystemTools::GetFilenameName(inputVolume[i]);
+      const auto input_fn = itksys::SystemTools::GetFilenameName(img_filenames[i]);
 
       const std::vector<std::string> output_fn_components{ outputDirectory, "/", input_fn };
       const std::string              output_fn = itksys::SystemTools::JoinPath(output_fn_components);

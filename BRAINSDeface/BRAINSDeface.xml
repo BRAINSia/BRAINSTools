@@ -38,6 +38,15 @@
             <label>Source Reference Image</label>
             <channel>input</channel>
         </image>
+        <image multiple="true">>
+            <name>passiveVolume</name>
+            <flag>p</flag>
+            <longflag>passiveVolume</longflag>
+            <description>Input images not used in generating masks, all images must be in the exact same physical space as inputVolumes, ACPC aligned and consistent with landmarks.</description>
+            <label>Source Passive Images Image</label>
+            <channel>input</channel>
+        </image>
+
 
         <image>
             <name>inputMask</name>
@@ -52,7 +61,7 @@
             <longflag>defaceMode</longflag>
             <element>zero</element>
             <element>blur</element>
-            <default>zero</default>
+            <default>blur</default>
         </string-enumeration>
     </parameters>
 

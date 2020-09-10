@@ -152,15 +152,15 @@ main(int argc, char * argv[])
         constexpr double                                 approx_eye_radius = 9; // Size of eyes
         while (!mit.IsAtEnd())
         {
+          mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
+          const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
+          if (!isInside)
+          {
+            mit.Set(outside_fov);
+          }
           if (mit.Value() == 0) // Only change if not yet set.
           {
-            mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
-            const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
-            if (!isInside)
-            {
-              mit.Set(outside_fov);
-            }
-            else if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
+            if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
             {
               mit.Set(below_ac);
             }
@@ -279,22 +279,33 @@ main(int argc, char * argv[])
     signedDistanceMap->SetInput(padImageFilter->GetOutput());
     signedDistanceMap->SetInsideIsPositive(true);
     signedDistanceMap->Update();
-    InternalImageType::Pointer distanceMap = signedDistanceMap->GetOutput();
+
+    using DistBlurFilter = itk::SmoothingRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
+    DistBlurFilter::Pointer blur = DistBlurFilter::New();
+    blur->SetInput(signedDistanceMap->GetOutput());
+    blur->SetSigma(2.25);
+    blur->Update();
+    InternalImageType::Pointer distanceMap = blur->GetOutput();
+
     for (itk::ImageRegionIterator<InternalImageType> diit(distanceMap, distanceMap->GetLargestPossibleRegion());
          !diit.IsAtEnd();
          ++diit)
     {
       const auto &                           refvalue = diit.Value();
-      constexpr InternalImageType::PixelType allowed_blurring_area = -2.0; // Allow blurring if distance from edge
+      constexpr InternalImageType::PixelType allowed_blurring_area = 0.0; // Allow blurring if distance from edge
       if (refvalue < allowed_blurring_area)
       {
         diit.Set(0.0);
       }
       else
       {
-        diit.Set(std::abs(refvalue));
+        const InternalImageType::PixelType absrefvalue = std::abs(refvalue);
+        const InternalImageType::PixelType distout = absrefvalue < 10.0 ? absrefvalue : 10.0;
+        diit.Set(distout);
       }
     }
+
+
     if (debugLevel >= 2)
     {
       itkUtil::WriteImage<InternalImageType>(distanceMap, outputDirectory + "/dist_img.nii.gz");
@@ -303,13 +314,12 @@ main(int argc, char * argv[])
       itk::LinearInterpolateImageFunction<InternalImageType>::New();
     distanceMapInterpolator->SetInputImage(distanceMap);
 
-
-    // blur configx
+    // blur configuration
     //  const int    numSigmas = 2;
     //  const double sigmas[numSigmas] = { 1.0, 1.1};
-    constexpr size_t numSigmas = 10;
+    constexpr size_t numSigmas = 13;
     // constexpr size_t lastSigmaIndex = numSigmas - 1;
-    constexpr double sigmas[numSigmas] = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 };
+    constexpr double sigmas[numSigmas] = { 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 };
 
     // Second add images that are also used for defacing
     for (const auto & passive_im_fn : passiveVolume)

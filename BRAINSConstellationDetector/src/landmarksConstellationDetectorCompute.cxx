@@ -60,7 +60,6 @@ lmk_check_differences(const LandmarksMapType & ref,
 void
 landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 {
-  bool forced_landmark_compare_are_same = true;
   std::cout << "\nEstimating MSP..." << std::endl;
 
   VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
@@ -567,11 +566,19 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
                                     LlsMatrix_name);
 
               // Update landmarks in input and ACPC-aligned space
-              this->m_orig_lmks_updated[LlsMatrix_name] =
-                this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found.at(LlsMatrix_name));
+              if(  m_orig_lmks_forced.find(LlsMatrix_name) != m_orig_lmks_forced.end() )
+              {
+                std::cout << "USING FORCED LMK " <<  LlsMatrix_name << std::endl;
+                this->m_orig_lmks_updated[LlsMatrix_name] = m_orig_lmks_forced.at(LlsMatrix_name);
+              }
+              else
               {
                 this->m_orig_lmks_updated[LlsMatrix_name] =
-                  this->m_orig2eyeFixed_img_tfm->TransformPoint(this->m_orig_lmks_updated.at(LlsMatrix_name));
+                  this->m_eyeFixed2msp_img_tfm->TransformPoint(msp_lmks_algo_found.at(LlsMatrix_name));
+                {
+                  this->m_orig_lmks_updated[LlsMatrix_name] =
+                    this->m_orig2eyeFixed_img_tfm->TransformPoint(this->m_orig_lmks_updated.at(LlsMatrix_name));
+                }
               }
               msp_lmks_computed_iteratively_using_orig_lmks[LlsMatrix_name] =
                 orig2msp_lmk_tfm->TransformPoint(this->m_orig_lmks_updated.at(LlsMatrix_name));
@@ -590,7 +597,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
     } // End of local searching kernel
 
   } // End of local searching
-  forced_landmark_compare_are_same =
+  const bool forced_landmark_compare_are_same =
     lmk_check_differences(m_orig_lmks_forced, m_orig_lmks_updated, false, __FILE__, __LINE__);
   if (!forced_landmark_compare_are_same)
   {

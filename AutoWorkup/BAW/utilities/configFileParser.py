@@ -352,7 +352,7 @@ def parse_file(configFile, env, workphase):
         parser.read_file(configFID)
     assert parser.has_option(env, "_BUILD_DIR") or parser.has_option(
         "DEFAULT", "_BUILD_DIR"
-    ), "BUILD_DIR option not in {0}".format(env)
+    ), "_BUILD_DIR option not in {0}".format(env)
     environment, cluster = parse_environment(parser, env)
     experiment = parse_experiment(parser, workphase)
     pipeline = parse_nipype(parser)

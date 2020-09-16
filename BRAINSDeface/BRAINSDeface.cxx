@@ -150,17 +150,21 @@ main(int argc, char * argv[])
       {
         itk::ImageRegionIteratorWithIndex<MaskImageType> mit(mask_labels, mask_labels->GetLargestPossibleRegion());
         constexpr double                                 approx_eye_radius = 9; // Size of eyes
+        constexpr double                                 front_of_eyes_region = approx_eye_radius * 3.15;
+        constexpr double                                 mm_below_AC = 80.0;
         while (!mit.IsAtEnd())
         {
           mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
           const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
-          if (!isInside)
+          const bool inferior_to_mm_below_AC = (maskpnt[SI] < AC_pnt[SI] - mm_below_AC);
+
+          if (!isInside && inferior_to_mm_below_AC)
           {
             mit.Set(outside_fov);
           }
           if (mit.Value() == 0) // Only change if not yet set.
           {
-            if (maskpnt[SI] < AC_pnt[SI] - 80.0) // removing 80 mm inferior
+            if (inferior_to_mm_below_AC) // removing 80 mm inferior
             {
               mit.Set(below_ac);
             }
@@ -193,8 +197,8 @@ main(int argc, char * argv[])
               mit.Set(eye_boxes_code);
             }
             // Now try to remove eyebrows/forehead
-            else if ((maskpnt[PA] < (RE_pnt[PA] - approx_eye_radius * 3) ||
-                      maskpnt[PA] < (LE_pnt[PA] - approx_eye_radius * 3))
+            else if ((maskpnt[PA] < (RE_pnt[PA] - front_of_eyes_region) ||
+                      maskpnt[PA] < (LE_pnt[PA] - front_of_eyes_region))
                      //                   && (maskpnt[SI] < (RE_pnt[SI] + approx_eye_radius * 5) ||
                      //                    maskpnt[SI] < (LE_pnt[SI] + approx_eye_radius * 5))
             )

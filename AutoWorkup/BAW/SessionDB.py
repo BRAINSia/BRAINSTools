@@ -44,17 +44,27 @@ class SessionDB(object):
                 _tablename=self.MasterTableName, _subjid=subject_filter
             )
 
-    def open_connection(self):
+    def open_connection(self, read_only=False):
         """This function represents a """
-        self.connection = lite.connect(self.dbName)
+        if read_only:
+            print("Opening database as read_only mode")
+            self.connection = lite.connect(self.dbName, uri=True)
+        else:
+            self.connection = lite.connect(self.dbName)
         self.cursor = self.connection.cursor()
 
     def close_connection(self):
         """This function represents a """
-        if not self.cursor is None:
-            self.cursor.close()
+        #print("A")
+        #if not self.cursor is None and not self.connection is None:
+        #    print("B")
+        #    self.cursor.close()
+        #    print("C")
         if not self.connection is None:
+        #    print("D")
             self.connection.close()
+        #    print("E")
+        #print("F")
 
     def _local_fill_db_and_close(self, sqlCommandList):
         """This function represents a

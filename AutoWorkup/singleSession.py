@@ -174,11 +174,13 @@ def create_and_run(
     master_config = OrderedDict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
-    database = open_subject_database(
-        experiment["cachedir"], ["all"], environment["prefix"], experiment["dbfile"]
-    )
-    database.open_connection()
+
     try:
+        database = open_subject_database(
+            experiment["cachedir"], ["all"], environment["prefix"], experiment["dbfile"]
+        )
+        # We only need to read from the database as this point
+        database.open_connection(read_only=True)
         all_sessions = database.get_all_sessions()
         if not set(sessions) <= set(all_sessions) and "all" not in sessions:
             missing = set(sessions) - set(all_sessions)
@@ -217,11 +219,8 @@ def create_and_run(
             )
             _dict["BadT2"] = False
             if _dict["T2s"] == database.get_filenames_by_scan_type(session, ["T2-15"]):
-                print("This T2 is not going to be used for JointFusion")
-                print("This T2 is not going to be used for JointFusion")
-                print("This T2 is not going to be used for JointFusion")
-                print("This T2 is not going to be used for JointFusion")
-                print((_dict["T2s"]))
+                for t2fn in _dict["T2s"]:
+                  print(f"This T2-15 is not going to be used for JointFusion {t2fn}")
                 _dict["BadT2"] = True
             _dict["PDs"] = database.get_filenames_by_scan_type(
                 session, ["PD-15", "PD-30"]
@@ -378,10 +377,12 @@ def create_and_run(
                 else:
                     print("EXITING WITHOUT WORK DUE TO dryRun flag")
     except Exception as e:
+        print("Something went wrong:")
         print(e)
         raise
     finally:
         try:
+            #print("attempting to close connection")
             database.close_connection()
         except Exception as e:
             print(e)

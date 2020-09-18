@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- NOT YET USED this needs to be filled out later -->
 <executable>
     <category>Utilities.BRAINS</category>
     <title>Brain Deface from T1/T2 image (BRAINS)</title>
     <description>
-        This program: 1)
+        This program: 1) will deface images from a set of images.  Inputs must be ACPC aligned, and AC, PC, LE, RE provided.
     </description>
-    <version>5.3.2</version>
+    <version>5.3.3</version>
     <documentation-url></documentation-url>
     <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
     <contributor>

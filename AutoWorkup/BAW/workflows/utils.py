@@ -29,6 +29,9 @@ def run_workflow(workflow, plugin="Linear", plugin_args=OrderedDict()):
     for key, value in list(workflow.config["execution"].items()):
         print("EXECUTE ENV: {0}={1}".format(key, value))
     try:
+        if plugin == "SGEGraph":
+             plugin_args['dont_resubmit_completed_jobs']= True
+             print(f"{plugin_args}")
         workflow.run(plugin=plugin, plugin_args=plugin_args)
     except:
         print(("=+-+" * 25))

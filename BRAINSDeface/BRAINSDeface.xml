@@ -5,7 +5,7 @@
     <description>
         This program: 1) will deface images from a set of images.  Inputs must be ACPC aligned, and AC, PC, LE, RE provided.
     </description>
-    <version>5.3.3</version>
+    <version>5.4.0</version>
     <documentation-url></documentation-url>
     <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
     <contributor>

@@ -10,7 +10,7 @@
 include(ProjectSourceVersion)
 
 ## NOTE:    NEED TO MANUALLY UPDATE ALL XML FILES
-##       -  vim $(git grep  -l "<version>" -- *.xml)
+##       -  vim $(git grep  -l "<version>" -- '*.xml')
 ##                     :%s/< *version *> *[^<]*</<version>5.3.2</g
 ##       -  manually modify CMakeList.txt to update version in project() command
 ##       -  manually edit CMake/ProjectSourceVersionVars.cmake and change version defaults

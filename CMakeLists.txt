@@ -37,8 +37,11 @@ set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often ma
 project(${LOCAL_PROJECT_NAME}
    LANGUAGES  C CXX
    DESCRIPTION "BRAINSTools see github at https://github.com/BRAINSia/BRAINSTools" #<-- cmake version 3.9 or greater
-   VERSION 5.3.2
+   VERSION 5.4.0
 )
+# VERSION 5.4.0 The version used to create the final PREDICTHD_BIDS_DEFACE dataset.
+# VERSION 5.3.2 Many tools placed in ARCHIVE
+
 #-- The project() command stores the version number and its components in variables
 #-- PROJECT_VERSION, <PROJECT-NAME>_VERSION
 #-- PROJECT_VERSION_MAJOR, <PROJECT-NAME>_VERSION_MAJOR

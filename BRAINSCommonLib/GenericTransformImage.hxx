@@ -208,13 +208,11 @@ DoResampleInPlace(
   return resampleIPFilter->GetOutput();
 }
 
-template <typename InputImageType>
-typename InputImageType::ConstPointer
-_ConvertToDistanceMap(InputImageType const * const         OperandImage,
+template <typename InputImageType, typename DistanceMapImageType>
+typename DistanceMapImageType::ConstPointer
+local_ConvertToDistanceMap(InputImageType const * const         OperandImage,
                       typename InputImageType::PixelType & suggestedDefaultValue)
 {
-  typename InputImageType::ConstPointer PrincipalOperandImage;
-
   /* We make the values inside the structures positive and outside negative
    * using
    *  BinaryThresholdImageFilter. As the lower and upper threshold values are
@@ -236,8 +234,9 @@ _ConvertToDistanceMap(InputImageType const * const         OperandImage,
     initialFilter->SetUpperThreshold(upperThreshold);
   }
   initialFilter->Update();
+  typename DistanceMapImageType::ConstPointer PrincipalOperandImage;
   {
-    using DistanceFilterType = itk::SignedMaurerDistanceMapImageFilter<InputImageType, InputImageType>;
+    using DistanceFilterType = itk::SignedMaurerDistanceMapImageFilter<InputImageType, DistanceMapImageType>;
     typename DistanceFilterType::Pointer DistanceFilter = DistanceFilterType::New();
     DistanceFilter->SetInput(initialFilter->GetOutput());
     // DistanceFilter->SetNarrowBandwidth( m_BandWidth );
@@ -276,18 +275,19 @@ _ConvertToDistanceMap(InputImageType const * const         OperandImage,
   return PrincipalOperandImage;
 }
 
-template <typename InputImageType>
-typename InputImageType::Pointer
-_FromDistanceMap(typename InputImageType::Pointer                             TransformedImage,
-                 const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage)
+template <typename OutputImageType, typename DistanceMapImageType>
+typename OutputImageType::Pointer
+local_FromDistanceMap(typename DistanceMapImageType::Pointer                        TransformedImage,
+                 const itk::ImageBase<OutputImageType::ImageDimension> * const ReferenceImage)
 {
   // A special case for dealing with binary images
   // where signed distance maps are warped and thresholds created
   using MaskPixelType = short int;
-  using BinFlagOnMaskImageType = typename itk::Image<MaskPixelType, InputImageType::ImageDimension>;
+  using BinFlagOnMaskImageType = typename itk::Image<MaskPixelType, OutputImageType::ImageDimension>;
 
   // Now Threshold and write out image
-  using BinaryThresholdFilterType = typename itk::BinaryThresholdImageFilter<InputImageType, BinFlagOnMaskImageType>;
+  using BinaryThresholdFilterType =
+    typename itk::BinaryThresholdImageFilter<DistanceMapImageType, BinFlagOnMaskImageType>;
   typename BinaryThresholdFilterType::Pointer finalFilter = BinaryThresholdFilterType::New();
   finalFilter->SetInput(TransformedImage);
 
@@ -310,12 +310,12 @@ _FromDistanceMap(typename InputImageType::Pointer                             Tr
 
   finalFilter->Update();
 
-  using CastImageFilter = typename itk::CastImageFilter<BinFlagOnMaskImageType, InputImageType>;
+  using CastImageFilter = typename itk::CastImageFilter<BinFlagOnMaskImageType, OutputImageType>;
   typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
   castFilter->SetInput(finalFilter->GetOutput());
   castFilter->Update();
 
-  typename InputImageType::Pointer FinalTransformedImage = castFilter->GetOutput();
+  typename OutputImageType::Pointer FinalTransformedImage = castFilter->GetOutput();
   return FinalTransformedImage;
 }
 
@@ -332,15 +332,6 @@ GenericTransformImage(
   const bool                         binaryFlag)
 {
   sanitiy_check_binary_interpolation(binaryFlag, interpolationMode);
-  // FIRST will need to convert binary image to signed distance in case
-  // binaryFlag is true. Splice in a case for dealing with binary images,
-  // where signed distance maps are warped and thresholds created.
-  typename InputImageType::ConstPointer PrincipalOperandImage =
-    (binaryFlag) ? _ConvertToDistanceMap(OperandImage, suggestedDefaultValue).GetPointer() : OperandImage;
-
-  // RESAMPLE with the appropriate transform and interpolator:
-  // One name for the intermediate resampled float image.
-  typename InputImageType::Pointer TransformedImage;
   if (genericTransform.IsNotNull())
   {
     if (interpolationMode == "ResampleInPlace")
@@ -365,12 +356,35 @@ GenericTransformImage(
         // extract the included linear rigid transform from the input composite
         genericTransform = genericCompositeTransform->GetNthTransform(0).GetPointer();
       }
-      TransformedImage =
-        DoResampleInPlace<InputImageType, InputImageType>(PrincipalOperandImage.GetPointer(), genericTransform);
+      typename InputImageType::ConstPointer PrincipalOperandImage = OperandImage;
+      return DoResampleInPlace<InputImageType, InputImageType>(PrincipalOperandImage.GetPointer(), genericTransform);
+    }
+    else if (binaryFlag)
+    {
+      // RESAMPLE with the appropriate transform and interpolator:
+      // One name for the intermediate resampled float image.
+      using RealImageType = itk::Image<typename itk::NumericTraits<typename InputImageType::PixelType>::RealType,
+                                       InputImageType::ImageDimension>;
+      // FIRST will need to convert binary image to signed distance in case
+      // binaryFlag is true. Splice in a case for dealing with binary images,
+      // where signed distance maps are warped and thresholds created.
+      typename RealImageType::ConstPointer PrincipalOperandImage =
+        local_ConvertToDistanceMap<InputImageType, RealImageType>(OperandImage, suggestedDefaultValue).GetPointer();
+      typename RealImageType::Pointer TransformedImage = TransformResample<RealImageType, RealImageType>(
+        PrincipalOperandImage.GetPointer(),
+        // INFO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
+        ReferenceImage,
+        static_cast<typename RealImageType::PixelType>(suggestedDefaultValue),
+        GetInterpolatorFromString<RealImageType>(interpolationMode).GetPointer(),
+        genericTransform.GetPointer());
+      // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
+      return local_FromDistanceMap<InputImageType, RealImageType>(TransformedImage, ReferenceImage);
     }
     else
     {
-      TransformedImage = TransformResample<InputImageType, InputImageType>(
+      // RESAMPLE with the appropriate transform and interpolator:
+      typename InputImageType::ConstPointer PrincipalOperandImage = OperandImage;
+      return TransformResample<InputImageType, InputImageType>(
         PrincipalOperandImage.GetPointer(),
         // INFO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
         ReferenceImage,
@@ -379,9 +393,7 @@ GenericTransformImage(
         genericTransform.GetPointer());
     }
   }
-
-  // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
-  return (binaryFlag) ? _FromDistanceMap<InputImageType>(TransformedImage, ReferenceImage) : TransformedImage;
+  return nullptr;
 }
 
 template <typename InputImageType>
@@ -396,35 +408,47 @@ SimpleGenericTransformImage(
   const bool                         binaryFlag)
 {
   sanitiy_check_binary_interpolation(binaryFlag, interpolationMode);
-  // FIRST will need to convert binary image to signed distance in case
-  // binaryFlag is true. Splice in a case for dealing with binary images,
-  // where signed distance maps are warped and thresholds created.
-  typename InputImageType::ConstPointer PrincipalOperandImage =
-    (binaryFlag) ? _ConvertToDistanceMap(OperandImage, suggestedDefaultValue).GetPointer() : OperandImage;
+
   // RESAMPLE with the appropriate transform and interpolator:
   // One name for the intermediate resampled float image.
-  typename InputImageType::Pointer TransformedImage;
 
-  // std::cout<< " Displacement Field is Null... " << std::endl;
+  if (interpolationMode == "ResampleInPlace")
+  {
+    itkGenericExceptionMacro(<< "ResampleInPlace not allow for SimpleGenericTransformImage" << std::endl);
+  }
   if (genericTransform.IsNotNull())
   {
-    if (interpolationMode == "ResampleInPlace")
+    if (binaryFlag)
     {
-      itkGenericExceptionMacro(<< "ResampleInPlace not allow for SimpleGenericTransformImage" << std::endl);
+      // FIRST will need to convert binary image to signed distance in case
+      // binaryFlag is true. Splice in a case for dealing with binary images,
+      // where signed distance maps are warped and thresholds created.
+      using RealImageType = itk::Image<typename itk::NumericTraits<typename InputImageType::PixelType>::RealType,
+                                       InputImageType::ImageDimension>;
+      typename RealImageType::ConstPointer PrincipalOperandImage =
+        local_ConvertToDistanceMap<InputImageType, RealImageType>(OperandImage, suggestedDefaultValue).GetPointer();
+
+      typename RealImageType::Pointer TransformedImage = TransformResample<RealImageType, RealImageType>(
+        PrincipalOperandImage.GetPointer(),
+        ReferenceImage,
+        suggestedDefaultValue,
+        GetInterpolatorFromString<RealImageType>(interpolationMode).GetPointer(),
+        genericTransform.GetPointer());
+      // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
+      return local_FromDistanceMap<InputImageType, RealImageType>(TransformedImage, ReferenceImage);
     }
     else
     {
-      TransformedImage = TransformResample<InputImageType, InputImageType>(
+      typename InputImageType::ConstPointer PrincipalOperandImage = OperandImage;
+      return TransformResample<InputImageType, InputImageType>(
         PrincipalOperandImage.GetPointer(),
-        // INFO:  Change function signature to be a ConstPointer instead of a raw pointer ReferenceImage.GetPointer(),
         ReferenceImage,
         suggestedDefaultValue,
         GetInterpolatorFromString<InputImageType>(interpolationMode).GetPointer(),
         genericTransform.GetPointer());
     }
   }
-  // FINALLY will need to convert signed distance to binary image in case binaryFlag is true.
-  return (binaryFlag) ? _FromDistanceMap<InputImageType>(TransformedImage, ReferenceImage) : TransformedImage;
+  return nullptr;
 }
 
 #endif

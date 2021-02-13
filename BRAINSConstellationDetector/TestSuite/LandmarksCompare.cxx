@@ -92,23 +92,19 @@ main(int argc, char * argv[])
       }
       else
       {
-        bool         thisLmkOK = true;
         const double error_term = lmk1iter->second.EuclideanDistanceTo(lmk2iter->second);
 
+        std::string status { "PASSED" };
         if (error_term > lmk_tolerance && error_term > tolerance)
         {
-          std::cout << "FAILED: lmk " << lmk1iter->first << "\t\t differ    ||" << lmk1iter->second << " - "
-                    << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
-                    << " tol: " << tolerance << std::endl;
+          status="FAILED";
           allSame = false;
-          thisLmkOK = false;
         }
-        if (thisLmkOK)
-        {
-          std::cout << "  PASSED: lmk " << lmk1iter->first << "\t\t are same ||" << lmk1iter->second << " - "
-                    << lmk2iter->second << "|| = " << error_term << "\t > " << lmk_tolerance << " wts " << lmk_tolerance
-                    << " tol: " << tolerance << std::endl;
-        }
+        std::cout << status << ": " << lmk1iter->first << "\tdiffer |" << lmk1iter->second << " - "
+                  << lmk2iter->second << "| = " << error_term
+                  << "\t( "  << error_term << " ?< [" << lmk_tolerance << " wts "
+                  << "|| " << tolerance << " cmdlntol]" << " )"
+                  << std::endl;
       }
       ++lmk1iter;
     }

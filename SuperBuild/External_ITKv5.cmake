@@ -56,7 +56,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    c3bf73cfece084b1e46d997941a752a85a29c5ea  # ITK 5.2rc2
+    7863da6db1fd541487c9e543308dcfcea26d3261 # 20210122
     QUIET
     )
 
@@ -130,6 +130,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DModule_MGHIO:BOOL=ON
       -DModule_ITKIOMINC:BOOL=ON
       -DModule_ITKReview:BOOL=ON
+      -DModule_AdaptiveDenoising:BOOL=ON # Required for ANTs
+      -DModule_ITKMetricsv4:BOOL=ON # needed for MattesMutualInformationImageToImageMetricv4
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF # HACK:  QUICK CHANGE
       -DITK_WRAP_PYTHON:BOOL=OFF

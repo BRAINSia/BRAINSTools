@@ -7,11 +7,11 @@ FindITKUtil( DWIConvert_ITK
         )
 
 FindVTKUtil(
-  vtkIOLegacy
-  vtkIOXML
-  vtkCommonDataModel
-  vtkFiltersCore
-  vtkFiltersGeneral
+  IOLegacy #vtkIOLegacy
+  IOXML # vtkIOXML
+  CommonDataModel # vtkCommonDataModel
+  FiltersCore # vtkFiltersCore
+  FiltersGeneral # vtkFiltersGeneral
 )
 
 option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)

@@ -16,9 +16,9 @@ FindITKUtil(BRAINSTalairach_ITK
 # VTK
 #
 FindVTKUtil(
-  vtkCommonExecutionModel
-  vtkIOLegacy
-  vtkIOXML
+  CommonExecutionModel # vtkCommonExecutionModel
+  IOLegacy # vtkIOLegacy
+  IOXML # vtkIOXML
   )
 #-----------------------------------------------------------------------------
 # Output directories.

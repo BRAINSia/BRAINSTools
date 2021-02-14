@@ -33,7 +33,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/uclouvain/openjpeg.git")
-  set(${proj}_GIT_TAG "4a2a8693e5a02207a8813b02a375abdc4e43c49b") # release 2016-08-06
+  set(${proj}_GIT_TAG "0bda7188b7b545232a341f1d978b1e4feda46fc2") # 20210122
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

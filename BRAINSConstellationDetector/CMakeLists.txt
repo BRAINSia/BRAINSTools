@@ -43,24 +43,24 @@ if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
     ITKVTK
     ITKVtkGlue
   )
-  set(LOCAL_VTKQT vtkGUISupportQt)
+  set(LOCAL_VTKQT GUISupportQt) #vtkGUISupportQt)
 
 FindVTKUtil(
-  vtkCommonColor
-  vtkCommonComputationalGeometry
-  vtkCommonCore
-  vtkCommonDataModel
-  vtkCommonExecutionModel
-  vtkCommonMath
-  vtkCommonMisc
-  vtkCommonSystem
-  vtkCommonTransforms
-  vtkFiltersCore
-  vtkFiltersGeneral
-  vtkFiltersSources
-  vtkImagingCore
-  vtkInteractionStyle
-  vtkRenderingCore
+  CommonColor #vtkCommonColor
+  CommonComputationalGeometry #vtkCommonComputationalGeometry
+  CommonCore #vtkCommonCore
+  CommonDataModel #vtkCommonDataModel
+  CommonExecutionModel #vtkCommonExecutionModel
+  CommonMath #vtkCommonMath
+  CommonMisc #vtkCommonMisc
+  CommonSystem #vtkCommonSystem
+  CommonTransforms #vtkCommonTransforms
+  FiltersCore #vtkFiltersCore
+  FiltersGeneral #vtkFiltersGeneral
+  FiltersSources #vtkFiltersSources
+  ImagingCore #vtkImagingCore
+  InteractionStyle #vtkInteractionStyle
+  RenderingCore #vtkRenderingCore
   ${LOCAL_VTKQT})
 endif()
 

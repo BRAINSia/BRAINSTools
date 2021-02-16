@@ -11,12 +11,12 @@ macro(FindVTKUtil)
 
   #  message("VTK_DIR:${VTK_DIR}")
   set(VTK_COMMON_COMPONENTS
-    vtkCommonSystem
-    vtkCommonCore
-    vtkCommonSystem
-    vtkCommonMath
-    vtkCommonMisc
-    vtkCommonTransforms
+    CommonSystem #vtkCommonSystem
+    CommonCore #vtkCommonCore
+    CommonSystem #vtkCommonSystem
+    CommonMath #vtkCommonMath
+    CommonMisc #vtkCommonMisc
+    CommonTransforms #vtkCommonTransforms
     ${ARGN}
   )
   find_package(VTK ${VTK_VERSION_MIN} COMPONENTS ${VTK_COMMON_COMPONENTS} REQUIRED)
@@ -39,7 +39,11 @@ macro(FindVTKUtil)
 #  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS ${VTK_DEFINITIONS})
 
   find_package(VTK ${VTK_VERSION_MIN} REQUIRED) ## HACK: VTK should be minimized.  This is maximizing it's use to all modules.
-  include(${VTK_USE_FILE})
+
+  # No longer needed; warns or errors depending on the version requested when
+  # finding VTK.
+  #include(${VTK_USE_FILE})
+
   #  message("VTK_USE_FILE:${VTK_USE_FILE}")
   #  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
   include_directories(${VTK_INCLUDE_DIRS})

@@ -2,7 +2,9 @@
 set(proj teem)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES zlib)
+set(${proj}_DEPENDENCIES ""
+#zlib
+)
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_teem)
   list(APPEND teem_DEPENDENCIES ${VTK_EXTERNAL_NAME})
 endif()

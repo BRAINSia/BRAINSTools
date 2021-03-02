@@ -5,8 +5,10 @@ set(${proj}_REQUIRED_VERSION "v9.0.1")  #If a required version is necessary, the
 set(VTK_VERSION_MAJOR 9)
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "zlib" )
-#"TBB")
+set(${proj}_DEPENDENCIES ""
+# "zlib"
+# "TBB"
+)
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -126,10 +128,14 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}
       # ZLIB
-      -D${proj}_USE_SYSTEM_ZLIB:BOOL=ON
-      -DZLIB_ROOT:PATH=${ZLIB_ROOT}
-      -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
-      -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      #-D${proj}_USE_SYSTEM_ZLIB:BOOL=ON
+      #-DZLIB_ROOT:PATH=${ZLIB_ROOT}
+      #-DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
+      #-DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+      -D${proj}_USE_SYSTEM_ZLIB:BOOL=OFF
+      -DZLIB_ROOT:PATH=""
+      -DZLIB_INCLUDE_DIR:PATH=""
+      -DZLIB_LIBRARY:FILEPATH=""
       # TBB
       -DVTK_SMP_IMPLEMENTATION_TYPE:STRING=Sequential
       #-DVTK_SMP_IMPLEMENTATION_TYPE:STRING=TBB

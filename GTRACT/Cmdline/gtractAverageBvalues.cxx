@@ -56,15 +56,18 @@
 #include "DWIConvertLib.h"
 
 int
-buildDirectionLut(itk::Array<int> &       lut,
-                  itk::Array<int> &       count,
-                  itk::MetaDataDictionary meta,
-                  int                     numImages,
-                  double                  directionsTolerance,
-                  bool                    averageB0only);
+buildDirectionLut(itk::Array<int> &               lut,
+                  itk::Array<int> &               count,
+                  const itk::MetaDataDictionary & meta,
+                  int                             numImages,
+                  double                          directionsTolerance,
+                  bool                            averageB0only);
 
 bool
-areDirectionsEqual(std::string direction1, std::string direction2, double directionsTolerance, bool averageB0only);
+areDirectionsEqual(const std::string & direction1,
+                   const std::string & direction2,
+                   double              directionsTolerance,
+                   bool                averageB0only);
 
 int
 main(int argc, char * argv[])
@@ -257,12 +260,12 @@ main(int argc, char * argv[])
 }
 
 int
-buildDirectionLut(itk::Array<int> &       lut,
-                  itk::Array<int> &       count,
-                  itk::MetaDataDictionary meta,
-                  int                     numImages,
-                  double                  directionsTolerance,
-                  bool                    averageB0only)
+buildDirectionLut(itk::Array<int> &               lut,
+                  itk::Array<int> &               count,
+                  const itk::MetaDataDictionary & meta,
+                  int                             numImages,
+                  double                          directionsTolerance,
+                  bool                            averageB0only)
 {
   int numElements = 0;
 
@@ -321,7 +324,10 @@ buildDirectionLut(itk::Array<int> &       lut,
 }
 
 bool
-areDirectionsEqual(std::string direction1, std::string direction2, double directionsTolerance, bool averageB0only)
+areDirectionsEqual(const std::string & direction1,
+                   const std::string & direction2,
+                   double              directionsTolerance,
+                   bool                averageB0only)
 {
   constexpr unsigned int MAXSTR = 256;
   char                   tmpDir1[MAXSTR];

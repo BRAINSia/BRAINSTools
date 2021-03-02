@@ -202,7 +202,7 @@ DoIt(int argc, char * argv[], PixelType)
 }
 
 void
-GetImageType(std::string                         fileName,
+GetImageType(const std::string &                 fileName,
              itk::ImageIOBase::IOPixelType &     pixelType,
              itk::ImageIOBase::IOComponentType & componentType)
 {

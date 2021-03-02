@@ -47,7 +47,7 @@ local_to_string(unsigned int i)
 
 VersorTransformType::Pointer
 landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
-  VersorTransformType::ConstPointer orig2msp_img_tfm)
+  const VersorTransformType::ConstPointer & orig2msp_img_tfm)
 {
   VersorTransformType::Pointer orig2msp_lmk_tfm = VersorTransformType::New();
   SImageType::PointType        centerPoint = orig2msp_img_tfm->GetCenter();
@@ -81,8 +81,9 @@ landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType &
 }
 
 void
-landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(SImageType::Pointer      original_space_image,
-                                                                        const LandmarksMapType & updated_orig_lmks)
+landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
+  const SImageType::Pointer & original_space_image,
+  const LandmarksMapType &    updated_orig_lmks)
 {
   ////////////////////////////
   // START BRAINSFit alternative
@@ -280,11 +281,11 @@ landmarksConstellationDetector::GetImageOrigToACPCVersorTransform() const
 
 SImageType::PointType
 landmarksConstellationDetector::FindCandidatePoints(
-  SImageType::Pointer volumeMSP,
-  SImageType::Pointer mask_LR,
-  const double        LR_restrictions,
-  const double        PA_restrictions,
-  const double        SI_restrictions,
+  const SImageType::Pointer & volumeMSP,
+  const SImageType::Pointer & mask_LR,
+  const double                LR_restrictions,
+  const double                PA_restrictions,
+  const double                SI_restrictions,
   // INFO: restrictions should really be ellipsoidal values
   const SImageType::PointType::VectorType &                      CenterOfSearchArea,
   const std::vector<std::vector<float>> &                        TemplateMean,
@@ -552,24 +553,21 @@ landmarksConstellationDetector::FindCandidatePoints(
 
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
       msp_lmks_algo_found["CenterOfSearchArea"] = CenterOfSearchArea;
-      msp_lmks_algo_found["LPS_BEGIN"] =  LPS_BEGIN;
-      msp_lmks_algo_found["LPS_END"] =  LPS_END;
-      const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" +
-                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                      local_to_string(curr_rotationAngle_index) + "_markers.fcsv");
+      msp_lmks_algo_found["LPS_BEGIN"] = LPS_BEGIN;
+      msp_lmks_algo_found["LPS_END"] = LPS_END;
+      const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                   "_" + local_to_string(curr_rotationAngle_index) + "_markers.fcsv");
       WriteITKtoSlicer3Lmk(pointsName, msp_lmks_algo_found);
 
       // Print the name of the file that is the master volume, the fixed image sample should
       // be aligned with this!
-      const std::string volumeMSPName(this->m_ResultsDir + "/NCCOutput_" +
-                                              itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                              local_to_string(curr_rotationAngle_index) + "_volumeMSP.nii.gz");
+      const std::string volumeMSPName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                      "_" + local_to_string(curr_rotationAngle_index) + "_volumeMSP.nii.gz");
       itkUtil::WriteImage<SImageType>(volumeMSP, volumeMSPName);
 
 
-      const std::string mask_LRName(this->m_ResultsDir + "/NCCOutput_" +
-                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                      local_to_string(curr_rotationAngle_index) + "_mask_LRName.nii.gz");
+      const std::string mask_LRName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                    "_" + local_to_string(curr_rotationAngle_index) + "_mask_LRName.nii.gz");
       itkUtil::WriteImage<SImageType>(mask_LR, mask_LRName);
 
       const std::string ncc_output_name_fixed(this->m_ResultsDir + "/NCCOutput_" +

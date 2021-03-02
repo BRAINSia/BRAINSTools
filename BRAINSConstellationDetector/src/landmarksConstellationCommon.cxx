@@ -249,7 +249,7 @@ CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
 
 
 PyramidFilterType::Pointer
-MakeThreeLevelPyramid(SImageType::Pointer refImage)
+MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;
 
@@ -279,7 +279,7 @@ MakeThreeLevelPyramid(SImageType::Pointer refImage)
 }
 
 PyramidFilterType::Pointer
-MakeOneLevelPyramid(SImageType::Pointer refImage)
+MakeOneLevelPyramid(const SImageType::Pointer & refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;
 
@@ -375,7 +375,7 @@ computeSymmetricScale(const std::vector<itk::Point<double, 3>> & fixedPoints,
 } // namespace
 
 SimilarityTransformType::Pointer
-DoIt_Similarity(PointList fixedPoints, PointList movingPoints)
+DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints)
 {
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
@@ -408,7 +408,7 @@ DoIt_Similarity(PointList fixedPoints, PointList movingPoints)
 
 
 VersorRigidTransformType::Pointer
-DoIt_Rigid(PointList fixedPoints, PointList movingPoints)
+DoIt_Rigid(const PointList & fixedPoints, const PointList & movingPoints)
 {
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
@@ -448,9 +448,9 @@ computeTmspFromPoints(SImageType::PointType RP,
   orig.emplace_back(AC);
   orig.emplace_back(PC);
   SImagePointType NEWAC = DesiredCenter;
-//  NEWAC[0] = 0.0;
-//  NEWAC[1] = 0.0;
-//  NEWAC[2] = 0.0;
+  //  NEWAC[0] = 0.0;
+  //  NEWAC[1] = 0.0;
+  //  NEWAC[2] = 0.0;
   SImagePointType NEWPC;
   NEWPC[0] = 0.0;
   SImageType::PointType::VectorType ACPC = PC - AC;
@@ -468,7 +468,7 @@ computeTmspFromPoints(SImageType::PointType RP,
   // double theta = ACPC/
   const auto a = ACPC.GetVnlVector();
   const auto b = ACRP.GetVnlVector();
-  const auto rej = a - ( (dot_product(a, b) / dot_product(b, b)) * b);
+  const auto rej = a - ((dot_product(a, b) / dot_product(b, b)) * b);
   NEWRP[2] = -rej.magnitude();
 
   PointList final;
@@ -476,8 +476,8 @@ computeTmspFromPoints(SImageType::PointType RP,
   final.emplace_back(NEWAC);
   final.emplace_back(NEWPC);
 
-  //Now convert the result to a Euler Transform.
-  auto versorBaseTransform =  DoIt_Rigid(final, orig);
+  // Now convert the result to a Euler Transform.
+  auto                        versorBaseTransform = DoIt_Rigid(final, orig);
   RigidTransformType::Pointer result = RigidTransformType::New();
   result->SetIdentity();
   result->SetCenter(versorBaseTransform->GetCenter());
@@ -592,7 +592,7 @@ decomposeRPAC(const SImageType::PointType & RP,
 
 
 void
-extractArray(LinearInterpolatorType::Pointer                                imInterp,
+extractArray(const LinearInterpolatorType::Pointer &                        imInterp,
              const SImageType::PointType &                                  CenterPoint,
              const landmarksConstellationModelIO::IndexLocationVectorType & model,
              std::vector<float> &                                           result_array)
@@ -657,7 +657,7 @@ CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer ACPC_MSP_Align
 // using PointType = landmarksDataSet::PointType;
 
 void
-MakeLabelImage(SImageType::Pointer           in,
+MakeLabelImage(const SImageType::Pointer &   in,
                const SImageType::PointType & RP,
                const SImageType::PointType & AC,
                const SImageType::PointType & PC,

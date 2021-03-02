@@ -54,7 +54,7 @@ EMSParameters ::EMSParameters()
 }
 
 void
-EMSParameters ::AddImage(std::string s, std::string orient)
+EMSParameters ::AddImage(const std::string & s, const std::string & orient)
 {
   m_Images.push_back(s);
   m_ImageOrientations.push_back(orient);

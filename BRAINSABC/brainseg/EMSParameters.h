@@ -65,7 +65,7 @@ public:
   itkSetMacro(OutputFormat, std::string);
 
   void
-  AddImage(std::string s, std::string orient);
+  AddImage(const std::string & s, const std::string & orient);
 
   void
   ClearImages();

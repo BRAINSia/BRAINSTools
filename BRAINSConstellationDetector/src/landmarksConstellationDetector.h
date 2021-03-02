@@ -101,7 +101,7 @@ public:
   }
 
   double
-  GetModelRadius(std::string PointName)
+  GetModelRadius(const std::string & PointName)
   {
     return m_InputTemplateModel.GetRadius(PointName);
   }
@@ -157,7 +157,7 @@ public:
   Compute(SImageType::Pointer orig_space_image);
 
   SImageType::Pointer
-  GetTaggedImage(SImageType::Pointer original_space_image) const
+  GetTaggedImage(const SImageType::Pointer & original_space_image) const
   {
     itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
 
@@ -204,8 +204,8 @@ public:
   VersorTransformType::Pointer
   GetImageOrigToACPCVersorTransform() const;
   void
-  ComputeFinalRefinedACPCAlignedTransform(SImageType::Pointer      original_space_image,
-                                          const LandmarksMapType & updated_orig_lmks);
+  ComputeFinalRefinedACPCAlignedTransform(const SImageType::Pointer & original_space_image,
+                                          const LandmarksMapType &    updated_orig_lmks);
 
 protected:
 private:
@@ -225,7 +225,7 @@ private:
   }
 
   static VersorTransformType::Pointer
-  GetLandmarkTransformFromImageTransform(VersorTransformType::ConstPointer orig2msp_img_tfm);
+  GetLandmarkTransformFromImageTransform(const VersorTransformType::ConstPointer & orig2msp_img_tfm);
   // Linear model estimation using EPCA
   void
   LinearEstimation(LandmarksMapType &               msp_lmks_linearly_estimated,
@@ -253,11 +253,11 @@ private:
                                 int                               sign);
 
   SImageType::PointType
-  FindCandidatePoints(SImageType::Pointer volumeMSP,
-                      SImageType::Pointer mask_LR,
-                      const double        LR_restrictions,
-                      const double        PA_restrictions,
-                      const double        SI_restrictions,
+  FindCandidatePoints(const SImageType::Pointer & volumeMSP,
+                      const SImageType::Pointer & mask_LR,
+                      const double                LR_restrictions,
+                      const double                PA_restrictions,
+                      const double                SI_restrictions,
                       // INFO: restrictions should really be ellipsoidal values
                       const SImageType::PointType::VectorType &                      CenterOfSearchArea,
                       const std::vector<std::vector<float>> &                        TemplateMean,

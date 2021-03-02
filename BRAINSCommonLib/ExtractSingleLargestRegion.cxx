@@ -27,11 +27,11 @@
 #include "ExtractSingleLargestRegion.h"
 
 itk::Image<unsigned char, 3>::Pointer
-ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
-                                   const int                             openingSize,
-                                   const int                             closingSize,
-                                   const int                             safetySize,
-                                   itk::Image<unsigned char, 3>::Pointer inputLabelImage)
+ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer & Mask,
+                                   const int                                     openingSize,
+                                   const int                                     closingSize,
+                                   const int                                     safetySize,
+                                   const itk::Image<unsigned char, 3>::Pointer & inputLabelImage)
 {
   using ByteImageType = itk::Image<unsigned char, 3>;
   using CCImageType = itk::Image<unsigned int, 3>;
@@ -132,12 +132,12 @@ ExtractSingleLargestRegionFromMask(itk::Image<unsigned char, 3>::Pointer Mask,
 }
 
 itk::Image<unsigned char, 3>::Pointer
-ExtractSingleLargestRegion(const unsigned char                   threshold_low,
-                           const unsigned char                   threshold_high,
-                           const int                             openingSize,
-                           const int                             closingSize,
-                           const int                             safetySize,
-                           itk::Image<unsigned char, 3>::Pointer inputLabelImage)
+ExtractSingleLargestRegion(const unsigned char                           threshold_low,
+                           const unsigned char                           threshold_high,
+                           const int                                     openingSize,
+                           const int                                     closingSize,
+                           const int                                     safetySize,
+                           const itk::Image<unsigned char, 3>::Pointer & inputLabelImage)
 {
   using ByteImageType = itk::Image<unsigned char, 3>;
   using BinaryThresholdFilter = itk::BinaryThresholdImageFilter<ByteImageType, ByteImageType>;

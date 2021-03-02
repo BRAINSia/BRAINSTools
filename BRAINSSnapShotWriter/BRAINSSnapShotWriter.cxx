@@ -50,7 +50,7 @@ template <typename TImageType>
 ExtractIndexType
 GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
                        std::vector<int>             planes,
-                       IndexType                    inputSliceToExtractInIndex,
+                       const IndexType &            inputSliceToExtractInIndex,
                        PercentIndexType             inputSliceToExtractInPercent,
                        PhysicalPointIndexType       inputSliceToExtractInPhysicalPoint)
 {

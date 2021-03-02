@@ -49,9 +49,9 @@ public:
 
   // currently supported file types: { ".nii", ".nii.gz", ".nhdr", ".nrrd"}
   void
-  SetInputFileName(std::string inputFilePath);
+  SetInputFileName(const std::string & inputFilePath);
   void
-  SetOutputFileName(std::string outputFilePath);
+  SetOutputFileName(const std::string & outputFilePath);
 
   const std::string &
   getInputVolume() const;

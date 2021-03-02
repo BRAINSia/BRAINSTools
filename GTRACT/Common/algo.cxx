@@ -37,7 +37,7 @@
 #include "algo.h"
 
 TMatrix
-Matrix_Inverse(TMatrix M)
+Matrix_Inverse(const TMatrix & M)
 {
   //  const int NumberOfDirections=M.rows();
   TMatrix M_T = M.transpose();
@@ -74,7 +74,7 @@ My_lsf(TVector x, TVector y)
 }
 
 TVector
-Eigen_Value(TMatrix M)
+Eigen_Value(const TMatrix & M)
 {
   vnl_symmetric_eigensystem<float> eig(M);
   TVector                          result(3);
@@ -177,7 +177,7 @@ CI(TVector ADC1, TVector ADC2)
 }
 
 float
-LI(TVector ADC1, TVector ADC2)
+LI(const TVector & ADC1, const TVector & ADC2)
 {
   TVector t0 = DD(ADC1, ADC2);
 

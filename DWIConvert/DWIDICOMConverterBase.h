@@ -61,10 +61,10 @@ protected:
    * @param vr "DCM_DS" for enumeration as indicated by vr in example above
    */
   void
-  _addToStringDictionary(const std::string dcm_primary_name,
-                         const std::string dcm_seconary_name,
-                         const std::string dcm_human_readable_name,
-                         const enum VRType vr);
+  _addToStringDictionary(const std::string & dcm_primary_name,
+                         const std::string & dcm_seconary_name,
+                         const std::string & dcm_human_readable_name,
+                         const enum VRType   vr);
 
   /** the SliceOrderIS flag can be computed (as above) but if it's
    *  invariant, the derived classes can just set the flag. This method

@@ -348,7 +348,7 @@ DWIConverter::MakeFileComment(const std::string & version,
                               bool                useBMatrixGradientDirections,
                               bool                useIdentityMeaseurementFrame,
                               double              smallGradientThreshold,
-                              const std::string   inputFileType) const
+                              const std::string & inputFileType) const
 {
   std::stringstream commentSection;
   {
@@ -375,7 +375,7 @@ DWIConverter::MakeFileComment(const std::string & version,
 }
 
 void
-DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string commentstring) const
+DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string & commentstring) const
 {
   const size_t extensionPos = outputVolumeHeaderName.find(".nhdr");
   const bool   nrrdSingleFileFormat = (extensionPos != std::string::npos) ? false : true;
@@ -640,8 +640,8 @@ DWIConverter::FourDToThreeDImage(Volume4DType::Pointer img4D) const
 
 void
 DWIConverter::WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
-                                       const std::string     outputBValues,
-                                       const std::string     outputBVectors,
+                                       const std::string &   outputBValues,
+                                       const std::string &   outputBVectors,
                                        Volume4DType::Pointer img4D) const
 {
   const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] * this->m_MeasurementFrame[2][2];

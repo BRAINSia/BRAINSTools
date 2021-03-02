@@ -120,7 +120,7 @@ extern unsigned char
 ShortToUChar(short in, short min, short max);
 
 extern SImageType::Pointer
-CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer ACPC_MSP_AlignedTransform,
+CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
                                 /* const
                                   SImageType::PointType
                                   finalPoint, */
@@ -150,9 +150,9 @@ ComputeMSP(SImageType::Pointer           input_image,
            double &                      cc);
 
 extern SImageType::Pointer
-CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
-                      const RigidTransformType::Pointer MSPTransform,
-                      const std::string &               debugfilename);
+CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
+                      const RigidTransformType::Pointer & MSPTransform,
+                      const std::string &                 debugfilename);
 
 extern void
 CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename);

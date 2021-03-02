@@ -69,14 +69,12 @@ namespace itk
  * \endcode
  */
 template <typename TInputScalarType, typename TWriteScalarType>
-extern void
-WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const MyTransform,
-                     const std::string &                                  TransformFilename);
+extern void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const MyTransform,
+                                 const std::string &                                  TransformFilename);
 
 template <typename TScalarType>
-extern void
-WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const MyTransform,
-                     const std::string &                             TransformFilename);
+extern void WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const MyTransform,
+                                 const std::string &                             TransformFilename);
 
 /**
  * \author Hans J. Johnson
@@ -137,7 +135,7 @@ ReadTransformFromDisk(const std::string & initialTransform);
  * \endcode
  */
 extern itk::VersorRigid3DTransform<double>::Pointer
-ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite);
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer & genericTransformToWrite);
 
 /**
  * \author Hans J. Johnson

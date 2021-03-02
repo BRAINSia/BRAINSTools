@@ -245,10 +245,10 @@ DWIDICOMConverterBase::LoadFromDisk()
  * @param vr "DCM_DS" for enumeration as indicated by vr in example above
  */
 void
-DWIDICOMConverterBase::_addToStringDictionary(const std::string dcm_primary_name,
-                                              const std::string dcm_seconary_name,
-                                              const std::string dcm_human_readable_name,
-                                              const enum VRType vr)
+DWIDICOMConverterBase::_addToStringDictionary(const std::string & dcm_primary_name,
+                                              const std::string & dcm_seconary_name,
+                                              const std::string & dcm_human_readable_name,
+                                              const enum VRType   vr)
 {
   int dcm_primary_code;
   {

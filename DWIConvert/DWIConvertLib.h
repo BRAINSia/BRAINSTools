@@ -139,10 +139,10 @@ public:
 
 private:
   DWIConverter *
-  CreateDicomConverter(const std::string inputDicomDirectory,
-                       const bool        useBMatrixGradientDirections,
-                       const double      smallGradientThreshold,
-                       const bool        allowLossyConversion);
+  CreateDicomConverter(const std::string & inputDicomDirectory,
+                       const bool          useBMatrixGradientDirections,
+                       const double        smallGradientThreshold,
+                       const bool          allowLossyConversion);
 
   std::string m_inputFileType;
   std::string m_outputFileType;

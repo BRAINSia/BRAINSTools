@@ -47,7 +47,7 @@ DWIMetaDataDictionaryValidator::GetGradientKeyString(int index) const
 
 
 void
-DWIMetaDataDictionaryValidator::SetStringDictObject(const std::string key, const std::string value)
+DWIMetaDataDictionaryValidator::SetStringDictObject(const std::string & key, const std::string & value)
 {
   itk::EncapsulateMetaData<std::string>(m_dict, key, value);
 }
@@ -229,7 +229,7 @@ DWIMetaDataDictionaryValidator::SetBValue(const double bvalue)
 }
 
 std::string
-DWIMetaDataDictionaryValidator::GetIndexedKeyString(const std::string base_key_name, const size_t index) const
+DWIMetaDataDictionaryValidator::GetIndexedKeyString(const std::string & base_key_name, const size_t index) const
 {
   std::ostringstream itos;
   itos << index;
@@ -279,7 +279,7 @@ DWIMetaDataDictionaryValidator::GenericSetDoubleVector(const std::vector<double>
 std::vector<std::string>
 DWIMetaDataDictionaryValidator::GenericGetStringVector(const std::string & KeyBaseName,
                                                        const size_t        numElements,
-                                                       const std::string   defaultValue) const
+                                                       const std::string & defaultValue) const
 {
   std::vector<std::string> values(numElements);
   for (size_t index = 0; index < values.size(); ++index)

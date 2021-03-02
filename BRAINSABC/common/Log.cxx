@@ -60,7 +60,7 @@ Log ::CloseFile()
 
 
 void
-Log ::SetOutputFileName(const std::string s)
+Log ::SetOutputFileName(const std::string & s)
 {
   if (m_Output.is_open())
   {

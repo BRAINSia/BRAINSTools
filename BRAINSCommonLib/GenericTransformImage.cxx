@@ -53,7 +53,7 @@
 namespace itk
 {
 itk::VersorRigid3DTransform<double>::Pointer
-ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite)
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer & genericTransformToWrite)
 {
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
   using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;

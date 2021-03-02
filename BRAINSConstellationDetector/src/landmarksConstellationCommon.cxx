@@ -154,9 +154,9 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
 }
 
 SImageType::Pointer
-CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
-                      const RigidTransformType::Pointer MSPTransform,
-                      const std::string &               debugfilename)
+CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
+                      const RigidTransformType::Pointer & MSPTransform,
+                      const std::string &                 debugfilename)
 {
   SImageType::PixelType low = 0;
 
@@ -448,9 +448,9 @@ computeTmspFromPoints(SImageType::PointType RP,
   orig.emplace_back(AC);
   orig.emplace_back(PC);
   SImagePointType NEWAC = DesiredCenter;
-//  NEWAC[0] = 0.0;
-//  NEWAC[1] = 0.0;
-//  NEWAC[2] = 0.0;
+  //  NEWAC[0] = 0.0;
+  //  NEWAC[1] = 0.0;
+  //  NEWAC[2] = 0.0;
   SImagePointType NEWPC;
   NEWPC[0] = 0.0;
   SImageType::PointType::VectorType ACPC = PC - AC;
@@ -468,7 +468,7 @@ computeTmspFromPoints(SImageType::PointType RP,
   // double theta = ACPC/
   const auto a = ACPC.GetVnlVector();
   const auto b = ACRP.GetVnlVector();
-  const auto rej = a - ( (dot_product(a, b) / dot_product(b, b)) * b);
+  const auto rej = a - ((dot_product(a, b) / dot_product(b, b)) * b);
   NEWRP[2] = -rej.magnitude();
 
   PointList final;
@@ -476,8 +476,8 @@ computeTmspFromPoints(SImageType::PointType RP,
   final.emplace_back(NEWAC);
   final.emplace_back(NEWPC);
 
-  //Now convert the result to a Euler Transform.
-  auto versorBaseTransform =  DoIt_Rigid(final, orig);
+  // Now convert the result to a Euler Transform.
+  auto                        versorBaseTransform = DoIt_Rigid(final, orig);
   RigidTransformType::Pointer result = RigidTransformType::New();
   result->SetIdentity();
   result->SetCenter(versorBaseTransform->GetCenter());
@@ -625,7 +625,7 @@ ShortToUChar(short in, short min, short max)
 }
 
 SImageType::Pointer
-CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer ACPC_MSP_AlignedTransform,
+CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
                                 /* const
                                   SImageType::PointType
                                   finalPoint_MSP, */

@@ -70,7 +70,7 @@ using Similarity3DParametersType = Similarity3DTransformType::ParametersType;
  * AffineTransformPointer  :=  AffineTransformPointer
  */
 inline void
-AssignConvertedTransform(AffineTransformPointer & result, const AffineTransformType::ConstPointer affine)
+AssignConvertedTransform(AffineTransformPointer & result, const AffineTransformType::ConstPointer & affine)
 {
   if (result.IsNotNull())
   {
@@ -121,7 +121,7 @@ AssignConvertedTransform(AffineTransformPointer & result, const VnlTransformMatr
  * VnlTransformMatrixType44  :=  AffineTransformPointer
  */
 inline void
-AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransformType::ConstPointer affine)
+AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransformType::ConstPointer & affine)
 {
   if (affine.IsNotNull())
   {
@@ -150,7 +150,7 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransfor
  * AffineTransformPointer  :=  ScaleSkewVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform(AffineTransformPointer & result, const ScaleSkewVersor3DTransformType::ConstPointer scale)
+AssignConvertedTransform(AffineTransformPointer & result, const ScaleSkewVersor3DTransformType::ConstPointer & scale)
 {
   if (result.IsNotNull() && scale.IsNotNull())
   {
@@ -171,8 +171,8 @@ AssignConvertedTransform(AffineTransformPointer & result, const ScaleSkewVersor3
  * ScaleSkewVersor3DTransformPointer  :=  ScaleSkewVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &                result,
-                         const ScaleSkewVersor3DTransformType::ConstPointer scale)
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &                  result,
+                         const ScaleSkewVersor3DTransformType::ConstPointer & scale)
 {
   if (result.IsNotNull() && scale.IsNotNull())
   {
@@ -192,7 +192,7 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &                resu
  */
 
 inline void
-AssignConvertedTransform(AffineTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale)
+AssignConvertedTransform(AffineTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer & scale)
 {
   if (result.IsNotNull() && scale.IsNotNull())
   {
@@ -216,7 +216,7 @@ AssignConvertedTransform(AffineTransformPointer & result, const ScaleVersor3DTra
  */
 
 inline void
-AssignConvertedTransform(ScaleVersor3DTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer scale)
+AssignConvertedTransform(ScaleVersor3DTransformPointer & result, const ScaleVersor3DTransformType::ConstPointer & scale)
 {
   if (result.IsNotNull() && scale.IsNotNull())
   {
@@ -235,8 +235,8 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result, const ScaleVers
  * AffineTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform(AffineTransformPointer &                       result,
-                         const VersorRigid3DTransformType::ConstPointer versorTransform)
+AssignConvertedTransform(AffineTransformPointer &                         result,
+                         const VersorRigid3DTransformType::ConstPointer & versorTransform)
 {
   if (result.IsNotNull() && versorTransform.IsNotNull())
   {
@@ -262,8 +262,8 @@ AssignConvertedTransform(AffineTransformPointer &                       result,
  */
 
 inline void
-AssignConvertedTransform(VersorRigid3DTransformPointer &                result,
-                         const VersorRigid3DTransformType::ConstPointer versorRigid)
+AssignConvertedTransform(VersorRigid3DTransformPointer &                  result,
+                         const VersorRigid3DTransformType::ConstPointer & versorRigid)
 {
   if (result.IsNotNull() && versorRigid.IsNotNull())
   {
@@ -282,8 +282,8 @@ AssignConvertedTransform(VersorRigid3DTransformPointer &                result,
  * ScaleSkewVersor3DTransformPointer  :=  ScaleVersor3DTransformPointer
  */
 inline void
-AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
-                         const ScaleVersor3DTransformType::ConstPointer scale)
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &              result,
+                         const ScaleVersor3DTransformType::ConstPointer & scale)
 {
   if (result.IsNotNull() && scale.IsNotNull())
   {
@@ -305,8 +305,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
  * ScaleSkewVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
-                         const VersorRigid3DTransformType::ConstPointer versorRigid)
+AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &              result,
+                         const VersorRigid3DTransformType::ConstPointer & versorRigid)
 {
   if (result.IsNotNull() && versorRigid.IsNotNull())
   {
@@ -328,8 +328,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &            result,
  */
 
 inline void
-AssignConvertedTransform(Similarity3DTransformPointer &                result,
-                         const Similarity3DTransformType::ConstPointer similarity3D)
+AssignConvertedTransform(Similarity3DTransformPointer &                  result,
+                         const Similarity3DTransformType::ConstPointer & similarity3D)
 {
   if (result.IsNotNull() && similarity3D.IsNotNull())
   {
@@ -348,8 +348,8 @@ AssignConvertedTransform(Similarity3DTransformPointer &                result,
  * ScaleVersor3DTransformPointer  :=  VersorRigid3DTransformPointer
  */
 inline void
-AssignConvertedTransform(ScaleVersor3DTransformPointer &                result,
-                         const VersorRigid3DTransformType::ConstPointer versorRigid)
+AssignConvertedTransform(ScaleVersor3DTransformPointer &                  result,
+                         const VersorRigid3DTransformType::ConstPointer & versorRigid)
 {
   if (result.IsNotNull() && versorRigid.IsNotNull())
   {
@@ -367,8 +367,8 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer &                result,
 }
 
 inline void
-ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                result,
-                              const ScaleVersor3DTransformType::ConstPointer scaleVersorRigid)
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                  result,
+                              const ScaleVersor3DTransformType::ConstPointer & scaleVersorRigid)
 {
   if (result.IsNotNull() && scaleVersorRigid.IsNotNull())
   {
@@ -386,8 +386,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                res
 }
 
 inline void
-ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                    result,
-                              const ScaleSkewVersor3DTransformType::ConstPointer scaleSkewVersorRigid)
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                      result,
+                              const ScaleSkewVersor3DTransformType::ConstPointer & scaleSkewVersorRigid)
 {
   if (result.IsNotNull() && scaleSkewVersorRigid.IsNotNull())
   {
@@ -405,8 +405,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                   
 }
 
 inline void
-ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                result,
-                              const VersorRigid3DTransformType::ConstPointer versorRigid)
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                  result,
+                              const VersorRigid3DTransformType::ConstPointer & versorRigid)
 {
   if (result.IsNotNull() && versorRigid.IsNotNull())
   {
@@ -431,7 +431,7 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                res
  * must clip out the null subspace, if any.
  */
 inline Matrix3D
-orthogonalize(const Matrix3D rotator)
+orthogonalize(const Matrix3D & rotator)
 {
   vnl_svd<double>                             decomposition(rotator.GetVnlMatrix().as_matrix(), -1E-6);
   vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
@@ -457,7 +457,7 @@ orthogonalize(const Matrix3D rotator)
 }
 
 inline void
-ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const AffineTransformType::ConstPointer affine)
+ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const AffineTransformType::ConstPointer & affine)
 {
   if (result.IsNotNull() && affine.IsNotNull())
   {

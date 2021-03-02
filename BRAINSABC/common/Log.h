@@ -61,7 +61,7 @@ public:
   //  }
 
   void
-  SetOutputFileName(std::string s);
+  SetOutputFileName(const std::string & s);
 
   void
   WriteString(const char * s);

@@ -120,50 +120,51 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::kNNCore(SampleType *      
   const signed int threadsToUse = std::max<signed int>(1, (maxNumThreads * 2.0 - baseMemoryNeeded) / 2.0);
   // i.e. 10 cores = 20GB available - 10 base requireed= 10/2 = 5 threads can run.
   const size_t minGrainSize = numTest / threadsToUse;
-  tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(static_cast<LOOPITERTYPE>(0), static_cast<LOOPITERTYPE>(numTest), minGrainSize),
-                    [=, &liklihoodMatrix](const tbb::blocked_range<LOOPITERTYPE> & r) {
-                      // each test case is a query point
-                      MeasurementVectorType queryPoint(numFeatures);
-                      // Now we should find K labels correspondence to K neighbors
-                      vnl_matrix<FloatingPrecision> neighborLabels(K, numClasses);
-                      // Weight vector
-                      vnl_matrix<FloatingPrecision> weights(1, K, 0);
+  tbb::parallel_for(
+    tbb::blocked_range<LOOPITERTYPE>(static_cast<LOOPITERTYPE>(0), static_cast<LOOPITERTYPE>(numTest), minGrainSize),
+    [=, &liklihoodMatrix](const tbb::blocked_range<LOOPITERTYPE> & r) {
+      // each test case is a query point
+      MeasurementVectorType queryPoint(numFeatures);
+      // Now we should find K labels correspondence to K neighbors
+      vnl_matrix<FloatingPrecision> neighborLabels(K, numClasses);
+      // Weight vector
+      vnl_matrix<FloatingPrecision> weights(1, K, 0);
 
-                      // compute the distances
-                      typename TreeType::InstanceIdentifierVectorType neighbors;
-                      std::vector<double>                             distances(K);
-                      for (size_t iTest = r.begin(); iTest < r.end(); ++iTest) ///////
-                      {
-                        for (size_t i = 0; i < numFeatures; ++i)
-                        {
-                          queryPoint[i] = testMatrix(iTest, i);
-                        }
+      // compute the distances
+      typename TreeType::InstanceIdentifierVectorType neighbors;
+      std::vector<double>                             distances(K);
+      for (size_t iTest = r.begin(); iTest < r.end(); ++iTest) ///////
+      {
+        for (size_t i = 0; i < numFeatures; ++i)
+        {
+          queryPoint[i] = testMatrix(iTest, i);
+        }
 
-                        tree->Search(queryPoint, K, neighbors, distances);
+        tree->Search(queryPoint, K, neighbors, distances);
 
-                        FloatingPrecision sumOfWeights = 0;
-                        for (size_t n = 0; n < K; ++n)
-                        {
-                          // Labels of the K neighbors
-                          neighborLabels.set_row(n, localLabels.get_row(neighbors[n]));
-                          //  Compute Weights and sum of weights
-                          const FloatingPrecision distSqr = std::pow(distances[n], 2);
-                          if (distSqr == 0)
-                          {
-                            weights(0, n) = 1; // avoids inf weights
-                          }
-                          else
-                          {
-                            weights(0, n) = 1 / distSqr;
-                          }
-                          sumOfWeights += weights(0, n);
-                        }
-                        weights = weights / sumOfWeights;
+        FloatingPrecision sumOfWeights = 0;
+        for (size_t n = 0; n < K; ++n)
+        {
+          // Labels of the K neighbors
+          neighborLabels.set_row(n, localLabels.get_row(neighbors[n]));
+          //  Compute Weights and sum of weights
+          const FloatingPrecision distSqr = std::pow(distances[n], 2);
+          if (distSqr == 0)
+          {
+            weights(0, n) = 1; // avoids inf weights
+          }
+          else
+          {
+            weights(0, n) = 1 / distSqr;
+          }
+          sumOfWeights += weights(0, n);
+        }
+        weights = weights / sumOfWeights;
 
-                        // (weights * neighborLabels) is a 1xC vector
-                        liklihoodMatrix.set_row(iTest, (weights * neighborLabels).get_row(0));
-                      } // end of main loop
-                    }); // End parallel_for
+        // (weights * neighborLabels) is a 1xC vector
+        liklihoodMatrix.set_row(iTest, (weights * neighborLabels).get_row(0));
+      } // end of main loop
+    }); // End parallel_for
 
   muLogMacro(<< "\n--------------------------------" << std::endl);
   muLogMacro(<< "LiklihoodMatrix is calculated: [ " << liklihoodMatrix.rows() << " x " << liklihoodMatrix.cols() << " ]"
@@ -1138,7 +1139,7 @@ typename TProbabilityImage::Pointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
   const FloatingPrecision                   priorScale,
   const typename TProbabilityImage::Pointer prior,
-  const vnl_matrix<FloatingPrecision>       currCovariance,
+  const vnl_matrix<FloatingPrecision> &     currCovariance,
   typename RegionStats::MeanMapType &       currMeans,
   const MapOfInputImageVectors &            intensityImages)
 {
@@ -2647,12 +2648,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
-EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned int           degree,
-                                                                  const unsigned int           CurrentEMIteration,
-                                                                  const ByteImageVectorType &  CandidateRegions,
-                                                                  MapOfInputImageVectors &     inputImages,
-                                                                  const ByteImageType::Pointer currentBrainMask,
-                                                                  const ByteImageType::Pointer currentForegroundMask,
+EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned int             degree,
+                                                                  const unsigned int             CurrentEMIteration,
+                                                                  const ByteImageVectorType &    CandidateRegions,
+                                                                  MapOfInputImageVectors &       inputImages,
+                                                                  const ByteImageType::Pointer & currentBrainMask,
+                                                                  const ByteImageType::Pointer & currentForegroundMask,
                                                                   const ProbabilityImageVectorType & probImages,
                                                                   const BoolVectorType &             probUseForBias,
                                                                   const int                          DebugLevel,

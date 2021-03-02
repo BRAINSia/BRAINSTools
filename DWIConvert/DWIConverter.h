@@ -197,10 +197,10 @@ public:
                   bool                useBMatrixGradientDirections,
                   bool                useIdentityMeaseurementFrame,
                   double              smallGradientThreshold,
-                  const std::string   inputFileType) const;
+                  const std::string & inputFileType) const;
 
   void
-  ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string commentstring) const;
+  ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string & commentstring) const;
   Volume4DType::Pointer
   ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const;
 
@@ -212,8 +212,8 @@ public:
    */
   void
   WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
-                           const std::string     outputBValues,
-                           const std::string     outputBVectors,
+                           const std::string &   outputBValues,
+                           const std::string &   outputBVectors,
                            Volume4DType::Pointer img4D) const;
 
 

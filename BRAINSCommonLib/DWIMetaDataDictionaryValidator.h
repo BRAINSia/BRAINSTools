@@ -69,13 +69,13 @@ class DWIMetaDataDictionaryValidator
 private:
   itk::MetaDataDictionary m_dict;
   void
-  SetStringDictObject(const std::string, const std::string);
+  SetStringDictObject(const std::string &, const std::string &);
 
 protected:
   std::string
   GetGradientKeyString(int) const;
   std::string
-  GetIndexedKeyString(const std::string base_key_name, const size_t index) const;
+  GetIndexedKeyString(const std::string & base_key_name, const size_t index) const;
 
   void
   GenericSetStringVector(const std::vector<std::string> & values, const std::string & KeyBaseName);
@@ -85,7 +85,7 @@ protected:
   std::vector<std::string>
   GenericGetStringVector(const std::string & KeyBaseName,
                          const size_t        numElements,
-                         const std::string   defaultValue) const;
+                         const std::string & defaultValue) const;
 
   std::vector<double>
   GenericGetDoubleVector(const std::string & KeyBaseName, const size_t numElements, const double defaultValue) const;

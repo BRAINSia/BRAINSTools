@@ -135,7 +135,7 @@ ReadTransformFromDisk(const std::string & initialTransform);
  * \endcode
  */
 extern itk::VersorRigid3DTransform<double>::Pointer
-ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer genericTransformToWrite);
+ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointer & genericTransformToWrite);
 
 /**
  * \author Hans J. Johnson

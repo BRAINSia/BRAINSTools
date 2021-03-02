@@ -123,7 +123,7 @@ public:
   }
 
   void
-  Setorig2eyeFixed_img_tfm(const VersorTransformType::Pointer houghEyeTransform)
+  Setorig2eyeFixed_img_tfm(const VersorTransformType::Pointer & houghEyeTransform)
   {
     this->m_orig2eyeFixed_img_tfm = houghEyeTransform;
   }
@@ -210,16 +210,16 @@ public:
 protected:
 private:
   void
-  EulerToVersorRigid(VersorTransformType::Pointer &, const RigidTransformType::ConstPointer);
+  EulerToVersorRigid(VersorTransformType::Pointer &, const RigidTransformType::ConstPointer &);
 
   void
-  DoResampleInPlace(const SImageType::ConstPointer, const RigidTransformType::ConstPointer, SImageType::Pointer &);
+  DoResampleInPlace(const SImageType::ConstPointer &, const RigidTransformType::ConstPointer &, SImageType::Pointer &);
 
   static VersorTransformType::Pointer
   Compute_orig2msp_img_tfm(const SImagePointType & RP, const SImagePointType & AC, const SImagePointType & PC);
 
   static bool
-  mapHasKey(const LandmarksMapType & map, const std::string key)
+  mapHasKey(const LandmarksMapType & map, const std::string & key)
   {
     return map.find(key) != map.cend();
   }

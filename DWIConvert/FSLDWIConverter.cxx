@@ -5,8 +5,8 @@
 #include "FSLDWIConverter.h"
 
 FSLDWIConverter::FSLDWIConverter(const DWIConverter::FileNamesContainer & inputFileNames,
-                                 const std::string                        inputBValues,
-                                 const std::string                        inputBVectors)
+                                 const std::string &                      inputBValues,
+                                 const std::string &                      inputBVectors)
   : DWIConverter(inputFileNames)
   , m_inputBValues(inputBValues)
   , m_inputBVectors(inputBVectors)

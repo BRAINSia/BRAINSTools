@@ -623,8 +623,8 @@ landmarksConstellationDetector::FindCandidatePoints(
 }
 
 void
-landmarksConstellationDetector::EulerToVersorRigid(VersorTransformType::Pointer &         result,
-                                                   const RigidTransformType::ConstPointer eulerRigid)
+landmarksConstellationDetector::EulerToVersorRigid(VersorTransformType::Pointer &           result,
+                                                   const RigidTransformType::ConstPointer & eulerRigid)
 {
   if (result.IsNotNull() && eulerRigid.IsNotNull())
   {
@@ -645,9 +645,9 @@ landmarksConstellationDetector::EulerToVersorRigid(VersorTransformType::Pointer 
 
 
 void
-landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer         inputImg,
-                                                  const RigidTransformType::ConstPointer rigidTx,
-                                                  SImageType::Pointer &                  inPlaceResampledImg)
+landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer &         inputImg,
+                                                  const RigidTransformType::ConstPointer & rigidTx,
+                                                  SImageType::Pointer &                    inPlaceResampledImg)
 {
   VersorTransformType::Pointer versorRigidTx = VersorTransformType::New();
   EulerToVersorRigid(versorRigidTx, rigidTx.GetPointer());

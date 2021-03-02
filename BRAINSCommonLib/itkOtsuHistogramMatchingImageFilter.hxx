@@ -347,11 +347,11 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 template <typename TInputImage, typename TOutputImage, typename THistogramMeasurement>
 void
 OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasurement>::ConstructHistogram(
-  const InputImageType *           image,
-  const SpatialObjectType::Pointer mask,
-  HistogramType *                  histogram,
-  const THistogramMeasurement      minValue,
-  const THistogramMeasurement      maxValue)
+  const InputImageType *             image,
+  const SpatialObjectType::Pointer & mask,
+  HistogramType *                    histogram,
+  const THistogramMeasurement        minValue,
+  const THistogramMeasurement        maxValue)
 {
   {
     // allocate memory for the histogram

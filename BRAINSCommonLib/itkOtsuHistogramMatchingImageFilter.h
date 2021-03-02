@@ -207,11 +207,11 @@ protected:
 
   /** Construct a histogram from an image. */
   void
-  ConstructHistogram(const InputImageType *                    image,
-                     const typename SpatialObjectType::Pointer mask,
-                     HistogramType *                           histogram,
-                     const THistogramMeasurement               minValue,
-                     const THistogramMeasurement               maxValue);
+  ConstructHistogram(const InputImageType *                      image,
+                     const typename SpatialObjectType::Pointer & mask,
+                     HistogramType *                             histogram,
+                     const THistogramMeasurement                 minValue,
+                     const THistogramMeasurement                 maxValue);
 
 private:
   unsigned long m_NumberOfHistogramLevels{ 256 };

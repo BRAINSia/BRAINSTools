@@ -4,9 +4,9 @@
 
 #include "DWIConverterFactory.h"
 
-DWIConverterFactory::DWIConverterFactory(const std::string DicomDirectory,
-                                         const bool        UseBMatrixGradientDirections,
-                                         const double      smallGradientThreshold)
+DWIConverterFactory::DWIConverterFactory(const std::string & DicomDirectory,
+                                         const bool          UseBMatrixGradientDirections,
+                                         const double        smallGradientThreshold)
   : m_DicomDirectory(DicomDirectory)
   , m_UseBMatrixGradientDirections(UseBMatrixGradientDirections)
   , m_SmallGradientThreshold(smallGradientThreshold)

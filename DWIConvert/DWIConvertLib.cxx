@@ -208,10 +208,10 @@ DWIConvert::write()
 }
 
 DWIConverter *
-DWIConvert::CreateDicomConverter(const std::string inputDicomDirectory,
-                                 const bool        useBMatrixGradientDirections,
-                                 const double      smallGradientThreshold,
-                                 const bool        allowLossyConversion)
+DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
+                                 const bool          useBMatrixGradientDirections,
+                                 const double        smallGradientThreshold,
+                                 const bool          allowLossyConversion)
 {
   // check for required parameters
   if (inputDicomDirectory == emptyString)

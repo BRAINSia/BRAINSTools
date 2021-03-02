@@ -1139,7 +1139,7 @@ typename TProbabilityImage::Pointer
 EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
   const FloatingPrecision                   priorScale,
   const typename TProbabilityImage::Pointer prior,
-  const vnl_matrix<FloatingPrecision>       currCovariance,
+  const vnl_matrix<FloatingPrecision> &     currCovariance,
   typename RegionStats::MeanMapType &       currMeans,
   const MapOfInputImageVectors &            intensityImages)
 {
@@ -2648,12 +2648,12 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
 
 template <typename TInputImage, typename TProbabilityImage>
 typename EMSegmentationFilter<TInputImage, TProbabilityImage>::MapOfInputImageVectors
-EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned int           degree,
-                                                                  const unsigned int           CurrentEMIteration,
-                                                                  const ByteImageVectorType &  CandidateRegions,
-                                                                  MapOfInputImageVectors &     inputImages,
-                                                                  const ByteImageType::Pointer currentBrainMask,
-                                                                  const ByteImageType::Pointer currentForegroundMask,
+EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned int             degree,
+                                                                  const unsigned int             CurrentEMIteration,
+                                                                  const ByteImageVectorType &    CandidateRegions,
+                                                                  MapOfInputImageVectors &       inputImages,
+                                                                  const ByteImageType::Pointer & currentBrainMask,
+                                                                  const ByteImageType::Pointer & currentForegroundMask,
                                                                   const ProbabilityImageVectorType & probImages,
                                                                   const BoolVectorType &             probUseForBias,
                                                                   const int                          DebugLevel,

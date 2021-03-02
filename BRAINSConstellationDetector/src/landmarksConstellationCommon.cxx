@@ -154,9 +154,9 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
 }
 
 SImageType::Pointer
-CreatedebugPlaneImage(SImageType::Pointer               referenceImage,
-                      const RigidTransformType::Pointer MSPTransform,
-                      const std::string &               debugfilename)
+CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
+                      const RigidTransformType::Pointer & MSPTransform,
+                      const std::string &                 debugfilename)
 {
   SImageType::PixelType low = 0;
 
@@ -625,7 +625,7 @@ ShortToUChar(short in, short min, short max)
 }
 
 SImageType::Pointer
-CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer ACPC_MSP_AlignedTransform,
+CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
                                 /* const
                                   SImageType::PointType
                                   finalPoint_MSP, */

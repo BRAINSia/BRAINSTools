@@ -85,7 +85,7 @@ using ImageType = itk::Image<PixelType, ImageDimension>;
 using LandmarksVectorType = std::vector<ImageType::PointType>;
 
 LandmarksVectorType
-LoadLandmarks(std::string filename);
+LoadLandmarks(const std::string & filename);
 
 int
 main(int argc, char * argv[])
@@ -241,7 +241,7 @@ main(int argc, char * argv[])
 }
 
 LandmarksVectorType
-LoadLandmarks(std::string filename)
+LoadLandmarks(const std::string & filename)
 {
   LandmarksVectorType landmarks;
   std::string         line;

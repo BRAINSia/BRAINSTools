@@ -89,7 +89,7 @@ using ShortImagePointer = ShortImageType::Pointer;
  * \return either the absolute path, or the prepended path
  */
 static std::string
-FindPathFromAtlasXML(const std::string & xmlCodedPath, std::string atlasDefinitionPath)
+FindPathFromAtlasXML(const std::string & xmlCodedPath, const std::string & atlasDefinitionPath)
 {
   if (xmlCodedPath[0] != '/') // If not an absolute path, assume relative path
   {

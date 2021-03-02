@@ -42,16 +42,16 @@ GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::str
 }
 
 void
-PrepareOutputImages(SImageType::Pointer &             lOutputResampledImage,
-                    SImageType::Pointer &             lOutputImage,
-                    SImageType::Pointer &             lOutputUntransformedClippedVolume,
-                    SImageType::ConstPointer          lImageToBeResampled,
-                    VersorTransformType::ConstPointer lVersorTransform,
-                    const double                      lACLowerBound,
-                    const short int                   BackgroundFillValue,
-                    const std::string &               lInterpolationMode,
-                    const bool                        lCutOutHeadInOutputVolume,
-                    const double                      lOtsuPercentileThreshold)
+PrepareOutputImages(SImageType::Pointer &                     lOutputResampledImage,
+                    SImageType::Pointer &                     lOutputImage,
+                    SImageType::Pointer &                     lOutputUntransformedClippedVolume,
+                    const SImageType::ConstPointer &          lImageToBeResampled,
+                    const VersorTransformType::ConstPointer & lVersorTransform,
+                    const double                              lACLowerBound,
+                    const short int                           BackgroundFillValue,
+                    const std::string &                       lInterpolationMode,
+                    const bool                                lCutOutHeadInOutputVolume,
+                    const double                              lOtsuPercentileThreshold)
 {
   using ResampleIPFilterType = ResampleInPlaceImageFilter<SImageType, SImageType>;
   using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
@@ -167,9 +167,9 @@ PrepareOutputImages(SImageType::Pointer &             lOutputResampledImage,
 }
 
 void
-ApplyInverseOfTransformToLandmarks(VersorTransformType::ConstPointer lVersorTransform,
-                                   const LandmarksMapType &          inputLmks,
-                                   LandmarksMapType &                outputLmks)
+ApplyInverseOfTransformToLandmarks(const VersorTransformType::ConstPointer & lVersorTransform,
+                                   const LandmarksMapType &                  inputLmks,
+                                   LandmarksMapType &                        outputLmks)
 {
   VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
   {

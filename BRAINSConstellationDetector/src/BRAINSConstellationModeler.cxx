@@ -288,7 +288,7 @@ main(int argc, char * argv[])
 
     RigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
       ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
-    const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
+    const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
       StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);

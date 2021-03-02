@@ -102,9 +102,9 @@ ComputeIsotropicScaleFactor(const LandmarkPointContainer & fixedLmks,
 }
 
 void
-PreProcessLandmarkFiles(std::string              inputFixedLandmarkFilename,
-                        std::string              inputMovingLandmarkFilename,
-                        std::string              inputWeightFilename,
+PreProcessLandmarkFiles(const std::string &      inputFixedLandmarkFilename,
+                        const std::string &      inputMovingLandmarkFilename,
+                        const std::string &      inputWeightFilename,
                         LandmarkPointContainer & fixedLmks,
                         LandmarkPointContainer & movingLmks,
                         LandmarkWeightType &     landmarkWgts)

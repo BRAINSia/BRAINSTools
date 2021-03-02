@@ -54,13 +54,13 @@
 #include "gtractCommonWin32.h"
 
 extern GTRACT_COMMON_EXPORT TMatrix
-                            Matrix_Inverse(TMatrix M);
+                            Matrix_Inverse(const TMatrix & M);
 
 extern GTRACT_COMMON_EXPORT float
 My_lsf(TVector x, TVector y);
 
 extern GTRACT_COMMON_EXPORT TVector
-                            Eigen_Value(TMatrix M);
+                            Eigen_Value(const TMatrix & M);
 
 extern GTRACT_COMMON_EXPORT TMatrix
                             Tensor2Matrix(TVector ADCe);
@@ -87,7 +87,7 @@ extern GTRACT_COMMON_EXPORT float
 CI(TVector ADC1, TVector ADC2);
 
 extern GTRACT_COMMON_EXPORT float
-LI(TVector ADC1, TVector ADC2);
+LI(const TVector & ADC1, const TVector & ADC2);
 
 extern GTRACT_COMMON_EXPORT TVector
                             TensorShape(TVector eigV);

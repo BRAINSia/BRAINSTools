@@ -233,7 +233,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
 }
 
 void
-GetImageType(std::string                         fileName,
+GetImageType(const std::string &                 fileName,
              itk::ImageIOBase::IOPixelType &     pixelType,
              itk::ImageIOBase::IOComponentType & componentType)
 {

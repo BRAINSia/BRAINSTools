@@ -46,7 +46,7 @@ PURPOSE.  See the above copyright notices for more information.
 
 
 std::string
-GetXmlLabelName(std::string fileName, int label)
+GetXmlLabelName(const std::string & fileName, int label)
 {
   // Set default return value
   std::string labelName = "Error";
@@ -90,7 +90,7 @@ GetXmlLabelName(std::string fileName, int label)
 }
 
 std::string
-GetAntsLabelName(std::string fileName, int label)
+GetAntsLabelName(const std::string & fileName, int label)
 {
   // Set default return value
   std::string labelName = "Error";
@@ -138,7 +138,7 @@ GetAntsLabelName(std::string fileName, int label)
 }
 
 std::string
-GetLabelName(int mode, std::string fileName, int label)
+GetLabelName(int mode, const std::string & fileName, int label)
 {
   switch (mode)
   {

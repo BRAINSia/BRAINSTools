@@ -73,20 +73,20 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
 
 // Write Slicer scene file (.mrml)
 extern void
-WriteMRMLFile(std::string                                   outputMRML,
-              std::string                                   outputLandmarksInInputSpace,
-              std::string                                   outputLandmarksInOutputSpace,
-              std::string                                   inputVolume,
-              std::string                                   outputVolume,
-              std::string                                   outputTransform,
-              const LandmarksMapType &                      outputLandmarksInInputSpaceMap,
-              const LandmarksMapType &                      outputLandmarksInOutputSpaceMap,
-              LandmarkIO::VersorTransformType::ConstPointer versorTransform);
+WriteMRMLFile(const std::string &                                   outputMRML,
+              std::string                                           outputLandmarksInInputSpace,
+              std::string                                           outputLandmarksInOutputSpace,
+              const std::string &                                   inputVolume,
+              const std::string &                                   outputVolume,
+              const std::string &                                   outputTransform,
+              const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
+              const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
+              const LandmarkIO::VersorTransformType::ConstPointer & versorTransform);
 
 // load linear least squares model for selected landmarks
 // .load from txt file
 extern void
-loadLLSModel(std::string                                     llsModelFilename,
+loadLLSModel(const std::string &                             llsModelFilename,
              std::map<std::string, std::vector<double>> &    llsMeans,
              std::map<std::string, LandmarkIO::MatrixType> & llsMatrices,
              std::map<std::string, double> &                 searchRadii);
@@ -114,8 +114,8 @@ readLLSModel(const std::string &                             modelName,
 
 // write out verification script
 extern void
-writeVerificationScript(std::string outputVerificationScriptFilename,
-                        std::string outputVolume,
-                        std::string saveOutputLandmarksFilename);
+writeVerificationScript(const std::string & outputVerificationScriptFilename,
+                        const std::string & outputVolume,
+                        const std::string & saveOutputLandmarksFilename);
 
 #endif // __landmarkIO__h

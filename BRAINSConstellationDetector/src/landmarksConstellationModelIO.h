@@ -119,7 +119,7 @@ public:
   }
 
   void
-  SetRPtoXMean(std::string name, const SImageType::PointType::VectorType & RPtoXMean)
+  SetRPtoXMean(const std::string & name, const SImageType::PointType::VectorType & RPtoXMean)
   {
     this->m_RPtoXMean[name] = RPtoXMean;
   }
@@ -149,7 +149,7 @@ public:
   }
 
   const SImageType::PointType::VectorType &
-  GetRPtoXMean(std::string name)
+  GetRPtoXMean(const std::string & name)
   {
     return this->m_RPtoXMean[name];
   }
@@ -226,7 +226,7 @@ public:
 
   // Access the internal memory locations for modification.
   FloatVectorType &
-  AccessTemplate(std::string name, const unsigned int indexDataSet, const unsigned int indexAngle)
+  AccessTemplate(const std::string & name, const unsigned int indexDataSet, const unsigned int indexAngle)
   {
     if (this->m_Templates.find(name) == this->m_Templates.end())
     {
@@ -237,7 +237,7 @@ public:
 
   // Access the mean vectors of templates
   const FloatVectorType &
-  AccessTemplateMean(std::string name, const unsigned int indexAngle)
+  AccessTemplateMean(const std::string & name, const unsigned int indexAngle)
   {
     if (this->m_TemplateMeansComputed.find(name) == this->m_TemplateMeansComputed.end() ||
         this->m_Templates.find(name) == this->m_Templates.end())
@@ -249,7 +249,7 @@ public:
   }
 
   const Float2DVectorType &
-  AccessAllTemplateMeans(std::string name)
+  AccessAllTemplateMeans(const std::string & name)
   {
     if (this->m_TemplateMeansComputed.find(name) == this->m_TemplateMeansComputed.end() &&
         this->m_Templates.find(name) == this->m_Templates.end())
@@ -531,7 +531,7 @@ public:
   };
 
   void
-  WritedebugMeanImages(std::string name)
+  WritedebugMeanImages(const std::string & name)
   {
     debugImageDescriptor DID(this->m_TemplateMeans[name], this->GetRadius(name), this->GetHeight(name), "");
 

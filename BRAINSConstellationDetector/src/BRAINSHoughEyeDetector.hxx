@@ -29,8 +29,8 @@ namespace itk
 
 template <typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
-RigidResampleInPlayByVersor3D(const typename TInputImage::ConstPointer & image,
-                              VersorRigid3DTransform<double>::Pointer    versorRigid3DTfm)
+RigidResampleInPlayByVersor3D(const typename TInputImage::ConstPointer &      image,
+                              const VersorRigid3DTransform<double>::Pointer & versorRigid3DTfm)
 {
   /** The output image will have exact the same index contents
    but with modified image info so that the index-to-physical mapping

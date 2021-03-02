@@ -43,10 +43,10 @@
  * ImageMaskSpatialObjectType
  */
 extern itk::Image<unsigned char, 3>::ConstPointer
-ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPointer inputSpatialObject);
+ExtractConstPointerToImageMaskFromImageSpatialObject(const SpatialObjectType::ConstPointer & inputSpatialObject);
 
 extern itk::ImageMaskSpatialObject<3>::ConstPointer
-ConvertMaskImageToSpatialMask(itk::Image<unsigned char, 3>::ConstPointer inputImage);
+ConvertMaskImageToSpatialMask(const itk::Image<unsigned char, 3>::ConstPointer & inputImage);
 
 template <typename TransformType, unsigned int VImageDimension>
 void

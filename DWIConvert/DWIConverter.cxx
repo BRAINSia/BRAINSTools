@@ -505,7 +505,7 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
 }
 
 Volume4DType::Pointer
-DWIConverter::ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const
+DWIConverter::ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) const
 {
   const int nVolumes = this->GetNVolume();
 
@@ -573,7 +573,7 @@ DWIConverter::ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const
 }
 
 DWIConverter::Volume3DUnwrappedType::Pointer
-DWIConverter::FourDToThreeDImage(Volume4DType::Pointer img4D) const
+DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
 {
   Volume4DType::SizeType      size4D(img4D->GetLargestPossibleRegion().GetSize());
   Volume4DType::DirectionType direction4D(img4D->GetDirection());
@@ -639,10 +639,10 @@ DWIConverter::FourDToThreeDImage(Volume4DType::Pointer img4D) const
 }
 
 void
-DWIConverter::WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
-                                       const std::string &   outputBValues,
-                                       const std::string &   outputBVectors,
-                                       Volume4DType::Pointer img4D) const
+DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolumeHeaderName,
+                                       const std::string &           outputBValues,
+                                       const std::string &           outputBVectors,
+                                       const Volume4DType::Pointer & img4D) const
 {
   const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] * this->m_MeasurementFrame[2][2];
   if (std::abs(trace - 1.0) > 1e-4)
@@ -726,7 +726,7 @@ DWIConverter::ComputeMaxBvalue(const std::vector<double> & bValues) const
 }
 
 size_t
-DWIConverter::has_valid_nifti_extension(std::string outputVolumeHeaderName) const
+DWIConverter::has_valid_nifti_extension(const std::string & outputVolumeHeaderName) const
 {
   constexpr size_t   NUMEXT = 2;
   const char * const extList[NUMEXT] = { ".nii.gz", ".nii" };

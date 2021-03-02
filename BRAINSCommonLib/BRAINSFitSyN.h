@@ -33,16 +33,16 @@ using CompositeTransformType = RegistrationHelperType::CompositeTransformType;
 
 template <typename FixedImageType, typename MovingimageType>
 typename SyN::CompositeTransformType::Pointer
-simpleSynReg(typename FixedImageType::Pointer &              infixedImage,
-             typename MovingimageType::Pointer &             inmovingImage,
-             typename SyN::CompositeTransformType::Pointer   compositeInitialTransform,
-             typename SyN::CompositeTransformType::Pointer & internalSavedState,
-             typename FixedImageType::Pointer &              infixedImage2 = NULL,
-             typename MovingimageType::Pointer &             inmovingImage2 = NULL,
-             SyN::RealType                                   samplingPercentage = 1.0,
-             std::string                                     whichMetric = "cc",
-             const bool                                      synFull = true,
-             typename SyN::CompositeTransformType::Pointer   restoreState = nullptr)
+simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
+             typename MovingimageType::Pointer &                   inmovingImage,
+             const typename SyN::CompositeTransformType::Pointer & compositeInitialTransform,
+             typename SyN::CompositeTransformType::Pointer &       internalSavedState,
+             typename FixedImageType::Pointer &                    infixedImage2 = NULL,
+             typename MovingimageType::Pointer &                   inmovingImage2 = NULL,
+             SyN::RealType                                         samplingPercentage = 1.0,
+             const std::string &                                   whichMetric = "cc",
+             const bool                                            synFull = true,
+             const typename SyN::CompositeTransformType::Pointer & restoreState = nullptr)
 {
   typename SyN::RegistrationHelperType::Pointer regHelper = SyN::RegistrationHelperType::New();
   {

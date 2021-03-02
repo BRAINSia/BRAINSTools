@@ -59,7 +59,7 @@ BRAINSLinearModelerEPCAPrimary(int argc, char * argv[]);
  * filename ...
  */
 void
-CreateLmkDB(std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB);
+CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB);
 
 /*
  * Initialize X_i matrix from base landmarks

@@ -74,7 +74,7 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
 
 BRAINSConstellationDetectorPrimary::ImagePointType
 BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
-  BRAINSConstellationDetectorPrimary::ImageType::ConstPointer img)
+  const BRAINSConstellationDetectorPrimary::ImageType::ConstPointer & img)
 {
   // ------------------------------------
   // Find center of head mass

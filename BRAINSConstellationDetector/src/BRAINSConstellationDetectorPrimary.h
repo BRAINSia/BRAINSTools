@@ -328,7 +328,7 @@ public:
 
 private:
   static std::vector<float> &
-  RAS2LPS(std::vector<float> & RASlmk, std::string name)
+  RAS2LPS(std::vector<float> & RASlmk, const std::string & name)
   {
     if (!RASlmk.empty())
     {
@@ -350,7 +350,7 @@ private:
     return RASlmk;
   }
   static ImagePointType
-  localFindCenterHeadFunc(ImageType::ConstPointer img);
+  localFindCenterHeadFunc(const ImageType::ConstPointer & img);
 
   int          m_houghEyeDetectorMode;      // 1
   unsigned int m_mspQualityLevel;           // 2

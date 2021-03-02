@@ -28,7 +28,7 @@
 #include "itkNumberToString.h"
 
 RGBImageType::Pointer
-ReturnOrientedRGBImage(SImageType::Pointer inputImage)
+ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
 {
   RGBImageType::Pointer orientedImage;
 
@@ -79,7 +79,7 @@ ReturnOrientedRGBImage(SImageType::Pointer inputImage)
 }
 
 RGB2DImageType::Pointer
-GenerateRGB2DImage(RGBImageType::Pointer orientedImage)
+GenerateRGB2DImage(const RGBImageType::Pointer & orientedImage)
 {
   // Alocate 2DImage
   RGB2DImageType::Pointer   TwoDImage = RGB2DImageType::New();
@@ -420,15 +420,15 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
 // INFO:  Determine what the interface for WriteMRMLFile really needs to produce
 // a useful file, and then limit the interface to just that.
 extern void
-WriteMRMLFile(std::string                                   outputMRML,
-              std::string                                   outputLandmarksInInputSpace,
-              std::string                                   outputLandmarksInOutputSpace,
-              std::string                                   inputVolume,
-              std::string                                   outputVolume,
-              std::string                                   outputTransform,
-              const LandmarksMapType &                      outputLandmarksInInputSpaceMap,
-              const LandmarksMapType &                      outputLandmarksInOutputSpaceMap,
-              LandmarkIO::VersorTransformType::ConstPointer versorTransform)
+WriteMRMLFile(const std::string &                                   outputMRML,
+              std::string                                           outputLandmarksInInputSpace,
+              std::string                                           outputLandmarksInOutputSpace,
+              const std::string &                                   inputVolume,
+              const std::string &                                   outputVolume,
+              const std::string &                                   outputTransform,
+              const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
+              const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
+              const LandmarkIO::VersorTransformType::ConstPointer & versorTransform)
 {
   constexpr unsigned int      LocalImageDimension = 3;
   itk::NumberToString<double> doubleToString;
@@ -730,7 +730,7 @@ WriteMRMLFile(std::string                                   outputMRML,
 }
 
 void
-loadLLSModel(std::string                                     llsModelFilename,
+loadLLSModel(const std::string &                             llsModelFilename,
              std::map<std::string, std::vector<double>> &    llsMeans,
              std::map<std::string, LandmarkIO::MatrixType> & llsMatrices,
              std::map<std::string, double> &                 searchRadii)
@@ -833,9 +833,9 @@ loadLLSModel(std::string                                     llsModelFilename,
 }
 
 void
-writeVerificationScript(std::string outputVerificationScriptFilename,
-                        std::string outputVolume,
-                        std::string saveOutputLandmarksFilename)
+writeVerificationScript(const std::string & outputVerificationScriptFilename,
+                        const std::string & outputVolume,
+                        const std::string & saveOutputLandmarksFilename)
 {
   std::ofstream ScriptFile;
 

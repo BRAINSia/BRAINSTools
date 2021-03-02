@@ -202,19 +202,19 @@ public:
   void
   ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, const std::string & commentstring) const;
   Volume4DType::Pointer
-  ThreeDToFourDImage(Volume3DUnwrappedType::Pointer img) const;
+  ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) const;
 
   Volume3DUnwrappedType::Pointer
-  FourDToThreeDImage(Volume4DType::Pointer img4D) const;
+  FourDToThreeDImage(const Volume4DType::Pointer & img4D) const;
 
   /** the DICOM datasets are read as 3D volumes, but they need to be
    *  written as 4D volumes for image types other than NRRD.
    */
   void
-  WriteFSLFormattedFileSet(const std::string &   outputVolumeHeaderName,
-                           const std::string &   outputBValues,
-                           const std::string &   outputBVectors,
-                           Volume4DType::Pointer img4D) const;
+  WriteFSLFormattedFileSet(const std::string &           outputVolumeHeaderName,
+                           const std::string &           outputBValues,
+                           const std::string &           outputBVectors,
+                           const Volume4DType::Pointer & img4D) const;
 
 
   /**
@@ -236,7 +236,7 @@ protected:
   double
   ComputeMaxBvalue(const std::vector<double> & bValues) const;
   size_t
-  has_valid_nifti_extension(std::string outputVolumeHeaderName) const;
+  has_valid_nifti_extension(const std::string & outputVolumeHeaderName) const;
 
   /** add vendor-specific flags; */
   virtual void

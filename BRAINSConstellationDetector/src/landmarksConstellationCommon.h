@@ -107,10 +107,10 @@ using LinearInterpolatorType = itk::LinearInterpolateImageFunction<SImageType, d
 extern std::string globalResultsDir;
 extern int         globalImagedebugLevel;
 extern PyramidFilterType::Pointer
-MakeThreeLevelPyramid(SImageType::Pointer refImage);
+MakeThreeLevelPyramid(const SImageType::Pointer & refImage);
 
 extern PyramidFilterType::Pointer
-MakeOneLevelPyramid(SImageType::Pointer refImage);
+MakeOneLevelPyramid(const SImageType::Pointer & refImage);
 
 extern SImageType::PointType
 GetImageCenterPhysicalPoint(SImageType::Pointer & image);
@@ -135,7 +135,7 @@ decomposeRPAC(const SImageType::PointType & RP,
               double * const                RPAC_over_RPPC);
 
 extern void
-MakeLabelImage(SImageType::Pointer           in,
+MakeLabelImage(const SImageType::Pointer &   in,
                const SImageType::PointType & RP,
                const SImageType::PointType & AC,
                const SImageType::PointType & PC,
@@ -286,7 +286,7 @@ removeVectorMean(std::vector<ValuesType> & x)
  * @param result_array
  */
 extern void
-extractArray(LinearInterpolatorType::Pointer                                imInterp,
+extractArray(const LinearInterpolatorType::Pointer &                        imInterp,
              const SImageType::PointType &                                  CenterPoint,
              const landmarksConstellationModelIO::IndexLocationVectorType & model,
              std::vector<float> &                                           result_array);
@@ -367,9 +367,9 @@ using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
 using SimilarityTransformType = itk::Similarity3DTransform<double>;
 
 extern SimilarityTransformType::Pointer
-DoIt_Similarity(PointList fixedPoints, PointList movingPoints);
+DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints);
 
 extern VersorRigidTransformType::Pointer
-DoIt_Rigid(PointList fixedPoints, PointList movingPoints);
+DoIt_Rigid(const PointList & fixedPoints, const PointList & movingPoints);
 
 #endif //__landmarksConstellationCommon_h

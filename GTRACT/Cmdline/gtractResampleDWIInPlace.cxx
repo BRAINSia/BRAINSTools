@@ -65,8 +65,8 @@
  */
 template <typename IOImageType>
 typename IOImageType::Pointer
-SetVectorImageRigidTransformInPlace(typename itk::VersorRigid3DTransform<double>::ConstPointer RigidTransform,
-                                    const IOImageType *                                        InputImage)
+SetVectorImageRigidTransformInPlace(const typename itk::VersorRigid3DTransform<double>::ConstPointer & RigidTransform,
+                                    const IOImageType *                                                InputImage)
 {
   using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<IOImageType, IOImageType>;
   using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;

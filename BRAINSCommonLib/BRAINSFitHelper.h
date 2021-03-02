@@ -205,7 +205,7 @@ public:
   itkGetConstMacro(WriteOutputTransformInFloat, bool);
 
   void
-  SetSamplingStrategy(std::string strategy)
+  SetSamplingStrategy(const std::string & strategy)
   {
     if (strategy == "Random")
     {

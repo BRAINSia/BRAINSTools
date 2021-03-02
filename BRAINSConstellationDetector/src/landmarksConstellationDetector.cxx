@@ -46,7 +46,7 @@ local_to_string(unsigned int i)
 
 VersorTransformType::Pointer
 landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
-  VersorTransformType::ConstPointer orig2msp_img_tfm)
+  const VersorTransformType::ConstPointer & orig2msp_img_tfm)
 {
   VersorTransformType::Pointer orig2msp_lmk_tfm = VersorTransformType::New();
   SImageType::PointType        centerPoint = orig2msp_img_tfm->GetCenter();
@@ -80,8 +80,9 @@ landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType &
 }
 
 void
-landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(SImageType::Pointer      original_space_image,
-                                                                        const LandmarksMapType & updated_orig_lmks)
+landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
+  const SImageType::Pointer & original_space_image,
+  const LandmarksMapType &    updated_orig_lmks)
 {
   ////////////////////////////
   // START BRAINSFit alternative
@@ -279,11 +280,11 @@ landmarksConstellationDetector::GetImageOrigToACPCVersorTransform() const
 
 SImageType::PointType
 landmarksConstellationDetector::FindCandidatePoints(
-  SImageType::Pointer volumeMSP,
-  SImageType::Pointer mask_LR,
-  const double        LR_restrictions,
-  const double        PA_restrictions,
-  const double        SI_restrictions,
+  const SImageType::Pointer & volumeMSP,
+  const SImageType::Pointer & mask_LR,
+  const double                LR_restrictions,
+  const double                PA_restrictions,
+  const double                SI_restrictions,
   // INFO: restrictions should really be ellipsoidal values
   const SImageType::PointType::VectorType &                      CenterOfSearchArea,
   const std::vector<std::vector<float>> &                        TemplateMean,

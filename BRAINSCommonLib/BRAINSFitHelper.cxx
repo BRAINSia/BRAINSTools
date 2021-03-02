@@ -47,7 +47,7 @@ debug_catch()
 
 // convert spatial object to image
 itk::Image<unsigned char, 3>::ConstPointer
-ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPointer inputSpatialObject)
+ExtractConstPointerToImageMaskFromImageSpatialObject(const SpatialObjectType::ConstPointer & inputSpatialObject)
 {
   using MaskImageType = itk::Image<unsigned char, 3>;
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
@@ -65,7 +65,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject(SpatialObjectType::ConstPoi
 
 // convert image to mask (spatial object)
 itk::ImageMaskSpatialObject<3>::ConstPointer
-ConvertMaskImageToSpatialMask(itk::Image<unsigned char, 3>::ConstPointer inputImage)
+ConvertMaskImageToSpatialMask(const itk::Image<unsigned char, 3>::ConstPointer & inputImage)
 {
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<3>;
   ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();

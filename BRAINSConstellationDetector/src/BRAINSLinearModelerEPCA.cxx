@@ -47,7 +47,7 @@ main(int argc, char * argv[])
 }
 
 void
-CreateLmkDB(std::string filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB)
+CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB)
 {
   // Read in list of landmark list file
   std::ifstream myfile(filename.c_str());

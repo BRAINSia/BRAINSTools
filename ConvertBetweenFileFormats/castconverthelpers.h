@@ -120,7 +120,7 @@ PrintInfo(ReaderType reader, WriterType writer)
  */
 template <typename InputImageType, typename OutputImageType>
 void
-ReadDicomSeriesCastWriteImage(std::string inputDirectoryName, std::string outputFileName)
+ReadDicomSeriesCastWriteImage(const std::string & inputDirectoryName, const std::string & outputFileName)
 {
   /** Typedef the correct reader, caster and writer. */
   using SeriesReaderType = typename itk::ImageSeriesReader<InputImageType>;
@@ -194,7 +194,7 @@ ReadDicomSeriesCastWriteImage(std::string inputDirectoryName, std::string output
  */
 template <typename InputImageType, typename OutputImageType>
 void
-ReadCastWriteImage(std::string inputFileName, std::string outputFileName)
+ReadCastWriteImage(const std::string & inputFileName, const std::string & outputFileName)
 {
   /**  Typedef the correct reader, caster and writer. */
   using ImageReaderType = typename itk::ImageFileReader<InputImageType>;
@@ -333,7 +333,7 @@ ReadVTICastWriteImage(std::string inputFileName, std::string outputFileName, int
 #else
 template <typename TOuptutPixelType>
 int
-ReadVTICastWriteImage(std::string, std::string, int)
+ReadVTICastWriteImage(const std::string &, const std::string &, int)
 {
   return 0;
 }

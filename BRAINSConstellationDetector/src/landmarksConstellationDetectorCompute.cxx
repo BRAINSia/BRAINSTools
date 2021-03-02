@@ -23,7 +23,7 @@ static bool
 lmk_check_differences(const LandmarksMapType & ref,
                       const LandmarksMapType & cmp,
                       const bool               backward_compare,
-                      std::string              filename,
+                      const std::string &      filename,
                       int                      lineno)
 {
   std::cerr << "===" << lineno << " " << filename << std::endl;
@@ -82,7 +82,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
   this->m_eyeFixed2msp_img_tfm =
     ComputeMSP(this->m_eyeFixed_img, eyeFixed_lmk_CenterOfHeadMass, this->m_mspQualityLevel, c_c);
   {
-    const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
+    const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
       StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);

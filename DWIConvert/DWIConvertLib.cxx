@@ -274,7 +274,7 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
 
 
 void
-DWIConvert::SetInputFileName(std::string inputFilePath)
+DWIConvert::SetInputFileName(const std::string & inputFilePath)
 {
 
   const auto isDirectory = itksys::SystemTools::FileIsDirectory(inputFilePath);
@@ -324,7 +324,7 @@ DWIConvert::SetInputFileName(std::string inputFilePath)
 
 
 void
-DWIConvert::SetOutputFileName(std::string outputFilePath)
+DWIConvert::SetOutputFileName(const std::string & outputFilePath)
 {
   m_outputVolume = outputFilePath;
   m_outputFileType = detectOuputVolumeType(outputFilePath);

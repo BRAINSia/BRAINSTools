@@ -96,8 +96,8 @@ LLSModel ::WriteScalar(const std::string & path, const double & value)
 void
 LLSModel ::WriteString(const std::string & path, const std::string & strname)
 {
-  const H5std_string SET_NAME(path);
-  const H5std_string SET_DATA(strname);
+  const H5std_string & SET_NAME(path);
+  const H5std_string & SET_DATA(strname);
 
   hsize_t       numStrings(1);
   H5::DataSpace strSpace(1, &numStrings);

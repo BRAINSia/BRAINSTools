@@ -1268,7 +1268,7 @@ main(int argc, char ** argv)
       // so there is no need to overwrite that.
       if (!atlasToSubjectTransform.empty() && !itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str()))
       {
-        const std::string postSegmentationTransformFileName = atlasToSubjectTransform;
+        const std::string & postSegmentationTransformFileName = atlasToSubjectTransform;
         // NOTE:  Aliasing of smart-pointers up the polymorphic tree OK here
         // because
         // the primary

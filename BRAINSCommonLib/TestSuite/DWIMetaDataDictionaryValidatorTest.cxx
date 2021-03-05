@@ -63,7 +63,7 @@ PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
       using msrFrameType = std::vector<std::vector<double>>;
       const auto * msrFrameMetaDataObject =
         dynamic_cast<const itk::MetaDataObject<msrFrameType> *>(it->second.GetPointer());
-      const msrFrameType outMsr = msrFrameMetaDataObject->GetMetaDataObjectValue();
+      const msrFrameType & outMsr = msrFrameMetaDataObject->GetMetaDataObjectValue();
       for (const auto & i : outMsr)
       {
         std::cout << "  ";

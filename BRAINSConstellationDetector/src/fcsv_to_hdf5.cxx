@@ -626,9 +626,9 @@ main(int argc, char * argv[])
     vnl_matrix<double> Yi =
       (byClassLandmarkMatrix["newLandmarks"][i].second) - (byClassLandmarkMatrix["baseLandmarks"][0].second);
 
-    const vnl_matrix<double> tmp = vnl_matrix_inverse<double>(Zi * Zi.transpose().as_ref()).as_matrix();
-    const vnl_matrix<double> Zinv{ tmp };
-    const vnl_matrix<double> Ci{ Zinv * (Zi * Yi) };
+    const vnl_matrix<double>   tmp = vnl_matrix_inverse<double>(Zi * Zi.transpose().as_ref()).as_matrix();
+    const vnl_matrix<double> & Zinv{ tmp };
+    const vnl_matrix<double>   Ci{ Zinv * (Zi * Yi) };
     M.push_back(W[i] * Ci);
 
     // Compute the estimation errors for training datasets

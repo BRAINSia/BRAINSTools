@@ -151,7 +151,7 @@ DWIConvert::write(const std::string & outputVolume)
 
   std::string outputVolumeHeaderName(m_outputVolume);
   { // concatenate with outputDirectory
-    if (m_outputVolume.find("/") == std::string::npos && m_outputVolume.find("\\") == std::string::npos)
+    if (m_outputVolume.find('/') == std::string::npos && m_outputVolume.find('\\') == std::string::npos)
     {
       if (!outputVolumeHeaderName.empty())
       {

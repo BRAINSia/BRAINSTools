@@ -154,7 +154,8 @@ DoIt(std::string      inputVolume,
     typename TInputImagePixelType::Pointer image;
     if (rescaleIntensities)
     {
-      typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats = itk::StatisticsImageFilter<TInputImagePixelType>::New();
+      typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats =
+        itk::StatisticsImageFilter<TInputImagePixelType>::New();
       stats->SetInput(volOrig);
       stats->Update();
       typename TInputImagePixelType::PixelType minPixel(stats->GetMinimum());
@@ -191,8 +192,8 @@ DoIt(std::string      inputVolume,
         }
       }
 
-      typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer remapIntensityFilter =
-        itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
+      typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer
+        remapIntensityFilter = itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
       remapIntensityFilter->SetOutputMinimum(rescaleIntensitiesOutputRange[0]);
@@ -289,7 +290,8 @@ main(int argc, char * argv[])
     {
       switch (componentType)
       {
-        case itk::ImageIOBase::UCHAR: {
+        case itk::ImageIOBase::UCHAR:
+        {
           using PixelType = unsigned char;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -303,7 +305,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::CHAR: {
+        case itk::ImageIOBase::CHAR:
+        {
           using PixelType = char;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -317,7 +320,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::USHORT: {
+        case itk::ImageIOBase::USHORT:
+        {
           using PixelType = unsigned short;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -331,7 +335,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::SHORT: {
+        case itk::ImageIOBase::SHORT:
+        {
           using PixelType = short;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -345,7 +350,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::UINT: {
+        case itk::ImageIOBase::UINT:
+        {
           using PixelType = unsigned int;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -359,7 +365,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::INT: {
+        case itk::ImageIOBase::INT:
+        {
           using PixelType = int;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -373,7 +380,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::ULONG: {
+        case itk::ImageIOBase::ULONG:
+        {
           using PixelType = unsigned long;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -387,7 +395,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::LONG: {
+        case itk::ImageIOBase::LONG:
+        {
           using PixelType = long;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -401,7 +410,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::FLOAT: {
+        case itk::ImageIOBase::FLOAT:
+        {
           using PixelType = float;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,
@@ -415,7 +425,8 @@ main(int argc, char * argv[])
                                  backgroundFillValueString,
                                  interpolationMode);
         }
-        case itk::ImageIOBase::DOUBLE: {
+        case itk::ImageIOBase::DOUBLE:
+        {
           using PixelType = double;
           using ImageType = itk::Image<PixelType, VDimension>;
           return DoIt<ImageType>(inputVolume,

@@ -230,7 +230,7 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
-  bool useLPS = false;
+  bool        useLPS = false;
   std::string version_major_str = "unknown";
   std::string version_minor_str = "unknown";
   std::string coordinate_str = "RAS"; // Match old slicer version RAS strings
@@ -260,17 +260,17 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
         {
           coordinate_str = match.str(1);
         }
-        if( coordinate_str.find("LPS") != std::string::npos  || coordinate_str.find("1") != std::string::npos)
+        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find("1") != std::string::npos)
         {
-          useLPS=true;
+          useLPS = true;
         }
-        else if( coordinate_str.find("RAS") != std::string::npos|| coordinate_str.find("0") != std::string::npos)
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find("0") != std::string::npos)
         {
-          useLPS=false;
+          useLPS = false;
         }
         else // Unkonwn coordinate stsystem
         {
-          useLPS=false;
+          useLPS = false;
         }
       }
     }
@@ -291,7 +291,6 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       }
       landmarks[name] = labelPos;
     }
-
   }
 
   myfile.close();
@@ -327,7 +326,7 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
-  bool useLPS = false;
+  bool        useLPS = false;
   std::string version_major_str = "unknown";
   std::string version_minor_str = "unknown";
   std::string coordinate_str = "RAS"; // Match old slicer version RAS strings
@@ -357,17 +356,17 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
         {
           coordinate_str = match.str(1);
         }
-        if( coordinate_str.find("LPS") != std::string::npos  || coordinate_str.find("1") != std::string::npos)
+        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find("1") != std::string::npos)
         {
-          useLPS=true;
+          useLPS = true;
         }
-        else if( coordinate_str.find("RAS") != std::string::npos|| coordinate_str.find("0") != std::string::npos)
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find("0") != std::string::npos)
         {
-          useLPS=false;
+          useLPS = false;
         }
         else // Unkonwn coordinate system
         {
-          useLPS=false;
+          useLPS = false;
         }
       }
     }
@@ -378,7 +377,7 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
       std::vector<std::string> asTokens = split(line, ',');
       const std::string        name = asTokens[11]; // 11 position is label name
       LandmarkPointType        labelPos;
-      if( useLPS)
+      if (useLPS)
       {
         labelPos[0] = +atof(asTokens[1].c_str()); // L -> L (+)
         labelPos[1] = +atof(asTokens[2].c_str()); // P -> P (+)

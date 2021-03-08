@@ -239,14 +239,20 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
   // If the accumulator buffer is not empty, then every subsequent image is resampled to the current
   // accumulator buffer.
   command.SetOption(
-    "IResample", "", false, "IResample resamples each image to the current --iresampleref <file>. 0-NearestNeighbor, 1=Linear, 2=WindowedSinc");
+    "IResample",
+    "",
+    false,
+    "IResample resamples each image to the current --iresampleref <file>. 0-NearestNeighbor, 1=Linear, 2=WindowedSinc");
   command.SetOptionLongTag("IResample", "ifresample");
   command.AddOptionField("IResample", "constant", MetaCommand::INT, true, "1");
 
   // If the accumulator buffer is not empty, then every subsequent image is resampled to the current
   // accumulator buffer.
   command.SetOption(
-    "IResampleRef", "", false, "IResampleRef set the reference image space for resampling. 0-NearestNeighbor, 1=Linear, 2=WindowedSinc");
+    "IResampleRef",
+    "",
+    false,
+    "IResampleRef set the reference image space for resampling. 0-NearestNeighbor, 1=Linear, 2=WindowedSinc");
   command.SetOptionLongTag("IResampleRef", "ifresampleref");
   command.AddOptionField("IResampleRef", "constant", MetaCommand::STRING, true, "");
 

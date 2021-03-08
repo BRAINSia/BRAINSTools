@@ -284,9 +284,10 @@ main(int argc, char * argv[])
     // original input volume from the training set
     // transforms image to MSP aligned voxel lattice
 
-    double                      c_c = 0;
+    double c_c = 0;
 
-    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm = ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
+    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
+      ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
     const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
       StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();

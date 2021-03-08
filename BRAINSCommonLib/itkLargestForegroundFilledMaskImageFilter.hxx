@@ -154,27 +154,27 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
     threshold_low_foreground = otsuThresholdResult;
   }
 
-    using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage, IntegerImageType>;
-    typename InputThresholdFilterType::Pointer threshold = InputThresholdFilterType::New();
-    threshold->SetInput(this->GetInput());
-    threshold->SetInsideValue(this->m_InsideValue);
-    threshold->SetOutsideValue(this->m_OutsideValue);
-    threshold->SetLowerThreshold(threshold_low_foreground);
-    const typename TInputImage::PixelType threshold_hi_foreground = NumericTraits<typename TInputImage::PixelType>::max();
-    threshold->SetUpperThreshold(threshold_hi_foreground);
-    threshold->Update();
-    std::cout << "LowHigh Thresholds: [" << threshold_low_foreground << ","
-              << threshold_hi_foreground << "]" << std::endl;
+  using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage, IntegerImageType>;
+  typename InputThresholdFilterType::Pointer threshold = InputThresholdFilterType::New();
+  threshold->SetInput(this->GetInput());
+  threshold->SetInsideValue(this->m_InsideValue);
+  threshold->SetOutsideValue(this->m_OutsideValue);
+  threshold->SetLowerThreshold(threshold_low_foreground);
+  const typename TInputImage::PixelType threshold_hi_foreground = NumericTraits<typename TInputImage::PixelType>::max();
+  threshold->SetUpperThreshold(threshold_hi_foreground);
+  threshold->Update();
+  std::cout << "LowHigh Thresholds: [" << threshold_low_foreground << "," << threshold_hi_foreground << "]"
+            << std::endl;
 
-    using FilterType = ConnectedComponentImageFilter<IntegerImageType, IntegerImageType>;
-    typename FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
-    //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
-    //  watcher.QuietOn();
-    labelConnectedComponentsFilter->SetInput(threshold->GetOutput());
-    // labelConnectedComponentsFilter->Update();
+  using FilterType = ConnectedComponentImageFilter<IntegerImageType, IntegerImageType>;
+  typename FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
+  //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
+  //  watcher.QuietOn();
+  labelConnectedComponentsFilter->SetInput(threshold->GetOutput());
+  // labelConnectedComponentsFilter->Update();
 
-    using RelabelType = RelabelComponentImageFilter<IntegerImageType, IntegerImageType>;
-    typename RelabelType::Pointer relabel = RelabelType::New();
+  using RelabelType = RelabelComponentImageFilter<IntegerImageType, IntegerImageType>;
+  typename RelabelType::Pointer relabel = RelabelType::New();
   relabel->SetInput(labelConnectedComponentsFilter->GetOutput());
 
   try

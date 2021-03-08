@@ -552,24 +552,21 @@ landmarksConstellationDetector::FindCandidatePoints(
 
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
       msp_lmks_algo_found["CenterOfSearchArea"] = CenterOfSearchArea;
-      msp_lmks_algo_found["LPS_BEGIN"] =  LPS_BEGIN;
-      msp_lmks_algo_found["LPS_END"] =  LPS_END;
-      const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" +
-                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                      local_to_string(curr_rotationAngle_index) + "_markers.fcsv");
+      msp_lmks_algo_found["LPS_BEGIN"] = LPS_BEGIN;
+      msp_lmks_algo_found["LPS_END"] = LPS_END;
+      const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                   "_" + local_to_string(curr_rotationAngle_index) + "_markers.fcsv");
       WriteITKtoSlicer3Lmk(pointsName, msp_lmks_algo_found);
 
       // Print the name of the file that is the master volume, the fixed image sample should
       // be aligned with this!
-      const std::string volumeMSPName(this->m_ResultsDir + "/NCCOutput_" +
-                                              itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                              local_to_string(curr_rotationAngle_index) + "_volumeMSP.nii.gz");
+      const std::string volumeMSPName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                      "_" + local_to_string(curr_rotationAngle_index) + "_volumeMSP.nii.gz");
       itkUtil::WriteImage<SImageType>(volumeMSP, volumeMSPName);
 
 
-      const std::string mask_LRName(this->m_ResultsDir + "/NCCOutput_" +
-                                      itksys::SystemTools::GetFilenameName(mapID) + "_" +
-                                      local_to_string(curr_rotationAngle_index) + "_mask_LRName.nii.gz");
+      const std::string mask_LRName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +
+                                    "_" + local_to_string(curr_rotationAngle_index) + "_mask_LRName.nii.gz");
       itkUtil::WriteImage<SImageType>(mask_LR, mask_LRName);
 
       const std::string ncc_output_name_fixed(this->m_ResultsDir + "/NCCOutput_" +

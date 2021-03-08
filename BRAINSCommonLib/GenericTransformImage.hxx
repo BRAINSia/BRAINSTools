@@ -211,7 +211,7 @@ DoResampleInPlace(
 template <typename InputImageType, typename DistanceMapImageType>
 typename DistanceMapImageType::ConstPointer
 local_ConvertToDistanceMap(InputImageType const * const         OperandImage,
-                      typename InputImageType::PixelType & suggestedDefaultValue)
+                           typename InputImageType::PixelType & suggestedDefaultValue)
 {
   /* We make the values inside the structures positive and outside negative
    * using
@@ -278,7 +278,7 @@ local_ConvertToDistanceMap(InputImageType const * const         OperandImage,
 template <typename OutputImageType, typename DistanceMapImageType>
 typename OutputImageType::Pointer
 local_FromDistanceMap(typename DistanceMapImageType::Pointer                        TransformedImage,
-                 const itk::ImageBase<OutputImageType::ImageDimension> * const ReferenceImage)
+                      const itk::ImageBase<OutputImageType::ImageDimension> * const ReferenceImage)
 {
   // A special case for dealing with binary images
   // where signed distance maps are warped and thresholds created
@@ -298,18 +298,18 @@ local_FromDistanceMap(typename DistanceMapImageType::Pointer                    
   // Signed distance boundary voxels are defined as being included in the
   // structure,  therefore the desired distance threshold is in the middle
   // of the enclosing (negative) voxel ribbon around threshold 0.
-  const typename OutputImageType::SpacingType              Spacing = ReferenceImage->GetSpacing();
-  static_assert(OutputImageType::ImageDimension >= 2 && OutputImageType::ImageDimension <= 3, "ERROR: Unsupported image dimension requested." );
-  const auto average_spacing_size = [=] () {
-    auto sum=0.0;
-    for(unsigned int i = 0; i < OutputImageType::ImageDimension; ++i)
+  const typename OutputImageType::SpacingType Spacing = ReferenceImage->GetSpacing();
+  static_assert(OutputImageType::ImageDimension >= 2 && OutputImageType::ImageDimension <= 3,
+                "ERROR: Unsupported image dimension requested.");
+  const auto average_spacing_size = [=]() {
+    auto sum = 0.0;
+    for (unsigned int i = 0; i < OutputImageType::ImageDimension; ++i)
     {
       sum += Spacing[i];
     }
     return sum / static_cast<double>(OutputImageType::ImageDimension);
   }();
-  const typename BinaryThresholdFilterType::InputPixelType lowerThreshold =
-    -0.5 * average_spacing_size;
+  const typename BinaryThresholdFilterType::InputPixelType lowerThreshold = -0.5 * average_spacing_size;
   //  std::cerr << "Lower Threshold == " << lowerThreshold << std::endl;
 
   const typename BinaryThresholdFilterType::InputPixelType upperThreshold =

@@ -94,17 +94,16 @@ main(int argc, char * argv[])
       {
         const double error_term = lmk1iter->second.EuclideanDistanceTo(lmk2iter->second);
 
-        std::string status { "PASSED" };
+        std::string status{ "PASSED" };
         if (error_term > lmk_tolerance && error_term > tolerance)
         {
-          status="FAILED";
+          status = "FAILED";
           allSame = false;
         }
-        std::cout << status << ": " << lmk1iter->first << "\tdiffer |" << lmk1iter->second << " - "
-                  << lmk2iter->second << "| = " << error_term
-                  << "\t( "  << error_term << " ?< [" << lmk_tolerance << " wts "
-                  << "|| " << tolerance << " cmdlntol]" << " )"
-                  << std::endl;
+        std::cout << status << ": " << lmk1iter->first << "\tdiffer |" << lmk1iter->second << " - " << lmk2iter->second
+                  << "| = " << error_term << "\t( " << error_term << " ?< [" << lmk_tolerance << " wts "
+                  << "|| " << tolerance << " cmdlntol]"
+                  << " )" << std::endl;
       }
       ++lmk1iter;
     }

@@ -411,7 +411,6 @@ main(int argc, char * argv[])
     }
 
 
-
     // STEP 3 Generate intensity normalized images from the clippings.
     for (size_t i = 0; i < img_filenames.size(); ++i)
     {

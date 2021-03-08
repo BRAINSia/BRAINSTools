@@ -250,6 +250,7 @@ public:
   /** Set the write debug image level */
   itkSetMacro(WritedebuggingAccumulatorImageLevel, unsigned int);
   itkSetMacro(ResultsDir, std::string);
+
 protected:
   HoughTransformRadialVotingImageFilter();
   ~HoughTransformRadialVotingImageFilter() override;

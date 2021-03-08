@@ -1364,25 +1364,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
                     << "before it is passed to the BSpline registration.\n"
                     << std::endl;
           typename MovingImageType::Pointer warpedMoving1 =
-            GenericTransformImage<MovingImageType>(
-              this->m_MovingVolume,
-              this->m_FixedVolume,
-              this->m_CurrentGenericTransform.GetPointer(),
-              m_BackgroundFillValue,
-              "Linear",
-              false);
+            GenericTransformImage<MovingImageType>(this->m_MovingVolume,
+                                                   this->m_FixedVolume,
+                                                   this->m_CurrentGenericTransform.GetPointer(),
+                                                   m_BackgroundFillValue,
+                                                   "Linear",
+                                                   false);
           preprocessedMovingImagesList.clear();
           preprocessedMovingImagesList.push_back(warpedMoving1);
           if (m_MovingVolume2.IsNotNull())
           {
             typename MovingImageType::Pointer warpedMoving2 =
-              GenericTransformImage<MovingImageType>(
-                this->m_MovingVolume2,
-                this->m_FixedVolume2,
-                this->m_CurrentGenericTransform.GetPointer(),
-                m_BackgroundFillValue,
-                "Linear",
-                false);
+              GenericTransformImage<MovingImageType>(this->m_MovingVolume2,
+                                                     this->m_FixedVolume2,
+                                                     this->m_CurrentGenericTransform.GetPointer(),
+                                                     m_BackgroundFillValue,
+                                                     "Linear",
+                                                     false);
             preprocessedMovingImagesList.push_back(warpedMoving2);
           }
           for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); n++)
@@ -1405,14 +1403,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             dynamic_cast<SpatialObjectType const *>(firstMetricComponent->GetMovingImageMask());
           if (movingMask.IsNotNull())
           {
-            typename MaskImageType::Pointer warpedMovingMaskImage =
-              GenericTransformImage<MaskImageType>(
-                ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
-                this->m_FixedVolume,
-                this->m_CurrentGenericTransform.GetPointer(),
-                m_BackgroundFillValue,
-                "Linear",
-                false);
+            typename MaskImageType::Pointer warpedMovingMaskImage = GenericTransformImage<MaskImageType>(
+              ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
+              this->m_FixedVolume,
+              this->m_CurrentGenericTransform.GetPointer(),
+              m_BackgroundFillValue,
+              "Linear",
+              false);
 
 
             const SpatialObjectType * warpedMask =

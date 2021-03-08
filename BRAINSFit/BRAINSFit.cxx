@@ -538,13 +538,12 @@ main(int argc, char * argv[])
     }
 
     {
-      resampledImage = GenericTransformImage<MovingVolumeType>(
-        preprocessedMovingVolume,
-        extractFixedVolume,
-        currentGenericTransform.GetPointer(),
-        backgroundFillValue,
-        interpolationMode,
-        false);
+      resampledImage = GenericTransformImage<MovingVolumeType>(preprocessedMovingVolume,
+                                                               extractFixedVolume,
+                                                               currentGenericTransform.GetPointer(),
+                                                               backgroundFillValue,
+                                                               interpolationMode,
+                                                               false);
     }
 
     // If --logFileReport myReport.csv is specified on the command line, then write out this simple CSV file.

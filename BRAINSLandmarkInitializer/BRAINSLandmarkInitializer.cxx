@@ -77,28 +77,27 @@ CheckLandmarks(const LandmarksMapType & ldmk, const LandmarksWeightMapType & wei
   }
 }
 
-double ComputeIsotropicScaleFactor(
-  const LandmarkPointContainer & fixedLmks,
-  const LandmarkPointContainer & movingLmks,
-  const LandmarkWeightType & landmarkWgts
-  )
+double
+ComputeIsotropicScaleFactor(const LandmarkPointContainer & fixedLmks,
+                            const LandmarkPointContainer & movingLmks,
+                            const LandmarkWeightType &     landmarkWgts)
 {
-  double isotropic_scale_factor=1.0;
-  const size_t numLmks =fixedLmks.size();
+  double       isotropic_scale_factor = 1.0;
+  const size_t numLmks = fixedLmks.size();
 
-  const bool has_lmk_weights = ( landmarkWgts.size() == numLmks);
+  const bool has_lmk_weights = (landmarkWgts.size() == numLmks);
 
-  double fix_dist_sum = 0.0;
-  double mov_dist_sum = 0.0;
+  double       fix_dist_sum = 0.0;
+  double       mov_dist_sum = 0.0;
   const auto & fix_ref = fixedLmks[0];
   const auto & mov_ref = movingLmks[0];
-  for(size_t i = 1; i < numLmks; ++i)
+  for (size_t i = 1; i < numLmks; ++i)
   {
-    double weight = ( has_lmk_weights) ? landmarkWgts[i] : 1.0;
-    fix_dist_sum += weight*fix_ref.EuclideanDistanceTo(fixedLmks[i]);
-    mov_dist_sum += weight*mov_ref.EuclideanDistanceTo(movingLmks[i]);
+    double weight = (has_lmk_weights) ? landmarkWgts[i] : 1.0;
+    fix_dist_sum += weight * fix_ref.EuclideanDistanceTo(fixedLmks[i]);
+    mov_dist_sum += weight * mov_ref.EuclideanDistanceTo(movingLmks[i]);
   }
-  isotropic_scale_factor = fix_dist_sum/mov_dist_sum;
+  isotropic_scale_factor = fix_dist_sum / mov_dist_sum;
   return isotropic_scale_factor;
 }
 
@@ -108,8 +107,7 @@ PreProcessLandmarkFiles(std::string              inputFixedLandmarkFilename,
                         std::string              inputWeightFilename,
                         LandmarkPointContainer & fixedLmks,
                         LandmarkPointContainer & movingLmks,
-                        LandmarkWeightType &     landmarkWgts
-                        )
+                        LandmarkWeightType &     landmarkWgts)
 {
   fixedLmks.clear();
   movingLmks.clear();
@@ -257,7 +255,8 @@ main(int argc, char * argv[])
 
     auto transform = InitializeTransform<AffineTransformType>(
       fixedLmks, movingLmks, landmarkWgts, referenceImage, bsplineNumberOfControlPoints);
-    std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+    std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType
+              << std::endl;
     itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
   }
   else if (outputTransformType == "BSplineTransform")
@@ -281,15 +280,17 @@ main(int argc, char * argv[])
       Similarity3DTransformType::Pointer simTransform = Similarity3DTransformType::New();
 
       simTransform->SetMatrix(transform->GetMatrix());
-      const double isotropic_scale_factor= ComputeIsotropicScaleFactor(fixedLmks, movingLmks, landmarkWgts);
+      const double isotropic_scale_factor = ComputeIsotropicScaleFactor(fixedLmks, movingLmks, landmarkWgts);
       std::cout << "Using isotropic scale factor: " << isotropic_scale_factor << std::endl;
-      //simTransform->SetScale(isotropic_scale_factor);
-      std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+      // simTransform->SetScale(isotropic_scale_factor);
+      std::cout << "Writing output transform file to disk: " << outputTransformFilename
+                << " type:" << outputTransformType << std::endl;
       itk::WriteTransformToDisk<double>(simTransform, outputTransformFilename);
     }
     else
     {
-      std::cout << "Writing output transform file to disk: " << outputTransformFilename << " type:" << outputTransformType << std::endl;
+      std::cout << "Writing output transform file to disk: " << outputTransformFilename
+                << " type:" << outputTransformType << std::endl;
       itk::WriteTransformToDisk<double>(transform, outputTransformFilename);
     }
   }

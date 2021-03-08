@@ -137,43 +137,50 @@ template <typename TOutputPixel, typename TProbabilityPixel>
 void
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectImages()
 {
-    muLogMacro(<< "Register intra-subject images" << std::endl);
+  muLogMacro(<< "Register intra-subject images" << std::endl);
 
-    int i = 0;
-    for (auto mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.cbegin();
-         mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.cend();
-         ++mapOfModalImageListsIt) {
-        auto currModeImageListIt = mapOfModalImageListsIt->second.begin();
-        auto intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
-        auto isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
-        this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].clear(); // Ensure that pushing onto clean list
-        while (currModeImageListIt != mapOfModalImageListsIt->second.end()) {
-            //NEED A "USE_CACHED_VAULES commandline flag
-#ifdef QUICK_FALLTHROUGH_IF_EXISTS // PROVIDES a fall through to avoid estimating transforms, only useful for repeat runs
-            std::cerr << "FILENAME  " <<  (*isNamesIt).c_str() << std::flush << std::endl;
-            if (itksys::SystemTools::FileExists((*isNamesIt).c_str()))
-            {
-              try
-              {
-                muLogMacro(<< "Reading transform from file: " << (*isNamesIt).c_str() << "." << std::endl);
-                m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(
-                  itk::ReadTransformFromDisk((*isNamesIt).c_str()));
-              }
-              catch (...)
-              {
-                muLogMacro(<< "Failed to read transform file caused exception." << (*isNamesIt) << std::endl);
-                itkExceptionMacro(<< "Failed to read transform file " << (*isNamesIt));
-              }
-            }
-            else
+  int i = 0;
+  for (auto mapOfModalImageListsIt = this->m_IntraSubjectOriginalImageList.cbegin();
+       mapOfModalImageListsIt != this->m_IntraSubjectOriginalImageList.cend();
+       ++mapOfModalImageListsIt)
+  {
+    auto currModeImageListIt = mapOfModalImageListsIt->second.begin();
+    auto intraImIt = this->m_IntraSubjectOriginalImageList[mapOfModalImageListsIt->first].begin();
+    auto isNamesIt = this->m_IntraSubjectTransformFileNames[mapOfModalImageListsIt->first].begin();
+    this->m_IntraSubjectTransforms[mapOfModalImageListsIt->first].clear(); // Ensure that pushing onto clean list
+    while (currModeImageListIt != mapOfModalImageListsIt->second.end())
+    {
+      // NEED A "USE_CACHED_VAULES commandline flag
+#ifdef QUICK_FALLTHROUGH_IF_EXISTS // PROVIDES a fall through to avoid estimating transforms, only useful for repeat
+                                   // runs
+      std::cerr << "FILENAME  " << (*isNamesIt).c_str() << std::flush << std::endl;
+      if (itksys::SystemTools::FileExists((*isNamesIt).c_str()))
+      {
+        try
+        {
+          muLogMacro(<< "Reading transform from file: " << (*isNamesIt).c_str() << "." << std::endl);
+          m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(
+            itk::ReadTransformFromDisk((*isNamesIt).c_str()));
+        }
+        catch (...)
+        {
+          muLogMacro(<< "Failed to read transform file caused exception." << (*isNamesIt) << std::endl);
+          itkExceptionMacro(<< "Failed to read transform file " << (*isNamesIt));
+        }
+      }
+      else
 #endif
-            if (m_ImageLinearTransformChoice == "Identity") {
-                muLogMacro(<< "Registering (Identity) image to key image." << std::endl);
-                m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
-            } else if ((*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer()) {
-                muLogMacro(<< "Key image registered to itself with Identity transform." << std::endl);
-                m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
-            } else // when m_ImageLinearTransformChoice == "Rigid"
+        if (m_ImageLinearTransformChoice == "Identity")
+      {
+        muLogMacro(<< "Registering (Identity) image to key image." << std::endl);
+        m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
+      }
+      else if ((*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer())
+      {
+        muLogMacro(<< "Key image registered to itself with Identity transform." << std::endl);
+        m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
+      }
+      else // when m_ImageLinearTransformChoice == "Rigid"
       {
         using HelperType = itk::BRAINSFitHelper;
         HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();

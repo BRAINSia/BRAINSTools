@@ -53,9 +53,9 @@
 
 
 //// A filter to debug the min/max values
-//template <typename TImage>
-//void
-//PrintImageMinAndMax(TImage * inputImage)
+// template <typename TImage>
+// void
+// PrintImageMinAndMax(TImage * inputImage)
 //{
 //  using StatisticsFilterType = typename itk::StatisticsImageFilter<TImage>;
 //  typename StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
@@ -65,7 +65,8 @@
 //            << statsFilter->GetMaximum() << std::endl;
 //}
 
-std::string inputImageToStringPixelType(const std::string & inputVolume)
+std::string
+inputImageToStringPixelType(const std::string & inputVolume)
 {
   // https://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
   itk::ImageIOBase::Pointer imageIO =
@@ -89,74 +90,84 @@ std::string inputImageToStringPixelType(const std::string & inputVolume)
     {
       switch (componentType)
       {
-        case itk::ImageIOBase::UCHAR: {
-//          using PixelType = unsigned char;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::UCHAR:
+        {
+          //          using PixelType = unsigned char;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "uchar";
         }
-        case itk::ImageIOBase::CHAR: {
-//          using PixelType = char;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::CHAR:
+        {
+          //          using PixelType = char;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "char";
         }
-        case itk::ImageIOBase::USHORT: {
-//          using PixelType = unsigned short;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::USHORT:
+        {
+          //          using PixelType = unsigned short;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "ushort";
         }
-        case itk::ImageIOBase::SHORT: {
-//          using PixelType = short;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::SHORT:
+        {
+          //          using PixelType = short;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "short";
         }
-        case itk::ImageIOBase::UINT: {
-//          using PixelType = unsigned int;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::UINT:
+        {
+          //          using PixelType = unsigned int;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "uint";
         }
-        case itk::ImageIOBase::INT: {
-//          using PixelType = int;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::INT:
+        {
+          //          using PixelType = int;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "int";
         }
-        case itk::ImageIOBase::ULONG: {
-//          using PixelType = unsigned long;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::ULONG:
+        {
+          //          using PixelType = unsigned long;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "ulong";
         }
-        case itk::ImageIOBase::LONG: {
-//          using PixelType = long;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::LONG:
+        {
+          //          using PixelType = long;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "long";
         }
-        case itk::ImageIOBase::FLOAT: {
-//          using PixelType = float;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::FLOAT:
+        {
+          //          using PixelType = float;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "float";
         }
-        case itk::ImageIOBase::DOUBLE: {
-//          using PixelType = double;
-//          using ImageType = itk::Image<PixelType, VDimension>;
-//          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
-//          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
+        case itk::ImageIOBase::DOUBLE:
+        {
+          //          using PixelType = double;
+          //          using ImageType = itk::Image<PixelType, VDimension>;
+          //          using InternalPixelType = itk::NumericTraits<PixelType>::RealType;
+          //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "double";
         }
         case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
@@ -171,7 +182,7 @@ std::string inputImageToStringPixelType(const std::string & inputVolume)
 }
 
 
-using InternalPixelType = double; //DEBUG:  This should be "RealType of input pixel type."
+using InternalPixelType = double; // DEBUG:  This should be "RealType of input pixel type."
 using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, 3>;
 using TBRAINSResampleReferenceImageType = TBRAINSResampleInternalImageType;
 
@@ -186,13 +197,13 @@ main(int argc, char * argv[])
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
   std::string pixelDataStorageType = "unknown";
-  bool isBinaryImage {false};
-  if(pixelType == "input")
+  bool        isBinaryImage{ false };
+  if (pixelType == "input")
   {
     // Interrogate input image to set the pixelType
     pixelDataStorageType = inputImageToStringPixelType(inputVolume);
   }
-  else if(pixelType == "binary")
+  else if (pixelType == "binary")
   {
     pixelDataStorageType = "binary";
     isBinaryImage = true;
@@ -201,9 +212,9 @@ main(int argc, char * argv[])
   {
     pixelDataStorageType = pixelType;
   }
-  pixelType = "PRUPOSEFULLY DESTROYED TYPE TO CAUSE FAILURES"; //pixelType should no longer be used
-  //TODO:
-  //TODO:  Everything below this line should be wrapped in a "DoIt" template function similar to BRAINSAlignMSP.cxx.
+  pixelType = "PRUPOSEFULLY DESTROYED TYPE TO CAUSE FAILURES"; // pixelType should no longer be used
+  // TODO:
+  // TODO:  Everything below this line should be wrapped in a "DoIt" template function similar to BRAINSAlignMSP.cxx.
 
   const bool debug = true;
   bool       useTransform = (!warpTransform.empty());
@@ -378,22 +389,20 @@ main(int argc, char * argv[])
         else
         {
           std::cout << "*** ERROR ***" << std::endl
-                    << " The transform type of " << transformFileType
-                    << " does NOT support inverse transformation"
+                    << " The transform type of " << transformFileType << " does NOT support inverse transformation"
                     << " from BRAINSResample tool." << std::endl;
         }
       }
     }
 
     TBRAINSResampleInternalImageType::Pointer TransformedImage =
-      GenericTransformImage<TBRAINSResampleInternalImageType>(
-        PrincipalOperandImage,
-        ReferenceImage,
-        // DisplacementField,
-        genericTransform.GetPointer(),
-        defaultValue,
-        interpolationMode,
-        isBinaryImage);
+      GenericTransformImage<TBRAINSResampleInternalImageType>(PrincipalOperandImage,
+                                                              ReferenceImage,
+                                                              // DisplacementField,
+                                                              genericTransform.GetPointer(),
+                                                              defaultValue,
+                                                              interpolationMode,
+                                                              isBinaryImage);
     if (gridSpacing.size() == TBRAINSResampleInternalImageType::ImageDimension)
     {
       // find min/max pixels for image

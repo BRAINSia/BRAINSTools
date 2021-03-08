@@ -219,14 +219,14 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
   // so add small margin for errors
   // mean=-9.219245 stddev = 8.672305
   static constexpr float float_pi_over_180 = static_cast<float>(itk::Math::pi_over_180);
-  static constexpr float ThetaDown{ (-39.8F - min_width_degrees) *
-	                            1.05F * float_pi_over_180 }; // 0.785398 = 45degree chin down//
-  static constexpr float ThetaUp{   (37.9F + min_width_degrees) *
-	                            1.05F * float_pi_over_180 }; // 1.047 = 60degree chin up direction
+  static constexpr float ThetaDown{ (-39.8F - min_width_degrees) * 1.05F *
+                                    float_pi_over_180 }; // 0.785398 = 45degree chin down//
+  static constexpr float ThetaUp{ (37.9F + min_width_degrees) * 1.05F *
+                                  float_pi_over_180 }; // 1.047 = 60degree chin up direction
   // -0.527797 22.314781   min=-37.5, max=34.8
   // mean LE =  31.572420 stddev_RE=1.459590  min=30.1  max=34.8
   // mean RE = -31.812798 stddev_RE=1.641007  min=-37.5 max= -30.1
-  constexpr float minLRAngle{  5.0F * float_pi_over_180 };
+  constexpr float minLRAngle{ 5.0F * float_pi_over_180 };
   constexpr float maxLRAngle{ (35.0F + min_width_degrees) * 1.05F * float_pi_over_180 };
 
 

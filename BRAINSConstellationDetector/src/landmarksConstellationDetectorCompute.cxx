@@ -79,10 +79,8 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 
   // Compute the estimated MSP transform, and aligned image from eye centers data.
   double c_c = 0;
-  this->m_eyeFixed2msp_img_tfm = ComputeMSP(this->m_eyeFixed_img,
-             eyeFixed_lmk_CenterOfHeadMass,
-             this->m_mspQualityLevel,
-             c_c);
+  this->m_eyeFixed2msp_img_tfm =
+    ComputeMSP(this->m_eyeFixed_img, eyeFixed_lmk_CenterOfHeadMass, this->m_mspQualityLevel, c_c);
   {
     const SImageType::PixelType minPixelValue = [](SImageType::Pointer im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
@@ -566,9 +564,9 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
                                     LlsMatrix_name);
 
               // Update landmarks in input and ACPC-aligned space
-              if(  m_orig_lmks_forced.find(LlsMatrix_name) != m_orig_lmks_forced.end() )
+              if (m_orig_lmks_forced.find(LlsMatrix_name) != m_orig_lmks_forced.end())
               {
-                std::cout << "USING FORCED LMK " <<  LlsMatrix_name << std::endl;
+                std::cout << "USING FORCED LMK " << LlsMatrix_name << std::endl;
                 this->m_orig_lmks_updated[LlsMatrix_name] = m_orig_lmks_forced.at(LlsMatrix_name);
               }
               else

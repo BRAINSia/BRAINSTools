@@ -38,7 +38,8 @@
 #include "GenericTransformImage.h"
 #include "landmarksConstellationCommon.h"
 
-namespace {
+namespace
+{
 //// Function to convert a point from std::vector to itk::Point
 //// this also performs the RAS -> LPS conversion necessary
 //// from slicer -> ITK
@@ -53,7 +54,7 @@ convertStdVectorToITKPoint(const std::vector<float> & vec)
   p[2] = vec[2];
   return p;
 }
-}
+} // namespace
 
 int
 main(int argc, char * argv[])

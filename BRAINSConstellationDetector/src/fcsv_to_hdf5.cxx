@@ -362,9 +362,9 @@ main(int argc, char * argv[])
   }
 
   std::string cleanedGlobPattern = landmarkGlobPattern;
-  while (cleanedGlobPattern.find("\\") != std::string::npos)
+  while (cleanedGlobPattern.find('\\') != std::string::npos)
   {
-    cleanedGlobPattern.replace(cleanedGlobPattern.find("\\"), 1, ""); // Replace
+    cleanedGlobPattern.replace(cleanedGlobPattern.find('\\'), 1, ""); // Replace
                                                                       // escape
                                                                       // characters
   }

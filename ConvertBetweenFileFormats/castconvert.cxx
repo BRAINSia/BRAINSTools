@@ -135,7 +135,7 @@ main(int argc, char * argv[])
     /** Make sure last character of input != "/".
      * Otherwise FileIsDirectory() won't work.
      */
-    if (input.rfind("/") == input.size() - 1)
+    if (input.rfind('/') == input.size() - 1)
     {
       input.erase(input.size() - 1, 1);
     }
@@ -273,13 +273,13 @@ main(int argc, char * argv[])
     }
 
     /** Get rid of the "_" in inputPixelComponentType and outputPixelComponentType. */
-    std::basic_string<char>::size_type              pos = inputPixelComponentType.find("_");
+    std::basic_string<char>::size_type              pos = inputPixelComponentType.find('_');
     static const std::basic_string<char>::size_type npos = std::basic_string<char>::npos;
     if (pos != npos)
     {
       inputPixelComponentType.replace(pos, 1, " ");
     }
-    pos = outputPixelComponentType.find("_");
+    pos = outputPixelComponentType.find('_');
     if (pos != npos)
     {
       outputPixelComponentType.replace(pos, 1, " ");

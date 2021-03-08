@@ -500,7 +500,7 @@ RegressionTestBaselines(char * baselineFilename)
   std::string originalBaseline(baselineFilename);
 
   int                    x = 0;
-  std::string::size_type suffixPos = originalBaseline.rfind(".");
+  std::string::size_type suffixPos = originalBaseline.rfind('.');
   std::string            suffix;
   if (suffixPos != std::string::npos)
   {

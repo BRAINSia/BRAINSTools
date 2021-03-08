@@ -260,11 +260,11 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
         {
           coordinate_str = match.str(1);
         }
-        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find("1") != std::string::npos)
+        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find('1') != std::string::npos)
         {
           useLPS = true;
         }
-        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find("0") != std::string::npos)
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos)
         {
           useLPS = false;
         }
@@ -356,11 +356,11 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
         {
           coordinate_str = match.str(1);
         }
-        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find("1") != std::string::npos)
+        if (coordinate_str.find("LPS") != std::string::npos || coordinate_str.find('1') != std::string::npos)
         {
           useLPS = true;
         }
-        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find("0") != std::string::npos)
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos)
         {
           useLPS = false;
         }

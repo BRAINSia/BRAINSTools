@@ -651,8 +651,13 @@ main(int argc, char ** argv)
                 }
               }
               std::string intraSubjectTransformFileName =
-                outputDir + GetStrippedImageFileNameExtension((*imIt).c_str()) + "_to_" +
-                GetStrippedImageFileNameExtension(GetMapVectorFirstElement(inputVolumeMap)) + suffixstr + ".h5";
+                std::string("")
+                  .append(outputDir)
+                  .append(GetStrippedImageFileNameExtension((*imIt).c_str()))
+                  .append("_to_")
+                  .append(GetStrippedImageFileNameExtension(GetMapVectorFirstElement(inputVolumeMap)))
+                  .append(suffixstr)
+                  .append(".h5");
               intraSubjectTransformFileNames[typeIt->first].push_back(intraSubjectTransformFileName);
             }
           }
@@ -711,7 +716,11 @@ main(int argc, char ** argv)
               FloatWriterType::Pointer writer = FloatWriterType::New();
 
               std::stringstream write_atlas_index_stream("");
-              const std::string fn = outputDir + "RenormalizedAtlasTemplate_" + mapIt->first + suffstr;
+              const std::string fn = std::string("")
+                                       .append(outputDir)
+                                       .append("RenormalizedAtlasTemplate_")
+                                       .append(mapIt->first)
+                                       .append(suffstr);
 
               writer->SetInput(img_i);
               writer->SetFileName(fn.c_str());
@@ -982,8 +991,11 @@ main(int argc, char ** argv)
             rescaler->SetInput(elem.second[i]);
             rescaler->Update();
 
-            std::string fn = outputDir + GetStrippedImageFileNameExtension(inputVolumeMap[elem.first][i]) +
-                             std::string("_registered") + suffstr;
+            std::string fn = std::string("")
+                               .append(outputDir)
+                               .append(GetStrippedImageFileNameExtension(inputVolumeMap[elem.first][i]))
+                               .append(std::string("_registered"))
+                               .append(suffstr);
 
             using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
             ShortWriterType::Pointer writer = ShortWriterType::New();
@@ -1218,7 +1230,8 @@ main(int argc, char ** argv)
       rescaleInstensityFilter->SetInput(avgImage);
       rescaleInstensityFilter->Update();
 
-      std::string avgFileName = outputDir + volumeType + std::string("_average") + suffstr;
+      std::string avgFileName =
+        std::string("").append(outputDir).append(volumeType).append(std::string("_average")).append(suffstr);
 
       muLogMacro(<< "Writing averaged corrected input images... " << avgFileName << std::endl);
 

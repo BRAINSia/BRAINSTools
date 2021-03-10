@@ -35,7 +35,6 @@
 */
 
 #include "itkImage.h"
-#include <cmath>
 #include <fstream>
 #include "Slicer3LandmarkIO.h"
 

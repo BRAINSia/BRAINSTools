@@ -33,7 +33,6 @@
 #include <vnl/algo/vnl_svd.h>
 #include <vcl_compiler.h>
 #include <iostream>
-#include <cmath>
 
 // INFO:  Need to make return types an input template type.
 namespace AssignRigid

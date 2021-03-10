@@ -20,8 +20,6 @@
 #define __LLSBiasCorrector_hxx
 
 #include <cfloat>
-#include <cmath>
-#include <cmath>
 #include <iostream>
 
 #include "Log.h"

@@ -46,7 +46,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 #include <sstream>
-#include <cmath>
 #include <itkIntensityWindowingImageFilter.h>
 #include "BRAINSThreadControl.h"
 #include "landmarksConstellationCommon.h"

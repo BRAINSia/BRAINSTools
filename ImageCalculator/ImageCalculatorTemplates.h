@@ -38,7 +38,6 @@
 #  include <sstream>
 #  include <vcl_compiler.h>
 #  include <iostream>
-#  include <cmath>
 #  include "ImageCalculatorUtils.h"
 #  include <metaCommand.h>
 #  include <itkIdentityTransform.h>

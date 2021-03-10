@@ -37,8 +37,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <cmath>
-
 #include <itkImage.h>
 #include <itkImageFileWriter.h>
 #include <itkImageFileReader.h>

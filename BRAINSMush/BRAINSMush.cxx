@@ -44,7 +44,6 @@ Minimal Input Example:
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 
 #include <fstream>
-#include <cmath>
 #include <string>
 #include <BRAINSCommonLib.h>
 

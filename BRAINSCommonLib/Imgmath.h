@@ -42,7 +42,6 @@
 #include "itkLogImageFilter.h"
 #include <vcl_compiler.h>
 #include <iostream>
-#include <cmath>
 
 /* Iadd adds 2 images at every pixel location and outputs the resulting image.*/
 template <typename ImageType>

@@ -19,7 +19,6 @@
 #include "LLSModel.h"
 
 #include "BRAINSConstellationDetectorVersion.h"
-#include "math.h"
 
 
 LLSModel ::LLSModel() = default;

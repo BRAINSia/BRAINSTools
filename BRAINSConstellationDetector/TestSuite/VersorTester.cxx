@@ -17,7 +17,6 @@
  *
  *=========================================================================*/
 #include <sstream>
-#include <cmath>
 
 #include <itkMath.h>
 #include <itkPoint.h>

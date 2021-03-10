@@ -30,7 +30,6 @@
 #include "itkImage.h"
 #include "itkImageFileReader.h"
 #include "itkTransformFileReader.h"
-#include "math.h"
 
 
 #define CHECK_PARAMETER_IS_SET(parameter, message)                                                                     \

@@ -24,7 +24,6 @@
 #include <sstream>
 #include <iomanip>
 
-#include <cmath>
 #include <cstdlib>
 #include <algorithm>
 

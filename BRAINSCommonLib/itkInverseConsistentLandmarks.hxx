@@ -35,7 +35,6 @@
 #include "itkInverseConsistentLandmarks.h"
 #include <cstdio>
 #include <ctime>
-#include <cmath>
 #include <string>
 #include <iostream>
 #include "itkNumberToString.h"

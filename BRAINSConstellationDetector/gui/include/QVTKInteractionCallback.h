@@ -32,8 +32,6 @@
 #include <QObject>
 #include <QString>
 
-#include <cmath>
-
 #include <QDebug>
 
 #include "itkMacro.h" //Needed for nullptr

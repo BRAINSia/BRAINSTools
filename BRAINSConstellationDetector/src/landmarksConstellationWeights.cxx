@@ -44,7 +44,6 @@
 #include "landmarksConstellationCommon.h"
 #include "landmarksConstellationTrainingDefinitionIO.h"
 #include "landmarksConstellationWeightsCLP.h"
-#include "math.h"
 
 
 // D E F I N E S //////////////////////////////////////////////////////////////

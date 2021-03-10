@@ -24,7 +24,6 @@
 
 #include "Slicer3LandmarkWeightIO.h"
 #include "itkNumberToString.h"
-#include "math.h"
 
 void
 WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const LandmarksWeightMapType & landmarks)

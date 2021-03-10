@@ -35,7 +35,6 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include <cmath>
 #include <cstring>
 #include <map>
 

@@ -190,9 +190,9 @@ public:
     for (auto & q : output)
     {
       q.resize(input[0][0].size());
-      for (auto oit = q.begin(); oit != q.end(); ++oit)
+      for (float & oit : q)
       {
-        *oit = 0;
+        oit = 0;
       }
     }
     for (const auto & curr_dataset : input)
@@ -218,9 +218,9 @@ public:
     const float inv_size = 1.0 / input.size();
     for (auto & q : output)
     {
-      for (auto oit = q.begin(); oit != q.end(); ++oit)
+      for (float & oit : q)
       {
-        *oit *= inv_size;
+        oit *= inv_size;
       }
     }
   }
@@ -768,9 +768,9 @@ private:
   {
     for (const auto & it1 : vec)
     {
-      for (auto it2 = it1.begin(); it2 != it1.end(); ++it2)
+      for (float it2 : it1)
       {
-        this->Write<float>(f, *it2);
+        this->Write<float>(f, it2);
       }
     }
   }
@@ -780,9 +780,9 @@ private:
   {
     for (auto & it1 : vec)
     {
-      for (auto it2 = it1.begin(); it2 != it1.end(); ++it2)
+      for (float & it2 : it1)
       {
-        this->Read<float>(f, *it2);
+        this->Read<float>(f, it2);
       }
     }
   }

@@ -67,9 +67,9 @@ PrintDictionaryHelper(const itk::MetaDataDictionary & dictPrint)
       for (const auto & i : outMsr)
       {
         std::cout << "  ";
-        for (size_t j = 0; j < i.size(); ++j)
+        for (const auto & j : i)
         {
-          std::cout << i[j] << " ";
+          std::cout << j << " ";
         }
         std::cout << std::endl;
       }
@@ -334,9 +334,9 @@ main(int argc, char * argv[])
         std::cout << "ERROR: outGT not preserved! Output outGT:" << std::endl;
         for (const auto & i : outGT)
         {
-          for (size_t j = 0; j < i.size(); ++j)
+          for (const auto & j : i)
           {
-            std::cout << i[j] << " ";
+            std::cout << j << " ";
           }
           std::cout << std::endl;
         }

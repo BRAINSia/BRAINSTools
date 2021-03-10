@@ -28,7 +28,6 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 PURPOSE.  See the above copyright notices for more information.
 =========================================================================*/
 
-#include <cmath>
 #include <sstream>
 #include <iostream>
 #include <fstream>
@@ -42,7 +41,6 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkDOMNode.h"
 
 #include "BRAINSLabelStatsCLP.h"
-#include "math.h"
 
 
 std::string

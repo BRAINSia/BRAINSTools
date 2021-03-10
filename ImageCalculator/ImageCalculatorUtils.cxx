@@ -23,7 +23,6 @@
 #include <cstring>
 #include <vcl_compiler.h>
 #include <iostream>
-#include <cmath>
 #include <iostream>
 #include <metaCommand.h>
 #include <iostream>

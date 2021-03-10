@@ -52,8 +52,6 @@ case n:     PCn1         PCn2
 
 #include "Slicer3LandmarkIO.h"
 #include "itkImage.h"
-#include "math.h"
-#include <cmath>
 
 
 int

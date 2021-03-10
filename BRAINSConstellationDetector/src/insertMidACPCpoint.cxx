@@ -32,7 +32,6 @@
 // {NameOfoutputlandmarkFile}.fcsv
 
 #include "itkImage.h"
-#include <cmath>
 #include "Slicer3LandmarkIO.h"
 #include "insertMidACPCpointCLP.h"
 #include <BRAINSCommonLib.h>

@@ -6,7 +6,6 @@
 
 #include <itkMetaDataObject.h>
 
-#include <cmath>
 #include <cstdio>
 #include <itkImage.h>
 #include <itkImageFileWriter.h>

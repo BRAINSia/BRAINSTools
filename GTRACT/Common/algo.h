@@ -41,8 +41,6 @@
 #ifndef __algo_H_
 #define __algo_H_
 
-#include <cmath>
-
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/vnl_transpose.h>

@@ -31,7 +31,6 @@
 #include "BRAINSHoughEyeDetector.h"
 
 #include "itkLandmarkBasedTransformInitializer.h"
-#include "math.h"
 #include <BRAINSFitHelper.h>
 
 

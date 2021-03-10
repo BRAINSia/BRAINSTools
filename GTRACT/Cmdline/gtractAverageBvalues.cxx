@@ -37,8 +37,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <cmath>
-
 #include <itkArray.h>
 #include <itkImage.h>
 #include <itkVectorImage.h>

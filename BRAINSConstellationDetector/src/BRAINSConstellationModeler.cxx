@@ -48,7 +48,6 @@
 
 #include <fstream>
 #include <cstring>
-#include <cmath>
 #include <map>
 
 #include "BRAINSThreadControl.h"
@@ -62,7 +61,6 @@
 #include "GenericTransformImage.h"
 
 #include "itkOrthogonalize3DRotationMatrix.h"
-#include "math.h"
 
 
 // //////////////////////////////////////////////////////////////

@@ -35,7 +35,6 @@
 #include <vnl/algo/vnl_svd.h>
 #include <vcl_compiler.h>
 #include <iostream>
-#include <cmath>
 #include <cstdio>
 
 /*

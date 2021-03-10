@@ -38,7 +38,6 @@
 #include "itkNumberToString.h"
 #include "DWIMetaDataDictionaryValidator.h"
 
-#include <cmath>
 
 using PixelValueType = short;
 /*

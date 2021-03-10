@@ -32,7 +32,6 @@
 #include "vtkRenderWindow.h"
 #include "vtkInteractorStyleImage.h"
 #include "vtkVersion.h"
-#include <cmath>
 
 // The mouse motion callback, to turn "Slicing" on and off
 void

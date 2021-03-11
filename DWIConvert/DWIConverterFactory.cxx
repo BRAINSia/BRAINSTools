@@ -2,12 +2,14 @@
 // Created by Hui Xie on 12/19/16.
 //
 
+#include <utility>
+
 #include "DWIConverterFactory.h"
 
-DWIConverterFactory::DWIConverterFactory(const std::string & DicomDirectory,
-                                         const bool          UseBMatrixGradientDirections,
-                                         const double        smallGradientThreshold)
-  : m_DicomDirectory(DicomDirectory)
+DWIConverterFactory::DWIConverterFactory(std::string  DicomDirectory,
+                                         const bool   UseBMatrixGradientDirections,
+                                         const double smallGradientThreshold)
+  : m_DicomDirectory(std::move(DicomDirectory))
   , m_UseBMatrixGradientDirections(UseBMatrixGradientDirections)
   , m_SmallGradientThreshold(smallGradientThreshold)
 {}

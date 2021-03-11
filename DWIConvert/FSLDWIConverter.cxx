@@ -2,14 +2,16 @@
 // Created by Johnson, Hans J on 11/25/16.
 //
 
+#include <utility>
+
 #include "FSLDWIConverter.h"
 
 FSLDWIConverter::FSLDWIConverter(const DWIConverter::FileNamesContainer & inputFileNames,
-                                 const std::string &                      inputBValues,
-                                 const std::string &                      inputBVectors)
+                                 std::string                              inputBValues,
+                                 std::string                              inputBVectors)
   : DWIConverter(inputFileNames)
-  , m_inputBValues(inputBValues)
-  , m_inputBVectors(inputBVectors)
+  , m_inputBValues(std::move(inputBValues))
+  , m_inputBVectors(std::move(inputBVectors))
 {}
 
 FSLDWIConverter::CommonDicomFieldMapType

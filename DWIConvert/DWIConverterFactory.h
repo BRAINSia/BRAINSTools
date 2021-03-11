@@ -37,9 +37,9 @@
 class DWIConverterFactory
 {
 public:
-  DWIConverterFactory(const std::string & DicomDirectory,
-                      const bool          UseBMatrixGradientDirections,
-                      const double        smallGradientThreshold);
+  DWIConverterFactory(std::string  DicomDirectory,
+                      const bool   UseBMatrixGradientDirections,
+                      const double smallGradientThreshold);
 
   ~DWIConverterFactory();
 

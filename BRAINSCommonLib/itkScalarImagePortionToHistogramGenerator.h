@@ -118,6 +118,15 @@ public:
   void
   SetHistogramMax(RealPixelType maximumValue);
 
+  /** Delete the copy constructor */
+  ScalarImagePortionToHistogramGenerator(const Self &) = delete; // purposely not
+                                                                 // implemented
+
+  /** Delete the copy assignment operator */
+  void
+  operator=(const Self &) = delete; // purposely not
+                                    // implemented
+
 protected:
   ScalarImagePortionToHistogramGenerator();
   ~ScalarImagePortionToHistogramGenerator() override = default;
@@ -130,13 +139,6 @@ private:
 
   HistogramPointer m_Histogram;
   GeneratorPointer m_HistogramGenerator;
-
-  ScalarImagePortionToHistogramGenerator(const Self &) = delete; // purposely not
-                                                                 // implemented
-  void
-  operator=(const Self &) = delete; // purposely not
-
-  // implemented
 };
 } // end of namespace Statistics
 } // end of namespace itk

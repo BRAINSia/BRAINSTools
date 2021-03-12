@@ -178,6 +178,15 @@ public:
   unsigned long
   GetMTime() const override;
 
+  /** Delete the copy constructor */
+  GtractInverseDisplacementFieldImageFilter(const Self &) = delete; // purposely not
+                                                                    // implemented
+
+  /** Delete the copy assignment operator */
+  void
+  operator=(const Self &) = delete; // purposely not
+                                    // implemented
+
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
   itkConceptMacro(OutputHasNumericTraitsCheck, (Concept::HasNumericTraits<OutputPixelComponentType>));
@@ -204,13 +213,6 @@ protected:
   PrepareKernelBaseSpline();
 
 private:
-  GtractInverseDisplacementFieldImageFilter(const Self &) = delete; // purposely not
-                                                                    // implemented
-  void
-  operator=(const Self &) = delete; // purposely not
-
-  // implemented
-
   SizeType                   m_Size;            // Size of the output image
   KernelTransformPointerType m_KernelTransform; // Coordinate transform to
                                                 // use

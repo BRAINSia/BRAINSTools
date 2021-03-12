@@ -47,8 +47,7 @@ CrossOverAffineSystem<TCoordinateType, NDimensions>::CrossOverAffineSystem()
  * Destructor
  */
 template <typename TCoordinateType, unsigned int NDimensions>
-CrossOverAffineSystem<TCoordinateType, NDimensions>::~CrossOverAffineSystem()
-{}
+CrossOverAffineSystem<TCoordinateType, NDimensions>::~CrossOverAffineSystem() = default;
 
 /**
  * Utility function not provided in general vector implementations.

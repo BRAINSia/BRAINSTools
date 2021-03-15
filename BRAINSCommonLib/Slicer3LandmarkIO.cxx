@@ -264,11 +264,8 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
         {
           useLPS = true;
         }
-        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos)
-        {
-          useLPS = false;
-        }
-        else // Unkonwn coordinate stsystem
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos ||
+                 true) // also serves as default for an unknown coordinate system
         {
           useLPS = false;
         }
@@ -360,11 +357,8 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
         {
           useLPS = true;
         }
-        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos)
-        {
-          useLPS = false;
-        }
-        else // Unkonwn coordinate system
+        else if (coordinate_str.find("RAS") != std::string::npos || coordinate_str.find('0') != std::string::npos ||
+                 true) // also serves as default for an unknown coordinate system
         {
           useLPS = false;
         }

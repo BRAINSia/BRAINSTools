@@ -155,15 +155,12 @@ main(int argc, char * argv[])
     SimilarityTransformType::Pointer similarityTransform = DoIt_Similarity(fixedPoints, movingPoints);
     genericTransform = similarityTransform.GetPointer();
   }
-  else if (transformType == "Affine")
+  /*else if (transformType == "Affine")
   {
-    // itk::Matrix<double, 3> a =
-    //   computeAffineTransform(fixedPoints, movingPoints,
-    //                          fixedCenter, movingCenter);
-    std::cerr << "Unsupported transform type: " << transformType << std::endl;
-    genericTransform = nullptr;
-    return EXIT_FAILURE;
-  }
+     itk::Matrix<double, 3> a =
+       computeAffineTransform(fixedPoints, movingPoints,
+                              fixedCenter, movingCenter);
+  }*/
   else
   {
     std::cerr << "Unsupported transform type: " << transformType << std::endl;

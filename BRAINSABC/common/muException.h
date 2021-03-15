@@ -33,11 +33,11 @@ namespace mu
 class Exception : public std::exception
 {
 public:
-  Exception() throw()
+  Exception() noexcept
     : m_Message("")
   {}
 
-  ~Exception() throw() override = default;
+  ~Exception() noexcept override = default;
 
   void
   SetMessage(const char * s)
@@ -52,7 +52,7 @@ public:
   }
 
   const char *
-  what() const throw() override
+  what() const noexcept override
   {
     return m_Message.c_str();
   }

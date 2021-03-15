@@ -83,7 +83,7 @@ public:
   ////////////////////////
   // Mandatory metric functions
   void
-  Initialize() throw(itk::ExceptionObject) override
+  Initialize() override
   {
     ParametersType params;
     params.set_size(SpaceDimension);

@@ -268,8 +268,6 @@ DWIDICOMConverterBase::_addToStringDictionary(const std::string & dcm_primary_na
       this->m_Headers[0]->GetElementCS(dcm_primary_code, dcm_secondary_code, stringValue, throwException);
       break;
     case DCM_LO:
-      this->m_Headers[0]->GetElementLO(dcm_primary_code, dcm_secondary_code, stringValue, throwException);
-      break;
     case DCM_SH:
       this->m_Headers[0]->GetElementLO(dcm_primary_code, dcm_secondary_code, stringValue, throwException);
       break;

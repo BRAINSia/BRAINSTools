@@ -162,7 +162,8 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
     {
       const std::string transformFileType = genericComponent->GetNameOfClass();
       if (transformFileType == "VersorRigid3DTransform" || transformFileType == "ScaleVersor3DTransform" ||
-          transformFileType == "ScaleSkewVersor3DTransform" || transformFileType == "AffineTransform")
+          transformFileType == "ScaleSkewVersor3DTransform" || transformFileType == "AffineTransform" ||
+          transformFileType == "displacementFieldTransform")
       {
         if (!outputTransform.empty()) // Write out the transform
         {
@@ -182,13 +183,6 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
         if (!outputTransform.empty())
         {
           itk::WriteTransformToDisk<TInputScalarType, TWriteScalarType>(tempInitializerITKTransform, outputTransform);
-        }
-      }
-      else if (transformFileType == "displacementFieldTransform")
-      {
-        if (!outputTransform.empty()) // Write out the transform
-        {
-          itk::WriteTransformToDisk<TInputScalarType, TWriteScalarType>(genericComponent, outputTransform);
         }
       }
       else //  NO SUCH CASE!!

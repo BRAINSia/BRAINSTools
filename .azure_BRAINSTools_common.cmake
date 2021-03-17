@@ -451,7 +451,7 @@ while(NOT dashboard_done)
                 NUMBER_ERRORS build_errors
                 NUMBER_WARNINGS build_warnings)
     ctest_test(
-         BUILD "${CTEST_BINARY_DIRECTORY}/BRAINSTools-${CTEST_BUILD_CONFIGURATION}-EP${CTEST_BUILD_CONFIGURATION}-build
+         BUILD "${CTEST_BINARY_DIRECTORY}/BRAINSTools-${CTEST_BUILD_CONFIGURATION}-EP${CTEST_BUILD_CONFIGURATION}-build"
          ${CTEST_TEST_ARGS}
          RETURN_VALUE test_return)
     set(safe_message_skip 1) # Block furhter messages

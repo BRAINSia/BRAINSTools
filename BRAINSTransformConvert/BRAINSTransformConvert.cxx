@@ -205,9 +205,9 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform<TScalarType>::Pointer 
 }
 
 #define CHECK_PARAMETER_IS_SET(parameter, message)                                                                     \
-  if (parameter == "")                                                                                                 \
+  if ((parameter) == "")                                                                                               \
   {                                                                                                                    \
-    std::cerr << message << std::endl;                                                                                 \
+    std::cerr << (message) << std::endl;                                                                               \
     return EXIT_FAILURE;                                                                                               \
   }
 

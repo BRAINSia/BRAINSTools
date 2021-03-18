@@ -117,11 +117,11 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::Calculate()
       if (histIt.GetFrequency() != 0)
       {
         ++m_NumberOfValidHistogramsEntries;
-        m_UpperIntensityThresholdValue = static_cast<int>(measurement + 0.5);
+        m_UpperIntensityThresholdValue = lround(measurement);
         // rounding by chopping
         if (!saw_lowest)
         {
-          m_LowerIntensityThresholdValue = static_cast<int>(measurement + 0.5);
+          m_LowerIntensityThresholdValue = lround(measurement);
           // rounding by chopping
           saw_lowest = true;
         }

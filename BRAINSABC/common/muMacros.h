@@ -25,19 +25,19 @@
 #include <sstream>
 #include <string>
 
-#define muEcho(varname) std::cout << #varname << " = " << varname << std::flush << std::endl;
+#define muEcho(varname) std::cout << #varname << " = " << (varname) << std::flush << std::endl;
 
 #define muStringMacro(strname, s)                                                                                      \
   std::string strname;                                                                                                 \
   {                                                                                                                    \
     std::ostringstream outss;                                                                                          \
     outss << "" s << std::ends;                                                                                        \
-    strname = outss.str();                                                                                             \
+    (strname) = outss.str();                                                                                           \
   }
 
 #define muSelfFilterMacro(filter, obj)                                                                                 \
   {                                                                                                                    \
-    filter->SetInput(obj);                                                                                             \
+    (filter)->SetInput(obj);                                                                                           \
     iterator copy                                                                                                      \
   }
 
@@ -47,7 +47,7 @@
     typename ReaderType::Pointer reader = ReaderType::New();                                                           \
     reader->SetFileName(filename);                                                                                     \
     reader->Update();                                                                                                  \
-    image = reader->GetOutput();                                                                                       \
+    (image) = reader->GetOutput();                                                                                     \
   }
 
 #define muWriteMacro(type, filename, image)                                                                            \

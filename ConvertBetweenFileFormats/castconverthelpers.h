@@ -359,7 +359,7 @@ ReadVTICastWriteImage(const std::string &, const std::string &, int)
  */
 
 #define callCorrectReadWriterMacro(typeIn, typeOut, dim)                                                               \
-  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == dim)             \
+  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == (dim))           \
   {                                                                                                                    \
     if (!ReadVTICastWriteImage<typeOut>(inputFileName, outputFileName, dim))                                           \
     {                                                                                                                  \

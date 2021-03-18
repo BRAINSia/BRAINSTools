@@ -2561,7 +2561,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                 || ((deltaLogLikelihood < m_LikelihoodTolerance) && (biasdegree == m_MaxBiasDegree));
 
     CurrentEMIteration++;
-    const float biasIncrementInterval = (m_MaximumIterations / (m_MaxBiasDegree + 1));
+    const float biasIncrementInterval = ((float)m_MaximumIterations / (m_MaxBiasDegree + 1));
     CHECK_NAN(biasIncrementInterval,
               __FILE__,
               __LINE__,

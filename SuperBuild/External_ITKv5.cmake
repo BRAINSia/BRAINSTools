@@ -56,7 +56,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    7863da6db1fd541487c9e543308dcfcea26d3261 # 20210122
+    c3bf73cfece084b1e46d997941a752a85a29c5ea # 20210609
     QUIET
     )
 

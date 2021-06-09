@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.13.4...3.14.2)
-cmake_policy(VERSION 3.13.4...3.14.2)
+cmake_minimum_required(VERSION 3.16.3...3.20.3)
+cmake_policy(VERSION 3.16.3...3.20.3)
 
 #-----------------------------------------------------------------------------
-# Enable C++11
+# Enable C++14
 #-----------------------------------------------------------------------------
 #####
 ##  Set the default target properties for ITK
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 11) # Supported values are ``11``, ``14``, and ``17``.
+  set(CMAKE_CXX_STANDARD 14) # Supported values are ``14``, ``14``, and ``17``.
 endif()
 if(NOT CMAKE_CXX_STANDARD_REQUIRED)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,7 +15,7 @@ endif()
 if(NOT CMAKE_CXX_EXTENSIONS)
   set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
-set(VALID_CXX_STANDARDS "11" "14" "17")
+set(VALID_CXX_STANDARDS "14" "17" "20" "23")
 if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
    MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
 endif()
@@ -37,8 +37,9 @@ set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often ma
 project(${LOCAL_PROJECT_NAME}
    LANGUAGES  C CXX
    DESCRIPTION "BRAINSTools see github at https://github.com/BRAINSia/BRAINSTools" #<-- cmake version 3.9 or greater
-   VERSION 5.4.0
+   VERSION 5.5.0
 )
+# VERSION 5.5.0 The version that requires C++14 by default
 # VERSION 5.4.0 The version used to create the final PREDICTHD_BIDS_DEFACE dataset.
 # VERSION 5.3.2 Many tools placed in ARCHIVE
 

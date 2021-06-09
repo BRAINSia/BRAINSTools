@@ -132,7 +132,7 @@ endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
 set(${proj}_GIT_TAG
-  87d0a3ac21d34af2e18a46630a2ca1f3fc037b4f # 20210122
+  51a52c994b22081a68f4102301e034ec45cfd4f7 # 20210609
 )
 
 ExternalProject_Add(${proj}

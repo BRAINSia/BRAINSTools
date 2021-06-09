@@ -4,7 +4,7 @@
   <title>Foreground masking (BRAINS)</title>
   <description>This program is used to create a mask over the most prominant forground region in an image.  This is accomplished via a combination of otsu thresholding and a closing operation.
   </description>
-  <version>5.4.0</version>
+  <version>5.5.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsroiauto.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Hans J. Johnson, hans-johnson -at- uiowa.edu, http://www.psychiatry.uiowa.edu</contributor>

@@ -1,5 +1,6 @@
 
 set(proj ITKv5)
+set(${proj}_REQUIRED_VERSION 5.2)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -18,7 +19,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(ITK_DIR CACHE)
-  find_package(ITK 5.0 COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
+  find_package(ITK ${${proj}_REQUIRED_VERSION} COMPONENTS ${${CMAKE_PROJECT_NAME}_ITK_COMPONENTS} REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
@@ -164,7 +165,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(ITK_DIR ${CMAKE_INSTALL_PREFIX})
+  set(ITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-${${proj}_REQUIRED_VERSION})
   #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------

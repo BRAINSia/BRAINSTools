@@ -139,15 +139,10 @@ PhilipsDWIConverter::ExtractDWIData()
       {
         continue;
       }
-      else if (!B0FieldFound || b < zeroBValueTolerance)
-      { // Deal with b0 images
-        this->m_BValues.push_back(b);
-        this->m_DiffusionVectors.push_back(vect3d);
-      }
-      else if (StringContains(DiffusionDirectionality, "DIRECTIONAL") ||
+      else if (!B0FieldFound || b < zeroBValueTolerance || StringContains(DiffusionDirectionality, "DIRECTIONAL") ||
                (DiffusionDirectionality == "NONE") // Some new Philips data does not specify "DIRECTIONAL"
                || (DiffusionDirectionality.empty()))
-      { // Deal with gradient direction images
+      { // Deal with b0 images and Deal with gradient direction images
         this->m_BValues.push_back(b);
         this->m_DiffusionVectors.push_back(vect3d);
       }

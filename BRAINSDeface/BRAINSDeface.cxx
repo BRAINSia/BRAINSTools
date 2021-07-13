@@ -168,19 +168,12 @@ main(int argc, char * argv[])
             {
               mit.Set(below_ac);
             }
-            // blur nose region
+            // blur nose region / blur Cheak region
             else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
                      (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
             {
               mit.Set(face_rm);
             }
-            // blur Cheak region
-            else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
-                     (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
-            {
-              mit.Set(face_rm);
-            }
-
             else if ((
                        // Now remove RE eye boxes
                        (maskpnt[PA] < (RE_pnt[PA] + approx_eye_radius)) && // anterior to back of eye

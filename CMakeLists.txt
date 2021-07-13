@@ -7,7 +7,7 @@ cmake_policy(VERSION 3.16.3...3.20.3)
 #####
 ##  Set the default target properties for ITK
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14) # Supported values are ``14``, ``14``, and ``17``.
+  set(CMAKE_CXX_STANDARD 14) # Supported values are 14, 17, 20, and 23.
 endif()
 if(NOT CMAKE_CXX_STANDARD_REQUIRED)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)

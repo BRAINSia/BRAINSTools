@@ -28,7 +28,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    v2021.2.0 # 20210609
+    68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
     QUIET
     )
 

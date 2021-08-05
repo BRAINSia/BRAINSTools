@@ -53,8 +53,8 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
 
   // Verify input parameters
-  if (((outputLandmarksPaired.compare("") != 0) && (inputLandmarksPaired.compare("") == 0)) ||
-      ((outputLandmarksPaired.compare("") == 0) && (inputLandmarksPaired.compare("") != 0)))
+  if (((!outputLandmarksPaired.empty()) && (inputLandmarksPaired.empty())) ||
+      ((outputLandmarksPaired.empty()) && (!inputLandmarksPaired.empty())))
   {
     std::cerr << "The outputLandmark parameter should be paired with"
               << "the inputLandmark parameter." << std::endl;
@@ -62,7 +62,7 @@ main(int argc, char * argv[])
     std::cerr << "Type " << argv[0] << " -h for more help." << std::endl;
   }
 
-  if ((outputLandmarksPaired.compare("") != 0) && (inputLandmarksPaired.compare("") != 0))
+  if ((!outputLandmarksPaired.empty()) && (!inputLandmarksPaired.empty()))
   {
     LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksPaired);
     LandmarksMapType alignedLandmarks;

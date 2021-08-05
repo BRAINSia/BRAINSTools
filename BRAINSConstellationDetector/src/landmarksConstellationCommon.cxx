@@ -33,7 +33,6 @@
 #include "BRAINSThreadControl.h"
 #include "itksys/SystemTools.hxx"
 #include "itkIO.h"
-#include "itkRecursiveGaussianImageFilter.h"
 
 #include "itkReflectiveCorrelationCenterToImageMetric.h"
 #include "landmarksConstellationCommon.h"
@@ -46,14 +45,12 @@ bool debug(false);
 bool globalverboseFlag(false);
 } // namespace LMC
 
-std::string globalResultsDir("."); // A global variable to define where
+std::string globalResultsDir{"."}; // A global variable to define where
                                    // output images are to be placed
 int globalImagedebugLevel(1000);   // A global variable to determine the
                                    // level of debugging to perform.
 
 using reflectionFunctorType = Rigid3DCenterReflectorFunctor<itk::PowellOptimizerv4<double>>;
-
-using GaussianFilterType = itk::RecursiveGaussianImageFilter<SImageType, SImageType>;
 
 static RigidTransformType::Pointer
 DoMultiQualityReflection(SImageType::Pointer &                  image,
@@ -278,27 +275,27 @@ MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
   return MyPyramid;
 }
 
-PyramidFilterType::Pointer
-MakeOneLevelPyramid(const SImageType::Pointer & refImage)
-{
-  PyramidFilterType::ScheduleType pyramidSchedule;
-
-  PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
-
-  MyPyramid->SetInput(refImage);
-  MyPyramid->SetNumberOfLevels(1);
-  pyramidSchedule.SetSize(1, 3);
-
-  SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
-  for (unsigned int c = 0; c < pyramidSchedule.cols(); ++c)
-  {
-    // about 8mm
-    pyramidSchedule[0][c] = static_cast<unsigned int>(2 * round(4.0 / refImageSpacing[c]));
-  }
-  MyPyramid->SetSchedule(pyramidSchedule);
-  MyPyramid->Update();
-  return MyPyramid;
-}
+//PyramidFilterType::Pointer
+//MakeOneLevelPyramid(const SImageType::Pointer & refImage)
+//{
+//  PyramidFilterType::ScheduleType pyramidSchedule;
+//
+//  PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
+//
+//  MyPyramid->SetInput(refImage);
+//  MyPyramid->SetNumberOfLevels(1);
+//  pyramidSchedule.SetSize(1, 3);
+//
+//  SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
+//  for (unsigned int c = 0; c < pyramidSchedule.cols(); ++c)
+//  {
+//    // about 8mm
+//    pyramidSchedule[0][c] = static_cast<unsigned int>(2 * round(4.0 / refImageSpacing[c]));
+//  }
+//  MyPyramid->SetSchedule(pyramidSchedule);
+//  MyPyramid->Update();
+//  return MyPyramid;
+//}
 
 // ////////////////////////////////////////////////////////////////////////
 //  This is a lightweight wrapper for FindCenterOfBrainBasedOnTopOfHead, which
@@ -343,7 +340,7 @@ public:
   }
 
 private:
-  itk::Point<double, 3> m_Point;
+  const itk::Point<double, 3> m_Point;
 };
 
 // Function to compute the scaling factor between two sets of points.
@@ -351,7 +348,7 @@ private:
 //    Berthold K. P. Horn (1987),
 //    "Closed-form solution of absolute orientation using unit quaternions,"
 //    Journal of the Optical Society of America A, 4:629-642
-static double
+double
 computeSymmetricScale(const std::vector<itk::Point<double, 3>> & fixedPoints,
                       const std::vector<itk::Point<double, 3>> & movingPoints,
                       const itk::Point<double, 3> &              fixedcenter,
@@ -708,7 +705,7 @@ GetImageCenterPhysicalPoint(SImageType::Pointer & image)
 
   for (size_t q = 0; q < SImageType::ImageDimension; ++q)
   {
-    centerIndex[q] = 0.5 * (imageOverallSize[q] - 1);
+    centerIndex[q] = 0.5 * (static_cast<double>(imageOverallSize[q]) - 1.0);
   }
   SImageType::PointType centerLocation;
   image->TransformContinuousIndexToPhysicalPoint(centerIndex, centerLocation);

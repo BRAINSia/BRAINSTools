@@ -2,9 +2,9 @@ set(proj        ANTs) #This local name
 
 set(${proj}_DEPENDENCIES ITKv5 SlicerExecutionModel )
 
-if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
-  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-endif()
+#if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
+#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
+#endif()
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
   list(APPEND ${proj}_DEPENDENCIES VTK)
 endif()
@@ -132,7 +132,7 @@ endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
 set(${proj}_GIT_TAG
-  51a52c994b22081a68f4102301e034ec45cfd4f7 # 20210609
+  61e9501f639663cdd3ae08b8840a85c7b805a8d3 # 20210805
 )
 
 ExternalProject_Add(${proj}

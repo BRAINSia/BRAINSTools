@@ -58,15 +58,15 @@ option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
-option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
+#option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
 
 #------------------------------------------------------------------------------
 # ${LOCAL_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 
-if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
-list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK)
-endif()
+#if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
+#  list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES DCMTK)
+#endif()
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES ITKv5)
 list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES SlicerExecutionModel)
 # Teem is not needed list(APPEND ${LOCAL_PROJECT_NAME}_DEPENDENCIES teem)
@@ -160,7 +160,7 @@ mark_as_superbuild( # Local project
 
     #BOOST_INCLUDE_DIR:PATH
     ${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT:BOOL
-    USE_SYSTEM_DCMTK:BOOL
+    #    USE_SYSTEM_DCMTK:BOOL
     USE_SYSTEM_ITK:BOOL
     ITK_DIR:PATH
 

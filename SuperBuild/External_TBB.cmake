@@ -28,7 +28,8 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
+    #68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
+    5a643c2360fb7684b6a88eccf4421f8c635668f5 # 20210805
     QUIET
     )
 
@@ -69,7 +70,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(TBB_DIR ${CMAKE_INSTALL_PREFIX})
+  set(TBB_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/TBB)
   #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------

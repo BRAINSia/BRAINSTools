@@ -49,7 +49,8 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     # * Set CMP0067 to ensure try_compile work as expected
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
     #"b0a30fb0fcb46ca765e9e2d88a92405946fa9d7e" # 20200312
-    "3e299bc08f16da786883da73c6a4d35457b7838e" # 20210122
+    #"3e299bc08f16da786883da73c6a4d35457b7838e" # 20210122
+    "62899a5e84e0f9918b520218effa75a0c9059e2f"   20210805
     QUIET
     )
 
@@ -86,7 +87,7 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(DCMTK_DIR ${CMAKE_INSTALL_PREFIX})
+  set(DCMTK_DIR "${CMAKE_INSTALL_PREFIX}/lib/cmake/dcmtk")
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree

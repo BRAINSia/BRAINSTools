@@ -549,12 +549,27 @@ GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
 {
   SImageType::PointType ZeroCenter;
 
+  const auto orig_AC= GetNamedPointFromLandmarkList(landmarks, "AC");
+
   ZeroCenter.Fill(0.0);
   RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
     computeTmspFromPoints(GetNamedPointFromLandmarkList(landmarks, "RP"),
-                          GetNamedPointFromLandmarkList(landmarks, "AC"),
+                           orig_AC,
                           GetNamedPointFromLandmarkList(landmarks, "PC"),
                           ZeroCenter);
+#if 1
+  RigidTransformType::Pointer inv_ptr = RigidTransformType::New();
+  landmarkDefinedACPCAlignedToZeroTransform->GetInverse(inv_ptr);
+  RigidTransformType::InputPointType minor_offset_AC = inv_ptr->TransformPoint(orig_AC);
+  const auto orig_translation = inv_ptr->GetTranslation();
+  inv_ptr->SetTranslation(orig_translation - minor_offset_AC.GetVectorFromOrigin() );
+
+  inv_ptr->GetInverse(landmarkDefinedACPCAlignedToZeroTransform);
+// RigidTransformType::InputPointType updtminor_offset_AC = inv_ptr->TransformPoint(orig_AC);
+//  std::cout << updtminor_offset_AC << std::endl;
+//  const auto updateorig_translation = landmarkDefinedACPCAlignedToZeroTransform->GetTranslation();
+//  std::cout << updateorig_translation << std::endl;
+#endif
   return landmarkDefinedACPCAlignedToZeroTransform;
 }
 

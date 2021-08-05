@@ -31,6 +31,17 @@
       <channel>output</channel>
       <description>Output landmark file (.fcsv)</description>
     </file>
+
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
+      <name>outputTransform</name>
+      <label>Output Transform</label>
+      <default></default>
+      <longflag>outputTransform</longflag>
+      <description>The filename for the original space to ACPC alignment to be written (in .h5 format).  The rigid ouptut transform is the inverse of the transform used to 'push' the landmarks, and is suitable for directly using to 'pull' images into an resampled acpc aligned space.
+      </description>
+      <channel>output</channel>
+    </transform>
+
   </parameters>
 
 </executable>

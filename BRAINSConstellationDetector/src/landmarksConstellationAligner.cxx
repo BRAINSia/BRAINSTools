@@ -39,6 +39,8 @@
 #include <vnl/vnl_cross.h>
 
 #include "landmarksConstellationAlignerCLP.h"
+#include "itkTransformFileWriter.h"
+
 
 // D E F I N E S //////////////////////////////////////////////////////////////
 using ImagePointType = SImageType::PointType;
@@ -92,6 +94,24 @@ main(int argc, char * argv[])
     // writing the acpc-aligned landmark file
     WriteITKtoSlicer3Lmk(outputLandmarksPaired, alignedLandmarks);
     std::cout << "The acpc-aligned landmark list file is written." << std::endl;
+
+      if (!outputTransform.empty()) {
+          std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;
+          {
+              using TransformWriterType = itk::TransformFileWriterTemplate<double>;
+              TransformWriterType::Pointer writer = TransformWriterType::New();
+              writer->SetInput(finalTransform);
+              writer->SetFileName(outputTransform);
+              try {
+                  writer->Update();
+              }
+              catch (itk::ExceptionObject &excep) {
+                  std::cerr << "Cannot write the outputTransform file!" << std::endl;
+                  std::cerr << excep << std::endl;
+              }
+              std::cout << "The output rigid transform file is written." << std::endl;
+          }
+    }
   }
   return 0;
 }

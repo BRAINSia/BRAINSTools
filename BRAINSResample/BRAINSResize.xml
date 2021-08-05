@@ -6,7 +6,7 @@
   <description>
 This program is useful for downsampling an image by a constant scale factor.
   </description>
-  <version>5.5.0</version>
+  <version>5.6.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsresize.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Hans Johnson.</contributor>

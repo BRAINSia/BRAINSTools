@@ -3,7 +3,7 @@
   <category>Quantification</category>
   <title>Label Statistics (BRAINS)</title>
   <description>Compute image statistics within each label of a label map. </description>
-  <version>5.5.0</version>
+  <version>5.6.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainslabelstats.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Vincent A. Magnotta</contributor>

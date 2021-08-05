@@ -5,7 +5,7 @@
     <description>
         Computes the percentile rescaling of an image
     </description>
-    <version>5.5.0</version>
+    <version>5.6.0</version>
     <documentation-url></documentation-url>
     <license></license>
     <contributor>Alexander B. Powers and Hans J. Johnson</contributor>

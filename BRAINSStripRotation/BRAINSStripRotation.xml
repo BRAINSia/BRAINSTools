@@ -3,7 +3,7 @@
   <category>Utilities</category>
   <title>Strip Rotation (BRAINS)</title>
   <description>Read an Image, write out same image with identity rotation matrix plus an ITK transform file</description>
-  <version>5.5.0</version>
+  <version>5.6.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsstriprotation.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Kent Williams</contributor>

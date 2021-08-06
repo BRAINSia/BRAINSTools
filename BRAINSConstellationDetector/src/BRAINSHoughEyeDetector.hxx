@@ -218,7 +218,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
   // 4885 scan session analyzed across 50 scanners, (-39.8, 37.9) was measured range in the si ,
   // so add small margin for errors
   // mean=-9.219245 stddev = 8.672305
-  static constexpr float float_pi_over_180 = static_cast<float>(itk::Math::pi_over_180);
+  static constexpr auto float_pi_over_180 = static_cast<float>(itk::Math::pi_over_180);
   static constexpr float ThetaDown{ (-39.8F - min_width_degrees) * 1.05F *
                                     float_pi_over_180 }; // 0.785398 = 45degree chin down//
   static constexpr float ThetaUp{ (37.9F + min_width_degrees) * 1.05F *

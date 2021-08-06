@@ -59,7 +59,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractImageIO : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GtractImageIO);
+  ITK_DISALLOW_COPY_AND_MOVE(GtractImageIO);
 
   using Self = GtractImageIO;
   using Superclass = itk::Object;

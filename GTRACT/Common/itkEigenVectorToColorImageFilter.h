@@ -75,7 +75,7 @@ using TensorShapeType = enum ENUM_TENSOR_SHAPE_TYPE;
 class EigenVectorToColorImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(EigenVectorToColorImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(EigenVectorToColorImageFilter);
 
   /** Standard class type alias. */
   using Self = EigenVectorToColorImageFilter;

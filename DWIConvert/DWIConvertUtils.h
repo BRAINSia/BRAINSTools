@@ -59,7 +59,7 @@ namespace itk
 template <typename TPixel>
 struct itk::ImageIOBase::MapPixelType<itk::VariableLengthVector<TPixel>>
 {
-  static const IOComponentType CType = itk::ImageIOBase::MapPixelType<TPixel>::CType;
+  static const IOComponentEnum CType = itk::ImageIOBase::MapPixelType<TPixel>::CType;
 };
 } // namespace itk
 template <typename TImage>

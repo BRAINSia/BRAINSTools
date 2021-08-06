@@ -57,7 +57,7 @@ namespace itk
 class BRAINSFitHelper : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelper);
+  ITK_DISALLOW_COPY_AND_MOVE(BRAINSFitHelper);
 
   /** Standard class type alias. */
   using Self = BRAINSFitHelper;
@@ -93,7 +93,7 @@ public:
 
   using AffineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
   using AffineTransformType = itk::AffineTransform<RealType, 3>;
-  using SamplingStrategyType = AffineRegistrationType::MetricSamplingStrategyType;
+  using SamplingStrategyType = AffineRegistrationType::MetricSamplingStrategyEnum;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -110,10 +110,12 @@ public:
   itkGetConstObjectMacro(FixedVolume2, FixedImageType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro(MovingVolume, MovingImageType) itkGetConstObjectMacro(MovingVolume, MovingImageType);
+  itkSetObjectMacro(MovingVolume, MovingImageType);
+  itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro(MovingVolume2, MovingImageType) itkGetConstObjectMacro(MovingVolume2, MovingImageType);
+  itkSetObjectMacro(MovingVolume2, MovingImageType);
+  itkGetConstObjectMacro(MovingVolume2, MovingImageType);
 
   /** The preprocessedMoving volume SHOULD NOT BE SET, you can get it out of the
    *  algorithm.*/

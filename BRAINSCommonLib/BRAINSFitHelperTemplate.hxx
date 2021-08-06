@@ -693,7 +693,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
     if (m_NumberOfIterations.size() != 1)
     {
       itkGenericExceptionMacro(<< "ERROR:  Wrong number of parameters for NumberOfIterations."
-                               << " It either needs to be 1 or the same size as TransformType.")
+                               << " It either needs to be 1 or the same size as TransformType.");
     }
     for (unsigned int q = 0; q < m_TransformType.size(); ++q)
     {

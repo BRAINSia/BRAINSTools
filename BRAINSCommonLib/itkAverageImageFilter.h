@@ -56,7 +56,7 @@ template <typename TInputImage, typename TOutputImage = TInputImage>
 class ITK_EXPORT AverageImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AverageImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(AverageImageFilter);
 
   /** Standard class type alias. */
   using Self = AverageImageFilter;

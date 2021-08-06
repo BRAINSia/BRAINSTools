@@ -49,7 +49,7 @@ class TensorInterpolateImageFunction
   : public ImageFunction<TInputImage, SymmetricSecondRankTensor<double, 3>, TCoordRep>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TensorInterpolateImageFunction);
+  ITK_DISALLOW_COPY_AND_MOVE(TensorInterpolateImageFunction);
 
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;
 

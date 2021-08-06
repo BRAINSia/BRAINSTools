@@ -65,7 +65,7 @@ template <typename TInputImage, typename TTransformType, typename TSpatialObject
 class CreateSpatialObjectFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CreateSpatialObjectFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(CreateSpatialObjectFilter);
 
   /** Standard class type alias. */
   using Self = CreateSpatialObjectFilter;

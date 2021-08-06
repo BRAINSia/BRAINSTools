@@ -66,7 +66,7 @@ class DtiGraphSearchTrackingFilter
   : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGraphSearchTrackingFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiGraphSearchTrackingFilter);
 
   /** Standard class type alias. */
   using Self = DtiGraphSearchTrackingFilter;

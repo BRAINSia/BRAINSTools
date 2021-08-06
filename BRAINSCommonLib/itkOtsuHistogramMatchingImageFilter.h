@@ -81,7 +81,7 @@ template <typename TInputImage, typename TOutputImage, typename THistogramMeasur
 class OtsuHistogramMatchingImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(OtsuHistogramMatchingImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(OtsuHistogramMatchingImageFilter);
 
   /** Standard class type alias. */
   using Self = OtsuHistogramMatchingImageFilter;

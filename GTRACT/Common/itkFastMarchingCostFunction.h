@@ -62,7 +62,7 @@ namespace itk
 class FastMarchingCostFunction : public SingleValuedCostFunction
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(FastMarchingCostFunction);
+  ITK_DISALLOW_COPY_AND_MOVE(FastMarchingCostFunction);
 
   /** Standard class type alias */
   using Self = FastMarchingCostFunction;

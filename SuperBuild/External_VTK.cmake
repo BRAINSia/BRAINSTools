@@ -3,7 +3,7 @@ set(proj VTK)
 
 set(VTK_VERSION_MAJOR 9)
 set(VTK_VERSION_MINOR 0)
-set(${proj}_REQUIRED_VERSION "v9.0.3")  #If a required version is necessary, then set this, else leave blank
+set(${proj}_REQUIRED_VERSION "9.0")  #If a required version is necessary, then set this, else leave blank
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib" )
@@ -140,7 +140,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       DEPENDS "${${proj}_DEPENDENCIES}"
     )
   ### --- End Project specific additions
-  set(${proj}_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/vtk-${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR})
+  set(${proj}_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/vtk-${${proj}_REQUIRED_VERSION})
   #${CMAKE_CURRENT_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})

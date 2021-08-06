@@ -54,7 +54,7 @@ template <typename TOutputImage>
 class RandomImageSource : public ImageSource<TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(RandomImageSource);
+  ITK_DISALLOW_COPY_AND_MOVE(RandomImageSource);
 
   /** Standard class type alias. */
   using Self = RandomImageSource;

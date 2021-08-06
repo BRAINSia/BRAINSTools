@@ -1,7 +1,7 @@
 //
 // Created by johnsonhj on 7/25/20.
 // A program to process an entire set of T1, T2, PD images at once
-// and create a deface mask suitable for anonymizing data
+// and create deface mask suitable for anonymizing data
 
 //
 #include <iostream>
@@ -14,8 +14,6 @@
 #include <itkIO.h>
 #include <Slicer3LandmarkIO.h>
 #include <BRAINSIntensityTransform.h>
-#include <itkBRAINSROIAutoImageFilter.h>
-#include "itkMaskImageFilter.h"
 #include "itkSignedMaurerDistanceMapImageFilter.h"
 #include "itkConstantPadImageFilter.h"
 #include "BRAINSCommonLib.h"
@@ -27,7 +25,7 @@
  * (i.e. AC at ~(0,0,0) and PC at ~(0,X,0) to generate "defaced" or "face-obscured" data as a de-identification
  * process.
  *
- * A coded mask image is created in a standardized 0.5mm space that is 512x512x512 with the center of the image at
+ * A coded mask image is created in a standardized 0.5 mm space that is 512x512x512 with the center of the image at
  * 0,0,0.
  *
  */
@@ -48,7 +46,7 @@ main(int argc, char * argv[])
   // STEP 1: Using all the anatomical images for this session, generate a label mask defining
   // regions that are 0= in all the images
   //                  1= part of the face region
-  //                  2= 80mm below the ac point --> altered to remove this region by resampling
+  //                  2= 80 mm below the ac point --> altered to remove this region by resampling
   //                  3= Outside FOV for at least 1 image
   using InternalImageType = itk::Image<float, 3>;
   using MaskImageType = itk::Image<unsigned char, 3>;
@@ -174,13 +172,12 @@ main(int argc, char * argv[])
             {
               mit.Set(face_rm);
             }
-            // blur Cheak region
-            else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
-                     (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
-            {
-              mit.Set(face_rm);
-            }
-
+//            // blur Cheek region
+//            else if ((maskpnt[PA] < RE_pnt[PA] || maskpnt[PA] < LE_pnt[PA]) &&
+//                     (maskpnt[SI] < (RE_pnt[SI]) || (maskpnt[SI] < LE_pnt[SI])))
+//            {
+//              mit.Set(face_rm);
+//            }
             else if ((
                        // Now remove RE eye boxes
                        (maskpnt[PA] < (RE_pnt[PA] + approx_eye_radius)) && // anterior to back of eye
@@ -285,11 +282,11 @@ main(int argc, char * argv[])
     signedDistanceMap->Update();
 
     using DistBlurFilter = itk::SmoothingRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
-    DistBlurFilter::Pointer blur = DistBlurFilter::New();
-    blur->SetInput(signedDistanceMap->GetOutput());
-    blur->SetSigma(2.25);
-    blur->Update();
-    InternalImageType::Pointer distanceMap = blur->GetOutput();
+    DistBlurFilter::Pointer blur_filter = DistBlurFilter::New();
+    blur_filter->SetInput(signedDistanceMap->GetOutput());
+    blur_filter->SetSigma(2.25);
+    blur_filter->Update();
+    InternalImageType::Pointer distanceMap = blur_filter->GetOutput();
 
     for (itk::ImageRegionIterator<InternalImageType> diit(distanceMap, distanceMap->GetLargestPossibleRegion());
          !diit.IsAtEnd();
@@ -304,7 +301,7 @@ main(int argc, char * argv[])
       else
       {
         const InternalImageType::PixelType absrefvalue = std::abs(refvalue);
-        const InternalImageType::PixelType distout = absrefvalue < 10.0 ? absrefvalue : 10.0;
+        const InternalImageType::PixelType distout = absrefvalue < 10.0f ? absrefvalue : 10.0f;
         diit.Set(distout);
       }
     }
@@ -341,16 +338,16 @@ main(int argc, char * argv[])
       using BlurFilter = itk::SmoothingRecursiveGaussianImageFilter<FadeMapType, FadeMapType>;
       for (size_t i = 0; i < numSigmas; ++i)
       {
-        BlurFilter::Pointer blur = BlurFilter::New();
-        blur->SetInput(curr_img);
-        blur->SetSigma(sigmas[i]);
-        blur->Update();
-        blurredImages[i] = blur->GetOutput();
+        BlurFilter::Pointer l_blur = BlurFilter::New();
+        l_blur->SetInput(curr_img);
+        l_blur->SetSigma(sigmas[i]);
+        l_blur->Update();
+        blurredImages[i] = l_blur->GetOutput();
         blurredImageInterpolators[i] = itk::LinearInterpolateImageFunction<InternalImageType>::New();
         blurredImageInterpolators[i]->SetInputImage(blurredImages[i]);
         if (debugLevel >= 5)
         {
-          itkUtil::WriteImage<InternalImageType>(blur->GetOutput(),
+          itkUtil::WriteImage<InternalImageType>(l_blur->GetOutput(),
                                                  outputDirectory + "/blur_img_" + std::to_string(i) + ".nii.gz");
         }
       }
@@ -364,16 +361,16 @@ main(int argc, char * argv[])
         curr_img->TransformIndexToPhysicalPoint<double>(curr_index, imgpnt);
         if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
         {
-          const MaskImageType::PixelType mask_value = maskInterpolator->Evaluate(imgpnt);
+          const auto mask_value = static_cast<MaskImageType::PixelType>(maskInterpolator->Evaluate(imgpnt));
           if (mask_value == valid_inside_pixel)
           {
             // Pass
           }
           else if (mask_value == face_rm || mask_value == auto_roi_background || mask_value == eye_boxes_code)
           {
-            const InternalImageType::PixelType distanceValue = distanceMapInterpolator->Evaluate(imgpnt);
+            const auto distanceValue = static_cast<InternalImageType::PixelType>(distanceMapInterpolator->Evaluate(imgpnt));
             // determine the correct blur value
-            int              sigmaIndex = 0;
+            size_t           sigmaIndex = 0;
             constexpr double sigma_distance_ratio = 1.0; // Factor of sigma smoothing to distance ratio
             for (size_t i = 0; i < numSigmas; ++i)
             {

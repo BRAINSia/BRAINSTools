@@ -40,7 +40,7 @@ template <typename TInputImage, typename TOutputImage = TInputImage>
 class StretchIntensityImageFilter : public ImageSource<TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(StretchIntensityImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(StretchIntensityImageFilter);
 
   /** Standard class type alias. */
   using Self = StretchIntensityImageFilter;

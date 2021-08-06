@@ -36,7 +36,7 @@ template <typename TInputImage, typename TOutputImage>
 class DifferenceImageFilter : public Testing::ComparisonImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DifferenceImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DifferenceImageFilter);
 
   /** Standard class type alias. */
   using Self = DifferenceImageFilter;

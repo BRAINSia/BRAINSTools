@@ -92,7 +92,7 @@ class OppositeImageFilter
                                    Functor::Opposite<typename TInputImage::PixelType, typename TOutputImage::PixelType>>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(OppositeImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(OppositeImageFilter);
 
   /** Standard class type alias. */
   using Self = OppositeImageFilter;

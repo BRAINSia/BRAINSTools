@@ -78,7 +78,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
   const IOPixelType pixelType = imageIO->GetPixelType();
   std::cout << "Pixel Type is " << itk::ImageIOBase::GetPixelTypeAsString(pixelType) << std::endl;
 
-  using IOComponentType = itk::ImageIOBase::IOComponentType;
+  using IOComponentType = itk::ImageIOBase::IOComponentEnum;
   const IOComponentType componentType = imageIO->GetComponentType();
   std::cout << "Component Type is " << imageIO->GetComponentTypeAsString(componentType) << std::endl;
   const unsigned int imageDimension = imageIO->GetNumberOfDimensions();

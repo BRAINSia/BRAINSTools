@@ -72,7 +72,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalVersorRigidFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalVersorRigidFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(AnatomicalVersorRigidFilter);
 
   /** Standard class type alias. */
   using Self = AnatomicalVersorRigidFilter;

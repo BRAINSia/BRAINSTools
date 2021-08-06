@@ -374,7 +374,7 @@ template <typename TTransformType,
 class MultiModal3DMutualRegistrationHelper : public ProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MultiModal3DMutualRegistrationHelper);
+  ITK_DISALLOW_COPY_AND_MOVE(MultiModal3DMutualRegistrationHelper);
 
   /** Standard class type alias. */
   using Self = MultiModal3DMutualRegistrationHelper;

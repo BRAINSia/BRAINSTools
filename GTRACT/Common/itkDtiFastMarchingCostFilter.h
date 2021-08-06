@@ -379,7 +379,7 @@ protected:
   itkGetConstReferenceMacro(LastIndex, LevelSetIndexType);
 
 private:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingCostFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiFastMarchingCostFilter);
 
   NodeContainerPointer m_AlivePoints;
   NodeContainerPointer m_TrialPoints;

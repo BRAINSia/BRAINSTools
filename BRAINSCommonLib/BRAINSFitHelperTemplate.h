@@ -85,7 +85,7 @@ template <typename FixedImageType, typename MovingImageType>
 class BRAINSFitHelperTemplate : public Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BRAINSFitHelperTemplate);
+  ITK_DISALLOW_COPY_AND_MOVE(BRAINSFitHelperTemplate);
 
   /** Standard class type alias. */
   using Self = BRAINSFitHelperTemplate;
@@ -123,7 +123,7 @@ public:
   using TranslationTransformType = itk::TranslationTransform<RealType, MovingImageDimension>;
   using AffineTransformType = itk::AffineTransform<RealType, MovingImageDimension>;
   using ScalableAffineTransformType = itk::ScalableAffineTransform<RealType, MovingImageDimension>;
-  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyType;
+  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyEnum;
 
   using MatrixOffsetTransformBaseType = typename AffineTransformType::Superclass;
   using MatrixOffsetTransformBasePointer = typename MatrixOffsetTransformBaseType::Pointer;
@@ -143,10 +143,12 @@ public:
   itkGetConstObjectMacro(FixedVolume2, FixedImageType);
 
   /** Set/Get the Moving image. */
-  itkSetObjectMacro(MovingVolume, MovingImageType) itkGetConstObjectMacro(MovingVolume, MovingImageType);
+  itkSetObjectMacro(MovingVolume, MovingImageType);
+  itkGetConstObjectMacro(MovingVolume, MovingImageType);
 
   /** Set/Get the second Moving image for multi-modal SyN. */
-  itkSetObjectMacro(MovingVolume2, MovingImageType) itkGetConstObjectMacro(MovingVolume2, MovingImageType);
+  itkSetObjectMacro(MovingVolume2, MovingImageType);
+  itkGetConstObjectMacro(MovingVolume2, MovingImageType);
 
   itkSetObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);
   itkGetModifiableObjectMacro(FixedBinaryVolume, FixedBinaryVolumeType);

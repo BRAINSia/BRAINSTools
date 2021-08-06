@@ -63,7 +63,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT GtractParameterIO : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GtractParameterIO);
+  ITK_DISALLOW_COPY_AND_MOVE(GtractParameterIO);
 
   using Self = GtractParameterIO;
   using Superclass = itk::Object;

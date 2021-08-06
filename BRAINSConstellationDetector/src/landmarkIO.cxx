@@ -805,7 +805,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
       {
         if (!getline(myfile, line))
         {
-          itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!")
+          itkGenericExceptionMacro(<< "Bad linear model coefficients in llsModelFile!");
         }
         else
         {

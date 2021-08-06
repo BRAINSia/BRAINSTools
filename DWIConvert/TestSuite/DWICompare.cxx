@@ -29,13 +29,9 @@
 #include <itkImageFileReader.h>
 #include <itkNrrdImageIO.h>
 
-#include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 
 #include <itkMath.h>
-#include <vcl_compiler.h>
-#include <iostream>
-#include <algorithm>
 
 #include "DWICompareCLP.h"
 #include <BRAINSCommonLib.h>
@@ -69,7 +65,7 @@ TestIfInformationIsDifferent(typename ImageType::ConstPointer first, typename Im
     failureStatus = true;
   }
   const float directionTolerance = 1e-3;
-  if (!first->GetDirection().GetVnlMatrix().as_ref().is_equal(second->GetDirection().GetVnlMatrix(),
+  if (!first->GetDirection().GetVnlMatrix().as_ref().is_equal(second->GetDirection().GetVnlMatrix().as_matrix(),
                                                               directionTolerance))
   {
     std::cout << "The first image Direction does not match second image Information" << std::endl;
@@ -97,7 +93,7 @@ TestIfInformationIsDifferent(typename ImageType::ConstPointer first, typename Im
   {
     if ((itr2.IsAtEnd()) || (itr1.Get() != itr2.Get()))
     {
-      if (failureStatus == false)
+      if (!failureStatus)
       {
         std::cout << "ERROR: Pixel values are different " << std::endl;
       }
@@ -122,10 +118,10 @@ DoIt(int argc, char * argv[], PixelType)
   using FileReaderType = itk::ImageFileReader<DiffusionImageType>;
   typename FileReaderType::Pointer firstReader = FileReaderType::New();
   typename FileReaderType::Pointer secondReader = FileReaderType::New();
-  firstReader->SetFileName(inputVolume1.c_str());
+  firstReader->SetFileName(inputVolume1);
   firstReader->Update();
   typename DiffusionImageType::ConstPointer firstImage = firstReader->GetOutput();
-  secondReader->SetFileName(inputVolume2.c_str());
+  secondReader->SetFileName(inputVolume2);
   secondReader->Update();
   typename DiffusionImageType::ConstPointer secondImage = secondReader->GetOutput();
 
@@ -204,11 +200,11 @@ DoIt(int argc, char * argv[], PixelType)
 void
 GetImageType(const std::string &                 fileName,
              itk::ImageIOBase::IOPixelType &     pixelType,
-             itk::ImageIOBase::IOComponentType & componentType)
+             itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
   itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
-  imageReader->SetFileName(fileName.c_str());
+  imageReader->SetFileName(fileName);
   imageReader->UpdateOutputInformation();
 
   pixelType = imageReader->GetImageIO()->GetPixelType();
@@ -223,7 +219,7 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
 
   itk::ImageIOBase::IOPixelType     pixelType;
-  itk::ImageIOBase::IOComponentType componentType;
+  itk::ImageIOBase::IOComponentEnum componentType;
 
   try
   {
@@ -238,48 +234,39 @@ main(int argc, char * argv[])
       {
         return DoIt(argc, argv, static_cast<unsigned char>(0));
       }
-      break;
-      case itk::ImageIOBase::CHAR:
+       case itk::ImageIOBase::CHAR:
       {
         return DoIt(argc, argv, static_cast<char>(0));
       }
-      break;
       case itk::ImageIOBase::USHORT:
       {
         return DoIt(argc, argv, static_cast<unsigned short>(0));
       }
-      break;
       case itk::ImageIOBase::SHORT:
       {
         return DoIt(argc, argv, static_cast<short>(0));
       }
-      break;
       case itk::ImageIOBase::UINT:
       {
         return DoIt(argc, argv, static_cast<unsigned int>(0));
       }
-      break;
       case itk::ImageIOBase::INT:
       {
         return DoIt(argc, argv, static_cast<int>(0));
       }
-      break;
       case itk::ImageIOBase::ULONG:
       {
         return DoIt(argc, argv, static_cast<unsigned long>(0));
       }
-      break;
       case itk::ImageIOBase::LONG:
       {
         return DoIt(argc, argv, static_cast<long>(0));
       }
-      break;
       case itk::ImageIOBase::FLOAT:
       {
         return DoIt(argc, argv, static_cast<float>(0));
         // std::cout << "FLOAT type not currently supported." << std::endl;
       }
-      break;
       case itk::ImageIOBase::DOUBLE:
       {
         std::cout << "DOUBLE type not currently supported." << std::endl;

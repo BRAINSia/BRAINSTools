@@ -42,7 +42,7 @@ template <typename TInputImage, typename TOutputImage>
 class ComparisonImageFilter : public ImageSource<TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ComparisonImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(ComparisonImageFilter);
 
   /** Standard class type alias. */
   using Self = ComparisonImageFilter;

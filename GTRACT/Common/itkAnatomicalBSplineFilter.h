@@ -75,7 +75,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT AnatomicalBSplineFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(AnatomicalBSplineFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(AnatomicalBSplineFilter);
 
   /** Standard class type alias. */
   using Self = AnatomicalBSplineFilter;

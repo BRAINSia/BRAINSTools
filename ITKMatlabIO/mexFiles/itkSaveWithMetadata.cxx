@@ -45,7 +45,7 @@ printVecValue(const std::vector<double> vec)
   std::cout << std::endl;
 }
 
-inline itk::ImageIOBase::IOComponentType
+inline itk::ImageIOBase::IOComponentEnum
 typeMtoITK(const mxClassID mtype)
 {
 
@@ -935,7 +935,7 @@ itkSaveWithMetaData(int nrhs, const mxArray * prhs[])
     mexErrMsgTxt(errBuff);
   }
 
-  const itk::ImageIOBase::IOComponentType ntype = typeMtoITK(mxGetClassID(msm.GetField("data")));
+  const itk::ImageIOBase::IOComponentEnum ntype = typeMtoITK(mxGetClassID(msm.GetField("data")));
 
   if (itk::ImageIOBase::UNKNOWNCOMPONENTTYPE == ntype)
   {

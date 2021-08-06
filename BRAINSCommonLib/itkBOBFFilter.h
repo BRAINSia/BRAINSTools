@@ -30,7 +30,7 @@ template <typename TInputImage, typename TOutputImage>
 class BOBFFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(BOBFFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(BOBFFilter);
 
   /** Standard class type alias. */
   using Self = BOBFFilter;

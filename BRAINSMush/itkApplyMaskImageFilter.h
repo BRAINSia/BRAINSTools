@@ -80,7 +80,7 @@ protected: /* define methods available only to related classes */
 private: /* define methods available only to this class */
   bool m_InvertMask;
 
-  ITK_DISALLOW_COPY_AND_ASSIGN(ApplyMaskImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(ApplyMaskImageFilter);
 };
 } // end namespace itk
 

@@ -73,7 +73,7 @@ template <typename TDisplacementField, typename TOutputImage>
 class GridForwardWarpImageFilterNew : public ImageToImageFilter<TDisplacementField, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(GridForwardWarpImageFilterNew);
+  ITK_DISALLOW_COPY_AND_MOVE(GridForwardWarpImageFilterNew);
 
   /** Standard class type alias. */
   using Self = GridForwardWarpImageFilterNew;

@@ -50,7 +50,7 @@ template <typename TCoordinateType, unsigned int NDimensions = 3>
 class CrossOverAffineSystem : public itk::LightProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(CrossOverAffineSystem);
+  ITK_DISALLOW_COPY_AND_MOVE(CrossOverAffineSystem);
 
   /** Standard class type alias. */
   using Self = CrossOverAffineSystem;

@@ -67,7 +67,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT ComputeDiffusionTensorImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(ComputeDiffusionTensorImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(ComputeDiffusionTensorImageFilter);
 
   /** Standard class type alias. */
   using Self = ComputeDiffusionTensorImageFilter;

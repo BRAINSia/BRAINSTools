@@ -50,7 +50,7 @@ template <typename TFirstImage, typename TSecondImage>
 class MixtureStatisticCostFunction : public MultipleValuedCostFunction
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(MixtureStatisticCostFunction);
+  ITK_DISALLOW_COPY_AND_MOVE(MixtureStatisticCostFunction);
 
   /** Standard type alias. */
   using Self = MixtureStatisticCostFunction;

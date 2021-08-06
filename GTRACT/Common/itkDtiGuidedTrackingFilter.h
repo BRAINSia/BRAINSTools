@@ -69,7 +69,7 @@ class DtiGuidedTrackingFilter
   : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiGuidedTrackingFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiGuidedTrackingFilter);
 
   /** Standard class type alias. */
   using Self = DtiGuidedTrackingFilter;

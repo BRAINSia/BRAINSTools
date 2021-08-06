@@ -35,42 +35,27 @@
 =========================================================================*/
 
 #include <vtkPoints.h>
-#include <vtkFloatArray.h>
 #include <vtkPointData.h>
 #include <vtkLookupTable.h>
-#include <vtkCellArray.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkXMLPolyDataReader.h>
-#include <vtkAppendPolyData.h>
 #include <vtkVersion.h>
 
 #include <itkOrientImageFilter.h>
-#include "itkDiffusionTensor3DReconstructionImageFilter.h"
-#include "itkVectorImage.h"
-#include "itkNrrdImageIO.h"
 #include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkMetaDataDictionary.h"
-#include "itkImageSeriesReader.h"
 #include "itkImageRegionConstIterator.h"
-#include "itkImageRegionIterator.h"
-#include "itkImageRegionIteratorWithIndex.h"
-#include "itkVectorIndexSelectionCastImageFilter.h"
 #include <itkSpatialOrientationAdapter.h>
 #include "itkMath.h"
-#include "vnl/vnl_matrix.h"
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkVectorLinearInterpolateImageFunction.h"
-#include "itkVariableLengthVector.h"
-#include "itkImageFileWriter.h"
 #include <vnl/algo/vnl_svd.h>
 #include <iostream>
 
-#include "algo.h"
 #include "GtractTypes.h"
 
 // ////////////////////////////////////////////////////////////////////////
@@ -277,7 +262,7 @@ main(int argc, char * argv[])
     // Compute Singluar value Decompostion of the Jacobian to find the Rotation
     // Matrix.
 
-    vnl_svd<double> svd(J + iden);
+    vnl_svd<double> svd( (J + iden).as_matrix() );
     vnlMatrixType   rotationMatrix(svd.U() * svd.V().transpose());
 
     vnlMatrixType rotatedTensorPixel = rotationMatrix * fullTensorPixel * rotationMatrix.transpose();

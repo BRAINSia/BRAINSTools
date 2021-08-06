@@ -67,7 +67,7 @@ namespace itk
 class GTRACT_COMMON_EXPORT InvertBSplineFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(InvertBSplineFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(InvertBSplineFilter);
 
   /** Standard class type alias. */
   using Self = InvertBSplineFilter;

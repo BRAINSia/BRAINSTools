@@ -108,7 +108,7 @@ template <typename TTensorImageType, typename TAnisotropyImageType, typename TMa
 class DtiTrackingFilterBase : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiTrackingFilterBase);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiTrackingFilterBase);
 
   /** Standard class type alias. */
   using Self = DtiTrackingFilterBase;

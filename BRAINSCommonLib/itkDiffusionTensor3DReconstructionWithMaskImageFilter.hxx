@@ -33,7 +33,8 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<
   TReferenceImagePixelType,
   TGradientImagePixelType,
   TTensorPixelType>::DiffusionTensor3DReconstructionWithMaskImageFilter()
-  : m_GradientDirectionContainer(nullptr)
+  : m_TensorBasis()
+  ,m_GradientDirectionContainer(nullptr)
   , m_Threshold(NumericTraits<ReferencePixelType>::min())
   , m_BValue(1.0)
   , m_GradientImageTypeEnumeration(Else)
@@ -211,7 +212,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
           ++(*gradientItContainer[i]);
         }
 
-        vnl_svd<double> pseudoInverseSolver(m_TensorBasis);
+        vnl_svd<double> pseudoInverseSolver{m_TensorBasis.as_matrix()};
         if (m_NumberOfGradientDirections > 6)
         {
           D = pseudoInverseSolver.solve(m_BMatrix * B);
@@ -250,11 +251,11 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
   {
     using GradientIteratorType = ImageRegionConstIterator<GradientImagesType>;
     using GradientVectorType = typename GradientImagesType::PixelType;
-    typename GradientImagesType::Pointer gradientImagePointer = nullptr;
+
 
     // Would have liked a dynamic_cast here, but seems SGI doesn't like it
     // The enum will ensure that an inappropriate cast is not done
-    gradientImagePointer = dynamic_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
+    typename GradientImagesType::Pointer gradientImagePointer = dynamic_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
 
     GradientIteratorType git(gradientImagePointer, outputRegionForThread);
     git.GoToBegin();
@@ -320,7 +321,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
           }
         }
 
-        vnl_svd<double> pseudoInverseSolver(m_TensorBasis);
+        vnl_svd<double> pseudoInverseSolver(m_TensorBasis.as_matrix());
         if (m_NumberOfGradientDirections > 6)
         {
           D = pseudoInverseSolver.solve(m_BMatrix * B);
@@ -397,36 +398,36 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
 
   m_BMatrix.inplace_transpose();
 }
-
-template <typename TReferenceImagePixelType, typename TGradientImagePixelType, typename TTensorPixelType>
-void
-DiffusionTensor3DReconstructionWithMaskImageFilter<
-  TReferenceImagePixelType,
-  TGradientImagePixelType,
-  TTensorPixelType>::AddGradientImage(const GradientDirectionType & gradientDirection,
-                                      const GradientImageType *     gradientImage)
-{
-  // Make sure crazy users did not call both AddGradientImage and
-  // SetGradientImage
-  if (m_GradientImageTypeEnumeration == GradientIsInASingleImage)
-  {
-    itkExceptionMacro(<< "Cannot call both methods:"
-                      << "AddGradientImage and SetGradientImage. Please call only one of them.");
-  }
-
-  // If the container to hold the gradient directions hasn't been allocated
-  // yet, allocate it.
-  if (!this->m_GradientDirectionContainer)
-  {
-    this->m_GradientDirectionContainer = GradientDirectionContainerType::New();
-  }
-
-  m_GradientDirectionContainer->InsertElement(m_NumberOfGradientDirections,
-                                              gradientDirection / gradientDirection.two_norm());
-  ++m_NumberOfGradientDirections;
-  this->ProcessObject::SetNthInput(m_NumberOfGradientDirections, const_cast<GradientImageType *>(gradientImage));
-  m_GradientImageTypeEnumeration = GradientIsInManyImages;
-}
+//
+//template <typename TReferenceImagePixelType, typename TGradientImagePixelType, typename TTensorPixelType>
+//void
+//DiffusionTensor3DReconstructionWithMaskImageFilter<
+//  TReferenceImagePixelType,
+//  TGradientImagePixelType,
+//  TTensorPixelType>::AddGradientImage(const GradientDirectionType & gradientDirection,
+//                                      const GradientImageType *     gradientImage)
+//{
+//  // Make sure crazy users did not call both AddGradientImage and
+//  // SetGradientImage
+//  if (m_GradientImageTypeEnumeration == GradientIsInASingleImage)
+//  {
+//    itkExceptionMacro(<< "Cannot call both methods:"
+//                      << "AddGradientImage and SetGradientImage. Please call only one of them.");
+//  }
+//
+//  // If the container to hold the gradient directions hasn't been allocated
+//  // yet, allocate it.
+//  if (!this->m_GradientDirectionContainer)
+//  {
+//    this->m_GradientDirectionContainer = GradientDirectionContainerType::New();
+//  }
+//
+//  m_GradientDirectionContainer->InsertElement(m_NumberOfGradientDirections,
+//                                              gradientDirection / gradientDirection.two_norm());
+//  ++m_NumberOfGradientDirections;
+//  this->ProcessObject::SetNthInput(m_NumberOfGradientDirections, const_cast<GradientImageType *>(gradientImage));
+//  m_GradientImageTypeEnumeration = GradientIsInManyImages;
+//}
 
 template <typename TReferenceImagePixelType, typename TGradientImagePixelType, typename TTensorPixelType>
 void

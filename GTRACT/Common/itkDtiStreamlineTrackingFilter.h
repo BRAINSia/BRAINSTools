@@ -65,7 +65,7 @@ class DtiStreamlineTrackingFilter
   : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiStreamlineTrackingFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiStreamlineTrackingFilter);
 
   /** Standard class type alias. */
   using Self = DtiStreamlineTrackingFilter;

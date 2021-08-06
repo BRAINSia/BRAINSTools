@@ -83,7 +83,7 @@ template <typename TInputImage, typename TOutputImage, typename TInterpolatorPre
 class IdentityResampleByFFT : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(IdentityResampleByFFT);
+  ITK_DISALLOW_COPY_AND_MOVE(IdentityResampleByFFT);
 
   /** Standard class type alias. */
   using Self = IdentityResampleByFFT;

@@ -49,7 +49,7 @@ template <typename TCoordinateType, unsigned int NDimensions, typename TInputIma
 class TransformAdaptor : public LightProcessObject
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TransformAdaptor);
+  ITK_DISALLOW_COPY_AND_MOVE(TransformAdaptor);
 
   /** Standard class type alias. */
   using Self = TransformAdaptor;

@@ -79,7 +79,7 @@ using AnisotropyType = enum ENUM_ANISOTROPY_TYPE;
 class GTRACT_COMMON_EXPORT TensorToAnisotropyImageFilter : public itk::Object
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(TensorToAnisotropyImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(TensorToAnisotropyImageFilter);
 
   /** Standard class type alias. */
   using Self = TensorToAnisotropyImageFilter;

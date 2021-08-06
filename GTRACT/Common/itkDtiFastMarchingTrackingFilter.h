@@ -72,7 +72,7 @@ class GTRACT_COMMON_EXPORT DtiFastMarchingTrackingFilter
   : public itk::DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DtiFastMarchingTrackingFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DtiFastMarchingTrackingFilter);
 
   /** Standard class typdedefs. */
   using Self = DtiFastMarchingTrackingFilter;

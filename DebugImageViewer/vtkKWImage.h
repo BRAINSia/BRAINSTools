@@ -61,7 +61,7 @@ public:
   using ImageBaseType = itk::ImageBase<3>;
   using ImagePointer = ImageBaseType::Pointer;
   using ImageConstPointer = ImageBaseType::ConstPointer;
-  using ITKScalarPixelType = itk::ImageIOBase::IOComponentType;
+  using ITKScalarPixelType = itk::ImageIOBase::IOComponentEnum;
 
   // Set the untyped ITK image
   void

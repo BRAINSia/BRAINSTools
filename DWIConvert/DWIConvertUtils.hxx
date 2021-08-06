@@ -56,7 +56,7 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
 
   {
     itk::ImageIOBase *                imageIO = imgReader->GetModifiableImageIO();
-    itk::ImageIOBase::IOComponentType ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
+    itk::ImageIOBase::IOComponentEnum ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
     if (!allowLossyConversion)
     {
       if (imageIO->GetComponentType() != ioType)
@@ -123,7 +123,7 @@ ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool
 
   {
     itk::ImageIOBase *                imageIO = imgReader->GetModifiableImageIO();
-    itk::ImageIOBase::IOComponentType ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
+    itk::ImageIOBase::IOComponentEnum ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
     if (!allowLossyConversion)
     {
       if (imageIO->GetComponentType() != ioType)

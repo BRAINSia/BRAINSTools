@@ -136,7 +136,7 @@ template <typename TInputImage,
 class DivergenceImageFilter : public ImageToImageFilter<TInputImage, TOutputImage>
 {
 public:
-  ITK_DISALLOW_COPY_AND_ASSIGN(DivergenceImageFilter);
+  ITK_DISALLOW_COPY_AND_MOVE(DivergenceImageFilter);
 
   /** Standard class type alias. */
   using Self = DivergenceImageFilter;

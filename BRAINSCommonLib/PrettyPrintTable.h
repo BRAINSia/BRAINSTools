@@ -162,7 +162,7 @@ public:
         {
           output << i[j][k];
         }
-        unsigned int limit;
+        unsigned int limit = 0;
         // if right justify, just output pad
         if (m_rightJustify)
         {

@@ -16,8 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if !defined(__ImageCalculatorTemplates_h____)
-#  define __ImageCalculatorTemplates_h____
+#if !defined(ImageCalculatorTemplates_h__)
+#  define ImageCalculatorTemplates_h__
 
 #  define ITK_CONCEPT_NO_CHECKING
 #  include "itkImageFileReader.h"
@@ -333,8 +333,8 @@ template <typename ImageType>
 void
 statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
 {
-  std::map<std::string, std::string> StatDescription;
-  std::map<std::string, float>       StatValues;
+  std::map<std::string, std::string> StatDescription{};
+  std::map<std::string, float>       StatValues{};
 
   // The statistics image filter calclates all the statistics of AccImage
   using StatsFilterType = itk::StatisticsImageFilter<ImageType>;
@@ -601,23 +601,16 @@ ProcessOutputStage(const typename itk::Image<InPixelType, ImageDims>::Pointer Ac
 class string_tokenizer : public std::vector<std::string>
 {
 public:
-  string_tokenizer(const std::string & s, const char * const sep = " ") { this->init(s, sep); }
+  explicit string_tokenizer(const std::string & s, const char * const sep = " ") { this->init(s, sep); }
+  string_tokenizer & operator=(const string_tokenizer &)  = delete;
+  string_tokenizer(const string_tokenizer &) = delete;
 
-  string_tokenizer(const char * const s, const char * const sep = " ") { this->init(std::string(s), sep); }
-
-protected:
-  string_tokenizer &
-  operator=(const string_tokenizer &)
-  {
-    return *this;
-  }; // explicitly prevent this
-  string_tokenizer(const string_tokenizer &)
-    : std::vector<std::string>(){}; // explicitly prevent this
+  explicit string_tokenizer(const char * const s, const char * const sep = " ") { this->init(std::string(s), sep); }
 private:
   void
   init(const std::string & input, const char * const sep = " ")
   {
-    std::string::size_type start;
+    std::string::size_type start = 0;
 
     std::string::size_type _end = 0;
     int                    i = 0;
@@ -716,7 +709,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   using ReaderType = itk::ImageFileReader<ImageType>;
   using PixelType = typename ImageType::PixelType;
   // Read the first Image
-  typename ReaderType::Pointer reader = ReaderType::New();
+  typename ReaderType::Pointer reader= ReaderType::New();
   reader->SetFileName(InputList.at(0).c_str());
   std::cout << "Reading 1st Image..." << InputList.at(0).c_str() << std::endl;
   try
@@ -743,7 +736,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   {
     std::cout << "Reading image.... " << InputList.at(currimage).c_str() << std::endl;
 
-    typename ReaderType::Pointer reader2 = ReaderType::New();
+    typename ReaderType::Pointer reader2= ReaderType::New();
     reader2->SetFileName(InputList.at(currimage).c_str());
     try
     {
@@ -940,4 +933,4 @@ ImageCalculatorProcessND(const std::string & InType, MetaCommand & command)
   }
 }
 
-#endif // __ImageCalculatorTemplates_h____
+#endif // ImageCalculatorTemplates_h__

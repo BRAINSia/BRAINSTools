@@ -479,7 +479,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   const
 {
   unsigned long mtime = Superclass::GetMTime();
-  unsigned long m;
+  unsigned long m = 0;
 
   // Some of the following should be removed once ivars are put in the
   // input and output lists

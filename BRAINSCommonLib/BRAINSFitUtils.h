@@ -29,9 +29,10 @@
 #include "itkBSplineTransform.h"
 #include "itkBRAINSROIAutoImageFilter.h"
 
-#include <vcl_compiler.h>
-#include <iostream>
 #include "algorithm"
+#include "math.h"
+#include <iostream>
+#include <vcl_compiler.h>
 
 /**
  * This file contains utility functions that are common to a few of the
@@ -264,9 +265,9 @@ ClampNoisyTailsOfImage(const float                               m_RemoveIntensi
   duplicator->Update();
   typename TInputImage::Pointer image = duplicator->GetOutput();
 
-  float min;
-  float max;
-  float mean;
+  float min = NAN;
+  float max = NAN;
+  float mean = NAN;
   ComputeRobustMinMaxMean<TInputImage, TMaskSpatialObject>(
     m_RemoveIntensityOutliers, image.GetPointer(), mask.GetPointer(), min, max, mean);
   itk::ImageRegionIterator<TInputImage> fi(image, image->GetBufferedRegion());

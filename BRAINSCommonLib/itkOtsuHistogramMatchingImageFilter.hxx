@@ -38,6 +38,7 @@
 #include <vector>
 
 #include "BRAINSFitUtils.h"
+#include "math.h"
 
 namespace itk
 {
@@ -315,7 +316,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
         }
       }
 
-      double mappedValue;
+      double mappedValue = NAN;
       if (j == 0)
       {
         // Linear interpolate from min to point[0]

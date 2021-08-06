@@ -347,8 +347,8 @@ public:
     }
 
     {
-      SImageType::PixelType dummyLow;
-      SImageType::PixelType dummyHigh;
+      SImageType::PixelType dummyLow = 0;
+      SImageType::PixelType dummyHigh = 0;
       // Find threshold below which image is considered background.
       m_BackgroundValue = setLowHigh<SImageType>(RefImage, dummyLow, dummyHigh, 0.1F);
     }

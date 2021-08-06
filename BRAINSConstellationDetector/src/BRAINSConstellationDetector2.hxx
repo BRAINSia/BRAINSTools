@@ -115,7 +115,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
   globalImagedebugLevel = this->m_WritedebuggingImagesLevel;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue;
+  short BackgroundFillValue = 0;
   if (this->m_BackgroundFillValueString == std::string("BIGNEG"))
   {
     BackgroundFillValue = -32768;

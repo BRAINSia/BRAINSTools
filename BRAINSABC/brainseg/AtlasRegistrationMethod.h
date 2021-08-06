@@ -58,7 +58,7 @@
 class EmptyVectorException
 {
 public:
-  EmptyVectorException(const char * pStr = "The list of input images was empty.  Nothing to averge.")
+  explicit EmptyVectorException(const char * pStr = "The list of input images was empty.  Nothing to averge.")
     : pMessage(pStr)
   {}
 

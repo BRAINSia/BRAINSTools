@@ -46,7 +46,7 @@ class landmarksConstellationDetector
   using ValMapType = std::map<std::string, float>;
 
 public:
-  landmarksConstellationDetector(const LandmarksMapType & orig_lmks)
+  explicit landmarksConstellationDetector(const LandmarksMapType & orig_lmks)
     : m_mspQualityLevel(1)
     , m_orig_lmks_updated{ orig_lmks } // Initialize the updated landmarks
     , m_orig_lmks_forced{ orig_lmks }

@@ -52,7 +52,7 @@ AllocVecImage(const itk::ImageBase<TImage::ImageDimension> * templateImage, unsi
 class inBadList
 {
 public:
-  inBadList(const std::vector<int> & list)
+  explicit inBadList(const std::vector<int> & list)
     : valueList(list)
   {}
   bool

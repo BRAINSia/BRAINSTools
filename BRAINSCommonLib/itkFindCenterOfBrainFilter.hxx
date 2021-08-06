@@ -26,6 +26,7 @@
 
 // #define USE_DEBUGGIN_IMAGES
 #include "itksys/SystemTools.hxx"
+#include "math.h"
 
 namespace itk
 {
@@ -110,7 +111,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
 
   // //////////////////////////////////////////////////////////////////////
   //  This will find maximum Superior physical location of all image voxels.
-  double maxSIDirection;
+  double maxSIDirection = NAN;
   {
     using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
     MaskIteratorType ItPixel(LFFimage, LFFimage->GetLargestPossibleRegion());

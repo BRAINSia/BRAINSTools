@@ -300,7 +300,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   {
     if (threadId == 0 && !(i % updateVisits))
     {
-      this->UpdateProgress((float)i / (float)totalPixels);
+      this->UpdateProgress(static_cast<float>(i) / static_cast<float>(totalPixels));
     }
 
     const auto srcValue = static_cast<double>(inIter.Get());

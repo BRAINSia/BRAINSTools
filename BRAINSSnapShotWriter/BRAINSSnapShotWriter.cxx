@@ -96,7 +96,7 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
         exit(EXIT_FAILURE);
       }
       unsigned int size = (referenceImage->GetBufferedRegion()).GetSize()[planes[i]];
-      unsigned int index = static_cast<unsigned int>((float)inputSliceToExtractInPercent[i] / 100.0F) * size;
+      unsigned int index = static_cast<unsigned int>(static_cast<float>(inputSliceToExtractInPercent[i]) / 100.0F) * size;
 
       std::cout << inputSliceToExtractInPercent[i] << "-->" << index << std::endl;
       sliceIndexToExtract.push_back(index);

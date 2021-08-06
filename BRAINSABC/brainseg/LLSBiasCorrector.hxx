@@ -623,7 +623,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
     coeffs = svd.solve(rhs);
   }
 #ifndef WIN32
-  if (!std::isfinite((double)coeffs[0][0]))
+  if (!std::isfinite(static_cast<double>(coeffs[0][0])))
 #else
   if (coeffs[0][0] != std::numeric_limits::infinity())
 #endif
@@ -751,7 +751,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                                     }
                                   }
                                   biasIntensityScaleFactor->SetPixel(
-                                    currOutIndex, (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
+                                    currOutIndex, static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                                 } // for currOutIndex[0]
                               }
                             }
@@ -778,7 +778,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                   {
                     multiplicitiveBiasCorrectionFactor = maxBiasInForegroundMask;
                     biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                       (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
+                                                       static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                   }
                   else if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask) //
                                                                                          //
@@ -786,7 +786,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                   {
                     multiplicitiveBiasCorrectionFactor = minBiasInForegroundMask;
                     biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                       (InternalImagePixelType)multiplicitiveBiasCorrectionFactor);
+                                                       static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                   }
 
                   typename MaskNNInterpolationType::OutputType allTissueMaskValue = 0;

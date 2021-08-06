@@ -640,5 +640,4 @@ sanitiy_check_binary_interpolation(const bool binaryFlag, const std::string & in
               << "          the signed distance map implied by your choice" << std::endl
               << "          of pixelType binary." << std::endl;
   }
-  return;
-}
+  }

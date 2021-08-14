@@ -62,7 +62,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
 {
   std::cout << "\nEstimating MSP..." << std::endl;
 
-  VersorTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorTransformType::New();
+  VersorRigidTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorRigidTransformType::New();
   this->m_orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
   const SImagePointType eyeFixed_lmk_CenterOfHeadMass =
     orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("CM"));
@@ -155,7 +155,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
   }
 
   // INFO: Compute Center of Head Mass differently
-  VersorTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorTransformType::New();
+  VersorRigidTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorRigidTransformType::New();
   this->m_eyeFixed2msp_img_tfm->GetInverse(local_eyeFixed2msp_lmk_tfm);
 
   SImageType::PointType msp_center_of_head_mass =
@@ -451,7 +451,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
       this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm(
         this->m_orig_lmks_updated["RP"], this->m_orig_lmks_updated["AC"], this->m_orig_lmks_updated["PC"]);
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
-      VersorTransformType::Pointer orig2msp_lmk_tfm =
+      VersorRigidTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform(this->m_orig2msp_img_tfm.GetPointer());
 
 

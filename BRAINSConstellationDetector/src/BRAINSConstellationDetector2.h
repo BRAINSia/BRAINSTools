@@ -150,7 +150,7 @@ public:
   itkSetMacro(InterpolationMode, std::string);
 
   /** Set Hough eye transform */
-  itkSetObjectMacro(orig2eyeFixed_img_tfm, VersorTransformType);
+  itkSetObjectMacro(orig2eyeFixed_img_tfm, VersorRigidTransformType);
 
   // TODO: Make LandmarksMapType a thin class with ostream overload
   //       so that `std::cout << _arg << std::endl;` works from itkSetMacro
@@ -181,8 +181,8 @@ public:
 
   // Get Basic Outputs
   /** Get the versor transform */
-  itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorTransformType);
-  itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorTransformType);
+  itkGetConstObjectMacro(OrigToACPCVersorTransform, VersorRigidTransformType);
+  itkGetConstObjectMacro(ACPCToOrigVersorTransform, VersorRigidTransformType);
 
 
   /** Get the aligned named points */
@@ -202,7 +202,7 @@ public:
   itkGetConstObjectMacro(CleanedIntensityOriginalInputImage, SImageType);
 
   /** Get the Hough eye transform */
-  itkGetModifiableObjectMacro(orig2eyeFixed_img_tfm, VersorTransformType);
+  itkGetModifiableObjectMacro(orig2eyeFixed_img_tfm, VersorRigidTransformType);
 
   /** Set the Hough eye failure report */
   void
@@ -313,7 +313,7 @@ protected:
   // Note: this->GetInput() will return a const input after Hough eye.
   SImageType::Pointer m_OriginalInputImage;
 
-  VersorTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
+  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
                                                         // location in the original
                                                         // space
 
@@ -327,8 +327,8 @@ protected:
   std::map<std::string, double>              m_SearchRadii;
 
   // Outputs
-  VersorTransformType::Pointer m_OrigToACPCVersorTransform;
-  VersorTransformType::Pointer m_ACPCToOrigVersorTransform;
+  VersorRigidTransformType::Pointer m_OrigToACPCVersorTransform;
+  VersorRigidTransformType::Pointer m_ACPCToOrigVersorTransform;
   LandmarksMapType             m_AlignedPoints;
   SImageType::Pointer          m_OutputImage; // Output image w/o
                                               // interpolation

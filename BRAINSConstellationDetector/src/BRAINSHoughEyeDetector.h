@@ -74,8 +74,8 @@ public:
   using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<TOutputImage>;
 
   /* Transform and filter type alias */
-  using VersorTransformType = VersorRigid3DTransform<double>;
-  using VersorVectorType = typename VersorTransformType::OutputVectorType;
+  using VersorRigidTransformType = VersorRigid3DTransform<double>;
+  using VersorVectorType = typename VersorRigidTransformType::OutputVectorType;
 
   using WriterType = ImageFileWriter<TInputImage>;
   using HoughFilterType = HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>;
@@ -166,7 +166,7 @@ public:
   itkGetConstMacro(MinInputPixelValue, OutputPixelType);
 
   /** Get the versor transform of the detector */
-  itkGetModifiableObjectMacro(orig2eyeFixedTransform, VersorTransformType);
+  itkGetModifiableObjectMacro(orig2eyeFixedTransform, VersorRigidTransformType);
 
   /** Get/Set the failure report */
   itkGetConstMacro(Failure, bool);
@@ -221,7 +221,7 @@ protected:
   OutputPixelType    m_MaxInputPixelValue;
   OutputPixelType    m_MinInputPixelValue;
 
-  VersorTransformType::Pointer m_orig2eyeFixedTransform;
+  VersorRigidTransformType::Pointer m_orig2eyeFixedTransform;
 
   // Eye Radius rages from 11-13 mm
   static constexpr double default_minimum_radius = 11.0; // mm

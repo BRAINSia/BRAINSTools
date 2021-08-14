@@ -121,8 +121,8 @@ ExtractTransform(typename itk::VersorRigid3DTransform<TScalarType>::Pointer & re
   // versor == rotation only
   if (IsClass(source, "VersorTransform"))
   {
-    using VersorTransformType = itk::VersorTransform<TScalarType>;
-    const auto * versorXfrm = dynamic_cast<const VersorTransformType *>(source);
+    using VersorRigidTransformType = itk::VersorTransform<TScalarType>;
+    const auto * versorXfrm = dynamic_cast<const VersorRigidTransformType *>(source);
 
     result->SetRotation(versorXfrm->GetVersor());
     result->SetCenter(versorXfrm->GetCenter());

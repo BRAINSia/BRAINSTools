@@ -313,7 +313,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
       itkUtil::WriteImage<SImageType>(VersorisoTaggedImage, this->m_ResultsDir + "/Versor_ISO_Lmk_MSP.nii.gz");
     }
     {
-      RigidTransformType::Pointer orig2msp_img_tfm = myDetector.Getorig2msp_img_tfm();
+      Euler3DTransformType::Pointer orig2msp_img_tfm = myDetector.Getorig2msp_img_tfm();
       SImageType::Pointer         msp_img =
         TransformResample<SImageType, SImageType>(TaggedOriginalImage.GetPointer(),
                                                   MakeIsoTropicReferenceImage().GetPointer(),

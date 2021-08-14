@@ -84,9 +84,9 @@ public:
   using ValueType = typename VectorType::ValueType;
 
   /** Quaternion conversion types for this class */
-  using VersorTransformType = itk::VersorTransform<TCoordinateType>;
-  using VersorTransformPointer = typename VersorTransformType::Pointer;
-  using VersorParametersType = typename VersorTransformType::ParametersType;
+  using VersorRigidTransformType = itk::VersorTransform<TCoordinateType>;
+  using VersorTransformPointer = typename VersorRigidTransformType::Pointer;
+  using VersorParametersType = typename VersorRigidTransformType::ParametersType;
 
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<TCoordinateType>;
   using VersorRigid3DTransformPointer = typename VersorRigid3DTransformType::Pointer;

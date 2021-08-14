@@ -68,9 +68,9 @@ main(int argc, char * argv[])
     LandmarksMapType alignedLandmarks;
 
     // computing the forward and inverse transform
-    RigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
+    VersorRigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
 
-    VersorTransformType::Pointer finalTransform = VersorTransformType::New();
+    VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ZeroCenteredTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation;
     const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
@@ -79,21 +79,21 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ZeroCenteredTransform->GetTranslation());
     // inverse transform
-    VersorTransformType::Pointer invFinalTransform = VersorTransformType::New();
+    VersorRigidTransformType::Pointer invFinalTransform = VersorRigidTransformType::New();
     SImageType::PointType        centerPoint = finalTransform->GetCenter();
     invFinalTransform->SetCenter(centerPoint);
     invFinalTransform->SetIdentity();
     finalTransform->GetInverse(invFinalTransform);
 
     // converting the original landmark file to the aligned landmark file
-    LandmarksMapType::const_iterator olit = origLandmarks.begin();
-    for (; olit != origLandmarks.end(); ++olit)
+
+    for (auto & origLandmark : origLandmarks)
     {
-      alignedLandmarks[olit->first] = invFinalTransform->TransformPoint(olit->second);
+      alignedLandmarks[origLandmark.first] = invFinalTransform->TransformPoint(origLandmark.second);
     }
     // writing the acpc-aligned landmark file
     WriteITKtoSlicer3Lmk(outputLandmarksPaired, alignedLandmarks);
-    std::cout << "The acpc-aligned landmark list file is written." << std::endl;
+    std::cout << "The acpc-aligned landmark list file is written: " << outputLandmarksPaired << std::endl;
 
       if (!outputTransform.empty()) {
           std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;

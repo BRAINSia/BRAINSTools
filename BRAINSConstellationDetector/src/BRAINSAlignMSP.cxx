@@ -89,7 +89,7 @@ DoIt(std::string         inputVolume,
     return remapIntensityFilter->GetOutput();
   }();
 
-  RigidTransformType::Pointer orig2msp_img_tfm = nullptr;
+  VersorRigidTransformType::Pointer orig2msp_img_tfm = nullptr;
 
   SImagePointType orig_lmk_CenterOfHeadMass;
   // load corresponding landmarks from file, and define MSP from those landmarks.
@@ -121,7 +121,7 @@ DoIt(std::string         inputVolume,
 
   if (!resampleMSPLandmarkPoints.empty() && !LandmarkPoints.empty())
   {
-    RigidTransformType::Pointer orig2msp_lmk_tfm = RigidTransformType::New();
+    Euler3DTransformType::Pointer orig2msp_lmk_tfm = Euler3DTransformType::New();
     orig2msp_img_tfm->GetInverse(orig2msp_lmk_tfm);
     if (orig2msp_lmk_tfm.IsNull())
     {

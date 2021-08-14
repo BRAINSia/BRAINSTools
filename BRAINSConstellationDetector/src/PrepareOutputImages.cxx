@@ -18,7 +18,6 @@
  *=========================================================================*/
 
 #include "itkIO.h"
-#include <BRAINSFitHelper.h>
 
 #include "PrepareOutputImages.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
@@ -32,11 +31,9 @@ SImageType::PointType
 GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::string & NamedPoint)
 {
   auto itpair = landmarks.find(NamedPoint);
-
   if (itpair == landmarks.end())
   {
-    std::cout << "ERROR:  " << NamedPoint << " not found in list." << std::endl;
-    return {};
+    itkGenericExceptionMacro(<< "ERROR:  " << NamedPoint << " not found in list." << std::endl);
   }
   return itpair->second;
 }
@@ -46,7 +43,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
                     SImageType::Pointer &                     lOutputImage,
                     SImageType::Pointer &                     lOutputUntransformedClippedVolume,
                     const SImageType::ConstPointer &          lImageToBeResampled,
-                    const VersorTransformType::ConstPointer & lVersorTransform,
+                    const VersorRigidTransformType::ConstPointer & lVersorTransform,
                     const double                              lACLowerBound,
                     const short int                           BackgroundFillValue,
                     const std::string &                       lInterpolationMode,
@@ -93,7 +90,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
       ChopImageBelowLowerBound<SImageType>(lOutputResampledImage, BackgroundFillValue, PhysicalLowerBound);
       ChopImageBelowLowerBound<SImageType>(lOutputImage, BackgroundFillValue, PhysicalLowerBound);
 
-      // Second Create a mask for inverse resampling to orignal space
+      // Second Create a mask for inverse resampling to original space
       SImageType::Pointer ZeroOneImage = SImageType::New();
       ZeroOneImage->CopyInformation(lOutputResampledImage);
       ZeroOneImage->SetRegions(lOutputResampledImage->GetLargestPossibleRegion());
@@ -143,7 +140,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
       ResampleFilter->SetDefaultPixelValue(0);
       ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
       {
-        VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
+        VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
         const SImageType::PointType  centerPoint = lVersorTransform->GetCenter();
         lInvVersorTransform->SetCenter(centerPoint);
         lInvVersorTransform->SetIdentity();
@@ -167,11 +164,11 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
 }
 
 void
-ApplyInverseOfTransformToLandmarks(const VersorTransformType::ConstPointer & lVersorTransform,
+ApplyInverseOfTransformToLandmarks(const VersorRigidTransformType::ConstPointer & lVersorTransform,
                                    const LandmarksMapType &                  inputLmks,
                                    LandmarksMapType &                        outputLmks)
 {
-  VersorTransformType::Pointer lInvVersorTransform = VersorTransformType::New();
+  VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
   {
     const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
     lInvVersorTransform->SetCenter(centerPoint);

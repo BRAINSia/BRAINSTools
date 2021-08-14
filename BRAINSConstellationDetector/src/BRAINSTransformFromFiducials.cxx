@@ -135,13 +135,15 @@ main(int argc, char * argv[])
 
   if (transformType == "Rigid")
   {
-    VersorRigidTransformType::Pointer rigidTransform = DoIt_Rigid(fixedPoints, movingPoints);
+    VersorRigidTransformType::Pointer rigidTransform =
+      ComputeRigidTransformFromLandmarkLists(fixedPoints, movingPoints);
     // do nothing
     genericTransform = rigidTransform.GetPointer();
   }
   else if (transformType == "Translation")
   {
-    VersorRigidTransformType::Pointer rigidTransform = DoIt_Rigid(fixedPoints, movingPoints);
+    VersorRigidTransformType::Pointer rigidTransform =
+      ComputeRigidTransformFromLandmarkLists(fixedPoints, movingPoints);
     // Clear out the computed rotation if we only requested translation
     itk::Versor<double> v;
     v.SetIdentity();

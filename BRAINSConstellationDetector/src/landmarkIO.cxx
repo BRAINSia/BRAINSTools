@@ -428,7 +428,7 @@ WriteMRMLFile(const std::string &                                   outputMRML,
               const std::string &                                   outputTransform,
               const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
               const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
-              const LandmarkIO::VersorTransformType::ConstPointer & versorTransform)
+              const LandmarkIO::VersorRigidTransformType::ConstPointer & versorTransform)
 {
   constexpr unsigned int      LocalImageDimension = 3;
   itk::NumberToString<double> doubleToString;

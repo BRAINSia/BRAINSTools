@@ -33,7 +33,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
                     SImageType::Pointer &                     lOutputImage,
                     SImageType::Pointer &                     lOutputUntransformedClippedVolume,
                     const SImageType::ConstPointer &          lImageToBeResampled,
-                    const VersorTransformType::ConstPointer & lVersorTransform,
+                    const VersorRigidTransformType::ConstPointer & lVersorTransform,
                     const double                              lACLowerBound,
                     const short int                           BackgroundFillValue,
                     const std::string &                       lInterpolationMode,
@@ -41,7 +41,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
                     const double                              lOtsuPercentileThreshold);
 
 extern void
-ApplyInverseOfTransformToLandmarks(const VersorTransformType::ConstPointer & lVersorTransform,
+ApplyInverseOfTransformToLandmarks(const VersorRigidTransformType::ConstPointer & lVersorTransform,
                                    const LandmarksMapType &                  inputLmks,
                                    LandmarksMapType &                        outputLmks);
 } // namespace itk

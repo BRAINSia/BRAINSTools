@@ -284,7 +284,7 @@ main(int argc, char * argv[])
 
     double c_c = 0;
 
-    RigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
+    VersorRigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
       ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
     const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
@@ -311,20 +311,20 @@ main(int argc, char * argv[])
     }
 
     // Compute the transform from original space to the AC-PC aligned space using Reflective Correlation method
-    //    RigidTransformType::Pointer invTmsp = RigidTransformType::New();
+    //    Euler3DTransformType::Pointer invTmsp = Euler3DTransformType::New();
     //    eyeFixed2msp_lmk_tfm->GetInverse(invTmsp);
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
     // AC and PC points
-    RigidTransformType::Pointer ACPC_AlignedTransform = computeTmspFromPoints(origRP, origAC, origPC, origin);
+    VersorRigidTransformType::Pointer ACPC_AlignedTransform = computeTmspFromPoints_Versor(origRP, origAC, origPC, origin);
 
-    // We cannot easily compute the Inverse transform by the following to lines, we need to use versor for percise
+    // We cannot easily compute the Inverse transform by the following two lines, we need to use versor for precise
     // transformation
-    //    RigidTransformType::Pointer ACPC_AlignedTransform_INV = RigidTransformType::New();
+    //    Euler3DTransformType::Pointer ACPC_AlignedTransform_INV = Euler3DTransformType::New();
     //    ACPC_AlignedTransform_INV->GetInverse(ACPC_AlignedTransform);
 
     // AC-PC aligned TRANSFORM
-    VersorTransformType::Pointer finalTransform = VersorTransformType::New();
+    VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ACPC_AlignedTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation; // was commented before
     const itk::Matrix<double, 3, 3> & NewCleanedOrthogonalized =
@@ -333,7 +333,7 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ACPC_AlignedTransform->GetTranslation());
     // inverse transform
-    VersorTransformType::Pointer  ACPC_AlignedTransform_INV = VersorTransformType::New();
+    VersorRigidTransformType::Pointer  ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
     const SImageType::PointType & centerPoint = finalTransform->GetCenter();
     ACPC_AlignedTransform_INV->SetCenter(centerPoint);
     ACPC_AlignedTransform_INV->SetIdentity();
@@ -392,7 +392,7 @@ main(int argc, char * argv[])
           myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep() * currentAngle;
         const float current_angle = degree_current_angle * itk::Math::pi / 180;
 
-        RigidTransformType::Pointer Point_Rotate = RigidTransformType::New();
+        Euler3DTransformType::Pointer Point_Rotate = Euler3DTransformType::New();
         Point_Rotate->SetCenter(transformedPoint);
         Point_Rotate->SetRotation(current_angle, 0, 0);
 

@@ -45,14 +45,14 @@ bool debug(false);
 bool globalverboseFlag(false);
 } // namespace LMC
 
-std::string globalResultsDir{"."}; // A global variable to define where
-                                   // output images are to be placed
-int globalImagedebugLevel(1000);   // A global variable to determine the
-                                   // level of debugging to perform.
+std::string globalResultsDir{ "." }; // A global variable to define where
+                                     // output images are to be placed
+int globalImagedebugLevel(1000);     // A global variable to determine the
+                                     // level of debugging to perform.
 
 using reflectionFunctorType = Rigid3DCenterReflectorFunctor<itk::PowellOptimizerv4<double>>;
 
-static RigidTransformType::Pointer
+static Euler3DTransformType::Pointer
 DoMultiQualityReflection(SImageType::Pointer &                  image,
                          const int                              qualityLevel,
                          const reflectionFunctorType::Pointer & reflectionFunctor)
@@ -94,16 +94,16 @@ DoMultiQualityReflection(SImageType::Pointer &                  image,
   return reflectionFunctor->GetTransformToMSP();
 }
 
-RigidTransformType::Pointer
+VersorRigidTransformType::Pointer
 ComputeMSP(SImageType::Pointer           input_image,
            const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
            double &                      cc)
 {
-  RigidTransformType::Pointer output_transform;
+  Euler3DTransformType::Pointer output_transform;
   if (qualityLevel == -1) // Assume image was pre-aligned outside of the program
   {
-    output_transform = RigidTransformType::New();
+    output_transform = Euler3DTransformType::New();
     output_transform->SetIdentity();
     cc = -654.321;
   }
@@ -115,7 +115,13 @@ ComputeMSP(SImageType::Pointer           input_image,
     output_transform = DoMultiQualityReflection(input_image, qualityLevel, reflectionFunctor);
     cc = reflectionFunctor->GetCC();
   }
-  return output_transform;
+
+  VersorRigidTransformType::Pointer versor_output_transform = VersorRigidTransformType::New();
+  versor_output_transform->SetIdentity();
+  versor_output_transform->SetTranslation(output_transform->GetTranslation());
+  versor_output_transform->SetCenter(output_transform->GetCenter());
+  versor_output_transform->SetMatrix(output_transform->GetMatrix());
+  return versor_output_transform;
 }
 
 void
@@ -152,7 +158,7 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
 
 SImageType::Pointer
 CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
-                      const RigidTransformType::Pointer & MSPTransform,
+                      const VersorRigidTransformType::Pointer & MSPTransform,
                       const std::string &                 debugfilename)
 {
   SImageType::PixelType low = 0;
@@ -212,7 +218,7 @@ CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
     }
   }
 
-  RigidTransformType::Pointer invMSPTransform = RigidTransformType::New();
+  Euler3DTransformType::Pointer invMSPTransform = Euler3DTransformType::New();
   MSPTransform->GetInverse(invMSPTransform);
   SImageType::Pointer RotatedPlane =
     TransformResample<SImageType, SImageType>(MSPImage.GetPointer(),
@@ -275,27 +281,27 @@ MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
   return MyPyramid;
 }
 
-//PyramidFilterType::Pointer
-//MakeOneLevelPyramid(const SImageType::Pointer & refImage)
+// PyramidFilterType::Pointer
+// MakeOneLevelPyramid(const SImageType::Pointer & refImage)
 //{
-//  PyramidFilterType::ScheduleType pyramidSchedule;
+//   PyramidFilterType::ScheduleType pyramidSchedule;
 //
-//  PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
+//   PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
 //
-//  MyPyramid->SetInput(refImage);
-//  MyPyramid->SetNumberOfLevels(1);
-//  pyramidSchedule.SetSize(1, 3);
+//   MyPyramid->SetInput(refImage);
+//   MyPyramid->SetNumberOfLevels(1);
+//   pyramidSchedule.SetSize(1, 3);
 //
-//  SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
-//  for (unsigned int c = 0; c < pyramidSchedule.cols(); ++c)
-//  {
-//    // about 8mm
-//    pyramidSchedule[0][c] = static_cast<unsigned int>(2 * round(4.0 / refImageSpacing[c]));
-//  }
-//  MyPyramid->SetSchedule(pyramidSchedule);
-//  MyPyramid->Update();
-//  return MyPyramid;
-//}
+//   SImageType::SpacingType refImageSpacing = refImage->GetSpacing();
+//   for (unsigned int c = 0; c < pyramidSchedule.cols(); ++c)
+//   {
+//     // about 8mm
+//     pyramidSchedule[0][c] = static_cast<unsigned int>(2 * round(4.0 / refImageSpacing[c]));
+//   }
+//   MyPyramid->SetSchedule(pyramidSchedule);
+//   MyPyramid->Update();
+//   return MyPyramid;
+// }
 
 // ////////////////////////////////////////////////////////////////////////
 //  This is a lightweight wrapper for FindCenterOfBrainBasedOnTopOfHead, which
@@ -405,12 +411,11 @@ DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints)
 
 
 VersorRigidTransformType::Pointer
-DoIt_Rigid(const PointList & fixedPoints, const PointList & movingPoints)
+ComputeRigidTransformFromLandmarkLists(const PointList & fixedPoints, const PointList & movingPoints)
 {
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
   VersorRigidTransformType::Pointer rigidTransform = VersorRigidTransformType::New();
-
   rigidTransform->SetIdentity();
 
   using InitializerType =
@@ -429,33 +434,28 @@ DoIt_Rigid(const PointList & fixedPoints, const PointList & movingPoints)
 }
 
 
-//
-//
-//
-// ////////////////////////////////////////////////////////////////////////////////////////////////
-RigidTransformType::Pointer
-computeTmspFromPoints(SImageType::PointType RP,
-                      SImageType::PointType AC,
-                      SImageType::PointType PC,
-                      SImageType::PointType DesiredCenter)
+VersorRigidTransformType::Pointer
+computeTmspFromPoints_Versor(SImageType::PointType RP,
+                             SImageType::PointType AC,
+                             SImageType::PointType PC,
+                             SImageType::PointType DesiredCenter)
 {
-
   PointList orig;
   orig.emplace_back(RP);
   orig.emplace_back(AC);
   orig.emplace_back(PC);
-  SImagePointType NEWAC = DesiredCenter;
+  const SImagePointType NEWAC = DesiredCenter;
   //  NEWAC[0] = 0.0;
   //  NEWAC[1] = 0.0;
   //  NEWAC[2] = 0.0;
   SImagePointType NEWPC;
   NEWPC[0] = 0.0;
-  SImageType::PointType::VectorType ACPC = PC - AC;
+  const SImageType::PointType::VectorType ACPC = PC - AC;
   NEWPC[1] = ACPC.GetNorm();
   NEWPC[2] = 0.0;
 
   // https://en.wikipedia.org/wiki/Vector_projection
-  SImageType::PointType::VectorType ACRP = RP - AC;
+  const SImageType::PointType::VectorType ACRP = RP - AC;
 
   SImagePointType NEWRP;
   NEWRP[0] = 0;
@@ -474,95 +474,57 @@ computeTmspFromPoints(SImageType::PointType RP,
   final.emplace_back(NEWPC);
 
   // Now convert the result to a Euler Transform.
-  auto                        versorBaseTransform = DoIt_Rigid(final, orig);
-  RigidTransformType::Pointer result = RigidTransformType::New();
+  auto versorBaseTransform = ComputeRigidTransformFromLandmarkLists(final, orig);
+  return versorBaseTransform;
+}
+
+Euler3DTransformType::Pointer
+VersorToEulerTransform( VersorRigidTransformType::Pointer versorBaseTransform)
+{
+  Euler3DTransformType::Pointer result = Euler3DTransformType::New();
   result->SetIdentity();
   result->SetCenter(versorBaseTransform->GetCenter());
   result->SetMatrix(versorBaseTransform->GetMatrix());
   result->SetTranslation(versorBaseTransform->GetTranslation());
   return result;
-
-#if 0
-  // a variable to store correlation coefficient values
-  SImageType::PointType::VectorType ACPC = PC - AC;
-
-  ACPC.Normalize();
-  SImageType::PointType::VectorType ACRP = RP - AC;
-
-  vnl_vector_fixed<double, 3> NormalToMSPPlane = vnl_cross_3d(ACPC.GetVnlVector(), ACRP.GetVnlVector());
-  // --std::cout << ACPC << "=" << PC << " - " << AC << std::endl;
-  // --std::cout << ACRP << "=" << RP << " - " << AC << std::endl;
-  // --std::cout << NormalToMSPPlane << std::endl;
-  SImageType::PointType::VectorType NormalToMSPPlaneVector;
-  NormalToMSPPlaneVector[0] = NormalToMSPPlane[0];
-  NormalToMSPPlaneVector[1] = NormalToMSPPlane[1];
-  NormalToMSPPlaneVector[2] = NormalToMSPPlane[2];
-  NormalToMSPPlaneVector.Normalize();
-  if (NormalToMSPPlaneVector[0] < 0)
-  {
-    NormalToMSPPlaneVector *= -1.0;
-  }
-
-  // --std::cout << "Norm: " << NormalToMSPPlaneVector << "     NORMACPC: " <<
-  // ACPC << std::endl;
-
-  // double
-  // PlaneNormalBank=-std::atan2(NormalToMSPPlaneVector[2],NormalToMSPPlaneVector[0]);
-  //  //Rotate the "Y" (i.e. Anterior to Posterior Axis)
-  // double PlaneNormalHeading=-std::acos(NormalToMSPPlaneVector[0]);
-  //               //Rotate the "Z" (i.e. Inferior to Superior Axis)
-
-  double PlaneNormalBank = -std::atan2(NormalToMSPPlaneVector[2], NormalToMSPPlaneVector[0]);
-  // Rotate the "Y" (i.e. Anterior to Posterior Axis)
-  double PlaneNormalHeading = std::sin(NormalToMSPPlaneVector[1]);
-  // Rotate the "Z" (i.e. Inferior to Superior Axis)
-  double PlaneNormalAttitude = std::sin(ACPC[2]);
-
-  SImageType::PointType::VectorType CenterOffset = AC.GetVectorFromOrigin() - DesiredCenter.GetVectorFromOrigin();
-
-  RigidTransformType::Pointer AlignMSPTransform = RigidTransformType::New();
-  AlignMSPTransform->SetCenter(DesiredCenter);
-  AlignMSPTransform->SetRotation(PlaneNormalAttitude, PlaneNormalBank, PlaneNormalHeading);
-  {
-    // Clean up the rotation to make it orthogonal:
-    const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
-      itk::Orthogonalize3DRotationMatrix(AlignMSPTransform->GetMatrix());
-    AlignMSPTransform->SetMatrix(CleanedOrthogonalized);
-  }
-  AlignMSPTransform->SetTranslation(CenterOffset);
-  if (LMC::globalverboseFlag)
-  {
-    std::cout << "\n============================" << CenterOffset << " \n" << AlignMSPTransform << std::endl;
-    std::cout << " \n" << AlignMSPTransform->GetTranslation() << std::endl;
-    std::cout << "============================\n" << std::endl;
-  }
-  return AlignMSPTransform;
-#endif
+}
+//
+//
+//
+// ////////////////////////////////////////////////////////////////////////////////////////////////
+Euler3DTransformType::Pointer
+computeTmspFromPoints(SImageType::PointType RP,
+                      SImageType::PointType AC,
+                      SImageType::PointType PC,
+                      SImageType::PointType DesiredCenter)
+{
+  auto versorBaseTransform = computeTmspFromPoints_Versor(RP,AC,PC, DesiredCenter);
+  return VersorToEulerTransform( versorBaseTransform);
 }
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
-RigidTransformType::Pointer
+VersorRigidTransformType::Pointer
 GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
 {
   SImageType::PointType ZeroCenter;
 
-  const auto orig_AC= GetNamedPointFromLandmarkList(landmarks, "AC");
+  const auto orig_AC = GetNamedPointFromLandmarkList(landmarks, "AC");
 
   ZeroCenter.Fill(0.0);
-  RigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
-    computeTmspFromPoints(GetNamedPointFromLandmarkList(landmarks, "RP"),
-                           orig_AC,
+  VersorRigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
+    computeTmspFromPoints_Versor(GetNamedPointFromLandmarkList(landmarks, "RP"),
+                          orig_AC,
                           GetNamedPointFromLandmarkList(landmarks, "PC"),
                           ZeroCenter);
 #if 1
-  RigidTransformType::Pointer inv_ptr = RigidTransformType::New();
+  Euler3DTransformType::Pointer inv_ptr = Euler3DTransformType::New();
   landmarkDefinedACPCAlignedToZeroTransform->GetInverse(inv_ptr);
-  RigidTransformType::InputPointType minor_offset_AC = inv_ptr->TransformPoint(orig_AC);
-  const auto orig_translation = inv_ptr->GetTranslation();
-  inv_ptr->SetTranslation(orig_translation - minor_offset_AC.GetVectorFromOrigin() );
+  Euler3DTransformType::InputPointType minor_offset_AC = inv_ptr->TransformPoint(orig_AC);
+  const auto                         orig_translation = inv_ptr->GetTranslation();
+  inv_ptr->SetTranslation(orig_translation - minor_offset_AC.GetVectorFromOrigin());
 
   inv_ptr->GetInverse(landmarkDefinedACPCAlignedToZeroTransform);
-// RigidTransformType::InputPointType updtminor_offset_AC = inv_ptr->TransformPoint(orig_AC);
+// Euler3DTransformType::InputPointType updtminor_offset_AC = inv_ptr->TransformPoint(orig_AC);
 //  std::cout << updtminor_offset_AC << std::endl;
 //  const auto updateorig_translation = landmarkDefinedACPCAlignedToZeroTransform->GetTranslation();
 //  std::cout << updateorig_translation << std::endl;
@@ -637,16 +599,16 @@ ShortToUChar(short in, short min, short max)
 }
 
 SImageType::Pointer
-CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
+CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
                                 /* const
                                   SImageType::PointType
                                   finalPoint_MSP, */
                                 const SImageType::PointType         itkNotUsed(PreMSP_Point),
                                 /*const*/ SImageType::Pointer &     image,
-                                const RigidTransformType::Pointer & Point_Rotate)
+                                const Euler3DTransformType::Pointer & Point_Rotate)
 {
   // ////// Compose test rotation with the translated ACPC alignment
-  RigidTransformType::Pointer Point_Centered_TestRotated = RigidTransformType::New();
+  Euler3DTransformType::Pointer Point_Centered_TestRotated = Euler3DTransformType::New();
 
   Point_Centered_TestRotated->SetFixedParameters(ACPC_MSP_AlignedTransform->GetFixedParameters());
   Point_Centered_TestRotated->SetParameters(ACPC_MSP_AlignedTransform->GetParameters());
@@ -661,7 +623,7 @@ CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_Ali
                                               GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
                                               Point_Centered_TestRotated.GetPointer());
 
-  RigidTransformType::Pointer invPoint_Centered_TestRotated = RigidTransformType::New();
+  Euler3DTransformType::Pointer invPoint_Centered_TestRotated = Euler3DTransformType::New();
   Point_Centered_TestRotated->GetInverse(invPoint_Centered_TestRotated);
   return image_Point_TestRotated;
 }

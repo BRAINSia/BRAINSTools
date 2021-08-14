@@ -44,11 +44,11 @@ local_to_string(unsigned int i)
 
 // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
 
-VersorTransformType::Pointer
+VersorRigidTransformType::Pointer
 landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
-  const VersorTransformType::ConstPointer & orig2msp_img_tfm)
+  const VersorRigidTransformType::ConstPointer & orig2msp_img_tfm)
 {
-  VersorTransformType::Pointer orig2msp_lmk_tfm = VersorTransformType::New();
+  VersorRigidTransformType::Pointer orig2msp_lmk_tfm = VersorRigidTransformType::New();
   SImageType::PointType        centerPoint = orig2msp_img_tfm->GetCenter();
   orig2msp_lmk_tfm->SetCenter(centerPoint);
   orig2msp_lmk_tfm->SetIdentity();
@@ -56,7 +56,7 @@ landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
   return orig2msp_lmk_tfm;
 }
 
-VersorTransformType::Pointer
+VersorRigidTransformType::Pointer
 landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType & RP,
                                                          const SImagePointType & AC,
                                                          const SImagePointType & PC)
@@ -64,9 +64,9 @@ landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType &
   SImageType::PointType ZeroCenter;
   ZeroCenter.Fill(0.0);
 
-  RigidTransformType::Pointer orig2msp_lmk_tfm_estimate = computeTmspFromPoints(RP, AC, PC, ZeroCenter);
+  Euler3DTransformType::Pointer orig2msp_lmk_tfm_estimate = computeTmspFromPoints(RP, AC, PC, ZeroCenter);
 
-  VersorTransformType::Pointer orig2msp_lmk_tfm_cleaned = VersorTransformType::New();
+  VersorRigidTransformType::Pointer orig2msp_lmk_tfm_cleaned = VersorRigidTransformType::New();
   orig2msp_lmk_tfm_cleaned->SetFixedParameters(orig2msp_lmk_tfm_estimate->GetFixedParameters());
 
   itk::Versor<double>               versorRotation;
@@ -252,7 +252,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     {
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-      const VersorTransformType::Pointer orig2msp_lmk_tfm =
+      const VersorRigidTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform(this->m_orig2msp_img_tfm.GetPointer());
       const VersorRigid3DTransformType::OutputPointType acPointInACPCSpace =
         orig2msp_lmk_tfm->TransformPoint(GetNamedPointFromLandmarkList(updated_orig_lmks, "AC"));
@@ -272,7 +272,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
   ////////////////////////////
 }
 
-VersorTransformType::Pointer
+VersorRigidTransformType::Pointer
 landmarksConstellationDetector::GetImageOrigToACPCVersorTransform() const
 {
   return m_orig2msp_img_tfm;
@@ -623,8 +623,8 @@ landmarksConstellationDetector::FindCandidatePoints(
 }
 
 void
-landmarksConstellationDetector::EulerToVersorRigid(VersorTransformType::Pointer &           result,
-                                                   const RigidTransformType::ConstPointer & eulerRigid)
+landmarksConstellationDetector::EulerToVersorRigid(VersorRigidTransformType::Pointer &           result,
+                                                   const Euler3DTransformType::ConstPointer & eulerRigid)
 {
   if (result.IsNotNull() && eulerRigid.IsNotNull())
   {
@@ -646,10 +646,10 @@ landmarksConstellationDetector::EulerToVersorRigid(VersorTransformType::Pointer 
 
 void
 landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer &         inputImg,
-                                                  const RigidTransformType::ConstPointer & rigidTx,
+                                                  const Euler3DTransformType::ConstPointer & rigidTx,
                                                   SImageType::Pointer &                    inPlaceResampledImg)
 {
-  VersorTransformType::Pointer versorRigidTx = VersorTransformType::New();
+  VersorRigidTransformType::Pointer versorRigidTx = VersorRigidTransformType::New();
   EulerToVersorRigid(versorRigidTx, rigidTx.GetPointer());
 
   using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<SImageType, SImageType>;

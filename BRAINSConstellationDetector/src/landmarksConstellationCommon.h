@@ -23,7 +23,7 @@
  */
 
 /**
- * This is a temporary file to be used during refactoring to help consolicate a family of functions into a common
+ * This is a temporary file to be used during refactoring to help consolidate a family of functions into a common
  * library.
  */
 #ifndef __landmarksConstellationCommon_h
@@ -32,10 +32,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+#include <algorithm>
 
 #include <numeric>
 #include <itksys/SystemTools.hxx>
 #include <string>
+
 #include "itkImage.h"
 #include "itkIO.h"
 
@@ -50,13 +53,10 @@
 
 #include "itkSpatialObjectToImageFilter.h"
 #include "itkRGBPixel.h"
-#include "itkIO.h"
 #include "itkExtractImageFilter.h"
 #include "itkStatisticsImageFilter.h"
 #include "itkFlipImageFilter.h"
 
-#include <iostream>
-#include "algorithm"
 #include "itkImageDuplicator.h"
 #include "itkEuler3DTransform.h"
 #include <vnl/vnl_cross.h>
@@ -68,6 +68,12 @@
 #include "itkSimilarity3DTransform.h"
 
 #include "Slicer3LandmarkIO.h"
+
+using ImagePointType = itk::Point<double, 3>;
+using PointList = std::vector<ImagePointType>;
+using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
+using SimilarityTransformType = itk::Similarity3DTransform<double>;
+using Euler3DTransformType = itk::Euler3DTransform<double>;
 
 extern const unsigned int NO;
 namespace LMC
@@ -95,8 +101,7 @@ using RGBPixelType = itk::RGBPixel<unsigned char>;
 using RGBImageType = itk::Image<RGBPixelType, 3>;
 using RGB2DImageType = itk::Image<RGBPixelType, 2>;
 
-using RigidTransformType = itk::Euler3DTransform<double>;
-using VersorTransformType = itk::VersorRigid3DTransform<double>;
+
 
 using PyramidFilterType = itk::MultiResolutionPyramidImageFilter<SImageType, SImageType>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<SImageType, double>;
@@ -119,13 +124,13 @@ extern unsigned char
 ShortToUChar(short in, short min, short max);
 
 extern SImageType::Pointer
-CreateTestCenteredRotatedImage2(const RigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
+CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_MSP_AlignedTransform,
                                 /* const
                                   SImageType::PointType
                                   finalPoint, */
                                 const SImageType::PointType         PreMSP_Point,
                                 /*const*/ SImageType::Pointer &     image,
-                                const RigidTransformType::Pointer & Point_Rotate);
+                                const Euler3DTransformType::Pointer & Point_Rotate);
 
 extern void
 decomposeRPAC(const SImageType::PointType & RP,
@@ -142,7 +147,7 @@ MakeLabelImage(const SImageType::Pointer &   in,
                const SImageType::PointType & VN4,
                const std::string &           fname);
 
-extern RigidTransformType::Pointer
+extern VersorRigidTransformType::Pointer
 ComputeMSP(SImageType::Pointer           input_image,
            const SImageType::PointType & input_image_center_of_mass,
            const int                     qualityLevel,
@@ -150,19 +155,25 @@ ComputeMSP(SImageType::Pointer           input_image,
 
 extern SImageType::Pointer
 CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
-                      const RigidTransformType::Pointer & MSPTransform,
+                      const VersorRigidTransformType::Pointer & MSPTransform,
                       const std::string &                 debugfilename);
 
 extern void
 CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename);
 
-extern RigidTransformType::Pointer
+extern VersorRigidTransformType::Pointer
+computeTmspFromPoints_Versor(SImageType::PointType RP,
+                      SImageType::PointType AC,
+                      SImageType::PointType PC,
+                      SImageType::PointType DesiredCenter);
+
+extern Euler3DTransformType::Pointer
 computeTmspFromPoints(SImageType::PointType RP,
                       SImageType::PointType AC,
                       SImageType::PointType PC,
                       SImageType::PointType DesiredCenter);
 
-extern RigidTransformType::Pointer
+extern VersorRigidTransformType::Pointer
 GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks);
 
 extern SImageType::PointType
@@ -361,15 +372,12 @@ setLowHigh(typename SImageType::Pointer &   image,
 }
 
 
-using ImagePointType = itk::Point<double, 3>;
-using PointList = std::vector<ImagePointType>;
-using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
-using SimilarityTransformType = itk::Similarity3DTransform<double>;
+
 
 extern SimilarityTransformType::Pointer
 DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints);
 
 extern VersorRigidTransformType::Pointer
-DoIt_Rigid(const PointList & fixedPoints, const PointList & movingPoints);
+ComputeRigidTransformFromLandmarkLists(const PointList & fixedPoints, const PointList & movingPoints);
 
 #endif //__landmarksConstellationCommon_h

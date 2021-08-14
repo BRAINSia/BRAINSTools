@@ -64,7 +64,7 @@ public:
   using FindCenterFilter = itk::FindCenterOfBrainFilter<ImageType>;
   using HoughEyeDetectorType = itk::BRAINSHoughEyeDetector<ImageType, ImageType>;
   using TransformWriterType = itk::TransformFileWriter;
-  using VersorTransformType = itk::VersorRigid3DTransform<double>;
+  using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
   std::string pathOut;
   std::string errorMsg;
 

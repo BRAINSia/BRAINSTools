@@ -313,7 +313,7 @@ public:
   }
 
 
-  RigidTransformType::Pointer
+  Euler3DTransformType::Pointer
   GetTransformToMSP() const
   {
     // Here we try to make MSP plane as the mid slice of the output image voxel lattice
@@ -322,9 +322,9 @@ public:
     SImageType::PointType physCenter = GetImageCenterPhysicalPoint(image);
 
     // Move the physical origin to the center of the image
-    RigidTransformType::Pointer tempEulerAngles3DT = RigidTransformType::New();
+    Euler3DTransformType::Pointer tempEulerAngles3DT = Euler3DTransformType::New();
     tempEulerAngles3DT->Compose(this->GetTransformFromParams(this->m_params));
-    RigidTransformType::TranslationType tnsl = tempEulerAngles3DT->GetTranslation();
+    Euler3DTransformType::TranslationType tnsl = tempEulerAngles3DT->GetTranslation();
 
     tempEulerAngles3DT->Translate(physCenter.GetVectorFromOrigin() - tnsl);
     return tempEulerAngles3DT;
@@ -383,10 +383,10 @@ public:
   }
 
   /* -- */
-  RigidTransformType::Pointer
+  Euler3DTransformType::Pointer
   GetTransformFromParams(ParametersType const & params) const
   {
-    RigidTransformType::Pointer tempEulerAngles3DT = RigidTransformType::New();
+    Euler3DTransformType::Pointer tempEulerAngles3DT = Euler3DTransformType::New();
 
     tempEulerAngles3DT->SetCenter(this->GetCenterOfHeadMass());
     tempEulerAngles3DT->SetRotation(0, params[1], params[0]);

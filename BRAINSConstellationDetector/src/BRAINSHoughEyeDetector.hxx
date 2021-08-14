@@ -58,8 +58,8 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
   using InputPointType = typename TInputImage::PointType;
 
   /* Transform and filter type alias */
-  using VersorTransformType = VersorRigid3DTransform<double>;
-  using VersorVectorType = typename VersorTransformType::OutputVectorType;
+  using VersorRigidTransformType = VersorRigid3DTransform<double>;
+  using VersorVectorType = typename VersorRigidTransformType::OutputVectorType;
 
   static constexpr unsigned int Dimension = TInputImage::ImageDimension;
   /*
@@ -201,7 +201,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
   this->m_MinInputPixelValue = 1234;
 
   /** Internal parameters */
-  this->m_orig2eyeFixedTransform = VersorTransformType::New();
+  this->m_orig2eyeFixedTransform = VersorRigidTransformType::New();
 }
 
 template <typename TInputImage, typename TOutputImage>

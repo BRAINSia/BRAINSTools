@@ -38,8 +38,8 @@
 namespace LandmarkIO
 {
 using MatrixType = vnl_matrix<double>;
-using VersorTransformType = itk::VersorRigid3DTransform<double>;
-using VersorTransformMatrixType = VersorTransformType::MatrixType;
+using VersorRigidTransformType = itk::VersorRigid3DTransform<double>;
+using VersorTransformMatrixType = VersorRigidTransformType::MatrixType;
 using DuplicatorType = itk::ImageDuplicator<SImageType>;
 } // namespace LandmarkIO
 
@@ -81,7 +81,7 @@ WriteMRMLFile(const std::string &                                   outputMRML,
               const std::string &                                   outputTransform,
               const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
               const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
-              const LandmarkIO::VersorTransformType::ConstPointer & versorTransform);
+              const LandmarkIO::VersorRigidTransformType::ConstPointer & versorTransform);
 
 // load linear least squares model for selected landmarks
 // .load from txt file

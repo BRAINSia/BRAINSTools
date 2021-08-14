@@ -106,10 +106,10 @@ public:
     return m_InputTemplateModel.GetRadius(PointName);
   }
 
-  RigidTransformType::Pointer
+  Euler3DTransformType::Pointer
   Getorig2msp_img_tfm() const
   {
-    RigidTransformType::Pointer value = RigidTransformType::New();
+    Euler3DTransformType::Pointer value = Euler3DTransformType::New();
 
     value->SetFixedParameters(this->m_eyeFixed2msp_img_tfm->GetFixedParameters());
     value->SetParameters(this->m_eyeFixed2msp_img_tfm->GetParameters());
@@ -123,7 +123,7 @@ public:
   }
 
   void
-  Setorig2eyeFixed_img_tfm(const VersorTransformType::Pointer & houghEyeTransform)
+  Setorig2eyeFixed_img_tfm(const VersorRigidTransformType::Pointer & houghEyeTransform)
   {
     this->m_orig2eyeFixed_img_tfm = houghEyeTransform;
   }
@@ -201,7 +201,7 @@ public:
     this->m_atlasLandmarkWeights = atlasLandmarkWeights;
   }
 
-  VersorTransformType::Pointer
+  VersorRigidTransformType::Pointer
   GetImageOrigToACPCVersorTransform() const;
   void
   ComputeFinalRefinedACPCAlignedTransform(const SImageType::Pointer & original_space_image,
@@ -210,12 +210,12 @@ public:
 protected:
 private:
   void
-  EulerToVersorRigid(VersorTransformType::Pointer &, const RigidTransformType::ConstPointer &);
+  EulerToVersorRigid(VersorRigidTransformType::Pointer &, const Euler3DTransformType::ConstPointer &);
 
   void
-  DoResampleInPlace(const SImageType::ConstPointer &, const RigidTransformType::ConstPointer &, SImageType::Pointer &);
+  DoResampleInPlace(const SImageType::ConstPointer &, const Euler3DTransformType::ConstPointer &, SImageType::Pointer &);
 
-  static VersorTransformType::Pointer
+  static VersorRigidTransformType::Pointer
   Compute_orig2msp_img_tfm(const SImagePointType & RP, const SImagePointType & AC, const SImagePointType & PC);
 
   static bool
@@ -224,8 +224,8 @@ private:
     return map.find(key) != map.cend();
   }
 
-  static VersorTransformType::Pointer
-  GetLandmarkTransformFromImageTransform(const VersorTransformType::ConstPointer & orig2msp_img_tfm);
+  static VersorRigidTransformType::Pointer
+  GetLandmarkTransformFromImageTransform(const VersorRigidTransformType::ConstPointer & orig2msp_img_tfm);
   // Linear model estimation using EPCA
   void
   LinearEstimation(LandmarksMapType &               msp_lmks_linearly_estimated,
@@ -279,10 +279,10 @@ private:
   // name list of the landmarks that should be treated as midline landmarks
   std::vector<std::string> m_MidlinePointsList;
 
-  RigidTransformType::Pointer  m_eyeFixed2msp_img_tfm;
-  VersorTransformType::Pointer m_orig2msp_img_tfm;
+  VersorRigidTransformType::Pointer  m_eyeFixed2msp_img_tfm;
+  VersorRigidTransformType::Pointer m_orig2msp_img_tfm;
 
-  VersorTransformType::Pointer m_orig2eyeFixed_img_tfm;
+  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm;
   bool                         m_HoughEyeFailure;
 
   // Store linear model parameters

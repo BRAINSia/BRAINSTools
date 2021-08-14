@@ -436,7 +436,7 @@ BRAINSConstellationDetectorPrimary::Compute()
 
   for (auto lit = constellation2->GetAlignedPoints().begin(); lit != constellation2->GetAlignedPoints().end(); ++lit)
   {
-    const VersorTransformType::OutputPointType transformedPoint =
+    const VersorRigidTransformType::OutputPointType transformedPoint =
       constellation2->GetOrigToACPCVersorTransform()->TransformPoint(lit->second);
     this->m_outputLandmarksInInputSpaceMap[lit->first] = transformedPoint;
   }

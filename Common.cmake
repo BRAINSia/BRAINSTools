@@ -533,12 +533,12 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
   # the RPATH to be used when installing, but only if it's not a system directory
   if(APPLE)
     #TODO set @rpath settings correctly, use full path for now
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../lib" "@executable_path/../lib/ITK-5.2" "@executable_path/ITK-5.2")
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../lib" "@executable_path/../lib/ITK-5.3" "@executable_path/ITK-5.3")
   else()
     # Most libararies are installed in ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
     list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
-    # ITK install path puts FFTW in lib subdirectory ITK-5.2
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/ITK-5.2" "\$ORIGIN/ITK-5.2")
+    # ITK install path puts FFTW in lib subdirectory ITK-5.3
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/ITK-5.3" "\$ORIGIN/ITK-5.3")
     #          Relative for binaries FROM:  /bin/prog.bin                                /lib/libitkXXXX.so
     # TBB install path is always "${CMAKE_INSTALL_PREFIX}/lib" even on rhel7
     list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib")

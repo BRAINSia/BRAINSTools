@@ -1,4 +1,4 @@
-#-----------------------------------------------------------------------------
+
 enable_testing()
 include(CTest)
 
@@ -74,6 +74,9 @@ include(CMakeParseArguments)
 #------------------------------------------------------------------------------
 if(NOT Slicer_BUILD_BRAINSTOOLS)
   ## HACK Force all shared libraries
+  set(BUILD_SHARED_LIBS OFF) ## Build everything static for non-slicer builds
+  set(EXTERNAL_BUILD_SHARED_LIBS OFF) ## Build external projects shared
+else()
   set(BUILD_SHARED_LIBS ON) ## Build everything static for non-slicer builds
   set(EXTERNAL_BUILD_SHARED_LIBS ON) ## Build external projects shared
 endif()

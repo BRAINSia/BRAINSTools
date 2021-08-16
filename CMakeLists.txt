@@ -37,8 +37,9 @@ set(LOCAL_PROJECT_NAME BRAINSTools) # <-- the primary product endpoint (Often ma
 project(${LOCAL_PROJECT_NAME}
    LANGUAGES  C CXX
    DESCRIPTION "BRAINSTools see github at https://github.com/BRAINSia/BRAINSTools" #<-- cmake version 3.9 or greater
-   VERSION 5.6.0
+   VERSION 5.7.0
 )
+# VERSION 5.7.0 Update ITK, VTK, ANTs, improve landmarksConstellationAligner with bug fix for finding RP point
 # VERSION 5.6.0 Update ITK, VTK, ANTs, Remove DCMTK external, and improve landmarksConstellationAligner
 # VERSION 5.5.0 The version that requires C++14 by default
 # VERSION 5.4.0 The version used to create the final PREDICTHD_BIDS_DEFACE dataset.

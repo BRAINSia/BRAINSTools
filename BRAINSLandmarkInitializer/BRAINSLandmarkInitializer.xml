@@ -3,7 +3,7 @@
   <category>Utilities.BRAINS</category>
   <title>BRAINSLandmarkInitializer</title>
   <description>Create transformation file (*.h5) from a pair of landmarks (*fcsv) files.</description>
-  <version>5.6.0</version>
+  <version>5.7.0</version>
   <documentation-url></documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>Eunyoung Regina Kim, Ali Ghayoor, and Hans J. Johnson</contributor>

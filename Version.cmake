@@ -11,13 +11,13 @@ include(ProjectSourceVersion)
 
 ## NOTE:    NEED TO MANUALLY UPDATE ALL XML FILES
 ##       -  vim $(git grep  -l "<version>" -- '*.xml')
-##                     :%s/< *version *> *[^<]*</<version>5.6.0</g
+##                     :%s/< *version *> *[^<]*</<version>5.7.0</g
 ##       -  manually modify CMakeList.txt to update version in project() command
 ##       -  manually edit CMake/ProjectSourceVersionVars.cmake and change version defaults
 ##       -  Change values in this file
-##       -  git commit -a -m"ENH: Updating version to v5.6.0"
-##       -  git tag -a v5.6.0 -m"ENH: Tagging v5.6.0"
-##       -  git push origin v5.6.0
+##       -  git commit -a -m"ENH: Updating version to v5.7.0"
+##       -  git tag -a v5.7.0 -m"ENH: Tagging v5.7.0"
+##       -  git push origin v5.7.0
 ##       -  git push origin --tags  ## DON'T forget to do this!
 ## See note above for updating versions
 #-- DON'T OVERRIDE projcet() set(${PROJECT_NAME}_VERSION_MAJOR ${_GIT_VERSION_MAJOR})

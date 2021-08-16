@@ -440,38 +440,36 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
                              SImageType::PointType PC,
                              SImageType::PointType DesiredCenter)
 {
-  PointList orig;
-  orig.emplace_back(RP);
-  orig.emplace_back(AC);
-  orig.emplace_back(PC);
-  const SImagePointType NEWAC = DesiredCenter;
-  //  NEWAC[0] = 0.0;
-  //  NEWAC[1] = 0.0;
-  //  NEWAC[2] = 0.0;
-  SImagePointType NEWPC;
-  NEWPC[0] = 0.0;
   const SImageType::PointType::VectorType ACPC = PC - AC;
-  NEWPC[1] = ACPC.GetNorm();
-  NEWPC[2] = 0.0;
-
-  // https://en.wikipedia.org/wiki/Vector_projection
   const SImageType::PointType::VectorType ACRP = RP - AC;
 
-  SImagePointType NEWRP;
-  NEWRP[0] = 0;
-  auto ACRPnorm = ACRP;
-  ACRPnorm.Normalize();
-  NEWRP[1] = dot_product(ACPC.GetVnlVector(), ACRPnorm.GetVnlVector());
-  // double theta = ACPC/
-  const auto a = ACPC.GetVnlVector();
-  const auto b = ACRP.GetVnlVector();
-  const auto rej = a - ((dot_product(a, b) / dot_product(b, b)) * b);
-  NEWRP[2] = -rej.magnitude();
+  const SImagePointType & NEWAC = DesiredCenter;
+
+  const SImagePointType NEWPC{{
+  DesiredCenter[0] + 0.0,
+  DesiredCenter[1] + ACPC.GetNorm(),
+  DesiredCenter[2] + 0.0
+  }};
+  // https://en.wikipedia.org/wiki/Vector_projection
+  const auto b = ACPC.GetVnlVector();
+  const auto a = ACRP.GetVnlVector();
+  const auto a1_projection = (dot_product(a, b)/dot_product(b,b))*b;
+  const auto a2_rejection = a - a1_projection;
+  const SImagePointType NEWRP{{
+  DesiredCenter[0] + 0.0,
+  DesiredCenter[0] + a1_projection.magnitude(),
+  DesiredCenter[0] + -a2_rejection.magnitude()
+  }};
+
+  PointList orig;
+  orig.emplace_back(AC);
+  orig.emplace_back(PC);
+  orig.emplace_back(RP);
 
   PointList final;
-  final.emplace_back(NEWRP);
   final.emplace_back(NEWAC);
   final.emplace_back(NEWPC);
+  final.emplace_back(NEWRP);
 
   // Now convert the result to a Euler Transform.
   auto versorBaseTransform = ComputeRigidTransformFromLandmarkLists(final, orig);
@@ -516,19 +514,6 @@ GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
                           orig_AC,
                           GetNamedPointFromLandmarkList(landmarks, "PC"),
                           ZeroCenter);
-#if 1
-  Euler3DTransformType::Pointer inv_ptr = Euler3DTransformType::New();
-  landmarkDefinedACPCAlignedToZeroTransform->GetInverse(inv_ptr);
-  Euler3DTransformType::InputPointType minor_offset_AC = inv_ptr->TransformPoint(orig_AC);
-  const auto                         orig_translation = inv_ptr->GetTranslation();
-  inv_ptr->SetTranslation(orig_translation - minor_offset_AC.GetVectorFromOrigin());
-
-  inv_ptr->GetInverse(landmarkDefinedACPCAlignedToZeroTransform);
-// Euler3DTransformType::InputPointType updtminor_offset_AC = inv_ptr->TransformPoint(orig_AC);
-//  std::cout << updtminor_offset_AC << std::endl;
-//  const auto updateorig_translation = landmarkDefinedACPCAlignedToZeroTransform->GetTranslation();
-//  std::cout << updateorig_translation << std::endl;
-#endif
   return landmarkDefinedACPCAlignedToZeroTransform;
 }
 

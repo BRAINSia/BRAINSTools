@@ -27,7 +27,7 @@ list(APPEND ExternalData_OBJECT_STORES
 set(ExternalData_BINARY_ROOT ${CMAKE_BINARY_DIR}/ExternalData)
 
 # Expands %(algo:lower)
-set(ExternalData_URL_ALGO_MD5_lower md5)
+set(ExternalData_URL_ALGO_SHA512_lower sha512)
 set(ExternalData_URL_TEMPLATES "" CACHE STRING
   "Additional URL templates for the ExternalData CMake script to look for testing data. E.g.
 file:///var/bigharddrive/%(algo)/%(hash)")

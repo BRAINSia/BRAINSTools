@@ -127,7 +127,7 @@ install(FILES ${BRAINSBUILD_FILES}
 #=======================================================================
 # Install the common build scripts for BRAINS tools in a common location
 #=======================================================================
-file(GLOB_RECURSE BRAINSTEST_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/TestData" "*.md5")
+file(GLOB_RECURSE BRAINSTEST_FILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/TestData" "*.sha512")
 set(TESTFILES_TO_INSTALL "")
 foreach(TESTFILE ${BRAINSTEST_FILES})
   #message(STATUS "### ${TESTFILE} ${CMAKE_CURRENT_BINARY_DIR}/TestData/${TESTFILE}")

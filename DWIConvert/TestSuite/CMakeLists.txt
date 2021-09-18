@@ -5,8 +5,8 @@ set(DWITarDir ${TestData_DIR}/DWI_TestData_TARBALLS)
 
 #make sure: tarballs are stored in /scratch/hxie1/Projects/BrainsToolsBuild/ExternalData/TestData/DWI_TestData_TARBALLS/
 # 1 upload testcase file into BRAINSTools/Public/ in http://slicer.kitware.com;
-# 2 download the key file(MD5);
-# 3 put the MD5 file into /Volumes/scratch/hxie1/Projects/BRAINSTools/TestData/DWI_TestData_TARBALLS;
+# 2 download the key file(SHA512);
+# 3 put the SHA512 file into /Volumes/scratch/hxie1/Projects/BRAINSTools/TestData/DWI_TestData_TARBALLS;
 # 4 rerun CCMake, then Ctest will automatically find it and download it
 
 set(ALL_DICOM_TARBALLS

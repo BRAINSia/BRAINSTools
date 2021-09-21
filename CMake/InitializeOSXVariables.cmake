@@ -112,14 +112,14 @@ if(APPLE)
     endif()
   endif()
 
-    # Require minimum deployment target of 10.9. In 10.9 libc++ replaces libstdc++
+    # In 10.9 libc++ replaces libstdc++
     # as the default runtime. Requiring this minimum ensures that all libraries
     # use libc++.
-    set(required_deployment_target "10.11")
+    set(required_deployment_target "10.13")
   ## See https://doc.qt.io/qt-5.11/supported-platforms-and-configurations.html for supported versions of qt
-  ## Provide backwards compatibility levels equal to QT support (i.e. 10.14 QT 5.12 also supports 10.13, and 10.12)
+  ## Provide backwards compatibility levels equal to QT support (i.e. 10.14 QT 5.12 also supports 10.13, and 10.13)
   if(NOT CMAKE_OSX_DEPLOYMENT_TARGET)
-    if( _CURRENT_OSX_VERSION VERSION_GREATER "10.12" )
+    if( _CURRENT_OSX_VERSION VERSION_GREATER "10.13" )
        set(CMAKE_OSX_DEPLOYMENT_TARGET "${_CURRENT_OSX_VERSION}" CACHE STRING "Force deployment target to 10.14" FORCE)
     else()
        set(CMAKE_OSX_DEPLOYMENT_TARGET "${required_deployment_target}" CACHE STRING "Force deployment target to 10.14" FORCE)
@@ -132,9 +132,9 @@ if(APPLE)
   if("x${CMAKE_OSX_DEPLOYMENT_TARGET}x" STREQUAL "xx")
     string(REGEX MATCH "MacOSX([0-9]+\\.[0-9]+)\\.sdk" _match "${CMAKE_OSX_SYSROOT}")
     set(SDK_VERSION "${CMAKE_MATCH_1}")
-    if( "${SDK_VERSION}" VERSION_LESS "10.11" )
+    if( "${SDK_VERSION}" VERSION_LESS "10.13" )
       message(FATAL_ERROR
-        "The ${SDK_VERSION} (<10.11) and OSX_DEPLOYMENT_TARGET are not supported!\n"
+        "The ${SDK_VERSION} (<10.13) and OSX_DEPLOYMENT_TARGET are not supported!\n"
         )
     endif()
   endif()

@@ -102,8 +102,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
   set(vtk_git_protocol "https")
   set(${proj}_GIT_REPOSITORY "${vtk_git_protocol}://gitlab.kitware.com/vtk/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  #set(${proj}_GIT_TAG "262ea6e1c5336a3f91fa6eb4007e19ac1185d2e1")   # 20210609
-  set(${proj}_GIT_TAG "a827c3bad7411c976a2fbb4064910ce12d67c6cf")   # 20210805
+  set(${proj}_GIT_TAG "af2cd258dfc90200937c4bd07bf74144a2516cd9")   # 20210921
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -125,6 +124,12 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}
       -DModule_vtkIOXML:BOOL=ON
       -DModule_vtkIOXMLParser:BOOL=ON
+## Disable vtk dicom that conflicts with itk dcmtk with duplicate symbols
+VTK_GROUP_ENABLE_MPI:STRING=DONT_WANT
+VTK_MODULE_ENABLE_VTK_DICOMParser:STRING=DONT_WANT
+VTK_MODULE_ENABLE_VTK_vtkDICOM:STRING=DONT_WANT
+VTK_ENABLE_WRAPPING:BOOL=OFF
+##
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}
       # ZLIB

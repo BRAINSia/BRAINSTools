@@ -90,10 +90,6 @@ using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
 using StructuringElementType = itk::BinaryBallStructuringElement<InputPixelType, BRAINSMush::Dimension>;
 } // namespace
 
-ImageType::Pointer LoadImage(std::string);
-
-MaskImageType::Pointer LoadMaskImage(std::string);
-
 MaskImageType::Pointer
 GenerateInitializerRegion(ImageType::Pointer & referenceImage,
                           std::vector<int>     boundingBoxSize,

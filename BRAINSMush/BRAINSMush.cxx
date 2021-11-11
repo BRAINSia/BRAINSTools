@@ -33,7 +33,7 @@ Minimal Input Example:
 #include "itkBinaryErodeImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"
 #include "itkConnectedComponentImageFilter.h"
-#include "itkConnectedThresholdImageFilter.h"
+//#include "itkConnectedThresholdImageFilter.h"
 #include "itkImageFileReader.h"
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
@@ -43,124 +43,131 @@ Minimal Input Example:
 
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 
+
 #include <fstream>
 #include <string>
 #include <BRAINSCommonLib.h>
+#include <itkIO.h>
 
 #define PR(x)                                                                                                          \
-  std::cout << #x " = " << x << "\n"; // a simple print macro for
-                                      // use when debugging
+  std::cout << #x " = " << (x) << "\n"; // a simple print macro for
+                                        // use when debugging
 
-int
-main(int argc, char ** argv)
+ImageType::Pointer
+MixtureOptimizer(ImageType::Pointer &     firstImage,
+                 ImageType::Pointer &     secondImage,
+                 MaskImageType::Pointer & maskImage,
+                 double                   desiredMean,
+                 double                   desiredVariance,
+                 std::string              outputWeightsFile)
 {
-  PARSE_ARGS;
-  BRAINSRegisterAlternateIO();
-  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  using MixtureStatisticCostFunctionType = itk::MixtureStatisticCostFunction<ImageType, ImageType>;
+  MixtureStatisticCostFunctionType::Pointer twoByTwoCostFunction = MixtureStatisticCostFunctionType::New();
+  twoByTwoCostFunction->SetDesiredMean(desiredMean);
+  twoByTwoCostFunction->SetDesiredVariance(desiredVariance);
+  twoByTwoCostFunction->SetFirstImage(firstImage);
+  twoByTwoCostFunction->SetSecondImage(secondImage);
+  twoByTwoCostFunction->SetImageMask(maskImage);
+  twoByTwoCostFunction->Initialize(1);
 
-  bool debug = true;
-  if (debug)
-  {
-    std::cout << "First Mixture Component Image: " << inputFirstVolume << std::endl;
-    std::cout << "Second Mixture Component Image: " << inputSecondVolume << std::endl;
-    std::cout << "Region Of Interest Image Mask: " << inputMaskVolume << std::endl;
-    std::cout << "Desired Mean: " << desiredMean << std::endl;
-    std::cout << "Desired Variance: " << desiredVariance << std::endl;
+  std::cout << "---------------------------------------------------" << std::endl;
+  std::cout << "Initialized MixtureStatisticCostFunction! " << std::endl;
+  std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-    std::cout << "Seed Point: {" << seed[0] << ", " << seed[1] << ", " << seed[2] << "}" << std::endl;
+  const double firstMean = static_cast<double>(twoByTwoCostFunction->GetSumOfFirstMaskVoxels()) /
+                           static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
+  const double secondMean = static_cast<double>(twoByTwoCostFunction->GetSumOfSecondMaskVoxels()) /
+                            static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
 
-    std::cout << "Bounding Box Size: {" << boundingBoxSize[0] << ", " << boundingBoxSize[1] << ", "
-              << boundingBoxSize[2] << "}" << std::endl;
+  using LevenbergMarquardtOptimizerType = itk::LevenbergMarquardtOptimizer;
+  LevenbergMarquardtOptimizerType::Pointer twoByTwoOptimizer = LevenbergMarquardtOptimizerType::New();
+  twoByTwoOptimizer->SetUseCostFunctionGradient(false);
+  twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction);
+  LevenbergMarquardtOptimizerType::ParametersType initialParameters(2);
+  initialParameters[0] = firstMean * desiredMean / firstMean;
+  initialParameters[1] = secondMean * desiredMean / secondMean;
+  twoByTwoOptimizer->SetInitialPosition(initialParameters);
 
-    std::cout << "Bounding Box Start: {" << boundingBoxStart[0] << ", " << boundingBoxStart[1] << ", "
-              << boundingBoxStart[2] << "}" << std::endl;
+  std::cout << "---------------------------------------------------" << std::endl;
+  std::cout << "Updating Levenberg-Marquardt Optimizer... " << std::endl;
+  std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-    std::cout << "Output Image Name: " << outputVolume << std::endl;
-    std::cout << "Output Mask Name: " << outputMask << std::endl;
-    std::cout << "Output Weights File: " << outputWeightsFile << std::endl;
-    std::cout << "Preliminary Lower Threshold Factor: " << lowerThresholdFactorPre << std::endl;
-    std::cout << "Preliminary Upper Threshold Factor: " << upperThresholdFactorPre << std::endl << std::endl;
-    std::cout << "Main Lower Threshold Factor: " << lowerThresholdFactor << std::endl;
-    std::cout << "Main Upper Threshold Factor: " << upperThresholdFactor << std::endl << std::endl;
-  }
-  /* ------------------------------------------------------------------------------------
-   * Load Images
-   */
-  ImageType::Pointer firstImage = LoadImage(inputFirstVolume.c_str());
-
-  ImageType::Pointer secondImage = LoadImage(inputSecondVolume.c_str());
-
-  /* ------------------------------------------------------------------------------------
-   * Load or automatically generate the MaskImage to define the region on which
-   * to optimize mixture image uniformity.
-   * In the case where no mask was given on the command line, the method calls
-   * for GenerateBrainVolume to be run twice.
-   * Twice.
-   */
-  MaskImageType::Pointer maskImage = MaskImageType::New();
-
-  if (inputMaskVolume == "no_mask_exists") // "no_mask_exists" is the default
-                                           // when no mask is specified on
-                                           // command line
-  {
-    MaskImageType::Pointer boxImage = GenerateInitializerRegion(firstImage, boundingBoxSize, boundingBoxStart);
-    GenerateBrainVolume(firstImage,
-                        secondImage,
-                        boxImage,
-                        inputMaskVolume,
-                        desiredMean,
-                        desiredVariance,
-                        lowerThresholdFactorPre,
-                        upperThresholdFactorPre,
-                        boundingBoxSize,
-                        boundingBoxStart,
-                        //      seed,
-                        outputVolume,
-                        //  outputMask,
-                        outputWeightsFile,
-                        maskImage);
-    inputMaskVolume = "The_mask_was_generated"; // used as an anti-sentinel
-  }
-  else
-  {
-    maskImage = LoadMaskImage(inputMaskVolume);
-  }
-
-  // Use the MaskImage from above to define the region on which to optimize
-  // mixture image uniformity.
-  MaskImageType::Pointer resultImage = MaskImageType::New();
-  GenerateBrainVolume(firstImage,
-                      secondImage,
-                      maskImage,
-                      inputMaskVolume,
-                      desiredMean,
-                      desiredVariance,
-                      lowerThresholdFactor,
-                      upperThresholdFactor,
-                      boundingBoxSize,
-                      boundingBoxStart,
-                      //  seed,
-                      outputVolume,
-                      //    outputMask,
-                      outputWeightsFile,
-                      resultImage);
-
-  MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
-  maskWriter->SetInput(resultImage);
-  maskWriter->SetFileName(outputMask);
   try
   {
-    maskWriter->Update();
+    twoByTwoOptimizer->StartOptimization();
   }
   catch (itk::ExceptionObject & exp)
   {
+    std::cerr << "LMO FAIL" << std::endl;
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;
   }
+  // End of Sending to Optimizer
+  /* ------------------------------------------------------------------------------------
+   */
 
-  return 0;
+  LevenbergMarquardtOptimizerType::ParametersType optimalParameters = twoByTwoOptimizer->GetCurrentPosition();
+  LevenbergMarquardtOptimizerType::MeasureType    optimalMeasures = twoByTwoOptimizer->GetValue();
 
-  // End of Output
+  std::cout << "---------------------------------------------------" << std::endl;
+  std::cout << "Obtained Output from Levenberg-Marquardt Optimizer!" << std::endl;
+  std::cout << "---------------------------------------------------" << std::endl << std::endl;
+
+  /* ------------------------------------------------------------------------------------
+   * Save the optimization:  one line with the image coeficients in order,
+   * and one line with the error measure ito desired mean and variance.  Print
+   * it all out, too.
+   */
+  const double firstWeight = optimalParameters[0];
+  const double secondWeight = optimalParameters[1];
+
+  std::cout << "First Weight:  " << firstWeight << std::endl;
+  std::cout << "Second Weight:  " << secondWeight << std::endl;
+  std::cout << "Optimality of Mean:  " << optimalMeasures[0] << std::endl;
+  std::cout << "Optimality of Variance:  " << optimalMeasures[1] << std::endl << std::endl;
+
+  // write a text file named outputWeightsFile
+
+  std::ofstream to(outputWeightsFile.c_str());
+  if (to.is_open())
+  {
+    to << firstWeight << "  " << secondWeight << std::endl;
+    to << optimalMeasures[0] << "  " << optimalMeasures[1] << std::endl;
+    to.close();
+  }
+  else
+  {
+    std::cout << "Can't open file for writing! --- " << outputWeightsFile << std::endl;
+  }
+
+  /* ------------------------------------------------------------------------------------
+   * declare and compute mixtureImage.
+   */
+
+  ImageType::Pointer mixtureImage = ImageType::New();
+  mixtureImage->SetRegions(firstImage->GetLargestPossibleRegion());
+  mixtureImage->SetSpacing(firstImage->GetSpacing());
+  mixtureImage->SetOrigin(firstImage->GetOrigin());
+  mixtureImage->SetDirection(firstImage->GetDirection());
+  mixtureImage->Allocate();
+
+  ConstIteratorType firstIt(firstImage, firstImage->GetRequestedRegion());
+  ConstIteratorType secondIt(secondImage, secondImage->GetRequestedRegion());
+
+  using MixtureIteratorType = itk::ImageRegionIterator<ImageType>;
+  MixtureIteratorType mixtureIt(mixtureImage, mixtureImage->GetRequestedRegion());
+  for (mixtureIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !mixtureIt.IsAtEnd();
+       ++mixtureIt, ++firstIt, ++secondIt)
+  {
+    PixelType firstValue = firstIt.Get();
+    PixelType secondValue = secondIt.Get();
+
+    double mixtureValue = firstWeight * firstValue + secondWeight * secondValue;
+
+    mixtureIt.Set(mixtureValue);
+  }
+
+  return mixtureImage;
 }
 
 void
@@ -378,8 +385,8 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ImageType, MaskImageType>;
   BinaryThresholdFilterType::Pointer threshToHeadMask = BinaryThresholdFilterType::New();
   threshToHeadMask->SetInput(mixtureImage);
-  threshToHeadMask->SetLowerThreshold(lower);
-  threshToHeadMask->SetUpperThreshold(upper);
+  threshToHeadMask->SetLowerThreshold(static_cast<float>(lower));
+  threshToHeadMask->SetUpperThreshold(static_cast<float>(upper));
   threshToHeadMask->SetInsideValue(1);
   threshToHeadMask->SetOutsideValue(0);
 
@@ -603,8 +610,9 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   resultImage = LFF->GetOutput();
 }
 
+
 ImageType::Pointer
-LoadImage(std::string imageName)
+LoadImage(const std::string & imageName)
 {
   ReaderType::Pointer loadImageReader = ReaderType::New();
 
@@ -625,7 +633,7 @@ LoadImage(std::string imageName)
 }
 
 MaskImageType::Pointer
-LoadMaskImage(std::string imageName)
+LoadMaskImage(const std::string & imageName)
 {
   MaskReaderType::Pointer loadImageReader = MaskReaderType::New();
 
@@ -684,118 +692,115 @@ GenerateInitializerRegion(ImageType::Pointer & referenceImage,
   return initializeMask;
 }
 
-ImageType::Pointer
-MixtureOptimizer(ImageType::Pointer &     firstImage,
-                 ImageType::Pointer &     secondImage,
-                 MaskImageType::Pointer & maskImage,
-                 double                   desiredMean,
-                 double                   desiredVariance,
-                 std::string              outputWeightsFile)
+
+int
+main(int argc, char ** argv)
 {
-  using MixtureStatisticCostFunctionType = itk::MixtureStatisticCostFunction<ImageType, ImageType>;
-  MixtureStatisticCostFunctionType::Pointer twoByTwoCostFunction = MixtureStatisticCostFunctionType::New();
-  twoByTwoCostFunction->SetDesiredMean(desiredMean);
-  twoByTwoCostFunction->SetDesiredVariance(desiredVariance);
-  twoByTwoCostFunction->SetFirstImage(firstImage);
-  twoByTwoCostFunction->SetSecondImage(secondImage);
-  twoByTwoCostFunction->SetImageMask(maskImage);
-  twoByTwoCostFunction->Initialize(1);
+  PARSE_ARGS;
+  BRAINSRegisterAlternateIO();
+  const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  std::cout << "---------------------------------------------------" << std::endl;
-  std::cout << "Initialized MixtureStatisticCostFunction! " << std::endl;
-  std::cout << "---------------------------------------------------" << std::endl << std::endl;
-
-  double firstMean = twoByTwoCostFunction->GetSumOfFirstMaskVoxels() / twoByTwoCostFunction->GetNumberOfMaskVoxels();
-  double secondMean = twoByTwoCostFunction->GetSumOfSecondMaskVoxels() / twoByTwoCostFunction->GetNumberOfMaskVoxels();
-  double jointFactor = 1.0 / (firstMean + secondMean);
-
-  using LevenbergMarquardtOptimizerType = itk::LevenbergMarquardtOptimizer;
-  LevenbergMarquardtOptimizerType::Pointer twoByTwoOptimizer = LevenbergMarquardtOptimizerType::New();
-  twoByTwoOptimizer->SetUseCostFunctionGradient(false);
-  twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction);
-  LevenbergMarquardtOptimizerType::ParametersType initialParameters(2);
-  initialParameters[0] = firstMean * jointFactor;
-  initialParameters[1] = secondMean * jointFactor;
-  twoByTwoOptimizer->SetInitialPosition(initialParameters);
-
-  std::cout << "---------------------------------------------------" << std::endl;
-  std::cout << "Updating Levenberg-Marquardt Optimizer... " << std::endl;
-  std::cout << "---------------------------------------------------" << std::endl << std::endl;
-
-  try
+  bool debug = true;
+  if (debug)
   {
-    twoByTwoOptimizer->StartOptimization();
+    std::cout << "First Mixture Component Image: " << inputFirstVolume << std::endl;
+    std::cout << "Second Mixture Component Image: " << inputSecondVolume << std::endl;
+    std::cout << "Region Of Interest Image Mask: " << inputMaskVolume << std::endl;
+    std::cout << "Desired Mean: " << desiredMean << std::endl;
+    std::cout << "Desired Variance: " << desiredVariance << std::endl;
+
+    std::cout << "Seed Point: {" << seed[0] << ", " << seed[1] << ", " << seed[2] << "}" << std::endl;
+
+    std::cout << "Bounding Box Size: {" << boundingBoxSize[0] << ", " << boundingBoxSize[1] << ", "
+              << boundingBoxSize[2] << "}" << std::endl;
+
+    std::cout << "Bounding Box Start: {" << boundingBoxStart[0] << ", " << boundingBoxStart[1] << ", "
+              << boundingBoxStart[2] << "}" << std::endl;
+
+    std::cout << "Output Image Name: " << outputVolume << std::endl;
+    std::cout << "Output Mask Name: " << outputMask << std::endl;
+    std::cout << "Output Weights File: " << outputWeightsFile << std::endl;
+    std::cout << "Preliminary Lower Threshold Factor: " << lowerThresholdFactorPre << std::endl;
+    std::cout << "Preliminary Upper Threshold Factor: " << upperThresholdFactorPre << std::endl << std::endl;
+    std::cout << "Main Lower Threshold Factor: " << lowerThresholdFactor << std::endl;
+    std::cout << "Main Upper Threshold Factor: " << upperThresholdFactor << std::endl << std::endl;
   }
-  catch (itk::ExceptionObject & exp)
-  {
-    std::cerr << "LMO FAIL" << std::endl;
-    std::cerr << "Exception caught !" << std::endl;
-    std::cerr << exp << std::endl;
-  }
-  // End of Sending to Optimizer
   /* ------------------------------------------------------------------------------------
+   * Load Images
    */
+  ImageType::Pointer firstImage = LoadImage(inputFirstVolume.c_str());
 
-  LevenbergMarquardtOptimizerType::ParametersType optimalParameters = twoByTwoOptimizer->GetCurrentPosition();
-  LevenbergMarquardtOptimizerType::MeasureType    optimalMeasures = twoByTwoOptimizer->GetValue();
-
-  std::cout << "---------------------------------------------------" << std::endl;
-  std::cout << "Obtained Output from Levenberg-Marquardt Optimizer!" << std::endl;
-  std::cout << "---------------------------------------------------" << std::endl << std::endl;
+  ImageType::Pointer secondImage = LoadImage(inputSecondVolume.c_str());
 
   /* ------------------------------------------------------------------------------------
-   * Save the optimization:  one line with the image coeficients in order,
-   * and one line with the error measure ito desired mean and variance.  Print
-   * it all out, too.
+   * Load or automatically generate the MaskImage to define the region on which
+   * to optimize mixture image uniformity.
+   * In the case where no mask was given on the command line, the method calls
+   * for GenerateBrainVolume to be run twice.
+   * Twice.
    */
-  const double firstWeight = optimalParameters[0];
-  const double secondWeight = optimalParameters[1];
+  MaskImageType::Pointer maskImage = MaskImageType::New();
 
-  std::cout << "First Weight:  " << firstWeight << std::endl;
-  std::cout << "Second Weight:  " << secondWeight << std::endl;
-  std::cout << "Optimality of Mean:  " << optimalMeasures[0] << std::endl;
-  std::cout << "Optimality of Variance:  " << optimalMeasures[1] << std::endl << std::endl;
-
-  // write a text file named outputWeightsFile
-
-  std::ofstream to(outputWeightsFile.c_str());
-  if (to.is_open())
+  if (inputMaskVolume == "no_mask_exists") // "no_mask_exists" is the default
+                                           // when no mask is specified on
+                                           // command line
   {
-    to << firstWeight << "  " << secondWeight << std::endl;
-    to << optimalMeasures[0] << "  " << optimalMeasures[1] << std::endl;
-    to.close();
+    MaskImageType::Pointer boxImage = GenerateInitializerRegion(firstImage, boundingBoxSize, boundingBoxStart);
+    GenerateBrainVolume(firstImage,
+                        secondImage,
+                        boxImage,
+                        inputMaskVolume,
+                        desiredMean,
+                        desiredVariance,
+                        lowerThresholdFactorPre,
+                        upperThresholdFactorPre,
+                        boundingBoxSize,
+                        boundingBoxStart,
+                        //      seed,
+                        outputVolume,
+                        //  outputMask,
+                        outputWeightsFile,
+                        maskImage);
+    inputMaskVolume = "The_mask_was_generated"; // used as an anti-sentinel
   }
   else
   {
-    std::cout << "Can't open file for writing! --- " << outputWeightsFile << std::endl;
+    maskImage = LoadMaskImage(inputMaskVolume);
   }
 
-  /* ------------------------------------------------------------------------------------
-   * declare and compute mixtureImage.
-   */
+  // Use the MaskImage from above to define the region on which to optimize
+  // mixture image uniformity.
+  MaskImageType::Pointer resultImage = MaskImageType::New();
+  GenerateBrainVolume(firstImage,
+                      secondImage,
+                      maskImage,
+                      inputMaskVolume,
+                      desiredMean,
+                      desiredVariance,
+                      lowerThresholdFactor,
+                      upperThresholdFactor,
+                      boundingBoxSize,
+                      boundingBoxStart,
+                      //  seed,
+                      outputVolume,
+                      //    outputMask,
+                      outputWeightsFile,
+                      resultImage);
 
-  ImageType::Pointer mixtureImage = ImageType::New();
-  mixtureImage->SetRegions(firstImage->GetLargestPossibleRegion());
-  mixtureImage->SetSpacing(firstImage->GetSpacing());
-  mixtureImage->SetOrigin(firstImage->GetOrigin());
-  mixtureImage->SetDirection(firstImage->GetDirection());
-  mixtureImage->Allocate();
-
-  ConstIteratorType firstIt(firstImage, firstImage->GetRequestedRegion());
-  ConstIteratorType secondIt(secondImage, secondImage->GetRequestedRegion());
-
-  using MixtureIteratorType = itk::ImageRegionIterator<ImageType>;
-  MixtureIteratorType mixtureIt(mixtureImage, mixtureImage->GetRequestedRegion());
-  for (mixtureIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !mixtureIt.IsAtEnd();
-       ++mixtureIt, ++firstIt, ++secondIt)
+  MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
+  maskWriter->SetInput(resultImage);
+  maskWriter->SetFileName(outputMask);
+  try
   {
-    PixelType firstValue = firstIt.Get();
-    PixelType secondValue = secondIt.Get();
-
-    double mixtureValue = firstWeight * firstValue + secondWeight * secondValue;
-
-    mixtureIt.Set(mixtureValue);
+    maskWriter->Update();
+  }
+  catch (itk::ExceptionObject & exp)
+  {
+    std::cerr << "Exception caught !" << std::endl;
+    std::cerr << exp << std::endl;
   }
 
-  return mixtureImage;
+  return 0;
+
+  // End of Output
 }

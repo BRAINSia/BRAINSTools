@@ -77,6 +77,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetValue(const Paramete
   sumsq = sumsq - m_DesiredVariance;
   m_Measure[0] = sum * sum;
   m_Measure[1] = sumsq * sumsq;
+  std::cout << "DBG: m_Measure " << m_Measure << "\t" << parameters << std::endl;
   return m_Measure;
 }
 

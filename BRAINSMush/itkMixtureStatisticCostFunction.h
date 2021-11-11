@@ -44,6 +44,7 @@
 #include "itkProgressReporter.h"
 #include "itkMultipleValuedCostFunction.h"
 
+
 namespace itk
 {
 template <typename TFirstImage, typename TSecondImage>
@@ -151,7 +152,6 @@ public:
 protected:
   MixtureStatisticCostFunction();
   ~MixtureStatisticCostFunction() override;
-
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
@@ -161,24 +161,22 @@ protected:
   mutable ImageMaskPointer m_ImageMask;
 
 private:
-  double m_DesiredMean;
-  double m_DesiredVariance;
+  double m_DesiredMean{};
+  double m_DesiredVariance{};
 
-  double m_NumberOfMaskVoxels;
-  double m_SumOfFirstMaskVoxels;
-  double m_SumOfSecondMaskVoxels;
-  double m_SumSquaresOfFirstMaskVoxels;
-  double m_SumSquaresOfSecondMaskVoxels;
-  double m_SumOfFirstTimesSecondMaskVoxels;
+  double m_NumberOfMaskVoxels{};
+  double m_SumOfFirstMaskVoxels{};
+  double m_SumOfSecondMaskVoxels{};
+  double m_SumSquaresOfFirstMaskVoxels{};
+  double m_SumSquaresOfSecondMaskVoxels{};
+  double m_SumOfFirstTimesSecondMaskVoxels{};
 
   /** Different arrays. */
-  mutable MeasureType    m_Measure;
-  mutable MeasureType *  m_MeasurePointer;
-  mutable ParametersType m_Parameters;
+  mutable MeasureType   m_Measure;
+  mutable MeasureType * m_MeasurePointer;
+  // mutable ParametersType m_Parameters;
 };
 } // end namespace itk
-#ifndef ITK_MANUAL_INSTANTIATION
-#  include "itkMixtureStatisticCostFunction.hxx"
-#endif
 
+#include "itkMixtureStatisticCostFunction.hxx"
 #endif

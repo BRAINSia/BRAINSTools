@@ -145,9 +145,10 @@ Iavg(typename ImageType::Pointer input1, int nimgs)
   image->SetRegions(input1->GetLargestPossibleRegion());
   image->CopyInformation(input1);
   image->Allocate();
-  using ConstIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  ConstIteratorType in1(input1, input1->GetLargestPossibleRegion());
-  ConstIteratorType out(image, image->GetLargestPossibleRegion());
+  using lConstIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
+  lConstIteratorType in1(input1, input1->GetLargestPossibleRegion());
+  using IteratorType = typename itk::ImageRegionIterator<ImageType>;
+  IteratorType out(image, image->GetLargestPossibleRegion());
   for (in1.GoToBegin(), out.GoToBegin(); !in1.IsAtEnd(); ++in1, ++out)
   {
     out.Set(in1.Get() / nimgs);

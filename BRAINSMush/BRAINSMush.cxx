@@ -40,7 +40,7 @@ Minimal Input Example:
 #include "itkLabelStatisticsImageFilter.h"
 #include "itkRelabelComponentImageFilter.h"
 #include "itkThresholdImageFilter.h"
-
+#include "itkAmoebaOptimizer.h"
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 
 
@@ -79,17 +79,16 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   const double secondMean = static_cast<double>(twoByTwoCostFunction->GetSumOfSecondMaskVoxels()) /
                             static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
 
-  using LevenbergMarquardtOptimizerType = itk::LevenbergMarquardtOptimizer;
-  LevenbergMarquardtOptimizerType::Pointer twoByTwoOptimizer = LevenbergMarquardtOptimizerType::New();
-  twoByTwoOptimizer->SetUseCostFunctionGradient(false);
-  twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction);
-  LevenbergMarquardtOptimizerType::ParametersType initialParameters(2);
-  initialParameters[0] = firstMean * desiredMean / firstMean;
-  initialParameters[1] = secondMean * desiredMean / secondMean;
+  using OptimizerType = itk::AmoebaOptimizer;
+  OptimizerType::Pointer twoByTwoOptimizer = OptimizerType::New();
+  //  twoByTwoOptimizer->SetUseCostFunctionGradient(false);
+  twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction.GetPointer());
+  OptimizerType::ParametersType initialParameters(1);
+  initialParameters[0] = firstMean / secondMean;
   twoByTwoOptimizer->SetInitialPosition(initialParameters);
 
   std::cout << "---------------------------------------------------" << std::endl;
-  std::cout << "Updating Levenberg-Marquardt Optimizer... " << std::endl;
+  std::cout << "Updating Optimizer... " << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
   try
@@ -106,8 +105,8 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   /* ------------------------------------------------------------------------------------
    */
 
-  LevenbergMarquardtOptimizerType::ParametersType optimalParameters = twoByTwoOptimizer->GetCurrentPosition();
-  LevenbergMarquardtOptimizerType::MeasureType    optimalMeasures = twoByTwoOptimizer->GetValue();
+  OptimizerType::ParametersType optimalParameters = twoByTwoOptimizer->GetCurrentPosition();
+  OptimizerType::MeasureType    optimalMeasures = twoByTwoOptimizer->GetValue();
 
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Obtained Output from Levenberg-Marquardt Optimizer!" << std::endl;
@@ -118,21 +117,18 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
    * and one line with the error measure ito desired mean and variance.  Print
    * it all out, too.
    */
-  const double firstWeight = optimalParameters[0];
-  const double secondWeight = optimalParameters[1];
+  const double secondImageBlendValue = optimalParameters[0];
 
-  std::cout << "First Weight:  " << firstWeight << std::endl;
-  std::cout << "Second Weight:  " << secondWeight << std::endl;
-  std::cout << "Optimality of Mean:  " << optimalMeasures[0] << std::endl;
-  std::cout << "Optimality of Variance:  " << optimalMeasures[1] << std::endl << std::endl;
+  std::cout << "First Weight:  " << secondImageBlendValue << std::endl;
+  std::cout << "Optimality of Variance:  " << optimalMeasures << std::endl << std::endl;
 
   // write a text file named outputWeightsFile
 
   std::ofstream to(outputWeightsFile.c_str());
   if (to.is_open())
   {
-    to << firstWeight << "  " << secondWeight << std::endl;
-    to << optimalMeasures[0] << "  " << optimalMeasures[1] << std::endl;
+    to << secondImageBlendValue << "  " << std::endl;
+    to << optimalMeasures << "  " << optimalMeasures << std::endl;
     to.close();
   }
   else
@@ -162,7 +158,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
     PixelType firstValue = firstIt.Get();
     PixelType secondValue = secondIt.Get();
 
-    double mixtureValue = firstWeight * firstValue + secondWeight * secondValue;
+    double mixtureValue = firstValue + secondImageBlendValue * secondValue;
 
     mixtureIt.Set(mixtureValue);
   }
@@ -308,7 +304,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       std::cerr << "Exception caught ! " << std::endl;
       std::cerr << excp << std::endl;
-      // return EXIT_FAILURE;
+      return;
     }
 
     using binaryErodeFilterType = itk::BinaryErodeImageFilter<MaskImageType, MaskImageType, StructuringElementType>;
@@ -357,7 +353,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       std::cerr << "Exception caught ! " << std::endl;
       std::cerr << excp << std::endl;
-      // return EXIT_FAILURE;
+      return EXIT_FAILURE;
     }
 
     // using StatisticRealType = LabelFilterType::RealType;
@@ -385,8 +381,10 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ImageType, MaskImageType>;
   BinaryThresholdFilterType::Pointer threshToHeadMask = BinaryThresholdFilterType::New();
   threshToHeadMask->SetInput(mixtureImage);
-  threshToHeadMask->SetLowerThreshold(static_cast<float>(lower));
-  threshToHeadMask->SetUpperThreshold(static_cast<float>(upper));
+  auto smaller = lower < upper ? lower : upper;
+  auto larger = lower < upper ? upper : lower;
+  threshToHeadMask->SetLowerThreshold(static_cast<float>(smaller));
+  threshToHeadMask->SetUpperThreshold(static_cast<float>(larger));
   threshToHeadMask->SetInsideValue(1);
   threshToHeadMask->SetOutsideValue(0);
 

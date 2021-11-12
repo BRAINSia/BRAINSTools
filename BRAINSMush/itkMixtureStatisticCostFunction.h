@@ -16,24 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-/*=========================================================================
- *
- *  Program:   Insight Segmentation & Registration Toolkit
- *  Module:    $RCSfile: itkMixtureStatisticsCostFunction.h,v $
- *  Language:  C++
- *  Date:      $Date: 2007-03-29 19:37:00 $
- *  Version:   $Revision: 1.14 $
- *
- *  Copyright (c) Insight Software Consortium. All rights reserved.
- *  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
- *
- *  This software is distributed WITHOUT ANY WARRANTY; without even
- *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the above copyright notices for more information.
- *
- *  =========================================================================*/
-#ifndef __itkMixtureStatisticsCostFunction_h
-#define __itkMixtureStatisticsCostFunction_h
+#ifndef itkMixtureStatisticsCostFunction_h_
+#define itkMixtureStatisticsCostFunction_h_
 
 #include "itkImageBase.h"
 #include "itkImage.h"
@@ -42,20 +26,20 @@
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkNumericTraits.h"
 #include "itkProgressReporter.h"
-#include "itkMultipleValuedCostFunction.h"
+#include "itkSingleValuedCostFunction.h"
 
 
 namespace itk
 {
 template <typename TFirstImage, typename TSecondImage>
-class MixtureStatisticCostFunction : public MultipleValuedCostFunction
+class MixtureStatisticCostFunction : public SingleValuedCostFunction
 {
 public:
   ITK_DISALLOW_COPY_AND_MOVE(MixtureStatisticCostFunction);
 
   /** Standard type alias. */
   using Self = MixtureStatisticCostFunction;
-  using Superclass = MultipleValuedCostFunction;
+  using Superclass = SingleValuedCostFunction;
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
@@ -119,10 +103,7 @@ public:
   itkGetMacro(SumOfFirstTimesSecondMaskVoxels, double);
 
   /** The dimensions of parameter space. */
-  enum
-  {
-    SpaceDimension = 2
-  };
+  static constexpr unsigned int ParameterSpaceDimension = 2;
 
   /** Not necessary for this optimizer. */
   void
@@ -133,17 +114,17 @@ public:
   MeasureType
   GetValue(const ParametersType & parameters) const override;
 
-  /** Return a pointer of values evaluated for the given parameters. */
-  MeasureType *
-  GetValue(ParametersType & parameters);
+  //  /** Return a pointer of values evaluated for the given parameters. */
+  //  MeasureType *
+  //  GetValue(ParametersType & parameters);
 
   /** Get the SpaceDimension. */
   unsigned int
   GetNumberOfParameters() const override;
-
-  /** Get the number Range Dimension. */
-  unsigned int
-  GetNumberOfValues() const override;
+  //
+  //  /** Get the number Range Dimension. */
+  //  unsigned int
+  //  GetNumberOfValues() const override;
 
   /** Initialize */
   void
@@ -161,7 +142,8 @@ protected:
   mutable ImageMaskPointer m_ImageMask;
 
 private:
-  double m_DesiredMean{};
+  static constexpr int number_of_unkowns{ 1 };
+  double               m_DesiredMean{};
   double m_DesiredVariance{};
 
   double m_NumberOfMaskVoxels{};
@@ -171,12 +153,10 @@ private:
   double m_SumSquaresOfSecondMaskVoxels{};
   double m_SumOfFirstTimesSecondMaskVoxels{};
 
-  /** Different arrays. */
+  /** Measurement value. */
   mutable MeasureType   m_Measure;
-  mutable MeasureType * m_MeasurePointer;
-  // mutable ParametersType m_Parameters;
 };
 } // end namespace itk
 
 #include "itkMixtureStatisticCostFunction.hxx"
-#endif
+#endif // itkMixtureStatisticsCostFunction_h_

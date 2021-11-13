@@ -51,18 +51,15 @@ public:
 
   /**  Type of the First Image. */
   using FirstImageType = TFirstImage;
-  using FirstImagePixelType = typename TFirstImage::PixelType;
   using FirstImageConstPointer = typename FirstImageType::ConstPointer;
 
   /**  Type of the Second Image. */
   using SecondImageType = TSecondImage;
-  using SecondImagePixelType = typename TFirstImage::PixelType;
   using SecondImageConstPointer = typename SecondImageType::ConstPointer;
-  using SecondImageRegionType = typename SecondImageType::RegionType;
 
-  /** Constants for the image dimensions */
-  static constexpr unsigned int FirstImageDimension = TFirstImage::ImageDimension;
-  static constexpr unsigned int SecondImageDimension = TSecondImage::ImageDimension;
+  ///** Constants for the image dimensions */
+  // static constexpr unsigned int FirstImageDimension = TFirstImage::ImageDimension;
+  // static constexpr unsigned int SecondImageDimension = TSecondImage::ImageDimension;
 
   /** Array Typedefs. */
   using ParametersType = Superclass::ParametersType;
@@ -95,15 +92,15 @@ public:
   itkGetMacro(DesiredVariance, double);
   itkSetMacro(DesiredVariance, double);
 
-  itkGetMacro(NumberOfMaskVoxels, double);
-  itkGetMacro(SumOfFirstMaskVoxels, double);
-  itkGetMacro(SumOfSecondMaskVoxels, double);
-  itkGetMacro(SumSquaresOfFirstMaskVoxels, double);
-  itkGetMacro(SumSquaresOfSecondMaskVoxels, double);
-  itkGetMacro(SumOfFirstTimesSecondMaskVoxels, double);
+  //  itkGetMacro(NumberOfMaskVoxels, double);
+  //  itkGetMacro(SumOfFirstMaskVoxels, double);
+  //  itkGetMacro(SumOfSecondMaskVoxels, double);
+  //  itkGetMacro(SumSquaresOfFirstMaskVoxels, double);
+  //  itkGetMacro(SumSquaresOfSecondMaskVoxels, double);
+  //  itkGetMacro(SumOfFirstTimesSecondMaskVoxels, double);
 
   /** The dimensions of parameter space. */
-  static constexpr unsigned int ParameterSpaceDimension = 2;
+  static constexpr unsigned int number_of_unknowns = 1;
 
   /** Not necessary for this optimizer. */
   void
@@ -142,19 +139,18 @@ protected:
   mutable ImageMaskPointer m_ImageMask;
 
 private:
-  static constexpr int number_of_unkowns{ 1 };
-  double               m_DesiredMean{};
+  double m_DesiredMean{};
   double m_DesiredVariance{};
 
-  double m_NumberOfMaskVoxels{};
-  double m_SumOfFirstMaskVoxels{};
-  double m_SumOfSecondMaskVoxels{};
-  double m_SumSquaresOfFirstMaskVoxels{};
-  double m_SumSquaresOfSecondMaskVoxels{};
-  double m_SumOfFirstTimesSecondMaskVoxels{};
+  //  double m_NumberOfMaskVoxels{};
+  //  double m_SumOfFirstMaskVoxels{};
+  //  double m_SumOfSecondMaskVoxels{};
+  //  double m_SumSquaresOfFirstMaskVoxels{};
+  //  double m_SumSquaresOfSecondMaskVoxels{};
+  //  double m_SumOfFirstTimesSecondMaskVoxels{};
 
   /** Measurement value. */
-  mutable MeasureType   m_Measure;
+  mutable MeasureType m_Measure;
 };
 } // end namespace itk
 

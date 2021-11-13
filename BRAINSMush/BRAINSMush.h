@@ -16,29 +16,8 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-/*=========================================================================
- *
- *  Program:   BRAINS (Brain Research: Analysis of Images, Networks, and
- * Systems)
- *  Module:    $RCSfile: $
- *  Language:  TCL
- *  Date:      $Date: 2006/03/29 14:53:40 $
- *  Version:   $Revision: 1.9 $
- *
- *  Copyright (c) Iowa Mental Health Clinical Research Center. All rights
- * reserved.
- *  See BRAINSCopyright.txt or
- * http://www.psychiatry.uiowa.edu/HTML/Copyright.html
- *  for details.
- *
- *  This software is distributed WITHOUT ANY WARRANTY; without even
- *  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- *  PURPOSE.  See the above copyright notices for more information.
- *
- *  =========================================================================*/
-
-#ifndef __BrainMUSH_h__
-#define __BrainMUSH_h__
+#ifndef BrainMUSH_h_
+#define BrainMUSH_h_
 
 #include <iostream>
 #include <fstream>
@@ -76,12 +55,12 @@ using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
 using MaskPixelType = signed short;
 using MaskImageType = itk::Image<MaskPixelType, 3>;
-using MaskIndexType = MaskImageType::IndexType;
+// using MaskIndexType = MaskImageType::IndexType;
 
 using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
 
 using ReaderType = itk::ImageFileReader<ImageType>;
-using MaskReaderType = itk::ImageFileReader<MaskImageType>;
+// using MaskReaderType = itk::ImageFileReader<MaskImageType>;
 
 using ConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
 using MaskIteratorType = itk::ImageRegionIterator<MaskImageType>;
@@ -89,6 +68,12 @@ using ConstMaskIteratorType = itk::ImageRegionConstIterator<MaskImageType>;
 
 using StructuringElementType = itk::BinaryBallStructuringElement<InputPixelType, BRAINSMush::Dimension>;
 } // namespace
+
+ImageType::Pointer
+LoadImage(const std::string &);
+
+MaskImageType::Pointer
+LoadMaskImage(const std::string &);
 
 MaskImageType::Pointer
 GenerateInitializerRegion(ImageType::Pointer & referenceImage,
@@ -120,4 +105,4 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
                     std::string              outputWeightsFile,
                     MaskImageType::Pointer & resultImage);
 
-#endif /* __BrainMUSH_h__ */
+#endif /* BrainMUSH_h_ */

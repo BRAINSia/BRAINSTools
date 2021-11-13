@@ -49,10 +49,63 @@ Minimal Input Example:
 #include <BRAINSCommonLib.h>
 #include <itkIO.h>
 
-#define PR(x)                                                                                                          \
-  std::cout << #x " = " << (x) << "\n"; // a simple print macro for
-                                        // use when debugging
+// a simple print macro for use when debugging
+#define PR(x) std::cout << #x " = " << (x) << "\n";
 
+#undef USE_EASYMIXTURE_VARIANT
+#ifdef USE_EASYMIXTURE_VARIANT
+#  include <itkNormalizeImageFilter.h>
+ImageType::Pointer
+EZMixtureOptimizer(ImageType::Pointer &     firstImage,
+                   ImageType::Pointer &     secondImage,
+                   MaskImageType::Pointer & maskImage)
+{
+  ImageType::Pointer mixtureImage = ImageType::New();
+  mixtureImage->CopyInformation(firstImage);
+  mixtureImage->SetRegions(firstImage->GetLargestPossibleRegion());
+  mixtureImage->SetSpacing(firstImage->GetSpacing());
+  mixtureImage->SetOrigin(firstImage->GetOrigin());
+  mixtureImage->SetDirection(firstImage->GetDirection());
+  mixtureImage->Allocate();
+
+  using OutIteratorType = typename itk::ImageRegionIterator<ImageType>;
+  OutIteratorType mixtureImageIt(mixtureImage, mixtureImage->GetLargestPossibleRegion());
+
+  using FirstIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
+  FirstIteratorType firstIt(firstImage, firstImage->GetLargestPossibleRegion());
+
+  using SecondConstIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
+  SecondConstIteratorType secondIt(secondImage, secondImage->GetLargestPossibleRegion());
+
+  using MaskConstIteratorType = typename itk::ImageRegionConstIterator<MaskImageType>;
+  MaskConstIteratorType maskIt(maskImage, maskImage->GetLargestPossibleRegion());
+
+  if (firstImage->GetLargestPossibleRegion().GetSize() != secondImage->GetLargestPossibleRegion().GetSize() ||
+      firstImage->GetLargestPossibleRegion().GetSize() != maskImage->GetLargestPossibleRegion().GetSize())
+  {
+    itkGenericExceptionMacro(<< "ERROR: Image or Mask size do not match");
+  }
+  ///////////////
+  double error_sum = 0.0;
+  double count = 0.0;
+  for (maskIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !maskIt.IsAtEnd();
+       ++maskIt, ++firstIt, ++secondIt)
+  {
+    if (maskIt.Get() != 0)
+    {
+      count += 1.0;
+      auto ratio_error = firstIt.Get() / secondIt.Get();
+      error_sum += ratio_error;
+    }
+  }
+  auto fixit_ratio = error_sum / count;
+  for (firstIt.GoToBegin(), secondIt.GoToBegin(); !firstIt.IsAtEnd(); ++firstIt, ++secondIt)
+  {
+    mixtureImageIt.Set(firstIt.Get() + secondIt.Get() * fixit_ratio);
+  }
+  return mixtureImage;
+}
+#else
 ImageType::Pointer
 MixtureOptimizer(ImageType::Pointer &     firstImage,
                  ImageType::Pointer &     secondImage,
@@ -74,19 +127,21 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   std::cout << "Initialized MixtureStatisticCostFunction! " << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-  const double firstMean = static_cast<double>(twoByTwoCostFunction->GetSumOfFirstMaskVoxels()) /
-                           static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
-  const double secondMean = static_cast<double>(twoByTwoCostFunction->GetSumOfSecondMaskVoxels()) /
-                            static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
+  //  const double firstMean = static_cast<double>(twoByTwoCostFunction->GetSumOfFirstMaskVoxels()) /
+  //                           static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
+  //  const double secondMean = static_cast<double>(twoByTwoCostFunction->GetSumOfSecondMaskVoxels()) /
+  //                            static_cast<double>(twoByTwoCostFunction->GetNumberOfMaskVoxels());
 
   using OptimizerType = itk::AmoebaOptimizer;
   OptimizerType::Pointer twoByTwoOptimizer = OptimizerType::New();
   //  twoByTwoOptimizer->SetUseCostFunctionGradient(false);
   twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction.GetPointer());
   OptimizerType::ParametersType initialParameters(1);
-  initialParameters[0] = firstMean / secondMean;
+  initialParameters[0] = 0.5; // firstMean / secondMean;
+  //  std::cout << "FIRST MEAN: " << firstMean << " SECOND MEAN: " << secondMean << " RATIO: " << initialParameters[0]
+  //            << std::endl;
   twoByTwoOptimizer->SetInitialPosition(initialParameters);
-
+  // twoByTwoOptimizer->SetMaximumNumberOfIterations(0);
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Updating Optimizer... " << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
@@ -109,7 +164,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   OptimizerType::MeasureType    optimalMeasures = twoByTwoOptimizer->GetValue();
 
   std::cout << "---------------------------------------------------" << std::endl;
-  std::cout << "Obtained Output from Levenberg-Marquardt Optimizer!" << std::endl;
+  std::cout << "Obtained Output from Optimizer!" << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
   /* ------------------------------------------------------------------------------------
@@ -165,6 +220,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
 
   return mixtureImage;
 }
+#endif // USE_EASYMIXTURE_VARIANT
 
 void
 GenerateBrainVolume(ImageType::Pointer &     firstImage,
@@ -186,9 +242,12 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   /* ------------------------------------------------------------------------------------
    * Send to Optimizer
    */
+#ifdef USE_EASYMIXTURE_VARIANT
+  ImageType::Pointer mixtureImage = EZMixtureOptimizer(firstImage, secondImage, maskImage);
+#else
   ImageType::Pointer mixtureImage =
     MixtureOptimizer(firstImage, secondImage, maskImage, desiredMean, desiredVariance, outputWeightsFile);
-
+#endif
   /* ------------------------------------------------------------------------------------
    * Generate brain volume mask (adapted but heavily modified from proc
    * MushPiece in brainsAutoWorkupPhase2.tcl)
@@ -353,7 +412,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       std::cerr << "Exception caught ! " << std::endl;
       std::cerr << excp << std::endl;
-      return EXIT_FAILURE;
+      return;
     }
 
     // using StatisticRealType = LabelFilterType::RealType;
@@ -612,43 +671,20 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
 ImageType::Pointer
 LoadImage(const std::string & imageName)
 {
-  ReaderType::Pointer loadImageReader = ReaderType::New();
-
-  loadImageReader->SetFileName(imageName);
-  try
-  {
-    loadImageReader->Update();
-  }
-  catch (itk::ExceptionObject & exp)
-  {
-    std::cerr << "Exception caught !" << std::endl;
-    std::cerr << exp << std::endl;
-  }
-
-  ImageType::Pointer image;
-
-  return image = loadImageReader->GetOutput();
+  return itkUtil::ScaleAndCast<ImageType, ImageType>(itk::ReadImage<ImageType>(imageName), 0, 2048);
 }
 
 MaskImageType::Pointer
 LoadMaskImage(const std::string & imageName)
 {
-  MaskReaderType::Pointer loadImageReader = MaskReaderType::New();
-
-  loadImageReader->SetFileName(imageName);
-  try
-  {
-    loadImageReader->Update();
-  }
-  catch (itk::ExceptionObject & exp)
-  {
-    std::cerr << "Exception caught !" << std::endl;
-    std::cerr << exp << std::endl;
-  }
-
-  MaskImageType::Pointer image;
-
-  return image = loadImageReader->GetOutput();
+  //  typename itk::BinaryThresholdImageFilter<MaskImageType,MaskImageType>::Pointer thf =
+  //    itk::BinaryThresholdImageFilter<MaskImageType,MaskImageType>::New();
+  //  thf->SetInput(itk::ReadImage<MaskImageType>(imageName));
+  //  thf->SetLowerThreshold(0);
+  //  thf->SetUpperThreshold(itk::NumericTraits<typename MaskImageType::PixelType>::max());
+  //  thf->Update();
+  //  return thf->GetOutput();
+  return itk::ReadImage<MaskImageType>(imageName);
 }
 
 MaskImageType::Pointer
@@ -726,9 +762,9 @@ main(int argc, char ** argv)
   /* ------------------------------------------------------------------------------------
    * Load Images
    */
-  ImageType::Pointer firstImage = LoadImage(inputFirstVolume.c_str());
+  ImageType::Pointer firstImage = LoadImage(inputFirstVolume);
 
-  ImageType::Pointer secondImage = LoadImage(inputSecondVolume.c_str());
+  ImageType::Pointer secondImage = LoadImage(inputSecondVolume);
 
   /* ------------------------------------------------------------------------------------
    * Load or automatically generate the MaskImage to define the region on which

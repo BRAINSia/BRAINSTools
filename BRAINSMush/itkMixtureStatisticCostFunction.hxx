@@ -16,7 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-
 #ifndef itkMixtureStatisticsCostFunction_hxx_
 #define itkMixtureStatisticsCostFunction_hxx_
 
@@ -100,10 +99,10 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetValue(const Paramete
   // the measure is the squared distance to each of the goals.
   const double error_mean = mean - m_DesiredMean;
   const double error_variance = variance - m_DesiredVariance;
-  m_Measure = error_variance; // * error_variance;
+  m_Measure = error_variance;
 
-  std::cout << mean << " " << m_DesiredMean << " " << error_mean << " ** " << variance << " " << error_variance << " "
-            << m_DesiredVariance << " : " << m_Measure << "=======" << parameters << std::endl;
+  std::cout << mean << " " << m_DesiredMean << " " << error_mean << " ** " << m_Measure << "=======" << parameters
+            << std::endl;
   return m_Measure;
 }
 
@@ -119,7 +118,7 @@ unsigned int
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetNumberOfParameters() const
 {
   // Return the number of parameters.
-  return number_of_unkowns;
+  return number_of_unknowns;
 }
 //
 // template <typename TFirstImage, typename TSecondImage>
@@ -127,55 +126,55 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetNumberOfParameters()
 // MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetNumberOfValues() const
 //{
 //  // Return the number of residuals.
-//  return 2;
+//  return number_of_unknowns;
 //}
 
 template <typename TFirstImage, typename TSecondImage>
 void
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>::Initialize(short label)
 {
-  // measure each image and each squared image within the mask
-  using FirstConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::FirstImageType>;
-  FirstConstIteratorType firstIt(m_FirstImage, m_FirstImage->GetLargestPossibleRegion());
-
-  using SecondConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::SecondImageType>;
-  SecondConstIteratorType secondIt(m_SecondImage, m_SecondImage->GetLargestPossibleRegion());
-
-  using MaskConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::ImageMaskType>;
-  MaskConstIteratorType maskIt(m_ImageMask, m_ImageMask->GetLargestPossibleRegion());
-
-  if (m_FirstImage->GetLargestPossibleRegion().GetSize() != m_SecondImage->GetLargestPossibleRegion().GetSize() ||
-      m_FirstImage->GetLargestPossibleRegion().GetSize() != m_ImageMask->GetLargestPossibleRegion().GetSize())
-  {
-    itkGenericExceptionMacro(<< "ERROR: Image or Mask size do not match");
-  }
-  ///////////////
-
-  /////////////
-
-  m_NumberOfMaskVoxels = 0.0;
-  m_SumOfFirstMaskVoxels = 0.0;
-  m_SumOfSecondMaskVoxels = 0.0;
-  m_SumSquaresOfFirstMaskVoxels = 0.0;
-  m_SumSquaresOfSecondMaskVoxels = 0.0;
-  m_SumOfFirstTimesSecondMaskVoxels = 0.0;
-  for (maskIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !maskIt.IsAtEnd();
-       ++maskIt, ++firstIt, ++secondIt)
-  {
-    const auto & current_value = maskIt.Get();
-    if (current_value != 0 || current_value == label)
-    {
-      const auto & firstValue = firstIt.Get();
-      const auto & secondValue = secondIt.Get();
-
-      m_NumberOfMaskVoxels += 1.0;
-      m_SumOfFirstMaskVoxels += firstValue;
-      m_SumOfSecondMaskVoxels += secondValue;
-      m_SumSquaresOfFirstMaskVoxels += firstValue * firstValue;
-      m_SumSquaresOfSecondMaskVoxels += secondValue * secondValue;
-      m_SumOfFirstTimesSecondMaskVoxels += firstValue * secondValue;
-    }
-  }
+  //  // measure each image and each squared image within the mask
+  //  using FirstConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::FirstImageType>;
+  //  FirstConstIteratorType firstIt(m_FirstImage, m_FirstImage->GetLargestPossibleRegion());
+  //
+  //  using SecondConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::SecondImageType>;
+  //  SecondConstIteratorType secondIt(m_SecondImage, m_SecondImage->GetLargestPossibleRegion());
+  //
+  //  using MaskConstIteratorType = typename itk::ImageRegionConstIterator<typename Self::ImageMaskType>;
+  //  MaskConstIteratorType maskIt(m_ImageMask, m_ImageMask->GetLargestPossibleRegion());
+  //
+  //  if (m_FirstImage->GetLargestPossibleRegion().GetSize() != m_SecondImage->GetLargestPossibleRegion().GetSize() ||
+  //      m_FirstImage->GetLargestPossibleRegion().GetSize() != m_ImageMask->GetLargestPossibleRegion().GetSize())
+  //  {
+  //    itkGenericExceptionMacro(<< "ERROR: Image or Mask size do not match");
+  //  }
+  //  ///////////////
+  //
+  //  /////////////
+  //
+  //  m_NumberOfMaskVoxels = 0.0;
+  //  m_SumOfFirstMaskVoxels = 0.0;
+  //  m_SumOfSecondMaskVoxels = 0.0;
+  //  m_SumSquaresOfFirstMaskVoxels = 0.0;
+  //  m_SumSquaresOfSecondMaskVoxels = 0.0;
+  //  m_SumOfFirstTimesSecondMaskVoxels = 0.0;
+  //  for (maskIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !maskIt.IsAtEnd();
+  //       ++maskIt, ++firstIt, ++secondIt)
+  //  {
+  //    const auto & current_value = maskIt.Get();
+  //    if (current_value != 0 || current_value == label)
+  //    {
+  //      const auto & firstValue = firstIt.Get();
+  //      const auto & secondValue = secondIt.Get();
+  //
+  //      m_NumberOfMaskVoxels += 1.0;
+  //      m_SumOfFirstMaskVoxels += firstValue;
+  //      m_SumOfSecondMaskVoxels += secondValue;
+  //      m_SumSquaresOfFirstMaskVoxels += firstValue * firstValue;
+  //      m_SumSquaresOfSecondMaskVoxels += secondValue * secondValue;
+  //      m_SumOfFirstTimesSecondMaskVoxels += firstValue * secondValue;
+  //    }
+  //  }
 }
 
 template <typename TFirstImage, typename TSecondImage>
@@ -184,13 +183,13 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::PrintSelf(std::ostream 
 {
   Superclass::PrintSelf(os, indent);
 
-  os << indent << "DesiredMean = " << m_DesiredMean << std::endl
-     << indent << "DesiredVariance = " << m_DesiredVariance << std::endl
-     << indent << "NumberOfMaskVoxels = " << m_NumberOfMaskVoxels << std::endl
-     << indent << "SumOfFirstMaskVoxels = " << m_SumOfFirstMaskVoxels << std::endl
-     << indent << "SumSquaresOfFirstMaskVoxels = " << m_SumSquaresOfFirstMaskVoxels << std::endl
-     << indent << "SumOfSecondMaskVoxels = " << m_SumOfSecondMaskVoxels << std::endl
-     << indent << "SumSquaresOfSecondMaskVoxels = " << m_SumSquaresOfSecondMaskVoxels << std::endl;
+  //  os << indent << "DesiredMean = " << m_DesiredMean << std::endl
+  //     << indent << "DesiredVariance = " << m_DesiredVariance << std::endl
+  //     << indent << "NumberOfMaskVoxels = " << m_NumberOfMaskVoxels << std::endl
+  //     << indent << "SumOfFirstMaskVoxels = " << m_SumOfFirstMaskVoxels << std::endl
+  //     << indent << "SumSquaresOfFirstMaskVoxels = " << m_SumSquaresOfFirstMaskVoxels << std::endl
+  //     << indent << "SumOfSecondMaskVoxels = " << m_SumOfSecondMaskVoxels << std::endl
+  //     << indent << "SumSquaresOfSecondMaskVoxels = " << m_SumSquaresOfSecondMaskVoxels << std::endl;
 }
 } // end namespace itk
 #endif // itkMixtureStatisticsCostFunction_hxx_

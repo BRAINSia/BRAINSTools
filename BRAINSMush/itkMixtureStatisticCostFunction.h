@@ -57,10 +57,6 @@ public:
   using SecondImageType = TSecondImage;
   using SecondImageConstPointer = typename SecondImageType::ConstPointer;
 
-  ///** Constants for the image dimensions */
-  // static constexpr unsigned int FirstImageDimension = TFirstImage::ImageDimension;
-  // static constexpr unsigned int SecondImageDimension = TSecondImage::ImageDimension;
-
   /** Array Typedefs. */
   using ParametersType = Superclass::ParametersType;
   using MeasureType = Superclass::MeasureType;
@@ -87,18 +83,6 @@ public:
   itkSetObjectMacro(ImageMask, ImageMaskType);
   itkGetConstObjectMacro(ImageMask, ImageMaskType);
 
-  itkGetMacro(DesiredMean, double);
-  itkSetMacro(DesiredMean, double);
-  itkGetMacro(DesiredVariance, double);
-  itkSetMacro(DesiredVariance, double);
-
-  //  itkGetMacro(NumberOfMaskVoxels, double);
-  //  itkGetMacro(SumOfFirstMaskVoxels, double);
-  //  itkGetMacro(SumOfSecondMaskVoxels, double);
-  //  itkGetMacro(SumSquaresOfFirstMaskVoxels, double);
-  //  itkGetMacro(SumSquaresOfSecondMaskVoxels, double);
-  //  itkGetMacro(SumOfFirstTimesSecondMaskVoxels, double);
-
   /** The dimensions of parameter space. */
   static constexpr unsigned int number_of_unknowns = 1;
 
@@ -111,21 +95,9 @@ public:
   MeasureType
   GetValue(const ParametersType & parameters) const override;
 
-  //  /** Return a pointer of values evaluated for the given parameters. */
-  //  MeasureType *
-  //  GetValue(ParametersType & parameters);
-
   /** Get the SpaceDimension. */
   unsigned int
   GetNumberOfParameters() const override;
-  //
-  //  /** Get the number Range Dimension. */
-  //  unsigned int
-  //  GetNumberOfValues() const override;
-
-  /** Initialize */
-  void
-  Initialize(short label);
 
 protected:
   MixtureStatisticCostFunction();
@@ -139,16 +111,6 @@ protected:
   mutable ImageMaskPointer m_ImageMask;
 
 private:
-  double m_DesiredMean{};
-  double m_DesiredVariance{};
-
-  //  double m_NumberOfMaskVoxels{};
-  //  double m_SumOfFirstMaskVoxels{};
-  //  double m_SumOfSecondMaskVoxels{};
-  //  double m_SumSquaresOfFirstMaskVoxels{};
-  //  double m_SumSquaresOfSecondMaskVoxels{};
-  //  double m_SumOfFirstTimesSecondMaskVoxels{};
-
   /** Measurement value. */
   mutable MeasureType m_Measure;
 };

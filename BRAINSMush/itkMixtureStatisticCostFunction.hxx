@@ -57,25 +57,27 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetValue(const Paramete
   }
 
   double l_NumberOfMaskVoxels = 0.0;
+  double l_AllIteratorVoxels = 0.0;
   double mush_sum = 0.0;
   double mush_sumsq = 0.0;
 
   for (maskIt.GoToBegin(), firstIt.GoToBegin(), secondIt.GoToBegin(); !maskIt.IsAtEnd();
        ++maskIt, ++firstIt, ++secondIt)
   {
+    l_AllIteratorVoxels += 1;
     if (maskIt.Get() != 0)
     {
       const typename TFirstImage::PixelType &  firstValue = firstIt.Get();
       const typename TSecondImage::PixelType & secondValue = secondIt.Get();
 
       l_NumberOfMaskVoxels += 1.0;
-      const auto mush_value = firstValue + secondImageWeighting * secondValue;
+      const auto mush_value = std::fabs(firstValue - secondImageWeighting * secondValue);
       mush_sum += mush_value;
       mush_sumsq += mush_value * mush_value;
     }
   }
 
-
+  std::cout << "XXXXXXXXXXXXXXX RATIO OF MASK TO IMAGE: " << l_NumberOfMaskVoxels / l_AllIteratorVoxels << std::endl;
 #if 0
   // == MUSH = a*T1 + b*T2
   const double weighted_firstsum = firstImageWeighting * m_SumOfFirstMaskVoxels;
@@ -94,8 +96,9 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::GetValue(const Paramete
 
 #endif
   // convert 3 statistics into mixture mean and variance
-  const double variance = (mush_sumsq - (mush_sum * mush_sum) / l_NumberOfMaskVoxels) / (l_NumberOfMaskVoxels - 1);
   const double mean = mush_sum / l_NumberOfMaskVoxels;
+  const double variance = (mush_sumsq / l_NumberOfMaskVoxels) - mean * mean;
+
   // the measure is the squared distance to each of the goals.
   const double error_mean = mean - m_DesiredMean;
   const double error_variance = variance - m_DesiredVariance;

@@ -20,7 +20,6 @@
 #define __CrossOverAffineSystem_hxx
 
 #include "itkNumericTraits.h"
-#include "CrossOverAffineSystem.h"
 
 /**
  * Constructor

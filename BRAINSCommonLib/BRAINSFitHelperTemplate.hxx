@@ -28,7 +28,6 @@
 #include "itkCheckerBoardImageFilter.h"
 #include "itkOtsuHistogramMatchingImageFilter.h"
 #include <fstream>
-#include "BRAINSFitHelperTemplate.h"
 #include "itkConjugateGradientLineSearchOptimizerv4.h"
 #include "itkLBFGSBOptimizerv4.h"
 

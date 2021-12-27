@@ -24,7 +24,6 @@
 
 #include "PrepareOutputImages.h"
 #include "landmarksConstellationDetector.h"
-#include "BRAINSConstellationDetector2.h"
 #include "itkOrthogonalize3DRotationMatrix.h"
 #include "itkLandmarkBasedTransformInitializer.h"
 

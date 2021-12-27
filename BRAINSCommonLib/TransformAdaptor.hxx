@@ -19,7 +19,6 @@
 #ifndef __TransformAdaptor_hxx
 #define __TransformAdaptor_hxx
 
-#include "TransformAdaptor.h"
 
 namespace itk
 {

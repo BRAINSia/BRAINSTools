@@ -19,7 +19,6 @@
 #ifndef _itkReflectiveCorrelationCenterToImageMetric_hxx
 #define _itkReflectiveCorrelationCenterToImageMetric_hxx
 
-#include "itkReflectiveCorrelationCenterToImageMetric.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
 #endif // _itkReflectiveCorrelationCenterToImageMetric_hxx

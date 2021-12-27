@@ -31,7 +31,6 @@
 #ifndef __itkScalarImagePortionToHistogramGenerator_hxx
 #define __itkScalarImagePortionToHistogramGenerator_hxx
 
-#include "itkScalarImagePortionToHistogramGenerator.h"
 
 namespace itk
 {

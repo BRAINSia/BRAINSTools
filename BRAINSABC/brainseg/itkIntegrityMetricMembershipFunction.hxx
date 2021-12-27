@@ -18,7 +18,6 @@
 #ifndef itkIntegrityMetricMembershipFunction_hxx
 #define itkIntegrityMetricMembershipFunction_hxx
 
-#include "itkIntegrityMetricMembershipFunction.h"
 
 #include "itkVector.h"
 #include "itkListSample.h"

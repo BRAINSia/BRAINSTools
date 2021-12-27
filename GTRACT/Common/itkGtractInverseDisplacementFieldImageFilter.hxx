@@ -19,7 +19,6 @@
 #ifndef __itkGtractInverseDisplacementFieldImageFilter_hxx
 #define __itkGtractInverseDisplacementFieldImageFilter_hxx
 
-#include "itkGtractInverseDisplacementFieldImageFilter.h"
 #include "itkProgressReporter.h"
 #include "itkThinPlateSplineKernelTransform.h"
 #include "itkImageRegionIteratorWithIndex.h"

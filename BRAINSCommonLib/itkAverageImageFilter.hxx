@@ -18,7 +18,6 @@
 #ifndef _itkAverageImageFilter_hxx
 #define _itkAverageImageFilter_hxx
 
-#include "itkAverageImageFilter.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"

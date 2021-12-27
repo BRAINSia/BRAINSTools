@@ -19,7 +19,6 @@
 #ifndef __itkDiffusionTensor3DReconstructionWithMaskImageFilter_hxx
 #define __itkDiffusionTensor3DReconstructionWithMaskImageFilter_hxx
 
-#include "itkDiffusionTensor3DReconstructionWithMaskImageFilter.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"

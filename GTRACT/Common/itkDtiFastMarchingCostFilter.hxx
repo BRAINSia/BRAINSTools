@@ -51,7 +51,6 @@
 #include "itkMetaDataObject.h"
 #include <itkDiffusionTensor3D.h>
 
-#include "itkDtiFastMarchingCostFilter.h"
 
 #include <iostream>
 

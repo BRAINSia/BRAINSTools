@@ -18,7 +18,6 @@
 #ifndef __itkBlendImageFilter_hxx
 #define __itkBlendImageFilter_hxx
 
-#include "itkBlendImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkProgressReporter.h"
 

@@ -31,7 +31,6 @@
 #include "itkVersorRigid3DTransform.h"
 
 // MI registration module
-#include "AtlasRegistrationMethod.h"
 
 #include "itkMath.h"
 

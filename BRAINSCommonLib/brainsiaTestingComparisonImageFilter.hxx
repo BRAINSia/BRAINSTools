@@ -18,7 +18,6 @@
 #ifndef itkTestingComparisonImageFilter_hxx
 #define itkTestingComparisonImageFilter_hxx
 
-#include "brainsiaTestingComparisonImageFilter.h"
 
 #include "itkConstNeighborhoodIterator.h"
 #include "itkImageRegionIterator.h"

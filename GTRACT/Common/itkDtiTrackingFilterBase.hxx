@@ -51,7 +51,6 @@
 // #include "itkMetaDataObject.h"
 #include "itkProgressAccumulator.h"
 
-#include "itkDtiTrackingFilterBase.h"
 // #include "algo.h"
 
 

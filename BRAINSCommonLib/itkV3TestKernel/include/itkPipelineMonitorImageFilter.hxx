@@ -18,7 +18,6 @@
 #ifndef __itkPipelineMonitorImageFilter_hxx
 #define __itkPipelineMonitorImageFilter_hxx
 
-#include "itkPipelineMonitorImageFilter.h"
 
 namespace itk
 {

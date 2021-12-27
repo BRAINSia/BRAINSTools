@@ -28,7 +28,6 @@
 #ifndef __itkTestingStretchIntensityImageFilter_hxx
 #define __itkTestingStretchIntensityImageFilter_hxx
 
-#include "itkTestingStretchIntensityImageFilter.h"
 
 namespace itk
 {

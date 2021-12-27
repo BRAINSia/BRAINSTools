@@ -16,7 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "itkMultiModeHistogramThresholdBinaryImageFilter.h"
 #include "itkComputeHistogramQuantileThresholds.h"
 
 #include <itkBinaryThresholdImageFilter.h>

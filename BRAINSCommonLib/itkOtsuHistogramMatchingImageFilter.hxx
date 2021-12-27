@@ -31,7 +31,6 @@
 #ifndef __itkOtsuHistogramMatchingImageFilter_hxx
 #define __itkOtsuHistogramMatchingImageFilter_hxx
 
-#include "itkOtsuHistogramMatchingImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkNumericTraits.h"

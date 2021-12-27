@@ -29,7 +29,6 @@
  *  =========================================================================*/
 #ifndef __itkBRAINSROIAutoImageFilter_hxx
 #define __itkBRAINSROIAutoImageFilter_hxx
-#include "itkBRAINSROIAutoImageFilter.h"
 
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"

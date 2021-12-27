@@ -21,7 +21,6 @@
 
 #include "itkImageRegionIteratorWithIndex.h"
 
-#include "AtlasCropImageSource.h"
 
 template <typename TInputImage, typename TProbabilityImage>
 AtlasCropImageSource<TInputImage, TProbabilityImage>::AtlasCropImageSource()

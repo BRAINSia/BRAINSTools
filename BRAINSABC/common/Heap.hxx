@@ -19,7 +19,6 @@
 #ifndef __Heap_hxx
 #define __Heap_hxx
 
-#include "Heap.h"
 
 #include "muException.h"
 

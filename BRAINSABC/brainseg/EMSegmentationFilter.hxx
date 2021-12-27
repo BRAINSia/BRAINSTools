@@ -62,7 +62,6 @@
 
 // #include "QHullMSTClusteringProcess.h"
 #include "AtlasDefinition.h"
-#include "EMSegmentationFilter.h"
 #include "ExtractSingleLargestRegion.h"
 #include "PrettyPrintTable.h"
 #include "ComputeDistributions.h"

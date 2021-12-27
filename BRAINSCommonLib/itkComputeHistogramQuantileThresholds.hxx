@@ -18,7 +18,6 @@
  *=========================================================================*/
 #ifndef __itkComputeHistogramQuantileThresholds_hxx
 #define __itkComputeHistogramQuantileThresholds_hxx
-#include "itkComputeHistogramQuantileThresholds.h"
 
 // #include <itkSimpleFilterWatcher.h>
 #include <itkImageRegionIterator.h>

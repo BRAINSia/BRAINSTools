@@ -19,7 +19,6 @@
 #ifndef __itkBOBFFilter_hxx
 #define __itkBOBFFilter_hxx
 
-#include "itkBOBFFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkNumericTraits.h"

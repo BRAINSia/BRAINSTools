@@ -40,7 +40,6 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkOrientImageFilter.h"
-#include "itkCreateSpatialObjectFilter.h"
 #include <itkIOCommon.h>
 #include <itkCastImageFilter.h>
 #include <itkConstantPadImageFilter.h>

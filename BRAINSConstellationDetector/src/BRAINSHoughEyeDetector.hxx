@@ -22,7 +22,6 @@
  * University of Iowa Health Care 2010
  */
 
-#include "BRAINSHoughEyeDetector.h"
 
 namespace itk
 {

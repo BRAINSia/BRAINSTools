@@ -24,7 +24,6 @@
 
 #include "Log.h"
 #include "StandardizeMaskIntensity.h"
-#include "LLSBiasCorrector.h"
 #include "itkMath.h"
 #include "itkTimeProbe.h"
 #include "ComputeDistributions.h"

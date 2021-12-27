@@ -18,7 +18,6 @@
  *=========================================================================*/
 #ifndef itkFindCenterOfBrainFilter_hxx
 #define itkFindCenterOfBrainFilter_hxx
-#include "itkFindCenterOfBrainFilter.h"
 #include "itkNumericTraits.h"
 #include "itkImageMomentsCalculator.h"
 #include "itkImageDuplicator.h"

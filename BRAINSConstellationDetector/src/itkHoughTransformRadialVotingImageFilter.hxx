@@ -59,7 +59,6 @@
 #ifndef __itkHoughTransformRadialVotingImageFilter_hxx
 #define __itkHoughTransformRadialVotingImageFilter_hxx
 
-#include "itkHoughTransformRadialVotingImageFilter.h"
 
 #include "itkDiscreteGaussianImageFilter.h"
 #include "itkGaussianDerivativeImageFunction.h"

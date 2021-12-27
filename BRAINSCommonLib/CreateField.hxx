@@ -18,7 +18,6 @@
  *=========================================================================*/
 #ifndef __CreateField_hxx
 #define __CreateField_hxx
-#include "CreateField.h"
 #include "itkIOCommon.h"
 #include "itkVectorIndexSelectionCastImageFilter.h"
 #include "itkIO.h"

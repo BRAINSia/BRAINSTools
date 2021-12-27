@@ -51,7 +51,6 @@
 #include <itkMetaDataObject.h>
 #include "itkFastMarchingCostFunction.h"
 
-#include "itkDtiFastMarchingTrackingFilter.h"
 #include <itkRegularStepGradientDescentOptimizer.h>
 #include "GtractTypes.h"
 #include <map>

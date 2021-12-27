@@ -36,7 +36,6 @@
 
 #ifndef _itkTensorLinearInterpolateImageFunction_hxx
 #define _itkTensorLinearInterpolateImageFunction_hxx
-#include "itkTensorLinearInterpolateImageFunction.h"
 
 #include "itkMath.h"
 

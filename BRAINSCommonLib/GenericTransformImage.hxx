@@ -20,7 +20,6 @@
 #define _GenericTransformImage_hxx_
 
 #include <iostream>
-#include "GenericTransformImage.h"
 #include "itkResampleInPlaceImageFilter.h"
 #include "itkConstantBoundaryCondition.h"
 #include "itkIO.h"

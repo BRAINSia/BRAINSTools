@@ -32,7 +32,6 @@
  *  =========================================================================*/
 #ifndef __itkInverseConsistentLandmarks_hxx
 #define __itkInverseConsistentLandmarks_hxx
-#include "itkInverseConsistentLandmarks.h"
 #include <cstdio>
 #include <ctime>
 #include <string>

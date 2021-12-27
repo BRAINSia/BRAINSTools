@@ -18,7 +18,6 @@
  *=========================================================================*/
 #ifndef __ApplyField_hxx
 #define __ApplyField_hxx
-#include "ApplyField.h"
 #include "itkImage.h"
 #include "itkWarpImageFilter.h"
 #include "itkBinaryThresholdImageFilter.h"

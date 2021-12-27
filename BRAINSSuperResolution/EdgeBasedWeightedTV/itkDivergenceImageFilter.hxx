@@ -18,7 +18,6 @@
 #ifndef itkDivergenceImageFilter_hxx
 #define itkDivergenceImageFilter_hxx
 
-#include "itkDivergenceImageFilter.h"
 
 #include "itkNeighborhoodAlgorithm.h"
 #include "itkImageRegionIterator.h"

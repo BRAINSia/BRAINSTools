@@ -18,7 +18,6 @@
  *=========================================================================*/
 #ifndef __itkLargestForegroundFilledMaskImageFilter_hxx
 #define __itkLargestForegroundFilledMaskImageFilter_hxx
-#include "itkLargestForegroundFilledMaskImageFilter.h"
 #include "itkComputeHistogramQuantileThresholds.h"
 
 #include <itkConnectedComponentImageFilter.h>

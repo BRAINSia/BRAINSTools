@@ -37,7 +37,6 @@
 #ifndef _gtractDiffusionTensor3D_hxx
 #define _gtractDiffusionTensor3D_hxx
 
-#include "gtractDiffusionTensor3D.h"
 #include "itkNumericTraits.h"
 
 namespace itk

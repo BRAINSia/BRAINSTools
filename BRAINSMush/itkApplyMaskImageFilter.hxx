@@ -19,7 +19,6 @@
 #ifndef _itkApplyMaskImageFilter_hxx
 #define _itkApplyMaskImageFilter_hxx
 
-#include "itkApplyMaskImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 

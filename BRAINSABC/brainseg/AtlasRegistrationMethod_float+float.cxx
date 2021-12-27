@@ -16,6 +16,6 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#include "AtlasRegistrationMethod.hxx"
+#include "AtlasRegistrationMethod.h"
 
 template class AtlasRegistrationMethod<float, float>;

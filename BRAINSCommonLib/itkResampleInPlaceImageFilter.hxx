@@ -27,7 +27,6 @@
 #ifndef __itkResampleInPlaceImageFilter_hxx
 #define __itkResampleInPlaceImageFilter_hxx
 
-#include "itkResampleInPlaceImageFilter.h"
 #include "itkCastImageFilter.h"
 
 namespace itk

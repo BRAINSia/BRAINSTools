@@ -33,7 +33,6 @@
 #ifndef __ApplicationBase_hxx
 #define __ApplicationBase_hxx
 
-#include "ApplicationBase.h"
 
 namespace itk
 {

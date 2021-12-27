@@ -35,7 +35,6 @@
 #ifndef __genericRegistrationHelper_hxx
 #define __genericRegistrationHelper_hxx
 
-#include "genericRegistrationHelper.h"
 #include "GenericTransformImage.h"
 
 #include "itkVersor.h"

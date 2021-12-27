@@ -49,7 +49,6 @@
 #include "itkMetaDataObject.h"
 #include "itkProgressAccumulator.h"
 #include "itkImageMomentsCalculator.h"
-#include "itkDtiGraphSearchTrackingFilter.h"
 #include "algo.h"
 
 #include <iostream>

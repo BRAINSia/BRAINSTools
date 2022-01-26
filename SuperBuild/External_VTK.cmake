@@ -101,7 +101,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
   set(vtk_git_protocol "https")
   set(${proj}_GIT_REPOSITORY "${vtk_git_protocol}://gitlab.kitware.com/vtk/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "bba5337c35e31213eacb96baed111c8a40d0836b")   # 20211223
+  set(${proj}_GIT_TAG "6b3a8ff048572d531f2cee9ced88ad72ce35210c")   # 20220126
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}

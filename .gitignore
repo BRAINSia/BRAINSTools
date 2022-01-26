@@ -45,3 +45,4 @@ crash*
 Testing/Temporary/LastTest.log
 
 TestData/.ExternalData_SHA512*
+CMakeUserPresets.json

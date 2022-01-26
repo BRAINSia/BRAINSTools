@@ -35,8 +35,9 @@ _build
 .clang_complete
 .emacs.desktop
 .idea
-cmake-build-*
-cmake-travis-*
+/cmake-*
+/cmake-build-*
+/cmake-travis-*
 .svn
 CMakeCache.txt
 CMakeFiles/*

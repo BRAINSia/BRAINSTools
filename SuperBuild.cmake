@@ -128,10 +128,6 @@ if(${LOCAL_PROJECT_NAME}_USE_QT)
     )
 endif()
 
-#-------------------------------------------------------------------------
-if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
-  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
-endif()
 
 #
 # By default we want to build BRAINSTools stuff using the CMAKE_BUILD_TYPE of

@@ -67,6 +67,10 @@ if( IS_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/.git")
   include(Version.cmake) ## Do introspection for fine grained versioning, and tag matching
 endif()
 #-----------------------------------------------------------------------------
+#-------------------------------------------------------------------------
+if(NOT DEFINED BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET)
+  set(BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET "BRAINSToolsFetchData")
+endif()
 
 ## This file acts as a simple switch to initiate
 ## two completely independant CMake build environments.
@@ -85,11 +89,14 @@ endif()
 #-----------------------------------------------------------------------------
 option(${LOCAL_PROJECT_NAME}_SUPERBUILD "Build ${LOCAL_PROJECT_NAME} and the projects it depends on via SuperBuild.cmake." ON)
 mark_as_advanced(${LOCAL_PROJECT_NAME}_SUPERBUILD)
+option(${LOCAL_PROJECT_NAME}_PKGBUILD "Build ${LOCAL_PROJECT_NAME} SUPPORT_FILES ONLY (i.e. do not build BRAINSTools)." ON)
+mark_as_advanced(${LOCAL_PROJECT_NAME}_PKGBUILD)
 
 #-----------------------------------------------------------------------------
 # Common build features for both the superbuild and the main build
 #-----------------------------------------------------------------------------
 include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake) #<-- All feature options for top superbuild and inner product build
+
 
 #-----------------------------------------------------------------------------
 # Superbuild script
@@ -97,9 +104,12 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake) #<-- All feature options for t
 if(${LOCAL_PROJECT_NAME}_SUPERBUILD)
   include("${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake") #<-- Harness for managing top superbuild, and finally delegate inner product build
   return()
-else()
+elseif(${LOCAL_PROJECT_NAME}_PKGBUILD )
 #-----------------------------------------------------------------------------
   include("${CMAKE_CURRENT_SOURCE_DIR}/${LOCAL_PROJECT_NAME}.cmake") #<-- inner product build (a separate build environment from top level build)
+  return()
+else()
+  message(STATUS "BRAINSTools package not built because ${LOCAL_PROJECT_NAME}_PKGBUILD=${${LOCAL_PROJECT_NAME}_PKGBUILD}")
   return()
 endif()
 

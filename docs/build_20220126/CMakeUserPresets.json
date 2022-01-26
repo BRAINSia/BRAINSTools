@@ -1,0 +1,128 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 16,
+    "patch": 3
+  },
+  "configurePresets": [
+    {
+      "name": "brainstools_base",
+      "displayName": "Release Common Settings",
+      "description": "Support Release build using Ninja generator",
+      "hidden" : true,
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": { "type": "BOOL", "value": "ON" },
+        "CMAKE_BUILD_TYPE": { "type": "STRING", "value": "Release" },
+        "CMAKE_INSTALL_PREFIX": { "type" : "PATH", "value" : "/Shared/johnsonhj/Binaries/Linux/Ubuntu/focal/apps/BRAINSTools/20220126" },
+        "BRAINSTools_BUILD_DICOM_SUPPORT":  { "type" : "BOOL", "value": "ON" },
+        "BRAINSTools_REQUIRES_FFTW": { "type": "BOOL", "value" : "ON" },
+        "BRAINSTools_REQUIRES_TBB": { "type": "BOOL", "value" : "ON" },
+        "BRAINSTools_REQUIRES_VTK": { "type": "BOOL", "value" : "ON" },
+        "USE_ANTS": { "type": "BOOL", "value" : "ON" },
+        "USE_AutoWorkup": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSABC": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSConstellationDetector": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSCreateLabelMapFromProbabilityMaps": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSCreateLabelMapFromPr": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSDeface": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSDWICleanup": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSFit": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSInitializedControlPo": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSIntensityNormalize": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSLabelStats": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSLandmarkInitializer": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSMultiModeSegment": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSMultiSTAPLE": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSMush": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSPosteriorToContinuousClass": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSResample": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSROIAuto": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSSnapShotWriter": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSStripRotation": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSTransformConvert": { "type": "BOOL", "value" : "ON" },
+        "USE_ConvertBetweenFileFormats": { "type": "BOOL", "value" : "ON" },
+        "USE_DWIConvert": { "type": "BOOL", "value" : "ON" },
+        "USE_GTRACT": {"type": "BOOL", "value": "ON" },
+        "USE_ImageCalculator": { "type": "BOOL", "value" : "ON" },
+        "USE_ReferenceAtlas": { "type": "BOOL", "value" : "ON" }
+      },
+      "environment": {
+        "NSLOTS": "4",
+        "PATH": "$penv{PATH}"
+      }
+    },
+    {
+      "name": "brainstools_support",
+      "displayName": "Release support config",
+      "description": "Release support superbuild using Ninja generator",
+      "inherits" : "brainstools_base",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/cmake-release-support",
+      "cacheVariables": {
+        "USE_SYSTEM_ITK": { "type": "BOOL", "value" : "OFF" },
+        "USE_SYSTEM_SlicerExecutionModel": { "type": "BOOL", "value" : "OFF" },
+        "USE_SYSTEM_VTK": { "type": "BOOL", "value" : "OFF" },
+        "USE_SYSTEM_zlib": { "type": "BOOL", "value" : "OFF" },
+        "BRAINSTools_SUPERBUILD": { "type" : "BOOL", "value": "ON" },
+        "BRAINSTools_PKGBUILD": { "type" : "BOOL", "value": "OFF" }
+      },
+      "environment": {
+        "NSLOTS": "4",
+        "PATH": "$penv{PATH}"
+      }
+    },
+    {
+      "name": "brainstools_release",
+      "displayName": "Default Config",
+      "description": "Default build using Ninja generator",
+      "inherits" : "brainstools_base",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/cmake-release-build",
+      "cacheVariables": {
+        "BRAINSTools_SUPERBUILD": { "type" : "BOOL", "value": "OFF" },
+        "BRAINSTools_PKGBUILD": { "type" : "BOOL", "value": "ON" },
+        "CMAKE_BUILD_TYPE": { "type": "STRING", "value": "Release" },
+        "USE_SYSTEM_ITK": { "type": "BOOL", "value" : "ON" },
+        "USE_SYSTEM_SlicerExecutionModel": { "type": "BOOL", "value" : "ON" },
+        "USE_SYSTEM_VTK": { "type": "BOOL", "value" : "ON" },
+        "USE_SYSTEM_zlib": { "type": "BOOL", "value" : "ON" },
+        "ANTs_SOURCE_DIR": {"type":"PATH", "value" : "${sourceDir}/cmake-release-support/ANTs" },
+        "ANTs_LIBRARY_DIR": { "type": "PATH", "value" : "${sourceDir}/cmake-release-support/ANTs-Release-build/Examples" },
+        "ANTs_DIR": { "type": "PATH", "value" : "${sourceDir}/cmake-release-support/ANTs-Release-build" },
+        "ITK_DIR": {"type": "PATH", "value" : "${sourceDir}/cmake-release-support/ITKv5-Release-build"},
+        "SlicerExecutionModel_DIR": { "type": "PATH", "value": "${sourceDir}/cmake-release-support/SlicerExecutionModel-Release-build"},
+        "VTK_DIR": { "type": "PATH", "value" : "${sourceDir}/cmake-release-support/VTK-Release-build" },
+        "ZLIB_DIR" : { "type": "PATH", "value" : "${sourceDir}/cmake-release-support/zlib-build" }
+      },
+      "environment": {
+        "NSLOTS": "4",
+        "PATH": "$penv{PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "brainstools_support",
+      "configurePreset": "brainstools_support"
+    },
+    {
+      "name": "brainstools_release",
+      "configurePreset": "brainstools_release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "brainstools_support",
+      "configurePreset": "brainstools_support",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    },
+    {
+      "name": "brainstools_release",
+      "configurePreset": "brainstools_release",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    }
+  ]
+}

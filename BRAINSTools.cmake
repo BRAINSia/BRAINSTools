@@ -257,5 +257,5 @@ endif()
 include(${CMAKE_CURRENT_LIST_DIR}/cpack_brainstools.cmake)
 # Name of data management target
 if(${CMAKE_PROJECT_NAME} STREQUAL "BRAINSTools")
-  ExternalData_Add_Target( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} )
+  ExternalData_Add_Target( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} SHOW_PROGRESS ON )
 endif()

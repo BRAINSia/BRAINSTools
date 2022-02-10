@@ -131,9 +131,9 @@ if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
 endif()
 ### --- End Project specific additions
 set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
-set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
+## set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_GIT_TAG
-  28dd25cd9b9cb616d0ebf3adcb32ce74992c674a  # 20220126 - Update to new ITK version
+  6f07ac55569d0d085d2adf7888d1c7a2bd563bfe  # 20220210 - Update to new ITK version
 )
 
 ExternalProject_Add(${proj}

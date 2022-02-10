@@ -51,13 +51,14 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # HINT: -DUSE BRAINSTools_ITKv5_GIT_TAG:STRING=fix-some-error-pr-request
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-     ${git_protocol}://github.com/BRAINSia/ITK.git
+     #${git_protocol}://github.com/BRAINSia/ITK.git
+     ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
      QUIET
   )
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    1295d239397f111bd008c1093d9ddc5a3867669a # 20220126
+    107384b11a26cb862772c24d9b7cce3db521a2fd # 20220210
     QUIET
     )
 

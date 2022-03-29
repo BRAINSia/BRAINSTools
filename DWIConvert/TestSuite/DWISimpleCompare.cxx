@@ -294,7 +294,7 @@ main(int argc, char * argv[])
         rval = DoIt(inputVolume1, inputVolume2, static_cast<long>(0), CheckDWIData);
         break;
       case itk::ImageIOBase::FLOAT:
-        rval = DoIt(inputVolume1, inputVolume2, static_cast<float>(0), CheckDWIData);
+        rval = DoIt(inputVolume1, inputVolume2, 0f, CheckDWIData);
         // std::cout << "FLOAT type not currently supported." << std::endl;
         break;
       case itk::ImageIOBase::DOUBLE:

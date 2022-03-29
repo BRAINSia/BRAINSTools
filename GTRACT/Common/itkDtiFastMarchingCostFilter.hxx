@@ -95,7 +95,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::DtiFastMarchingCostFilter()
   m_LargeValue = static_cast<PixType>(NumericTraits<PixType>::max() / 2.0);
   // m_LargeValue    = static_cast<PixelType>( 10000.0 );
   m_StoppingValue = static_cast<double>(m_LargeValue);
-  m_AnisotropyWeight = static_cast<float>(0.0);
+  m_AnisotropyWeight = 0.0f;
   m_CollectPoints = false;
   m_NormalizationFactor = 1.0;
 }

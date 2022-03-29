@@ -264,7 +264,7 @@ main(int argc, char * argv[])
       }
       case itk::ImageIOBase::FLOAT:
       {
-        return DoIt(argc, argv, static_cast<float>(0));
+        return DoIt(argc, argv, 0f);
         // std::cout << "FLOAT type not currently supported." << std::endl;
       }
       case itk::ImageIOBase::DOUBLE:

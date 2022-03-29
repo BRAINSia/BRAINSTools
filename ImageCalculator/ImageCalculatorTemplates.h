@@ -113,7 +113,7 @@ FunctorClassDeclare(add, +);
 FunctorClassDeclare(subtract, -);
 FunctorClassDeclare2(square, a * a);
 FunctorClassDeclare2(binarydecimate, a > 0 ? 255 : 0);
-FunctorClassDeclare2(squareroot, sqrt((double)a));
+FunctorClassDeclare2(squareroot, sqrt(static_cast<double>(a)));
 } // namespace Functor
 
 #  define FunctorProcess(op, constvalue)                                                                               \

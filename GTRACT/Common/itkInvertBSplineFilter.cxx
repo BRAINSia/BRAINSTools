@@ -67,9 +67,9 @@ InvertBSplineFilter::Update()
   PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
   PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();
 
-  float xinr = static_cast<float>(imageSize[0]) / (float)m_XgridSize;
-  float yinr = static_cast<float>(imageSize[1]) / (float)m_YgridSize;
-  float zinr = static_cast<float>(imageSize[2]) / (float)m_ZgridSize;
+  float xinr = static_cast<float>(imageSize[0]) / static_cast<float>(m_XgridSize);
+  float yinr = static_cast<float>(imageSize[1]) / static_cast<float>(m_YgridSize);
+  float zinr = static_cast<float>(imageSize[2]) / static_cast<float>(m_ZgridSize);
 
   PointIdType id = itk::NumericTraits<PointIdType>::ZeroValue();
   std::cout << "Xsize " << imageSize[0] << " Ysize " << imageSize[1] << " Zsize " << imageSize[2] << std::endl;

@@ -335,8 +335,8 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 
       // Clamp values to the min/max of the source histogram range (the values
       // are supposed to be aligned anyway)
-      //      mappedValue=std::max(mappedValue,(double)m_SourceMinValue);
-      //      mappedValue=std::min(mappedValue,(double)m_SourceMaxValue);
+      //      mappedValue=std::max(mappedValue,static_cast<double>(m_SourceMinValue));
+      //      mappedValue=std::min(mappedValue,static_cast<double>(m_SourceMaxValue));
       outIter.Set(static_cast<OutputPixelType>(mappedValue));
     }
   }

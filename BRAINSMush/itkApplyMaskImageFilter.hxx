@@ -101,7 +101,7 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>::GenerateData()
   {
     if (!(i % updateVisits))
     {
-      this->UpdateProgress((float)i / (float)totalPixels);
+      this->UpdateProgress(static_cast<float>(i )/ static_cast<float>(totalPixels));
     }
 
     if (!m_InvertMask)

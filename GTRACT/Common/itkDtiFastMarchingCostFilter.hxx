@@ -400,7 +400,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::UpdateFront(
     // const EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel( node.GetIndex() );
 
     // does this node contain the current value ?
-    currentValue = (double)output->GetPixel(node.GetIndex());
+    currentValue = static_cast<double>(output->GetPixel(node.GetIndex()));
 
     if (node.GetValue() != currentValue)
     {

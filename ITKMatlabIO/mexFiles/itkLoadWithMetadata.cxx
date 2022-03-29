@@ -323,10 +323,10 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
     } // end if
   }   // end data section
 
-  myMexPrintf("mxNrrdDimension = %lf\n", (double)mxNrrdDim);
+  myMexPrintf("mxNrrdDimension = %lf\n", static_cast<double>(mxNrrdDim));
   for (unsigned i = 0; i < numMxDimensions; ++i)
   {
-    myMexPrintf("sizeI = %d, i = %d, numMxDimensions = %d\n", (int)sizeI[i], i, numMxDimensions);
+    myMexPrintf("sizeI = %d, i = %d, numMxDimensions = %d\n", static_cast<int>(sizeI[i]), i, numMxDimensions);
   } // end for
 
   // create voxel data array for matlab

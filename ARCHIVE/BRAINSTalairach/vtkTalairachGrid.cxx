@@ -381,9 +381,9 @@ vtkTalairachGrid::EstablishTalairachGrid()
   // vtkPoints *points = vtkPoints::New();
   // points->Allocate(dim[0]*dim[1]*dim[2]);
 
-  // short x_alloc = (short)dim[0];
-  // short y_alloc = (short)dim[1];
-  // short z_alloc = (short)dim[2];
+  // short x_alloc = static_cast<short>(dim[0]);
+  // short y_alloc = static_cast<short>(dim[1]);
+  // short z_alloc = static_cast<short>(dim[2]);
 
   // points->Allocate(x_alloc * y_alloc * z_alloc);
 

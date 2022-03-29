@@ -223,11 +223,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
   {
     // Not parallizable! ORDER IS IMPORTANT  //#pragma omp parallel for
     // reduction(+:numEquations) default(shared)
-    for (long kk = 0; kk < (long)size[2]; kk += skips[2])
+    for (long kk = 0; kk < static_cast<long>(size[2]); kk += skips[2])
     {
-      for (long jj = 0; jj < (long)size[1]; jj += skips[1])
+      for (long jj = 0; jj < static_cast<long>(size[1]); jj += skips[1])
       {
-        for (long ii = 0; ii < (long)size[0]; ii += skips[0])
+        for (long ii = 0; ii < static_cast<long>(size[0]); ii += skips[0])
         {
           const ProbabilityImageIndexType currProbIndex = { { ii, jj, kk } };
           if (m_ForegroundBrainMask->GetPixel(currProbIndex) != 0)

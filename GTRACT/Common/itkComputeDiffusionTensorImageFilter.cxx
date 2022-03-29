@@ -123,7 +123,7 @@ ComputeDiffusionTensorImageFilter ::Update()
   {
     /* Get the index & value for B0 */
     ADC_It.GoToBeginOfLine();
-    auto ADC0 = (float)ADC_It.Get();
+    auto ADC0 = static_cast<float>(ADC_It.Get());
     ADCIndex = ADC_It.GetIndex();
     for (int i = 0; i < 3; i++)
     {
@@ -139,7 +139,7 @@ ComputeDiffusionTensorImageFilter ::Update()
       TVector temp(m_NumberOfBSteps * m_NumberOfDirections);
       for (int i = 0; i < m_NumberOfBSteps * m_NumberOfDirections; i++)
       {
-        temp(i) = (float)ADC_It.Get();
+        temp(i) = static_cast<float>(ADC_It.Get());
         ++ADC_It;
       }
 

@@ -293,7 +293,7 @@ main(int argc, char * argv[])
   {
     transformTypes.emplace_back("ScaleVersor3D");
     std::vector<double> minStepLength;
-    minStepLength.push_back((double)minimumStepSize);
+    minStepLength.push_back(static_cast<double>(minimumStepSize));
     registerImageFilter->SetTranslationScale(translationScale);
     registerImageFilter->SetMaximumStepLength(maximumStepSize);
     registerImageFilter->SetMinimumStepLength(minStepLength);

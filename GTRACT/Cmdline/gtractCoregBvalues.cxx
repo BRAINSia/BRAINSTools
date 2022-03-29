@@ -166,7 +166,7 @@ main(int argc, char * argv[])
   RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
 
   std::vector<double> minStepLength;
-  minStepLength.push_back((double)minimumStepSize);
+  minStepLength.push_back(static_cast<double>(minimumStepSize));
 
   std::vector<std::string> rigidTransformTypes;
   rigidTransformTypes.emplace_back("ScaleVersor3D");

@@ -62,7 +62,7 @@ Example session for a clean build:
 ```sh
 mkdir ~/src/mytester
 cd ~/src/mytester
-git clone git://github.com/BRAINSia/BRAINSTools.git
+git clone https://github.com/BRAINSia/BRAINSTools.git
 
 cd BRAINSTools/
 bash ./Utilities/SetupForDevelopment.sh

@@ -22,7 +22,7 @@ endif()
 if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
+    set(git_protocol "https")
   endif()
 
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})

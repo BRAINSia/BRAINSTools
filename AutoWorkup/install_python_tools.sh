@@ -27,7 +27,7 @@ for required_package in nibabel networkx nipype; do
   easy_install --install-dir=${INSTALL_DIR} ${required_package}
 done
 
-#git clone git://github.com/nipy/nipype.git  nipype
+#git clone https://github.com/nipy/nipype.git  nipype
 #cd ${THIS_DIR}/nipype
 #python setup.py install --prefix=${INSTALL_DIR}
 

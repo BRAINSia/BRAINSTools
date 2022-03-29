@@ -6,7 +6,7 @@ Example session for a clean build on Linux using gcc-4.2:
 DIRECTORY=~/src/mytester
 mkdir ${DIRECTORY}
 cd ${DIRECTORY}
-git clone git://github.com/BRAINSia/BRAINSTools.git
+git clone https://github.com/BRAINSia/BRAINSTools.git
 ```
 __For developers:__
 

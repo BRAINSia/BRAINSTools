@@ -16,7 +16,7 @@ set( SOURCE_DOWNLOAD_CACHE ${CMAKE_CURRENT_BINARY_DIR} ) #<-- Note same as defau
 # Git protocol option
 #-----------------------------------------------------------------------------
 option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
-set(git_protocol "git")
+set(git_protocol "https")
 if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
   set(git_protocol "https")
 endif()

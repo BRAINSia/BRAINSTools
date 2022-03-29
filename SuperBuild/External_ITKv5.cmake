@@ -44,7 +44,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   if(NOT DEFINED git_protocol)
-      set(git_protocol "git")
+      set(git_protocol "https")
   endif()
 
   # HINT: -DUSE BRAINSTools_ITKv5_GIT_REPOSITORY:STRING=git@github.com:hjmjohnson/ITK.git to override

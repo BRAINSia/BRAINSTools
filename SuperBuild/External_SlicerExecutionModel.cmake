@@ -32,7 +32,7 @@ if(NOT DEFINED SlicerExecutionModel_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM
   endif()
 
   if(NOT DEFINED git_protocol)
-    set(git_protocol "git")
+    set(git_protocol "https")
   endif()
 
   macro(_set var type value)

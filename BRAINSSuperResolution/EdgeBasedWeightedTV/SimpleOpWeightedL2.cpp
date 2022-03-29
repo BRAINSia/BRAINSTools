@@ -306,7 +306,7 @@ SimpleOpWeightedL2(sitk::Image & norm01_lowres, sitk::Image & edgemask)
   //        For SimpleITK & ITK, scalar values are first typecast to double, then typecast to image pixel type
   //         i.e.:  O = I * 7 where I is complex, and 7 is an integer
   //        foreach p in I:
-  //             o = p * std::complex<float>(double(7))
+  //             o = p * std::complex<float>(static_cast<double>(7))
   //
   //        VectorImages [*/] scalar in ITK are problematic for multiplication & division, and do not work!
   for (size_t i = 0; i < Niter; ++i)

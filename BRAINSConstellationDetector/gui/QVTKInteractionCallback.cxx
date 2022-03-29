@@ -652,7 +652,7 @@ QVTKInteractionCallback::setValueZLocation(const int zLocation)
   // designed for slider bar effect
   double tag[2];
   tag[0] = m_valueReceiveZ;
-  tag[1] = double(m_type);
+  tag[1] = static_cast<double>(m_type);
 
   emit visibilityCallback(tag);
 }

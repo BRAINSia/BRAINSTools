@@ -85,7 +85,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
   for (dim = 0; dim < ImageDimension; dim++)
   {
     baseIndex[dim] = (long)floor(index[dim]);
-    distance[dim] = index[dim] - double(baseIndex[dim]);
+    distance[dim] = index[dim] - static_cast<double>(baseIndex[dim]);
   }
 
   /**

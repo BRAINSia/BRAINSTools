@@ -27,7 +27,7 @@ Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
   vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
 
   vnl_matrix<double> W(3, 3);
-  W.fill(double(0));
+  W.fill(static_cast<double>(0));
   for (unsigned int i = 0; i < 3; ++i)
   {
     if (decomposition.Winverse()(i, i) != 0.0)

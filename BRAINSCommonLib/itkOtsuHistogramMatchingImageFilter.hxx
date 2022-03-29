@@ -184,11 +184,11 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   m_QuantileTable[0][m_NumberOfMatchPoints + 1] = m_SourceMaxValue;
   m_QuantileTable[1][m_NumberOfMatchPoints + 1] = m_ReferenceMaxValue;
 
-  const double delta = 1.0 / (double(m_NumberOfMatchPoints) + 1.0);
+  const double delta = 1.0 / (static_cast<double>(m_NumberOfMatchPoints) + 1.0);
   for (unsigned int j = 1; j < m_NumberOfMatchPoints + 1; ++j)
   {
-    m_QuantileTable[0][j] = m_SourceHistogram->Quantile(0, double(j) * delta);
-    m_QuantileTable[1][j] = m_ReferenceHistogram->Quantile(0, double(j) * delta);
+    m_QuantileTable[0][j] = m_SourceHistogram->Quantile(0, static_cast<double>(j) * delta);
+    m_QuantileTable[1][j] = m_ReferenceHistogram->Quantile(0, static_cast<double>(j) * delta);
   }
 
   // Fill in the gradient array.
@@ -257,10 +257,10 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 
   m_QuantileTable[2][m_NumberOfMatchPoints + 1] = m_OutputMaxValue;
 
-  const double delta = 1.0 / (double(m_NumberOfMatchPoints) + 1.0);
+  const double delta = 1.0 / (static_cast<double>(m_NumberOfMatchPoints) + 1.0);
   for (unsigned int j = 1; j < m_NumberOfMatchPoints + 1; ++j)
   {
-    m_QuantileTable[2][j] = m_OutputHistogram->Quantile(0, double(j) * delta);
+    m_QuantileTable[2][j] = m_OutputHistogram->Quantile(0, static_cast<double>(j) * delta);
   }
 }
 

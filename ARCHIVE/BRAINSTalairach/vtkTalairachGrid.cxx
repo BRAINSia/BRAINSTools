@@ -869,17 +869,17 @@ vtkTalairachGrid::ConvertPixelPointToTalairachPoint(double * voxelPoint)
   if (voxelPoint[1] <= ACPoint[1])
   {
     std::cout << "Y - Greater than AC" << std::endl;
-    talPoint[1] = (voxelPoint[1] - ACPoint[1]) / (float)(SLAPoint[1] - ACPoint[1]) * (102.0 - 24.0) - 24.0;
+    talPoint[1] = (voxelPoint[1] - ACPoint[1]) / static_cast<float>(SLAPoint[1] - ACPoint[1]) * (102.0 - 24.0) - 24.0;
   }
   else if (voxelPoint[1] <= PCPoint[1])
   {
     std::cout << "Y - Greater than PC" << std::endl;
-    talPoint[1] = (voxelPoint[1] - ACPoint[1]) / (float)(ACPoint[1] - PCPoint[1]) * 24.0;
+    talPoint[1] = (voxelPoint[1] - ACPoint[1]) / static_cast<float>(ACPoint[1] - PCPoint[1]) * 24.0;
   }
   else
   {
     std::cout << "Y - Less than AC and PC" << std::endl;
-    talPoint[1] = (voxelPoint[1] - PCPoint[1]) / (float)(PCPoint[1] - IRPPoint[1]) * 69.0;
+    talPoint[1] = (voxelPoint[1] - PCPoint[1]) / static_cast<float>(PCPoint[1] - IRPPoint[1]) * 69.0;
   }
 
   /* X axis */
@@ -898,12 +898,12 @@ vtkTalairachGrid::ConvertPixelPointToTalairachPoint(double * voxelPoint)
   if (voxelPoint[2] > PCPoint[2])
   {
     std::cout << "Z - Greater than PC" << std::endl;
-    talPoint[2] = (voxelPoint[2] - PCPoint[2]) / (float)(SLAPoint[2] - PCPoint[2]) * 75.0;
+    talPoint[2] = (voxelPoint[2] - PCPoint[2]) / static_cast<float>(SLAPoint[2] - PCPoint[2]) * 75.0;
   }
   else
   {
     std::cout << "Z - Less than PC" << std::endl;
-    talPoint[2] = (voxelPoint[2] - PCPoint[2]) / (float)(PCPoint[2] - IRPPoint[2]) * 43.0;
+    talPoint[2] = (voxelPoint[2] - PCPoint[2]) / static_cast<float>(PCPoint[2] - IRPPoint[2]) * 43.0;
   }
 
   std::cout << "Tal Point : " << talPoint[0] << " " << talPoint[1] << " " << talPoint[2] << std::endl;

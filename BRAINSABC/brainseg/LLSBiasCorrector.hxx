@@ -191,9 +191,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
   // images from being created
   const InputImageSpacingType spacing = m_ForegroundBrainMask->GetSpacing();
   unsigned int                skips[3];
-  skips[0] = (unsigned int)(m_SampleSpacing / spacing[0]);
-  skips[1] = (unsigned int)(m_SampleSpacing / spacing[1]);
-  skips[2] = (unsigned int)(m_SampleSpacing / spacing[2]);
+  skips[0] = static_cast<int>(m_SampleSpacing / spacing[0]);
+  skips[1] = static_cast<int>(m_SampleSpacing / spacing[1]);
+  skips[2] = static_cast<int>(m_SampleSpacing / spacing[2]);
 
   if (skips[0] < MIN_SKIP_SIZE)
   {

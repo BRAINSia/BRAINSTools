@@ -148,7 +148,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
   if (m_SlabMode)
   {
     long len = m_UpperBound[ImageDimension - 1] - m_LowerBound[ImageDimension - 1] + 1;
-    long offt = (long)(0.2 * len);
+    long offt = static_cast<long>(0.2 * len);
     m_LowerBound[ImageDimension - 1] += offt;
     m_UpperBound[ImageDimension - 1] -= offt;
   }

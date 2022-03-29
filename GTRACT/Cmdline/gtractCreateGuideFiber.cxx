@@ -125,9 +125,9 @@ main(int argc, char * argv[])
         avgPoint[2] += currentPoint[2];
       }
     }
-    avgPoint[0] /= (double)(N);
-    avgPoint[1] /= (double)(N);
-    avgPoint[2] /= (double)(N);
+    avgPoint[0] /= static_cast<double>(N);
+    avgPoint[1] /= static_cast<double>(N);
+    avgPoint[2] /= static_cast<double>(N);
     guidePoints->InsertNextPoint(avgPoint);
   }
   vtkCellArray * line = vtkCellArray::New();

@@ -152,7 +152,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
     /***VAM - MaxDistance is now defined by the user */
     // float MaxDist =
     //
-    // std::sqrt(pow((double)(p1[0]-p2[0]),2.0)+pow((double)(p1[1]-p2[1]),2.0)+pow((double)(p1[2]-p2[2]),2.0));
+    // std::sqrt(pow(static_cast<double>(p1[0]-p2[0]),2.0)+pow(static_cast<double>(p1[1]-p2[1]),2.0)+pow(static_cast<double>(p1[2]-p2[2]),2.0));
     // MaxDist *= 1.5;
     double MaxDist = this->m_MaximumGuideDistance;
     // std::cout << "Max Distance: " << MaxDist << std::endl;
@@ -362,8 +362,8 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
     this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p1, index1);
 
     float dist =
-      std::sqrt(std::pow((double)(index1[0] - index[0]), 2.0) + std::pow((double)(index1[1] - index[1]), 2.0) +
-                std::pow((double)(index1[2] - index[2]), 2.0));
+      std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) + std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
+                std::pow(static_cast<double>(index1[2] - index[2]), 2.0));
     if (dist < minDist)
     {
       minDist = dist;

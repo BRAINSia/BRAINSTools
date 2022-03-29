@@ -356,9 +356,9 @@ main(int argc, char * argv[])
   }
 
   vnl_matrix_fixed<double, 4, 1> voxelShift;
-  voxelShift[0][0] = -1.0 * (double)(imagePadding[0]);
-  voxelShift[1][0] = -1.0 * (double)(imagePadding[1]);
-  voxelShift[2][0] = -1.0 * (double)(imagePadding[2]);
+  voxelShift[0][0] = -1.0 * static_cast<double>(imagePadding[0]);
+  voxelShift[1][0] = -1.0 * static_cast<double>(imagePadding[1]);
+  voxelShift[2][0] = -1.0 * static_cast<double>(imagePadding[2]);
   voxelShift[3][0] = 1.0;
 
   vnl_matrix_fixed<double, 3, 1> newOriginMatrix = newMatrix * voxelShift;

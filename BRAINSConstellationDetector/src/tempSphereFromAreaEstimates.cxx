@@ -194,7 +194,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     // Make sure that bin width is smaller than the minimum voxel width.  A
     // single layer cannot have more than one row of voxels accumulated in a
     // single bin.
-    int numBins = (int)((maxval - minval) / (std::min(origSpacing[0], std::min(origSpacing[1], origSpacing[2]))));
+    int numBins = static_cast<int>((maxval - minval) / (std::min(origSpacing[0], std::min(origSpacing[1], origSpacing[2]))));
 
     // Histogram computation
     HistogramType::SizeType size;

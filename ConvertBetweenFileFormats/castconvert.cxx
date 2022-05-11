@@ -346,7 +346,7 @@ main(int argc, char * argv[])
         }
       } // end isDICOM
     }   // end try
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       /** If any errors have occurred, catch and print the exception and return false. */
       std::cerr << "ExceptionObject caught !" << std::endl;
@@ -354,7 +354,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     /** If any errors have occurred, catch and print the exception and return false. */
     std::cerr << "ExceptionObject caught !" << std::endl;

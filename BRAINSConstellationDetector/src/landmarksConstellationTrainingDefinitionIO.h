@@ -140,7 +140,7 @@ public:
       }
       input.close();
     }
-    catch (err_flags f)
+    catch (const err_flags f)
     {
       std::cerr << "File read error "
                 << (f == landmarksConstellationTrainingDefinitionIO::eof ? "unexpected end of file" : "file read error")

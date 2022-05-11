@@ -153,7 +153,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << " Error while reading image file( s ) with ITK:\n " << err << std::endl;
   }
@@ -283,7 +283,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     {
       houghEyeDetector->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot find eye centers" << std::endl;
       std::cerr << excep << std::endl;
@@ -453,7 +453,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputTransform file!" << std::endl;
       std::cerr << excep << std::endl;
@@ -475,7 +475,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputVolume image!" << std::endl;
       std::cerr << excep << std::endl;
@@ -496,7 +496,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputResampledVolume image!" << std::endl;
       std::cerr << excep << std::endl;
@@ -548,7 +548,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputUntransformedClippedVolume image!" << std::endl;
       std::cerr << excep << std::endl;

@@ -32,7 +32,7 @@
     std::cerr << "Failed to catch expected exception" << std::endl;                                                    \
     return EXIT_FAILURE;                                                                                               \
   }                                                                                                                    \
-  catch (itk::ExceptionObject & excp)                                                                                  \
+  catch (const itk::ExceptionObject & excp)                                                                                  \
   {                                                                                                                    \
     std::cout << "Caught expected exception" << std::endl;                                                             \
     std::cout << excp << std::endl;                                                                                    \
@@ -44,7 +44,7 @@
     std::cout << "Trying " << #command << std::endl;                                                                   \
     command;                                                                                                           \
   }                                                                                                                    \
-  catch (itk::ExceptionObject & excp)                                                                                  \
+  catch (const itk::ExceptionObject & excp)                                                                                  \
   {                                                                                                                    \
     std::cerr << excp << std::endl;                                                                                    \
     return EXIT_FAILURE;                                                                                               \

@@ -165,7 +165,7 @@ main(int argc, char * argv[])
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excep)
+    catch (const itk::ExceptionObject & excep)
     {
       std::cerr << "Cannot write the outputTransform file!" << std::endl;
       std::cerr << excep << std::endl;
@@ -181,7 +181,7 @@ main(int argc, char * argv[])
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;
@@ -198,7 +198,7 @@ main(int argc, char * argv[])
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;
@@ -229,7 +229,7 @@ main(int argc, char * argv[])
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown " << std::endl;
       std::cerr << excp << std::endl;

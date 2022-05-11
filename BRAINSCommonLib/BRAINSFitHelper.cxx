@@ -40,7 +40,7 @@
 
 // A little dummy function to make it easy to stop the debugger.
 void
-debug_catch()
+debug_catch ( )
 {
   std::cout << "HERE" << __FILE__ << " " << __LINE__ << std::endl;
 }
@@ -210,7 +210,7 @@ DoHistogramEqualization(typename FixedImageType::Pointer &         inputFixedIma
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "Exception Object caught: " << std::endl;
       std::cout << err << std::endl;
@@ -264,7 +264,7 @@ BRAINSFitHelper::Update()
         {
           writer->Update();
         }
-        catch (itk::ExceptionObject & err)
+        catch (const itk::ExceptionObject & err)
         {
           std::cout << "Exception Object caught: " << std::endl;
           std::cout << err << std::endl;
@@ -281,7 +281,7 @@ BRAINSFitHelper::Update()
           {
             writer2->Update();
           }
-          catch (itk::ExceptionObject & err)
+          catch (const itk::ExceptionObject & err)
           {
             std::cout << "Exception Object caught: " << std::endl;
             std::cout << err << std::endl;
@@ -300,7 +300,7 @@ BRAINSFitHelper::Update()
         {
           writer->Update();
         }
-        catch (itk::ExceptionObject & err)
+        catch (const itk::ExceptionObject & err)
         {
           std::cout << "Exception Object caught: " << std::endl;
           std::cout << err << std::endl;
@@ -317,7 +317,7 @@ BRAINSFitHelper::Update()
           {
             writer2->Update();
           }
-          catch (itk::ExceptionObject & err)
+          catch (const itk::ExceptionObject & err)
           {
             std::cout << "Exception Object caught: " << std::endl;
             std::cout << err << std::endl;
@@ -573,7 +573,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         oss << "Exception Object caught: " << std::endl;
         oss << err << std::endl;
@@ -590,7 +590,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         oss << "Exception Object caught: " << std::endl;
         oss << err << std::endl;
@@ -608,7 +608,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         oss << "Exception Object caught: " << std::endl;
         oss << err << std::endl;
@@ -626,7 +626,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         oss << "Exception Object caught: " << std::endl;
         oss << err << std::endl;

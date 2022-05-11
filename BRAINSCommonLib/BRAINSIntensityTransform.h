@@ -58,7 +58,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   {
     statsFilter->Update();
   }
-  catch (itk::ExceptionObject & error)
+  catch (const itk::ExceptionObject & error)
   {
     std::cerr << "Stats Filter Error: " << error << std::endl;
     return nullptr;
@@ -96,7 +96,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   {
     imageToHistogramFilter->Update();
   }
-  catch (itk::ExceptionObject & error)
+  catch (const itk::ExceptionObject & error)
   {
     std::cerr << "Histogram Error: " << error << std::endl;
     return nullptr;
@@ -165,7 +165,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
     {
       outStatsFilter->Update();
     }
-    catch (itk::ExceptionObject & error)
+    catch (const itk::ExceptionObject & error)
     {
       std::cerr << "Stats Filter Error: " << error << std::endl;
       return nullptr;

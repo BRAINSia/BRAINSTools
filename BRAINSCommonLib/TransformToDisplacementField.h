@@ -42,7 +42,7 @@ TransformToDisplacementField(itk::ImageBase<DisplacementFieldPointerType::Object
   {
     todef->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     throw; // pass the buck up.
   }

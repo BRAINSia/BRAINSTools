@@ -246,7 +246,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   {
     m_GradientOP->StartOptimization();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << "Exception thrown ! " << std::endl;
     std::cout << "An error ocurred during Optimization" << std::endl;
@@ -302,7 +302,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
         {
           m_GradientOP->ResumeOptimization();
         }
-        catch (itk::ExceptionObject & e)
+        catch (const itk::ExceptionObject & e)
         {
           std::cout << "Exception thrown ! " << std::endl;
           std::cout << "An error ocurred during Optimization" << std::endl;

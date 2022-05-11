@@ -181,7 +181,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   {
     relabel->Update();
   }
-  catch (ExceptionObject & excep)
+  catch (const ExceptionObject & excep)
   {
     std::cerr << "Relabel: exception caught !" << std::endl;
     std::cerr << excep << std::endl;

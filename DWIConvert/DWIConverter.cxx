@@ -495,7 +495,7 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
     {
       rawWriter->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown while writing the series to" << outputVolumeDataName << " " << excp << std::endl;
       std::cerr << excp << std::endl;
@@ -664,7 +664,7 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolum
   {
     imgWriter->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while writing " << outputVolumeHeaderName << std::endl;
     std::cerr << excp << std::endl;

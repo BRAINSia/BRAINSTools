@@ -53,7 +53,7 @@ main(int argc, char * argv[])
       reader->Update();
       current = reader->GetOutput();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
@@ -105,7 +105,7 @@ main(int argc, char * argv[])
       reader->Update();
       nonAirVolume = reader->GetOutput();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
@@ -120,7 +120,7 @@ main(int argc, char * argv[])
     ComputeLabels<ProbabilityImageType, ByteImageType, FloatingPointPrecision>(
       Posteriors, priorIsForeground, priorLabels, nonAirVolume, dirtyLabels, cleanLabels, inclusionThreshold, 0);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
     return 1;
@@ -132,7 +132,7 @@ main(int argc, char * argv[])
     {
       itkUtil::WriteImage<ByteImageType>(dirtyLabels, dirtyLabelVolume);
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;
@@ -144,7 +144,7 @@ main(int argc, char * argv[])
     {
       itkUtil::WriteImage<ByteImageType>(cleanLabels, cleanLabelVolume);
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << " " << __FILE__ << " " << __LINE__ << std::endl;
       return 1;

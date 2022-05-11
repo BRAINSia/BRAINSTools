@@ -35,7 +35,7 @@ main()
     std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" << std::endl;
     testPassedStatus &= false;
   }
-  catch (itk::ExceptionObject & exception)
+  catch (const itk::ExceptionObject & exception)
   {
     // We want to succesfully catch this exception
     std::cout << "Successfully caught exception for landmark file reading." << std::endl;
@@ -53,7 +53,7 @@ main()
     std::cout << "!!Error: Succesfully read non-existant file ?!?!?! :(" << std::endl;
     testPassedStatus &= false;
   }
-  catch (itk::ExceptionObject & exception)
+  catch (const itk::ExceptionObject & exception)
   {
     // We want to succesfully catch this exception
     std::cout << "Successfully caught exception for landmark weights file reading." << std::endl;

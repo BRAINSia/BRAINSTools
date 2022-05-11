@@ -82,7 +82,7 @@ MaxOfImageList(
     {
       myMax->Update();
     }
-    catch (itk::ExceptionObject & exp)
+    catch (const itk::ExceptionObject & exp)
     {
       std::cerr << "ExceptionObject with Iterator" << std::endl;
       std::cerr << exp << std::endl;

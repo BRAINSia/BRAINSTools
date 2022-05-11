@@ -76,7 +76,7 @@ main(int argc, char * argv[])
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << " Error while reading image file(s) with ITK:\n " << err << std::endl;
     }
@@ -117,7 +117,7 @@ main(int argc, char * argv[])
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << " Error while reading image file(s) with ITK:\n " << err << std::endl;
     }

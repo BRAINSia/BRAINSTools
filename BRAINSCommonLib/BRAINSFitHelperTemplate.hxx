@@ -375,7 +375,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
               {
                 checker->Update();
               }
-              catch (itk::ExceptionObject & err)
+              catch (const itk::ExceptionObject & err)
               {
                 std::cout << "Caught an ITK exception: " << std::endl;
                 std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -398,7 +398,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
                 {
                   writer->Update();
                 }
-                catch (itk::ExceptionObject & err)
+                catch (const itk::ExceptionObject & err)
                 {
                   std::cout << "Exception Object caught: " << std::endl;
                   std::cout << err << std::endl;
@@ -452,7 +452,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       {
         checker->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         std::cout << "Caught an ITK exception: " << std::endl;
         std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -475,7 +475,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
         {
           writer->Update();
         }
-        catch (itk::ExceptionObject & err)
+        catch (const itk::ExceptionObject & err)
         {
           std::cout << "Exception Object caught: " << std::endl;
           std::cout << err << std::endl;
@@ -605,7 +605,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     this->m_ActualNumberOfIterations = appMutualRegistration->GetActualNumberOfIterations();
     this->m_PermittedNumberOfIterations = numberOfIterations;
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     // pass exception to caller
     itkGenericExceptionMacro(<< "Exception caught during registration: " << err);
@@ -826,7 +826,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             return;
           }
         }
-        catch (itk::ExceptionObject & excp)
+        catch (const itk::ExceptionObject & excp)
         {
           std::cout << "[FAILED]" << std::endl;
           std::cerr << "Error while reading the m_CurrentGenericTransform" << std::endl;
@@ -911,7 +911,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             return;
           }
         }
-        catch (itk::ExceptionObject & excp)
+        catch (const itk::ExceptionObject & excp)
         {
           std::cout << "[FAILED]" << std::endl;
           std::cerr << "Error while reading the m_CurrentGenericTransform" << std::endl;
@@ -1004,7 +1004,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             return;
           }
         }
-        catch (itk::ExceptionObject & excp)
+        catch (const itk::ExceptionObject & excp)
         {
           std::cout << "[FAILED]" << std::endl;
           std::cerr << "Error while reading the m_CurrentGenericTransform" << std::endl << excp << std::endl;
@@ -1092,7 +1092,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             return;
           }
         }
-        catch (itk::ExceptionObject & excp)
+        catch (const itk::ExceptionObject & excp)
         {
           std::cout << "[FAILED]" << std::endl;
           std::cerr << "Error while reading the m_CurrentGenericTransform" << std::endl << excp << std::endl;
@@ -1506,7 +1506,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         std::cout << "Stop condition from LBFGSBoptimizer."
                   << bsplineRegistration->GetOptimizer()->GetStopConditionDescription() << std::endl;
       }
-      catch (itk::ExceptionObject & e)
+      catch (const itk::ExceptionObject & e)
       {
         itkGenericExceptionMacro(<< "Exception caught: " << e << std::endl);
       }
@@ -1618,7 +1618,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             {
               transformWriter->Update();
             }
-            catch (itk::ExceptionObject & excp)
+            catch (const itk::ExceptionObject & excp)
             {
               itkGenericExceptionMacro(<< "Exception caught: Cannot write state file: " << excp << std::endl);
             }

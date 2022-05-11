@@ -138,7 +138,7 @@ CreateField<TImage, T2Image>::Execute()
       m_Image2ShrinkFactors[j] = uNumber;
     }
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "  Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -168,7 +168,7 @@ CreateField<TImage, T2Image>::Execute()
 
     m_MovingImage = filter->GetOutput();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "  Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -212,7 +212,7 @@ CreateField<TImage, T2Image>::Execute()
     {
       m_Registration->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "  Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -230,7 +230,7 @@ CreateField<TImage, T2Image>::Execute()
       m_DisplacementField = m_Registration->GetOutput();
       // m_DisplacementField->DisconnectPipeline();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "  Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -242,7 +242,7 @@ CreateField<TImage, T2Image>::Execute()
       throw;
     }
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "  Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;

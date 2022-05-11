@@ -147,7 +147,7 @@ main(int argc, char * argv[])
   {
     imageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -461,7 +461,7 @@ main(int argc, char * argv[])
   {
     nrrdWriter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }
@@ -487,7 +487,7 @@ main(int argc, char * argv[])
     {
       B0Writer->Update();
     }
-    catch (itk::ExceptionObject & e)
+    catch (const itk::ExceptionObject & e)
     {
       std::cout << e << std::endl;
     }

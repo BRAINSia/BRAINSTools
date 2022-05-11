@@ -73,7 +73,7 @@ ReadImage(const std::string & fileName)
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -97,7 +97,7 @@ ReadImage(const std::string & fileName)
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "Caught an exception: " << std::endl;
       std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -219,7 +219,7 @@ WriteConstImage(const typename ImageType::ConstPointer image, const std::string 
   {
     writer->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Exception Object caught: " << std::endl;
     std::cout << err << std::endl;
@@ -291,7 +291,7 @@ ScaleAndCast(const typename InputImageType::Pointer &  image,
   {
     RealToProbMapCast->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     throw e;
   }

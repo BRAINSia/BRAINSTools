@@ -104,7 +104,7 @@ main(int argc, char * argv[])
   {
     codeImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -121,7 +121,7 @@ main(int argc, char * argv[])
   {
     referenceImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -136,7 +136,7 @@ main(int argc, char * argv[])
   {
     orientImageFilter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
@@ -178,7 +178,7 @@ main(int argc, char * argv[])
   {
     resample->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -194,7 +194,7 @@ main(int argc, char * argv[])
   {
     orientCodeImageFilter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;
@@ -212,7 +212,7 @@ main(int argc, char * argv[])
   {
     ImageWriter->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

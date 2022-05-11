@@ -125,7 +125,7 @@ main(int argc, char * argv[])
     myPermuter->Update();
     fixedImage = myPermuter->GetOutput();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown " << std::endl;
     std::cerr << excp << std::endl;
@@ -154,7 +154,7 @@ main(int argc, char * argv[])
   {
     transformInitializer->InitializeTransform();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown " << std::endl;
     std::cerr << excp << std::endl;

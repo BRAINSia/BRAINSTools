@@ -88,7 +88,7 @@ DWIConverterFactory::New()
       {
         curReader->LoadFile();
       }
-      catch( ... )
+      catch (const ... )
       {
         std::cerr << "Error reading slice" << m_InputFileNames[i] << std::endl;
         delete curReader;
@@ -161,7 +161,7 @@ DWIConverterFactory::New()
       m_Headers[0]->GetElementLO(0x0008, 0x0070, this->m_Vendor);
       strupper(this->m_Vendor);
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Can't get vendor name from DICOM file" << excp << std::endl;
       return nullptr;

@@ -369,7 +369,7 @@ statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Error reading the series " << std::endl;
       std::cerr << excp << std::endl;
@@ -716,7 +716,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Error reading the series " << excp << std::endl;
     throw;
@@ -742,7 +742,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
     {
       reader2->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Error reading the series " << excp << std::endl;
       throw;

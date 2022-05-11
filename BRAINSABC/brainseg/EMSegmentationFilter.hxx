@@ -2443,7 +2443,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
       {
         ComputeCovarianceDeterminant(this->m_ListOfClassStatistics[q].m_Covariance);
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cerr << "Error computing covariance " << std::endl;
         std::cerr << excp << std::endl;

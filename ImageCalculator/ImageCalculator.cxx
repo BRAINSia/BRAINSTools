@@ -26,7 +26,7 @@ main(int argc, char * argv[])
   {
     return PrimaryImageCalculatorRoutine(argc, argv);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Exception Object caught: " << std::endl;
     std::cout << err << std::endl;

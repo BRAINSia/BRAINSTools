@@ -63,7 +63,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>::Execute()
     this->InitializeParser();
     m_Parser->Execute();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -89,7 +89,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>::Execute()
     this->InitializePreprocessor();
     m_Preprocessor->Execute();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;
@@ -116,7 +116,7 @@ ApplicationBase<TParser, TPreprocessor, TRegistrator>::Execute()
     m_Parser = nullptr;
     m_Registrator->Execute();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Caught an ITK exception: " << std::endl;
     std::cout << err << " " << __FILE__ << " " << __LINE__ << std::endl;

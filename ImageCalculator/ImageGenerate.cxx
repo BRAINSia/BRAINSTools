@@ -240,7 +240,7 @@ MakeImage(const std::string & filename,
     writer->SetInput(image);
     writer->Write();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Can't write " << filename << std::endl;
     std::cerr << excp << std::endl;

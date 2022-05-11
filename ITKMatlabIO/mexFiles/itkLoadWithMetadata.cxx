@@ -559,7 +559,7 @@ LoadDWIImage(const std::string & filename, mxArray *& structMx)
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::string msg = "Error: itk::ImageFileReader can't read " + filename + " : " + e.what();
     mexErrMsgTxt(msg.c_str());
@@ -704,7 +704,7 @@ mexFunction(int nlhs, mxArray * plhs[], int nrhs, const mxArray * prhs[])
   {
     itkLoadWithMetadata(plhs, prhs);
   }
-  catch (std::exception & e)
+  catch (const std::exception & e)
   {
     mexErrMsgTxt(e.what());
   }

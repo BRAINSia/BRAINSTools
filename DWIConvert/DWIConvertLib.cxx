@@ -92,7 +92,7 @@ DWIConvert::read()
       FSLconverter->SetThicknessFromSpacing(); // When converting from FSL, use thinkness as spacing[2]
       FSLconverter->ExtractDWIData();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       itkGenericExceptionMacro(<< "Exception creating converter " << excp << std::endl);
       delete FSLconverter;
@@ -114,7 +114,7 @@ DWIConvert::read()
       NRRDconverter->LoadFromDisk();
       NRRDconverter->ExtractDWIData();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       itkGenericExceptionMacro(<< "Exception creating converter " << excp << std::endl);
       delete NRRDconverter;
@@ -227,7 +227,7 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
   {
     converter = converterFactory.New();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
     return nullptr;
@@ -244,7 +244,7 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
     converter->SetAllowLossyConversion(allowLossyConversion);
     converter->LoadFromDisk();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
     delete converter;
@@ -255,7 +255,7 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
   {
     converter->ExtractDWIData();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
     delete converter;

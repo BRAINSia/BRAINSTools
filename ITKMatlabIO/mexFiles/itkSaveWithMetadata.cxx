@@ -369,7 +369,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
   {
     writer->Write();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::string msg("itkSaveWithMetaData: can't read\n");
     msg += filename;
@@ -627,7 +627,7 @@ writer->SetInput(im);
 try {
    writer->Write();
 }
-catch (itk::ExceptionObject &excp) {
+catch (const itk::ExceptionObject &excp) {
    std::string msg("itkSaveWithMetaData: can't read\n");
    msg += filename;
    msg += " ";
@@ -1128,7 +1128,7 @@ mexFunction(int nlhs, mxArray * plhs[], int nrhs, const mxArray * prhs[])
   {
     itkSaveWithMetaData(nrhs, prhs);
   }
-  catch (std::exception & e)
+  catch (const std::exception & e)
   {
     mexErrMsgTxt(e.what());
   }

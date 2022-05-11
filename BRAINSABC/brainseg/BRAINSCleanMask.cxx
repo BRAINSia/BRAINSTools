@@ -45,7 +45,7 @@ main(int argc, char ** argv)
   {
     input = itkUtil::ReadImage<ImageType>(inputVolume);
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cerr << "error reading " << inputVolume << std::endl << e << std::endl;
     return EXIT_FAILURE;
@@ -60,7 +60,7 @@ main(int argc, char ** argv)
   {
     output = CleanBrainLabelMap<ImageType, ImageType>(input);
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cerr << e << std::endl;
     return EXIT_FAILURE;
@@ -75,7 +75,7 @@ main(int argc, char ** argv)
   {
     itkUtil::WriteImage<ImageType>(output, outputVolume);
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cerr << "error writing " << inputVolume << std::endl << e << std::endl;
     return EXIT_FAILURE;

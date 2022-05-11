@@ -64,7 +64,7 @@ Resample(const std::string & inputVolume, const std::string & outputVolume, cons
     filter->Update();
     outputImage = filter->GetOutput();
   }
-  catch (itk::ExceptionObject & excep)
+  catch (const itk::ExceptionObject & excep)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << excep << std::endl;
@@ -98,7 +98,7 @@ main(int argc, char ** argv)
       return Resample<itk::Image<unsigned char, 3>>(inputVolume, outputVolume, scaleFactor);
     }
   }
-  catch (itk::ExceptionObject & excep)
+  catch (const itk::ExceptionObject & excep)
   {
     std::cerr << "BRAINSResize " << excep << std::endl;
     return EXIT_FAILURE;

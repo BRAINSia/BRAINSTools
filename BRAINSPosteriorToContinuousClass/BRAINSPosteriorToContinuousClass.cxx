@@ -136,7 +136,7 @@ main(int argc, char ** argv)
     crblWmReader->Update();
     crblWmVolume = crblWmReader->GetOutput();
   }
-  catch (itk::ExceptionObject & exe)
+  catch (const itk::ExceptionObject & exe)
   {
     std::cout << exe << std::endl;
     exit(1);

@@ -81,7 +81,7 @@ main(int argc, char * argv[])
   {
     anatomicalReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

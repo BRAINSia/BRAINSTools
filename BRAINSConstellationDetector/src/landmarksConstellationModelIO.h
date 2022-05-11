@@ -346,7 +346,7 @@ public:
       this->debugOffset(&output, "end of file", -1);
 #endif
     }
-    catch (ioErr e)
+    catch (const ioErr e)
     {
       std::cerr << "Write failed for " << filename << std::endl;
       std::cerr << e << std::endl;
@@ -500,7 +500,7 @@ public:
       this->debugOffset(&input, "end of file", -1);
 #endif
     }
-    catch (ioErr e)
+    catch (const ioErr e)
     {
 #ifdef __USE_OFFSET_DEBUGGING_CODE__
       this->debugOffset(&input, "end of file", -1);

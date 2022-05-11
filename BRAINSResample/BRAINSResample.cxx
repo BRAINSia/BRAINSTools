@@ -328,7 +328,7 @@ main(int argc, char * argv[])
           genericTransform = itk::ReadTransformFromDisk(warpTransform);
         }
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << excp << std::endl;
         throw excp;
@@ -468,7 +468,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -493,7 +493,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -518,7 +518,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -543,7 +543,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -568,7 +568,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -592,7 +592,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -610,7 +610,7 @@ main(int argc, char * argv[])
       {
         imageWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
         std::cout << excp << std::endl;
@@ -623,7 +623,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cout << "******* HERE *******" << __FILE__ << " " << __LINE__ << std::endl;
     std::cout << excp << std::endl;

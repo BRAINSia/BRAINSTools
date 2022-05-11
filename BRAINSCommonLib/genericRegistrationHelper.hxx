@@ -52,7 +52,7 @@
 #include "itkImageMomentsCalculator.h"
 
 extern void
-debug_catch();
+debug_catch ();
 
 namespace itk
 {
@@ -409,7 +409,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   {
     m_Registration->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     // Attempt to auto-recover if too many samples were requested.
     std::cerr << "ExceptionObject caught !" << std::endl;
@@ -448,7 +448,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
       {
       dwriter2->Update();
       }
-    catch( itk::ExceptionObject & err )
+    catch (const itk::ExceptionObject & err )
       {
       std::cerr << "Exception Object caught: " << std::endl;
       std::cerr << err << std::endl;

@@ -26,7 +26,7 @@ WriteVolume(const TImage * img, const std::string & fname)
   {
     imgWriter->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while writing " << fname << std::endl;
     std::cerr << excp << std::endl;
@@ -46,7 +46,7 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
   {
     imgReader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while reading " << fname << std::endl;
     std::cerr << excp << std::endl;
@@ -84,7 +84,7 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
         img = nullptr;       // Throw away existing version of image (save memory)
         doubleReader->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cerr << "Exception thrown while reading " << fname << std::endl;
         std::cerr << excp << std::endl;
@@ -113,7 +113,7 @@ ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool
   {
     imgReader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while reading " << fname << std::endl;
     std::cerr << excp << std::endl;
@@ -151,7 +151,7 @@ ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool
         img = nullptr;       // Throw away existing version of image (save memory)
         doubleReader->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cerr << "Exception thrown while reading " << fname << std::endl;
         std::cerr << excp << std::endl;

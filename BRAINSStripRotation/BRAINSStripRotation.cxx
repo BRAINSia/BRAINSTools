@@ -56,7 +56,7 @@ ReadAndSplitImage(const std::string & inputVolume, const std::string & outputVol
   {
     inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "Error reading " << inputVolume << err.what() << std::endl;
     return 1;
@@ -74,7 +74,7 @@ ReadAndSplitImage(const std::string & inputVolume, const std::string & outputVol
   {
     itkUtil::WriteImage<ImageType>(inputImage, outputVolume);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "Error writing " << outputVolume << err.what() << std::endl;
     return 1;
@@ -105,7 +105,7 @@ ReadAndSplitImage(const std::string & inputVolume, const std::string & outputVol
   {
     xfrmWriter->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "Error writing " << transform << err.what() << std::endl;
     return 1;
@@ -149,7 +149,7 @@ main(int argc, char * argv[])
       imageIO->SetFileName(inputVolume);
       imageIO->ReadImageInformation();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "itkLoadWithMetaData: can't read " << inputVolume << " " << excp.what() << std::endl;
       return 1;

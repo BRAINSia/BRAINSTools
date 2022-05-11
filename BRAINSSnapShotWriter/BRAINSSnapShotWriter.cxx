@@ -205,7 +205,7 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
 
       resampler->Update();
       }
-      catch(...)
+      catch (...)
       {
         std::cout << "ERROR:  Could not resample image " << filenameVector[i] << "." << std::endl;
         exit(EXIT_FAILURE);
@@ -429,7 +429,7 @@ main(int argc, char ** argv)
         {
           rgbComposer->Update();
         }
-        catch (itk::ExceptionObject & e)
+        catch (const itk::ExceptionObject & e)
         {
           std::cout << "ERROR:  Could not update image." << std::endl;
           std::cout << "ERROR:  " << e.what() << std::endl;
@@ -450,7 +450,7 @@ main(int argc, char ** argv)
         {
           rgbComposer->Update();
         }
-        catch (itk::ExceptionObject & e)
+        catch (const itk::ExceptionObject & e)
         {
           std::cout << "ERROR:  Could not update image." << std::endl;
           std::cout << "ERROR:  " << e.what() << std::endl;
@@ -494,7 +494,7 @@ main(int argc, char ** argv)
   {
     rgbFileWriter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << "ERROR:  Could not write image." << std::endl;
     std::cout << "ERROR:  " << e.what() << std::endl;

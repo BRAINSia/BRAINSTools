@@ -102,7 +102,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
         return nullptr;
       }
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cout << "[FAILED]" << std::endl;
       std::cerr << "Error while converting the genericTransformToWrite to Rigid" << std::endl;
@@ -211,7 +211,7 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
         }
       }
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       throw excp; // rethrow exception, handle in some other scope.
     }
@@ -304,7 +304,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
       }
     }
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "[FAILED]" << std::endl;
     std::cerr << "Error while reading the the file " << initialTransform << std::endl;
@@ -396,7 +396,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
         }
         genericTransform = tempCopy.GetPointer();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cerr << "[FAILED]" << std::endl;
         std::cerr << "Error while reading the the file " << initialTransform << std::endl;
@@ -424,7 +424,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
       }
       genericTransform = tempCopy.GetPointer();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "[FAILED]" << std::endl;
       std::cerr << "Error while adding all input transforms to a composite transform file " << initialTransform
@@ -502,7 +502,7 @@ void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const M
     {
       dispWriter->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << "Can't write the displacement field transform file " << TransformFilename << std::endl;
       std::cerr << "Exception Object caught: " << std::endl;
@@ -573,7 +573,7 @@ void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const M
     {
       transformWriter->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       throw excp;
     }
@@ -583,7 +583,7 @@ void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const M
       {
         inverseTransformWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         throw excp;
         // Writing the inverseTransform is optional,  throw excp;

@@ -375,7 +375,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
           {
             writer->Update();
           }
-          catch (itk::ExceptionObject & excep)
+          catch (const itk::ExceptionObject & excep)
           {
             std::cerr << "Cannot write the " << circles << " accumulator search ROI image!" << std::endl;
             std::cerr << excep << std::endl;

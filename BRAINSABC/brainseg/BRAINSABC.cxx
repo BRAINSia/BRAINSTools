@@ -796,7 +796,7 @@ main(int argc, char ** argv)
           {
             atlasToSubjectCurrentGenericTransform = itk::ReadTransformFromDisk(atlasToSubjectInitialTransform);
           }
-          catch (itk::ExceptionObject & /* excp */)
+          catch (const itk::ExceptionObject & /* excp */)
           {
             muLogMacro("ERROR:  Invalid atlasToSubjectInitialTransform specified" << atlasToSubjectInitialTransform
                                                                                   << std::endl);
@@ -864,7 +864,7 @@ main(int argc, char ** argv)
               return EXIT_FAILURE;
             }
           }
-          catch (itk::ExceptionObject & /* excp */)
+          catch (const itk::ExceptionObject & /* excp */)
           {
             muLogMacro("ERROR:  Invalid restore state specified" << restoreState << std::endl);
             return EXIT_FAILURE;
@@ -896,7 +896,7 @@ main(int argc, char ** argv)
         {
           atlasreg->Update();
         }
-        catch (itk::ExceptionObject & e)
+        catch (const itk::ExceptionObject & e)
         {
           std::cerr << "Exception caught!" << std::endl;
           std::cerr << e << std::endl;
@@ -1350,17 +1350,17 @@ main(int argc, char ** argv)
         writer->Modified();
         writer->Update();
       }
-      catch (itk::ExceptionObject & e)
+      catch (const itk::ExceptionObject & e)
       {
         muLogMacro(<< e << std::endl);
         return -1;
       }
-      catch (std::exception & e)
+      catch (const std::exception & e)
       {
         muLogMacro(<< "Exception: " << e.what() << std::endl);
         return -1;
       }
-      catch (std::string & s)
+      catch (const std::string & s)
       {
         muLogMacro(<< "Exception: " << s << std::endl);
         return -1;

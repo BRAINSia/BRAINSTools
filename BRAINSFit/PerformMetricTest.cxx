@@ -87,7 +87,7 @@ main(int argc, char * argv[])
     {
       transReader->Update();
     }
-    catch (itk::ExceptionObject & e)
+    catch (const itk::ExceptionObject & e)
     {
       std::cerr << "Exception caught!" << std::endl;
       std::cerr << e << std::endl;
@@ -180,7 +180,7 @@ main(int argc, char * argv[])
   {
     metric->GetValueAndDerivative(measure, derivative);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << err << std::endl;

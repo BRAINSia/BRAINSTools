@@ -121,7 +121,7 @@ main(int argc, char * argv[])
   {
     vectorImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -140,7 +140,7 @@ main(int argc, char * argv[])
     {
       SelectIndexImageFilter->Update();
     }
-    catch (itk::ExceptionObject & e)
+    catch (const itk::ExceptionObject & e)
     {
       std::cerr << e << std::endl;
       return EXIT_FAILURE;
@@ -209,7 +209,7 @@ main(int argc, char * argv[])
     {
       selectIndexImageFilter->Update();
     }
-    catch (itk::ExceptionObject & e)
+    catch (const itk::ExceptionObject & e)
     {
       std::cout << e << std::endl;
     }
@@ -363,7 +363,7 @@ main(int argc, char * argv[])
   {
     nrrdWriter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
   }

@@ -163,7 +163,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   {
     statisticsFilter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cerr << "Exception detected while comparing " << inputVolume1 << "  " << inputVolume2 << e.GetDescription();
     return EXIT_FAILURE;
@@ -310,7 +310,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
   }
-  catch (itk::ExceptionObject & excep)
+  catch (const itk::ExceptionObject & excep)
   {
     std::cerr << argv[0] << ": exception caught !" << std::endl;
     std::cerr << excep << std::endl;

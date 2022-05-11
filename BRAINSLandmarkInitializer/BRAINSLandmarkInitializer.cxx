@@ -196,7 +196,7 @@ InitializeTransform(const LandmarkPointContainer & fixedLmks,
   {
     landmarkBasedInitializer->InitializeTransform();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cout << "Exception Object caught: " << std::endl;
     std::cout << err << std::endl;
@@ -231,7 +231,7 @@ main(int argc, char * argv[])
       reader->Update();
       referenceImage = reader->GetOutput();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cout << "Exception Object caught: " << std::endl;
       std::cout << err << std::endl;

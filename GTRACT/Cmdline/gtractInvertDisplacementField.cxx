@@ -63,7 +63,7 @@ main(int argc, char * argv[])
   {
     scalarReader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by scalar image reader" << std::endl;
     std::cerr << excp << std::endl;
@@ -84,7 +84,7 @@ main(int argc, char * argv[])
   {
     vectorReader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by vector image reader" << std::endl;
     std::cerr << excp << std::endl;
@@ -107,7 +107,7 @@ main(int argc, char * argv[])
   {
     inverseFilter->UpdateLargestPossibleRegion();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown in Inverse filter" << std::endl;
     std::cerr << excp << std::endl;
@@ -125,7 +125,7 @@ main(int argc, char * argv[])
   {
     writer->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown by writer" << std::endl;
     std::cerr << excp << std::endl;

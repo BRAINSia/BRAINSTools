@@ -136,7 +136,7 @@ main(int argc, char ** argv)
   {
     tensorImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -155,7 +155,7 @@ main(int argc, char ** argv)
   {
     anisotropyImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -174,7 +174,7 @@ main(int argc, char ** argv)
   {
     startingSeedImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

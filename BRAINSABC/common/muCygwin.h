@@ -43,17 +43,17 @@
     {                                                                                                                  \
       r = _mu_main(argc, argv);                                                                                        \
     }                                                                                                                  \
-    catch (itk::ExceptionObject & e)                                                                                   \
+    catch (const itk::ExceptionObject & e)                                                                                   \
     {                                                                                                                  \
       std::cerr << e << std::endl;                                                                                     \
       return -1;                                                                                                       \
     }                                                                                                                  \
-    catch (std::exception & e)                                                                                         \
+    catch (const std::exception & e)                                                                                         \
     {                                                                                                                  \
       std::cerr << "Exception: " << e.what() << std::endl;                                                             \
       return -1;                                                                                                       \
     }                                                                                                                  \
-    catch (char * s)                                                                                                   \
+    catch (const char * s)                                                                                                   \
     {                                                                                                                  \
       std::cerr << "Exception: " << s << std::endl;                                                                    \
       return -1;                                                                                                       \

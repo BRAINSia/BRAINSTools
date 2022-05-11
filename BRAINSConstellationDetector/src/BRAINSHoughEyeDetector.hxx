@@ -330,7 +330,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
   {
     houghFilter->Update();
   }
-  catch (itk::ExceptionObject & excep)
+  catch (const itk::ExceptionObject & excep)
   {
     std::cerr << "Failed houghFilter " << std::endl;
     std::cerr << excep << std::endl;
@@ -356,7 +356,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & excep)
+      catch (const itk::ExceptionObject & excep)
       {
         std::cerr << "Cannot write the ROI image!" << std::endl;
         std::cerr << excep << std::endl;
@@ -373,7 +373,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
       {
         writer->Update();
       }
-      catch (itk::ExceptionObject & excep)
+      catch (const itk::ExceptionObject & excep)
       {
         std::cerr << "Cannot write the ROI image!" << std::endl;
         std::cerr << excep << std::endl;

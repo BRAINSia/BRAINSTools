@@ -118,7 +118,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   {
     twoByTwoOptimizer->StartOptimization();
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "LMO FAIL" << std::endl;
     std::cerr << "Exception caught !" << std::endl;
@@ -225,7 +225,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     std::cout << "Writing mixture image: " << outputVolume << std::endl;
     writer->Update();
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;
@@ -319,7 +319,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       threshToBrainCoreMask->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception caught ! " << std::endl;
       std::cerr << excp << std::endl;
@@ -349,7 +349,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       initialMaskImage->Update();
     }
-    catch (itk::ExceptionObject & exp)
+    catch (const itk::ExceptionObject & exp)
     {
       std::cerr << "Exception caught !" << std::endl;
       std::cerr << exp << std::endl;
@@ -368,7 +368,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     {
       labelFilter->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception caught ! " << std::endl;
       std::cerr << excp << std::endl;
@@ -409,7 +409,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   {
     threshToHeadMask->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception caught ! " << std::endl;
     std::cerr << excp << std::endl;
@@ -462,7 +462,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     binaryErodeFilter->SetInput(thresholdOutput);
     binaryErodeFilter->Update();
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;
@@ -486,7 +486,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   {
     threshToBrainCoreMask->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception caught ! " << std::endl;
     std::cerr << excp << std::endl;
@@ -553,7 +553,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
       LargestFilter->Update();
     }
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;
@@ -580,7 +580,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     binaryDilateFilter->SetInput(largestFilterOutput);
     binaryDilateFilter->Update();
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;
@@ -604,7 +604,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   {
     threshToClosureMask->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception caught ! " << std::endl;
     std::cerr << excp << std::endl;
@@ -771,7 +771,7 @@ main(int argc, char ** argv)
     std::cout << "Writing mush mask : " << resultImage << std::endl;
     maskWriter->Update();
   }
-  catch (itk::ExceptionObject & exp)
+  catch (const itk::ExceptionObject & exp)
   {
     std::cerr << "Exception caught !" << std::endl;
     std::cerr << exp << std::endl;

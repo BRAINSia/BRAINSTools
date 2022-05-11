@@ -52,7 +52,7 @@ main(int argc, char * argv[])
   {
     image4DReader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception thrown while reading the image" << std::endl;
     std::cerr << excp << std::endl;
@@ -98,7 +98,7 @@ main(int argc, char * argv[])
     {
       image3DWriter->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown while writing the image" << std::endl;
       std::cerr << excp << std::endl;

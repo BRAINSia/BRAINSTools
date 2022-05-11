@@ -85,7 +85,7 @@ main(int argc, char * argv[])
     {
       labelVolume = itkUtil::ReadImage<USImageType>(it);
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << std::endl;
       return 1;
@@ -112,7 +112,7 @@ main(int argc, char * argv[])
       std::cout << "Reading Composite Volume " << inputCompositeT1Volume << std::endl;
       compositeVolume = itkUtil::ReadImage<USImageType>(inputCompositeT1Volume);
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << err << std::endl;
       return 1;
@@ -136,7 +136,7 @@ main(int argc, char * argv[])
         {
           reader->Update();
         }
-        catch (itk::ExceptionObject & err)
+        catch (const itk::ExceptionObject & err)
         {
           std::cerr << err << std::endl;
           return 1;
@@ -203,7 +203,7 @@ main(int argc, char * argv[])
         resampler->SetTransform(curTransform);
         resampler->Update();
       }
-      catch (itk::ExceptionObject & err)
+      catch (const itk::ExceptionObject & err)
       {
         std::cerr << err << std::endl;
         return 1;
@@ -219,7 +219,7 @@ main(int argc, char * argv[])
         {
           itkUtil::WriteImage<USImageType>(resampler->GetOutput(), resampledName);
         }
-        catch (itk::ExceptionObject & err)
+        catch (const itk::ExceptionObject & err)
         {
           std::cerr << err << std::endl;
           return 1;
@@ -249,7 +249,7 @@ main(int argc, char * argv[])
   {
     STAPLEFilter->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << err << std::endl;
     return 1;
@@ -263,7 +263,7 @@ main(int argc, char * argv[])
     std::cout << "Writing " << outputMultiSTAPLE << std::endl;
     itkUtil::WriteImage<USImageType>(output, outputMultiSTAPLE);
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << err << std::endl;
     return 1;

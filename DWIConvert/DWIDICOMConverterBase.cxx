@@ -47,7 +47,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown while reading DICOM volume" << std::endl;
       std::cerr << excp << std::endl;
@@ -66,7 +66,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     {
       reader->Update();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::cerr << "Exception thrown while reading the series" << std::endl;
       std::cerr << excp << std::endl;

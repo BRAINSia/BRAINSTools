@@ -137,7 +137,7 @@ main(int argc, char * argv[])
     std::cout << "Reading Forward Displacement Field........." << std::endl;
     forwardFieldReader->Update();
   }
-  catch (itk::ExceptionObject & fe)
+  catch (const itk::ExceptionObject & fe)
   {
     std::cout << "Field Exception caught ! " << fe << std::endl;
   }
@@ -153,7 +153,7 @@ main(int argc, char * argv[])
     std::cout << "Reading Reverse Displacement Field........." << std::endl;
     reverseFieldReader->Update();
   }
-  catch (itk::ExceptionObject & fe)
+  catch (const itk::ExceptionObject & fe)
   {
     std::cout << "Field Exception caught ! " << fe << std::endl;
   }
@@ -170,7 +170,7 @@ main(int argc, char * argv[])
   {
     orientImageFilter->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     std::cout << e << std::endl;
     throw;

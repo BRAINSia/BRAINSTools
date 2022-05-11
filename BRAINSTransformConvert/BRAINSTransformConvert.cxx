@@ -488,7 +488,7 @@ DoConversion(int argc, char * argv[])
       {
         transformWriter->Update();
       }
-      catch (itk::ExceptionObject & excp)
+      catch (const itk::ExceptionObject & excp)
       {
         std::cerr << "Can't write " << outputTransform << excp.GetDescription() << std::endl;
         return EXIT_FAILURE;

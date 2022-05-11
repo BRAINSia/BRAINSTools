@@ -105,7 +105,7 @@ main(int argc, char * argv[])
               try {
                   writer->Update();
               }
-              catch (itk::ExceptionObject &excep) {
+              catch (const itk::ExceptionObject &excep) {
                   std::cerr << "Cannot write the outputTransform file!" << std::endl;
                   std::cerr << excep << std::endl;
               }

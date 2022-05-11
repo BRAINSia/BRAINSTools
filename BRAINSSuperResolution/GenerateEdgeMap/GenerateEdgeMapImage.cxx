@@ -123,7 +123,7 @@ main(int argc, char * argv[])
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & exp)
+    catch (const itk::ExceptionObject & exp)
     {
       std::cerr << "ExceptionObject with writer" << std::endl;
       std::cerr << exp << std::endl;
@@ -151,7 +151,7 @@ main(int argc, char * argv[])
     {
       writer->Update();
     }
-    catch (itk::ExceptionObject & exp)
+    catch (const itk::ExceptionObject & exp)
     {
       std::cerr << "ExceptionObject with writer" << std::endl;
       std::cerr << exp << std::endl;

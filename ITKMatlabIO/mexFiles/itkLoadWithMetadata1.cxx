@@ -555,7 +555,7 @@ LoadDWIImage(const std::string & filename, mxArray *& structMx)
   {
     reader->Update();
   }
-  catch (itk::ExceptionObject & excp)
+  catch (const itk::ExceptionObject & excp)
   {
     std::string msg("itkLoadWithMetaData: can't read ");
     msg += filename;
@@ -602,7 +602,7 @@ itkLoadWithMetadata(int, mxArray * plhs[], int nrhs, const mxArray * prhs[])
       imageIO->SetFileName(filename);
       imageIO->ReadImageInformation();
     }
-    catch (itk::ExceptionObject & excp)
+    catch (const itk::ExceptionObject & excp)
     {
       std::string msg("itkLoadWithMetaData: can't read ");
       msg += filename;

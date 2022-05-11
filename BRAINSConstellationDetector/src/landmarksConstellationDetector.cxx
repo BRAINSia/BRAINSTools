@@ -96,7 +96,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     {
       atlasReader->Update();
     }
-    catch (itk::ExceptionObject & err)
+    catch (const itk::ExceptionObject & err)
     {
       std::cerr << "Error while reading atlasVolume file:\n " << err << std::endl;
     }

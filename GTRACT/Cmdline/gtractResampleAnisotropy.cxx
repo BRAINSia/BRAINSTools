@@ -103,7 +103,7 @@ main(int argc, char * argv[])
   {
     anisotropyImageReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -120,7 +120,7 @@ main(int argc, char * argv[])
   {
     anatomicalReader->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;
@@ -144,7 +144,7 @@ main(int argc, char * argv[])
   {
     resample->Update();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "ExceptionObject caught !" << std::endl;
     std::cerr << err << std::endl;
@@ -163,7 +163,7 @@ main(int argc, char * argv[])
   {
     ImageWriter->Update();
   }
-  catch (itk::ExceptionObject & ex)
+  catch (const itk::ExceptionObject & ex)
   {
     std::cout << ex << std::endl;
     throw;

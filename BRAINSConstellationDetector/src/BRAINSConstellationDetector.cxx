@@ -152,7 +152,7 @@ main(int argc, char * argv[])
   {
     BCD.Compute();
   }
-  catch (itk::ExceptionObject & err)
+  catch (const itk::ExceptionObject & err)
   {
     std::cerr << "Exception Object caught:\n" << err << std::endl;
 

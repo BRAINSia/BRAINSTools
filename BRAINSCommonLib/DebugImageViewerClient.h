@@ -54,7 +54,7 @@ ScaleAndCast(const typename InputImageType::Pointer &  image,
   {
     RealToProbMapCast->Update();
   }
-  catch (itk::ExceptionObject & e)
+  catch (const itk::ExceptionObject & e)
   {
     throw;
   }

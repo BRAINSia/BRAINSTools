@@ -458,28 +458,28 @@ main(int argc, char * argv[])
         dataset.close();
       }
       // catch failure caused by the H5File operations
-      catch (H5::FileIException & error)
+      catch (const H5::FileIException & error)
       {
         error.printErrorStack();
         return -1;
       }
 
       // catch failure caused by the DataSet operations
-      catch (H5::DataSetIException & error)
+      catch (const H5::DataSetIException & error)
       {
         error.printErrorStack();
         return -1;
       }
 
       // catch failure caused by the DataSpace operations
-      catch (H5::DataSpaceIException & error)
+      catch (const H5::DataSpaceIException & error)
       {
         error.printErrorStack();
         return -1;
       }
 
       // catch failure caused by the DataSpace operations
-      catch (H5::DataTypeIException & error)
+      catch (const H5::DataTypeIException & error)
       {
         error.printErrorStack();
         return -1;

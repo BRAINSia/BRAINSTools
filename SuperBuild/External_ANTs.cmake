@@ -133,7 +133,7 @@ endif()
 set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
 ## set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_GIT_TAG
-  aacdc61e35a5ea4a4f93f6ac6b04f71d091d6b6d  # 20220609 - Update to new ITK version
+  04a018dc5308183b455194a9a5b14ffe1b0edf5f  # 20220726 - Update to new ITK version
 )
 
 ExternalProject_Add(${proj}

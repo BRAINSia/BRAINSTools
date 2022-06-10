@@ -183,33 +183,81 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     movingCaster->Update();
     typename SyN::ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
 
-    regHelper->AddMetric(
-      curMetric, dblFixedImage, dblMovingImage, stageID, weighting, samplingStrategy, bins, radius, samplingPercentage);
-
-    // Now if fixedVolume2 and movingVolume2 are not NULL, we add the second metric
-    // to our only stage of registration. Second metric has the same parameters but different input images.
-    if (infixedImage2.IsNotNull() && inmovingImage2.IsNotNull())
     {
-      std::cout << "Do Multimodal Registration..." << std::endl;
-      typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
-      fixedCaster2->SetInput(infixedImage2);
-      fixedCaster2->Update();
-      typename SyN::ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
+      SyN::RegistrationHelperType::LabeledPointSetType *   fixedLabeledPointSet = nullptr;
+      SyN::RegistrationHelperType::LabeledPointSetType *   movingLabeledPointSet = nullptr;
+      SyN::RegistrationHelperType::IntensityPointSetType * fixedIntensityPointSet = nullptr;
+      SyN::RegistrationHelperType::IntensityPointSetType * movingIntensityPointSet = nullptr;
+      bool                                                 useGradientFilter = false;
+      bool                                                 useBoundaryPointsOnly = false;
+      SyN::RegistrationHelperType::RealType                pointSetSigma = 0.0;
+      unsigned int                                         evaluationKNeighborhood = 0;
+      SyN::RegistrationHelperType::RealType                alpha = 0.0;
+      bool                                                 useAnisotropicCovariances = false;
+      SyN::RegistrationHelperType::RealType                intensityDistanceSigma = 0.0;
+      SyN::RegistrationHelperType::RealType                euclideanDistanceSigma = 0.0;
 
-      typename MovingCasterType::Pointer movingCaster2 = MovingCasterType::New();
-      movingCaster2->SetInput(inmovingImage2);
-      movingCaster2->Update();
-      typename SyN::ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
 
-      regHelper->AddMetric(curMetric,
-                           dblFixedImage2,
-                           dblMovingImage2,
-                           stageID,
-                           weighting,
-                           samplingStrategy,
-                           bins,
-                           radius,
-                           samplingPercentage);
+      regHelper->AddMetric(
+        /*metricType*/ curMetric,
+        /*fixedImage*/ dblFixedImage,
+        /*movingImage*/ dblMovingImage,
+        fixedLabeledPointSet,
+        movingLabeledPointSet,
+        fixedIntensityPointSet,
+        movingIntensityPointSet,
+        stageID,
+        weighting,
+        samplingStrategy,
+        bins,
+        radius,
+        useGradientFilter,
+        useBoundaryPointsOnly,
+        pointSetSigma,
+        evaluationKNeighborhood,
+        alpha,
+        useAnisotropicCovariances,
+        samplingPercentage,
+        intensityDistanceSigma,
+        euclideanDistanceSigma);
+
+      // Now if fixedVolume2 and movingVolume2 are not NULL, we add the second metric
+      // to our only stage of registration. Second metric has the same parameters but different input images.
+      if (infixedImage2.IsNotNull() && inmovingImage2.IsNotNull())
+      {
+        std::cout << "Do Multimodal Registration..." << std::endl;
+        typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
+        fixedCaster2->SetInput(infixedImage2);
+        fixedCaster2->Update();
+        typename SyN::ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
+
+        typename MovingCasterType::Pointer movingCaster2 = MovingCasterType::New();
+        movingCaster2->SetInput(inmovingImage2);
+        movingCaster2->Update();
+        typename SyN::ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();
+
+        regHelper->AddMetric(curMetric,
+                             dblFixedImage2,
+                             dblMovingImage2,
+                             fixedLabeledPointSet,
+                             movingLabeledPointSet,
+                             fixedIntensityPointSet,
+                             movingIntensityPointSet,
+                             stageID,
+                             weighting,
+                             samplingStrategy,
+                             bins,
+                             radius,
+                             useGradientFilter,
+                             useBoundaryPointsOnly,
+                             pointSetSigma,
+                             evaluationKNeighborhood,
+                             alpha,
+                             useAnisotropicCovariances,
+                             samplingPercentage,
+                             intensityDistanceSigma,
+                             euclideanDistanceSigma);
+      }
     }
   }
 

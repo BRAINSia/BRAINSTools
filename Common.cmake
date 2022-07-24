@@ -26,6 +26,10 @@ set(CMAKE_INSTALL_PREFIX_SET TRUE
       CACHE BOOL "TAG indicating that INSTALL_PREFIX_WAS_SET" FORCE )
 include(GNUInstallDirs)
 
+# Override to avoid installing in lib64 sub directories.
+# This needs to be defined after GNUInstallDirs
+set(CMAKE_INSTALL_LIBDIR lib)
+
 if(NOT Slicer_BUILD_BRAINSTOOLS)
   set(BRAINSTOOLS_MACOSX_RPATH ON)
 endif()
@@ -560,6 +564,7 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
   mark_as_superbuild(
     VARS
       CMAKE_INSTALL_PREFIX:PATH
+      CMAKE_INSTALL_LIBDIR:STRING
       CMAKE_SKIP_BUILD_RPATH:BOOL
       CMAKE_BUILD_WITH_INSTALL_RPATH:BOOL
       CMAKE_INSTALL_RPATH_USE_LINK_PATH:BOOL

@@ -22,7 +22,7 @@
 /**
  * \author Hans J. Johnson
  *
- * The intension of the BRIANSFitHelper is to provide a simple non-templated
+ * The intention of the BRIANSFitHelper is to provide a simple non-templated
  * class that can be used in other programs in a way that is very similar to
  * the command line version of the program from the SlicerExecutionModel
  * version of the BRAINSFitPrimary program.

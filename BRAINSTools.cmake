@@ -53,9 +53,9 @@ message(STATUS "${PROJECT_NAME}_VERSION_DEV   ${${PROJECT_NAME}_VERSION_DEV}")
 message(STATUS "Building ${PROJECT_NAME} version \"${${PROJECT_NAME}_VERSION}\"")
 
 include(FindITKUtil)
-include(FindVTKUtil)
 # #-----------------------------------------------------------------------------
 # if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
+# include(FindVTKUtil)
 # #  message("VTK_DIR:${VTK_DIR}")
 #   find_package(VTK REQUIRED)
 #   if(VTK_FOUND)

@@ -34,18 +34,19 @@ ReadImageMask(const std::string & filename, typename itk::ImageBase<VDimension> 
   using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<SpatialObjectMaskPixelType::ImageDimension>;
   typename ReadImageMaskSpatialObjectType::Pointer mask = ReadImageMaskSpatialObjectType::New();
   {
-    // Allow reading double precision images, and rely on standard typecasting to map zero to zero, and non-zero to non-zero.
-    using ReadMaskImageType = itk::Image<double, 3>;
+    // Allow reading unsigned long images for large label maps that do not fit in unsigned char images.
+    // to avoid typecasting errors in the labelmap.
+    using ReadMaskImageType = itk::Image<unsigned long, 3>;
     typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
     using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ReadMaskImageType, SpatialObjectMaskPixelType>;
     BinaryThresholdFilterType::Pointer btf = BinaryThresholdFilterType::New();
     btf->SetInput(OrientedMaskImage);
-    //NOTE: Identifying the background as Zero, so that all non-zero is foreground.
-    btf->SetLowerThreshold(0);
-    btf->SetUpperThreshold(0);
-    btf->SetInsideValue(0);
-    btf->SetOutsideValue(1);
+    btf->SetLowerThreshold(1);
+    btf->SetInsideValue(1);
+    btf->SetOutsideValue(0);
     btf->Update();
+    // INFO:  May want to check that physical spaces overlap?
+
     mask->SetImage(btf->GetOutput());
   }
 

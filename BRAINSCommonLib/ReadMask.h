@@ -16,27 +16,39 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#ifndef __ReadMask_h
-#define __ReadMask_h
+#ifndef ReadMask_h_
+#define ReadMask_h_
 
 #include "itkIO.h"
 #include "itkImageMaskSpatialObject.h"
+#include "itkBinaryThresholdImageFilter.h"
 
 template <typename MaskType, unsigned VDimension>
 typename MaskType::Pointer
 ReadImageMask(const std::string & filename, typename itk::ImageBase<VDimension> * /*referenceImage*/)
 {
   using MaskPixelType = unsigned char;
-  using ReadMaskImageType = itk::Image<MaskPixelType, 3>;
-
-  typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
-  // INFO:  May want to check that physical spaces overlap?
+  using SpatialObjectMaskPixelType = itk::Image<MaskPixelType, 3 >;
 
   // convert mask image to mask
-  using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<ReadMaskImageType::ImageDimension>;
+  using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<SpatialObjectMaskPixelType::ImageDimension>;
   typename ReadImageMaskSpatialObjectType::Pointer mask = ReadImageMaskSpatialObjectType::New();
-  mask->SetImage(OrientedMaskImage);
-  //
+  {
+    // Allow reading double precision images, and rely on standard typecasting to map zero to zero, and non-zero to non-zero.
+    using ReadMaskImageType = itk::Image<double, 3>;
+    typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
+    using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ReadMaskImageType, SpatialObjectMaskPixelType>;
+    BinaryThresholdFilterType::Pointer btf = BinaryThresholdFilterType::New();
+    btf->SetInput(OrientedMaskImage);
+    //NOTE: Identifying the background as Zero, so that all non-zero is foreground.
+    btf->SetLowerThreshold(0);
+    btf->SetUpperThreshold(0);
+    btf->SetInsideValue(0);
+    btf->SetOutsideValue(1);
+    btf->Update();
+    mask->SetImage(btf->GetOutput());
+  }
+
   mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   // return pointer to mask
   typename MaskType::Pointer p = dynamic_cast<MaskType *>(mask.GetPointer());

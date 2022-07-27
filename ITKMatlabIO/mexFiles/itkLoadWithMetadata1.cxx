@@ -247,7 +247,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
     unsigned int      gradCount(0);
     ;
     gradTag << "DWMRI_gradient_" << std::setw(4) << std::setfill('0') << gradCount;
-    gradCount++;
+    ++gradCount;
     std::string gradString;
     for (; itk::ExposeMetaData<std::string>(thisDic, gradTag.str(), gradString) != false; ++gradCount)
     {
@@ -443,7 +443,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
     for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
     {
       spacedirections_temp[count] = directions[sdIdx][axIdx] * itkSpacing[axIdx];
-      count++;
+      ++count;
     }
   }
   mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_spacedirections, spacedirections);

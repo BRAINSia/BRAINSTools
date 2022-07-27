@@ -101,7 +101,7 @@ vtkTalairachConversion::RemoveTalairachBox(int index)
       TalairachBoxList.remove(*it);
       break;
     }
-    currentIndex++;
+    ++currentIndex;
   }
 }
 

@@ -142,7 +142,7 @@ DWIMetaDataDictionaryValidator::GetGradientCount()
   {
     if (key.find("DWMRI_gradient_") != std::string::npos)
     {
-      count++;
+      ++count;
     }
     // Check for repeated components
     else if (key.find("DWMRI_NEX") != std::string::npos)
@@ -172,7 +172,7 @@ DWIMetaDataDictionaryValidator::GetGradientTable() const
       DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
       myGradientTable.push_back(curGradientDirection);
     }
-    count++;
+    ++count;
   }
   return myGradientTable;
 }

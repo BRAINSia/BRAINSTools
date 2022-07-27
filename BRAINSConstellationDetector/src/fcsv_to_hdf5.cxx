@@ -168,7 +168,7 @@ get_subjectid(const std::string & content)
     }
     else if (content[start] == '/')
     {
-      start++;
+      ++start;
       break;
     }
   }
@@ -407,7 +407,7 @@ main(int argc, char * argv[])
         CurrentLandmarkMatrix[subjCount][0] = currPoint[0];
         CurrentLandmarkMatrix[subjCount][1] = currPoint[1];
         CurrentLandmarkMatrix[subjCount][2] = currPoint[2];
-        subjCount++;
+        ++subjCount;
       }
       perLandmarkMatrix.emplace_back(lit, CurrentLandmarkMatrix);
     }
@@ -523,7 +523,7 @@ main(int argc, char * argv[])
   {
     vnl_matrix<double> lmkVec = ((kit->second) - (byClassLandmarkMatrix["baseLandmarks"].begin()->second)).transpose();
     Xi.update(lmkVec, (nb - 2) * dim, 0);
-    nb++;
+    ++nb;
   }
 
   // Compute all principal components
@@ -833,7 +833,7 @@ main(int argc, char * argv[])
         fid << doubleToString(temp[ll]) << " ";
       }
       fid << std::endl;
-      l++;
+      ++l;
     }
 
     fid << std::endl;
@@ -888,7 +888,7 @@ main(int argc, char * argv[])
         fid << doubleToString(temp[ll]) << " ";
       }
       fid << ";" << std::endl;
-      l++;
+      ++l;
     }
 
     fid << "];" << std::endl;
@@ -936,7 +936,7 @@ main(int argc, char * argv[])
       {
         name_M(l, ll) = temp[ll];
       }
-      l++;
+      ++l;
     }
 
     vnl_matlab_write(fid, name_M.data_array(), name_M.rows(), name_M.cols(), string_name_M.c_str());

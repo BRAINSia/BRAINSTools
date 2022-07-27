@@ -46,7 +46,7 @@ QLabelList::createListItemSlot(const QString & label)
 
   cancelHighlight(this->currentItem());
 
-  m_color++;
+  ++m_color;
 }
 
 void
@@ -69,7 +69,7 @@ QLabelList::createListItem(const QString & label, const QString & name)
 
   cancelHighlight(this->currentItem());
 
-  m_color++;
+  ++m_color;
 }
 
 void

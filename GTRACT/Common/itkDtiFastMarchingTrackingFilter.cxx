@@ -128,7 +128,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
     if (maskIt.Get() && ai >= m_SeedThreshold)
     {
       m_StartPoints.push_back(startIndex);
-      count++;
+      ++count;
     }
   }
   std::cerr << "Number of Seeds: " << count << std::endl;

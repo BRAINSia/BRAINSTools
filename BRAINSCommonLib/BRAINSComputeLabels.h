@@ -69,7 +69,7 @@ ComputeLabels(std::vector<typename TProbabilityImage::Pointer> & Posteriors,
   unsigned short           current_iteration = 0;
   do
   {
-    current_iteration++;
+    ++current_iteration;
     if (current_iteration > max_iterations)
     {
       std::cout << "ERROR:  Infinite loop detected for auto-correction" << std::endl;

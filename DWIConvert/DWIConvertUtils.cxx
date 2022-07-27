@@ -149,7 +149,7 @@ ReadBVals(std::vector<double> & bVals, unsigned int & bValCount, const std::stri
     {
       break;
     }
-    bValCount++;
+    ++bValCount;
     bVals.push_back(x);
   }
 
@@ -171,7 +171,7 @@ bVecFileIsHorizontalBy3Rows(const std::string & bVecFilename)
   {
     if (line.size() > 5)
     {
-      num_lines++;
+      ++num_lines;
     }
   }
   if (num_lines > 5) // A minimum of 6 lines are needed for vertical format.
@@ -269,7 +269,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs,
       {
         break;
       }
-      bVecCount++;
+      ++bVecCount;
       bVecs.push_back(x);
     }
   }

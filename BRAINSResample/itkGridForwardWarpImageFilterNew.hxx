@@ -117,7 +117,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>::GenerateData()
   {
     if (m_GridPixelSpacing[q] != 0)
     {
-      nonZeroGridDirections++;
+      ++nonZeroGridDirections;
     }
   }
   for (iter.GoToBegin(), fieldIt.GoToBegin(); !iter.IsAtEnd(); ++iter, ++fieldIt)

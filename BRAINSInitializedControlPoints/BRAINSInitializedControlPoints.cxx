@@ -187,7 +187,7 @@ main(int argc, char * argv[])
     coefficientImage->TransformIndexToPhysicalPoint(coefItr.GetIndex(), currentPoint);
     std::stringstream tmpName("p");
     tmpName << locationCount;
-    locationCount++;
+    ++locationCount;
     outputLandmarks[tmpName.str()] = currentPoint;
     ++coefItr;
   }

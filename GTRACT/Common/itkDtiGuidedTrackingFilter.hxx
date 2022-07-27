@@ -187,7 +187,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         this->ContinuousIndexToMM(index, p);
         fiber->InsertNextPoint(p.GetDataPointer());
 
-        currentPointId++;
+        ++currentPointId;
         fiberAnisotropy->InsertNextValue(anisotropy);
         fiberAnisotropySum->InsertNextValue(anisotropySum);
 
@@ -311,7 +311,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         std::cerr << "\tFiber-" << count << " (" << currentPointId << "); ";
         this->AddFiberToOutput(fiber, fiberTensors);
         stop = true;
-        count++;
+        ++count;
       }
 
       // Check for loops if selected by the user

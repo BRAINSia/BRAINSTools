@@ -384,14 +384,14 @@ main(int argc, char ** argv)
     AtlasDefTable.add(currentRow, 2 + pwi, PriorNames[pwi]);
   }
 
-  currentRow++;
+  ++currentRow;
   for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
   {
     priorsWeightList[pwi] = atlasDefinitionParser.GetWeight(PriorNames[pwi]);
     AtlasDefTable.add(currentRow, 2 + pwi, priorsWeightList[pwi]);
   }
 
-  currentRow++;
+  ++currentRow;
   SegFilterType::IntVectorType priorLabelCodeVector;
   priorLabelCodeVector.set_size(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior Label Codes");
@@ -403,7 +403,7 @@ main(int argc, char ** argv)
     AtlasDefTable.add(currentRow, 2 + pwi, priorLabelCodeVector[pwi], "%d");
   }
 
-  currentRow++;
+  ++currentRow;
   SegFilterType::BoolVectorType priorIsForegroundPriorVector;
   priorIsForegroundPriorVector.resize(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior IsForeground");
@@ -415,7 +415,7 @@ main(int argc, char ** argv)
     AtlasDefTable.add(currentRow, 2 + pwi, static_cast<int>(priorIsForegroundPriorVector[pwi]), "%d");
   }
 
-  currentRow++;
+  ++currentRow;
   SegFilterType::IntVectorType priorGaussianClusterCountVector;
   priorGaussianClusterCountVector.set_size(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior Clusters");
@@ -427,7 +427,7 @@ main(int argc, char ** argv)
     AtlasDefTable.add(currentRow, 2 + pwi, priorGaussianClusterCountVector[pwi], "%d");
   }
 
-  currentRow++;
+  ++currentRow;
   SegFilterType::BoolVectorType priorUseForBiasVector;
   priorUseForBiasVector.resize(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior For Bias");
@@ -440,7 +440,7 @@ main(int argc, char ** argv)
   }
 
   { // Print out the ranges.
-    currentRow++;
+    ++currentRow;
     for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
     {
       orderedmap<std::string, AtlasDefinition::BoundsType> temp_range_List;

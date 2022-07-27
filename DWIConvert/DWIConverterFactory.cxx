@@ -104,7 +104,7 @@ DWIConverterFactory::New()
         else
         {
           this->m_Headers[headerCount] = curReader;
-          headerCount++;
+          ++headerCount;
         }
       }
     }*/
@@ -136,7 +136,7 @@ DWIConverterFactory::New()
         else
         {
           m_Headers.push_back(curReader);
-          headerCount++;
+          ++headerCount;
         }
       }
     }

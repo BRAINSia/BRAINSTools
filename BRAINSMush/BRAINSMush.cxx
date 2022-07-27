@@ -285,7 +285,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
         PixelType signalValue = volumeIt.Get();
         signalTotal += signalValue;
       }
-      voxelCount++;
+      ++voxelCount;
     }
     PR(voxelCount);
     PR(signalTotal);

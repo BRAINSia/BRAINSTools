@@ -523,7 +523,7 @@ public:
       CS_sumVoxelValuesReflected += g;
       CS_sumSquaredVoxelValues += _f * _f;
       CS_sumVoxelValues += _f;
-      N++;
+      ++N;
     }
     sumVoxelValuesQR = CS_sumVoxelValuesQR.GetSum();
     sumSquaredVoxelValuesReflected = CS_sumSquaredVoxelValuesReflected.GetSum();

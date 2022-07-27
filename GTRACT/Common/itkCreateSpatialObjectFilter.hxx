@@ -75,7 +75,7 @@ CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Update()
   {
     if (it.Get() > 0)
     {
-      //      count++;
+      //      ++count;
       InputImageIndexType index = it.GetIndex();
       InputImagePointType p;
       m_Input->TransformIndexToPhysicalPoint(index, p);

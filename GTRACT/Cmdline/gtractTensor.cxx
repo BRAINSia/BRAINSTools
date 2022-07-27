@@ -309,7 +309,7 @@ main(int argc, char * argv[])
       gradientDirectionContainer->SetElement(vectorIndex, gradientDir);
       std::cout << "Add Gradient Direction " << vectorIndex << ":  " << gradientDir[0] << ",  " << gradientDir[1]
                 << ",  " << gradientDir[2] << std::endl;
-      vectorIndex++;
+      ++vectorIndex;
     }
   }
   indexImageToVectorImageFilter->Update();

@@ -224,7 +224,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::I
     // const float roi = m_StartIP->EvaluateAtContinuousIndex(seed);
     if (maskIt.Get())
     {
-      maskcount++;
+      ++maskcount;
       if (ai >= m_SeedThreshold)
       {
         EigenValuesArrayType                eigenValues;
@@ -240,7 +240,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::I
         direction *= -1;
         m_Seeds.push_back(seed);
         m_TrackingDirections.push_back(direction);
-        count++;
+        ++count;
       }
     }
   }

@@ -1057,7 +1057,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadAnalyzePointType
     }
     TempPnt.SetWeighting() = 1.0F;
     (*this)[CurrentName] = TempPnt;
-    count++;
+    ++count;
   }
 
   fclose(tempfile);

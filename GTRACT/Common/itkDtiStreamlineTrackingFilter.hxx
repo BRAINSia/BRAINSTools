@@ -174,7 +174,7 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
         typename Self::PointType p;
         this->ContinuousIndexToMM(index, p);
         fiber->InsertNextPoint(p.GetDataPointer());
-        currentPointId++;
+        ++currentPointId;
 
         EigenValuesArrayType                eigenValues;
         EigenVectorsMatrixType              eigenVectors;

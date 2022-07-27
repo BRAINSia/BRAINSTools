@@ -64,7 +64,7 @@ main(int, char **)
     std::cerr << "Requested feature name not correctly set" << std::endl;
     passed = false;
   }
-  fIt++;
+  ++fIt;
 
   if (fIt.Value() != TextureFeaturesFilterType::ClusterShade)
   {

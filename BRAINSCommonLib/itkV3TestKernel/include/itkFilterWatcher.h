@@ -68,7 +68,7 @@ public:
   virtual void
   ShowProgress()
   {
-    m_Steps++;
+    ++m_Steps;
     if (!m_Quiet)
     {
       std::cout << " | " << m_Process->GetProgress() << std::flush;
@@ -97,7 +97,7 @@ public:
   {
     std::cout << " #" << std::flush;
 
-    m_Iterations++;
+    ++m_Iterations;
   }
 
   virtual void

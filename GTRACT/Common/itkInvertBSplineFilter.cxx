@@ -93,7 +93,7 @@ InvertBSplineFilter::Update()
         // Add Points and the Landmark Point Lists
         sourceLandMarkContainer->InsertElement(id, p2);
         targetLandMarkContainer->InsertElement(id, p1);
-        id++;
+        ++id;
         // std::cout << "Set Z points " << z << " " << p1 << " " << p2 <<
         // std::endl;
       }

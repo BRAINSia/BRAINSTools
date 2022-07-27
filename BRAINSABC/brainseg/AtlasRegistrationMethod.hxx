@@ -293,7 +293,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
           ss << std::setw(3) << std::setfill('0') << IntraSubjectRegistration;
           intraSubjectRegistrationHelper->PrintCommandLine(true, std::string("IntraSubjectRegistration") + ss.str());
           muLogMacro(<< __FILE__ << " " << __LINE__ << " " << std::endl);
-          IntraSubjectRegistration++;
+          ++IntraSubjectRegistration;
         }
         intraSubjectRegistrationHelper->Update();
         const unsigned int actualIterations = intraSubjectRegistrationHelper->GetActualNumberOfIterations();
@@ -312,7 +312,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
       ++isNamesIt;
       ++intraImIt;
     }
-    i++;
+    ++i;
   }
 }
 
@@ -694,7 +694,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
       ss << std::setw(3) << std::setfill('0') << originalAtlasToSubject;
       atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubject") + ss.str());
       muLogMacro(<< __FILE__ << " " << __LINE__ << " " << std::endl);
-      originalAtlasToSubject++;
+      ++originalAtlasToSubject;
     }
     atlasToSubjectRegistrationHelper->Update();
     const unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();

@@ -243,7 +243,7 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
       if (value <= maxValue && value >= minValue)
       {
         sum += value;
-        counter++;
+        ++counter;
       }
     }
     meanValue = sum / static_cast<float>(counter);

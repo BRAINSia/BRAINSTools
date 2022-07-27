@@ -1058,7 +1058,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckLoopAgainstFilterOutp
       std::cerr << "mask = " << static_cast<float>(maskIter.Value())
                 << " dilated = " << static_cast<float>(dilIter.Value()) << " at vIndex " << maskIter.GetIndex()
                 << std::endl;
-      count++;
+      ++count;
     }
   }
   if (count == 0)
@@ -1841,7 +1841,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
         if (AllPixelsAreZero) // If all candidate regions are zero, then force
                               // to most likely background value.
         {
-          AllZeroCounts++;
+          ++AllZeroCounts;
           for (unsigned int k = 0; k < candiateVectorSize; k++)
           {
             if (this->m_PriorIsForegroundPriorVector[k] == false)
@@ -2219,7 +2219,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
           ss << std::setw(3) << std::setfill('0') << atlasToSubjectCounter;
           atlasToSubjectRegistrationHelper->PrintCommandLine(true, std::string("AtlasToSubjectUpdate") + ss.str());
           muLogMacro(<< __FILE__ << " " << __LINE__ << " " << std::endl);
-          atlasToSubjectCounter++;
+          ++atlasToSubjectCounter;
         }
         atlasToSubjectRegistrationHelper->Update();
         unsigned int actualIterations = atlasToSubjectRegistrationHelper->GetActualNumberOfIterations();
@@ -2560,7 +2560,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
                 //    (deltaLogLikelihood < 0)
                 || ((deltaLogLikelihood < m_LikelihoodTolerance) && (biasdegree == m_MaxBiasDegree));
 
-    CurrentEMIteration++;
+    ++CurrentEMIteration;
     const float biasIncrementInterval = (static_cast<float>(m_MaximumIterations )/ (m_MaxBiasDegree + 1));
     CHECK_NAN(biasIncrementInterval,
               __FILE__,
@@ -2573,7 +2573,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
            (CurrentEMIteration > (biasdegree + 1) * biasIncrementInterval)) &&
           (biasdegree < m_MaxBiasDegree))
       {
-        biasdegree++;
+        ++biasdegree;
       }
     }
   } // end EM loop

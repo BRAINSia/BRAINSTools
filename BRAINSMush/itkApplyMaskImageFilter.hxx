@@ -126,7 +126,7 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>::GenerateData()
         itOut.Set(static_cast<OutputPixelType>(itImage.Get()));
       }
     }
-    i++;
+    ++i;
     ++itMask;
     ++itImage;
   }

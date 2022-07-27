@@ -272,7 +272,7 @@ QSliceViewer::GenSphere()
   m_actor->GetProperty()->SetColor(m_color % 3 / 2 / 2.0 + (m_color * m_color) % 3 / 4.0,
                                    (m_color + 1) % 3 / 2 / 2.0 + m_color % 7 / 12.0,
                                    (m_color + 2) % 3 / 2 / 2.0 + m_color % 4 / 6.0);
-  m_color++;
+  ++m_color;
 }
 
 void

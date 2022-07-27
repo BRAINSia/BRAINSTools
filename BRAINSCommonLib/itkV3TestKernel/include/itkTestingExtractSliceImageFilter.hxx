@@ -90,7 +90,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::SetExtractionRegion(InputIma
     {
       outputSize[nonzeroSizeCount] = inputSize[i];
       outputIndex[nonzeroSizeCount] = extractRegion.GetIndex()[i];
-      nonzeroSizeCount++;
+      ++nonzeroSizeCount;
     }
   }
 
@@ -197,7 +197,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
               ++nonZeroCount2;
             }
           }
-          nonZeroCount++;
+          ++nonZeroCount;
         }
       }
     }

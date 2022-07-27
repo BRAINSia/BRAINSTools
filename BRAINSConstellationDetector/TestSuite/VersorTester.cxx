@@ -150,7 +150,7 @@ RotationMatrixToVersorTest(void)
                       << MR << "\nVR=\n"
                       << VR.GetMatrix() << "\nVFROMMR=\n"
                       << VFROMMR.GetMatrix() << std::endl;
-            errorCount++;
+            ++errorCount;
           }
         }
       }

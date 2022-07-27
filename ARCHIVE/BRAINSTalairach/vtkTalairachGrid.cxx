@@ -672,7 +672,7 @@ vtkTalairachGrid::EstablishTalairachGrid()
         // pnt[2] = talPnt[2];
 
         talairachGridPoints->InsertPoint(offset, pnt);
-        offset++;
+        ++offset;
       }
     }
   }

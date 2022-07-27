@@ -273,7 +273,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
             }
           }
         } // end counter
-        counter++;
+        ++counter;
       } // end gradient threshold
     }   // end intensity threshold
     ++image_it;

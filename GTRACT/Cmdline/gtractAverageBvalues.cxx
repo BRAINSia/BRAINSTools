@@ -233,7 +233,7 @@ main(int argc, char * argv[])
       newGradTable[currentIndex][0] = gradTable[i][0];
       newGradTable[currentIndex][1] = gradTable[i][1];
       newGradTable[currentIndex][2] = gradTable[i][2];
-      currentIndex++;
+      ++currentIndex;
     }
   }
   metaDataValidator.SetGradientTable(newGradTable);
@@ -294,7 +294,7 @@ buildDirectionLut(itk::Array<int> &               lut,
     {
       lut[i] = numElements;
       count[numElements]++;
-      numElements++;
+      ++numElements;
     }
   }
   // for (int i=0;i<numImages;i++) std::cout << i << " " << lut[i] << " " <<
@@ -307,7 +307,7 @@ buildDirectionLut(itk::Array<int> &               lut,
     if (count[i] > 0)
     {
       count[index] = count[i];
-      index++;
+      ++index;
     }
   }
   for (int i = numElements; i < numImages; i++)

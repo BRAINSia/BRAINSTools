@@ -171,7 +171,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
   // std::cout << "Ending Center Point: " << endP << std::endl;
   while (!(this->m_Seeds.empty()))
   {
-    originalSeedCount++;
+    ++originalSeedCount;
     if (oldsizeOfOutput != sizeOfOutput)
     {
       oldsizeOfOutput = sizeOfOutput;
@@ -256,7 +256,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
             fiberTensors->RemoveLastTuple();
             fiberAnisotropy->RemoveLastTuple();
             fiberAnisotropySum->RemoveLastTuple();
-            currentPointId--;
+            --currentPointId;
           }
 
           // fiber->SetNumberOfPoints( currentPointId );
@@ -301,7 +301,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
         typename Self::PointType t;
         this->ContinuousIndexToMM(index, t);
         fiber->InsertNextPoint(t.GetDataPointer());
-        currentPointId++;
+        ++currentPointId;
 
         EigenValuesArrayType                eigenValues;
         EigenVectorsMatrixType              eigenVectors;
@@ -441,7 +441,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
             (fiber->GetNumberOfPoints() / this->m_StepSize >= this->m_MinimumLength))
         {
           // Add Fiber to the Current Fiber Track //
-          sizeOfOutput++;
+          ++sizeOfOutput;
           std::cerr << "Fiber (" << originalSeedCount << "  " << sizeOfOutput << "  " << currentPointId << "); ";
           this->AddFiberToOutput(fiber, fiberTensors);
           // // newSeeds.push_back(index);
@@ -472,7 +472,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
             fiberTensors->RemoveLastTuple();
             fiberAnisotropy->RemoveLastTuple();
             fiberAnisotropySum->RemoveLastTuple();
-            currentPointId--;
+            --currentPointId;
           }
 
           // fiber->SetNumberOfPoints( currentPointId );

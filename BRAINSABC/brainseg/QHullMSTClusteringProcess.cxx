@@ -146,7 +146,7 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
     {
       if (!facet->upperdelaunay)
       {
-        numfacets++;
+        ++numfacets;
       }
     }
 
@@ -226,7 +226,7 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
       }
     }
     m_MSTEdges[edgeCount] = minEdge;
-    edgeCount++;
+    ++edgeCount;
 
     // See if a tree is formed already
     if (edgeCount == (m_NumberOfVertices - 1))
@@ -328,7 +328,7 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
       if (incident && (m_MSTEdges[k].dist > thres))
       {
         breakArray[k] = 1;
-        numBroken++;
+        ++numBroken;
       }
     }
   }
@@ -407,12 +407,12 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
     {
       if (treeMap[j] == i)
       {
-        s++;
+        ++s;
       }
     }
     if (s > 0)
     {
-      numNonZero++;
+      ++numNonZero;
     }
     clusters[i].size = s;
   }

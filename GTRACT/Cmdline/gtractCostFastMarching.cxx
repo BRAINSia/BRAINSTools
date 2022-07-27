@@ -73,7 +73,7 @@ public:
   ShowProgress()
   {
     std::cout << "Progress " << m_Process->GetProgress() << std::endl;
-    _dummy++; // Only here to prevent this function from being marked const
+    ++_dummy; // Only here to prevent this function from being marked const
   }
   itk::ProcessObject::Pointer m_Process;
 
@@ -198,7 +198,7 @@ main(int argc, char * argv[])
     {
       seedList.push_front(maskIt.GetIndex());
       seedValueList.push_front(0.0);
-      numSeeds++;
+      ++numSeeds;
     }
   }
 

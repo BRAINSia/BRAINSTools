@@ -186,7 +186,7 @@ main(int argc, char * argv[])
       scaledGradient[2] = currGradTable[j][2] * bValueScale;
       resultGradTable.push_back(scaledGradient);
 
-      vectorIndex++;
+      ++vectorIndex;
     }
   }
   resultMetaDataValidator.SetGradientTable(resultGradTable);

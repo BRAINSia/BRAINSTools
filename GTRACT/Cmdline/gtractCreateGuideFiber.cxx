@@ -115,7 +115,7 @@ main(int argc, char * argv[])
     {
       if (resampledFibers->GetCellType(j) == VTK_POLY_LINE)
       {
-        N++;
+        ++N;
         vtkIdList * cellPointList = vtkIdList::New();
         resampledFibers->GetCellPoints(j, cellPointList);
         double currentPoint[3];

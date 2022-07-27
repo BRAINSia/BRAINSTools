@@ -142,7 +142,7 @@ main(int argc, char * argv[])
     if ((it->first).compare("") != 0)
     {
       LandmarksNames.push_back(it->first);
-      numNamedLandmarks++;
+      ++numNamedLandmarks;
     }
   }
 

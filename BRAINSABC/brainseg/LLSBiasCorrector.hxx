@@ -353,7 +353,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
                                 const double zc = (currProbIndex[2] - m_XMu[2]) / m_XStd[2];
 
                                 m_Basis(r, c) = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
-                                c++;
+                                ++c;
                               }
                             }
                           }
@@ -720,7 +720,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
 
                                         // logFitValue += coeffs[c] * poly;
                                         logFitValue += coeffs(c, 0) * poly;
-                                        c++;
+                                        ++c;
                                       }
                                     }
                                   }

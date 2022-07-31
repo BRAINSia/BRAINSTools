@@ -583,7 +583,7 @@ main(int argc, char ** argv)
                          << ": " << (*imIt) << "...\n");
 
               LocalReaderPointer imgreader = LocalReaderType::New();
-              imgreader->SetFileName((*imIt).c_str());
+              imgreader->SetFileName(imIt->c_str());
 
               try
               {
@@ -653,7 +653,7 @@ main(int argc, char ** argv)
               std::string intraSubjectTransformFileName =
                 std::string("")
                   .append(outputDir)
-                  .append(GetStrippedImageFileNameExtension((*imIt).c_str()))
+                  .append(GetStrippedImageFileNameExtension(imIt->c_str()))
                   .append("_to_")
                   .append(GetStrippedImageFileNameExtension(GetMapVectorFirstElement(inputVolumeMap)))
                   .append(suffixstr)

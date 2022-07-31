@@ -83,7 +83,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
     auto transformIterator = transformList->begin();
-    auto disk_transform = dynamic_cast<itk::Transform<double, 3, 3> *>((*transformIterator).GetPointer());
+    auto disk_transform = dynamic_cast<itk::Transform<double, 3, 3> *>(transformIterator->GetPointer());
 
     if (isLandmarkTransform)
     {

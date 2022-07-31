@@ -58,7 +58,7 @@ ResampleImageListToFirstKeyImage(const std::string &            resamplerInterpo
     while (currImageIter != elem.second.end())
     {
       FloatImageType::Pointer tmp = ResampleImageWithIdentityTransform<FloatImageType>(
-        resamplerInterpolatorType, 0, (*currImageIter).GetPointer(), KeyImageFirstRead.GetPointer());
+        resamplerInterpolatorType, 0, currImageIter->GetPointer(), KeyImageFirstRead.GetPointer());
       // Add the image
       outputImageMap[elem.first].push_back(tmp);
       ++currImageIter;
@@ -118,7 +118,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
       const VersorRigid3DTransformType::ConstPointer tempRigidTransform =
-        dynamic_cast<VersorRigid3DTransformType const *>((*xfrmIt).GetPointer());
+        dynamic_cast<VersorRigid3DTransformType const *>(xfrmIt->GetPointer());
       if (tempRigidTransform.IsNull())
       {
         std::cerr << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
@@ -164,7 +164,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
     {
       using MinMaxType = itk::MinimumMaximumImageCalculator<FloatImageType>;
       MinMaxType::Pointer minmaxcalc = MinMaxType::New();
-      minmaxcalc->SetImage((*currModalIter).GetPointer());
+      minmaxcalc->SetImage(currModalIter->GetPointer());
       minmaxcalc->ComputeMinimum();
       minmaxcalc->Compute();
 
@@ -175,7 +175,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
       FloatImageType::Pointer resampledToFirstImage =
         ResampleImageWithIdentityTransform<FloatImageType>(resamplerInterpolatorType,
                                                            background_threshold_value,
-                                                           (*currModalIter).GetPointer(),
+                                                           currModalIter->GetPointer(),
                                                            allModalityKeySubjectImage.GetPointer());
 
       using OtsuThresholdType = itk::OtsuThresholdImageFilter<FloatImageType, ByteImageType>;

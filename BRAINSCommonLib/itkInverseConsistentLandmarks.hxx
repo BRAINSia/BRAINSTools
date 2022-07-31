@@ -861,7 +861,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadAnalyzePointType
       std::string OriginalLabel(CurrentName);
 
       char labelbuffer[16];
-      while ((*this).find(CurrentName) != (*this).end())
+      while (this->find(CurrentName) != this->end())
       {
         sprintf(labelbuffer, "%d", label);
         CurrentName = OriginalLabel + "_" + std::string(labelbuffer);
@@ -1046,7 +1046,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadAnalyzePointType
       std::string OriginalLabel(CurrentName);
 
       char labelbuffer[16];
-      while ((*this).find(CurrentName) != (*this).end())
+      while (this->find(CurrentName) != this->end())
       {
         sprintf(labelbuffer, "%d", label);
         CurrentName = OriginalLabel + "_" + std::string(labelbuffer);

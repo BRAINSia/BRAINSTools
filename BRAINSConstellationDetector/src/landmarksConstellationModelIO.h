@@ -565,7 +565,7 @@ public:
 
       IndexLocationVectorType::const_iterator locIt = DID.locations.begin();
       IndexLocationVectorType::const_iterator locItEnd = DID.locations.end();
-      for (auto floatIt = (*meanIt).begin(); locIt != locItEnd; ++floatIt, ++locIt)
+      for (auto floatIt = meanIt->begin(); locIt != locItEnd; ++floatIt, ++locIt)
       {
         FloatImageType::IndexType ind;
         for (unsigned k = 0; k < 3; k++)

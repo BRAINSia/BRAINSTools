@@ -420,7 +420,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
            it != currentTransformList.end();
            ++it)
       {
-        tempCopy->AddTransform(static_cast<itk::Transform<TScalarType, 3, 3> *>((*it).GetPointer()));
+        tempCopy->AddTransform(static_cast<itk::Transform<TScalarType, 3, 3> *>(it->GetPointer()));
       }
       genericTransform = tempCopy.GetPointer();
     }

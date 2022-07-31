@@ -119,11 +119,11 @@ CutBinaryVolumeByPlaneWithDirection(typename TImageType::Pointer * _imageVolume,
     LandmarkPointType currentPhysicalLocation;
     (*_imageVolume)->TransformIndexToPhysicalPoint(it.GetIndex(), currentPhysicalLocation);
 
-    if (direction == "true" && (*currentPlane).GetRelativeLocationToPlane(currentPhysicalLocation) > 0.0F)
+    if (direction == "true" && currentPlane->GetRelativeLocationToPlane(currentPhysicalLocation) > 0.0F)
     {
       it.Set(0.0F);
     }
-    else if (direction == "false" && (*currentPlane).GetRelativeLocationToPlane(currentPhysicalLocation) < 0.0F)
+    else if (direction == "false" && currentPlane->GetRelativeLocationToPlane(currentPhysicalLocation) < 0.0F)
     {
       it.Set(0.0F);
     }

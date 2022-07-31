@@ -475,7 +475,7 @@ DoConversion(int argc, char * argv[])
       transformWriter->SetUseCompression(true);
       for (auto it = transformList->begin(); it != transformList->end(); ++it)
       {
-        typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>((*it).GetPointer());
+        typename GenericTransformType::Pointer outXfrm = dynamic_cast<GenericTransformType *>(it->GetPointer());
         transformWriter->AddTransform(outXfrm);
         //
         std::cout << "Output Transform Type Written to the Disk ==> " << outXfrm->GetTransformTypeAsString()

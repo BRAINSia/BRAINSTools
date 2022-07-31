@@ -146,7 +146,7 @@ public:
     LocalConstIterator itend = this->end();
     while (it != itend)
     {
-      const PointType   cur = (*it).second;
+      const PointType   cur = it->second;
       PointSetPointType psPoint;
       for (unsigned int i = 0; i < 3; ++i)
       {

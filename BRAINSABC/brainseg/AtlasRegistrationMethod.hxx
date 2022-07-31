@@ -153,14 +153,14 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
       // NEED A "USE_CACHED_VAULES commandline flag
 #ifdef QUICK_FALLTHROUGH_IF_EXISTS // PROVIDES a fall through to avoid estimating transforms, only useful for repeat
                                    // runs
-      std::cerr << "FILENAME  " << (*isNamesIt).c_str() << std::flush << std::endl;
-      if (itksys::SystemTools::FileExists((*isNamesIt).c_str()))
+      std::cerr << "FILENAME  " << isNamesIt->c_str() << std::flush << std::endl;
+      if (itksys::SystemTools::FileExists(isNamesIt->c_str()))
       {
         try
         {
-          muLogMacro(<< "Reading transform from file: " << (*isNamesIt).c_str() << "." << std::endl);
+          muLogMacro(<< "Reading transform from file: " << isNamesIt->c_str() << "." << std::endl);
           m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(
-            itk::ReadTransformFromDisk((*isNamesIt).c_str()));
+            itk::ReadTransformFromDisk(isNamesIt->c_str()));
         }
         catch (...)
         {
@@ -175,7 +175,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         muLogMacro(<< "Registering (Identity) image to key image." << std::endl);
         m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
       }
-      else if ((*intraImIt).GetPointer() == this->m_KeySubjectImage.GetPointer())
+      else if (intraImIt->GetPointer() == this->m_KeySubjectImage.GetPointer())
       {
         muLogMacro(<< "Key image registered to itself with Identity transform." << std::endl);
         m_IntraSubjectTransforms[mapOfModalImageListsIt->first].push_back(MakeRigidIdentity());
@@ -201,7 +201,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         // INFO: Find way to turn on histogram equalization for same mode images
         constexpr int dilateSize = 15;
         constexpr int closingSize = 15;
-        intraSubjectRegistrationHelper->SetMovingVolume((*intraImIt).GetPointer());
+        intraSubjectRegistrationHelper->SetMovingVolume(intraImIt->GetPointer());
         muLogMacro(<< "Generating MovingImage Mask (Intrasubject  " << i << ")" << std::endl);
         using ROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3>>;
         typename ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
@@ -364,7 +364,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::AverageIntraSubjectReg
     {
       auto intraImIt = this->m_RegisteredIntraSubjectImagesList[mapOfRegisteredModalImageListsIt->first]
                          .begin(); // each intra subject image
-      this->m_ModalityAveragedOfIntraSubjectImages.push_back((*intraImIt).GetPointer());
+      this->m_ModalityAveragedOfIntraSubjectImages.push_back(intraImIt->GetPointer());
     }
     else
     {

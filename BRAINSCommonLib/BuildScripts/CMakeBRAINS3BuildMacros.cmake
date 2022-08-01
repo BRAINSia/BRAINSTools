@@ -90,8 +90,7 @@ endmacro()
 if(USE_DebugImageViewer)
 
   if(NOT VTK_FOUND) #See if it has already been found because this is a nested project
-    find_package(VTK REQUIRED)
-    include(${VTK_USE_FILE})
+    find_package(VTK 9.1 REQUIRED NO_MODULE)
   endif()
 
   macro(DebugImageViewerLibAdditions LibVariable)

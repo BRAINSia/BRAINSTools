@@ -3,10 +3,9 @@
 find_package(Matlab COMPONENTS MX_LIBRARY ENG_LIBRARY REQUIRED)
 include_directories(${Matlab_INCLUDE_DIRS})
 
-find_package(VTK 7 REQUIRED)
-include(${VTK_USE_FILE})
+find_package(VTK 9.1 REQUIRED NO_MODULE)
 
-find_package(ITK 4.5 REQUIRED)
+find_package(ITK 5 REQUIRED)
 include(${ITK_USE_FILE})
 
 #####################

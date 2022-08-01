@@ -42,9 +42,6 @@ macro(FindVTKUtil)
 
   # No longer needed; warns or errors depending on the version requested when
   # finding VTK.
-  #include(${VTK_USE_FILE})
-
-  #  message("VTK_USE_FILE:${VTK_USE_FILE}")
   #  message("VTK_INCLUDE_DIRS:${VTK_INCLUDE_DIRS}")
   include_directories(${VTK_INCLUDE_DIRS})
   link_directories(${VTK_LIBRARY_DIRS})

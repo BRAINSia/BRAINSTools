@@ -61,9 +61,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/../../CMake/LinAlgSelector.cmake)
 #-- find_package(ITK REQUIRED)
 #-- include(${ITK_USE_FILE})
 
-#-- find_package(VTK REQUIRED)
-#-- include(${VTK_USE_FILE})
-
 # --RTK now part of ITK remote module find_package(RTK REQUIRED NO_MODULE)
 # --RTK now part of ITK remote module include(${RTK_USE_FILE})
 

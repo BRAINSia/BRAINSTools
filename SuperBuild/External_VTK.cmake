@@ -3,7 +3,7 @@ set(proj VTK)
 
 set(VTK_VERSION_MAJOR 9)
 set(VTK_VERSION_MINOR 0)
-set(${proj}_REQUIRED_VERSION "9.0")  #If a required version is necessary, then set this, else leave blank
+set(${proj}_REQUIRED_VERSION "9.1")  #If a required version is necessary, then set this, else leave blank
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib" )
@@ -15,7 +15,7 @@ ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   unset(VTK_DIR CACHE)
   unset(VTK_SOURCE_DIR CACHE)
-  find_package(VTK REQUIRED NO_MODULE)
+  find_package(VTK 9.1 REQUIRED NO_MODULE)
 endif()
 
 # Sanity checks
@@ -101,7 +101,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   endif()
   set(vtk_git_protocol "https")
   set(${proj}_GIT_REPOSITORY "${vtk_git_protocol}://gitlab.kitware.com/vtk/VTK.git" CACHE STRING "Repository from which to get VTK" FORCE)
-  set(${proj}_GIT_TAG "6b3a8ff048572d531f2cee9ced88ad72ce35210c")   # 20220126
+  set(${proj}_GIT_TAG "6b3a8ff048572d531f2cee9ced88ad72ce35210c")   # 20220126 ## TODO: Update _REQUIRED_VERSION if changed.
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
@@ -145,9 +145,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       DEPENDS "${${proj}_DEPENDENCIES}"
     )
   ### --- End Project specific additions
-  set(${proj}_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/vtk-${${proj}_REQUIRED_VERSION})
-  #${CMAKE_CURRENT_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
-
+  set(VTK_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/vtk-${${proj}_REQUIRED_VERSION})
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 
   set(PNG_INCLUDE_DIR ${VTK_SOURCE_DIR}/Utilities/vtkpng)

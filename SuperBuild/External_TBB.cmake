@@ -71,7 +71,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(TBB_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/TBB)
+  set(TBB_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/TBB)
   #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------

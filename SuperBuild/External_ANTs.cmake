@@ -157,7 +157,7 @@ ExternalProject_Add(${proj}
   )
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
-set(${proj}_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+set(${proj}_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
 #${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
 
 mark_as_superbuild(

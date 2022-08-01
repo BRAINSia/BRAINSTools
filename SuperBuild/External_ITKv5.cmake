@@ -58,7 +58,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    835dc01388d22c4b4c9a46b01dbdfe394ec23511 # 20220726
+    fix-lib64-install-path-issues # 20220801
+    #835dc01388d22c4b4c9a46b01dbdfe394ec23511 # 20220726
     QUIET
     )
 
@@ -168,7 +169,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
   ExternalProject_GenerateProjectDescription_Step(${proj})
 
-  set(ITK_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ITK-${${proj}_REQUIRED_VERSION})
+  set(ITK_DIR ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/cmake/ITK-${${proj}_REQUIRED_VERSION})
   #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
   #-----------------------------------------------------------------------------

@@ -77,13 +77,13 @@ include(CMakeParseArguments)
 
 #------------------------------------------------------------------------------
 if(NOT Slicer_BUILD_BRAINSTOOLS)
-  ## HACK Force all shared libraries
-  set(BUILD_SHARED_LIBS OFF) ## Build everything static for non-slicer builds
-  set(EXTERNAL_BUILD_SHARED_LIBS OFF) ## Build external projects shared
+  option(EXTERNAL_BUILD_SHARED_LIBS "Build External support libraries as shared"    OFF)
 else()
-  set(BUILD_SHARED_LIBS ON) ## Build everything static for non-slicer builds
-  set(EXTERNAL_BUILD_SHARED_LIBS ON) ## Build external projects shared
+  option(EXTERNAL_BUILD_SHARED_LIBS "Build External support libraries as shared"    ON)
 endif()
+mark_as_advanced(EXTERNAL_BUILD_SHARED_LIBS)
+
+set(BUILD_SHARED_LIBS ${EXTERNAL_BUILD_SHARED_LIBS}) ## Build everything static for non-slicer builds, by default
 #------------------------------------------------------------------------------
 
 # Enable this option to avoid unnecessary re-compilation associated with command line module
@@ -536,21 +536,28 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
   # are found and used.
   # the RPATH to be used when installing, but only if it's not a system directory
   if(APPLE)
+    set(CMAKE_INSTALL_RPATH $loader_path)
     #TODO set @rpath settings correctly, use full path for now
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../lib" "@executable_path/../lib/ITK-5.3" "@executable_path/ITK-5.3")
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "@executable_path/../${CMAKE_INSTALL_LIBDIR}" "@executable_path/../${CMAKE_INSTALL_LIBDIR}/ITK-5.3" "@executable_path/ITK-5.3")
   else()
     # Most libararies are installed in ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN")
     list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}")
     # ITK install path puts FFTW in lib subdirectory ITK-5.3
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/ITK-5.3" "\$ORIGIN/ITK-5.3")
-    #          Relative for binaries FROM:  /bin/prog.bin                                /lib/libitkXXXX.so
-    # TBB install path is always "${CMAKE_INSTALL_PREFIX}/lib" even on rhel7
-    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../lib")
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/ITK-5.3")
+    list(APPEND CANDIDATE_PATHS_TO_INCLUDE "\$ORIGIN/ITK-5.3")
+    #          Relative for binaries FROM:  /bin/prog.bin                                /${CMAKE_INSTALL_LIBDIR}/libitkXXXX.so
 
     # Now remove possible duplicates
     list(REMOVE_DUPLICATES CANDIDATE_PATHS_TO_INCLUDE)
   endif()
-  foreach(CANDIDATE_RPATH ${CANDIDATE_PATHS_TO_INCLUDE})
+  foreach(CANDIDATE_RPATH_IN ${CANDIDATE_PATHS_TO_INCLUDE})
+    if(APPLE)
+      string(REPLACE "\$ORIGIN" "@loader_path" CANDIDATE_RPATH ${CANDIDATE_RPATH_IN})
+    else()
+      set(CANDIDATE_RPATH ${CANDIDATE_RPATH_IN})
+    endif()
+
     list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CANDIDATE_RPATH}" isSystemDir)
     #message(STATUS "------------------------- #${isSystemDir}#")
     if("${isSystemDir}" STREQUAL "-1")

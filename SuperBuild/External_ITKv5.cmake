@@ -51,15 +51,14 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   # HINT: -DUSE BRAINSTools_ITKv5_GIT_TAG:STRING=fix-some-error-pr-request
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-     #${git_protocol}://github.com/BRAINSia/ITK.git
+     #${git_protocol}://github.com/hjmjohnson/ITK.git
      ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git
      QUIET
   )
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    fix-lib64-install-path-issues # 20220801
-    #835dc01388d22c4b4c9a46b01dbdfe394ec23511 # 20220726
+    2ddf42785b3a1627f0e37bd6a0d21dc98635bfa3 # 20220808
     QUIET
     )
 

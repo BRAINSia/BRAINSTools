@@ -183,22 +183,19 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
   const auto num_pixels = image->GetBufferedRegion().GetNumberOfPixels();
   std::vector<typename TInputImage::PixelType> fixedList;
   fixedList.reserve(num_pixels);
+  const bool maskIsNull = mask.IsNull();
   {
     itk::ImageRegionConstIteratorWithIndex<TInputImage> fi(image, image->GetBufferedRegion());
     while (!fi.IsAtEnd())
     {
-      typename TInputImage::PointType physicalPoint;
-      image->TransformIndexToPhysicalPoint(fi.GetIndex(), physicalPoint);
+      const typename TInputImage::PointType physicalPoint{
+        image->template TransformIndexToPhysicalPoint<typename TInputImage::PointType::ValueType>(fi.GetIndex())
+      };
 
-      bool inCaluationRegion = true;
-      if (mask.IsNotNull() && (!mask->IsInsideInWorldSpace(physicalPoint)))
+      if ( maskIsNull || (mask->IsInsideInWorldSpace(physicalPoint)))
       // A null mask implies entire space is to be used.
       {
-        inCaluationRegion = false;
-      }
-      if (inCaluationRegion)
-      {
-        const typename TInputImage::PixelType currValue = fi.Get();
+        const typename TInputImage::PixelType & currValue = fi.Get();
         minValue = std::min(minValue, currValue);
         maxValue = std::max(maxValue, currValue);
         fixedList.push_back(currValue);

@@ -180,7 +180,9 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
   // By eliminating possible "bright or dark" noise in the image.
   minValue = std::numeric_limits<float>::max();
   maxValue = std::numeric_limits<float>::min();
-  std::vector<typename TInputImage::PixelType> fixedList(image->GetBufferedRegion().GetNumberOfPixels());
+  const auto num_pixels = image->GetBufferedRegion().GetNumberOfPixels();
+  std::vector<typename TInputImage::PixelType> fixedList;
+  fixedList.reserve(num_pixels);
   {
     itk::ImageRegionConstIteratorWithIndex<TInputImage> fi(image, image->GetBufferedRegion());
     while (!fi.IsAtEnd())

@@ -504,7 +504,7 @@ main(int argc, char * argv[])
 
     if (debugLevel > 7)
     {
-      myHelper->PrintCommandLine(true, "BF");
+      myHelper->PrintCommandLine(true, "BF_INPUTS");
     }
     try
     {

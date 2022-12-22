@@ -246,7 +246,7 @@ public:
   Update();
 
   void
-  PrintCommandLine(const bool dumpTempVolumes, const std::string & suffix) const;
+  PrintCommandLine(bool dumpTempVolumes, const std::string & suffix) const;
 
 protected:
   BRAINSFitHelper();

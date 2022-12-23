@@ -12,10 +12,10 @@
       "description": "Support Release build using Ninja generator",
       "hidden" : true,
       "cacheVariables": {
+        "CMAKE_INSTALL_PREFIX": { "type" : "PATH", "value" : "${sourceDir}/cmake-install-dir" },
         "CMAKE_EXPORT_COMPILE_COMMANDS": { "type": "BOOL", "value": "ON" },
         "CMAKE_OSX_DEPLOYMENT_TARGET" :{ "type" : "STRING", "value" : "12.3" },
-        "DCMAKE_INSTALL_LIBDIR" : { "type" : "STRING", "value" : "lib" },
-        "CMAKE_INSTALL_PREFIX": { "type" : "PATH", "value" : "/Users/johnsonhj/local/apps/BRAINSTools/20220210" },
+        "CMAKE_INSTALL_LIBDIR" : { "type" : "STRING", "value" : "lib" },
         "CMAKE_INSTALL_PREFIX_SET": { "type" : "BOOL", "value": "ON" },
         "CMAKE_CXX_FLAGS": {"type": "STRING", "value": "-march=native -mtune=native" },
         "CMAKE_C_FLAGS": {"type": "STRING", "value": "-march=native -mtune=native" },

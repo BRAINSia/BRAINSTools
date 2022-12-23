@@ -41,7 +41,7 @@ FindITKUtil(BRAINSConstellationDetector_ITK
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
   FindITKUtil(
     ITKVTK
-    ITKVtkGlue
+    # ITKVtkGlue
   )
   set(LOCAL_VTKQT GUISupportQt) #vtkGUISupportQt)
 

@@ -8,7 +8,7 @@ FindITKUtil(ConvertBetweenFileFormats_ITK
   )
 
 if(BUILD_WITH_GUI OR BRAINS3_USE_QT OR BRAINSTools_USE_QT)
-  FINDITKUtil(ITKVtkGlue)
+  # FINDITKUtil(ITKVtkGlue)
   set(LOCAL_VTKQT GUISupportQt) #vtkGUISupportQt)
   FindVTKUtil(
     InteractionStyle #vtkInteractionStyle

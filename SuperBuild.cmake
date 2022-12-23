@@ -193,11 +193,13 @@ endif()
 # Calling this macro last will ensure all prior calls to 'mark_as_superbuild' are
 # considered when updating the variable '${LOCAL_PROJECT_NAME}_EP_ARGS' passed to the main project
 # below.
+
 ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
    PROJECT_VAR proj
    EP_ARGS_VAR MYBRAINSTools_EP_ARGS ## Get mark_as_superbuild items for writing to cache file BRAINSTools-prefix/tmp/BRAINSTools-cache-Debug.cmake
    DEPENDS_VAR ${LOCAL_PROJECT_NAME}_DEPENDENCIES
 )
+
 #message(FATAL_ERROR "MYBRAINSTools_EP_ARGS:${MYBRAINSTools_EP_ARGS}:")
 #------------------------------------------------------------------------------
 # Write values to a file for demonstrating the config options
@@ -213,7 +215,7 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
 #message(FATAL_ERROR "${cmd_string}")
 #message(FATAL_ERROR "\n${WRITE_BRAINSTOOLS_ARGS}\n")
 # message(FATAL_ERROR "${MYBRAINSTools_EP_ARGS}")
-
+if(${LOCAL_PROJECT_NAME}_PKGBUILD)
 #------------------------------------------------------------------------------
 # Configure and build ${PROJECT_NAME}
 #------------------------------------------------------------------------------
@@ -239,6 +241,7 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
         LOG_CONFIGURE ON
         LOG_BUILD ON
         )
+endif()
 
 if(CMAKE_CONFIGURATION_TYPES)
   set(BUILD_STAMP_FILE "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-prefix/src/${LOCAL_PROJECT_NAME}-stamp/${CMAKE_CFG_INTDIR}/${LOCAL_PROJECT_NAME}-build")

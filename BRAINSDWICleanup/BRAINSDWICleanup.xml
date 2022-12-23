@@ -5,7 +5,7 @@
 
   <description>Remove bad gradients/volumes from DWI NRRD file.</description>
   <acknowledgements></acknowledgements>
-  <version>5.7.0</version>
+  <version>5.8.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsdwicleanup.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
   <contributor>This tool was developed by Kent Williams.</contributor>

@@ -1,4 +1,6 @@
 # Ignore sphinx temporary files
+
+__pycache__
 _build
 *.[oa]
 # Compiled Static libraries

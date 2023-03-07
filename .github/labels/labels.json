@@ -1,0 +1,339 @@
+[
+  {
+    "name": "f00: breaking",
+    "color": "ffa6ff",
+    "description": "Introduces a breaking change needed to address issue.",
+    "aliases": [
+      "s00: Breaking solution needed to address issue.",
+      "breaking",
+      "breaking change",
+      "breaking-change",
+      "Type: Breaking Change",
+      "type: breaking"
+    ]
+  },
+  {
+    "name": "f01: semantic-release",
+    "color": "b75fff",
+    "description": "Introduces a change requiring semantic-release update (i.e. new UDI) to address issue.",
+    "aliases": [
+      "s01: semantic-release requiring new UDI version",
+      "semantic-release"
+     ]
+  },
+  {
+    "name": "e01",
+    "color": "91ca55",
+    "description": "Small effort",
+    "aliases": [
+      "effort: 1"
+   ]
+  },
+  {
+    "name": "e02",
+    "color": "c2e2a2",
+    "description": "Effort",
+    "aliases": [
+      "effort: 2"
+    ]
+  },
+  {
+    "name": "e03",
+    "color": "e9f4dc",
+    "description": "Medium effort",
+    "aliases": [
+      "effort: 3"
+    ]
+  },
+  {
+    "name": "e05",
+    "color": "fef6d7",
+    "description": "Large effort",
+    "aliases": [
+      "effort: 5"
+    ]
+  },
+  {
+    "name": "e08",
+    "color": "fef2c0",
+    "description": "Very Large effort",
+    "aliases": [
+      "effort: 8"
+    ]
+  },
+  {
+    "name": "e13",
+    "color": "fbca04",
+    "description": "Should probably be broken into smaller tasks",
+    "aliases": [
+      "oldeffort: 13"
+    ]
+  },
+  {
+    "name": "p00: critical :fire:",
+    "color": "ff0000",
+    "aliases": [
+      "p00: critical",
+      "priority: critical",
+      "priority: now",
+      "Priority: Critical"
+    ]
+  },
+  {
+    "name": "p01: soon",
+    "color": "db0000",
+    "aliases": [
+      "priority: soon",
+      "priority: medium",
+      "Priority: Medium"
+    ]
+  },
+  {
+    "name": "p02: next",
+    "color": "b80000",
+    "aliases": [
+      "priority: next",
+      "priority: 2day",
+      "priority: high",
+      "Priority: High"
+    ]
+  },
+  {
+    "name": "p03: low",
+    "description": "Minimal business benefit identified",
+    "color": "960000",
+    "aliases": [
+      "priority: low"
+    ]
+  },
+  {
+    "name": "p04: help",
+    "description": "Help is requested to determine how to prioritize",
+    "color": "760000",
+    "aliases": [
+      "help",
+      "help wanted",
+      "Patch Welcome",
+      "status: help wanted",
+      "Status: PR Welcome",
+      "Status: Ready for PR"
+    ]
+  },
+  {
+    "name": "s00: approved",
+    "color": "00cb5e",
+    "description": "Approved to proceed.",
+    "aliases": [
+      "state: approved",
+      "approved"
+    ]
+  },
+  {
+    "name": "s01: blocked :no_entry:",
+    "color": "00ff8c",
+    "description": "Something is blocking action.",
+    "aliases": [
+      "s01: blocked :no entry:",
+      "s01: blocked",
+      "state: blocked",
+      "blocked",
+      "Status: Blocked",
+      "status: blocked"
+    ]
+  },
+  {
+    "name": "s02: pending",
+    "color": "009931",
+    "description": "A feature that needs dependencies merged, or a bug that needs further data.",
+    "aliases": [
+      "state: pending",
+      "in progress",
+      "on hold",
+      "pending",
+      "Status: In Progress",
+      "Status: Review Needed",
+      "watchlist"
+    ]
+  },
+  {
+    "name": "s03: inactive",
+    "color": "003c00",
+    "description": "The issue is either fixed, addressed better by other issues, or just out of product scope.",
+    "aliases": [
+      "state: inactive",
+      "duplicate",
+      "invalid",
+      "stale",
+      "Status: Abandoned",
+      "status: duplicate",
+      "status: wontfix",
+      "wont-fix",
+      "wontfix"
+    ]
+  },
+  {
+    "name": "t00: bug :bug:",
+    "color": "ff9800",
+    "description": "Something isn't working.",
+    "aliases": [
+      "t00: bug",
+      "type: bug",
+      "bug",
+      "Type: Bug"
+    ]
+  },
+  {
+    "name": "t01: security :key:",
+    "color": "d17200",
+    "description": "Something is vulnerable or not secure.",
+    "aliases": [
+      "type: security",
+      "security"
+    ]
+  },
+  {
+    "name": "t02: fix :hammer_and_wrench:",
+    "color": "a44f00",
+    "description": "Iterations on existing features or infrastructure.",
+    "aliases": [
+      "t02: fix :hammer & wrench:",
+      "t02: fix",
+      "fix",
+      "improvement",
+      "optimization",
+      "refactor",
+      "Type: Fix",
+      "Type: Refactoring"
+    ]
+  },
+  {
+    "name": "t03: testing :lab_coat:",
+    "color": "7b2c00",
+    "description": "Related to testing.",
+    "aliases": [
+      "t03: testing :lab coat:",
+      "t03: testing",
+      "type: testing",
+      "test",
+      "testing"
+    ]
+  },
+  {
+    "name": "t04: feature",
+    "color": "570400",
+    "description": "Brand new functionality, features, pages, workflows, endpoints, etc.",
+    "aliases": [
+      "type: feature",
+      "addition",
+      "enhancement",
+      "feature",
+      "type: enhancement",
+      "Type: Feature"
+    ]
+  },
+  {
+    "name": "t05: chore",
+    "color": "520000",
+    "description": "Other necessary (but less impactful) tasks.",
+    "aliases": [
+      "type: chore",
+      "chore",
+      "dependabot",
+      "dependencies",
+      "dependency",
+      "greenkeeper",
+      "legal",
+      "maintenance",
+      "Type: Maintenance",
+      "type: maintenance"
+    ]
+  },
+  {
+    "name": "t06: docs :book:",
+    "color": "623f1b",
+    "description": "Related to documentation and information.",
+    "aliases": [
+      "t05: docs",
+      "type: docs",
+      "doc",
+      "docs",
+      "document",
+      "documentation",
+      "documents",
+      "Type: Documentation",
+      "type: documentation"
+    ]
+  },
+  {
+    "name": "t07: discussion",
+    "color": "524438",
+    "description": "Questions, proposals and info that requires discussion.",
+    "aliases": [
+      "type: discussion",
+      "discussion",
+      "feedback",
+      "help wanted",
+      "idea",
+      "Idea",
+      "Proposal",
+      "proposal",
+      "question",
+      "type: design",
+      "Type: Question",
+      "type: question"
+    ]
+  },
+  {
+    "name": "w04: chaotic",
+    "color": "5785ff",
+    "description": "The situation is chaotic, novel practices expected to be used.",
+    "aliases": [
+      "work: chaotic",
+      "chaotic"
+    ]
+  },
+  {
+    "name": "w03: complex",
+    "color": "2768dd",
+    "description": "The situation is complex, emergent practices expected to be used.",
+    "aliases": [
+      "work: complex",
+      "complex"
+    ]
+  },
+  {
+    "name": "w02: complicated",
+    "color": "004dbc",
+    "description": "The situation is complicated, good practices expected to be used.",
+    "aliases": [
+      "work: complicated",
+      "complicated"
+    ]
+  },
+  {
+    "name": "w01: statndard",
+    "color": "00349c",
+    "description": "The situation is obvious, best practices expected to be  used.",
+    "aliases": [
+      "work: obvious",
+      "obvious"
+    ]
+  },
+  {
+    "name": "w05: good first issue",
+    "color": "7057ff",
+    "description": "Good for newcomers. Careful review expected.",
+    "aliases": [
+      "work: good first issue",
+      "good first issue",
+      "beginner-friendly",
+      "beginner",
+      "good for beginner",
+      "Good for beginners",
+      "good-starter-issue",
+      "starter-issue",
+      "starter",
+      "status: good starter issue"
+    ]
+  }
+]

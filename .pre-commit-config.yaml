@@ -5,6 +5,11 @@ repos:
       - id: check-added-large-files
         args: ['--maxkb=1024']
       - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-private-key
   - repo: https://github.com/psf/black
     # need to keep version for black in .pre-commit-config.yaml, requirements_dev.txt, and .github/workflows/prostatid_ci.yml
     rev: 24.2.0

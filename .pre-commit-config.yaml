@@ -16,6 +16,8 @@ repos:
         exclude: .*.sha.*|.*.vtk
       - id: mixed-line-ending
         exclude: .*.sha.*|.*.vtk
+      - id: name-tests-test
+        args: ['--pytest-test-first']
       - id: trailing-whitespace
         exclude: .*.sha.*|.*.vtk
   - repo: https://github.com/psf/black

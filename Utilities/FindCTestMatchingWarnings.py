@@ -67,7 +67,7 @@ def GetListOfCustomExludePatterns(patterns_file_name):
         iscomment_matchresult = comment_pat.search(line)
         if iscomment_matchresult:
             continue
-        if in_excepts_block == False:
+        if in_excepts_block is False:
             start_matchresult = start_excepts_pat.search(line)
             if start_matchresult:
                 in_excepts_block = True
@@ -170,12 +170,12 @@ for idx in range(0, len(warn_regex_patterns)):
                 ignore_result = CTEST_CUSTOM_WARNING_EXCEPTION_compiled[
                     ignore_pat_idx
                 ].search(line)
-                if ignore_result and ignore_found == False:
+                if ignore_result and ignore_found is False:
                     # print("{0}:
                     # {1}".format(CTEST_CUSTOM_WARNING_EXCEPTION[ignore_pat_idx],line))
                     ignore_found = True
                     continue
-            if ignore_found == False:
+            if ignore_found is False:
                 print(
                     (
                         termcolor.colored(

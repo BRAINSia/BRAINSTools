@@ -599,14 +599,14 @@ if __name__ == "__main__":
 
     LABELS_CONFIG_FILE = argv["--labelsConfigFile"]
 
-    if argv["--workflowCacheDir"] == None:
+    if argv["--workflowCacheDir"] is None:
         print("*** workflow cache directory is set to current working directory.")
         CACHEDIR = os.getcwd()
     else:
         CACHEDIR = argv["--workflowCacheDir"]
         assert os.path.exists(CACHEDIR), "Cache directory is not found: %s" % CACHEDIR
 
-    if argv["--resultDir"] == None:
+    if argv["--resultDir"] is None:
         print("*** data sink result directory is set to the cache directory.")
         RESULTDIR = CACHEDIR
     else:

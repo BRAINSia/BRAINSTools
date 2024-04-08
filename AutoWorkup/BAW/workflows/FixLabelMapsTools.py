@@ -162,7 +162,7 @@ def fix_label_map_from_neuromorphemetrics_2012(
     # DEBUG sitk.WriteImage(outlabels,"/tmp/outlabels.nii.gz")
 
     ## Now split CSF based on LeftHemisphereMask
-    if LeftHemisphereFN != None:
+    if LeftHemisphereFN is not None:
         LeftHemisphereIm = sitk.Cast(sitk.ReadImage(LeftHemisphereFN), sitk.sitkUInt32)
         left_hemi_pre = outlabels == OUT_DICT["LH_CSF"]
         outlabels = force_mask_insert(

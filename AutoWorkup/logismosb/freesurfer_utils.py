@@ -78,7 +78,8 @@ def recode_labelmap(in_file, out_file, recode_file):
             sys.exit()
         recode_table = dict(recode_data.astype(np.uint64))
 
-    mapper = lambda x: recode_table[x] if x in recode_table else x
+    def mapper(x):
+        return recode_table[x] if x in recode_table else x
 
     img = nib.load(in_file)
     klass = img.__class__

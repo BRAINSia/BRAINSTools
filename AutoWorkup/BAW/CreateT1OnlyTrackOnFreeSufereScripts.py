@@ -150,7 +150,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
             if session not in previous_list:
                 return_status = False
 
-    if return_status == False:
+    if return_status is False:
         print(("WARNING:  DON'T KNOW WHAT TO DO: ", base_tps_file))
         print(("current   ", found_sessions))
         print(("base-tps   ", previous_list))

@@ -119,7 +119,7 @@ def create_free_surfer_workflow_custom(
             msLDA_GenerateWeights, "vol_synth_file", outputsSpec, "cnr_optimal_image"
         )
 
-    if RunAllFSComponents == True:
+    if RunAllFSComponents is True:
         print("""Run FreeSurfer ReconAll at""")
         fs_reconall = pe.Node(
             interface=fswrap.FSScript(), name="FS52_cross_" + str(sessionid)

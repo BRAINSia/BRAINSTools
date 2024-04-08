@@ -229,7 +229,7 @@ def create_tissue_classify_workflow(
     )
 
     ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
-    if UseRegistrationMasking == True:
+    if UseRegistrationMasking is True:
         from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
         fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedImageROIAUTOMask")

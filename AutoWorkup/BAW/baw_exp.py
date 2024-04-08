@@ -258,7 +258,7 @@ def master_processing_controller(argv=None):
     import argparse
     import configparser
 
-    if argv == None:
+    if argv is None:
         argv = sys.argv
 
     # Create and parse input arguments
@@ -515,7 +515,7 @@ def master_processing_controller(argv=None):
         )
 
         for indx in range(0, len(sp_args_list)):
-            if all_results[indx] == False:
+            if all_results[indx] is False:
                 print(("FAILED for {0}".format(sp_args_list[indx][-1])))
 
     print(("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects)))

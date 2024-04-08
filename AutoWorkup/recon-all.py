@@ -193,7 +193,7 @@ def procargs(argv):
                 print("ERROR: --openmp flag accepts only integers")
                 sys.exit(2)
 
-    if config["subject_id"] == None:
+    if config["subject_id"] is None:
         print("ERROR: Must set subject_id using -s flag")
         help()
         sys.exit(2)
@@ -203,7 +203,7 @@ def procargs(argv):
         help()
         sys.exit(2)
 
-    if config["subjects_dir"] == None:
+    if config["subjects_dir"] is None:
         print("ERROR: Must set the subjects_dir before running")
         help()
         sys.exit(2)
@@ -212,24 +212,24 @@ def procargs(argv):
     print("Subject ID: {0}".format(config["subject_id"]))
     print("Input T1s: {0}".format(config["in_T1s"]))
 
-    if config["in_T2"] != None:
+    if config["in_T2"] is not None:
         print("Input T2: {0}".format(config["in_T2"]))
 
-    if config["in_FLAIR"] != None:
+    if config["in_FLAIR"] is not None:
         print("Input FLAIR: {0}".format(config["in_FLAIR"]))
 
     print("Plugin: {0}".format(config["plugin"]))
     print("Make qcache: {0}".format(config["qcache"]))
     print("Conform to 256: {0}".format(config["cw256"]))
 
-    if config["queue"] != None:
+    if config["queue"] is not None:
         print("Queue: {0}".format(config["queue"]))
         if config["plugin"] == "Linear":
             print(
                 "ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set"
             )
             sys.exit(2)
-        if config["openmp"] != None:
+        if config["openmp"] is not None:
             minmemoryGB = 8  # this could be modified in later updates
             config["plugin_args"] = {
                 "qsub_args": modify_qsub_args(
@@ -239,7 +239,7 @@ def procargs(argv):
             }
             print("plugin_args: {0}".format(config["plugin_args"]))
 
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         print("OpenMP: {0}".format(config["openmp"]))
 
     if config["longitudinal"]:
@@ -258,7 +258,7 @@ def check_env():
     fs_home = os.environ.get("FREESURFER_HOME")
     path = os.environ.get("PATH")
     print("FREESURFER_HOME: {0}".format(fs_home))
-    if fs_home == None:
+    if fs_home is None:
         print("ERROR: please set FREESURFER_HOME before running the workflow")
     elif not os.path.isdir(fs_home):
         print(
@@ -439,7 +439,7 @@ def main(argv):
 
     # Run Workflow
     reconall.base_dir = ExperimentInfo["Atlas"]["TEMP_CACHE"]
-    if config["plugin"] in ("SGE", "SGEGraph") and config["queue"] != None:
+    if config["plugin"] in ("SGE", "SGEGraph") and config["queue"] is not None:
         reconall.run(
             plugin=config["plugin"], plugin_args=dict(qsub_args="-q " + config["queue"])
         )

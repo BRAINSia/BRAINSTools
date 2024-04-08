@@ -160,7 +160,7 @@ def create_landmark_initialize_workflow(
     )
 
     ## This is for debugging purposes, and it is not intended for general use.
-    if DoReverseInit == True:
+    if DoReverseInit is True:
         ########################################################
         # Run BLI subject_to_atlas
         ########################################################
@@ -190,7 +190,7 @@ def create_landmark_initialize_workflow(
             BLI2Atlas, "outputTransformFilename", Resample2Atlas, "warpTransform"
         )
 
-    if (DoReverseInit == True) and (Debug == True):
+    if (DoReverseInit is True) and (Debug is True):
         ResampleFromAtlas = pe.Node(
             interface=BRAINSResample(), name="ResampleFromAtlas"
         )

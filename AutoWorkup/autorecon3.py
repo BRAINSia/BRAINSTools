@@ -135,9 +135,9 @@ def create_autorecon3(config):
 
     ar3_sphere = pe.Node(Sphere(), name="Spherical_Inflation")
     ar3_sphere.inputs.seed = 1234
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         ar3_sphere.inputs.num_threads = config["openmp"]
-    if config["plugin_args"] != None:
+    if config["plugin_args"] is not None:
         ar3_sphere.plugin_args = config["plugin_args"]
     ar3_lh_wf.connect(
         [
@@ -217,9 +217,9 @@ def create_autorecon3(config):
 
     ar3_parcellation = pe.Node(MRIsCALabel(), "Cortical_Parcellation")
     ar3_parcellation.inputs.seed = 1234
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         ar3_parcellation.inputs.num_threads = config["openmp"]
-    if config["plugin_args"] != None:
+    if config["plugin_args"] is not None:
         ar3_parcellation.plugin_args = config["plugin_args"]
     ar3_lh_wf.connect(
         [

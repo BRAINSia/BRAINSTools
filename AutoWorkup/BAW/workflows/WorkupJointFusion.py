@@ -50,7 +50,7 @@ def make_vector(inFN1, inFN2=None, jointFusion=False):
     """
     # print("inFN1: {0}".format(inFN1))
     # print("inFN2: {0}".format(inFN2))
-    if inFN2 == None:
+    if inFN2 is None:
         returnVector = [inFN1]
     else:
         returnVector = [inFN1, inFN2]
@@ -296,7 +296,7 @@ def create_joint_fusion_workflow(
 
     ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
     UseRegistrationMasking = True
-    if UseRegistrationMasking == True:
+    if UseRegistrationMasking is True:
         from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
         fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedROIAUTOMask")
@@ -393,7 +393,7 @@ def create_joint_fusion_workflow(
         )
 
         ## if using Registration masking, then do ROIAuto on fixed and moving images and connect to registraitons
-        if UseRegistrationMasking == True:
+        if UseRegistrationMasking is True:
             from nipype.interfaces.semtools.segmentation.specialized import (
                 BRAINSROIAuto,
             )
@@ -942,7 +942,7 @@ def create_joint_fusion_workflow(
     )
 
     ## Lobe Pacellation by recoding
-    if master_config["relabel2lobes_filename"] != None:
+    if master_config["relabel2lobes_filename"] is not None:
         # print("Generate relabeled version based on {0}".format(master_config['relabel2lobes_filename']))
 
         RECODE_LABELS_2_LobePacellation = read_recoding_list(

@@ -361,7 +361,7 @@ def mesh_2_mask(
 
     writer.SetFileName(outputImage)
 
-    if inputImage != None and direction != vtk_direction:
+    if inputImage is not None and direction != vtk_direction:
         flipFilter = vtk.vtkImageFlip()
         flipFilter.SetFilteredAxis(1)  # flip y axis
         flipFilter.SetInputData(imgstenc.GetOutput())
@@ -437,13 +437,13 @@ if __name__ == "__main__":
             assert False, "unhandled option"
 
     # check inputs
-    if inputMesh != None:
+    if inputMesh is not None:
         print("Input mesh: {0}".format(inputMesh))
     else:
         print("Error: input required for --inMesh")
         usage()
         sys.exit()
-    if outputImage != None:
+    if outputImage is not None:
         print("Output image: {0}".format(outputImage))
     else:
         print("Error: input required for --outImage")

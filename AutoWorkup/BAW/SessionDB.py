@@ -157,7 +157,7 @@ class SessionDB(object):
                             missingCount += 1
                         else:
                             print(("Found file {0}".format(imagePath)))
-                        if validEntry == True:
+                        if validEntry is True:
                             currDict["Qpos"] = str(i)
                             currDict["filename"] = imagePath
                             sqlCommand = self.make_sqlite_command(currDict)
@@ -167,7 +167,7 @@ class SessionDB(object):
                 print(row)
         sqlCommandList
         self._local_fill_db_and_close(sqlCommandList)
-        if (missingCount > 0) or (allEntriesOK == False):
+        if (missingCount > 0) or (allEntriesOK is False):
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()

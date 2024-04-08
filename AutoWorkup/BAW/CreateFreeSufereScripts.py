@@ -198,7 +198,7 @@ def mkfsscript(session, outscript, t1list, t2list, is3T, useT2):
         T1_FLAGS += " -i " + t1
 
     T2_FLAGS = ""
-    if len(t2list) > 0 and useT2 == True:
+    if len(t2list) > 0 and useT2 is True:
         ## HACK:  Rachael requested that this NOT be used
         T2_FLAGS = " -T2 " + t2list[0]
         pass
@@ -301,7 +301,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
             if session not in previous_list:
                 return_status = False
 
-    if return_status == False:
+    if return_status is False:
         print(("WARNING:  DON'T KNOW WHAT TO DO: {0}".format(base_tps_file)))
         print(("current   {0}".format(found_sessions)))
         print(("base-tps   {0}".format(previous_list)))
@@ -623,7 +623,7 @@ for thisSubject in all_subjects:
         if len(T1_files_30) > 0:
             is3T = True
         else:
-            if USE_15T_SESSIONS == False:
+            if USE_15T_SESSIONS is False:
                 continue  # Skip this session
             T1_files_15 = ExperimentDatabase.get_filenames_by_scan_type(
                 session, ["T1-15"]

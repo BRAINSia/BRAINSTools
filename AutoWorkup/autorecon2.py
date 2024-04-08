@@ -166,9 +166,9 @@ def create_autorecon2(config):
             "talairach.lta",
         )
         align_transform.inputs.nbrspacing = 3
-        if config["openmp"] != None:
+        if config["openmp"] is not None:
             align_transform.inputs.num_threads = config["openmp"]
-        if config["plugin_args"] != None:
+        if config["plugin_args"] is not None:
             align_transform.plugin_args = config["plugin_args"]
         ar2_wf.connect(
             [
@@ -237,9 +237,9 @@ def create_autorecon2(config):
         "transforms",
         "talairach.m3z",
     )
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         ca_register.inputs.num_threads = config["openmp"]
-    if config["plugin_args"] != None:
+    if config["plugin_args"] is not None:
         ca_register.plugin_args = config["plugin_args"]
     ar2_wf.connect(
         [
@@ -291,9 +291,9 @@ def create_autorecon2(config):
     em_reg_withskull.inputs.template = os.path.join(
         config["FREESURFER_HOME"], "average", "RB_all_withskull_2014-08-21.gca"
     )
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         em_reg_withskull.inputs.num_threads = config["openmp"]
-    if config["plugin_args"] != None:
+    if config["plugin_args"] is not None:
         em_reg_withskull.plugin_args = config["plugin_args"]
     ar2_wf.connect(
         [
@@ -367,9 +367,9 @@ def create_autorecon2(config):
     ca_label.inputs.template = os.path.join(
         config["FREESURFER_HOME"], "average", "RB_all_2014-08-21.gca"
     )
-    if config["openmp"] != None:
+    if config["openmp"] is not None:
         ca_label.inputs.num_threads = config["openmp"]
-    if config["plugin_args"] != None:
+    if config["plugin_args"] is not None:
         ca_label.plugin_args = config["plugin_args"]
     ar2_wf.connect(
         [
@@ -720,9 +720,9 @@ def create_autorecon2(config):
             qsphere.inputs.seed = 1234
             qsphere.inputs.magic = True
             qsphere.inputs.out_file = qsphere_nofix
-            if config["openmp"] != None:
+            if config["openmp"] is not None:
                 qsphere.inputs.num_threads = config["openmp"]
-            if config["plugin_args"] != None:
+            if config["plugin_args"] is not None:
                 qsphere.plugin_args = config["plugin_args"]
             hemi_wf.connect([(inflate1, qsphere, [("out_file", "in_file")])])
 

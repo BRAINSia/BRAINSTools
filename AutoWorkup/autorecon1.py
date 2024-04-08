@@ -48,7 +48,7 @@ def verify_inputs(T1sList):
                         )
                     )
                     sys.exit(-1)
-        elif extension == None:
+        elif extension is None:
             print(
                 "ERROR: Input files must be have '.mgz', '.nii', or '.nii.gz' extension"
             )
@@ -105,7 +105,7 @@ def copy_file(in_file, out_file=None):
     import os
     import shutil
 
-    if out_file == None:
+    if out_file is None:
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
     if isinstance(in_file, list) and len(in_file) == 1:
         in_file = in_file[0]
@@ -200,7 +200,7 @@ def create_autorecon1(config):
         ar1_wf.connect([(inputSpec, T1_image_preparation, [("Raw_T1s", "in_file")])])
 
         # T2 image preparation
-        if config["in_T2"] != None:
+        if config["in_T2"] is not None:
             # Create T2raw.mgz
             # mri_convert
             inputSpec.inputs.Raw_T2 = config["in_T2"]
@@ -211,7 +211,7 @@ def create_autorecon1(config):
             T2_convert.inputs.no_scale = True
             ar1_wf.connect([(inputSpec, T2_convert, [("Raw_T2", "in_file")])])
 
-        if config["in_FLAIR"] != None:
+        if config["in_FLAIR"] is not None:
             # FLAIR image preparation
             # Create FLAIRraw.mgz
             # mri_convert
@@ -539,9 +539,9 @@ copy the run to rawavg and continue."""
             "talairach_with_skull.lta",
         )
         mri_em_register.inputs.skull = True
-        if config["openmp"] != None:
+        if config["openmp"] is not None:
             mri_em_register.inputs.num_threads = config["openmp"]
-        if config["plugin_args"] != None:
+        if config["plugin_args"] is not None:
             mri_em_register.plugin_args = config["plugin_args"]
         ar1_wf.connect([(bias_correction, mri_em_register, [("out_file", "in_file")])])
 

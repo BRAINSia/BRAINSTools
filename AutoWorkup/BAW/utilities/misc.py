@@ -355,7 +355,7 @@ def common_ants_registration_settings(
 
     if initial_moving_transform is not None:
         antsRegistrationNode.inputs.initial_moving_transform = initial_moving_transform
-        if invert_initial_moving_transform == True:
+        if invert_initial_moving_transform is True:
             antsRegistrationNode.inputs.invert_initial_moving_transform = True
 
     if output_transform_prefix is not None:

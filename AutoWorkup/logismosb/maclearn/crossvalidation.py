@@ -13,7 +13,7 @@ import os
 import pandas as pd
 from sklearn import cross_validation
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve
 from sklearn.externals import joblib
 import pickle as pickle
 import sys

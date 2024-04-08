@@ -119,7 +119,7 @@ def clone_atlas_dir(cachedir, atlasdir):
     :param atlasdir:
     :return:
     """
-    from distutils.dir_util import copy_tree, remove_tree
+    from distutils.dir_util import copy_tree
     import stat
 
     new_dir = os.path.join(cachedir, "Atlas")

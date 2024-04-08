@@ -14,23 +14,10 @@ Author:
 Usage:
 
 """
-import os
 
-import SimpleITK as sitk
-import nipype
-import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces import ants
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 
 
 def create_estimation_workflow(WFname):
@@ -49,7 +36,6 @@ def create_estimation_workflow(WFname):
         :param dti_image:
         :return:
         """
-        import os
         from nipype.interfaces.semtools import dtiprocess
 
         DTIProcess = dtiprocess()

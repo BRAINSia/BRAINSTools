@@ -9,11 +9,10 @@ Usage:
 
 """
 
-import nipype
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.io import DataGrabber, FreeSurferSource
 from nipype.interfaces.utility import Merge
-from autorecon1 import mkdir_p, create_autorecon1
+from autorecon1 import create_autorecon1
 from autorecon2 import create_autorecon2
 from autorecon3 import create_autorecon3
 

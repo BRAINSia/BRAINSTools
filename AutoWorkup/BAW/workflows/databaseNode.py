@@ -16,7 +16,6 @@ from nipype.interfaces.base import (
     TraitedSpec,
     traits,
     File,
-    BaseInterface,
     DynamicTraitedSpec,
     BaseInterfaceInputSpec,
 )

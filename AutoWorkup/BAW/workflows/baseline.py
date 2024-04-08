@@ -45,7 +45,7 @@ package_check("IPython", "0.10", "tutorial1")
 
 from utilities.distributed import modify_qsub_args
 from utilities.image_processing import fix_wm_partitioning
-from PipeLineFunctionHelpers import convert_to_list, accumulate_like_tissue_posteriors
+from PipeLineFunctionHelpers import accumulate_like_tissue_posteriors
 from PipeLineFunctionHelpers import unwrap_posterior_images_from_list_tuples_function
 
 from .WorkupT1T2LandmarkInitialization import create_landmark_initialize_workflow

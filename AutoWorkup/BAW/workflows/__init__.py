@@ -1,7 +1,7 @@
 try:
     import utilities
 except ImportError:
-    import AutoWorkup.utilities
+    pass
 # import AutoWorkup.semtools
 
 # import atlasNode

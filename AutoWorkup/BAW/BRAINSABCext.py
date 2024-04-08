@@ -15,19 +15,12 @@ from builtins import range
 from xml.etree import ElementTree as et
 
 from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
     File,
-    Directory,
     traits,
-    isdefined,
-    InputMultiPath,
     OutputMultiPath,
 )
 from nipype.interfaces.semtools.segmentation.specialized import (
     BRAINSABCOutputSpec,
-    BRAINSABCInputSpec,
     BRAINSABC,
 )
 

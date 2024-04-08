@@ -15,7 +15,6 @@ from nipype.interfaces.base import (
     traits,
     File,
     TraitedSpec,
-    InputMultiPath,
     CommandLineInputSpec,
     CommandLine,
     isdefined,
@@ -25,7 +24,7 @@ import os
 import csv
 import vtk
 import numpy as np
-from os.path import abspath, isfile
+from os.path import abspath
 import SimpleITK as sitk
 from .freesurfer_utils import create_label_watershed
 
@@ -248,7 +247,6 @@ class WMMasking(BaseInterface):
         # LOGISMOS-B
 
         import SimpleITK as sitk
-        import os
 
         # Helpful methods
         # method to find largest connected component

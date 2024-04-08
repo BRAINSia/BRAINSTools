@@ -10,11 +10,10 @@ Usage:
 """
 
 import os
-import nipype
 from nipype.interfaces.utility import Function, IdentityInterface, Merge
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer import *
-from autorecon1 import mkdir_p, copy_file
+from autorecon1 import copy_file
 
 
 def copy_ltas(in_file, subjects_dir, subject_id, long_template):

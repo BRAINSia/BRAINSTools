@@ -38,24 +38,14 @@ from builtins import str
 
 from nipype.interfaces.ants.segmentation import JointFusion
 from nipype.interfaces.base import (
-    BaseInterface,
     traits,
-    TraitedSpec,
-    DynamicTraitedSpec,
     File,
-    BaseInterfaceInputSpec,
-    isdefined,
 )
-from nipype.interfaces.io import add_traits, SelectFiles, DataSink
 from nipype.interfaces.utility import (
     Select,
-    Merge,
-    Split,
-    Function,
-    Rename,
     IdentityInterface,
 )
-from nipype.pipeline.engine import Workflow, Node, MapNode
+from nipype.pipeline.engine import Workflow, Node
 
 
 def sample_crossvalidation_set(length, test_size):

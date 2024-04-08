@@ -577,7 +577,6 @@ def generate_subject_output_pattern(subjectid):
     :param subjectid:
     :return:
     """
-    import os.path
 
     patternList = []
     find_pat = "_subject_" + subjectid + "/"

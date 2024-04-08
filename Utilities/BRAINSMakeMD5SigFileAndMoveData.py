@@ -14,7 +14,6 @@
 import hashlib
 import os
 import argparse
-import sys
 import shutil
 
 

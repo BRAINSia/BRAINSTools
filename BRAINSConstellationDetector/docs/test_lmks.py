@@ -22,7 +22,6 @@ def read_fiducial_points(fcsv_file: str, fiducials: list) -> dict:
 
 if __name__ == "__main__":
     import sys
-    import os
     import math
 
     fiducials_fn = sys.argv[1]

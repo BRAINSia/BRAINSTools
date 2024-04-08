@@ -147,7 +147,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
         found_sessions.sort()
         previous_list.sort()
         for session in found_sessions:
-            if not session in previous_list:
+            if session not in previous_list:
                 return_status = False
 
     if return_status == False:

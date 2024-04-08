@@ -164,10 +164,6 @@ def create_and_run(
     from BAW.baw_exp import open_subject_database
     from BAW.utilities.misc import add_dict
     from collections import OrderedDict
-    import sys
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     from BAW.workflows.utils import run_workflow
 

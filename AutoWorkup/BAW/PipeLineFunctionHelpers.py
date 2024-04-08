@@ -107,7 +107,6 @@ def clip_t1_image_with_brain_mask(t1_image, brain_labels, clipped_file_name):
     :return:
     """
     import os
-    import sys
     import SimpleITK as sitk
 
     ## Now clean up the posteriors based on anatomical knowlege.
@@ -156,7 +155,7 @@ def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(
     )  # Need OrderedDict internally to ensure consistent ordering
 
     dictionary_of_session_list = OrderedDict()
-    assert not dg_list_list is None, "Input must be a list, not None"
+    assert dg_list_list is not None, "Input must be a list, not None"
     assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(
         type(postList)
     )
@@ -189,7 +188,6 @@ def accumulate_like_tissue_posteriors(posteriorImages):
     :return:
     """
     import os
-    import sys
     import SimpleITK as sitk
     from collections import (
         OrderedDict,

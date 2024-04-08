@@ -11,17 +11,8 @@ Usage:
 """
 from builtins import zip
 
-import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 
 from BRAINSABCext import *
 from utilities.distributed import modify_qsub_args
@@ -77,9 +68,6 @@ def make_posteriour_list_of_tuplefunc(posteriorImages):
         print(("ERROR: ", posteriorNames))
         print(("ERROR: ", POSTERIORS))
         return -1
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     temp_dictionary = list(zip(POSTERIORS, posteriorImages))
     # print("XXXXX: {0}".format(temp_dictionary))

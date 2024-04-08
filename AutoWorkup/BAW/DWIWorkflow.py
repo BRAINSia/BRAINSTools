@@ -734,7 +734,6 @@ def run_main_workflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR)
 
 if __name__ == "__main__":
     import os
-    import glob
     import sys
 
     from docopt import docopt
@@ -794,27 +793,13 @@ if __name__ == "__main__":
     PYTHON_AUX_PATHS.extend(sys.path)
     sys.path = PYTHON_AUX_PATHS
 
-    import SimpleITK as sitk
-    import nipype
     from nipype.interfaces import ants
-    from nipype.interfaces.base import (
-        CommandLine,
-        CommandLineInputSpec,
-        TraitedSpec,
-        File,
-        Directory,
-    )
-    from nipype.interfaces.base import traits, isdefined, BaseInterface
     from nipype.interfaces.utility import (
-        Merge,
-        Split,
         Function,
-        Rename,
         IdentityInterface,
     )
     import nipype.interfaces.io as nio  # Data i/oS
     import nipype.pipeline.engine as pe  # pypeline engine
-    from nipype.interfaces.freesurfer import ReconAll
     from nipype.interfaces.semtools import *
 
     #####################################################################################

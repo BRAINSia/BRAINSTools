@@ -182,4 +182,3 @@ done
 for i in $(find ${test_name}/ -name bvec_compare.output ); do
    echo "$i $(tail -n 1 $i)"
 done
-

@@ -29,4 +29,3 @@ int main(int argc, char *argv[])
 {
   return itksys_shared_forward_to_real(argc, argv);
 }
-

@@ -14,4 +14,3 @@ if { [catch "close $fp" res] } {
 } else {
     exit 0
 }
-

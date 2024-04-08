@@ -24,4 +24,3 @@ add_definitions('-DCOMPLEX=std::complex<double>')
 endif()
 
 link_libraries(SparseMatrixLib)
-

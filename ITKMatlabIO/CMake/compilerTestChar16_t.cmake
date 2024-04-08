@@ -24,4 +24,3 @@ if(NOT SUPPORTS_CHAR16_T)
 
   message(FATAL_ERROR "ERROR: Your compiler settings do not support char16_t\nFor clang try to add CXXFLAGS=\"-stdlib=libc++ -std=c++11\" when running cmake")
 endif()
-

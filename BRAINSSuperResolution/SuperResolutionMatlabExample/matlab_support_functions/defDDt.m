@@ -22,4 +22,3 @@ function [D,Dt] = defDDt
             DtXYZ = DtXYZ + cat(3, Z(:,:,end) - Z(:,:,1), -diff(Z,1,3));
         end
 end
-

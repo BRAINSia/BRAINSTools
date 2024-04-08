@@ -39,4 +39,3 @@ add_test(
     --outputVolume DWIDicom.nhdr
   )
 set_property(TEST ${CLP}Test PROPERTY LABELS ${CLP})
-

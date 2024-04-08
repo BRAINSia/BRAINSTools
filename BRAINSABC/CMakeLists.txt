@@ -25,4 +25,3 @@ add_subdirectory(brainseg)
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
   add_subdirectory(TestSuite)
 endif()
-

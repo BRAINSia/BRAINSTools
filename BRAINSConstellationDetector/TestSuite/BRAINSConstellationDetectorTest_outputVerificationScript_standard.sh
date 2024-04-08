@@ -15,4 +15,3 @@ $selectionNode SetReferenceActiveVolumeID [$volumeNode GetID]
 $::slicer3::ApplicationLogic PropagateVolumeSelection
 
 $fidLogic LoadFiducialList $landmarkName
-

@@ -5,4 +5,3 @@ function [ out ] = At_fhp(z,ind_samples, res)
         p(ind_samples) = z;
         out = sqrt(prod(res))*real(ifftn(p));
 end
-

@@ -38,6 +38,12 @@ repos:
     rev: 24.2.0
     hooks:
       - id: black
+    #  - repo: https://github.com/asottile/pyupgrade
+    #    rev: v3.15.0
+    #    hooks:
+    #    -   id: pyupgrade
+    #        args: [--py310-plus]
+
   - repo: https://github.com/kynan/nbstripout
     rev: 0.7.1
     hooks:

@@ -9,7 +9,7 @@ For more information on the individual BRAINSTools, please see the following lin
 https://github.com/BRAINSia/BRAINSTools/wiki
 
 ## Building
-Linux-based system follows basically similar instruction. 
+Linux-based system follows basically similar instruction.
 
 ```sh
 clone https://github.com/BRAINSia/BRAINSTools.git
@@ -19,10 +19,10 @@ ccmake ../BRAINSTools
 make #make -j4 or make -j8 depending on the available cores
 ```
 
-OS dependent instruction is given for any dependencies or other issues. Please report any issue you found so that we could update the instruction accordingly. 
+OS dependent instruction is given for any dependencies or other issues. Please report any issue you found so that we could update the instruction accordingly.
 
 >
-> We also recommend to check out NAMICExternalProjects, https://github.com/BRAINSia/NAMICExternalProjects, which provides a set of tools, including ANTs Package, Slicer Modules, and our own BRAINSTools. 
+> We also recommend to check out NAMICExternalProjects, https://github.com/BRAINSia/NAMICExternalProjects, which provides a set of tools, including ANTs Package, Slicer Modules, and our own BRAINSTools.
 >
 
 ### Mac OSX

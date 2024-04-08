@@ -23,7 +23,7 @@ function [X, cost, resvec] = OpWeightedL2(b_FC,edgemask,lambda,ind_samples,res,i
 % Output:  X = high-resolution output image
 %          cost = array of cost function value vs. iteration
 %Define AtA fourier mask
-p_image = zeros(res,'single'); 
+p_image = zeros(res,'single');
 p_image(1,1,1) = single(1);
 
 AtA =single( At_fhp(single(A_fhp(p_image,ind_samples,res)),ind_samples,res));

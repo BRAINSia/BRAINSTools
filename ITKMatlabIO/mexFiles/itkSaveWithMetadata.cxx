@@ -427,7 +427,7 @@ WriteDWIFile(const MatlabStructManager &msm, const char *filename) {
         }
         myMexPrintf("%lf, %d, %d\n", itkOrigin[sdIdx], sdIdx, ImageType::ImageDimension);
     }
-     
+
     typename ImageType::SpacingType itkSpacing;
     typename ImageType::DirectionType itkDirection;
     //
@@ -456,7 +456,7 @@ for (unsigned int axIdx = 0; axIdx < ImageType::ImageDimension; ++axIdx) {
         myMexPrintf("%lf, %d, %d\n", itkDirection[sdIdx][axIdx], sdIdx, ImageType::ImageDimension);
     }
 }
- 
+
 double flipFactors[4] = {1.0, 1.0, 1.0, 1.0};
 const int *nrrdSpaceDefinition = (int *) mxGetData(msm.GetField("space"));
 if (nrrdSpaceDefinition) {
@@ -482,7 +482,7 @@ if (nrrdSpaceDefinition) {
             break;
     }
 }
- 
+
 typename ImageType::Pointer im = ImageType::New();
 im->SetDirection(itkDirection);
 im->SetOrigin(itkOrigin);
@@ -508,17 +508,17 @@ if (numDims > ImageType::ImageDimension) {
         it.Set(vlv);
     }
 }
- 
+
 itk::MetaDataDictionary &thisDic = im->GetMetaDataDictionary();
 //
 // space direction
 std::string spaceDirKey("NRRD_space");
 spaceDirKey += airEnumStr(nrrdSpace, nrrdField_space);
- 
+
 myMexPrintf("%s\n", spaceDirKey.c_str());
 itk::EncapsulateMetaData<std::string>(thisDic, spaceDirKey,
                                       std::string(airEnumStr(nrrdSpace, nrrdSpaceLeftPosteriorSuperior)));
- 
+
 //
 // fill out metadata
 // Measurement Frame

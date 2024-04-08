@@ -6,7 +6,7 @@ function k = get_kspace_inds_new( res )
 
 % if res(2) = 7, cf(2) = 3 ->  [ 0  1  2  3 -3 -2 -1 ]
 % if res(2) = 6, cf(2) = 3 ->  [ 0  1  2    -3 -2 -1 ]
-%                                         ^ remove one positive element                                        
+%                                         ^ remove one positive element
 cf =   int64( floor(res/2)  ); %CenterFrequency
 indx = int64( [ 0:(cf(2) - mod(res(2)+1,2)), (-cf(2)):-1] );
 indy = int64( [ 0:(cf(1) - mod(res(1)+1,2)), (-cf(1)):-1] );

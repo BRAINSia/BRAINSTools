@@ -14,6 +14,10 @@ repos:
       - id: detect-private-key
       - id: end-of-file-fixer
         exclude: .*.sha.*|.*.vtk
+      - id: mixed-line-ending
+        exclude: .*.sha.*|.*.vtk
+      - id: trailing-whitespace
+        exclude: .*.sha.*|.*.vtk
   - repo: https://github.com/psf/black
     # need to keep version for black in .pre-commit-config.yaml, requirements_dev.txt, and .github/workflows/prostatid_ci.yml
     rev: 24.2.0

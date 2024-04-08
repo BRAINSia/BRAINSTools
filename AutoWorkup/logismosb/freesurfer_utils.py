@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 from nipype.interfaces.base import (
     BaseInterface,
     BaseInterfaceInputSpec,
@@ -317,8 +318,8 @@ class SplitLabelsInputSpec(BaseInterfaceInputSpec):
 class SplitLabelsOutputSpec(TraitedSpec):
     """This class represents a...
 
-     :param TraitedSpec:
-     """
+    :param TraitedSpec:
+    """
 
     out_file = traits.File(exists=True)
 
@@ -389,8 +390,8 @@ class SurfaceMaskInputSpec(FSTraitedSpec):
 class SurfaceMaskOutputSpec(TraitedSpec):
     """This class represents a...
 
-     :param TraitedSpec:
-     """
+    :param TraitedSpec:
+    """
 
     out_file = traits.File(desc="Output masked volume.")
 

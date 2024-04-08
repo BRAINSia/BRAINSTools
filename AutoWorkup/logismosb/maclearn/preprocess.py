@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 import os
 import SimpleITK as sitk
 import pandas as pd
@@ -337,8 +338,10 @@ def get_nm_fs_scan(nm_file, name="norm.mgz"):
     :return:
     """
     subject_id = get_nm_subject_id(nm_file)
-    nm_fs_t1 = "/Shared/johnsonhj/HDNI/20150206_FS_Neuromorphometric/{0}/mri/{1}".format(
-        subject_id, name
+    nm_fs_t1 = (
+        "/Shared/johnsonhj/HDNI/20150206_FS_Neuromorphometric/{0}/mri/{1}".format(
+            subject_id, name
+        )
     )
     return nm_fs_t1
 

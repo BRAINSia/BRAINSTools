@@ -1,10 +1,12 @@
 repos:
--   repo: https://github.com/ambv/black
-    rev: stable
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
     hooks:
-    - id: black
-      language_version: python3.6
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v1.2.3
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+      - id: check-case-conflict
+  - repo: https://github.com/psf/black
+    # need to keep version for black in .pre-commit-config.yaml, requirements_dev.txt, and .github/workflows/prostatid_ci.yml
+    rev: 24.2.0
     hooks:
-    - id: flake8
+      - id: black

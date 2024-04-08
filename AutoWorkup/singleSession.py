@@ -220,7 +220,7 @@ def create_and_run(
             _dict["BadT2"] = False
             if _dict["T2s"] == database.get_filenames_by_scan_type(session, ["T2-15"]):
                 for t2fn in _dict["T2s"]:
-                  print(f"This T2-15 is not going to be used for JointFusion {t2fn}")
+                    print(f"This T2-15 is not going to be used for JointFusion {t2fn}")
                 _dict["BadT2"] = True
             _dict["PDs"] = database.get_filenames_by_scan_type(
                 session, ["PD-15", "PD-30"]
@@ -382,7 +382,7 @@ def create_and_run(
         raise
     finally:
         try:
-            #print("attempting to close connection")
+            # print("attempting to close connection")
             database.close_connection()
         except Exception as e:
             print(e)

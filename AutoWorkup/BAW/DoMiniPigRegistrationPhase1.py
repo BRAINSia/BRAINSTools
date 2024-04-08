@@ -337,13 +337,13 @@ minipigWF.connect(T2DynFix, "outFN", T2_to_T1_Fit, "movingVolume")
 ######===========================
 def chop_image(inFN, inMaskFN, outFN):
     """A function to apply mask to zero out all non-interesting pixels.
-       ideally this should not be needed, but in an attempt to figure out
-       why registration is acting difficult, this is a reasonable solution
+    ideally this should not be needed, but in an attempt to figure out
+    why registration is acting difficult, this is a reasonable solution
 
-       :param inFN:
-       :param inMaskFN:
-       :param outFN:
-       :return: os.path.realpath(outFN)
+    :param inFN:
+    :param inMaskFN:
+    :param outFN:
+    :return: os.path.realpath(outFN)
     """
     import SimpleITK as sitk
     import os

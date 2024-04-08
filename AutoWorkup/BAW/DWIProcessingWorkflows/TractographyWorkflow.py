@@ -41,6 +41,7 @@ def create_tractography_workflow(WFname):
     :param WFname:
     :return:
     """
+
     ###### UTILITY FUNCTIONS #######
     def computer_number_of_seeds_per_vexel(inputVolume):
         """

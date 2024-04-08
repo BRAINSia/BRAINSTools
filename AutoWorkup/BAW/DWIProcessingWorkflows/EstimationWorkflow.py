@@ -40,6 +40,7 @@ def create_estimation_workflow(WFname):
     :param WFname:
     :return: EstimationWF
     """
+
     #### Utility function ####
     def run_dti_process(dti_image):
         """

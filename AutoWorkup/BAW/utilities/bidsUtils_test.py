@@ -9,6 +9,7 @@ Author:
 Usage: N/A not a command line script (no bang above)
 
 """
+
 # I don't know if pytest is a dependency of this project, so I am avoiding adding it for the moments
 
 from bidsUtils import BAWBIDSFormatter

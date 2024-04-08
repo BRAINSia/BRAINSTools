@@ -39,6 +39,7 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
     :param LABELS_CONFIG_FILE:
     :return:
     """
+
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     ###### UTILITY FUNCTIONS #######
     # This function returns a label map that only covers the FOV of the input DWI scan

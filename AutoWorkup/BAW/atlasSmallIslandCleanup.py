@@ -201,8 +201,10 @@ class DustCleanup:
                         currentLabel
                     )
                     if inputT2VolumeImage:
-                        meanT2Intensity = labelStatsT2WithRelabeledConnectedRegion.GetMean(
-                            currentLabel
+                        meanT2Intensity = (
+                            labelStatsT2WithRelabeledConnectedRegion.GetMean(
+                                currentLabel
+                            )
                         )
                     else:
                         meanT2Intensity = None

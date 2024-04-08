@@ -19,8 +19,7 @@ from nipype.interfaces.semtools import BRAINSSnapShotWriter
 
 
 def print_usage():
-    """This function prints the usage of BAW
-    """
+    """This function prints the usage of BAW"""
     print(
         "python ./BAWScreenShots.py \\\n"
         "-i  ./small_list.csv \\\n"
@@ -74,8 +73,7 @@ def read_input_file(inputFilename):
 
 
 def main(argv=None):
-    """This is the main function
-    """
+    """This is the main function"""
     inputfile = ""
     inputDirectory = ""
     inputSubDirectory = "TissueClassify"

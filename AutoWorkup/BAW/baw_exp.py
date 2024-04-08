@@ -93,9 +93,24 @@ def do_single_subject_processing(sp_args):
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    CACHE_ATLASPATH, CLUSTER_QUEUE, CLUSTER_QUEUE_LONG, QSTAT_IMMEDIATE_EXE, QSTAT_CACHED_EXE, ExperimentBaseDirectoryCache, ExperimentBaseDirectoryResults, subject_data_file, GLOBAL_DATA_SINK_REWRITE, JOB_SCRIPT, WORKFLOW_COMPONENTS, input_arguments, mountPrefix, start_time, subjectid, PreviousExperimentName = (
-        sp_args
-    )
+    (
+        CACHE_ATLASPATH,
+        CLUSTER_QUEUE,
+        CLUSTER_QUEUE_LONG,
+        QSTAT_IMMEDIATE_EXE,
+        QSTAT_CACHED_EXE,
+        ExperimentBaseDirectoryCache,
+        ExperimentBaseDirectoryResults,
+        subject_data_file,
+        GLOBAL_DATA_SINK_REWRITE,
+        JOB_SCRIPT,
+        WORKFLOW_COMPONENTS,
+        input_arguments,
+        mountPrefix,
+        start_time,
+        subjectid,
+        PreviousExperimentName,
+    ) = sp_args
 
     while time.time() < start_time:
         time.sleep(start_time - time.time() + 1)

@@ -14,24 +14,24 @@ from builtins import zip
 
 def make_atlas_node(atlasDirectory, name, atlasParts):
     """
-        :param atlasDirectory:
-        :param name:
-        :param atlasParts:
-        :return:
+    :param atlasDirectory:
+    :param name:
+    :param atlasParts:
+    :return:
 
-        Make an atlas node that contains the elements requested in the atlasParts section
-        This will allow more fine grained data grabbers to be used, thereby allowing enhanced
-        compartmentalization of algorithmic components.
+    Make an atlas node that contains the elements requested in the atlasParts section
+    This will allow more fine grained data grabbers to be used, thereby allowing enhanced
+    compartmentalization of algorithmic components.
 
-        (S) Static files that are relevant for any atlas
-        (W) Files that require warping to subjecgt specific atlas
+    (S) Static files that are relevant for any atlas
+    (W) Files that require warping to subjecgt specific atlas
 
-        KEY:
-          [S|W]_BRAINSABCSupport
-          [S|W]_BRAINSABCSupport
-          [S|W]_BCDSupport
-          [S|W]_LabelMapsSupport
-          [S|W]_ExtraSupport
+    KEY:
+      [S|W]_BRAINSABCSupport
+      [S|W]_BRAINSABCSupport
+      [S|W]_BCDSupport
+      [S|W]_LabelMapsSupport
+      [S|W]_ExtraSupport
     """
 
     import nipype.interfaces.io as nio  # Data i/o

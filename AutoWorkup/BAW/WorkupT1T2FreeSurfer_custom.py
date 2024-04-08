@@ -9,7 +9,6 @@ Usage:
 
 """
 
-
 import os
 from builtins import str
 
@@ -167,7 +166,7 @@ def create_free_surfer_subject_template(
     constructed_FS_SUBJECTS_DIR="/never_use_this",
     subcommand="template",
 ):
-    """ Construct the longitudinal workflow
+    """Construct the longitudinal workflow
     Step 1: Construct the within-subject cross-sectional template (using all subject's sessions)
 
     :param projectid:
@@ -245,7 +244,7 @@ def create_free_surfer_longitudinal_worklfow(
     constructed_FS_SUBJECTS_DIR="/never_use_this",
     subcommand="longitudinal",
 ):
-    """ Construct the longitudinal workflow
+    """Construct the longitudinal workflow
     Step 2: Construct the longitudinal subject results (for each session individually)
 
     :param projectid:

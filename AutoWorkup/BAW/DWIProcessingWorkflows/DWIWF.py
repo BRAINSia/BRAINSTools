@@ -46,7 +46,7 @@ def run_main_workflow(
 ):
     """
     This Function takes in...
-    
+
     :param DWI_scan:
     :param T2_scan:
     :param labelMap_image:

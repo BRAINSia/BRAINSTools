@@ -36,7 +36,7 @@ from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityIn
 
 
 def create_persistance_check_workflow(WFname):
-    """ The purpose of this workflow is to debug the automatic deletion of files from the output directory.
+    """The purpose of this workflow is to debug the automatic deletion of files from the output directory.
 
     :param WFname:
     :return:

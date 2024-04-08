@@ -26,8 +26,8 @@ def subset_lmks(
     input_filename, output_filename, keep_list=["AC", "PC", "VN4", "CM", "RE", "LE"]
 ):
     """
-  reads in a landmark file, filters the keep_list landmarks, and writes the output landmark file.
-  """
+    reads in a landmark file, filters the keep_list landmarks, and writes the output landmark file.
+    """
     names = [
         "id",
         "x",
@@ -75,8 +75,8 @@ def query_if_lmks_ok():
 
 def run_it(cmd, display_output: bool, echo_input: bool):
     """
-  Small wrapper to run shell scripts
-  """
+    Small wrapper to run shell scripts
+    """
     cmd = [str(x) for x in cmd]
     if echo_input:
         print(f"{' '.join(cmd)}")

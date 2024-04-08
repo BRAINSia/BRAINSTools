@@ -9,7 +9,6 @@ Usage:
 
 """
 
-
 ## \author Hans J. Johnson
 ## This file contains the code necessary to build the python module
 ## nodes for SEM compliant tools

@@ -102,13 +102,13 @@ def fix_label_map_from_neuromorphemetrics_2012(
         measureFilt.Execute(outlabels)
         imgMin = measureFilt.GetMinimum()
         imgMax = measureFilt.GetMaximum()
-        if imgMax < (2 ** 8) - 1:
+        if imgMax < (2**8) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt8)
-        elif imgMax < (2 ** 16) - 1:
+        elif imgMax < (2**16) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt16)
-        elif imgMax < (2 ** 32) - 1:
+        elif imgMax < (2**32) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt32)
-        elif imgMax < (2 ** 64) - 1:
+        elif imgMax < (2**64) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt64)
         return outlabels
 
@@ -240,18 +240,18 @@ def recode_label_map(InputFileName, OutputFileName, RECODE_TABLE):
         measureFilt.Execute(outlabels)
         imgMin = measureFilt.GetMinimum()
         imgMax = measureFilt.GetMaximum()
-        if imgMax < (2 ** 8) - 1:
+        if imgMax < (2**8) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt8)
-        elif imgMax < (2 ** 16) - 1:
+        elif imgMax < (2**16) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt16)
-        elif imgMax < (2 ** 32) - 1:
+        elif imgMax < (2**32) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt32)
-        elif imgMax < (2 ** 64) - 1:
+        elif imgMax < (2**64) - 1:
             outlabels = sitk.Cast(outlabels, sitk.sitkUInt64)
         return outlabels
 
     LabelImage = sitk.Cast(sitk.ReadImage(InputFileName), sitk.sitkUInt32)
-    for (old, new) in RECODE_TABLE:
+    for old, new in RECODE_TABLE:
         LabelImage = (
             sitk.Cast((LabelImage == old), sitk.sitkUInt32) * (new - old) + LabelImage
         )

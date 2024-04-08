@@ -13,7 +13,7 @@ import re
 
 
 def validate_path(path, allow_empty, isDirectory):
-    """ Check if a path exists and return the path with all variables expanded or raise AssertionError
+    """Check if a path exists and return the path with all variables expanded or raise AssertionError
 
     >>> validate_path('/usr/bin')
     /usr/bin
@@ -41,7 +41,7 @@ def validate_path(path, allow_empty, isDirectory):
 
 
 def validate_paths(pathString):
-    """ Run validate_path() on all paths in a ':' seperated string
+    """Run validate_path() on all paths in a ':' seperated string
 
     >>> validate_paths('/:/usr/bin')
     /:/usr/bin
@@ -59,7 +59,7 @@ def validate_paths(pathString):
 
 
 def append_path_list(new, old=None):
-    """ Join the new and old ":"-seperated path strings and return the result
+    """Join the new and old ":"-seperated path strings and return the result
 
     >>> append_path_list('/usr', '/bin:/usr/bin')
     /usr:/bin:/usr/bin

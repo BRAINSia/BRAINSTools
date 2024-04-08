@@ -9,7 +9,6 @@ Usage:
 
 """
 
-
 from builtins import range
 from builtins import str
 
@@ -264,14 +263,14 @@ def flatten_transform_and_images_list(
 def get_moving_images(
     ListOfImagesDictionaries, registrationImageTypes, interpolationMapping
 ):
-    """ This currently ONLY works when registrationImageTypes has
-        length of exactly 1.  When the new multi-variate registration
-        is introduced, it will be expanded.
+    """This currently ONLY works when registrationImageTypes has
+    length of exactly 1.  When the new multi-variate registration
+    is introduced, it will be expanded.
 
-        :param ListOfImagesDictionaries:
-        :param registrationImageTypes:
-        :param interpolationMapping:
-        :return:
+    :param ListOfImagesDictionaries:
+    :param registrationImageTypes:
+    :param interpolationMapping:
+    :return:
     """
     if len(registrationImageTypes) != 1:
         print("ERROR:  Multivariate imageing not supported yet!")

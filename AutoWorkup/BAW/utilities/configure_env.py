@@ -16,7 +16,6 @@ By using
     __file__ is the current Python file that exists in the BRAINSTools/AutoWorkup/ directory.
 """
 
-
 from builtins import str
 
 try:

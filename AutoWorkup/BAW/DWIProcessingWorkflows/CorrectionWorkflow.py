@@ -39,6 +39,7 @@ def create_correction_workflow(WFname):
     :param WFname:
     :return: CorrectionWF
     """
+
     ###### UTILITY FUNCTIONS #######
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     # remove the skull from the T2 volume

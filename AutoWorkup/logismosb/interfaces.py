@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 from nipype.interfaces.base import (
     BaseInterface,
     BaseInterfaceInputSpec,
@@ -219,7 +220,6 @@ class WMMaskingOutputSpec(TraitedSpec):
 
 
 class WMMasking(BaseInterface):
-
     """
     Takes in a brainslabel map from BRAINSTools AutoWorkup as well
     as a csf posterior probability map and a label map and outputs
@@ -564,8 +564,8 @@ def multilabel_dilation(img, radius=1, kernel=sitk.BinaryDilateImageFilter.Ball)
 class CreateGMLabelMapInputSpec(BaseInterfaceInputSpec):
     """This class represents a...
 
-     :param BaseInterfaceInputSpec:
-     """
+    :param BaseInterfaceInputSpec:
+    """
 
     atlas_file = File(
         exists=True, mandatory=True, desc="Label map used to define gray matter regions"
@@ -585,7 +585,6 @@ class CreateGMLabelMapOutputSpec(TraitedSpec):
 
 
 class CreateGMLabelMap(BaseInterface):
-
     """
     Selects the gray matter labels and then dilates them
 
@@ -631,8 +630,8 @@ class CreateGMLabelMap(BaseInterface):
 class ComputeDistanceInputSpec(BaseInterfaceInputSpec):
     """This class represents a...
 
-     :param BaseInterfaceInputSpec:
-     """
+    :param BaseInterfaceInputSpec:
+    """
 
     wm_file = File(exists=True, desc="vtk polydata mesh surface", mandatory=True)
     gm_file = File(exists=True, desc="vtk polydata mesh surface", mandatory=True)
@@ -655,7 +654,6 @@ class ComputeDistanceOutputSpec(TraitedSpec):
 
 
 class ComputeDistance(BaseInterface):
-
     """
     Nipype wrappers for a comparing 2 surfaces
     Compute the surface to surface distance between 2 using similar to FreeSurfer
@@ -771,8 +769,8 @@ class ComputeDistance(BaseInterface):
 class LOGISMOSBInputSpec(CommandLineInputSpec):
     """This class represents a...
 
-     :param CommandLineInputSpec:
-     """
+    :param CommandLineInputSpec:
+    """
 
     t1_file = File(
         exists=True, desc="T1 scan output by BAW", argstr="--inputT1 %s", mandatory=True
@@ -916,10 +914,10 @@ class LOGISMOSB(CommandLine):
 
 class BSGInputSpec(CommandLineInputSpec):
     """
-     This class represents a..
+    This class represents a..
 
-     :param CommandLineInputSpec:
-     """
+    :param CommandLineInputSpec:
+    """
 
     in_file = File(
         exists=True,
@@ -965,21 +963,21 @@ class BSGInputSpec(CommandLineInputSpec):
 
 class BSGOutputSpec(TraitedSpec):
     """
-     This class represents a...
+    This class represents a...
 
-     :param TraitedSpec:
-     """
+    :param TraitedSpec:
+    """
 
     out_file = File(exists=True, desc="output vtk mesh surface file")
 
 
 class BRAINSSurfaceGeneration(CommandLine):
     """
-     This class represents a...
+    This class represents a...
 
-     :param CommandLine:
-     :return:
-     """
+    :param CommandLine:
+    :return:
+    """
 
     cmd = "BRAINSSurfaceGeneration"
     input_spec = BSGInputSpec
@@ -994,8 +992,8 @@ class BRAINSSurfaceGeneration(CommandLine):
 class Genus0InputSpec(CommandLineInputSpec):
     """This class represents a...
 
-     :param CommandLineInputSpec:
-     """
+    :param CommandLineInputSpec:
+    """
 
     in_file = File(
         exists=True,

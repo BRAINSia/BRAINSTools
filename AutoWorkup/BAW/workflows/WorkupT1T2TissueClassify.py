@@ -245,9 +245,7 @@ def create_tissue_classify_workflow(
         from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 
         fixedROIAuto = pe.Node(interface=BRAINSROIAuto(), name="fixedImageROIAUTOMask")
-        fixedROIAuto.inputs.ROIAutoDilateSize = (
-            15
-        )  ## NOTE Very large to include some skull in bad cases of bias where back of head is very dark
+        fixedROIAuto.inputs.ROIAutoDilateSize = 15  ## NOTE Very large to include some skull in bad cases of bias where back of head is very dark
         fixedROIAuto.inputs.outputROIMaskVolume = "fixedImageROIAutoMask.nii.gz"
 
         tissueClassifyWF.connect(inputsSpec, "PrimaryT1", fixedROIAuto, "inputVolume")
@@ -305,8 +303,8 @@ def create_tissue_classify_workflow(
     BABCext.inputs.debuglevel = 0
     BABCext.inputs.useKNN = True
     BABCext.inputs.purePlugsThreshold = (
-        0.1
-    )  # New feature to allow for pure plug processing and improvements.
+        0.1  # New feature to allow for pure plug processing and improvements.
+    )
     BABCext.inputs.maxIterations = 2
     BABCext.inputs.maxBiasDegree = 0
     BABCext.inputs.filterIteration = 3
@@ -368,11 +366,11 @@ def create_tissue_classify_workflow(
 
     def make_inverse_transform_filename(TransformFileName):
         """### HACK:  This function is to work around a deficiency in BRAINSABCext where the inverse transform name is not being computed properly
-          in the list outputs
+        in the list outputs
 
-          :param Transform:
-          :return:
-          """
+        :param Transform:
+        :return:
+        """
         fixed_inverse_name = TransformFileName.replace(".h5", "_Inverse.h5")
         return [fixed_inverse_name]
 

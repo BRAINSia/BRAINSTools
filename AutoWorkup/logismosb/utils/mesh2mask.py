@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 import vtk, math
 import sys, os
 import SimpleITK as sitk
@@ -67,11 +68,11 @@ class Mesh2Mask(BaseInterface):
 
 def patch(mesh):
     """
-        This function...
+    This function...
 
-        :param mesh:
-        :return:
-        """
+    :param mesh:
+    :return:
+    """
     edges = vtk.vtkFeatureEdges()
     edges.SetInputData(mesh)
     edges.FeatureEdgesOff()

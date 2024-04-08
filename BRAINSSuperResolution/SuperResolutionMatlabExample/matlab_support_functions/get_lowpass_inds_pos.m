@@ -6,7 +6,7 @@ function ind = get_lowpass_inds(k,siz)
 %        siz = dimensions of center k-space indicies to return
 %output: ind = linear index set cooresponding to center kspace rectangle
 
-% NOTE: siz(2) = Row, siz(1) = Column, siz(3) = Slice 
+% NOTE: siz(2) = Row, siz(1) = Column, siz(3) = Slice
 %       (i.e. fortran indexing)
 
 %                                         U  L

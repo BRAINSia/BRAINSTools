@@ -36,7 +36,7 @@ Description:
      The purpose of this pipeline is to complete all the pre-processing steps needed to turn diffusion-weighted images
      into FA images that will be used to build a template diffusion tensor atlas for fiber tracking.`
 Author:
-    
+
 Inputs:
     The input to this pipeline is a list of subject IDs that is used to generate lists of the corresponding DWIs
     processed with automated quality control, T2s, and brain label images that are treated as brain masks.

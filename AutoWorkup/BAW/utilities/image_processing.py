@@ -3,7 +3,7 @@ image_processing.py
 ============================
 Description:
     The purpose of this is to image process functions for pipelines
-    
+
 Author:
 
 Usage:

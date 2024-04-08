@@ -3,7 +3,7 @@ distributed.py
 ============================
 Description:
     The purpose of this is to...
-    
+
 Author:
 
 Usage:

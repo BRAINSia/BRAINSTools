@@ -13,7 +13,7 @@ Our goal is to run following command successfully:
 python baw_exp.py -processingLevel 2 -ExperimentConfig bawConfigurationTemplate.ini -pe OSX
 ```
 
-# BRAINSAutoWorkUp Manual 
+# BRAINSAutoWorkUp Manual
 
 BRAINSAutoWorkUp is developed for batch processing of brain MRI (T1-weighted or T1- and T2-weighted MRI set).
 The pipeline is constructed based on NIPYPE.
@@ -33,8 +33,8 @@ Let's say your NAMICExternalProjects build and located at:
 > Please see Anaconda Environment setup instruction in https://github.com/BRAINSia/NAMICExternalProjects
 
 ## Preparation
-BRAINSAutoWorkup pipeline, located under `BRAINSTools/AutoWorkup/singleSession.py`, requires a configuration 
-file with a list file for MRI inputs. 
+BRAINSAutoWorkup pipeline, located under `BRAINSTools/AutoWorkup/singleSession.py`, requires a configuration
+file with a list file for MRI inputs.
 
 ### A input MRI list file
 A list file specifies where T1- (and T2-)weighted images are in the form of python *dictionary*:
@@ -50,7 +50,7 @@ A rough example of *bawInputList.csv*:
 **Note:** All `MRISessionName` in the *bawInputList.csv* file has to be unique across all participants. For datasets in which the sessions for all participants are the same, such as the Adolescent Brain Cognitive Development (ABCD) dataset with all baseline sessions defined as `baselineYear1Arm1`, each subject's session has to renamed before running BRAINSAutoWorkUp.
 
 ### Configuration file
-A configuration file allows for HPC power utilization as well as local machine running. 
+A configuration file allows for HPC power utilization as well as local machine running.
 Syntax follows a standard INI configuration file format (Please see https://en.wikipedia.org/wiki/INI_file)
 * EXPERIMENT section
 ```INI
@@ -59,7 +59,7 @@ SESSION_DB_BASE=path_to_the_list/bawInputList.csv
 SESSION_DB_TEMP=%(SESSION_DB_BASE)s
 SESSION_DB_LONG=%(SESSION_DB_BASE)s
 
-# A base output directory specification: 
+# A base output directory specification:
 BASE_OUTPUT_DIR=myExperimentDir
 
 # A experiment directory name will be created following the below specifications
@@ -70,8 +70,8 @@ EXPERIMENT_BASE=20150715_BAW_Tutorial_base
 EXPERIMENT_TEMP=20150715_BAW_Tutorial_temp
 EXPERIMENT_LONG=20150715_BAW_Tutorial_long
 
-# Our current template builder and longitudinal pipeline depend on the results of 
-# baseline and template building pipeline. 
+# Our current template builder and longitudinal pipeline depend on the results of
+# baseline and template building pipeline.
 EXPERIMENT_TEMP_INPUT=%(EXPERIMENT_BASE)s
 EXPERIMENT_LONG_INPUT=%(EXPERIMENT_TEMP)s
 
@@ -101,10 +101,10 @@ MODULES=
 
 ALL the OS specifications can be given one configuration file. This allows
 developers to test/run/utilize as many computing resources as possible
-in one experiment setup. 
-      
+in one experiment setup.
+
 *OSX Example*
-      
+
 ```INI
 [OSX]
 ## The cluster queue to use for submitting "normal running" jobs.
@@ -136,7 +136,7 @@ _NIPYPE_PACKAGE_DIR=%(_BUILD_DIR)s/NIPYPE
 ############## -- You should not need to modify below here. ###########
 APPEND_PYTHONPATH=%(_NIPYPE_PACKAGE_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_SIMPLEITK_PACKAGE_DIR)s
 APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_SIMPLEITK_PYTHON_LIB)s:%(_GRAPHVIZ_BIN)s
-############## end of OSX specification ############## 
+############## end of OSX specification ##############
 ```
 
 B.
@@ -146,7 +146,7 @@ _BRAINSTOOLS_BIN_DIR=%(_BUILD_DIR)s/bin
 ############## -- You should not need to modify below here. ###########
 APPEND_PYTHONPATH=
 APPEND_PATH=%(_BRAINSTOOLS_BIN_DIR)s:%(_GRAPHVIZ_BIN)s
-############## end of OSX specification ############## 
+############## end of OSX specification ##############
 ```
 
 ## Running
@@ -194,13 +194,13 @@ python $NamicBuild/BRAINSTools/AutoWorkup/singleSession.py \
 
 ```
 
-## If Brans Constellation Detector (BCD) Fails, how to start the processing anyway!? 
-BCD in BRAINSTools Auto Workup plays critical role to normalize spatial orientations 
+## If Brans Constellation Detector (BCD) Fails, how to start the processing anyway!?
+BCD in BRAINSTools Auto Workup plays critical role to normalize spatial orientations
 of MRIs. Since BCD happens at the very beginning of the process, if BCD fails, there
-will be no results produced from BRAINSTools Auto Workup. 
+will be no results produced from BRAINSTools Auto Workup.
 
-In any failure case of BCD, BAW can be proceeded by 
-1) fix BCD manually and then 
+In any failure case of BCD, BAW can be proceeded by
+1) fix BCD manually and then
 2) specify that manaull fixed file as an input.
 
 - To fix manually, I ran following scripts in order:
@@ -270,7 +270,7 @@ BRAINSConstellationDetector  \
 * Step 3:
 Copy "EMSP.nrrd"  file to the adjacent of original t1
 Change BAW input csv file t1 to above EMSP.nrrd (Name can be anything)
-``` 
+```
 touch ${inputVolume}_noDenoise
 ```
 

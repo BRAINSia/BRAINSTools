@@ -1,0 +1,7 @@
+BRAINSConstellationDetector/docs/FixBCDFailure.sh
+Utilities/Hooks/pre-commit-style
+BRAINSConstellationDetector/TestSuite/BRAINSConstellationDetectorTest_outputVerificationScript_standard.sh
+ITKMatlabIO/utils/Mac10.9_mexopts.sh
+BRAINSFit/TestSuite/Example.sh
+Utilities/createClionConfigFromSuperbuild.py
+AutoWorkup/BAW/atlasSmallIslandCleanup.py

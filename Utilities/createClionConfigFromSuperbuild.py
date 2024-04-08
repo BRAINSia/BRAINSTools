@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # \author Hans J. Johnson
 #

@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Example run for BRAINSFit
 echo Registering test2.nii.gz to test.nii.gz.

@@ -5,6 +5,8 @@ repos:
       - id: check-added-large-files
         args: ['--maxkb=1024']
       - id: check-case-conflict
+      - id: check-executables-have-shebangs
+      # See check-json5 to support orthanc json5 files - id: check-json
       - id: check-merge-conflict
       - id: check-toml
       - id: check-xml

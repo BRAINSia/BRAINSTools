@@ -1,3 +1,4 @@
+#!/bin/bash
 ##There is a program that reads in a T1 image, determine the AC, PC, VN4, and MPJ
 ##points and writes out a slicer .fcsv file with 3 landmark points in it
 ##There are 2 files to be read in order to confirm that the landmarks are

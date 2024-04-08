@@ -138,17 +138,17 @@ def unwrap_posterior_images_from_list_tuples_function(posteriorListOfTuples):
 
 
 def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(
-    dg_list_list
+    dg_list_list,
 ):
-    """ The input is a list of sessions with a list of posteriors per session.
-        The output is a dicitionary of posterior types, with a list of that
-        posterior type for each session.
+    """The input is a list of sessions with a list of posteriors per session.
+    The output is a dicitionary of posterior types, with a list of that
+    posterior type for each session.
 
-        dg_list_list=[['Y1/POSTERIOR_AIR.nii.gz','Y1/POSTERIOR_CAUDATE.nii.gz'],['Y2/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']]
-        dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
+    dg_list_list=[['Y1/POSTERIOR_AIR.nii.gz','Y1/POSTERIOR_CAUDATE.nii.gz'],['Y2/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']]
+    dictionary_of_session_list={'AIR':['Y1/POSTERIOR_AIR.nii.gz','Y2/POSTERIOR_AIR.nii.gz'], 'CAUDATE':['Y1/POSTERIOR_CAUDATE.nii.gz','Y2/POSTERIOR_CAUDATE.nii.gz']}
 
-        :param dg_list_list:
-        :return:
+    :param dg_list_list:
+    :return:
     """
     from os.path import basename
     from collections import (
@@ -253,10 +253,10 @@ def accumulate_like_tissue_posteriors(posteriorImages):
 
 
 def mkdir_p(path):
-    """ Safely make a new directory, checking if it already exists
+    """Safely make a new directory, checking if it already exists
 
-        :param path:
-        :return:
+    :param path:
+    :return:
     """
     try:
         os.makedirs(path)
@@ -268,11 +268,11 @@ def mkdir_p(path):
 
 
 def recursive_dir_rm(path):
-    """ Force recursive remove of directory
+    """Force recursive remove of directory
 
-        :param path:
-        :return:
-     """
+    :param path:
+    :return:
+    """
     if os.path.exists(path):
         shutil.rmtree(path)
     return
@@ -281,8 +281,8 @@ def recursive_dir_rm(path):
 def make_dummy_file(fn):
     """This function just makes a file with the correct name and time stamp
 
-       :param fn:
-       :return:
+    :param fn:
+    :return:
     """
     import time
 

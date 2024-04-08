@@ -193,7 +193,7 @@ def create_joint_fusion_workflow(
                 "subj_posteriors",  # The BABC posteriors
                 "subj_left_hemisphere",  # The warped left hemisphere mask
                 "atlasWeightFilename",  # The static weights file name
-                "labelBaseFilename"
+                "labelBaseFilename",
                 # Atlas label base name ex) neuro_lbls.nii.gz
             ]
         ),
@@ -327,17 +327,15 @@ def create_joint_fusion_workflow(
         jointFusionAtlases[jointFusion_atlas_subject].inputs.t2 = jointFusionAtlasDict[
             jointFusion_atlas_subject
         ]["t2"]
-        jointFusionAtlases[
-            jointFusion_atlas_subject
-        ].inputs.label = jointFusionAtlasDict[jointFusion_atlas_subject]["label"]
-        jointFusionAtlases[
-            jointFusion_atlas_subject
-        ].inputs.lmks = jointFusionAtlasDict[jointFusion_atlas_subject]["lmks"]
-        jointFusionAtlases[
-            jointFusion_atlas_subject
-        ].inputs.registration_mask = jointFusionAtlasDict[jointFusion_atlas_subject][
-            "registration_mask"
-        ]
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.label = (
+            jointFusionAtlasDict[jointFusion_atlas_subject]["label"]
+        )
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.lmks = (
+            jointFusionAtlasDict[jointFusion_atlas_subject]["lmks"]
+        )
+        jointFusionAtlases[jointFusion_atlas_subject].inputs.registration_mask = (
+            jointFusionAtlasDict[jointFusion_atlas_subject]["registration_mask"]
+        )
         ## Create BLI first
         ########################################################
         # Run BLI atlas_to_subject
@@ -346,10 +344,10 @@ def create_joint_fusion_workflow(
             interface=BRAINSLandmarkInitializer(),
             name="BLI_" + jointFusion_atlas_subject,
         )
-        BLICreator[
-            jointFusion_atlas_subject
-        ].inputs.outputTransformFilename = "landmarkInitializer_{0}_to_subject_transform.h5".format(
-            jointFusion_atlas_subject
+        BLICreator[jointFusion_atlas_subject].inputs.outputTransformFilename = (
+            "landmarkInitializer_{0}_to_subject_transform.h5".format(
+                jointFusion_atlas_subject
+            )
         )
 
         JointFusionWF.connect(
@@ -382,9 +380,9 @@ def create_joint_fusion_workflow(
             "qsub_args": modify_qsub_args(CLUSTER_QUEUE_LONG, 4, 2, 16),
             "overwrite": True,
         }
-        A2SantsRegistrationPreJointFusion_SyN[
-            jointFusion_atlas_subject
-        ].plugin_args = many_cpu_ANTsSyN_options_dictionary
+        A2SantsRegistrationPreJointFusion_SyN[jointFusion_atlas_subject].plugin_args = (
+            many_cpu_ANTsSyN_options_dictionary
+        )
         if onlyT1:
             JFregistrationTypeDescription = "FiveStageAntsRegistrationT1Only"
         else:
@@ -502,9 +500,9 @@ def create_joint_fusion_workflow(
                 "qsub_args": modify_qsub_args(CLUSTER_QUEUE, 1, 1, 1),
                 "overwrite": True,
             }
-            t2Resample[
-                jointFusion_atlas_subject
-            ].plugin_args = many_cpu_t2Resample_options_dictionary
+            t2Resample[jointFusion_atlas_subject].plugin_args = (
+                many_cpu_t2Resample_options_dictionary
+            )
             t2Resample[jointFusion_atlas_subject].inputs.num_threads = -1
             t2Resample[jointFusion_atlas_subject].inputs.dimension = 3
             t2Resample[jointFusion_atlas_subject].inputs.output_image = (
@@ -549,9 +547,9 @@ def create_joint_fusion_workflow(
             "qsub_args": modify_qsub_args(CLUSTER_QUEUE, 1, 1, 1),
             "overwrite": True,
         }
-        labelMapResample[
-            jointFusion_atlas_subject
-        ].plugin_args = many_cpu_labelMapResample_options_dictionary
+        labelMapResample[jointFusion_atlas_subject].plugin_args = (
+            many_cpu_labelMapResample_options_dictionary
+        )
         labelMapResample[jointFusion_atlas_subject].inputs.num_threads = -1
         labelMapResample[jointFusion_atlas_subject].inputs.dimension = 3
         labelMapResample[jointFusion_atlas_subject].inputs.output_image = (
@@ -598,17 +596,17 @@ def create_joint_fusion_workflow(
             "qsub_args": modify_qsub_args(CLUSTER_QUEUE, 1, 1, 1),
             "overwrite": True,
         }
-        NewlabelMapResample[
-            jointFusion_atlas_subject
-        ].plugin_args = many_cpu_NewlabelMapResample_options_dictionary
+        NewlabelMapResample[jointFusion_atlas_subject].plugin_args = (
+            many_cpu_NewlabelMapResample_options_dictionary
+        )
         NewlabelMapResample[jointFusion_atlas_subject].inputs.num_threads = -1
         NewlabelMapResample[jointFusion_atlas_subject].inputs.dimension = 3
         NewlabelMapResample[jointFusion_atlas_subject].inputs.output_image = (
             jointFusion_atlas_subject + "fswm_2_subj_lbl.nii.gz"
         )
-        NewlabelMapResample[
-            jointFusion_atlas_subject
-        ].inputs.interpolation = "MultiLabel"
+        NewlabelMapResample[jointFusion_atlas_subject].inputs.interpolation = (
+            "MultiLabel"
+        )
         NewlabelMapResample[jointFusion_atlas_subject].inputs.default_value = 0
         NewlabelMapResample[jointFusion_atlas_subject].inputs.invert_transform_flags = [
             False

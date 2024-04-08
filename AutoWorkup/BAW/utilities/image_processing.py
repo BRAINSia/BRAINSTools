@@ -15,7 +15,7 @@ Usage:
 
 
 def fix_wm_partitioning(brainMask, PosteriorsList):
-    """"There were some errors in mis-classifications for WM/NON_WM"""
+    """ "There were some errors in mis-classifications for WM/NON_WM"""
     """
     This Function takes in...
 
@@ -28,15 +28,15 @@ def fix_wm_partitioning(brainMask, PosteriorsList):
 
     def fill_hole_preserved_edge(inputMask, HOLE_FILL_SIZE):
         """This function fills holes and tries to preserve
-           the exterior topology.  Holes that are within 3 units
-           of the exterior topology may not be completely filled.
-           Any voxel in the original mask will be guanteed to be
-           in the returned mask.
+        the exterior topology.  Holes that are within 3 units
+        of the exterior topology may not be completely filled.
+        Any voxel in the original mask will be guanteed to be
+        in the returned mask.
 
-           :param inputMask:
-           :param HOLE_FILL_SIZE:
-           :return:
-           """
+        :param inputMask:
+        :param HOLE_FILL_SIZE:
+        :return:
+        """
 
         return sitk.BinaryThreshold(
             inputMask

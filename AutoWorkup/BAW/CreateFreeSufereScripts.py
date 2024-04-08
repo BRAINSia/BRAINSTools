@@ -10,7 +10,6 @@ Usage:
 
 """
 
-
 __author__ = "johnsonhj"
 
 import os
@@ -526,7 +525,7 @@ def get_base_size(filename):
 
 
 def get_input_file_name(filename):
-    """ Does conversion to nifti if necessary, because NRRD files are not supported by FreeSurfer
+    """Does conversion to nifti if necessary, because NRRD files are not supported by FreeSurfer
 
     :param filename:
     :return: outfn

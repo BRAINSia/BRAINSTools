@@ -311,7 +311,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         self.config["execution"] = {"remove_unnecessary_outputs": "true"}
 
     def create(self):  # , **kwargs):
-        """ Create the nodes and connections for the workflow """
+        """Create the nodes and connections for the workflow"""
 
         # Preamble
         csvReader = CSVReader()
@@ -421,7 +421,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
 
 
 class FusionLabelWorkflow(Workflow):
-    """ Subworkflow to use with MapNode """
+    """Subworkflow to use with MapNode"""
 
     def __init__(self, name="FusionLabelWorkflow", **kwargs):
         """

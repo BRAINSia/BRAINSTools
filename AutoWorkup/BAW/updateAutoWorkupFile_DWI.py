@@ -9,7 +9,6 @@ Usage:
 
 """
 
-
 import argparse
 import csv
 import os
@@ -160,8 +159,10 @@ class MakeNewImageDict(object):
         vals = list(imageDict.values())
         col_names = ",".join(keys)
         values = ", ".join(["'" + x + "'" for x in vals])
-        sqlCommand = "INSERT INTO {dbTableName} ({col_names}) VALUES ({values});".format(
-            dbTableName=self.dbTableName, col_names=col_names, values=values
+        sqlCommand = (
+            "INSERT INTO {dbTableName} ({col_names}) VALUES ({values});".format(
+                dbTableName=self.dbTableName, col_names=col_names, values=values
+            )
         )
         return sqlCommand
 

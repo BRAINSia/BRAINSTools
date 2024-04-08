@@ -220,7 +220,7 @@ def run_main_workflow(DWI_scan, T2_scan, labelMap_image, BASE_DIR, dataSink_DIR)
     :param labelMap_image:
     :param BASE_DIR:
     :param dataSink_DIR:
-    :return: 
+    :return:
     """
     print("Running the workflow ...")
 

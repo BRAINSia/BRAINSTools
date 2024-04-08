@@ -12,7 +12,7 @@ Usage:
 
 
 def load_modules(modules):
-    """ The command 'module' is actually a script call in bash:
+    """The command 'module' is actually a script call in bash:
 
     module=() {eval `/opt/modules/Modules/$MODULE_VERSION/bin/modulecmd bash $* }`
 

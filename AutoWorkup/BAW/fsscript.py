@@ -486,7 +486,7 @@ exit $status
 
 
 def run_longitudinal(args, FREESURFER_HOME, FS_SCRIPT):
-    """ Create the longitudinal analysis
+    """Create the longitudinal analysis
 
     :param args:
     :param FREESURFER_HOME:

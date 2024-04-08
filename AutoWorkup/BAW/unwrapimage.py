@@ -1,5 +1,5 @@
 def image_autounwrap(wrapped_inputfn, unwrapped_outputbasefn):
-    """ Find optimal image roll in each direction
+    """Find optimal image roll in each direction
     to roll the image with circular boundaries such
     that the resulting head is not split across the
     image boundaries

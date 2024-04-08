@@ -39,6 +39,7 @@ DWICOMPARE = "/scratch/kent/BRAINSTools/release/bin/DWISimpleCompare"
 # cached list of all already-converted scans
 ALL_SCANS = "/scratch/kent/DWI_test/TestResults/AllScans.txt"
 
+
 #
 # caches the list of all NRRD files in the PREDICT base dir
 def write_nrrds_to_file(file_name):

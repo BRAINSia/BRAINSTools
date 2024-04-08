@@ -124,9 +124,7 @@ def create_landmark_initialize_workflow(
     BCD.inputs.writeBranded2DImage = "BCD" + "_Branded2DQCimage.png"
     # BCD.inputs.outputMRML = "BCD" + "_Scene.mrml"
     BCD.inputs.interpolationMode = InterpolationMode
-    BCD.inputs.houghEyeDetectorMode = (
-        1
-    )  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
+    BCD.inputs.houghEyeDetectorMode = 1  # Look for dark eyes like on a T1 image, 0=Look for bright eyes like in a T2 image
     BCD.inputs.acLowerBound = 80.0  # Chop the data set 80mm below the AC PC point.
 
     # Entries below are of the form:

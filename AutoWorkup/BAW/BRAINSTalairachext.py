@@ -16,7 +16,6 @@ USAGE:
   --outputTalairachLandmarksFile <output landmarks file (including AC,PC,SLA,IRP)>
 """
 
-
 # import csv
 # import getopt
 # import os.path

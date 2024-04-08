@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 import numpy as np
 import SimpleITK as sitk
 import sys

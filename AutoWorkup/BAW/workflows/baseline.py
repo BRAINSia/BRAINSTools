@@ -576,8 +576,8 @@ def generate_single_session_template_wf(
         DenoiseInputImgs.inputs.noise_model = "Rician"
         # DenoiseInputImgs.inputs.save_noise=True # we do need this until NIPYPE is fixed
         DenoiseInputImgs.inputs.save_noise = (
-            False
-        )  # we don't need the noise image for BAW
+            False  # we don't need the noise image for BAW
+        )
         DenoiseInputImgs.inputs.shrink_factor = 1  # default
         baw201.connect(
             [
@@ -1117,11 +1117,9 @@ def generate_single_session_template_wf(
                 "overwrite": True,
             }
             BResample[atlasImage].inputs.pixelType = "binary"
-            BResample[
-                atlasImage
-            ].inputs.interpolationMode = (
-                "Linear"
-            )  ## Conversion to distance map, so use linear to resample distance map
+            BResample[atlasImage].inputs.interpolationMode = (
+                "Linear"  ## Conversion to distance map, so use linear to resample distance map
+            )
             BResample[atlasImage].inputs.outputVolume = atlasImage + ".nii.gz"
 
             baw201.connect(
@@ -1422,8 +1420,8 @@ def generate_single_session_template_wf(
                     resample_struct = pe.Node(
                         BRAINSResample(), name="Resample{0}".format(struct.upper())
                     )
-                    resample_struct.inputs.outputVolume = "{0}_in_original_space.nii.gz".format(
-                        struct
+                    resample_struct.inputs.outputVolume = (
+                        "{0}_in_original_space.nii.gz".format(struct)
                     )
                     resample_struct.inputs.pixelType = "short"
                     resample_struct.inputs.interpolationMode = "Linear"

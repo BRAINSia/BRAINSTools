@@ -12,7 +12,6 @@ By using
     you will set the FreeSurfer environment driven by the configuration file.
 """
 
-
 try:
     list(env.keys())
     FS_VARS

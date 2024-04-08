@@ -31,7 +31,7 @@ def common_ants_registration_settings(
     invert_initial_moving_transform,
     initial_moving_transform,
 ):
-    """ Ants registration settings are difficult
+    """Ants registration settings are difficult
     to get correct all the time.  This utility function
     is designed to assist with getting the common settings
     correct across different registration units.
@@ -336,11 +336,11 @@ def common_ants_registration_settings(
     antsRegistrationNode.inputs.num_threads = -1
 
     antsRegistrationNode.inputs.write_composite_transform = (
-        True
-    )  # Required for initialize_transforms_per_stage
+        True  # Required for initialize_transforms_per_stage
+    )
     antsRegistrationNode.inputs.collapse_output_transforms = (
-        False
-    )  # Mutually Exclusive with initialize_transforms_per_stage
+        False  # Mutually Exclusive with initialize_transforms_per_stage
+    )
     antsRegistrationNode.inputs.initialize_transforms_per_stage = True
 
     antsRegistrationNode.inputs.convergence_window_size = [12] * local_num_stages
@@ -572,7 +572,7 @@ def generate_wf_name(projectid, subjectid, sessionid, processing_phase):
 
 
 def generate_subject_output_pattern(subjectid):
-    """ This function generates output path substitutions for workflows and nodes that conform to a common standard
+    """This function generates output path substitutions for workflows and nodes that conform to a common standard
 
     :param subjectid:
     :return:
@@ -605,7 +605,7 @@ def generate_subject_output_pattern(subjectid):
 
 
 def generate_output_patern(projectid, subjectid, sessionid, DefaultNodeName):
-    """ This function generates output path substitutions for workflows and nodes that conform to a common standard.
+    """This function generates output path substitutions for workflows and nodes that conform to a common standard.
 
     :param projectid:
     :param subjectid:

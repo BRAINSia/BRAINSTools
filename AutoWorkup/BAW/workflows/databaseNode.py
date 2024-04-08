@@ -8,6 +8,7 @@ Author:
 Usage:
 
 """
+
 import os.path
 import sqlite3
 
@@ -57,25 +58,25 @@ class SQLiteGrabberOutputSpec(TraitedSpec):
 
 
 class SQLiteGrabber(IOBase):
-    """ Very simple frontend for getting values from SQLite database.
+    """Very simple frontend for getting values from SQLite database.
 
-        .. warning::
+    .. warning::
 
-            This is not a thread-safe node.
+        This is not a thread-safe node.
 
-        .. warning:: Vulnerable to SQL injection attacks - http://en.wikipedia.org/wiki/SQL_injection
+    .. warning:: Vulnerable to SQL injection attacks - http://en.wikipedia.org/wiki/SQL_injection
 
-        Examples
-        --------
+    Examples
+    --------
 
-        >>> sql = SQLiteGrabber()
-        >>> sql.inputs.database_file = 'my_database.db'
-        >>> sql.inputs.table_name = 'experiment_results'
-        >>> sql.inputs.columns = ['columnA', 'columnB']
-        >>> sql.inputs.constraints = [('column1', 'value1'), ('column2', ['value2a', 'value2b'])]
-        >>> sql.query
-        SELECT columnA, columnB FROM experiment_results WHERE column1='value1' AND column2 in ('value2a', 'value2b')
-        >>> sql.run() # doctest: +SKIP
+    >>> sql = SQLiteGrabber()
+    >>> sql.inputs.database_file = 'my_database.db'
+    >>> sql.inputs.table_name = 'experiment_results'
+    >>> sql.inputs.columns = ['columnA', 'columnB']
+    >>> sql.inputs.constraints = [('column1', 'value1'), ('column2', ['value2a', 'value2b'])]
+    >>> sql.query
+    SELECT columnA, columnB FROM experiment_results WHERE column1='value1' AND column2 in ('value2a', 'value2b')
+    >>> sql.run() # doctest: +SKIP
 
     """
 
@@ -93,7 +94,7 @@ class SQLiteGrabber(IOBase):
 
     @property
     def query(self):
-        """ `query` plus any columns and constraints ()
+        """`query` plus any columns and constraints ()
         validates arguments and generates command line"""
         self._check_mandatory_inputs()
         return self._gen_query()
@@ -106,8 +107,7 @@ class SQLiteGrabber(IOBase):
         super(SQLiteGrabber, self)._check_mandatory_inputs()
 
     def _list_outputs(self):
-        """Execute this module.
-        """
+        """Execute this module."""
         outputs = self.output_spec().get()
         outputs["query"] = self.query
         outputs["results"] = self._execute_query()

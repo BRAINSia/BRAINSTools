@@ -42,12 +42,12 @@ from .baw_exp import open_subject_database
 
 def get_processed_subjects(resultdir, input_subjects_list):
     """
-  This function...
+    This function...
 
-  :param resultdir:
-  :param input_subjects_list:
-  :return:
-  """
+    :param resultdir:
+    :param input_subjects_list:
+    :return:
+    """
     import glob
 
     required_files = [
@@ -131,17 +131,17 @@ def get_subjects_sessions_dictionary(
     input_subjects, cache, resultdir, prefix, dbfile, useSentinal, shuffle=False
 ):
     """
-  This function...
+    This function...
 
-  :param input_subjects:
-  :param cache:
-  :param resultdir:
-  :param prefix:
-  :param dbfile:
-  :param useSentinal:
-  :param shuffle:
-  :return:
-  """
+    :param input_subjects:
+    :param cache:
+    :param resultdir:
+    :param prefix:
+    :param dbfile:
+    :param useSentinal:
+    :param shuffle:
+    :return:
+    """
     import random
     from collections import (
         OrderedDict,
@@ -222,8 +222,8 @@ def merge_by_extended_list_elements(
     # HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
     registrationImageTypes = ["T1"]  # ['T1','T2'] someday.
     DefaultContinuousInterpolationType = (
-        "Linear"
-    )  # or 'LanczosWindowedSinc' ('Linear' for speed)
+        "Linear"  # or 'LanczosWindowedSinc' ('Linear' for speed)
+    )
     interpolationMapping = {
         "T1": DefaultContinuousInterpolationType,
         "T2": DefaultContinuousInterpolationType,
@@ -265,22 +265,22 @@ def merge_by_extended_list_elements(
 
 def xml_filename(subject):
     """
-  This function...
+    This function...
 
-  :param subject:
-  :return:
-  """
+    :param subject:
+    :return:
+    """
     return "AtlasDefinition_{0}.xml".format(subject)
 
 
 def get_session_from_subject_dictionary(subject_session_dictionary, subject):
     """
-  This function...
+    This function...
 
-  :param subject_session_dictionary:
-  :param subject:
-  :return:
-  """
+    :param subject_session_dictionary:
+    :param subject:
+    :return:
+    """
     print("#" + subject + "#" * 80 + "\n")
     print(subject_session_dictionary[subject])
     if len(subject_session_dictionary[subject]) == 0:
@@ -294,15 +294,15 @@ def get_session_from_subject_dictionary(subject_session_dictionary, subject):
 
 def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     """
-  This function...
+    This function...
 
-  :param argv:
-  :param environment:
-  :param experiment:
-  :param pipeline_options:
-  :param cluster:
-  :return:
-  """
+    :param argv:
+    :param environment:
+    :param experiment:
+    :param pipeline_options:
+    :param cluster:
+    :return:
+    """
     print("Getting subjects from database...")
     # subjects = argv["--subjects"].split(',')
     subjects, subjects_sessions_dictionary = get_subjects_sessions_dictionary(
@@ -600,12 +600,16 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         ####################################################################################################
         CLUSTER_QUEUE = cluster["queue"]
         CLUSTER_QUEUE_LONG = cluster["long_q"]
-        buildTemplateIteration1 = baw_ants_registration_template_build_single_iteration_wf(
-            "iteration01", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
+        buildTemplateIteration1 = (
+            baw_ants_registration_template_build_single_iteration_wf(
+                "iteration01", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
+            )
         )
         # buildTemplateIteration2 = buildTemplateIteration1.clone(name='buildTemplateIteration2')
-        buildTemplateIteration2 = baw_ants_registration_template_build_single_iteration_wf(
-            "Iteration02", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
+        buildTemplateIteration2 = (
+            baw_ants_registration_template_build_single_iteration_wf(
+                "Iteration02", CLUSTER_QUEUE, CLUSTER_QUEUE_LONG
+            )
         )
 
         CreateAtlasXMLAndCleanedDeformedAveragesNode = pe.Node(

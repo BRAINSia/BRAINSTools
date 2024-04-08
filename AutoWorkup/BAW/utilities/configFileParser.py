@@ -67,14 +67,14 @@ def get_ascii_from_parser(parser, region, tag):
 
 
 def parse_environment(parser, environment):
-    """ Parse the environment environment given by 'section' and return a dictionary
-        Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
+    """Parse the environment environment given by 'section' and return a dictionary
+    Values are shell-centric, i.e. PYTHONPATH is a colon-seperated string
 
-        This Function takes in...
-        :param parser:
-        :param environment:
+    This Function takes in...
+    :param parser:
+    :param environment:
 
-        :return:
+    :return:
     """
     from collections import (
         OrderedDict,
@@ -134,7 +134,7 @@ def parse_environment(parser, environment):
 
 
 def create_experiment_dir(dirname, name, suffix, verify=False):
-    """ Construct directories given the base directory, the experiment name, and the suffix ['CACHE', 'Results']
+    """Construct directories given the base directory, the experiment name, and the suffix ['CACHE', 'Results']
     This Function takes in...
 
     :param dirname:
@@ -162,7 +162,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
 
 
 def parse_experiment(parser, workflow_phase):
-    """ Parse the experiment section and return a dictionary
+    """Parse the experiment section and return a dictionary
     This Function takes in...
 
     :param parser:
@@ -295,7 +295,7 @@ def parse_experiment(parser, workflow_phase):
 
 
 def parse_nipype(parser):
-    """ Parse the nipype section and return a dictionary
+    """Parse the nipype section and return a dictionary
     This Function takes in...
 
     :param parser:

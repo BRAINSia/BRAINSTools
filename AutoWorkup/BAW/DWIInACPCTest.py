@@ -104,13 +104,13 @@ def get_global_sge_script(
     pythonPathsList, binPathsList, customEnvironment=OrderedDict()
 ):
     """This is a wrapper script for running commands on an SGE cluster
-so that all the python modules and commands are pathed properly
+    so that all the python modules and commands are pathed properly
 
-    :param pythonPathsList:
-    :param binPathsList:
-    :param customEnvironment: OrderedDict()
-    :return:
-"""
+        :param pythonPathsList:
+        :param binPathsList:
+        :param customEnvironment: OrderedDict()
+        :return:
+    """
 
     custEnvString = ""
     for key, value in list(customEnvironment.items()):
@@ -438,8 +438,8 @@ BFitB0_T2.inputs.maximumStepLength = 0.2
 BFitB0_T2.inputs.minimumStepLength = [0.00005]
 BFitB0_T2.inputs.useRigid = True
 BFitB0_T2.inputs.useAffine = (
-    True
-)  # Use Affine/but extract Rigid. Using initial transform from BRAINSABC
+    True  # Use Affine/but extract Rigid. Using initial transform from BRAINSABC
+)
 BFitB0_T2.inputs.maskInferiorCutOffFromCenter = 65
 BFitB0_T2.inputs.maskProcessingMode = "ROIAUTO"
 BFitB0_T2.inputs.ROIAutoDilateSize = 13
@@ -526,8 +526,8 @@ MasterDWIWorkflow.connect(
 
 RESAMPLE_BRAINMASK = pe.Node(interface=BRAINSResample(), name="RESAMPLE_BRAINMASK")
 RESAMPLE_BRAINMASK.inputs.interpolationMode = (
-    "NearestNeighbor"
-)  # This needs to be debugged'Binary'
+    "NearestNeighbor"  # This needs to be debugged'Binary'
+)
 RESAMPLE_BRAINMASK.inputs.outputVolume = "DeformedBrainMaskDWIRIP.nrrd"
 RESAMPLE_BRAINMASK.inputs.pixelType = "binary"
 

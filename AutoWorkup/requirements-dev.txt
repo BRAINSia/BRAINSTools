@@ -1,6 +1,4 @@
-pytest==4.5.0
-SimpleITK==1.2.0
-nipype==1.2.0
+-r requirements.txt
+pytest==7.4.3
 black==24.3.0
-argparse==1.4.0
-pre-commit==1.16.1
+pre-commit==3.6.0

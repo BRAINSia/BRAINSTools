@@ -118,8 +118,8 @@ for top, directory, files in os.walk(HeadOfITKTree):
         infile = open(currFile, "r")
         file_text = infile.read()
         newstring = (
-            file_text
-        )  # default output to input, just in case all search patterns fail
+            file_text  # default output to input, just in case all search patterns fail
+        )
         infile.close()
 
         substitutionMade = 0

@@ -9,7 +9,6 @@ Usage:
 
 """
 
-
 import csv
 import os
 import sqlite3 as lite
@@ -40,12 +39,14 @@ class SessionDB(object):
                 _tablename=self.MasterTableName
             )
         else:
-            self.MasterQueryFilter = "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
-                _tablename=self.MasterTableName, _subjid=subject_filter
+            self.MasterQueryFilter = (
+                "SELECT * FROM {_tablename} WHERE subj IN {_subjid}".format(
+                    _tablename=self.MasterTableName, _subjid=subject_filter
+                )
             )
 
     def open_connection(self, read_only=False):
-        """This function represents a """
+        """This function represents a"""
         if read_only:
             print("Opening database as read_only mode")
             self.connection = lite.connect(self.dbName, uri=True)
@@ -54,17 +55,17 @@ class SessionDB(object):
         self.cursor = self.connection.cursor()
 
     def close_connection(self):
-        """This function represents a """
-        #print("A")
-        #if not self.cursor is None and not self.connection is None:
+        """This function represents a"""
+        # print("A")
+        # if not self.cursor is None and not self.connection is None:
         #    print("B")
         #    self.cursor.close()
         #    print("C")
         if not self.connection is None:
-        #    print("D")
+            #    print("D")
             self.connection.close()
         #    print("E")
-        #print("F")
+        # print("F")
 
     def _local_fill_db_and_close(self, sqlCommandList):
         """This function represents a
@@ -196,8 +197,10 @@ class SessionDB(object):
         vals = list(imageDict.values())
         col_names = ",".join(keys)
         values = ", ".join(["'" + x + "'" for x in vals])
-        sqlCommand = "INSERT INTO {_tablename} ({_col_names}) VALUES ({_values});".format(
-            _tablename=self.MasterTableName, _col_names=col_names, _values=values
+        sqlCommand = (
+            "INSERT INTO {_tablename} ({_col_names}) VALUES ({_values});".format(
+                _tablename=self.MasterTableName, _col_names=col_names, _values=values
+            )
         )
         return sqlCommand
 

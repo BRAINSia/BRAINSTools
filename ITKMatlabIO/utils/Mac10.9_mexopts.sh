@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # mexopts.sh	Shell script for configuring MEX-file creation script,
 #               mex.  These options were tested with the specified compiler.

@@ -154,7 +154,7 @@ def procargs(argv):
             config["in_T1s"].append(os.path.abspath(arg))
             if not os.path.isfile(arg):
                 print("ERROR: input T1 image must be an existing image file")
-                print("{0} does not exist".format(arg))
+                print(f"{arg} does not exist")
                 sys.exit(2)
         elif opt in ("-s", "--subject"):
             config["subject_id"] = arg
@@ -162,13 +162,13 @@ def procargs(argv):
             config["in_T2"] = os.path.abspath(arg)
             if not os.path.isfile(config["in_T2"]):
                 print("ERROR: input T2 image must be an existing image file")
-                print("{0} does not exist".format(config["in_T2"]))
+                print("{} does not exist".format(config["in_T2"]))
                 sys.exit(2)
         elif opt in ("--FLAIR"):
             config["in_FLAIR"] = os.path.abspath(arg)
             if not os.path.isfile(config["in_FLAIR"]):
                 print("ERROR: input FLAIR image must be an existing image file")
-                print("{0} does not exist".format(config["in_FLAIR"]))
+                print("{} does not exist".format(config["in_FLAIR"]))
                 sys.exit(2)
         elif opt in ("--plugin"):
             config["plugin"] = arg
@@ -209,21 +209,21 @@ def procargs(argv):
         sys.exit(2)
 
     # print the input cofigurations
-    print("Subject ID: {0}".format(config["subject_id"]))
-    print("Input T1s: {0}".format(config["in_T1s"]))
+    print("Subject ID: {}".format(config["subject_id"]))
+    print("Input T1s: {}".format(config["in_T1s"]))
 
     if config["in_T2"] is not None:
-        print("Input T2: {0}".format(config["in_T2"]))
+        print("Input T2: {}".format(config["in_T2"]))
 
     if config["in_FLAIR"] is not None:
-        print("Input FLAIR: {0}".format(config["in_FLAIR"]))
+        print("Input FLAIR: {}".format(config["in_FLAIR"]))
 
-    print("Plugin: {0}".format(config["plugin"]))
-    print("Make qcache: {0}".format(config["qcache"]))
-    print("Conform to 256: {0}".format(config["cw256"]))
+    print("Plugin: {}".format(config["plugin"]))
+    print("Make qcache: {}".format(config["qcache"]))
+    print("Conform to 256: {}".format(config["cw256"]))
 
     if config["queue"] is not None:
-        print("Queue: {0}".format(config["queue"]))
+        print("Queue: {}".format(config["queue"]))
         if config["plugin"] == "Linear":
             print(
                 "ERROR: cannot submit to a queue unless SGE or SGEGraph plugins are set"
@@ -237,16 +237,16 @@ def procargs(argv):
                 ),
                 "overwrite": True,
             }
-            print("plugin_args: {0}".format(config["plugin_args"]))
+            print("plugin_args: {}".format(config["plugin_args"]))
 
     if config["openmp"] is not None:
-        print("OpenMP: {0}".format(config["openmp"]))
+        print("OpenMP: {}".format(config["openmp"]))
 
     if config["longitudinal"]:
         # set input requirements for running longitudinally
         # INFO: print errors when inputs are not set correctly
         print("Running longitudinally")
-        print("Longitudinal Base: {0}".format(config["long_base"]))
+        print("Longitudinal Base: {}".format(config["long_base"]))
     return config
 
 
@@ -257,7 +257,7 @@ def check_env():
     """
     fs_home = os.environ.get("FREESURFER_HOME")
     path = os.environ.get("PATH")
-    print("FREESURFER_HOME: {0}".format(fs_home))
+    print(f"FREESURFER_HOME: {fs_home}")
     if fs_home is None:
         print("ERROR: please set FREESURFER_HOME before running the workflow")
     elif not os.path.isdir(fs_home):
@@ -272,7 +272,7 @@ running this workflow"
         if os.path.isfile(setupscript):
             print(
                 "Please source the setup script before running the workflow:\
-\nsource {0}".format(
+\nsource {}".format(
                     setupscript
                 )
             )
@@ -339,20 +339,18 @@ def modify_qsub_args(
     minThreads = int(minThreads)  # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-        threadsRangeString = "{0}".format(minThreads)
+        threadsRangeString = f"{minThreads}"
         maxThreads = minThreads
     elif maxThreads == -1:
-        threadsRangeString = "{0}-".format(minThreads)
+        threadsRangeString = f"{minThreads}-"
         maxThreads = 12345  # HUGE NUMBER!
     else:
-        threadsRangeString = "{0}-{1}".format(minThreads, maxThreads)
+        threadsRangeString = f"{minThreads}-{maxThreads}"
 
     if maxThreads < minThreads:
         assert (
             maxThreads > minThreads
-        ), "Must specify maxThreads({0}) > minThreads({1})".format(
-            minThreads, maxThreads
-        )
+        ), f"Must specify maxThreads({minThreads}) > minThreads({maxThreads})"
     format_str = "-q {queue} -S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr}".format(
         totalThreads=threadsRangeString,
         stdout=stdout,
@@ -372,7 +370,7 @@ def main(argv):
     config = procargs(argv)
     config["FREESURFER_HOME"] = check_env()
     if config["longitudinal"]:
-        config["long_id"] = "{0}.long.{1}".format(
+        config["long_id"] = "{}.long.{}".format(
             config["subject_id"], config["long_base"]
         )
         config["current_id"] = config["long_id"]

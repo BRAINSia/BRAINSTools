@@ -67,7 +67,7 @@ class DTIPrepext(DTIPrep):
         for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
-        outputs = super(DTIPrepext, self)._outputs_from_inputs(pruned_outputs)
+        outputs = super()._outputs_from_inputs(pruned_outputs)
         inputDir, filename = os.path.split(self.inputs.DWINrrdFile)
         filenameList = filename.split(".")
         prefix = ".".join(filenameList[:-1])

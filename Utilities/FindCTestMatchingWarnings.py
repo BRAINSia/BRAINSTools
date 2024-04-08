@@ -1,7 +1,6 @@
 #!/bin/python
 
 
-from builtins import range
 import termcolor  # <-- used to make pretty printing in color
 import regex  # <-- support Perl style regular expressions that closely match what is used in CTest
 import sys
@@ -37,12 +36,10 @@ USAGE_COMMENT = r"""
 ################
 
 if len(sys.argv) != 3:
-    print(("{0}\n\n".format(USAGE_COMMENT)))
+    print(f"{USAGE_COMMENT}\n\n")
     print(
-        (
-            "USAGE {0} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(
-                sys.argv[0]
-            )
+        "USAGE {} <CDASH_WARNING_LOGGER> <$CMAKE_SOURCE_DIR/CMake/CTestCustom.cmake.in>\n".format(
+            sys.argv[0]
         )
     )
     sys.exit(0)
@@ -95,21 +92,15 @@ def GetListOfCustomExludePatterns(patterns_file_name):
 ##
 ######
 print(
-    (
-        termcolor.colored(
-            "Generating Custom exceptions from file: {0}".format(sys.argv[2]), "green"
-        )
-    )
+    termcolor.colored(f"Generating Custom exceptions from file: {sys.argv[2]}", "green")
 )
 CTEST_CUSTOM_WARNING_EXCEPTION = GetListOfCustomExludePatterns(sys.argv[2])
 print(
-    (
-        termcolor.colored(
-            "count= {0} {1}".format(
-                len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION
-            ),
-            "green",
-        )
+    termcolor.colored(
+        "count= {} {}".format(
+            len(CTEST_CUSTOM_WARNING_EXCEPTION), CTEST_CUSTOM_WARNING_EXCEPTION
+        ),
+        "green",
     )
 )
 
@@ -149,14 +140,14 @@ warn_regex_compiled = list()
 for cc in warn_regex_patterns:
     warn_regex_compiled.append(regex.compile(cc))
 
-print((termcolor.colored("Processing file: {0}".format(sys.argv[1]), "green")))
-ff = open(sys.argv[1], "r")
+print(termcolor.colored(f"Processing file: {sys.argv[1]}", "green"))
+ff = open(sys.argv[1])
 all_lines = ff.readlines()
 ff.close
 for idx in range(0, len(warn_regex_patterns)):
     print("")
-    print((termcolor.colored(warn_regex_patterns[idx], "blue")))
-    print(("=" * 80))
+    print(termcolor.colored(warn_regex_patterns[idx], "blue"))
+    print("=" * 80)
 
     line_count = 0
     for line in all_lines:
@@ -176,10 +167,4 @@ for idx in range(0, len(warn_regex_patterns)):
                     ignore_found = True
                     continue
             if ignore_found is False:
-                print(
-                    (
-                        termcolor.colored(
-                            "No Match :{0}: {1}    ".format(line_count, line), "red"
-                        )
-                    )
-                )
+                print(termcolor.colored(f"No Match :{line_count}: {line}    ", "red"))

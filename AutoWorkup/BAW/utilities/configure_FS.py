@@ -35,8 +35,8 @@ for ENVVAR_TO_CHECK in FS_VARS:
         if ENVVAR_TO_CHECK in env:
             os.environ[ENVVAR_TO_CHECK] = env[ENVVAR_TO_CHECK]
         else:
-            raise EnvironmentError(
-                "Freesurfer variable {0}={1} exists! \
+            raise OSError(
+                "Freesurfer variable {}={} exists! \
                 Please unset before continuing.".format(
                     ENVVAR_TO_CHECK, os.environ[ENVVAR_TO_CHECK]
                 )

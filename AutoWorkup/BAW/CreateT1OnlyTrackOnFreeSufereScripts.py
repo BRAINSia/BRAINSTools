@@ -55,9 +55,9 @@ def mkfsscript(session, outscript, t1list, t2list, is3T):
     ThreeTFlag = ""
     if is3T:
         ThreeTFlag = " -3T "
-        job_name = "F3B{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"F3B{session}"
     else:
-        job_name = "F1B{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"F1B{session}"
 
     auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/scripts/base_{SUBJ_SESSION_ID}_qsub.out
@@ -134,7 +134,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
     return_status = True
     previous_list = list()
     if os.path.exists(base_tps_file):
-        tpsFF = open(base_tps_file, "r")
+        tpsFF = open(base_tps_file)
         for tps_session in tpsFF.readlines():
             previous_list.append(tps_session.lstrip().rstrip())
         tpsFF.close()
@@ -200,7 +200,7 @@ def mk_template_script(templateID, sessionList, outscript, dependantJobNames):
         hold_jid = "#$ -hold_jid " + ",".join(dependantJobNames)
     else:
         hold_jid = ""
-    job_name = "TPL{TEMP_ID}".format(TEMP_ID=templateID)
+    job_name = f"TPL{templateID}"
     auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/scripts/temp_{SUBJ_SESSION_ID}_qsub.out
 #$ -e {FSSUBJDIR}/scripts/temp_{SUBJ_SESSION_ID}_qsub.err
@@ -256,10 +256,10 @@ def mklongscript(templateID, session, outscript, dependantJobNames, mode, is3T):
         hold_jid = ""
 
     if mode == "all":
-        job_name = "LNG{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"LNG{session}"
         mode_flag = "all"
     else:
-        job_name = "Q{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"Q{session}"
         mode_flag = "qcache"
 
     ThreeTFlag = ""
@@ -321,10 +321,8 @@ if (not os.path.exists(subjectDatabaseFile)) or (
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 else:
     print(
-        (
-            "Single_subject {0}: Using cached database, {1}".format(
-                single_subject, subjectDatabaseFile
-            )
+        "Single_subject {}: Using cached database, {}".format(
+            single_subject, subjectDatabaseFile
         )
     )
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
@@ -336,7 +334,7 @@ from collections import (
 
 pickled_good_list_fn = "good_list.obj"
 if os.path.exists(pickled_good_list_fn):
-    good_list = pickle.load(open(pickled_good_list_fn, "r"))
+    good_list = pickle.load(open(pickled_good_list_fn))
 else:
     good_list = OrderedDict()
 
@@ -448,7 +446,7 @@ for thisSubject in all_subjects:
             )
             T2_files = find_mgz(T2_files_30)
             if len(T2_files) != len(T2_files_30):
-                print(("SKIPPING: mgz files missing: {0}".format(T2_files_30)))
+                print(f"SKIPPING: mgz files missing: {T2_files_30}")
                 continue
         else:
             # print "HACK: ",T1_files_15
@@ -642,6 +640,6 @@ ff = open("type_report.csv", "w")
 ff.write(type_report)
 ff.close()
 
-print(("BASE COMPLETED: {0}".format(base_done)))
-print(("TEMPLATE COMPLETED: {0}".format(temp_done)))
-print(("LONGITUDINAL COMPLETED: {0}".format(long_done)))
+print(f"BASE COMPLETED: {base_done}")
+print(f"TEMPLATE COMPLETED: {temp_done}")
+print(f"LONGITUDINAL COMPLETED: {long_done}")

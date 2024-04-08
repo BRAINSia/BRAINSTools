@@ -38,7 +38,7 @@ def parse_labels_xml(xml_file):
     :return:
     """
     labels_dict = dict()
-    with open(xml_file, "r") as xml_reader:
+    with open(xml_file) as xml_reader:
         for line in xml_reader:
             if "<Label>" == line.strip():
                 name = (
@@ -77,7 +77,7 @@ def parse_lookup_table(lookup_table_file):
     :return:
     """
     labels_dict = dict()
-    with open(lookup_table_file, "r") as lookup_table:
+    with open(lookup_table_file) as lookup_table:
         for line in lookup_table:
 
             # parse line for label code
@@ -162,7 +162,7 @@ def parse_atlas_info(in_file):
     elif ext == ".xml":
         return parse_labels_xml(in_file)
     else:
-        print("Could not parse {0}".format(in_file))
+        print(f"Could not parse {in_file}")
 
 
 class WMMaskingInputSpec(BaseInterfaceInputSpec):
@@ -670,7 +670,7 @@ class ComputeDistance(BaseInterface):
         """
         outputs = self._outputs().get()
         outputs["out_file"] = os.path.abspath(
-            "{0}_ctx_results.csv".format(self.inputs.hemisphere)
+            f"{self.inputs.hemisphere}_ctx_results.csv"
         )
         return outputs
 
@@ -891,7 +891,7 @@ class LOGISMOSB(CommandLine):
         if name == "t2_file" and not os.path.isfile(value):
             print("Using T1 as T2 file")
             value = self.inputs.t1_file
-        return super(LOGISMOSB, self)._format_arg(name, spec, value)
+        return super()._format_arg(name, spec, value)
 
     def _list_outputs(self):
         """

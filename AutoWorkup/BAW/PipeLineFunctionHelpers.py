@@ -12,7 +12,6 @@ Usage:
 import errno
 import os
 import shutil  ## needed for removing directory tree
-from builtins import range
 
 
 def convert_to_list(element):
@@ -156,7 +155,7 @@ def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(
 
     dictionary_of_session_list = OrderedDict()
     assert dg_list_list is not None, "Input must be a list, not None"
-    assert isinstance(dg_list_list, list), "Input must be a list, not {0}".format(
+    assert isinstance(dg_list_list, list), "Input must be a list, not {}".format(
         type(postList)
     )
 

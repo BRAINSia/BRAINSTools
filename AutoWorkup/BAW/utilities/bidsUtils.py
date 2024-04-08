@@ -14,7 +14,7 @@ Usage: N/A not a command line script (no bang above)
 from os.path import join
 
 
-class BAWBIDSFormatter(object):
+class BAWBIDSFormatter:
     def __init__(self):
         self.sub_kw = "subject"
         self.ses_kw = "session"
@@ -56,7 +56,7 @@ class BAWBIDSFormatter(object):
 
         # add the extension if defined
         if ext:
-            bids_name = "{base}.{ext}".format(base=bids_name, ext=ext)
+            bids_name = f"{bids_name}.{ext}"
 
         # add full path if defined
         if full_path:

@@ -77,15 +77,13 @@ def create_reconall(config):
 
         for i, tp in enumerate(config["timepoints"]):
             # datasource timepoint files
-            tp_data_source = pe.Node(
-                FreeSurferSource(), name="{0}_DataSource".format(tp)
-            )
+            tp_data_source = pe.Node(FreeSurferSource(), name=f"{tp}_DataSource")
             tp_data_source.inputs.subject_id = tp
             tp_data_source.inputs.subjects_dir = config["subjects_dir"]
 
             tp_data_grabber = pe.Node(
                 DataGrabber(),
-                name="{0}_DataGrabber".format(tp),
+                name=f"{tp}_DataGrabber",
                 infields=["tp", "long_tempate"],
                 outfileds=["subj_to_template_lta", "seg_noCC", "seg_presurf"],
             )
@@ -105,17 +103,17 @@ def create_reconall(config):
 
             reconall.connect(
                 [
-                    (tp_data_source, merge_norms, [("norm", "in{0}".format(i))]),
-                    (tp_data_grabber, merge_segs, [("seg_presurf", "in{0}".format(i))]),
+                    (tp_data_source, merge_norms, [("norm", f"in{i}")]),
+                    (tp_data_grabber, merge_segs, [("seg_presurf", f"in{i}")]),
                     (
                         tp_data_grabber,
                         merge_segs_noCC,
-                        [("seg_noCC", "in{0}".format(i))],
+                        [("seg_noCC", f"in{i}")],
                     ),
                     (
                         tp_data_grabber,
                         merge_template_ltas,
-                        [("subj_to_template_lta", "in{0}".format(i))],
+                        [("subj_to_template_lta", f"in{i}")],
                     ),
                 ]
             )

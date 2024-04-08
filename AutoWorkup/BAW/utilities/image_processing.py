@@ -50,7 +50,7 @@ def fix_wm_partitioning(brainMask, PosteriorsList):
             10000,
         )
 
-    print(("Reading {0} of type {1}".format(brainMask, type(brainMask))))
+    print(f"Reading {brainMask} of type {type(brainMask)}")
     BM = sitk.BinaryThreshold(sitk.ReadImage(brainMask), 1, 1000)
     BM_FILLED = fill_hole_preserved_edge(BM, 3)
 
@@ -104,30 +104,24 @@ def fix_wm_partitioning(brainMask, PosteriorsList):
         :return:
         """
         print(
-            (
-                "Reading {0} of type {1}".format(
-                    ShiftPosteriorsList[NOTREGION_index],
-                    type(ShiftPosteriorsList[NOTREGION_index]),
-                )
+            "Reading {} of type {}".format(
+                ShiftPosteriorsList[NOTREGION_index],
+                type(ShiftPosteriorsList[NOTREGION_index]),
             )
         )
         NOTREGION = sitk.ReadImage(ShiftPosteriorsList[NOTREGION_index])
         print(
-            (
-                "Reading {0} of type {1}".format(
-                    ShiftPosteriorsList[REGION_index],
-                    type(ShiftPosteriorsList[REGION_index]),
-                )
+            "Reading {} of type {}".format(
+                ShiftPosteriorsList[REGION_index],
+                type(ShiftPosteriorsList[REGION_index]),
             )
         )
         REGION = sitk.ReadImage(ShiftPosteriorsList[REGION_index])
         ALL_REGION = NOTREGION + REGION
         NEW_REGION = ALL_REGION * sitk.Cast(BM_FILLED, sitk.sitkFloat32)
         NEW_NOTREGION = ALL_REGION * sitk.Cast((1 - BM_FILLED), sitk.sitkFloat32)
-        NEW_REGION_FN = os.path.realpath("POSTERIOR_{0}.nii.gz".format(REGION_NAME))
-        NEW_NOTREGION_FN = os.path.realpath(
-            "POSTERIOR_{0}.nii.gz".format(NOTREGION_NAME)
-        )
+        NEW_REGION_FN = os.path.realpath(f"POSTERIOR_{REGION_NAME}.nii.gz")
+        NEW_NOTREGION_FN = os.path.realpath(f"POSTERIOR_{NOTREGION_NAME}.nii.gz")
         sitk.WriteImage(NEW_REGION, NEW_REGION_FN)
         sitk.WriteImage(NEW_NOTREGION, NEW_NOTREGION_FN)
         ShiftPosteriorsList[NOTREGION_index] = NEW_NOTREGION_FN
@@ -149,10 +143,8 @@ def fix_wm_partitioning(brainMask, PosteriorsList):
     )
 
     print(
-        (
-            "Reading {0} of type {1}".format(
-                PosteriorsList[AIR_index], type(PosteriorsList[AIR_index])
-            )
+        "Reading {} of type {}".format(
+            PosteriorsList[AIR_index], type(PosteriorsList[AIR_index])
         )
     )
     AirMask = sitk.BinaryThreshold(

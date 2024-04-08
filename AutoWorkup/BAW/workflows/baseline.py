@@ -29,7 +29,6 @@ Usage:
 """
 
 import os
-from builtins import str
 
 import nipype.interfaces.io as nio
 import nipype.pipeline.engine as pe
@@ -330,10 +329,10 @@ def generate_single_session_template_wf(
         name="outputspec",
     )
 
-    dsName = "{0}_ds_{1}_lmks".format(phase, sessionid)
+    dsName = f"{phase}_ds_{sessionid}_lmks"
     DataSinkLandmarks = pe.Node(name=dsName, interface=nio.DataSink())
     DataSinkLandmarks.overwrite = master_config["ds_overwrite"]
-    DataSinkLandmarks.inputs.container = "{0}/{1}/{2}".format(
+    DataSinkLandmarks.inputs.container = "{}/{}/{}".format(
         projectid, subjectid, sessionid
     )
     DataSinkLandmarks.inputs.base_directory = master_config["resultdir"]
@@ -345,7 +344,7 @@ def generate_single_session_template_wf(
         atlas_warped_directory = master_config["atlascache"]
         atlasABCNode_XML = make_atlas_node(
             atlas_warped_directory,
-            "BABCXMLAtlas_{0}".format(sessionid),
+            f"BABCXMLAtlas_{sessionid}",
             ["W_BRAINSABCSupport"],
         )
         baw201.connect(
@@ -357,7 +356,7 @@ def generate_single_session_template_wf(
 
         atlasABCNode_W = make_atlas_node(
             atlas_warped_directory,
-            "BABCAtlas_W{0}".format(sessionid),
+            f"BABCAtlas_W{sessionid}",
             ["W_BRAINSABCSupport", "W_LabelMapsSupport"],
         )
         baw201.connect(
@@ -379,7 +378,7 @@ def generate_single_session_template_wf(
         )
         ## These landmarks are only relevant for the atlas-based-reference case
         atlasBCDNode_W = make_atlas_node(
-            atlas_warped_directory, "BBCDAtlas_W{0}".format(sessionid), ["W_BCDSupport"]
+            atlas_warped_directory, f"BBCDAtlas_W{sessionid}", ["W_BCDSupport"]
         )
         baw201.connect(
             [
@@ -399,7 +398,7 @@ def generate_single_session_template_wf(
 
     elif master_config["workflow_phase"] == "subject-based-reference":
         PostACPCAlignToAtlas = True  # Use this subjects atlas image to align landmarks
-        print((master_config["previousresult"]))
+        print(master_config["previousresult"])
         atlas_warped_directory = os.path.join(
             master_config["previousresult"], subjectid, "Atlas"
         )
@@ -502,7 +501,7 @@ def generate_single_session_template_wf(
         assert 0 == 1, "Invalid workflow type specified for singleSession"
 
     atlasBCDNode_S = make_atlas_node(
-        atlas_static_directory, "BBCDAtlas_S{0}".format(sessionid), ["S_BCDSupport"]
+        atlas_static_directory, f"BBCDAtlas_S{sessionid}", ["S_BCDSupport"]
     )
     baw201.connect(
         [
@@ -719,10 +718,10 @@ def generate_single_session_template_wf(
         )
 
     if "tissue_classify" in master_config["components"]:
-        dsName = "{0}_ds_{1}_tissue".format(phase, sessionid)
+        dsName = f"{phase}_ds_{sessionid}_tissue"
         DataSinkTissue = pe.Node(name=dsName, interface=nio.DataSink())
         DataSinkTissue.overwrite = master_config["ds_overwrite"]
-        DataSinkTissue.inputs.container = "{0}/{1}/{2}".format(
+        DataSinkTissue.inputs.container = "{}/{}/{}".format(
             projectid, subjectid, sessionid
         )
         DataSinkTissue.inputs.base_directory = master_config["resultdir"]
@@ -796,10 +795,10 @@ def generate_single_session_template_wf(
             ]
         )
 
-        dsName = "{0}_ds_{1}_tissue_t1".format(phase, sessionid)
+        dsName = f"{phase}_ds_{sessionid}_tissue_t1"
         DataSinkTissueT1 = pe.Node(name=dsName, interface=nio.DataSink())
         DataSinkTissueT1.overwrite = master_config["ds_overwrite"]
-        DataSinkTissueT1.inputs.container = "{0}/{1}/{2}".format(
+        DataSinkTissueT1.inputs.container = "{}/{}/{}".format(
             projectid, subjectid, sessionid
         )
         DataSinkTissueT1.inputs.base_directory = master_config["resultdir"]
@@ -809,10 +808,10 @@ def generate_single_session_template_wf(
         )
 
         if not onlyT1:
-            dsName = "{0}_ds_{1}_tissue_t2".format(phase, sessionid)
+            dsName = f"{phase}_ds_{sessionid}_tissue_t2"
             DataSinkTissueT2 = pe.Node(name=dsName, interface=nio.DataSink())
             DataSinkTissueT2.overwrite = master_config["ds_overwrite"]
-            DataSinkTissueT2.inputs.container = "{0}/{1}/{2}".format(
+            DataSinkTissueT2.inputs.container = "{}/{}/{}".format(
                 projectid, subjectid, sessionid
             )
             DataSinkTissueT2.inputs.base_directory = master_config["resultdir"]
@@ -823,10 +822,10 @@ def generate_single_session_template_wf(
             )
 
         if hasPDs:
-            dsName = "{0}_ds_{1}_tissue_pd".format(phase, sessionid)
+            dsName = f"{phase}_ds_{sessionid}_tissue_pd"
             DataSinkTissuePD = pe.Node(name=dsName, interface=nio.DataSink())
             DataSinkTissuePD.overwrite = master_config["ds_overwrite"]
-            DataSinkTissuePD.inputs.container = "{0}/{1}/{2}".format(
+            DataSinkTissuePD.inputs.container = "{}/{}/{}".format(
                 projectid, subjectid, sessionid
             )
             DataSinkTissuePD.inputs.base_directory = master_config["resultdir"]
@@ -837,10 +836,10 @@ def generate_single_session_template_wf(
             )
 
         if hasFLs:
-            dsName = "{0}_ds_{1}_tissue_fl".format(phase, sessionid)
+            dsName = f"{phase}_ds_{sessionid}_tissue_fl"
             DataSinkTissueFL = pe.Node(name=dsName, interface=nio.DataSink())
             DataSinkTissueFL.overwrite = master_config["ds_overwrite"]
-            DataSinkTissueFL.inputs.container = "{0}/{1}/{2}".format(
+            DataSinkTissueFL.inputs.container = "{}/{}/{}".format(
                 projectid, subjectid, sessionid
             )
             DataSinkTissueFL.inputs.base_directory = master_config["resultdir"]
@@ -1032,10 +1031,10 @@ def generate_single_session_template_wf(
             "TissueClassify.@complete_brainlabels_seg",
         )
 
-    dsName = "{0}_ds_{1}_seg".format(phase, sessionid)
+    dsName = f"{phase}_ds_{sessionid}_seg"
     DataSinkSegmentation = pe.Node(name=dsName, interface=nio.DataSink())
     DataSinkSegmentation.overwrite = master_config["ds_overwrite"]
-    DataSinkSegmentation.inputs.container = "{0}/{1}/{2}".format(
+    DataSinkSegmentation.inputs.container = "{}/{}/{}".format(
         projectid, subjectid, sessionid
     )
     DataSinkSegmentation.inputs.base_directory = master_config["resultdir"]
@@ -1418,10 +1417,10 @@ def generate_single_session_template_wf(
 
                 for struct in ("t1", "t2"):
                     resample_struct = pe.Node(
-                        BRAINSResample(), name="Resample{0}".format(struct.upper())
+                        BRAINSResample(), name=f"Resample{struct.upper()}"
                     )
                     resample_struct.inputs.outputVolume = (
-                        "{0}_in_original_space.nii.gz".format(struct)
+                        f"{struct}_in_original_space.nii.gz"
                     )
                     resample_struct.inputs.pixelType = "short"
                     resample_struct.inputs.interpolationMode = "Linear"
@@ -1437,7 +1436,7 @@ def generate_single_session_template_wf(
                     )
                     baw201.connect(
                         myLocalTCWF,
-                        "outputspec.{0}_average".format(struct),
+                        f"outputspec.{struct}_average",
                         resample_struct,
                         "inputVolume",
                     )
@@ -1445,7 +1444,7 @@ def generate_single_session_template_wf(
                         resample_struct,
                         "outputVolume",
                         myLocalLOGISMOSBWF,
-                        "inputspec.{0}_file".format(struct),
+                        f"inputspec.{struct}_file",
                     )
 
                 resample_joint_fusion = pe.Node(BRAINSResample(), "ResampleJointFusion")
@@ -1593,7 +1592,7 @@ def generate_single_session_template_wf(
 
         num_threads = 12
         # HACK to convert subject_dir to supported string type
-        old_str = type("")
+        old_str = str
         subject_dir = old_str(
             os.path.join(master_config["resultdir"], projectid, subjectid, sessionid)
         )

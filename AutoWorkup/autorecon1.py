@@ -43,7 +43,7 @@ def verify_inputs(T1sList):
             for otherFilename in T1sList[1:]:
                 if firstSize != sitk.ReadImage(otherFilename).GetSize():
                     print(
-                        "ERROR: T1s not the same size can not process {0} {1} together".format(
+                        "ERROR: T1s not the same size can not process {} {} together".format(
                             T1sList[0], otherFilename
                         )
                     )
@@ -109,7 +109,7 @@ def copy_file(in_file, out_file=None):
         out_file = os.path.join(os.getcwd(), os.path.basename(in_file))
     if isinstance(in_file, list) and len(in_file) == 1:
         in_file = in_file[0]
-    print("copying %s to %s" % (in_file, out_file))
+    print(f"copying {in_file} to {out_file}")
     shutil.copy(in_file, out_file)
     return out_file
 
@@ -133,7 +133,7 @@ def copy_files(in_files, out_files):
         sys.exit(-1)
     for i, in_file in enumerate(in_files):
         out_file = out_files[i]
-        print("copying %s to %s" % (in_file, out_file))
+        print(f"copying {in_file} to {out_file}")
         shutil.copy(in_file, out_file)
     return out_files
 
@@ -496,7 +496,7 @@ copy the run to rawavg and continue."""
             config["subjects_dir"],
             config["current_id"],
             "mri",
-            "brainmask_{0}.mgz".format(config["long_template"]),
+            "brainmask_{}.mgz".format(config["long_template"]),
         )
         ar1_wf.connect(
             [(inputSpec, copy_template_brainmask, [("template_brainmask", "in_file")])]

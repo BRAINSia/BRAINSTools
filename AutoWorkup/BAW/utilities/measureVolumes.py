@@ -11,8 +11,6 @@ Usage:
 """
 
 
-from builtins import str
-
 from utilities.misc import *
 
 
@@ -89,10 +87,10 @@ def get_label_volumes(labelVolume, RefVolume, labelDictionary):
         labelVolDict["Volume_mm3"] = structVolume
 
         if value in list(labelDictionary.keys()):
-            print(("{0} --> {1}".format(value, labelDictionary[value])))
+            print(f"{value} --> {labelDictionary[value]}")
             labelVolDict["LabelName"] = labelDictionary[value]
         else:
-            print(("** Caution: {0} --> No name exists!".format(value)))
+            print(f"** Caution: {value} --> No name exists!")
             labelVolDict["LabelName"] = "NA"
         labelVolDict["LabelCode"] = value
         labelVolDict["FileName"] = os.path.abspath(labelVolume)
@@ -215,7 +213,7 @@ def main():
             ],
         )
     except getopt.GetoptError as err:
-        print((str(err)))
+        print(str(err))
         print(
             "WorkupComputeLabelVolume.py -c <colorTable> -l <labelFilename>  -r <referenceFilename> -o <outputFileBasename>"
         )
@@ -241,14 +239,12 @@ def main():
 
     if colorTable and labelFilename and outputFileBasename:
         print(
-            (
-                """ Arguments:
-        color table: {0}
-        labelFile: {1}
-        referenceFilename: {2}
-        outputFileBasename: {3}""".format(
-                    colorTable, labelFilename, referenceFilename, outputFileBasename
-                )
+            """ Arguments:
+        color table: {}
+        labelFile: {}
+        referenceFilename: {}
+        outputFileBasename: {}""".format(
+                colorTable, labelFilename, referenceFilename, outputFileBasename
             )
         )
 

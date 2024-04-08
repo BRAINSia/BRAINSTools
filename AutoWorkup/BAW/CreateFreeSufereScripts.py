@@ -206,9 +206,9 @@ def mkfsscript(session, outscript, t1list, t2list, is3T, useT2):
     ThreeTFlag = ""
     if is3T:
         ThreeTFlag = " -3T "
-        job_name = "F3B{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"F3B{session}"
     else:
-        job_name = "F1B{SUBJ_SESSION_ID}".format(SUBJ_SESSION_ID=session)
+        job_name = f"F1B{session}"
 
     auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/scripts/base_{SUBJ_SESSION_ID}_qsub.out
@@ -285,7 +285,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
     return_status = True
     previous_list = list()
     if os.path.exists(base_tps_file):
-        tpsFF = open(base_tps_file, "r")
+        tpsFF = open(base_tps_file)
         for tps_session in tpsFF.readlines():
             previous_list.append(tps_session.lstrip().rstrip())
         tpsFF.close()
@@ -302,21 +302,21 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
                 return_status = False
 
     if return_status is False:
-        print(("WARNING:  DON'T KNOW WHAT TO DO: {0}".format(base_tps_file)))
-        print(("current   {0}".format(found_sessions)))
-        print(("base-tps   {0}".format(previous_list)))
+        print(f"WARNING:  DON'T KNOW WHAT TO DO: {base_tps_file}")
+        print(f"current   {found_sessions}")
+        print(f"base-tps   {previous_list}")
         import shutil
 
         templ_dir = os.path.join(subjects_dir, templateID)
         if os.path.exists(templ_dir):
-            print(("REMOVE TEMPLATE: {0}".format(templ_dir)))
+            print(f"REMOVE TEMPLATE: {templ_dir}")
             try:
                 shutil.rmtree(templ_dir)
             except:
-                print(("MANUALLY REMOVE: {0}".format(templ_dir)))
+                print(f"MANUALLY REMOVE: {templ_dir}")
             pass
         else:
-            print(("NO NEED TO REMOVE TEMPLATE: ".format()))
+            print(f"NO NEED TO REMOVE TEMPLATE: ")
 
         for session in found_sessions:
             long_sess_dir = os.path.join(subjects_dir, session + ".long." + templateID)
@@ -351,7 +351,7 @@ def mk_template_script(templateID, sessionList, outscript, dependantJobNames):
         hold_jid = "#$ -hold_jid " + ",".join(dependantJobNames)
     else:
         hold_jid = ""
-    job_name = "TPL{TEMP_ID}".format(TEMP_ID=templateID)
+    job_name = f"TPL{templateID}"
     auto_recon_script = """#!/bin/bash
 #$ -o {FSSUBJDIR}/scripts/temp_{SUBJ_SESSION_ID}_qsub.out
 #$ -e {FSSUBJDIR}/scripts/temp_{SUBJ_SESSION_ID}_qsub.err
@@ -480,10 +480,8 @@ if (not os.path.exists(subjectDatabaseFile)) or (
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 else:
     print(
-        (
-            "Single_subject {0}: Using cached database, {1}".format(
-                single_subject, subjectDatabaseFile
-            )
+        "Single_subject {}: Using cached database, {}".format(
+            single_subject, subjectDatabaseFile
         )
     )
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
@@ -495,7 +493,7 @@ from collections import (
 
 pickled_good_list_fn = "good_list.obj"
 if os.path.exists(pickled_good_list_fn):
-    good_list = pickle.load(open(pickled_good_list_fn, "r"))
+    good_list = pickle.load(open(pickled_good_list_fn))
 else:
     good_list = OrderedDict()
 
@@ -644,14 +642,8 @@ for thisSubject in all_subjects:
             )
             T2_files = find_mgz(T2_files_30)
             if len(T2_files) != len(T2_files_30):
-                print(
-                    (
-                        "\n\nWARNING:\n\n: some mgz files missing: {0}".format(
-                            T2_files_30
-                        )
-                    )
-                )
-                print(("\n {0}\n".format(T2_files)))
+                print(f"\n\nWARNING:\n\n: some mgz files missing: {T2_files_30}")
+                print(f"\n {T2_files}\n")
                 # continue
         else:
             T1_files = find_mgz(T1_files_15)
@@ -723,11 +715,11 @@ for thisSubject in all_subjects:
         file_missing = False
         for candiate_file in list_of_sentinal_files:
             if not os.path.exists(candiate_file):  ##If any files missing, break
-                print(("MISSING: {0}".format(candiate_file)))
+                print(f"MISSING: {candiate_file}")
                 file_missing = True
                 break
             else:
-                print(("OK: {0}".format(candiate_file)))
+                print(f"OK: {candiate_file}")
 
         # /Shared/paulsen/Experiments/20150617_PREDICTHD_FS/2739.template/mri/transforms/2739.template_to_96241.lta
         # /Shared/paulsen/Experiments/20150617_PREDICTHD_FS/2739.template/mri/transforms/96241_to_2739.template.lta
@@ -952,6 +944,6 @@ ff = open("type_report.csv", "w")
 ff.write(type_report)
 ff.close()
 
-print(("BASE COMPLETED: {0}".format(base_done)))
-print(("TEMPLATE COMPLETED: {0}".format(temp_done)))
-print(("LONGITUDINAL COMPLETED: {0}".format(long_done)))
+print(f"BASE COMPLETED: {base_done}")
+print(f"TEMPLATE COMPLETED: {temp_done}")
+print(f"LONGITUDINAL COMPLETED: {long_done}")

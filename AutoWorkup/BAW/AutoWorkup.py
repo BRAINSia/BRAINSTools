@@ -86,11 +86,11 @@ def setup_environment(argv):
         ),
     )  # MODS PATH
 
-    print(("@" * 80))
-    print((environment["env"]["PYTHONPATH"]))
-    print(("@" * 80))
-    print((environment["env"]["PATH"]))
-    print(("@" * 80))
+    print("@" * 80)
+    print(environment["env"]["PYTHONPATH"])
+    print("@" * 80)
+    print(environment["env"]["PATH"])
+    print("@" * 80)
 
     from nipype import config
 

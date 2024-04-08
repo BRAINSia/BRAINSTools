@@ -271,7 +271,7 @@ class PredictEdgeProbability(BaseInterface):
         """
         outputs = self._outputs().get()
         for matter in ["gm", "wm"]:
-            name = "{0}_edge_probability".format(matter)
+            name = f"{matter}_edge_probability"
             outputs[name] = os.path.abspath(name + ".nii.gz")
         return outputs
 
@@ -447,7 +447,7 @@ class LOGISMOSBPreprocessing(BaseInterface):
         """
         inputs = self.inputs.get()
         for matter in ("gm", "wm"):
-            proba_name = "{0}_proba".format(matter)
+            proba_name = f"{matter}_proba"
             proba_file = inputs[proba_name]
             proba = sitk.ReadImage(str(proba_file))
             if self.inputs.proba_scale:

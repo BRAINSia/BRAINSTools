@@ -68,7 +68,7 @@ def predict(clf, data, in_image, out_file, index, neg_proba=False):
     predict_prob[index] = data_prob[:, 1]
     predict_prob_neg[index] = data_prob[:, 0]
 
-    print("Writing probability predictions to file {0}".format(out_file))
+    print(f"Writing probability predictions to file {out_file}")
     if os.path.isfile(out_file):
         return out_file
     else:

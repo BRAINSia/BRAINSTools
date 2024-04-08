@@ -102,7 +102,7 @@ class FSScript(CommandLine):
     this_path = os.path.dirname(
         os.path.abspath(inspect.getfile(inspect.currentframe()))
     )  # script)
-    _cmd = "{0} {1}".format(sys.executable, os.path.join(this_path, "fsscript.py"))
+    _cmd = "{} {}".format(sys.executable, os.path.join(this_path, "fsscript.py"))
     # _cmd = 'fsscript.py'
     input_spec = FSScriptInputSpec
     output_spec = FSScriptOutputSpec
@@ -118,10 +118,8 @@ class FSScript(CommandLine):
         """
         if opt == "subprocess":
             if val not in ["autorecon", "template", "longitudinal"]:
-                raise ValueException(
-                    "{0} is not a valid value for 'subprocess'".format(val)
-                )
-        return super(FSScript, self)._format_arg(opt, spec, val)
+                raise ValueException(f"{val} is not a valid value for 'subprocess'")
+        return super()._format_arg(opt, spec, val)
 
     def _list_outputs(self):
         """

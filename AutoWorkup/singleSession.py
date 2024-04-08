@@ -73,7 +73,7 @@ def _create_single_session(dataDict, master_config, interpMode, pipeline_name):
     blackListFileName = dataDict["T1s"][0] + "_noDenoise"
     isBlackList = os.path.isfile(blackListFileName)
 
-    pname = "{0}_{1}_{2}".format(master_config["workflow_phase"], subject, session)
+    pname = "{}_{}_{}".format(master_config["workflow_phase"], subject, session)
     onlyT1 = not (len(dataDict["T2s"]) > 0)
     hasPDs = len(dataDict["PDs"]) > 0
     hasFLs = len(dataDict["FLs"]) > 0
@@ -182,25 +182,23 @@ def create_and_run(
             missing = set(sessions) - set(all_sessions)
             assert (
                 len(missing) == 0
-            ), "Requested sessions are missing from the database: {0}\n\n{1}".format(
+            ), "Requested sessions are missing from the database: {}\n\n{}".format(
                 missing, all_sessions
             )
         elif "all" in sessions:
             sessions = set(all_sessions)
         else:
             sessions = set(sessions)
-        print(("!=" * 40))
-        print(("Doing sessions {0}".format(sessions)))
-        print(("!=" * 40))
+        print("!=" * 40)
+        print(f"Doing sessions {sessions}")
+        print("!=" * 40)
         for session in sessions:
             _dict = OrderedDict()
             t1_list = database.get_filenames_by_scan_type(session, ["T1-15", "T1-30"])
             if len(t1_list) == 0:
                 print(
-                    (
-                        "ERROR: Skipping session {0} for subject {1} due to missing T1's".format(
-                            session, subject
-                        )
+                    "ERROR: Skipping session {} for subject {} due to missing T1's".format(
+                        session, subject
                     )
                 )
                 print("REMOVE OR FIX BEFORE CONTINUING")
@@ -326,10 +324,10 @@ def create_and_run(
                 )
 
             if os.path.exists(atlasDirectory):
-                print(("LOOKING FOR DIRECTORY {0}".format(atlasDirectory)))
+                print(f"LOOKING FOR DIRECTORY {atlasDirectory}")
             else:
-                print(("MISSING REQUIRED ATLAS INPUT {0}".format(atlasDirectory)))
-                print(("SKIPPING: {0} prerequisites missing".format(session)))
+                print(f"MISSING REQUIRED ATLAS INPUT {atlasDirectory}")
+                print(f"SKIPPING: {session} prerequisites missing")
                 continue
 
             assert (
@@ -346,12 +344,12 @@ def create_and_run(
                 for ff in list_of_paths:
                     if not os.path.exists(ff):
                         is_missing = True
-                        print(("MISSING: {0}".format(ff)))
+                        print(f"MISSING: {ff}")
                         break
                 return not is_missing
 
             if useSentinal and all_paths_exists(sentinal_file_list):
-                print(("SKIPPING: {0} exists".format(sentinal_file_list)))
+                print(f"SKIPPING: {sentinal_file_list} exists")
             else:
                 print("PROCESSING INCOMPLETE: at least 1 required file does not exists")
                 if not dryRun:
@@ -359,11 +357,11 @@ def create_and_run(
                         _dict,
                         master_config,
                         "Linear",
-                        "singleSession_{0}_{1}".format(
+                        "singleSession_{}_{}".format(
                             _dict["subject"], _dict["session"]
                         ),
                     )
-                    print(("Starting session {0}".format(session)))
+                    print(f"Starting session {session}")
                     # HACK Hard-coded to SGEGraph, but --wfrun is ignored completely
                     run_workflow(
                         workflow,
@@ -427,7 +425,7 @@ if __name__ == "__main__":
 
     argv = docopt(__doc__, version="1.1")
     print(argv)
-    print(("=" * 100))
+    print("=" * 100)
     environment, experiment, pipeline, cluster = setup_environment(argv)
 
     exit = single_session_main(environment, experiment, pipeline, cluster, **argv)

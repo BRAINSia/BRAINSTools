@@ -352,23 +352,23 @@ def create_autorecon3(config):
                     inputSpec,
                     workflow,
                     [
-                        ("{0}_inflated".format(hemisphere), "Inputs.inflated"),
-                        ("{0}_smoothwm".format(hemisphere), "Inputs.smoothwm"),
-                        ("{0}".format(hemisphere), "Inputs.hemisphere"),
-                        ("{0}_white".format(hemisphere), "Inputs.white"),
-                        ("{0}_cortex_label".format(hemisphere), "Inputs.cortex_label"),
-                        ("{0}_orig".format(hemisphere), "Inputs.orig"),
-                        ("{0}_sulc".format(hemisphere), "Inputs.sulc"),
-                        ("{0}_area".format(hemisphere), "Inputs.area"),
-                        ("{0}_curv".format(hemisphere), "Inputs.curv"),
+                        (f"{hemisphere}_inflated", "Inputs.inflated"),
+                        (f"{hemisphere}_smoothwm", "Inputs.smoothwm"),
+                        (f"{hemisphere}", "Inputs.hemisphere"),
+                        (f"{hemisphere}_white", "Inputs.white"),
+                        (f"{hemisphere}_cortex_label", "Inputs.cortex_label"),
+                        (f"{hemisphere}_orig", "Inputs.orig"),
+                        (f"{hemisphere}_sulc", "Inputs.sulc"),
+                        (f"{hemisphere}_area", "Inputs.area"),
+                        (f"{hemisphere}_curv", "Inputs.curv"),
                         ("subject_id", "Inputs.subject_id"),
                         ("subjects_dir", "Inputs.subjects_dir"),
                         ("aseg_presurf", "Inputs.aseg_presurf"),
                         ("brain_finalsurfs", "Inputs.brain_finalsurfs"),
                         ("wm", "Inputs.wm"),
                         ("filled", "Inputs.filled"),
-                        ("{0}_atlas".format(hemisphere), "Inputs.atlas"),
-                        ("{0}_classifier".format(hemisphere), "Inputs.classifier"),
+                        (f"{hemisphere}_atlas", "Inputs.atlas"),
+                        (f"{hemisphere}_classifier", "Inputs.classifier"),
                     ],
                 )
             ]
@@ -389,7 +389,7 @@ def create_autorecon3(config):
         intrinsic curvature index.
         """
         parcellation_stats_white = pe.Node(
-            ParcellationStats(), name="Parcellation_Stats_{0}_White".format(hemisphere)
+            ParcellationStats(), name=f"Parcellation_Stats_{hemisphere}_White"
         )
         parcellation_stats_white.inputs.mgz = True
         parcellation_stats_white.inputs.tabular_output = True
@@ -401,7 +401,7 @@ def create_autorecon3(config):
             config["subjects_dir"],
             config["current_id"],
             "stats",
-            "{0}.aparc.stats".format(hemisphere),
+            f"{hemisphere}.aparc.stats",
         )
 
         ar3_wf.connect(
@@ -418,15 +418,15 @@ def create_autorecon3(config):
                         ("transform", "transform"),
                         ("brainmask", "brainmask"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "in_cortex"),
-                        ("{0}".format(hemisphere), "hemisphere"),
+                        (f"{hemisphere}_cortex_label", "in_cortex"),
+                        (f"{hemisphere}", "hemisphere"),
                     ],
                 ),
                 (
                     workflow,
                     parcellation_stats_white,
                     [
-                        ("Make_Pial_Surface.out_pial", "{0}_pial".format(hemisphere)),
+                        ("Make_Pial_Surface.out_pial", f"{hemisphere}_pial"),
                         ("Make_Pial_Surface.out_thickness", "thickness"),
                         ("Cortical_Parcellation.out_file", "in_annotation"),
                     ],
@@ -434,14 +434,14 @@ def create_autorecon3(config):
                 (
                     opp_wf,
                     parcellation_stats_white,
-                    [("Make_Pial_Surface.out_pial", "{0}_pial".format(opp_hemi))],
+                    [("Make_Pial_Surface.out_pial", f"{opp_hemi}_pial")],
                 ),
                 (volume_mask, parcellation_stats_white, [("out_ribbon", "ribbon")]),
             ]
         )
 
         parcellation_stats_pial = pe.Node(
-            ParcellationStats(), name="Parcellation_Stats_{0}_Pial".format(hemisphere)
+            ParcellationStats(), name=f"Parcellation_Stats_{hemisphere}_Pial"
         )
         parcellation_stats_pial.inputs.mgz = True
         parcellation_stats_pial.inputs.tabular_output = True
@@ -453,7 +453,7 @@ def create_autorecon3(config):
             config["subjects_dir"],
             config["current_id"],
             "stats",
-            "{0}.aparc.pial.stats".format(hemisphere),
+            f"{hemisphere}.aparc.pial.stats",
         )
 
         ar3_wf.connect(
@@ -466,22 +466,22 @@ def create_autorecon3(config):
                         ("subjects_dir", "subjects_dir"),
                         ("wm", "wm"),
                         (
-                            "{0}_white".format(hemisphere),
-                            "{0}_white".format(hemisphere),
+                            f"{hemisphere}_white",
+                            f"{hemisphere}_white",
                         ),
-                        ("{0}_white".format(opp_hemi), "{0}_white".format(opp_hemi)),
+                        (f"{opp_hemi}_white", f"{opp_hemi}_white"),
                         ("transform", "transform"),
                         ("brainmask", "brainmask"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "in_cortex"),
-                        ("{0}".format(hemisphere), "hemisphere"),
+                        (f"{hemisphere}_cortex_label", "in_cortex"),
+                        (f"{hemisphere}", "hemisphere"),
                     ],
                 ),
                 (
                     workflow,
                     parcellation_stats_pial,
                     [
-                        ("Make_Pial_Surface.out_pial", "{0}_pial".format(hemisphere)),
+                        ("Make_Pial_Surface.out_pial", f"{hemisphere}_pial"),
                         ("Make_Pial_Surface.out_thickness", "thickness"),
                         ("Cortical_Parcellation.out_file", "in_annotation"),
                     ],
@@ -489,7 +489,7 @@ def create_autorecon3(config):
                 (
                     opp_wf,
                     parcellation_stats_pial,
-                    [("Make_Pial_Surface.out_pial", "{0}_pial".format(opp_hemi))],
+                    [("Make_Pial_Surface.out_pial", f"{opp_hemi}_pial")],
                 ),
                 (volume_mask, parcellation_stats_pial, [("out_ribbon", "ribbon")]),
             ]
@@ -497,7 +497,7 @@ def create_autorecon3(config):
 
         # Cortical Parcellation 2
         cortical_parcellation_2 = pe.Node(
-            MRIsCALabel(), name="Cortical_Parcellation_{0}_2".format(hemisphere)
+            MRIsCALabel(), name=f"Cortical_Parcellation_{hemisphere}_2"
         )
         if hemisphere == "lh":
             lh_cort_parc2 = cortical_parcellation_2
@@ -507,13 +507,13 @@ def create_autorecon3(config):
         cortical_parcellation_2.inputs.classifier = os.path.join(
             config["FREESURFER_HOME"],
             "average",
-            "{0}.destrieux.simple.2009-07-29.gcs".format(hemisphere),
+            f"{hemisphere}.destrieux.simple.2009-07-29.gcs",
         )
         cortical_parcellation_2.inputs.out_file = os.path.join(
             config["subjects_dir"],
             config["current_id"],
             "label",
-            "{0}.aparc.a2009s.annot".format(hemisphere),
+            f"{hemisphere}.aparc.a2009s.annot",
         )
         cortical_parcellation_2.inputs.seed = 1234
 
@@ -525,10 +525,10 @@ def create_autorecon3(config):
                     [
                         ("subject_id", "subject_id"),
                         ("subjects_dir", "subjects_dir"),
-                        ("{0}".format(hemisphere), "hemisphere"),
-                        ("{0}_smoothwm".format(hemisphere), "smoothwm"),
+                        (f"{hemisphere}", "hemisphere"),
+                        (f"{hemisphere}_smoothwm", "smoothwm"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "label"),
+                        (f"{hemisphere}_cortex_label", "label"),
                     ],
                 ),
                 (
@@ -541,7 +541,7 @@ def create_autorecon3(config):
 
         # Parcellation Statistics 2
         parcellation_stats_white_2 = parcellation_stats_white.clone(
-            name="Parcellation_Statistics_{0}_2".format(hemisphere)
+            name=f"Parcellation_Statistics_{hemisphere}_2"
         )
         parcellation_stats_white_2.inputs.out_color = os.path.join(
             config["subjects_dir"],
@@ -553,7 +553,7 @@ def create_autorecon3(config):
             config["subjects_dir"],
             config["current_id"],
             "stats",
-            "{0}.aparc.a2009s.stats".format(hemisphere),
+            f"{hemisphere}.aparc.a2009s.stats",
         )
         ar3_wf.connect(
             [
@@ -569,22 +569,22 @@ def create_autorecon3(config):
                         ("transform", "transform"),
                         ("brainmask", "brainmask"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "in_cortex"),
-                        ("{0}".format(hemisphere), "hemisphere"),
+                        (f"{hemisphere}_cortex_label", "in_cortex"),
+                        (f"{hemisphere}", "hemisphere"),
                     ],
                 ),
                 (
                     workflow,
                     parcellation_stats_white_2,
                     [
-                        ("Make_Pial_Surface.out_pial", "{0}_pial".format(hemisphere)),
+                        ("Make_Pial_Surface.out_pial", f"{hemisphere}_pial"),
                         ("Make_Pial_Surface.out_thickness", "thickness"),
                     ],
                 ),
                 (
                     opp_wf,
                     parcellation_stats_white_2,
-                    [("Make_Pial_Surface.out_pial", "{0}_pial".format(opp_hemi))],
+                    [("Make_Pial_Surface.out_pial", f"{opp_hemi}_pial")],
                 ),
                 (volume_mask, parcellation_stats_white_2, [("out_ribbon", "ribbon")]),
                 (
@@ -597,18 +597,18 @@ def create_autorecon3(config):
 
         # Cortical Parcellation 3
         cortical_parcellation_3 = pe.Node(
-            MRIsCALabel(), name="Cortical_Parcellation_{0}_3".format(hemisphere)
+            MRIsCALabel(), name=f"Cortical_Parcellation_{hemisphere}_3"
         )
         cortical_parcellation_3.inputs.classifier = os.path.join(
             config["FREESURFER_HOME"],
             "average",
-            "{0}.DKTatlas40.gcs".format(hemisphere),
+            f"{hemisphere}.DKTatlas40.gcs",
         )
         cortical_parcellation_3.inputs.out_file = os.path.join(
             config["subjects_dir"],
             config["current_id"],
             "label",
-            "{0}.aparc.DKTatlas40.annot".format(hemisphere),
+            f"{hemisphere}.aparc.DKTatlas40.annot",
         )
         cortical_parcellation_3.inputs.seed = 1234
         ar3_wf.connect(
@@ -619,10 +619,10 @@ def create_autorecon3(config):
                     [
                         ("subject_id", "subject_id"),
                         ("subjects_dir", "subjects_dir"),
-                        ("{0}".format(hemisphere), "hemisphere"),
-                        ("{0}_smoothwm".format(hemisphere), "smoothwm"),
+                        (f"{hemisphere}", "hemisphere"),
+                        (f"{hemisphere}_smoothwm", "smoothwm"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "label"),
+                        (f"{hemisphere}_cortex_label", "label"),
                     ],
                 ),
                 (
@@ -635,7 +635,7 @@ def create_autorecon3(config):
 
         # Parcellation Statistics 3
         parcellation_stats_white_3 = parcellation_stats_white.clone(
-            name="Parcellation_Statistics_{0}_3".format(hemisphere)
+            name=f"Parcellation_Statistics_{hemisphere}_3"
         )
         parcellation_stats_white_3.inputs.out_color = os.path.join(
             config["subjects_dir"],
@@ -647,7 +647,7 @@ def create_autorecon3(config):
             config["subjects_dir"],
             config["current_id"],
             "stats",
-            "{0}.aparc.DKTatlas40.stats".format(hemisphere),
+            f"{hemisphere}.aparc.DKTatlas40.stats",
         )
 
         ar3_wf.connect(
@@ -664,22 +664,22 @@ def create_autorecon3(config):
                         ("transform", "transform"),
                         ("brainmask", "brainmask"),
                         ("aseg_presurf", "aseg"),
-                        ("{0}_cortex_label".format(hemisphere), "in_cortex"),
-                        ("{0}".format(hemisphere), "hemisphere"),
+                        (f"{hemisphere}_cortex_label", "in_cortex"),
+                        (f"{hemisphere}", "hemisphere"),
                     ],
                 ),
                 (
                     workflow,
                     parcellation_stats_white_3,
                     [
-                        ("Make_Pial_Surface.out_pial", "{0}_pial".format(hemisphere)),
+                        ("Make_Pial_Surface.out_pial", f"{hemisphere}_pial"),
                         ("Make_Pial_Surface.out_thickness", "thickness"),
                     ],
                 ),
                 (
                     opp_wf,
                     parcellation_stats_white_3,
-                    [("Make_Pial_Surface.out_pial", "{0}_pial".format(opp_hemi))],
+                    [("Make_Pial_Surface.out_pial", f"{opp_hemi}_pial")],
                 ),
                 (volume_mask, parcellation_stats_white_3, [("out_ribbon", "ribbon")]),
                 (
@@ -691,7 +691,7 @@ def create_autorecon3(config):
         )
 
         # WM/GM Contrast
-        contrast = pe.Node(Contrast(), name="WM_GM_Contrast_{0}".format(hemisphere))
+        contrast = pe.Node(Contrast(), name=f"WM_GM_Contrast_{hemisphere}")
         if hemisphere == "lh":
             lh_contrast = contrast
         else:
@@ -707,9 +707,9 @@ def create_autorecon3(config):
                         ("rawavg", "rawavg"),
                         ("subject_id", "subject_id"),
                         ("subjects_dir", "subjects_dir"),
-                        ("{0}_white".format(hemisphere), "white"),
-                        ("{0}_cortex_label".format(hemisphere), "cortex"),
-                        ("{0}".format(hemisphere), "hemisphere"),
+                        (f"{hemisphere}_white", "white"),
+                        (f"{hemisphere}_cortex_label", "cortex"),
+                        (f"{hemisphere}", "hemisphere"),
                     ],
                 ),
                 (
@@ -1008,19 +1008,19 @@ def create_autorecon3(config):
                 hemi_contrast = rh_contrast
             for connection, meas_file, meas_name in [
                 (hemi_wf, "Make_Pial_Surface.out_thickness", "thickness"),
-                (inputSpec, "{0}_area".format(hemisphere), "area"),
+                (inputSpec, f"{hemisphere}_area", "area"),
                 (hemi_wf, "Make_Pial_Surface.out_area", "area.pial"),
                 (hemi_wf, "Calculate_Volume.out_file", "volume"),
-                (inputSpec, "{0}_curv".format(hemisphere), "curv"),
-                (inputSpec, "{0}_sulc".format(hemisphere), "sulc"),
-                (inputSpec, "{0}_white_K".format(hemisphere), "white.K"),
-                (inputSpec, "{0}_white_H".format(hemisphere), "white.H"),
+                (inputSpec, f"{hemisphere}_curv", "curv"),
+                (inputSpec, f"{hemisphere}_sulc", "sulc"),
+                (inputSpec, f"{hemisphere}_white_K", "white.K"),
+                (inputSpec, f"{hemisphere}_white_H", "white.H"),
                 (hemi_wf, "Jacobian.out_file", "jacobian_white"),
                 (hemi_contrast, "out_contrast", "w-g.pct.mgh"),
             ]:
                 preprocess = pe.Node(
                     MRISPreprocReconAll(),
-                    name="QCache_Preproc_{0}_{1}".format(
+                    name="QCache_Preproc_{}_{}".format(
                         hemisphere, meas_name.replace(".", "_")
                     ),
                 )
@@ -1029,7 +1029,7 @@ def create_autorecon3(config):
                     config["subjects_dir"],
                     config["current_id"],
                     "surf",
-                    "{0}.{1}.{2}.mgh".format(hemisphere, meas_name, target_id),
+                    f"{hemisphere}.{meas_name}.{target_id}.mgh",
                 )
                 target_dir = os.path.join(config["subjects_dir"], target_id)
                 if not os.path.isdir(target_dir):
@@ -1067,7 +1067,7 @@ def create_autorecon3(config):
                 for value in range(0, 26, 5):
                     surf2surf = pe.Node(
                         SurfaceSmooth(),
-                        name="Qcache_{0}_{1}_fwhm{2}".format(
+                        name="Qcache_{}_{}_fwhm{}".format(
                             hemisphere, meas_name.replace(".", "_"), value
                         ),
                     )
@@ -1075,7 +1075,7 @@ def create_autorecon3(config):
                     surf2surf.inputs.cortex = True
                     surf2surf.inputs.subject_id = target_id
                     surf2surf.inputs.hemi = hemisphere
-                    tval_file = "{0}.{1}.fwhm{2}.fsaverage.mgh".format(
+                    tval_file = "{}.{}.fwhm{}.fsaverage.mgh".format(
                         hemisphere, meas_name, value
                     )
                     surf2surf.inputs.out_file = os.path.join(

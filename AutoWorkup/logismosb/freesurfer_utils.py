@@ -296,7 +296,7 @@ def apply_label_split(
     elif hemi == "rh":
         out_image = (hemis == right_label) * image
     else:
-        print("ERROR: Invalid hemisphere name {0}".format(hemi))
+        print(f"ERROR: Invalid hemisphere name {hemi}")
         return
     sitk.WriteImage(out_image, out_file)
     out_file = os.path.abspath(out_file)

@@ -115,7 +115,7 @@ def split_region_data(train_data, test_data, matter, rg_name, label, n_jobs=-1):
     :param n_jobs:
     :return:
     """
-    print("Label Region: {0}".format(label))
+    print(f"Label Region: {label}")
     # Training
     train_index = train_data[rg_name][label]
     train_targets = train_data["Targets"][matter][train_index].values
@@ -193,13 +193,13 @@ def run_crossval(idx_split, data_file):
     print("Creating the fold directory")
     # define the fold directory filepath
     num1, num2 = np.where(np.in1d(ids, test_ids))[0]
-    fold_id = "{0}{1}".format(num1, num2)
+    fold_id = f"{num1}{num2}"
     fold_dir = os.path.join(cache_dir, fold_id)
     if not os.path.isdir(fold_dir):
         os.makedirs(fold_dir)
 
-    print("Training subjects: {0}".format(train_ids))
-    print("Testing subjects: {0}".format(test_ids))
+    print(f"Training subjects: {train_ids}")
+    print(f"Testing subjects: {test_ids}")
 
     train_data = data.loc[train_ids]
 
@@ -395,7 +395,7 @@ def main():
                 # plt.title('ROC Curve for {0} Matter Classification in {1}'.format(matter, label))
                 plt.legend(loc="best", fontsize=fontsize)
                 plt.savefig(
-                    os.path.join(cache_dir, "{0}{1}ROC.eps".format(matter, label)),
+                    os.path.join(cache_dir, f"{matter}{label}ROC.eps"),
                     pad_inches=0,
                 )
 

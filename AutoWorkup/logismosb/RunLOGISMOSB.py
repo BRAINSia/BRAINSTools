@@ -43,17 +43,17 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id from 
         "JointFusion",
         "JointFusion_HDAtlas20_2015_dustCleaned_label.nii.gz",
     )
-    logb_wf = create_logb_workflow(name="{0}_LOGISMOSB_Workflow".format(session_id))
-    wf = Workflow("AtrophySim_Baseline_{0}".format(session_id))
+    logb_wf = create_logb_workflow(name=f"{session_id}_LOGISMOSB_Workflow")
+    wf = Workflow(f"AtrophySim_Baseline_{session_id}")
     datasink = Node(DataSink(), name="DataSink")
     datasink.inputs.base_directory = os.path.join(subjects_dir, session_id)
     for hemisphere in ("lh", "rh"):
         for matter in ("gm", "wm"):
             wf.connect(
                 logb_wf,
-                "outputspec.{0}_{1}surface_file".format(hemisphere, matter),
+                f"outputspec.{hemisphere}_{matter}surface_file",
                 datasink,
-                "LOGISMOSB.@{0}_{1}".format(hemisphere, matter),
+                f"LOGISMOSB.@{hemisphere}_{matter}",
             )
     logb_wf.inputs.inputspec.t1_file = t1_file
     logb_wf.inputs.inputspec.t2_file = t2_file

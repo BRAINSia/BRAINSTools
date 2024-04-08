@@ -15,8 +15,7 @@ import sys
 
 if len(sys.argv) != 1:
     print(
-        (
-            """ERROR:  Improper invocation
+        """ERROR:  Improper invocation
 
 {PROGRAM_NAME} <Experiment.json>
 
@@ -51,8 +50,7 @@ if len(sys.argv) != 1:
 }
 
 """.format(
-                PROGRAM_NAME=sys.argv[0]
-            )
+            PROGRAM_NAME=sys.argv[0]
         )
     )
 
@@ -80,7 +78,7 @@ temp_paths = os.environ["PATH"].split(os.pathsep)
 temp_paths.insert(0, os.path.join("/scratch/johnsonhj/src/NEP-11", "bin"))
 os.environ["PATH"] = os.pathsep.join(temp_paths)
 
-print((sys.path))
+print(sys.path)
 
 
 from nipype.interfaces.utility import Function, IdentityInterface
@@ -96,7 +94,7 @@ import yaml
 
 ## Using yaml to load keys and values as strings
 
-with open(sys.argv[1], "r") as paramFptr:
+with open(sys.argv[1]) as paramFptr:
     ExperimentInfo = yaml.safe_load(paramFptr)
 
 print(ExperimentInfo)

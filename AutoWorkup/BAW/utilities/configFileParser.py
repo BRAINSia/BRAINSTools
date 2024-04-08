@@ -24,7 +24,6 @@ from future import standard_library
 
 standard_library.install_aliases()
 from past.utils import old_div
-from builtins import object
 from configparser import ConfigParser
 import os
 import sys
@@ -47,7 +46,7 @@ def str2bool(v):
         return True
     elif str(v).lower() in ("no", "false", "f", "0"):
         return False
-    raise ValueError("ERROR: INVALID String to bool conversion for '{0}'".format(v))
+    raise ValueError(f"ERROR: INVALID String to bool conversion for '{v}'")
 
 
 def get_ascii_from_parser(parser, region, tag):
@@ -151,7 +150,7 @@ def create_experiment_dir(dirname, name, suffix, verify=False):
             print(
                 "WARNING: Experiment directory already exists.  Continuing will overwrite the previous results..."
             )
-            print(("   Path: {0}".format(fullpath)))
+            print(f"   Path: {fullpath}")
             return fullpath
         try:
             os.makedirs(fullpath)
@@ -248,7 +247,7 @@ def parse_experiment(parser, workflow_phase):
         for component in retval["components"]:
             if component not in valid_components:
                 print(
-                    "ERROR: Unknown workflow component: {0} not in {1}".format(
+                    "ERROR: Unknown workflow component: {} not in {}".format(
                         component, valid_components
                     )
                 )
@@ -343,15 +342,15 @@ def parse_file(configFile, env, workphase):
     configFile = os.path.realpath(configFile)
     assert os.path.exists(
         configFile
-    ), "Configuration file could not be found: {0}".format(configFile)
+    ), f"Configuration file could not be found: {configFile}"
     parser = ConfigParser(
         allow_no_value=True
     )  # Parse configuration file parser = ConfigParser()
-    with io.open(configFile, "r", encoding="ascii") as configFID:
+    with open(configFile, encoding="ascii") as configFID:
         parser.read_file(configFID)
     assert parser.has_option(env, "_BUILD_DIR") or parser.has_option(
         "DEFAULT", "_BUILD_DIR"
-    ), "_BUILD_DIR option not in {0}".format(env)
+    ), f"_BUILD_DIR option not in {env}"
     environment, cluster = parse_environment(parser, env)
     experiment = parse_experiment(parser, workphase)
     pipeline = parse_nipype(parser)
@@ -373,7 +372,7 @@ def resolve_data_sink_option(args, pipeline):
     return False
 
 
-class _create_DS_runner(object):
+class _create_DS_runner:
     """
     This class represents an...
     :param object:
@@ -414,7 +413,7 @@ def get_cpus(option):
         assert option in [
             "local",
             "ds_runner",
-        ], "wfrun parse error!  Current option: {0}".format(option)
+        ], f"wfrun parse error!  Current option: {option}"
         threads = 1
         if option == "local":
             print("RUNNING WITHOUT POOL BUILDING")
@@ -436,7 +435,7 @@ def _nipype_plugin_config(wfrun, cluster, template=""):
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
 
-    assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {0}".format(
+    assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {}".format(
         wfrun
     )
     if wfrun in ["SGEGraph", "SGE"]:
@@ -450,9 +449,7 @@ def _nipype_plugin_config(wfrun, cluster, template=""):
     elif wfrun in ["local_4", "local_12"]:
         plugin_name = "MultiProc"
         proc_count = int(wfrun.split("local_")[1])
-        print(
-            ("Running with {0} parallel processes on local machine".format(proc_count))
-        )
+        print(f"Running with {proc_count} parallel processes on local machine")
         plugin_args = {"n_procs": proc_count}
     elif wfrun == "ds_runner":
         plugin_name = _create_DS_runner()
@@ -461,7 +458,7 @@ def _nipype_plugin_config(wfrun, cluster, template=""):
         assert wfrun in [
             "local",
             "ds_runner",
-        ], "You must specify a valid run environment type.  Invalid: {0}".format(wfrun)
+        ], f"You must specify a valid run environment type.  Invalid: {wfrun}"
         plugin_name = "Linear"
         plugin_args = OrderedDict()
 
@@ -492,7 +489,7 @@ def _nipype_execution_config(
 
         crashdumpTempDirName = tempfile.gettempdir()
     print("*** Note")
-    print(("    Crash file will be written to '{0}'".format(crashdumpTempDirName)))
+    print(f"    Crash file will be written to '{crashdumpTempDirName}'")
     return {
         "stop_on_first_crash": stop_crash,
         "stop_on_first_rerun": stop_rerun,

@@ -24,7 +24,7 @@ def train_classifiers(data_file, cache_dir=os.path.curdir):
     data = read_data(data_file)
     for matter in ["WM", "GM"]:
         classifier_file = os.path.join(
-            cache_dir, "Classifier", "{0}_matter_classifier.pkl".format(matter)
+            cache_dir, "Classifier", f"{matter}_matter_classifier.pkl"
         )
         if not os.path.exists(os.path.dirname(classifier_file)):
             os.makedirs(os.path.dirname(classifier_file))

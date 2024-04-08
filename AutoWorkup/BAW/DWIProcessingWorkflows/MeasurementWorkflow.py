@@ -192,7 +192,7 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
             else:
                 if totalVolume == 0:
                     raise ValueError(
-                        "Label {0} is not found in T2 labels map, but exists in DWI labels map!".format(
+                        "Label {} is not found in T2 labels map, but exists in DWI labels map!".format(
                             labelID
                         )
                     )

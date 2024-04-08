@@ -126,7 +126,7 @@ def clone_atlas_dir(cachedir, atlasdir):
     print("Searching for atlas directory in cache...")
     if not os.path.exists(new_dir):
         old_dir = validate_path(atlasdir, False, True)
-        print(("Copying new atlas {0} to cache directory...".format(old_dir)))
+        print(f"Copying new atlas {old_dir} to cache directory...")
         newfiles = copy_tree(
             old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True
         )
@@ -139,5 +139,5 @@ def clone_atlas_dir(cachedir, atlasdir):
             os.chmod(fname, stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
             assert os.path.isfile(fname)
     else:
-        print(("Atlas directory found at {0}".format(new_dir)))
+        print(f"Atlas directory found at {new_dir}")
     return new_dir

@@ -7,7 +7,7 @@ import pandas as pd
 
 def read_fiducial_points(fcsv_file: str, fiducials: list) -> dict:
     col_names = "id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID"
-    with open(fcsv_file, "r") as fid:
+    with open(fcsv_file) as fid:
         df = pd.read_csv(fid, sep=",", comment="#", names=col_names.split(","))
 
     fid_pts = {}

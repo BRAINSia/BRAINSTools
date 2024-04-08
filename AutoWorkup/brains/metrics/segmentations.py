@@ -12,7 +12,6 @@ Usage:
 from itertools import zip_longest
 
 import os.path
-from builtins import range
 
 import SimpleITK as sitk
 
@@ -71,7 +70,7 @@ def format_labels(label):
         side = "right"
     else:
         raise ValueError(
-            "Label %s is not recognized: cannot determine side %s" % (label, side)
+            f"Label {label} is not recognized: cannot determine side {side}"
         )
     label = "_".join([side, anatomy])
     return label

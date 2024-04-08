@@ -214,4 +214,4 @@ print(("\n\nRan: ", " ".join(sys.argv), "\n\n"))
 
 print(("FOUND: ", found_modules_list))
 for test_module in missing_modules_list:
-    print(("Missing Candidate Program: {prog_name}".format(prog_name=test_module)))
+    print(f"Missing Candidate Program: {test_module}")

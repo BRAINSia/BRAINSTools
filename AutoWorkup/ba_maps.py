@@ -113,8 +113,8 @@ def create_ba_maps_wf(config):
                             stats_node,
                             outputSpec,
                             [
-                                ("out_color", "{0}_thresh_color".format(hemisphere)),
-                                ("out_table", "{0}_thresh_table".format(hemisphere)),
+                                ("out_color", f"{hemisphere}_thresh_color"),
+                                ("out_table", f"{hemisphere}_thresh_table"),
                             ],
                         )
                     ]
@@ -127,8 +127,8 @@ def create_ba_maps_wf(config):
                             stats_node,
                             outputSpec,
                             [
-                                ("out_color", "{0}_color".format(hemisphere)),
-                                ("out_table", "{0}_table".format(hemisphere)),
+                                ("out_color", f"{hemisphere}_color"),
+                                ("out_table", f"{hemisphere}_table"),
                             ],
                         )
                     ]
@@ -140,8 +140,8 @@ def create_ba_maps_wf(config):
                         inputSpec,
                         node,
                         [
-                            ("{0}_sphere_reg".format(hemisphere), "sphere_reg"),
-                            ("{0}_white".format(hemisphere), "white"),
+                            (f"{hemisphere}_sphere_reg", "sphere_reg"),
+                            (f"{hemisphere}_white", "white"),
                             ("subject_id", "subject_id"),
                             ("subjects_dir", "subjects_dir"),
                         ],
@@ -160,7 +160,7 @@ def create_ba_maps_wf(config):
                         inputSpec,
                         stats_node,
                         [
-                            ("{0}_thickness".format(hemisphere), "thickness"),
+                            (f"{hemisphere}_thickness", "thickness"),
                             ("subject_id", "subject_id"),
                             ("subjects_dir", "subjects_dir"),
                             ("lh_white", "lh_white"),

@@ -89,7 +89,7 @@ class SQLiteGrabber(IOBase):
         :param **inpusts:
         """
         self._query = ""
-        super(SQLiteGrabber, self).__init__(**inputs)
+        super().__init__(**inputs)
 
     @property
     def query(self):
@@ -103,7 +103,7 @@ class SQLiteGrabber(IOBase):
         This function will...
         """
         assert os.path.splitext(self.inputs.database_file)[-1] == ".db"
-        super(SQLiteGrabber, self)._check_mandatory_inputs()
+        super()._check_mandatory_inputs()
 
     def _list_outputs(self):
         """Execute this module."""
@@ -147,18 +147,18 @@ class SQLiteGrabber(IOBase):
         query = " ".join(
             [
                 _select,
-                ", ".join(["{0}".format(c) for c in self.inputs.columns]),
-                "FROM {table}".format(table=self.inputs.table_name),
+                ", ".join([f"{c}" for c in self.inputs.columns]),
+                f"FROM {self.inputs.table_name}",
             ]
         )
         if self.inputs.constraints:
             query += " WHERE"
             for key, value in self.inputs.constraints:
                 if isinstance(value, str) or isinstance(value, str):
-                    query += " {column}='{value}'".format(column=key, value=value)
+                    query += f" {key}='{value}'"
                 elif isinstance(value, list):
-                    query += " {column} IN (".format(column=key)
-                    query += ", ".join(["'{value}'".format(value=v) for v in value])
+                    query += f" {key} IN ("
+                    query += ", ".join([f"'{v}'" for v in value])
                     query += ")"
                 query += " AND"
             query = query[:-4]  # Remove last unnecessary " AND"
@@ -202,10 +202,8 @@ def open_subject_database(
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
     else:
         print(
-            (
-                "Single_subject {0}: Using cached database, {1}".format(
-                    single_subject, subjectDatabaseFile
-                )
+            "Single_subject {}: Using cached database, {}".format(
+                single_subject, subjectDatabaseFile
             )
         )
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)

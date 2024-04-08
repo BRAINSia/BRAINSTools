@@ -200,7 +200,7 @@ def create_autorecon2(config):
             config["current_id"],
             "mri",
             "transforms",
-            "aseg_{0}.mgz".format(config["long_template"]),
+            "aseg_{}.mgz".format(config["long_template"]),
         )
 
         ar1_wf.connect(
@@ -574,7 +574,7 @@ def create_autorecon2(config):
                 config["subjects_dir"],
                 config["current_id"],
                 "surf",
-                "{0}.orig".format(hemisphere),
+                f"{hemisphere}.orig",
             )
 
             copy_template_orig_white = pe.Node(
@@ -585,7 +585,7 @@ def create_autorecon2(config):
                 config["subjects_dir"],
                 config["current_id"],
                 "surf",
-                "{0}.orig_white".format(hemisphere),
+                f"{hemisphere}.orig_white",
             )
 
             copy_template_orig_pial = pe.Node(
@@ -596,7 +596,7 @@ def create_autorecon2(config):
                 config["subjects_dir"],
                 config["current_id"],
                 "surf",
-                "{0}.orig_pial".format(hemisphere),
+                f"{hemisphere}.orig_pial",
             )
 
             # White
@@ -881,15 +881,15 @@ def create_autorecon2(config):
                         hemi_wf,
                         [
                             (
-                                "template_{0}_white".format(hemisphere),
+                                f"template_{hemisphere}_white",
                                 "Copy_Template_White.in_file",
                             ),
                             (
-                                "template_{0}_white".format(hemisphere),
+                                f"template_{hemisphere}_white",
                                 "Copy_Template_Orig_White.in_file",
                             ),
                             (
-                                "template_{0}_pial".format(hemisphere),
+                                f"template_{hemisphere}_pial",
                                 "Copy_Template_Pial.in_file",
                             ),
                         ],

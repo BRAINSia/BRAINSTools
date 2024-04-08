@@ -83,7 +83,7 @@ def patch(mesh):
     edges.BoundaryEdgesOn()
     edges.Update()
     print(
-        "{0} cells and {1} points".format(
+        "{} cells and {} points".format(
             edges.GetOutput().GetNumberOfCells(), edges.GetOutput().GetNumberOfPoints()
         )
     )
@@ -138,7 +138,7 @@ def preprocess_mesh(mesh, num_patches=10):
     edges2.Update()
     edgesPd = edges2.GetOutput()
     print(
-        "{0} cells and {1} points".format(
+        "{} cells and {} points".format(
             edgesPd.GetNumberOfCells(), edgesPd.GetNumberOfPoints()
         )
     )
@@ -179,7 +179,7 @@ def read_vtk_image(inputImage):
         imageReader = vtk.vtkNIFTIImageReader()
     else:
         print(
-            "ERROR: Input must be NIFTI image file. \n\tUnrecognized extension: {0}".format(
+            "ERROR: Input must be NIFTI image file. \n\tUnrecognized extension: {}".format(
                 img_ext
             )
         )
@@ -220,7 +220,7 @@ def mesh_2_mask(
         writer = vtk.vtkNIFTIImageWriter()
     else:
         print(
-            "ERROR: Output must be NIFTI image file. \n\tUnrecognized extension: {0}".format(
+            "ERROR: Output must be NIFTI image file. \n\tUnrecognized extension: {}".format(
                 out_ext
             )
         )
@@ -427,30 +427,30 @@ if __name__ == "__main__":
         elif o in ("-i", "--inMesh"):
             inputMesh = a
             if not os.path.isfile(inputMesh):
-                print("ERROR: {0} does not exist.".format(inputMesh))
+                print(f"ERROR: {inputMesh} does not exist.")
 
         elif o in ("-r", "--refImage"):
             refImage = a
             if not os.path.isfile(refImage):
-                print("ERROR: {0} does not exist.".format(refImage))
+                print(f"ERROR: {refImage} does not exist.")
         else:
             assert False, "unhandled option"
 
     # check inputs
     if inputMesh is not None:
-        print("Input mesh: {0}".format(inputMesh))
+        print(f"Input mesh: {inputMesh}")
     else:
         print("Error: input required for --inMesh")
         usage()
         sys.exit()
     if outputImage is not None:
-        print("Output image: {0}".format(outputImage))
+        print(f"Output image: {outputImage}")
     else:
         print("Error: input required for --outImage")
         usage()
         sys.exit()
 
-    print("Input image: {0}".format(refImage))
+    print(f"Input image: {refImage}")
 
     print("Converting mesh to mask")
-    print("Mask created: {0}".format(mesh_2_mask(inputMesh, outputImage, refImage)))
+    print(f"Mask created: {mesh_2_mask(inputMesh, outputImage, refImage)}")

@@ -204,8 +204,8 @@ def cast_to_int(image):
         elif image_max < 65535:
             return sitk.Cast(image, sitk.sitkUInt16)
     print("Could not cast image")
-    print("Max: {0}".format(image_max))
-    print("Min: {0}".format(image_min))
+    print(f"Max: {image_max}")
+    print(f"Min: {image_min}")
     return image
 
 
@@ -326,7 +326,7 @@ def get_edge_file_name(edge_name, out_dir):
     :param out_dir:
     :return:
     """
-    return os.path.join(out_dir, "{0}_edge.nii.gz".format(edge_name))
+    return os.path.join(out_dir, f"{edge_name}_edge.nii.gz")
 
 
 def get_nm_fs_scan(nm_file, name="norm.mgz"):
@@ -338,10 +338,8 @@ def get_nm_fs_scan(nm_file, name="norm.mgz"):
     :return:
     """
     subject_id = get_nm_subject_id(nm_file)
-    nm_fs_t1 = (
-        "/Shared/johnsonhj/HDNI/20150206_FS_Neuromorphometric/{0}/mri/{1}".format(
-            subject_id, name
-        )
+    nm_fs_t1 = "/Shared/johnsonhj/HDNI/20150206_FS_Neuromorphometric/{}/mri/{}".format(
+        subject_id, name
     )
     return nm_fs_t1
 
@@ -394,7 +392,7 @@ def get_nm_t1(nm_file, fs=False, cache_dir=os.getcwd()):
         in_t1 = get_nm_fs_scan(nm_file)
         out_t1 = convert_fs_scan(
             in_t1,
-            os.path.join(cache_dir, "t1_{0}.nii.gz".format(get_nm_subject_id(nm_file))),
+            os.path.join(cache_dir, f"t1_{get_nm_subject_id(nm_file)}.nii.gz"),
         )
     else:
         out_t1 = os.path.join(os.path.dirname(nm_file), "t1_average_BRAINSABC.nii.gz")
@@ -529,7 +527,7 @@ def save_data_frame(data, data_file):
     :param data_file:
     """
     if data_file.endswith(".hdf5"):
-        store = pd.HDFStore(data_file, "w", complib=str("zlib"), complevel=5)
+        store = pd.HDFStore(data_file, "w", complib="zlib", complevel=5)
         store.put("ImageData", data, data_columns=data.columns)
         store.close()
     elif data_file.endswith(".csv"):

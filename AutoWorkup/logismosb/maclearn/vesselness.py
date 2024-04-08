@@ -102,14 +102,14 @@ def compute_hessian_matrix(image, sigma):
     x_gradient, y_gradient, z_gradient = compute_directional_gradient_images(
         image, sigma=sigma
     )
-    x2_gradient, y2_gradient, z2_gradient = [
+    x2_gradient, y2_gradient, z2_gradient = (
         compute_gradient(grad, sigma=sigma)
         for grad in [x_gradient, y_gradient, z_gradient]
-    ]
-    x2_array, y2_array, z2_array = [
+    )
+    x2_array, y2_array, z2_array = (
         sitk.GetArrayFromImage(grad2)
         for grad2 in [x2_gradient, y2_gradient, z2_gradient]
-    ]
+    )
     hessian = np.stack((x2_array, y2_array, z2_array), axis=-1)
     if sigma > 0:
         return hessian * np.square(sigma)
@@ -339,8 +339,8 @@ def compute_vesselness_image_with_smoothing(
     """
     output_vesselness_image = None
     for sigma in sigmas:
-        str_sigma = "{0:.1f}".format(sigma).replace(".", "_")
-        print("--- sigma = {sigma} ---".format(sigma=str_sigma))
+        str_sigma = f"{sigma:.1f}".replace(".", "_")
+        print(f"--- sigma = {str_sigma} ---")
 
         vessel_image = compute_vesselness_image(
             image,

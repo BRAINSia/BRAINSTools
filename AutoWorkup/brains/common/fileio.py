@@ -41,7 +41,7 @@ def parse_labels_file():
     filename = _config.get("Resources", "label_template")
     fullname = check_file(os.path.join(build_tree, filename))
     labelDict = OrderedDict()
-    with open(fullname, "r") as fid:
+    with open(fullname) as fid:
         for line in fid.readlines():
             if line[0] != "#":
                 parts = line.split(" ")

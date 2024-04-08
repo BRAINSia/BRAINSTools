@@ -1,5 +1,3 @@
-from builtins import str
-
 #
 # script to download DICOM files, convert them and compare them
 # with the already converted files in /paulsen/MRx
@@ -53,7 +51,7 @@ def write_nrrds_to_file(file_name):
 # read in cached file list
 def get_all_nrrds_from_file(file_name):
     nrrds = []
-    with open(file_name, "rU") as fn:
+    with open(file_name) as fn:
         for f in fn:
             nrrds.append(f.rstrip())
     print((file_name, " size ", len(nrrds)))

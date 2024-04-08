@@ -13,13 +13,10 @@ import csv
 import os
 import sqlite3 as lite
 import sys
-from builtins import object
-from builtins import range
-from builtins import str
 from collections import OrderedDict
 
 
-class SessionDB(object):
+class SessionDB:
     """This class represents a..."""
 
     def __init__(self, defaultDBName="TempFileForDB.db", subject_list=[]):
@@ -103,12 +100,10 @@ class SessionDB(object):
         sqlCommandList = list()
         missingFilesLog = self.dbName + "_MissingFiles.log"
         missingCount = 0
-        print(("MISSING FILES RECORED IN {0}".format(missingFilesLog)))
+        print(f"MISSING FILES RECORED IN {missingFilesLog}")
         missingFiles = open(missingFilesLog, "w")
-        print(("Building Subject returnList: " + subject_data_file))
-        subjData = csv.reader(
-            open(subject_data_file, "rt"), delimiter=",", quotechar='"'
-        )
+        print("Building Subject returnList: " + subject_data_file)
+        subjData = csv.reader(open(subject_data_file), delimiter=",", quotechar='"')
         allEntriesOK = True
         for row in subjData:
             if len(row) < 1:
@@ -128,10 +123,8 @@ class SessionDB(object):
                 dictionary_keys = list(rawDict.keys())
                 if not (("T1-15" in dictionary_keys) or ("T1-30" in dictionary_keys)):
                     print(
-                        (
-                            "ERROR: Skipping session {0} due to missing T1's: {1}".format(
-                                currDict, dictionary_keys
-                            )
+                        "ERROR: Skipping session {} due to missing T1's: {}".format(
+                            currDict, dictionary_keys
                         )
                     )
                     print("REMOVE OR FIX BEFORE CONTINUING")
@@ -140,23 +133,21 @@ class SessionDB(object):
                     currDict["type"] = imageType
                     fullPaths = [mountPrefix + i for i in rawDict[imageType]]
                     if len(fullPaths) < 1:
-                        print(("Invalid Entry!  {0}".format(currDict)))
+                        print(f"Invalid Entry!  {currDict}")
                         validEntry = False
                     for i in range(len(fullPaths)):
                         imagePath = fullPaths[i]
                         if not os.path.exists(imagePath):
                             print(
-                                (
-                                    "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {0}\n".format(
-                                        imagePath
-                                    )
+                                "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX  Missing File: {}\n".format(
+                                    imagePath
                                 )
                             )
-                            missingFiles.write("Missing File: {0}\n".format(imagePath))
+                            missingFiles.write(f"Missing File: {imagePath}\n")
                             validEntry = False
                             missingCount += 1
                         else:
-                            print(("Found file {0}".format(imagePath)))
+                            print(f"Found file {imagePath}")
                         if validEntry is True:
                             currDict["Qpos"] = str(i)
                             currDict["filename"] = imagePath
@@ -171,7 +162,7 @@ class SessionDB(object):
             if os.path.exists(self.dbName):
                 os.remove(self.dbName)
             missingFiles.close()
-            print(("ABORTING: At least 1 missing file\n" * 20))
+            print("ABORTING: At least 1 missing file\n" * 20)
             sys.exit(-1)
         else:
             missingFiles.write("NO_MISSING_FILES")

@@ -170,4 +170,4 @@ DWI_AutoProcess.write_graph()
 DWI_AutoProcess.run()
 
 x = BRAINSResample()
-print((x.inputs))
+print(x.inputs)

@@ -61,15 +61,17 @@ NewVTKDependantCopyrightNotice = """/*==========================================
 
 ## Patterns that match the old copyright notice sections
 ## ITK only copyright
-ITKOnlyOldHeader = """ */\* *==.*Program:.*Insight Segmentation & Registration Toolkit.*Copyright .* Insight.*Consortium. All rights reserved.*See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.[\n\r ]*This software is distributed WITHOUT ANY WARRANTY; without even.*the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR.*PURPOSE.  See the above copyright notices for more information.*=== *\*/[\n\r ]*"""
+ITKOnlyOldHeader = """ */\\* *==.*Program:.*Insight Segmentation & Registration Toolkit.*Copyright .* Insight.*Consortium. All rights reserved.*See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.[\n\r ]*This software is distributed WITHOUT ANY WARRANTY; without even.*the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR.*PURPOSE.  See the above copyright notices for more information.*=== *\\*/[\n\r ]*"""
 ITKOnlyOldRE = re.compile(ITKOnlyOldHeader, re.MULTILINE | re.DOTALL | re.IGNORECASE)
 
 ## Files that originated in VTK, and now have ITK also
-ITKVTKOldHeader = """ */\* *==.*Program:.*Insight Segmentation & Registration Toolkit.*Copyright .* Insight Software Consortium. All rights reserved.*See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.[\n\r ]*.*VTKCopyright.txt.*This software is distributed WITHOUT ANY WARRANTY; without even.*the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR.*PURPOSE.  See the above copyright notices for more information.*=== *\*/[\n\r ]*"""
+ITKVTKOldHeader = """ */\\* *==.*Program:.*Insight Segmentation & Registration Toolkit.*Copyright .* Insight Software Consortium. All rights reserved.*See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.[\n\r ]*.*VTKCopyright.txt.*This software is distributed WITHOUT ANY WARRANTY; without even.*the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR.*PURPOSE.  See the above copyright notices for more information.*=== *\\*/[\n\r ]*"""
 ITKVTKOldRE = re.compile(ITKVTKOldHeader, re.MULTILINE | re.DOTALL | re.IGNORECASE)
 
 ## Looking for new files.
-NewITKHeader = """ */\* *==.*http://www.apache.org/licenses/LICENSE-2.0.txt.*=== *\*/"""
+NewITKHeader = (
+    r""" */\* *==.*http://www.apache.org/licenses/LICENSE-2.0.txt.*=== *\*/"""
+)
 NewITKHeaderRE = re.compile(NewITKHeader, re.MULTILINE | re.DOTALL | re.IGNORECASE)
 
 eolSpaceRemove = re.compile(r"  *$", re.MULTILINE)
@@ -89,7 +91,7 @@ ExtensionsThatNeedCopyright = [".cxx", ".c", ".h", ".hxx"]
 ############
 
 if len(sys.argv) != 2:
-    print(("USAGE:  {0} <Top of ITK tree to process>".format(sys.argv[0])))
+    print(f"USAGE:  {sys.argv[0]} <Top of ITK tree to process>")
     sys.exit(-1)
 
 HeadOfITKTree = sys.argv[1]
@@ -115,7 +117,7 @@ for top, directory, files in os.walk(HeadOfITKTree):
         currFile = os.path.join(top, ff)
         print(currFile)
 
-        infile = open(currFile, "r")
+        infile = open(currFile)
         file_text = infile.read()
         newstring = (
             file_text  # default output to input, just in case all search patterns fail
@@ -125,7 +127,7 @@ for top, directory, files in os.walk(HeadOfITKTree):
         substitutionMade = 0
         testITKOnlySearch = ITKOnlyOldRE.search(file_text)
         if testITKOnlySearch:
-            print(("{0} is ITKOnlyHeader".format(currFile)))
+            print(f"{currFile} is ITKOnlyHeader")
             newstring = ITKOnlyOldRE.sub(NewITKCopyrightNotice, file_text)
             newstring = eolSpaceRemove.sub(
                 "", newstring
@@ -134,7 +136,7 @@ for top, directory, files in os.walk(HeadOfITKTree):
 
         testITKVTKSearch = ITKVTKOldRE.search(file_text)
         if testITKVTKSearch:
-            print(("{0} is VTKITKHeader".format(currFile)))
+            print(f"{currFile} is VTKITKHeader")
             newstring = ITKVTKOldRE.sub(
                 NewITKCopyrightNotice + NewVTKDependantCopyrightNotice, file_text
             )
@@ -150,9 +152,9 @@ for top, directory, files in os.walk(HeadOfITKTree):
                 file_text
             )  # see if new CopyRight notice already exists.
             if testNewITKHeaderRE:
-                print(("Already Processed {0}".format(currFile)))
+                print(f"Already Processed {currFile}")
             elif substitutionMade == 0:
-                print(("{0} needed copyright header.".format(currFile)))
+                print(f"{currFile} needed copyright header.")
                 newstring = NewITKCopyrightNotice + file_text
                 newstring = eolSpaceRemove.sub(
                     "", newstring

@@ -10,8 +10,6 @@ Usage:
 """
 
 import os
-from builtins import object
-from builtins import range
 from xml.etree import ElementTree as et
 
 from nipype.interfaces.base import (
@@ -25,7 +23,7 @@ from nipype.interfaces.semtools.segmentation.specialized import (
 )
 
 
-class GetPosteriorsFromAtlasXML(object):
+class GetPosteriorsFromAtlasXML:
     """
     This class represents a...
     """
@@ -70,9 +68,7 @@ class GetPosteriorsFromAtlasXML(object):
     def get_posterior_file_name_list(self, posteriorTemplate):
         posteriorFileNameList = list()
         for priorType in self.priorTypeNameList:
-            posteriorFileNameList.append(
-                "POSTERIOR_{priorT}.nii.gz".format(priorT=priorType)
-            )
+            posteriorFileNameList.append(f"POSTERIOR_{priorType}.nii.gz")
             ## HACK:  The following is correct from the command line posteriorTemplate arguments
             # posteriorFileNameList.append(posteriorTemplate % priorType)
         return posteriorFileNameList
@@ -130,7 +126,7 @@ class BRAINSABCext(BRAINSABC):
         for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
-        outputs = super(BRAINSABCext, self)._outputs_from_inputs(pruned_outputs)
+        outputs = super()._outputs_from_inputs(pruned_outputs)
         input_check = OrderedDict(
             {
                 "T1": ("outputT1AverageImage", "t1_average_BRAINSABC.nii.gz"),

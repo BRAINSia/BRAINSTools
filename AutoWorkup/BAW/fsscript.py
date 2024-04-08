@@ -15,7 +15,6 @@ import argparse
 import os
 import shutil
 import subprocess
-from builtins import str
 
 import SimpleITK as sitk
 
@@ -55,18 +54,12 @@ def is_first_newer_than_second(firstFile, secondFile):
         print(("ERROR: image missing", firstFile))
         return True
     if not os.path.exists(secondFile):
-        print(("Returning True because file is missing:  {0}".format(secondFile)))
+        print(f"Returning True because file is missing:  {secondFile}")
         return True
     image_time = os.path.getmtime(firstFile)
     reference_time = os.path.getmtime(secondFile)
     if image_time > reference_time:
-        print(
-            (
-                "Returning True because {0} is newer than {1}".format(
-                    firstFile, secondFile
-                )
-            )
-        )
+        print(f"Returning True because {firstFile} is newer than {secondFile}")
         return True
     return False
 
@@ -332,10 +325,8 @@ exit $status
     script_name_stdout = script_name + "_out"
     script_name_stdout_fid = open(script_name_stdout, "w")
     print(
-        (
-            "Starting auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, subj_session_id
-            )
+        "Starting auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, subj_session_id
         )
     )
     scriptStatus = subprocess.check_call(
@@ -347,10 +338,8 @@ exit $status
     if scriptStatus != 0:
         sys.exit(scriptStatus)
     print(
-        (
-            "Ending auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, subj_session_id
-            )
+        "Ending auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, subj_session_id
         )
     )
     script_name_stdout_fid.close()
@@ -370,20 +359,18 @@ def run_subject_template(args, FREESURFER_HOME, FS_SCRIPT):
     base_template_id = args.base_template_id
     list_all_subj_session_ids = args.list_all_subj_session_ids
     subjects_dir = args.subjects_dir
-    print(("X" * 80))
-    print(("base_template_id :{0}:".format(base_template_id)))
+    print("X" * 80)
+    print(f"base_template_id :{base_template_id}:")
     print(
-        (
-            "Input a list of list_all_subj_session_ids :{0}:".format(
-                list_all_subj_session_ids
-            )
+        "Input a list of list_all_subj_session_ids :{}:".format(
+            list_all_subj_session_ids
         )
     )
-    print(("subjects_dir :{0}:".format(subjects_dir)))
-    print(("X" * 80))
+    print(f"subjects_dir :{subjects_dir}:")
+    print("X" * 80)
     assert isinstance(
         list_all_subj_session_ids, list
-    ), "Must input a list of list_all_subj_session_ids :{0}:".format(
+    ), "Must input a list of list_all_subj_session_ids :{}:".format(
         list_all_subj_session_ids
     )
     StageToRun = "Within-SubjectTemplate"
@@ -396,7 +383,7 @@ def run_subject_template(args, FREESURFER_HOME, FS_SCRIPT):
     prev_sessions = list()
     if os.path.exists(base_tempate_list):
         # print "XXX Opening ", base_tempate_list
-        ff = open(base_tempate_list, "r")
+        ff = open(base_tempate_list)
         # print "XXX Reading lines"
         prev_sessions = ff.readlines()
         # print prev_sessions
@@ -406,7 +393,7 @@ def run_subject_template(args, FREESURFER_HOME, FS_SCRIPT):
     reset_template_directory = False
 
     for subj_session_id in list_all_subj_session_ids:
-        allTimePointFlags += " -tp {timepoint}".format(timepoint=subj_session_id)
+        allTimePointFlags += f" -tp {subj_session_id}"
         if subj_session_id not in prev_sessions:
             reset_template_directory = True
 
@@ -460,10 +447,8 @@ exit $status
     script_name_stdout = script_name + "_out"
     script_name_stdout_fid = open(script_name_stdout, "w")
     print(
-        (
-            "Starting auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, base_template_id
-            )
+        "Starting auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, base_template_id
         )
     )
     scriptStatus = subprocess.check_call(
@@ -475,10 +460,8 @@ exit $status
     if scriptStatus != 0:
         sys.exit(scriptStatus)
     print(
-        (
-            "Ending auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, base_template_id
-            )
+        "Ending auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, base_template_id
         )
     )
     script_name_stdout_fid.close()
@@ -498,7 +481,7 @@ def run_longitudinal(args, FREESURFER_HOME, FS_SCRIPT):
     base_template_id = args.base_template_id
     assert isinstance(
         subj_session_id, str
-    ), "Must input a singel subj_session_id as string :{0}:".format(subj_session_id)
+    ), f"Must input a singel subj_session_id as string :{subj_session_id}:"
     StageToRun = "Longitudinal"
     FS_SCRIPT_FN = os.path.join(FREESURFER_HOME, FS_SCRIPT)
     auto_recon_script = """#!/bin/bash
@@ -539,10 +522,8 @@ exit $status
     script_name_stdout = script_name + "_out"
     script_name_stdout_fid = open(script_name_stdout, "w")
     print(
-        (
-            "Starting auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, base_template_id
-            )
+        "Starting auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, base_template_id
         )
     )
     scriptStatus = subprocess.check_call(
@@ -554,10 +535,8 @@ exit $status
     if scriptStatus != 0:
         sys.exit(scriptStatus)
     print(
-        (
-            "Ending auto_recon Stage: {0} for SubjectSession {1}".format(
-                StageToRun, base_template_id
-            )
+        "Ending auto_recon Stage: {} for SubjectSession {}".format(
+            StageToRun, base_template_id
         )
     )
     script_name_stdout_fid.close()
@@ -638,7 +617,7 @@ if __name__ == "__main__":
         local_FREESURFER_HOME = os.environ["FREESURFER_HOME"]
         if not os.path.exists(local_FREESURFER_HOME):
             raise Exception(
-                "INVALID PATH FOR FREESURFER HOME :{0}:".format(local_FREESURFER_HOME)
+                f"INVALID PATH FOR FREESURFER HOME :{local_FREESURFER_HOME}:"
             )
         # local_FS_SCRIPT = os.path.join(local_FREESURFER_HOME,'FreeSurferEnv.sh')
         local_FS_SCRIPT = "FreeSurferEnv.sh"

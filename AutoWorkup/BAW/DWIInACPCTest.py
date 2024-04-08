@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # <nbformat>3.0</nbformat>
 
 # <markdowncell>
@@ -338,7 +337,7 @@ import multiprocessing
 
 total_CPUS = multiprocessing.cpu_count()
 NUMPARALLEL = 1
-os.environ["NSLOTS"] = "{0}".format(total_CPUS / NUMPARALLEL)
+os.environ["NSLOTS"] = f"{total_CPUS / NUMPARALLEL}"
 
 MasterDWIWorkflow.write_graph()
 

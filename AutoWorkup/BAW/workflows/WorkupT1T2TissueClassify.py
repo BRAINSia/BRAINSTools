@@ -9,7 +9,6 @@ Author:
 Usage:
 
 """
-from builtins import zip
 
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.utility import Function, IdentityInterface

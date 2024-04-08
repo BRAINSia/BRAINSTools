@@ -11,9 +11,6 @@ Usage:
 """
 
 
-from builtins import range
-from builtins import str
-
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
@@ -58,7 +55,7 @@ def make_vector(inFN1, inFN2=None, jointFusion=False):
     if jointFusion:
         returnVector = [returnVector]
 
-    print(("jointFusion: " + str(jointFusion)))
+    print("jointFusion: " + str(jointFusion))
     print(returnVector)
     print("============================================")
     return returnVector
@@ -99,7 +96,7 @@ def read_recoding_list(recodeLabelFilename):
     recodeLabelPairList = []
     import csv
 
-    with open(recodeLabelFilename, "r") as f:
+    with open(recodeLabelFilename) as f:
         reader = csv.reader(f, delimiter=",")
         for line in reader:
             if line[0].startswith("#"):
@@ -128,7 +125,7 @@ def read_malf_atlas_db_base(dictionaryFilename):
     # scanID, ['atlasID', 't1', 't2' ,'label', 'lmks']
     import ast
 
-    with open(dictionaryFilename, "r") as f:
+    with open(dictionaryFilename) as f:
         for line in f.readlines():
             scanID, scanDict = ast.literal_eval(line)
             jointFusionAtlasDict[scanID] = scanDict
@@ -274,7 +271,7 @@ def create_joint_fusion_workflow(
     print("master_config")
     print(master_config)
     print("master_config['jointfusion_atlas_db_base']")
-    print((master_config["jointfusion_atlas_db_base"]))
+    print(master_config["jointfusion_atlas_db_base"])
     jointFusionAtlasDict = read_malf_atlas_db_base(
         master_config["jointfusion_atlas_db_base"]
     )
@@ -336,7 +333,7 @@ def create_joint_fusion_workflow(
             name="BLI_" + jointFusion_atlas_subject,
         )
         BLICreator[jointFusion_atlas_subject].inputs.outputTransformFilename = (
-            "landmarkInitializer_{0}_to_subject_transform.h5".format(
+            "landmarkInitializer_{}_to_subject_transform.h5".format(
                 jointFusion_atlas_subject
             )
         )

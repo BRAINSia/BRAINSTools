@@ -8,9 +8,6 @@ Usage:
 
 """
 
-from builtins import range
-from builtins import zip
-
 
 def make_atlas_node(atlasDirectory, name, atlasParts):
     """
@@ -49,7 +46,7 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
         "W_ExtraSupport",
     ]
     for ap in atlasParts:
-        assert ap in valid_choices, "ERROR: Invalid choice: {0} not in {1}".format(
+        assert ap in valid_choices, "ERROR: Invalid choice: {} not in {}".format(
             ap, valid_choices
         )
 
@@ -133,7 +130,7 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
     # node.inputs.raise_on_empty = True
     node.inputs.template = "*"
     ## Prefix every filename with atlasDirectory
-    atlas_search_paths = ["{0}".format(fn) for fn in atlas_file_names]
+    atlas_search_paths = [f"{fn}" for fn in atlas_file_names]
     node.inputs.field_template = OrderedDict(
         list(zip(atlas_file_keys, atlas_search_paths))
     )
@@ -210,7 +207,7 @@ def create_atlas_xml_and_cleaned_deformed_averages(
         "AVG_template_WMPM2_labels.nii.gz": "IGNORED",
         "AVG_template_rightHemisphere.nii.gz": "IGNORED",
     }
-    templateFile = open(AtlasTemplate, "r")
+    templateFile = open(AtlasTemplate)
     xmlAtlasFileContents = templateFile.read()  # read entire file into memory
     templateFile.close()
 
@@ -225,7 +222,7 @@ def create_atlas_xml_and_cleaned_deformed_averages(
         if base_name in list(patternDict.keys()):
             load_images_list[base_name] = sitk.ReadImage(full_pathname)
         else:
-            print(("MISSING FILE FROM patternDict: {0}".format(base_name)))
+            print(f"MISSING FILE FROM patternDict: {base_name}")
     ## Make binary dilated mask
     binmask = sitk.BinaryThreshold(load_images_list["AVG_BRAINMASK.nii.gz"], 1, 1000000)
     brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
@@ -324,17 +321,15 @@ def create_atlas_xml_and_cleaned_deformed_averages(
             import sys
 
             print(
-                (
-                    "ERROR: basename {0} not in list!! \n{1}".format(
-                        base_name,
-                        [
-                            "AVG_BRAINMASK.nii.gz",
-                            "AVG_T2.nii.gz",
-                            "AVG_PD.nii.gz",
-                            interiorPriors,
-                            exteriorPriors,
-                        ],
-                    )
+                "ERROR: basename {} not in list!! \n{}".format(
+                    base_name,
+                    [
+                        "AVG_BRAINMASK.nii.gz",
+                        "AVG_T2.nii.gz",
+                        "AVG_PD.nii.gz",
+                        interiorPriors,
+                        exteriorPriors,
+                    ],
                 )
             )
             sys.exit(-1)

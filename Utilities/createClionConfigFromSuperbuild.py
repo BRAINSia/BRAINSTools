@@ -27,7 +27,7 @@ if len(sys.argv) > 1:
 else:
     usage()
 
-with open(input_cache_file_from_superbuild, "r") as fid:
+with open(input_cache_file_from_superbuild) as fid:
     lines = fid.readlines()
 
 
@@ -54,4 +54,4 @@ for k, v in list(options_dict.items()):
     if k in skip_cmake_directives_list:
         continue
     if len(v[1]) > 0 and v[1] != '""':
-        print(('-D{0}:{1}="{2}"'.format(k, v[0], v[1])))
+        print(f'-D{k}:{v[0]}="{v[1]}"')

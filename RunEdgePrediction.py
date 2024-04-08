@@ -42,10 +42,10 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id from 
     posterior_files = dict()
     for name in ["CSF", "VB", "CRBLWM", "CRBLGM", "SURFGM", "WM"]:
         posterior_files[name] = os.path.join(
-            tissue_classify_directory, "POSTERIOR_{0}.nii.gz".format(name)
+            tissue_classify_directory, f"POSTERIOR_{name}.nii.gz"
         )
         if not os.path.exists(posterior_files[name]):
-            print("FILE NOT FOUND: {0}".format(posterior_files[name]))
+            print(f"FILE NOT FOUND: {posterior_files[name]}")
             sys.exit()
 
     abc_file = os.path.join(
@@ -59,7 +59,7 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id from 
     direction_files = dict()
     for name in ["rho", "phi", "theta"]:
         direction_files[name] = os.path.join(
-            subject_directory, "WarpedAtlas2Subject", "{0}.nii.gz".format(name)
+            subject_directory, "WarpedAtlas2Subject", f"{name}.nii.gz"
         )
 
     lh_white_surface_file = os.path.join(
@@ -70,16 +70,16 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id from 
     )
 
     logb_wf = create_logismosb_machine_learning_workflow()
-    wf = Workflow("MachineLearning_Baseline_{0}".format(session_id))
+    wf = Workflow(f"MachineLearning_Baseline_{session_id}")
     datasink = Node(DataSink(), name="DataSink")
     datasink.inputs.base_directory = os.path.join(results_dir, session_id)
     for hemisphere in ("lh", "rh"):
         for matter in ("gm", "wm"):
             wf.connect(
                 logb_wf,
-                "output_spec.{0}_{1}surface_file".format(hemisphere, matter),
+                f"output_spec.{hemisphere}_{matter}surface_file",
                 datasink,
-                "EdgePrediction.@{0}_{1}".format(hemisphere, matter),
+                f"EdgePrediction.@{hemisphere}_{matter}",
             )
 
     logb_wf.inputs.input_spec.t1_file = t1_file

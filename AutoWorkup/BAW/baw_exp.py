@@ -25,9 +25,6 @@ Usage:
 from future import standard_library
 
 standard_library.install_aliases()
-from builtins import str
-from builtins import range
-from builtins import object
 import os
 import sys
 import traceback
@@ -64,10 +61,8 @@ def open_subject_database(
         ExperimentDatabase.make_new_db(subject_data_file, mountPrefix)
     else:
         print(
-            (
-                "Single_subject {0}: Using cached database, {1}".format(
-                    single_subject, subjectDatabaseFile
-                )
+            "Single_subject {}: Using cached database, {}".format(
+                single_subject, subjectDatabaseFile
             )
         )
         ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
@@ -111,7 +106,7 @@ def do_single_subject_processing(sp_args):
 
     while time.time() < start_time:
         time.sleep(start_time - time.time() + 1)
-        print(("Delaying start for {0}".format(subjectid)))
+        print(f"Delaying start for {subjectid}")
 
     list_with_one_subject = [subjectid]
     ExperimentDatabase = open_subject_database(
@@ -218,7 +213,7 @@ def do_single_subject_processing(sp_args):
             baw200.run(plugin="MultiProc", plugin_args={"n_procs": 12})
         elif input_arguments.wfrun == "ds_runner":
 
-            class ds_runner(object):
+            class ds_runner:
                 def run(self, graph, **kwargs):
                     for node in graph.nodes():
                         if "_ds" in node.name.lower():
@@ -237,10 +232,10 @@ def do_single_subject_processing(sp_args):
             print(
                 "You must specify the run environment type. [helium_all.q,helium_all.q_graph,ipl_OSX,local_4,local_12,local]"
             )
-            print((input_arguments.wfrun))
+            print(input_arguments.wfrun)
             sys.exit(-1)
     except:
-        print(("ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {0}".format(subjectid)))
+        print(f"ERROR: EXCEPTION CAUGHT IN RUNNING SUBJECT {subjectid}")
         traceback.print_exc(file=sys.stdout)
         return False
     return True
@@ -351,7 +346,7 @@ def master_processing_controller(argv=None):
 
     try:
         verify_empty_freesurfer_env()
-    except EnvironmentError:
+    except OSError:
         raise
 
     # Define platform specific output write paths
@@ -362,7 +357,7 @@ def master_processing_controller(argv=None):
     if "input_results" in list(experiment.keys()):
         assert os.path.exists(
             experiment["input_results"]
-        ), "The previous experiment directory does not exist: {0}".format(
+        ), "The previous experiment directory does not exist: {}".format(
             experiment["input_results"]
         )
 
@@ -388,7 +383,7 @@ def master_processing_controller(argv=None):
         PreviousBaseDirectoryResults = PreviousBaseDirectoryPrefix + "_Results"
         assert os.path.exists(
             PreviousBaseDirectoryResults
-        ), "The previous experiment directory does not exist: {0}".format(
+        ), "The previous experiment directory does not exist: {}".format(
             PreviousBaseDirectoryResults
         )
     else:
@@ -398,7 +393,7 @@ def master_processing_controller(argv=None):
     #    The ATLAS pathing must stay constant
     ATLASPATH = expConfig.get(input_arguments.processingEnvironment, "ATLASPATH")
     if not os.path.exists(ATLASPATH):
-        print(("ERROR:  Invalid Path for Atlas: {0}".format(ATLASPATH)))
+        print(f"ERROR:  Invalid Path for Atlas: {ATLASPATH}")
         sys.exit(-1)
     CACHE_ATLASPATH = os.path.realpath(
         os.path.join(ExperimentBaseDirectoryCache, "Atlas")
@@ -407,10 +402,8 @@ def master_processing_controller(argv=None):
 
     if not os.path.exists(CACHE_ATLASPATH):
         print(
-            (
-                "Copying a reference of the atlas to the experiment cache directory:\n    from: {0}\n    to: {1}".format(
-                    ATLASPATH, CACHE_ATLASPATH
-                )
+            "Copying a reference of the atlas to the experiment cache directory:\n    from: {}\n    to: {}".format(
+                ATLASPATH, CACHE_ATLASPATH
             )
         )
         copy_tree(ATLASPATH, CACHE_ATLASPATH, preserve_mode=1, preserve_times=1)
@@ -423,10 +416,8 @@ def master_processing_controller(argv=None):
         )
     else:
         print(
-            (
-                "Atlas already exists in experiment cache directory: {0}".format(
-                    CACHE_ATLASPATH
-                )
+            "Atlas already exists in experiment cache directory: {}".format(
+                CACHE_ATLASPATH
             )
         )
 
@@ -481,7 +472,7 @@ def master_processing_controller(argv=None):
     for subjectid in to_do_subjects:
         delay = 2.5 * subj_index
         subj_index += 1
-        print(("START DELAY: {0}".format(delay)))
+        print(f"START DELAY: {delay}")
         sp_args = (
             CACHE_ATLASPATH,
             CLUSTER_QUEUE,
@@ -516,9 +507,9 @@ def master_processing_controller(argv=None):
 
         for indx in range(0, len(sp_args_list)):
             if all_results[indx] is False:
-                print(("FAILED for {0}".format(sp_args_list[indx][-1])))
+                print(f"FAILED for {sp_args_list[indx][-1]}")
 
-    print(("THIS RUN OF BAW FOR SUBJS {0} HAS COMPLETED".format(to_do_subjects)))
+    print(f"THIS RUN OF BAW FOR SUBJS {to_do_subjects} HAS COMPLETED")
     return 0
 
 

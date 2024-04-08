@@ -133,7 +133,7 @@ def get_surf(surf_dir, hemisphere, surf):
     :param surf:
     :return:
     """
-    return os.path.join(surf_dir, "{0}.{1}".format(hemisphere, surf))
+    return os.path.join(surf_dir, f"{hemisphere}.{surf}")
 
 
 def get_white(surf_dir, hemisphere):
@@ -299,7 +299,7 @@ def get_thickness_file(subjects_dir, subject_id, hemisphere):
     white, pial = get_white_and_pial(surf_dir, hemisphere)
     thickness = calculate_distance(white, pial)
     return write_vtk_file(
-        thickness, os.path.join(surf_dir, "{0}_thickness.vtk".format(hemisphere))
+        thickness, os.path.join(surf_dir, f"{hemisphere}_thickness.vtk")
     )
 
 

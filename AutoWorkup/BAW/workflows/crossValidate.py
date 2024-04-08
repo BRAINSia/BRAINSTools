@@ -33,8 +33,6 @@ PIPELINE
 
 
 import os.path
-from builtins import range
-from builtins import str
 
 from nipype.interfaces.ants.segmentation import JointFusion
 from nipype.interfaces.base import (
@@ -79,10 +77,10 @@ def sample_crossvalidation_set(length, test_size):
                 train.remove(y)
             except ValueError:
                 raise ValueError(
-                    "List test size is not evenly divisible by N({0})".format(test_size)
+                    f"List test size is not evenly divisible by N({test_size})"
                 )
         subsample_data_index.append({"train": train, "test": test})
-    print(("=" * 80))
+    print("=" * 80)
     print(subsample_data_index)
     return subsample_data_index
 
@@ -117,7 +115,7 @@ def write_cvsubset_file(
     import csv
 
     csv_data = []
-    with open(csv_file, mode="r") as infile:
+    with open(csv_file) as infile:
         reader = csv.DictReader(infile, skipinitialspace=True)
         for row in reader:
             csv_data.append(row)
@@ -149,16 +147,16 @@ def write_cvsubset_file(
 
     subset_no = 1
     for subset in cv_subsets:
-        print(("-" * 80))
-        print((" Creat a subset workflow Set " + str(subset_no)))
-        print(("-" * 80))
+        print("-" * 80)
+        print(" Creat a subset workflow Set " + str(subset_no))
+        print("-" * 80)
         trainData = [csv_data[i] for i in subset["train"]]
         testData = [csv_data[i] for i in subset["test"]]
 
         print([(trainData[i])["id"] for i in range(len(trainData))])
 
         for testSession in testData:
-            JointFusionWFName = "JointFusion_Set{0}_{1}".format(
+            JointFusionWFName = "JointFusion_Set{}_{}".format(
                 subset_no, testSession["id"]
             )
             myJointFusion = create_joint_fusion_workflow(
@@ -169,7 +167,7 @@ def write_cvsubset_file(
                 runFixFusionLabelMap=False,
             )
 
-            testSessionName = "testSessionSpec_Set{0}_{1}".format(
+            testSessionName = "testSessionSpec_Set{}_{}".format(
                 subset_no, testSession["id"]
             )
             testSessionSpec = pe.Node(
@@ -237,10 +235,10 @@ def write_cvsubset_file(
             """
             DataSink
             """
-            dsName = "DataSink_DS_Set{0}_{1}".format(subset_no, testSession["id"])
+            dsName = "DataSink_DS_Set{}_{}".format(subset_no, testSession["id"])
             DataSink = pe.Node(name=dsName, interface=nio.DataSink())
             DataSink.overwrite = master_config["ds_overwrite"]
-            DataSink.inputs.container = "CV_Set{0}/{1}".format(
+            DataSink.inputs.container = "CV_Set{}/{}".format(
                 subset_no, testSession["id"]
             )
             DataSink.inputs.base_directory = master_config["resultdir"]
@@ -294,7 +292,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         :param **kwargs:
         :return:
         """
-        super(CrossValidationJointFusionWorkflow, self).__init__(name=name, **kwargs)
+        super().__init__(name=name, **kwargs)
         self.csv_file = File(value=os.path.abspath(csv_file), exists=True)
         self.hasHeader = traits.Bool(hasHeader)
         self.sample_size = traits.Int(size)
@@ -309,13 +307,13 @@ class CrossValidationJointFusionWorkflow(Workflow):
         csvReader.inputs.header = self.hasHeader.default_value
         csvOut = csvReader.run()
 
-        print(("=" * 80))
-        print((csvOut.outputs.__dict__))
-        print(("=" * 80))
+        print("=" * 80)
+        print(csvOut.outputs.__dict__)
+        print("=" * 80)
 
         iters = OrderedDict()
         label = list(csvOut.outputs.__dict__.keys())[0]
-        result = eval("csvOut.outputs.{0}".format(label))
+        result = eval(f"csvOut.outputs.{label}")
         iters["tests"], iters["trains"] = sample_crossvalidation_set(
             result, self.sample_size.default_value
         )
@@ -422,7 +420,7 @@ class FusionLabelWorkflow(Workflow):
         :param kwargs:
         :return:
         """
-        super(FusionLabelWorkflow, self).__init__(name=name, **kwargs)
+        super().__init__(name=name, **kwargs)
         self.create()
         # self.connect = None  # Don't allow instances to add to workflow
 
@@ -436,7 +434,7 @@ class FusionLabelWorkflow(Workflow):
         :return:
         """
         try:
-            super(FusionLabelWorkflow, self).connect(*args, **kwargs)
+            super().connect(*args, **kwargs)
         except:
             from pprint import pprint
 
@@ -531,7 +529,7 @@ if __name__ == "__main__":
 
     argv = docopt(__doc__, version="1.1")
     print(argv)
-    print(("=" * 100))
+    print("=" * 100)
     from AutoWorkup import setup_environment
 
     if argv["--test"]:

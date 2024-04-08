@@ -72,7 +72,7 @@ def main(
     if outdir is not None:
         EXPERIMENT = EXPERIMENT.rstrip(os.path.sep)
         outdir = os.path.join(outdir, os.path.basename(EXPERIMENT))
-    with open(REPORT, "r") as iid, open(OUTFILE, "w") as oid:
+    with open(REPORT) as iid, open(OUTFILE, "w") as oid:
         report_reader = csv.DictReader(iid, delimiter=",", quotechar='"')
         writer = None
         for row in report_reader:
@@ -99,7 +99,7 @@ def main(
                 try:
                     assert (
                         len(os.listdir(outpath)) > 2
-                    ), "{0} doesn't have enough files".format(outpath)
+                    ), f"{outpath} doesn't have enough files"
                 except AssertionError:
                     try:
                         fname = os.path.join(path, "t1_average_BRAINSABC.nii.gz")

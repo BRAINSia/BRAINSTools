@@ -14,11 +14,9 @@ import csv
 import os
 import sqlite3 as lite
 import textwrap
-from builtins import object
-from builtins import str
 
 
-class UpdateAutoWorkup(object):
+class UpdateAutoWorkup:
     """This class represents a..."""
 
     def update_auto_workup(self):
@@ -61,13 +59,11 @@ class UpdateAutoWorkup(object):
         """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)
-        newPath = os.path.join(
-            dirname, "{}_{}".format(inputArguments.modality, basename)
-        )
+        newPath = os.path.join(dirname, f"{inputArguments.modality}_{basename}")
         return newPath
 
 
-class MakeNewImageDict(object):
+class MakeNewImageDict:
     """This class represents a..."""
 
     def __init__(self):
@@ -80,7 +76,7 @@ class MakeNewImageDict(object):
         self.commandList = list()
         self.dbName = "NewImages.db"
         self.dbTableName = "NewImages"
-        self.newImagesFilepath = "{}_Images.list".format(inputArguments.modality)
+        self.newImagesFilepath = f"{inputArguments.modality}_Images.list"
         self._make_new_images_file()
         self._make_db()
         self._create_command_list()
@@ -117,10 +113,8 @@ class MakeNewImageDict(object):
                     self._append_command(sqlCommand)
                 else:
                     print(
-                        (
-                            "WARNING: Wrong number of columns in csv file (should be 5): {0}".format(
-                                row
-                            )
+                        "WARNING: Wrong number of columns in csv file (should be 5): {}".format(
+                            row
                         )
                     )
 

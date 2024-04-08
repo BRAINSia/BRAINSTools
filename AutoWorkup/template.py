@@ -34,7 +34,6 @@ Examples:
 import glob
 import os
 import sys
-from builtins import range
 
 from .baw_exp import open_subject_database
 
@@ -95,7 +94,7 @@ def get_processed_subjects(resultdir, input_subjects_list):
     ]
     # resultdir/subject_dir/Atlas/AVG_T1.nii.gz
     for subject in input_subjects_list:
-        sential_file_pattern = "*{0}/Atlas/Avg_template_rightHemisphere.nii.gz".format(
+        sential_file_pattern = "*{}/Atlas/Avg_template_rightHemisphere.nii.gz".format(
             subject
         )
         glob_search_pattern = os.path.join(resultdir, sential_file_pattern)
@@ -109,10 +108,8 @@ def get_processed_subjects(resultdir, input_subjects_list):
                 if not os.path.exists(os.path.join(testDirectory, testFile)):
                     all_files_exists = False
                     print(
-                        (
-                            "MISSING FILE: {0}: ".format(
-                                os.path.join(testDirectory, testFile)
-                            )
+                        "MISSING FILE: {}: ".format(
+                            os.path.join(testDirectory, testFile)
                         )
                     )
             if all_files_exists:
@@ -121,8 +118,8 @@ def get_processed_subjects(resultdir, input_subjects_list):
                 )
             else:
                 partial_done.append(os.path.basename(os.path.dirname(testDirectory)))
-        print("SKIPPING COMPLETED SUBJECTS: {0}".format(processedSubjects))
-        print("Finishing Incomplete SUBJECTS: {0}".format(partial_done))
+        print(f"SKIPPING COMPLETED SUBJECTS: {processedSubjects}")
+        print(f"Finishing Incomplete SUBJECTS: {partial_done}")
         return processedSubjects
 
 
@@ -269,7 +266,7 @@ def xml_filename(subject):
     :param subject:
     :return:
     """
-    return "AtlasDefinition_{0}.xml".format(subject)
+    return f"AtlasDefinition_{subject}.xml"
 
 
 def get_session_from_subject_dictionary(subject_session_dictionary, subject):
@@ -286,7 +283,7 @@ def get_session_from_subject_dictionary(subject_session_dictionary, subject):
         import sys
 
         print(subject_session_dictionary)
-        print("ERROR:  No sessions for subject {0}".format(subject))
+        print(f"ERROR:  No sessions for subject {subject}")
         sys.exit(-1)
     return subject_session_dictionary[subject]
 
@@ -321,16 +318,14 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
     for thisSubject in subjects:
         if len(subjects_sessions_dictionary[thisSubject]) == 0:
             print(
-                (
-                    "ERROR: subject {0} has no sessions found.  Did you supply a valid subject id on the command line?".format(
-                        thisSubject
-                    )
+                "ERROR: subject {} has no sessions found.  Did you supply a valid subject id on the command line?".format(
+                    thisSubject
                 )
             )
             sys.exit(-1)
 
     for thisSubject in subjects:
-        print("Processing atlas generation for this subject: {0}".format(thisSubject))
+        print(f"Processing atlas generation for this subject: {thisSubject}")
         print("=" * 80)
         print("Copying Atlas directory and determining appropriate Nipype options...")
         subj_pipeline_options = nipype_options(
@@ -347,23 +342,21 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         for thisSession in subjects_sessions_dictionary[thisSubject]:
             path_test = os.path.join(
                 experiment["previousresult"],
-                "*/{0}/{1}/TissueClassify/t1_average_BRAINSABC.nii.gz".format(
+                "*/{}/{}/TissueClassify/t1_average_BRAINSABC.nii.gz".format(
                     thisSubject, thisSession
                 ),
             )
             t1_file_result = glob.glob(path_test)
             if len(t1_file_result) != 1:
                 print(
-                    (
-                        "Incorrect number of t1 images found for data grabber {0}".format(
-                            t1_file_result
-                        )
+                    "Incorrect number of t1 images found for data grabber {}".format(
+                        t1_file_result
                     )
                 )
-                print("     at path {0}".format(path_test))
+                print(f"     at path {path_test}")
                 ready_for_template_building = False
         if not ready_for_template_building:
-            print("TEMPORARY SKIPPING:  Not ready to process {0}".format(thisSubject))
+            print(f"TEMPORARY SKIPPING:  Not ready to process {thisSubject}")
             continue
 
         base_output_directory = os.path.join(
@@ -664,7 +657,7 @@ def _template_runner(argv, environment, experiment, pipeline_options, cluster):
         # Running off previous baseline experiment
         NACCommonAtlas = make_atlas_node(
             experiment["atlascache"],
-            "NACCommonAtlas_{0}".format("subject"),
+            "NACCommonAtlas_{}".format("subject"),
             ["S_BRAINSABCSupport"],
         )  # HACK : replace 'subject' with subject id once this is a loop rather than an iterable.
         template.connect(

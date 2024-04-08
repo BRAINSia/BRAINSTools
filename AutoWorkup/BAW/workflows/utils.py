@@ -28,14 +28,14 @@ def run_workflow(workflow, plugin="Linear", plugin_args=OrderedDict()):
 
     print("Running workflow...")
     for key, value in list(workflow.config["execution"].items()):
-        print("EXECUTE ENV: {0}={1}".format(key, value))
+        print(f"EXECUTE ENV: {key}={value}")
     try:
         if plugin == "SGEGraph":
             plugin_args["dont_resubmit_completed_jobs"] = True
             print(f"{plugin_args}")
         workflow.run(plugin=plugin, plugin_args=plugin_args)
     except:
-        print(("=+-+" * 25))
+        print("=+-+" * 25)
         print("Error: Exception while running subjects")
         traceback.print_exc(file=sys.stdout)
         return False
@@ -57,7 +57,7 @@ def print_workflow(workflow, plugin, dotfilename="workflow", graph2use="hierarch
         "MultiProc",
     ], "'plugin' must be in ['Linear', 'MultiProc'] to print workflow"
     dotfilename = "_".join([dotfilename, graph2use])
-    print(("Writing graph to filename {0}".format(dotfilename)))
+    print(f"Writing graph to filename {dotfilename}")
     try:
         workflow.write_graph(dotfilename=dotfilename, graph2use=graph2use)
         return True

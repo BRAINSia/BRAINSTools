@@ -9,9 +9,6 @@ Usage:
 
 """
 
-from builtins import range
-from builtins import str
-
 import nipype.interfaces.utility as util
 import nipype.pipeline.engine as pe
 from nipype.interfaces.ants import (
@@ -102,7 +99,7 @@ def renest_deformed_passive_images(
             nested_interpolation_type.append(interpolationMapping[image_type])
         else:
             nested_interpolation_type.append("Linear")  # Linear is the default.
-    print(("\n" * 10))
+    print("\n" * 10)
     print(("HACK: ", nested_imagetype_list))
     print(("HACK: ", outputAverageImageName_list))
     print(("HACK: ", image_type_list))
@@ -152,8 +149,8 @@ def split_composite_to_component_transform(transformFilename):
         script.close()
         os.chmod(script_name, 0o777)
         script_name = os.path.abspath(script_name)
-        print(("XX" * 40))
-        print(("Starting CompositeTransformUtil script: {0}".format(script_name)))
+        print("XX" * 40)
+        print(f"Starting CompositeTransformUtil script: {script_name}")
         scriptStatus = subprocess.check_call([script_name], shell=True)
         if scriptStatus != 0:
             sys.exit(scriptStatus)
@@ -194,20 +191,16 @@ def flatten_transform_and_images_list(
     import sys
 
     print(
-        (
-            "HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(
-                lpi=ListOfPassiveImagesDictionaries
-            )
+        "HACK:  DEBUG: ListOfPassiveImagesDictionaries\n{lpi}\n".format(
+            lpi=ListOfPassiveImagesDictionaries
         )
     )
     subjCount = len(ListOfPassiveImagesDictionaries)
     tranCount = len(transforms)
     if subjCount != tranCount:
         print(
-            (
-                "ERROR:  subjCount must equal tranCount {0} != {1}".format(
-                    subjCount, tranCount
-                )
+            "ERROR:  subjCount must equal tranCount {} != {}".format(
+                subjCount, tranCount
             )
         )
         sys.exit(-1)
@@ -216,10 +209,8 @@ def flatten_transform_and_images_list(
     invertTfmsFlagsCount = len(invert_transform_flags)
     if subjCount != invertTfmsFlagsCount:
         print(
-            (
-                "ERROR:  subjCount must equal invertTfmsFlags {0} != {1}".format(
-                    subjCount, invertTfmsFlagsCount
-                )
+            "ERROR:  subjCount must equal invertTfmsFlags {} != {}".format(
+                subjCount, invertTfmsFlagsCount
             )
         )
         sys.exit(-1)
@@ -245,10 +236,10 @@ def flatten_transform_and_images_list(
                 flattened_interpolation_type.append(interpolationMapping[imgname])
             else:
                 flattened_interpolation_type.append("Linear")  # Linear is the default.
-    print(("HACK: flattened images    {0}\n".format(flattened_images)))
-    print(("HACK: flattened nametypes {0}\n".format(flattened_image_nametypes)))
-    print(("HACK: flattened txfms     {0}\n".format(flattened_transforms)))
-    print(("HACK: flattened txfmsFlags{0}\n".format(flattened_invert_transform_flags)))
+    print(f"HACK: flattened images    {flattened_images}\n")
+    print(f"HACK: flattened nametypes {flattened_image_nametypes}\n")
+    print(f"HACK: flattened txfms     {flattened_transforms}\n")
+    print(f"HACK: flattened txfmsFlags{flattened_invert_transform_flags}\n")
     return (
         flattened_images,
         flattened_transforms,

@@ -123,7 +123,7 @@ def brainstem(
     )  # Need OrderedDict internally to ensure consistent ordering
 
     myLandmark = OrderedDict()
-    with open(landmarkFilename, "r") as myLandmarkFile:
+    with open(landmarkFilename) as myLandmarkFile:
         all_lines = myLandmarkFile.readlines()
 
     if "Markups fiducial file version " in all_lines[0]:

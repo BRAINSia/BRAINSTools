@@ -13,10 +13,9 @@ import argparse
 import csv
 import os
 import sys
-from builtins import object
 
 
-class runOneAW(object):
+class runOneAW:
     """This class represents a..."""
 
     def main(self):
@@ -50,8 +49,8 @@ class runOneAW(object):
             configFile=self.configPath,
             subject=input_arguments.subject,
         )
-        print(("-" * 80))
-        print(("\nExecuting command: \n{bawCommand}".format(bawCommand=bawCommand)))
+        print("-" * 80)
+        print(f"\nExecuting command: \n{bawCommand}")
         os.system(bawCommand)
 
     def generate_session_csv(self):
@@ -78,13 +77,7 @@ class runOneAW(object):
             sessionDict,
         )
         newFile.writerow(line)
-        print(
-            (
-                "\nThe session csv file has been generated: {0}\n".format(
-                    self.sessionPath
-                )
-            )
-        )
+        print(f"\nThe session csv file has been generated: {self.sessionPath}\n")
         print(line)
 
     def generate_config_file(self):
@@ -192,9 +185,7 @@ BCDMODELPATH=%(_BRAINSTOOLS_BUILD_PATH)s/BRAINSTools-build/TestData"""
         handle = open(self.configPath, "w")
         handle.write(newConfigString)
         handle.close()
-        print(
-            ("\nThe configuration file has been generated: {0}".format(self.configPath))
-        )
+        print(f"\nThe configuration file has been generated: {self.configPath}")
         print(newConfigString)
 
 

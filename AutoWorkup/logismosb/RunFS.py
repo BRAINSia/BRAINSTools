@@ -29,7 +29,7 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id FROM 
     t1_file = str(row[0])
     t2_file = str(row[1])
 
-    wf = Workflow(name="FreeSurfer_{0}".format(session_id))
+    wf = Workflow(name=f"FreeSurfer_{session_id}")
 
     subject_directory = os.path.dirname(os.path.dirname(t1_file))
 
@@ -43,7 +43,7 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id FROM 
         "/Shared/sinapse/CACHE/20161010_AtrophySimulation_Baseline", session_id
     )
     recon_all.plugin_args = plugin_args = {
-        "qsub_args": "-q HJ,UI,all.q,COE -pe smp {0}".format(num_threads),
+        "qsub_args": f"-q HJ,UI,all.q,COE -pe smp {num_threads}",
         "overwrite": True,
     }
 
@@ -52,9 +52,9 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id FROM 
     )
 
     logb = create_fs_logb_workflow_for_both_hemispheres(
-        name="FSLOGB_{0}".format(session_id),
+        name=f"FSLOGB_{session_id}",
         plugin_args={
-            "qsub_args": "-q HJ,UI,all.q,COE -pe smp {0}".format(num_threads),
+            "qsub_args": f"-q HJ,UI,all.q,COE -pe smp {num_threads}",
             "overwrite": True,
         },
     )
@@ -73,7 +73,7 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id FROM 
     datasink = Node(DataSink(), name="DataSink")
     datasink.inputs.base_directory = recon_all.inputs.subjects_dir
     for hemisphere in ("lh", "rh"):
-        fssource = Node(FreeSurferSource(), "{0}FSSource".format(hemisphere))
+        fssource = Node(FreeSurferSource(), f"{hemisphere}FSSource")
         fssource.inputs.hemi = hemisphere
         wf.connect(
             [
@@ -82,16 +82,16 @@ for row in cursor.execute("SELECT t1_image_file, t2_image_file, session_id FROM 
                     fssource,
                     [("subject_id", "subject_id"), ("subjects_dir", "subjects_dir")],
                 ),
-                (fssource, logb, [("white", "inputspec.{0}_white".format(hemisphere))]),
+                (fssource, logb, [("white", f"inputspec.{hemisphere}_white")]),
             ]
         )
 
         for matter in ("gm", "wm"):
             wf.connect(
                 logb,
-                "outputspec.{0}_{1}_surf_file".format(hemisphere, matter),
+                f"outputspec.{hemisphere}_{matter}_surf_file",
                 datasink,
-                "LOGISMOSB.FreeSurfer.@{0}_{1}".format(hemisphere, matter),
+                f"LOGISMOSB.FreeSurfer.@{hemisphere}_{matter}",
             )
 
     wf.base_dir = base_dir

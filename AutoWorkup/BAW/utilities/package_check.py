@@ -13,7 +13,7 @@ try:
 except ImportError:
     import sys
 
-    print((sys.path))
+    print(sys.path)
     raise ImportError(
         "Cannot import nipype.utils.misc.package_check(). \
         Verify that the sys.path includes the correct Nipype path.  \

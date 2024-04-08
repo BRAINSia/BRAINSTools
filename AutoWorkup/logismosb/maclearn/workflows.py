@@ -175,7 +175,7 @@ def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
     )
     output_spec = Node(IdentityInterface(inputs_to_resample), name="output_spec")
     for input in inputs_to_resample:
-        node = Node(BRAINSResample(), "Resample_{0}".format(input))
+        node = Node(BRAINSResample(), f"Resample_{input}")
         node.inputs.pixelType = "short"
         node.inputs.inverseTransform = True
         node.inputs.outputVolume = input + ".nii.gz"
@@ -189,10 +189,10 @@ def create_workflow_to_resample_baw_files(name="ResampleBAWOutputs"):
                     [
                         ("reference_file", "referenceVolume"),
                         ("acpc_transform", "warpTransform"),
-                        ("{0}".format(input), "inputVolume"),
+                        (f"{input}", "inputVolume"),
                     ],
                 ),
-                (node, output_spec, [("outputVolume", "{0}".format(input))]),
+                (node, output_spec, [("outputVolume", f"{input}")]),
             ]
         )
     return workflow
@@ -323,7 +323,7 @@ def create_logismosb_machine_learning_workflow(
                     (
                         input_spec,
                         predict_edges,
-                        [(feature, "input_spec.{0}".format(feature))],
+                        [(feature, f"input_spec.{feature}")],
                     )
                 ]
             )
@@ -347,23 +347,21 @@ def create_logismosb_machine_learning_workflow(
         )
 
         for hemisphere in hemispheres:
-            convert_white = Node(
-                MRIsConvert(), name="{0}_Convert_White".format(hemisphere)
-            )
-            convert_white.inputs.out_file = "{0}_white.vtk".format(hemisphere)
+            convert_white = Node(MRIsConvert(), name=f"{hemisphere}_Convert_White")
+            convert_white.inputs.out_file = f"{hemisphere}_white.vtk"
             convert_white.inputs.to_scanner = True
             workflow.connect(
                 [
                     (
                         input_spec,
                         convert_white,
-                        [("{0}_white_surface_file".format(hemisphere), "in_file")],
+                        [(f"{hemisphere}_white_surface_file", "in_file")],
                     )
                 ]
             )
 
             mask_wm = create_workflow_to_mask_white_matter(
-                "{0}_MaskWhiteMatter".format(hemisphere)
+                f"{hemisphere}_MaskWhiteMatter"
             )
             workflow.connect(
                 [
@@ -376,9 +374,7 @@ def create_logismosb_machine_learning_workflow(
                 ]
             )
 
-            preproc = Node(
-                LOGISMOSBPreprocessing(), "{0}_Preprocessing".format(hemisphere)
-            )
+            preproc = Node(LOGISMOSBPreprocessing(), f"{hemisphere}_Preprocessing")
             preproc.inputs.erode_mask = 0
             workflow.connect(
                 [
@@ -394,7 +390,7 @@ def create_logismosb_machine_learning_workflow(
                 ]
             )
 
-            logb = create_logismosb_node("ML_LOGISMOSB_{0}".format(hemisphere))
+            logb = create_logismosb_node(f"ML_LOGISMOSB_{hemisphere}")
             logb.inputs.basename = hemisphere
             if plugin_args:
                 logb.plugin_args = plugin_args

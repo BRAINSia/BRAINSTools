@@ -27,7 +27,7 @@ def load_cluster(modules=[]):
     if len(modules) > 0:
         module_list = []
         for module in modules:
-            module_list.append("module load {name}".format(name=module))
+            module_list.append(f"module load {module}")
         assert len(modules) == len(module_list)
         return "\n".join(module_list)
     return ""
@@ -43,7 +43,7 @@ def source_virtualenv(virtualenv_dir=""):
     if virtualenv_dir is None:
         return ""
     assert virtualenv_dir != ""
-    return "source {0}".format(virtualenv_dir)
+    return f"source {virtualenv_dir}"
 
 
 def prepend_env(environment=OrderedDict()):
@@ -136,7 +136,7 @@ def modify_qsub_args(
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed
     memoryThreads = int(
-        math.ceil((old_div(math.ceil(memoryGB), 2)))
+        math.ceil(old_div(math.ceil(memoryGB), 2))
     )  # Ensure that threads are integers
     minThreads = max(minThreads, memoryThreads)
     maxThreads = max(maxThreads, memoryThreads)
@@ -144,20 +144,18 @@ def modify_qsub_args(
     minThreads = int(minThreads)  # Ensure that threads are integers
 
     if maxThreads is None or minThreads == maxThreads:
-        threadsRangeString = "{0}".format(minThreads)
+        threadsRangeString = f"{minThreads}"
         maxThreads = minThreads
     elif maxThreads == -1:
-        threadsRangeString = "{0}-".format(minThreasds)
+        threadsRangeString = f"{minThreasds}-"
         maxThreads = 12345  # HUGE NUMBER!
     else:
-        threadsRangeString = "{0}-{1}".format(minThreads, maxThreads)
+        threadsRangeString = f"{minThreads}-{maxThreads}"
 
     if maxThreads < minThreads:
         assert (
             maxThreads > minThreads
-        ), "Must specify maxThreads({0}) > minThreads({1})".format(
-            minThreads, maxThreads
-        )
+        ), f"Must specify maxThreads({minThreads}) > minThreads({maxThreads})"
 
     ## INFO:  May need to figure out how to set memory and threads for cluster.
     ## for now just let the number of threads requested take care of this because

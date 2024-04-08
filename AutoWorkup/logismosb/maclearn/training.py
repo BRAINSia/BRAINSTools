@@ -230,7 +230,7 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
     feature_value_arrays.append(image_array(sitk.SobelEdgeDetection(image)))
 
     # eigenvalues of hessian
-    feature_names.extend(["Eigen{0}".format(i) for i in range(1, 4)])
+    feature_names.extend([f"Eigen{i}" for i in range(1, 4)])
     feature_value_arrays.extend(
         [eigen.flatten() for eigen in compute_absolute_eigen_values(image, sigma=0)]
     )
@@ -242,10 +242,8 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
     )
 
     for sigma in [i * 0.5 for i in range(1, 7)]:
-        sigma_str = "{0:.1f}".format(sigma)
-        feature_names.extend(
-            ["GaussEigen{0}_{1}".format(i, sigma_str) for i in range(1, 4)]
-        )
+        sigma_str = f"{sigma:.1f}"
+        feature_names.extend([f"GaussEigen{i}_{sigma_str}" for i in range(1, 4)])
         feature_value_arrays.extend(
             [
                 eigen.flatten()
@@ -253,12 +251,12 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
             ]
         )
 
-        feature_names.append("GaussLaplacian_{0}".format(sigma_str))
+        feature_names.append(f"GaussLaplacian_{sigma_str}")
         feature_value_arrays.append(
             image_array(sitk.LaplacianRecursiveGaussian(image, sigma=sigma))
         )
 
-        feature_names.append("Gauss_{0}".format(sigma_str))
+        feature_names.append(f"Gauss_{sigma_str}")
         feature_value_arrays.append(
             image_array(sitk.RecursiveGaussian(image, sigma=sigma))
         )
@@ -266,7 +264,7 @@ def image_data(in_file, modality, abc_file=None, additional_images=None):
         feature_value_arrays.append(
             image_array(sitk.GradientMagnitudeRecursiveGaussian(image, sigma=sigma))
         )
-        feature_names.append("GaussGradMag_{0}".format(sigma_str))
+        feature_names.append(f"GaussGradMag_{sigma_str}")
 
     feature_value_series = [pd.Series(array) for array in feature_value_arrays]
     keys = [modality + meas for meas in feature_names]
@@ -389,7 +387,7 @@ def collect_data(data_csv):
                 data_samples.append(line)
 
             except KeyError as e:
-                print("ERROR: csv line {0} KeyError: {1}".format(i + 1, str(e)))
+                print(f"ERROR: csv line {i + 1} KeyError: {str(e)}")
                 sys.exit()
 
     return data_samples
@@ -502,12 +500,12 @@ def train_classifier(
     :return:
     """
     if os.path.isfile(out_file):
-        print("Found classifier {0}".format(out_file))
+        print(f"Found classifier {out_file}")
         if not load_clf:
             return
         clf = joblib.load(out_file)
     else:
-        print("Fitting classifier {0}".format(out_file))
+        print(f"Fitting classifier {out_file}")
         clf.n_jobs = n_jobs
         clf.fit(data, targets)
         joblib.dump(clf, out_file)
@@ -529,12 +527,12 @@ def run_training(training_data, train_base_clf=False, out_dir=".", n_jobs=-1):
     for matter in ["WM", "GM"]:
         classifiers[matter] = dict()
 
-        print("Training {0}".format(matter))
+        print(f"Training {matter}")
         # Get WM training targets
         train_matter_targets = training_data["Targets"][matter].values
 
         if train_base_clf:
-            base_clf_file = os.path.join(out_dir, "{0}BaseCLF.pkl".format(matter))
+            base_clf_file = os.path.join(out_dir, f"{matter}BaseCLF.pkl")
             train_classifier(
                 all_training_features,
                 train_matter_targets,
@@ -556,9 +554,7 @@ def run_training(training_data, train_base_clf=False, out_dir=".", n_jobs=-1):
             )
 
             # train regional classifier
-            regional_clf_file = os.path.join(
-                out_dir, "{0}{1}RegionalCLF.pkl".format(matter, label)
-            )
+            regional_clf_file = os.path.join(out_dir, f"{matter}{label}RegionalCLF.pkl")
             train_classifier(
                 label_train_features,
                 label_train_targets,

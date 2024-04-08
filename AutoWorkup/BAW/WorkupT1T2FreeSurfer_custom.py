@@ -10,7 +10,6 @@ Usage:
 """
 
 import os
-from builtins import str
 
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.freesurfer.model import MS_LDA
@@ -83,7 +82,7 @@ def create_free_surfer_workflow_custom(
     )
 
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
+    print(f"HACK SETTING SUBJECTS_DIR {constructed_FS_SUBJECTS_DIR}")
     os.environ["SUBJECTS_DIR"] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 
@@ -190,7 +189,7 @@ def create_free_surfer_subject_template(
         name="inputspec",
     )
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
+    print(f"HACK SETTING SUBJECTS_DIR {constructed_FS_SUBJECTS_DIR}")
     os.environ["SUBJECTS_DIR"] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
     print("""Run FreeSurfer Within Subject Template at""")
@@ -268,7 +267,7 @@ def create_free_surfer_longitudinal_worklfow(
         name="inputspec",
     )
     ### HACK: the nipype interface requires that this environmental variable is set before running
-    print(("HACK SETTING SUBJECTS_DIR {0}".format(constructed_FS_SUBJECTS_DIR)))
+    print(f"HACK SETTING SUBJECTS_DIR {constructed_FS_SUBJECTS_DIR}")
     os.environ["SUBJECTS_DIR"] = constructed_FS_SUBJECTS_DIR
     inputsSpec.inputs.subjects_dir = constructed_FS_SUBJECTS_DIR  # HACK
 

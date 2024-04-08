@@ -80,9 +80,7 @@ def run_it(cmd, display_output: bool, echo_input: bool):
     cmd = [str(x) for x in cmd]
     if echo_input:
         print(f"{' '.join(cmd)}")
-    process = subprocess.run(
-        cmd, check=True, stdout=subprocess.PIPE, universal_newlines=True
-    )
+    process = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, text=True)
     if display_output:
         output = process.stdout
         print(output)
@@ -90,7 +88,7 @@ def run_it(cmd, display_output: bool, echo_input: bool):
 
 
 REVIEWS_NEEDED = []
-with open(REVIEW_FILE, "r") as fid:
+with open(REVIEW_FILE) as fid:
     all_reviews = json.load(fid)
     REVIEWS_NEEDED = all_reviews["bad"]
 

@@ -9,9 +9,6 @@ Usage:
 
 """
 
-from builtins import range
-
-
 from AutoWorkup import utilities
 
 
@@ -25,7 +22,7 @@ def configure_env_test():
 
     config_env = os.path.join(os.path.dirname(utilities.__file__), "configure_env.py")
     for p in range(10):
-        file_template = "/my/test/path/{0}".format(p)
+        file_template = f"/my/test/path/{p}"
 
     exec(
         compile(open(config_env).read(), config_env, "exec"),

@@ -16,8 +16,6 @@ By using
     __file__ is the current Python file that exists in the BRAINSTools/AutoWorkup/ directory.
 """
 
-from builtins import str
-
 try:
     __file__
     append_os_path
@@ -61,12 +59,12 @@ for item in list(old_sys_path):
         old_sys_path.remove(item)
 sys.path = [""] + append_sys_path + old_sys_path
 
-print(("=" * 100))
-print(("=" * 100))
-print(("=" * 100))
-print(("=" * 100))
-print(("=" * 100))
-print(("NEW PATH env " + os.environ["PATH"]))
-print(("=" * 100))
-print(("NEW PYTHONPATH env " + str(sys.path)))
-print(("=" * 100))
+print("=" * 100)
+print("=" * 100)
+print("=" * 100)
+print("=" * 100)
+print("=" * 100)
+print("NEW PATH env " + os.environ["PATH"])
+print("=" * 100)
+print("NEW PYTHONPATH env " + str(sys.path))
+print("=" * 100)

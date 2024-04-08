@@ -13,10 +13,9 @@ import argparse
 import csv
 import os
 import textwrap
-from builtins import object
 
 
-class UpdateAutoWorkup(object):
+class UpdateAutoWorkup:
     """This class represents a..."""
 
     def _get_black_list(self):
@@ -36,13 +35,7 @@ class UpdateAutoWorkup(object):
             if len(row) == 3:
                 blackListDict[row[0]] = row[1]
             else:
-                print(
-                    (
-                        "WARNING: WRONG # of columns in csv (should be 3): {0}".format(
-                            row
-                        )
-                    )
-                )
+                print(f"WARNING: WRONG # of columns in csv (should be 3): {row}")
         return blackListDict, list(blackListDict.keys())
 
     def _generate_new_path_name(self):
@@ -53,7 +46,7 @@ class UpdateAutoWorkup(object):
         """
         dirname = os.path.dirname(inputArguments.autoWorkupFile)
         basename = os.path.basename(inputArguments.autoWorkupFile)
-        newPath = os.path.join(dirname, "edited_{0}".format(basename))
+        newPath = os.path.join(dirname, f"edited_{basename}")
         return newPath
 
     def update_auto_workup(self):

@@ -139,7 +139,7 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
     for hemisphere in config["hemisphere_names"]:
         genus_zero_filter = Node(
             interface=GenusZeroImageFilter(),
-            name="{0}_GenusZeroImageFilter".format(hemisphere),
+            name=f"{hemisphere}_GenusZeroImageFilter",
         )
         genus_zero_filter.inputs.connectivity = config["GenusZeroImageFilter"][
             "connectivity"
@@ -150,7 +150,7 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
         genus_zero_filter.inputs.connectedComponent = config["GenusZeroImageFilter"][
             "connectedComponent"
         ]
-        genus_zero_filter.inputs.out_mask = "{0}_genus_zero_white_matter.nii.gz".format(
+        genus_zero_filter.inputs.out_mask = "{}_genus_zero_white_matter.nii.gz".format(
             hemisphere
         )
 
@@ -159,14 +159,14 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
                 (
                     white_matter_masking_node,
                     genus_zero_filter,
-                    [("{0}_wm".format(hemisphere), "in_file")],
+                    [(f"{hemisphere}_wm", "in_file")],
                 )
             ]
         )
 
         surface_generation = Node(
             interface=BRAINSSurfaceGeneration(),
-            name="{0}_BRAINSSurfaceGeneration".format(hemisphere),
+            name=f"{hemisphere}_BRAINSSurfaceGeneration",
         )
         surface_generation.inputs.smoothSurface = config["BRAINSSurfaceGeneration"][
             "smoothSurface"
@@ -174,7 +174,7 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
         surface_generation.inputs.numIterations = config["BRAINSSurfaceGeneration"][
             "numIterations"
         ]
-        surface_generation.inputs.out_file = "{0}_white_matter_surface.vtk".format(
+        surface_generation.inputs.out_file = "{}_white_matter_surface.vtk".format(
             hemisphere
         )
 
@@ -182,7 +182,7 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
             [(genus_zero_filter, surface_generation, [("out_file", "in_file")])]
         )
 
-        logismosb = Node(interface=LOGISMOSB(), name="{0}_LOGISMOSB".format(hemisphere))
+        logismosb = Node(interface=LOGISMOSB(), name=f"{hemisphere}_LOGISMOSB")
         logismosb.inputs.smoothnessConstraint = config["LOGISMOSB"][
             "smoothnessConstraint"
         ]
@@ -215,14 +215,14 @@ def create_logb_workflow(name="LOGISMOSB_WF", master_config=None, plugin_args=No
                 (
                     white_matter_masking_node,
                     logismosb,
-                    [("{0}_boundary".format(hemisphere), "brainlabels_file")],
+                    [(f"{hemisphere}_boundary", "brainlabels_file")],
                 ),
                 (
                     logismosb,
                     logismosb_output_node,
                     [
-                        ("gmsurface_file", "{0}_gmsurface_file".format(hemisphere)),
-                        ("wmsurface_file", "{0}_wmsurface_file".format(hemisphere)),
+                        ("gmsurface_file", f"{hemisphere}_gmsurface_file"),
+                        ("wmsurface_file", f"{hemisphere}_wmsurface_file"),
                     ],
                 ),
             ]
@@ -243,7 +243,7 @@ def create_output_spec(outputs, hemisphere_names, name):
     final_output_names = list()
     for output in outputs:
         for hemisphere in hemisphere_names:
-            final_output_names.append("{0}_".format(hemisphere) + output)
+            final_output_names.append(f"{hemisphere}_" + output)
     return Node(IdentityInterface(final_output_names), name)
 
 
@@ -497,7 +497,7 @@ def create_fs_logb_workflow_for_both_hemispheres(
 
     for hemi in ("lh", "rh"):
         hemi_logb_wf = create_fs_compatible_logb_workflow(
-            "{0}_LOGBWF".format(hemi), plugin_args=plugin_args, config=config
+            f"{hemi}_LOGBWF", plugin_args=plugin_args, config=config
         )
         hemi_logb_wf.inputs.inputspec.hemi = hemi
         fslogb_wf.connect(
@@ -510,7 +510,7 @@ def create_fs_logb_workflow_for_both_hemispheres(
                         ("rawavg", "inputspec.t1_file"),
                         ("t2_raw", "inputspec.t2_file"),
                         ("hncma_atlas", "inputspec.hncma_atlas"),
-                        ("{0}_white".format(hemi), "inputspec.white"),
+                        (f"{hemi}_white", "inputspec.white"),
                     ],
                 ),
                 (
@@ -531,8 +531,8 @@ def create_fs_logb_workflow_for_both_hemispheres(
                     hemi_logb_wf,
                     outputspec,
                     [
-                        ("outputspec.gmsurface_file", "{0}_gm_surf_file".format(hemi)),
-                        ("outputspec.wmsurface_file", "{0}_wm_surf_file".format(hemi)),
+                        ("outputspec.gmsurface_file", f"{hemi}_gm_surf_file"),
+                        ("outputspec.wmsurface_file", f"{hemi}_wm_surf_file"),
                     ],
                 )
             ]

@@ -5,4 +5,3 @@ File: /scratch/johnsonhj/src/NEP-11/BRAINSTools/BRAINSConstellationDetector/src/
 Line: 820
 Description: itk::ERROR: EMSP aligned image and zero eye centers landmarks are written to 
 ./. Use GUI corrector to correct the landmarks in.EMSP.fcsv
-

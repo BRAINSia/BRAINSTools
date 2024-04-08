@@ -10,4 +10,3 @@ function DU = SRgrad(U)
             
             DU = cat(4, DU_lines, DU_contiguous, DU_slices);
 end
-

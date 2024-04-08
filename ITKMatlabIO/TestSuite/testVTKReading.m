@@ -29,4 +29,3 @@ function [ errorStatus, vtkStruct ] = testVTKReading( )
 
   errorStatus = 1000; %% FAILED code
 end
-

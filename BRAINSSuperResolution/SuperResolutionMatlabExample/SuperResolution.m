@@ -18,4 +18,3 @@ X_sr = single(X_sr);
 %X_sr = single((X_sr-0.0)*(1.0/scaleFactor)+oldMin);
 
 end
-

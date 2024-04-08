@@ -20,4 +20,3 @@ end
 [kx,ky,kz] = meshgrid(indx,indy,indz);
 k = [kx(:)'; ky(:)'; kz(:)'];
 end
-

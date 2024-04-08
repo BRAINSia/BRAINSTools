@@ -39,4 +39,3 @@ newCircle.fibers=refCircle.fibers
 [newCircle.DDF]=disp.DDF'
 rmfield(newCircle,'values')
 vtkSavePolyData('disp_scale3_numdirs10_1_1_circles.vtp',newCircle)
-

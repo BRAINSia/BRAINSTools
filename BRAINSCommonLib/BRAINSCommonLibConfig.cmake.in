@@ -10,4 +10,3 @@ endif()
 
 set(BRAINSCommonLib_USE_FILE "${BRAINSCommonLib_CONFIG_DIR}/UseBRAINSCommonLib.cmake")
 #set(ITK_DIR "@ITK_DIR@")
-

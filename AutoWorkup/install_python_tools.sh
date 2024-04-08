@@ -30,5 +30,3 @@ done
 #git clone https://github.com/nipy/nipype.git  nipype
 #cd ${THIS_DIR}/nipype
 #python setup.py install --prefix=${INSTALL_DIR}
-
-

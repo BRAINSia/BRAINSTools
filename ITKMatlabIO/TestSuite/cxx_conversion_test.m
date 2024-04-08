@@ -58,4 +58,3 @@ function [ error ] = computeDispersionError( testd,refd )
   error_vector = abs(testd - refd);
   error = sum(error_vector);
 end
-

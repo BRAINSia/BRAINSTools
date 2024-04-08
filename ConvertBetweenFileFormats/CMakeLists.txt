@@ -44,4 +44,3 @@ install_targets(/bin ConvertBetweenFileFormats)
 if(BUILD_TESTING AND NOT BRAINSTools_DISABLE_TESTING)
     add_subdirectory(TestSuite)
 endif()
-

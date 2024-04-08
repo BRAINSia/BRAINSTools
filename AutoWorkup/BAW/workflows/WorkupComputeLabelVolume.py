@@ -12,9 +12,7 @@ Usage:
 
 
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import CommandLineInputSpec, TraitedSpec, File, Directory
-from nipype.interfaces.base import traits, isdefined
-from nipype.interfaces.utility import Merge, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 
 from utilities.measureVolumes import *
 from utilities.misc import *

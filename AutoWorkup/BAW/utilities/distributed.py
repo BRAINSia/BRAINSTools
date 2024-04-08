@@ -82,7 +82,6 @@ def create_global_sge_script(cluster, environment):
 
     import os
     from string import Template
-    import sys
     from collections import (
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering
@@ -167,10 +166,7 @@ def modify_qsub_args(
 
     ## format_str = '-S /bin/bash -cwd -pe smp {mint}{maxt} -o {stdout} -e {stderr} {queue}'
     format_str = "-S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr} {queue}".format(
-        mint=minThreads,
-        maxt=threadsRangeString,
         totalThreads=threadsRangeString,
-        mem=memoryGB,
         stdout=stdout,
         stderr=stderr,
         queue=queue,

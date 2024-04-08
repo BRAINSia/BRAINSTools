@@ -11,7 +11,6 @@ Usage:
 
 from . import preprocess
 from . import training
-from . import testing
 import os
 import pandas as pd
 import numpy as np

@@ -14,19 +14,10 @@ Usage:
 from builtins import range
 from builtins import str
 
-import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Merge, Function, IdentityInterface
 
 from utilities.distributed import modify_qsub_args
 from utilities.misc import *

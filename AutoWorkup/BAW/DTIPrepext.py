@@ -12,18 +12,10 @@ Usage:
 import os
 
 from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
     File,
-    Directory,
     traits,
-    isdefined,
-    InputMultiPath,
-    OutputMultiPath,
 )
 from nipype.interfaces.semtools.diffusion.dtiprep import (
-    DTIPrepInputSpec,
     DTIPrepOutputSpec,
     DTIPrep,
 )

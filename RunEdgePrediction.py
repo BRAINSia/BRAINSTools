@@ -6,7 +6,6 @@ import sys
 import os
 import sqlite3
 import SimpleITK as sitk
-import glob
 from nipype import Workflow, DataSink, Node
 
 connection = sqlite3.connect(

@@ -51,7 +51,6 @@ Pipeline Steps for CreateDWIWorkflow:
     dtiprocess is used again to compute FA, MD, RD, Frobenius norm, lambda1 (AD), lambda2, and lambda3 images with
     the masked tensor image.
 """
-import glob
 import os
 import sys
 from collections import (
@@ -78,23 +77,11 @@ PYTHON_AUX_PATHS = PYTHON_AUX_PATHS.split(":")
 PYTHON_AUX_PATHS.extend(sys.path)
 sys.path = PYTHON_AUX_PATHS
 
-import SimpleITK as sitk
-import nipype
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.semtools import *
 
-from .utilities.misc import common_ants_registration_settings
 from collections import (
     OrderedDict,
 )  # Need OrderedDict internally to ensure consistent ordering
@@ -207,7 +194,6 @@ def get_dwi_reference_images_from_session_id(SESSION_TUPLE, BASE_STRUCT, BASE_DW
     :param BASE_DWI:
     :return:
     """
-    import os
     import glob
 
     PROJ_ID = SESSION_TUPLE[0]
@@ -358,19 +344,7 @@ MasterDWIWorkflow.write_graph()
 
 SGEFlavor = "SGE"
 
-import nipype
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.freesurfer import ReconAll
 
 from nipype.interfaces.semtools import (
     BRAINSFit,

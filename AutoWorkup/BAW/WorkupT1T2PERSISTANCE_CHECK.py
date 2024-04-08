@@ -11,18 +11,9 @@ Usage:
 """
 
 
-import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import IdentityInterface
 
 """
     from WorkupT1T2PERSISTANCE_CHECK import create_persistance_check_workflow

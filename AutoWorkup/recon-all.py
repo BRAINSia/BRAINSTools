@@ -354,10 +354,7 @@ def modify_qsub_args(
             minThreads, maxThreads
         )
     format_str = "-q {queue} -S /bin/bash -cwd -pe smp {totalThreads} -o {stdout} -e {stderr}".format(
-        mint=minThreads,
-        maxt=threadsRangeString,
         totalThreads=threadsRangeString,
-        mem=memoryGB,
         stdout=stdout,
         stderr=stderr,
         queue=queue,

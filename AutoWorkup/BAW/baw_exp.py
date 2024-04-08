@@ -23,18 +23,15 @@ Usage:
 
 
 from future import standard_library
-from past.builtins import execfile
 
 standard_library.install_aliases()
 from builtins import str
 from builtins import range
 from builtins import object
 import os
-import re
 import sys
 import traceback
 
-import multiprocessing
 import time
 
 
@@ -126,7 +123,7 @@ def do_single_subject_processing(sp_args):
 
     import WorkupT1T2  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
 
-    if not PreviousExperimentName is None:
+    if PreviousExperimentName is not None:
         print("Running based on previous experiment results...")
         baw200 = WorkupT1T2.WorkupT1T2(
             subjectid,
@@ -260,8 +257,6 @@ def master_processing_controller(argv=None):
     )  # Need OrderedDict internally to ensure consistent ordering
     import argparse
     import configparser
-    import csv
-    import string
 
     if argv == None:
         argv = sys.argv
@@ -323,7 +318,7 @@ def master_processing_controller(argv=None):
     sys.path = environment("PYTHONPATH")
     os.environ["PATH"] = ":".join(environment["PATH"])
     # Virtualenv
-    if not environment["virtualenv_dir"] is None:
+    if environment["virtualenv_dir"] is not None:
         print("Loading virtualenv_dir...")
         exec(
             compile(
@@ -337,7 +332,6 @@ def master_processing_controller(argv=None):
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
     # print sys.path
     ## Check to ensure that SimpleITK can be found
-    import SimpleITK as sitk
     from nipype import (
         config,
     )  # NOTE:  This needs to occur AFTER the PYTHON_AUX_PATHS has been modified
@@ -346,24 +340,6 @@ def master_processing_controller(argv=None):
     # config.enable_provenance()
 
     ##############################################################################
-    from nipype.interfaces.base import (
-        CommandLine,
-        CommandLineInputSpec,
-        TraitedSpec,
-        File,
-        Directory,
-    )
-    from nipype.interfaces.base import traits, isdefined, BaseInterface
-    from nipype.interfaces.utility import (
-        Merge,
-        Split,
-        Function,
-        Rename,
-        IdentityInterface,
-    )
-    import nipype.interfaces.io as nio  # Data i/o
-    import nipype.pipeline.engine as pe  # pypeline engine
-    from nipype.interfaces.freesurfer import ReconAll
 
     from nipype.utils.misc import package_check
 
@@ -405,7 +381,7 @@ def master_processing_controller(argv=None):
         os.makedirs(ExperimentBaseDirectoryCache)
     if not os.path.exists(ExperimentBaseDirectoryResults):
         os.makedirs(ExperimentBaseDirectoryResults)
-    if not PreviousExperimentName is None:
+    if PreviousExperimentName is not None:
         PreviousBaseDirectoryPrefix = os.path.realpath(
             os.path.join(BASEOUTPUTDIR, PreviousExperimentName)
         )

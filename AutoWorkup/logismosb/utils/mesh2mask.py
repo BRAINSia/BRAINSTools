@@ -9,8 +9,10 @@ Usage:
 
 """
 
-import vtk, math
-import sys, os
+import vtk
+import math
+import sys
+import os
 import SimpleITK as sitk
 from .fs_thickness_measurements import read_poly_data
 from nipype.interfaces.base import (
@@ -401,7 +403,8 @@ def usage():
 
 
 if __name__ == "__main__":
-    import getopt, sys
+    import getopt
+    import sys
 
     try:
         opts, args = getopt.getopt(

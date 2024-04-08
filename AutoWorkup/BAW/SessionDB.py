@@ -61,7 +61,7 @@ class SessionDB(object):
         #    print("B")
         #    self.cursor.close()
         #    print("C")
-        if not self.connection is None:
+        if self.connection is not None:
             #    print("D")
             self.connection.close()
         #    print("E")

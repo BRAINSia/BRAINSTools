@@ -15,13 +15,12 @@ By using
 try:
     list(env.keys())
     FS_VARS
-except NameError as AttributeError:
+except NameError:
     raise AssertionError(
         "Run this file like: execfile('path/to/configure_FS', OrderedDict(env={}) \
         where 'env' is set to an os.environ-like dictionary"
     )
 import os
-from . import misc
 
 #####################################################################################
 #  FreeSurfer is extraordinarly finicky and is easily confused and incorrect.

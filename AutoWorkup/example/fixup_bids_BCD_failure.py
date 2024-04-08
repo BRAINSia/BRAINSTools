@@ -61,7 +61,7 @@ def subset_lmks(
 
 
 def query_if_lmks_ok():
-    print(f"Were the landmarks placed properly after correction?")
+    print("Were the landmarks placed properly after correction?")
     user_response_ok: str = input()
     if user_response_ok.upper() == "Y":
         with open(review_file, "w") as rfid:

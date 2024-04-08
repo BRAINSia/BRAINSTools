@@ -9,16 +9,13 @@ Usage:
 
 """
 
-from itertools import starmap, zip_longest
+from itertools import zip_longest
 
 import os.path
-from builtins import map
 from builtins import range
 
 import SimpleITK as sitk
-import numpy as np
 
-from .partials import calcutateBinaryVolume
 from ..common import check_file
 from ..config import _config
 from collections import (

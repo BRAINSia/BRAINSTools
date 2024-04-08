@@ -298,7 +298,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
         found_sessions.sort()
         previous_list.sort()
         for session in found_sessions:
-            if not session in previous_list:
+            if session not in previous_list:
                 return_status = False
 
     if return_status == False:
@@ -316,7 +316,7 @@ def validate_base_tps(base_tps_file, found_sessions, subject, templateID):
                 print(("MANUALLY REMOVE: {0}".format(templ_dir)))
             pass
         else:
-            print(("NO NEED TO REMOVE TEMPLATE: ".format(templ_dir)))
+            print(("NO NEED TO REMOVE TEMPLATE: ".format()))
 
         for session in found_sessions:
             long_sess_dir = os.path.join(subjects_dir, session + ".long." + templateID)
@@ -452,7 +452,6 @@ exit $recon_long_stat
         FSHOME=FREESURFER_HOME,
         FSSUBJDIR=subjects_dir,
         TEMP_ID=templateID,
-        SUBJ_SESSION_ID=session,
         JOB_NAME=job_name,
         THIS_SESSION=session,
         HOLD_FOR_JOBS=hold_jid,

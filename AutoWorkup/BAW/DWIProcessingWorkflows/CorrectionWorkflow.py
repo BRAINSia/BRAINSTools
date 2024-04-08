@@ -14,22 +14,10 @@ Author:
 Usage:
 """
 
-import nipype
-import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces import ants
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-
-from utilities.misc import common_ants_registration_settings
+from nipype.interfaces.utility import Function, IdentityInterface
 
 
 def create_correction_workflow(WFname):

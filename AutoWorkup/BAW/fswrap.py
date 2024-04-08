@@ -18,11 +18,7 @@ from nipype.interfaces.base import (
     Directory,
     File,
     traits,
-    InputMultiPath,
-    OutputMultiPath,
-    isdefined,
 )
-from nipype.utils.filemanip import split_filename
 
 
 class FSScriptInputSpec(CommandLineInputSpec):
@@ -121,7 +117,7 @@ class FSScript(CommandLine):
         :return:
         """
         if opt == "subprocess":
-            if not val in ["autorecon", "template", "longitudinal"]:
+            if val not in ["autorecon", "template", "longitudinal"]:
                 raise ValueException(
                     "{0} is not a valid value for 'subprocess'".format(val)
                 )

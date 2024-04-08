@@ -9,7 +9,6 @@ Usage:
 
 """
 
-import sklearn
 import numpy
 import os
 import csv

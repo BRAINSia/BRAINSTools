@@ -19,7 +19,7 @@ from builtins import str
 
 import SimpleITK as sitk
 
-from .PipeLineFunctionHelpers import mkdir_p, make_dummy_file, recursive_dir_rm
+from .PipeLineFunctionHelpers import mkdir_p, recursive_dir_rm
 
 
 def normalize_wm(t1, wm_prob):

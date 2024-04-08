@@ -21,9 +21,6 @@ Options:
 import os.path
 import hashlib
 
-import sys
-import shutil
-
 
 def md5_for_file(f, block_size=2**20):
     """Generate a hash key from a file"""

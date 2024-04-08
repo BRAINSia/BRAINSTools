@@ -10,10 +10,8 @@ Usage:
 """
 
 import os.path
-from warnings import warn
 
 import SimpleITK as sitk
-import numpy as np
 
 from ..common import check_file
 from ..config import _config

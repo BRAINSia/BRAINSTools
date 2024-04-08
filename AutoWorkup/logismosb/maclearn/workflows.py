@@ -9,7 +9,7 @@ Usage:
 
 """
 
-from nipype import Workflow, IdentityInterface, Node, Function
+from nipype import Workflow, IdentityInterface, Node
 from .nipype_interfaces import (
     PredictEdgeProbability,
     CollectFeatureFiles,

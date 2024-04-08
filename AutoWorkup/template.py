@@ -34,7 +34,6 @@ Examples:
 import glob
 import os
 import sys
-import traceback
 from builtins import range
 
 from .baw_exp import open_subject_database

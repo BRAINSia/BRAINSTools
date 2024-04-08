@@ -23,7 +23,6 @@ from nipype.interfaces.ants import (
 )
 from nipype.interfaces.utility import Function
 
-from .utilities.distributed import modify_qsub_args
 from .utilities.misc import common_ants_registration_settings
 
 
@@ -68,7 +67,6 @@ def make_transform_list_with_gradient_warps(averageAffineTranform, gradientStepW
 def renest_deformed_passive_images(
     deformedPassiveImages, flattened_image_nametypes, interpolationMapping
 ):
-    import os
     from collections import (
         OrderedDict,
     )  # Need OrderedDict internally to ensure consistent ordering

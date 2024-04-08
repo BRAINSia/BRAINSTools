@@ -9,25 +9,15 @@ Author:
 Usage:
 
 """
-import os
 
-import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools.registration.brainsresample import BRAINSResample
 from nipype.interfaces.semtools.segmentation.specialized import (
     BRAINSConstellationDetector,
 )
 from nipype.interfaces.semtools.segmentation.specialized import BRAINSROIAuto
 from nipype.interfaces.semtools.utilities.brains import BRAINSLandmarkInitializer
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import IdentityInterface
 
 from utilities.distributed import modify_qsub_args
 

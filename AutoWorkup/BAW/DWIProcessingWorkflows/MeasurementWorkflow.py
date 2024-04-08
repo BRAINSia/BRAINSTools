@@ -10,25 +10,11 @@ Usage:
 
 """
 
-import os
 from functools import reduce
 
-import SimpleITK as sitk
-import nipype
-import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
-from nipype.interfaces import ants
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
 from nipype.interfaces.semtools import *
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
-from past.utils import old_div
+from nipype.interfaces.utility import Function, IdentityInterface
 
 
 def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
@@ -51,7 +37,6 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
         :param DWIBrainMask:
         :return:
         """
-        import os
         import SimpleITK as sitk
 
         T2LabelMapVolume = sitk.ReadImage(
@@ -136,7 +121,6 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
         :param labelCodesFile:
         :return:
         """
-        import os
         import SimpleITK as sitk
         from collections import (
             OrderedDict,
@@ -186,10 +170,6 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
             :param T2LabelMap:
             :return:
             """
-            from past.utils import old_div
-            from collections import (
-                OrderedDict,
-            )  # Need OrderedDict internally to ensure consistent ordering
 
             statFilter = sitk.LabelStatisticsImageFilter()
             # RIS stats over input label ID
@@ -300,7 +280,6 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
         :param inputVolume:
         :return: outputVolume
         """
-        import os
         import SimpleITK as sitk
 
         refVolume = sitk.ReadImage(referenceVolume)

@@ -33,7 +33,6 @@ import io
 
 from .pathHandling import *
 from .distributed import modify_qsub_args
-from . import misc
 
 
 # http://stackoverflow.com/questions/715417/converting-from-a-string-to-boolean-in-python
@@ -408,7 +407,6 @@ def get_cpus(option):
     """
     assert option in _WFRUN_VALID_TYPES, "Unknown wfrun option"
     from multiprocessing import cpu_count
-    import os
 
     total_cpus = cpu_count()
     suffix = option.rsplit("local", 1)[1]

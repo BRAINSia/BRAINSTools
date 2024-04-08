@@ -82,27 +82,12 @@ os.environ["PATH"] = os.pathsep.join(temp_paths)
 
 print((sys.path))
 
-import SimpleITK as sitk
-import matplotlib as mp
 
-import nipype
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-)
-from nipype.interfaces.base import traits, isdefined, BaseInterface
-from nipype.interfaces.utility import Merge, Split, Function, Rename, IdentityInterface
+from nipype.interfaces.utility import Function, IdentityInterface
 import nipype.interfaces.io as nio  # Data i/o
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.ants import (
     Registration,
-    ApplyTransforms,
-    AverageImages,
-    MultiplyImages,
-    AverageAffineTransform,
 )
 
 from nipype.interfaces.semtools import *
@@ -200,7 +185,6 @@ def change_dynamic_range_of_image(inFN, outFN, winMin, winMax, outMin, outMax):
     :param outMax:
     :return: os.path.realpath(outFN)
     """
-    import SimpleITK as sitk
     import os
 
     at = sitk.ReadImage(inFN)
@@ -280,7 +264,6 @@ def smooth_brain_mask(inFN, outFN):
     :param outFN:
     :return: os.path.realpath(outFN)
     """
-    import SimpleITK as sitk
     import os
 
     FIXED_BM = inFN
@@ -345,7 +328,6 @@ def chop_image(inFN, inMaskFN, outFN):
     :param outFN:
     :return: os.path.realpath(outFN)
     """
-    import SimpleITK as sitk
     import os
 
     fbm = sitk.ReadImage(inMaskFN) > 0

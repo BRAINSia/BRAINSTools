@@ -1,6 +1,6 @@
 
 set(proj ITKv5)
-set(${proj}_REQUIRED_VERSION 5.3)
+set(${proj}_REQUIRED_VERSION 5.4)
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -58,7 +58,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    b5d413242df3be0c45174956f531a52167e7070f # 20230214
+    v5.4.0 # 20240531
     QUIET
     )
 

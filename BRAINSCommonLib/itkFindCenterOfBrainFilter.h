@@ -37,7 +37,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
   itkNewMacro(Self);
-  itkTypeMacro(FindCenterOfBrain, Superclass);
+  itkTypeMacro(FindCenterOfBrainFilter, Superclass);
 
   using ImageType = TInputImage;
   using MaskImageType = TMaskImage;

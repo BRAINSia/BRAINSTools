@@ -30,6 +30,9 @@ if(APPLE)
   # Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
   #       we ensure that the bitness, and C++ standard library will be properly detected.
   include(InitializeOSXVariables)
+  if(NOT CMAKE_OSX_DEPLOYMENT_TARGET EQUAL "11.0")
+      message(FATAL_ERROR "FAILURE ${CMAKE_OSX_DEPLOYMENT_TARGET} != 11.0")
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------

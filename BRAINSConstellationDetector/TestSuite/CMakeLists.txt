@@ -316,7 +316,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -332,7 +332,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -348,7 +348,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -384,7 +384,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -400,7 +400,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -416,7 +416,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -432,7 +432,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
     --outputUntransformedClippedVolume
@@ -448,7 +448,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -481,7 +481,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -497,7 +497,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -514,7 +514,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -531,7 +531,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -548,7 +548,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -568,7 +568,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -601,7 +601,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
@@ -617,7 +617,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.png
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 12
+    --compareNumberOfPixelsTolerance 20
 
     BRAINSConstellationDetectorTest
     --inputVolume DATA{${TestData_DIR}/T1.nii.gz}

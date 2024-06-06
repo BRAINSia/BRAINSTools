@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: "v4.6.0"
     hooks:
       - id: check-added-large-files
         args: ['--maxkb=1024']
@@ -8,19 +8,22 @@ repos:
       - id: check-executables-have-shebangs
       # See check-json5 to support orthanc json5 files - id: check-json
       - id: check-merge-conflict
+      - id: check-symlinks
       - id: check-toml
       - id: check-xml
       - id: check-yaml
+      - id: debug-statements
+        exclude: "some_path_to_files.py"
       - id: detect-private-key
       - id: end-of-file-fixer
-        exclude: .*.sha.*|.*.vtk
+        exclude: "\\.(md5|sha|sha512|svg|vtk|vtp)$|^Resources\\/[^\\/]+\\.h$|\\/ColorFiles\\/.+\\.txt$|Data\\/Input\\/.+$"
       - id: forbid-new-submodules
       - id: mixed-line-ending
-        exclude: .*.sha.*|.*.vtk
+        exclude: "\\.(sha|sha512|svg|vtk|vtp)$"
       - id: name-tests-test
         args: ['--pytest-test-first']
       - id: trailing-whitespace
-        exclude: .*.sha.*|.*.vtk
+        exclude: "\\.(sha|sha512|svg|vtk|vtp)$"
     #- repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
     #rev: v0.2.1
@@ -49,7 +52,13 @@ repos:
     hooks:
       - id: nbstripout
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.15.2
     hooks:
     -   id: pyupgrade
         args: [--py310-plus]
+
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: "0.28.4"
+    hooks:
+      - id: check-dependabot
+      - id: check-github-workflows

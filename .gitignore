@@ -1,5 +1,4 @@
 # Ignore sphinx temporary files
-
 __pycache__
 _build
 *.[oa]
@@ -49,3 +48,5 @@ Testing/Temporary/LastTest.log
 
 TestData/.ExternalData_SHA512*
 CMakeUserPresets.json
+
+venv

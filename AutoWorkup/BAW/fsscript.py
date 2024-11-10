@@ -219,7 +219,7 @@ def baw_fixed_brain_mask(
         ## some white matter is being classified as background when it it being avoid due
         ## to too strict of multi-modal thresholding.
         hole_filled = sitk.ErodeObjectMorphology(
-            sitk.DilateObjectMorphology(clipping, fill_size), fill_size
+            sitk.DilateObjectMorphology(clipping, [fill_size] * 3), [fill_size] * 3
         )
         final_mask = sitk.Cast(hole_filled * not_blood, sitk.sitkUInt8)
         ## Now make an mgz version of the binary custom brain mask

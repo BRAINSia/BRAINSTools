@@ -225,12 +225,12 @@ def create_atlas_xml_and_cleaned_deformed_averages(
             print(f"MISSING FILE FROM patternDict: {base_name}")
     ## Make binary dilated mask
     binmask = sitk.BinaryThreshold(load_images_list["AVG_BRAINMASK.nii.gz"], 1, 1000000)
-    brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, 5)
+    brainmask_dilatedBy5 = sitk.DilateObjectMorphology(binmask, [5] * 3)
     brainmask_dilatedBy5 = sitk.Cast(
         brainmask_dilatedBy5, sitk.sitkFloat32
     )  # Convert to Float32 for multiply
 
-    inv_brainmask_erodedBy5 = 1 - sitk.ErodeObjectMorphology(binmask, 5)
+    inv_brainmask_erodedBy5 = 1 - sitk.ErodeObjectMorphology(binmask, [5] * 3)
     inv_brainmask_erodedBy5 = sitk.Cast(
         inv_brainmask_erodedBy5, sitk.sitkFloat32
     )  # Convert to Float32 for multiply

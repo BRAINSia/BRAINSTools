@@ -239,14 +239,14 @@ def create_water_sheds(aseg_file, filled_file, dilation=6):
     # dilate putamen/pallidum and assign label 12
     rh_pitpul = (
         (
-            sitk.DilateObjectMorphology((fs == 51) + (fs == 52), dilation)
+            sitk.DilateObjectMorphology((fs == 51) + (fs == 52), [dilation] * 3)
             * (rh_hipthal == 0)
         )
         > 0
     ) * wm_labels[2]
     lh_pitpul = (
         (
-            sitk.DilateObjectMorphology((fs == 12) + (fs == 13), dilation)
+            sitk.DilateObjectMorphology((fs == 12) + (fs == 13), [dilation] * 3)
             * (lh_hipthal == 0)
         )
         > 0

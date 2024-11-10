@@ -123,14 +123,14 @@ def create_left_right_wm_hemispheres(
         """
         LargestComponentCode = 1
         if UseErosionCleaning:
-            erosionMask = sitk.ErodeObjectMorphology(inputMask, 1)
+            erosionMask = sitk.ErodeObjectMorphology(inputMask, [1] * 3)
         else:
             erosionMask = inputMask
         CC = sitk.ConnectedComponent(erosionMask)
         Rlabel = sitk.RelabelComponent(CC)
         largestMask = Rlabel == LargestComponentCode
         if UseErosionCleaning:
-            dilateMask = sitk.DilateObjectMorphology(largestMask, 1)
+            dilateMask = sitk.DilateObjectMorphology(largestMask, [1] * 3)
         else:
             dilateMask = largestMask
 
@@ -155,10 +155,10 @@ def create_left_right_wm_hemispheres(
         HDCMARegisteredVentricleLabels == HDMCARightVentricleCode
     )
     ExpandVentValue = 5
-    HDCMAMask_d5 = sitk.DilateObjectMorphology(HDCMAMask, ExpandVentValue)
+    HDCMAMask_d5 = sitk.DilateObjectMorphology(HDCMAMask, [ExpandVentValue] * 3)
     CSFMaskImage = ABCLabelsImage == ABCCSFLabelCode
     VentricleMask = (HDCMAMask_d5 * CSFMaskImage + HDCMAMask) > 0
-    VentricleMask_d2 = sitk.DilateObjectMorphology(VentricleMask, 2)
+    VentricleMask_d2 = sitk.DilateObjectMorphology(VentricleMask, [2] * 3)
     ABCWMLabelCode = 1
     WMMaskImage = ABCLabelsImage == ABCWMLabelCode
 

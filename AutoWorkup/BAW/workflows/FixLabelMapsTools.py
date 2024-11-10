@@ -60,14 +60,14 @@ def fix_label_map_from_neuromorphemetrics_2012(
         """
         LargestComponentCode = 1
         if UseErosionCleaning:
-            erosionMask = sitk.ErodeObjectMorphology(inputMask, 1)
+            erosionMask = sitk.ErodeObjectMorphology(inputMask, [1] * 3)
         else:
             erosionMask = inputMask
         CC = sitk.ConnectedComponent(erosionMask)
         Rlabel = sitk.RelabelComponent(CC)
         largestMask = Rlabel == LargestComponentCode
         if UseErosionCleaning:
-            dilateMask = sitk.DilateObjectMorphology(largestMask, 1)
+            dilateMask = sitk.DilateObjectMorphology(largestMask, [1] * 3)
         else:
             dilateMask = largestMask
 

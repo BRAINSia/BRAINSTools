@@ -209,13 +209,13 @@ def brainstem(
         + brainStemBinary * 30
     )
 
-    errod_brain_mask = sitk.ErodeObjectMorphology((outputTissueLabel > 0), 2)
+    errod_brain_mask = sitk.ErodeObjectMorphology((outputTissueLabel > 0), [2] * 3)
     LargestComponentCode = 1
     one_region_mask = (
         sitk.RelabelComponent(sitk.ConnectedComponent(errod_brain_mask))
         == LargestComponentCode
     )
-    dilate_one_region = sitk.DilateObjectMorphology(one_region_mask, 3) > 0
+    dilate_one_region = sitk.DilateObjectMorphology(one_region_mask, [3] * 3) > 0
     cleanedOutputTissueLabel = outputTissueLabel * dilate_one_region
 
     full_output_path = os.path.abspath(ouputTissuelLabelFilename)

@@ -288,7 +288,8 @@ class WMMasking(BaseInterface):
             # Fill the ventricle region
             for i in range(ventricleDilation):
                 ventTemp = (
-                    sitk.DilateObjectMorphology(ventTemp, dilationFactor) * boundary
+                    sitk.DilateObjectMorphology(ventTemp, [dilationFactor] * 3)
+                    * boundary
                 )
                 ventTemp = largest_connected_component(ventTemp)
             return ventTemp
@@ -420,7 +421,7 @@ class WMMasking(BaseInterface):
         # dilate preserved regions
         preservedDilation = 1
         preservedRegions = sitk.DilateObjectMorphology(
-            preservedRegions, preservedDilation
+            preservedRegions, [preservedDilation] * 3
         )
         # add the whtie matter masks to the preserved regions
         preservedRegions = preservedRegions + RightWhiteMatter + LeftWhiteMatter > 0
@@ -434,7 +435,7 @@ class WMMasking(BaseInterface):
         # Remove mask around cerebellum and brain stem
         cerebellumDilation = 1
         cerebellumMaskDilated = sitk.DilateObjectMorphology(
-            CerebellumMask, cerebellumDilation
+            CerebellumMask, [cerebellumDilation] * 3
         )
         leftBoundaryMask = left_hemisphere * (1 - cerebellumMaskDilated)
         leftBoundaryMask = largest_connected_component(leftBoundaryMask)
@@ -449,17 +450,17 @@ class WMMasking(BaseInterface):
             # by eroding the brainlabels mask
             brainlabelserosion = 1
             brainlabelsmask = sitk.ErodeObjectMorphology(
-                brainlabelsImage > 0, brainlabelserosion
+                brainlabelsImage > 0, [brainlabelserosion] * 3
             )
             brainlabelsImage = (
                 sitk.Cast(brainlabelsmask, sitk.sitkUInt32) * brainlabelsImage
             )
         elif boundaryDilation > 0:
             leftBoundaryMask = sitk.DilateObjectMorphology(
-                leftBoundaryMask, boundaryDilation
+                leftBoundaryMask, [boundaryDilation] * 3
             )
             rightBoundaryMask = sitk.DilateObjectMorphology(
-                rightBoundaryMask, boundaryDilation
+                rightBoundaryMask, [boundaryDilation] * 3
             )
 
         # Remove CSF from hemisphere masks

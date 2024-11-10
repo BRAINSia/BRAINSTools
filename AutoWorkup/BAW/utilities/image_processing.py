@@ -38,14 +38,11 @@ def fix_wm_partitioning(brainMask, PosteriorsList):
         :return:
         """
 
+        radius = [HOLE_FILL_SIZE] * inputMask.GetDimension()
+        filled_brain_mask = sitk.VotingBinaryHoleFilling(BM, radius)
+        eroded_brain_mask = sitk.ErodeObjectMorphology(filled_brain_mask, radius)
         return sitk.BinaryThreshold(
-            inputMask
-            + sitk.ErodeObjectMorphology(
-                sitk.VotingBinaryHoleFilling(
-                    BM, [HOLE_FILL_SIZE, HOLE_FILL_SIZE, HOLE_FILL_SIZE]
-                ),
-                HOLE_FILL_SIZE,
-            ),
+            inputMask + eroded_brain_mask,
             1,
             10000,
         )

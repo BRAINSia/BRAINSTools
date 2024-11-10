@@ -30,7 +30,7 @@ def validate_path(path, allow_empty, isDirectory):
     :param isDirectory:
     :return:
     """
-    msg = "Path could not be found! {0}"
+    msg = "Path could not be found! #{0}#"
     if (path is None or path == "") and allow_empty:
         return None
     full = os.path.realpath(os.path.abspath(path))
@@ -119,7 +119,7 @@ def clone_atlas_dir(cachedir, atlasdir):
     :param atlasdir:
     :return:
     """
-    from distutils.dir_util import copy_tree
+    from shutil import copytree
     import stat
 
     new_dir = os.path.join(cachedir, "Atlas")
@@ -127,9 +127,7 @@ def clone_atlas_dir(cachedir, atlasdir):
     if not os.path.exists(new_dir):
         old_dir = validate_path(atlasdir, False, True)
         print(f"Copying new atlas {old_dir} to cache directory...")
-        newfiles = copy_tree(
-            old_dir, new_dir, preserve_mode=1, preserve_times=1, verbose=True
-        )
+        newfiles = copytree(old_dir, new_dir)
         xml_file = "ExtendedAtlasDefinition.xml"
         old_xml = os.path.join(old_dir, xml_file + ".in")
         new_xml = os.path.join(new_dir, xml_file)

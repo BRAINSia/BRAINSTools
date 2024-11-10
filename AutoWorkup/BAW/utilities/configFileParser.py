@@ -20,10 +20,9 @@ Options:
 """
 
 
-from future import standard_library
+# from future import standard_library
+# standard_library.install_aliases()
 
-standard_library.install_aliases()
-from past.utils import old_div
 from configparser import ConfigParser
 import os
 import sys
@@ -419,7 +418,7 @@ def get_cpus(option):
             print("RUNNING WITHOUT POOL BUILDING")
     else:
         threads = int(suffix.strip("_"))
-    return int(old_div(total_cpus, threads))
+    return int(total_cpus // threads)
 
 
 def _nipype_plugin_config(wfrun, cluster, template=""):

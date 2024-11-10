@@ -56,7 +56,7 @@ class GetPosteriorsFromAtlasXML:
         :return:
         """
         myelem = et.fromstring(xmlString)
-        elementsList = list(myelem.getiterator())
+        elementsList = list(myelem.iter())
         iterator = list(range(len(elementsList)))
         priorTypeNameList = list()
         for i in iterator:

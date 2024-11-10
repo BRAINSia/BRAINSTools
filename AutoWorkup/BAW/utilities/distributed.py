@@ -11,7 +11,6 @@ Usage:
 """
 
 import math
-from past.utils import old_div
 from collections import (
     OrderedDict,
 )  # Need OrderedDict internally to ensure consistent ordering
@@ -136,7 +135,7 @@ def modify_qsub_args(
 
     ## NOTE: At least 1 thread needs to be requested per 2GB needed
     memoryThreads = int(
-        math.ceil(old_div(math.ceil(memoryGB), 2))
+        math.ceil(math.ceil(memoryGB) // 2)
     )  # Ensure that threads are integers
     minThreads = max(minThreads, memoryThreads)
     maxThreads = max(maxThreads, memoryThreads)

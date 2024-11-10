@@ -421,7 +421,7 @@ if __name__ == "__main__":
     import os
 
     from docopt import docopt
-    from BAW import setup_environment
+    from BAW.AutoWorkup import setup_environment
 
     argv = docopt(__doc__, version="1.1")
     print(argv)

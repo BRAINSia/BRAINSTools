@@ -51,7 +51,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BCDThinPlateSplineKernelTransform, ThinPlateSplineKernelTransform);
+  itkOverrideGetNameOfClassMacro(BCDThinPlateSplineKernelTransform);
   typename Superclass::Superclass::AMatrixType
   GetAMatrix()
   {

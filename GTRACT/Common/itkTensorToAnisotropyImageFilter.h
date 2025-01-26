@@ -123,7 +123,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(TensorToAnisotropyImageFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(TensorToAnisotropyImageFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);

@@ -81,7 +81,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(DtiGraphSearchTrackingFilter, itk::DtiTrackingFilterBase);
+  itkOverrideGetNameOfClassMacro(DtiGraphSearchTrackingFilter);
 
   itkSetMacro(AnisotropyBranchingValue, float);
   itkSetMacro(RandomSeed, int);

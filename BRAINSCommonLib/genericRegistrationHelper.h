@@ -386,7 +386,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiModal3DMutualRegistrationHelper, ProcessObject);
+  itkOverrideGetNameOfClassMacro(MultiModal3DMutualRegistrationHelper);
 
   using FixedImageType = TFixedImage;
   using FixedImageConstPointer = typename FixedImageType::ConstPointer;

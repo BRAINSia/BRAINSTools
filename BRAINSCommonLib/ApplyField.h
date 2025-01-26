@@ -37,7 +37,7 @@ public:
   using Pointer = SmartPointer<Self>;
   using ConstPointer = SmartPointer<const Self>;
 
-  itkTypeMacro(MIMApplication, Object);
+  itkOverrideGetNameOfClassMacro(MIMApplication);
 
   itkNewMacro(Self);
 

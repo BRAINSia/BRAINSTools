@@ -62,7 +62,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(CrossOverAffineSystem, itk::LightProcessObject);
+  itkOverrideGetNameOfClassMacro(CrossOverAffineSystem);
 
   /** Dimension of the domain space. */
   static constexpr unsigned int SpaceDimension = NDimensions;

@@ -81,7 +81,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BRAINSROIAutoImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(BRAINSROIAutoImageFilter);
 
   /** Image type alias support. */
   using InputPixelType = typename InputImageType::PixelType;

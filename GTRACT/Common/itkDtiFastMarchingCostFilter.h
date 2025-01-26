@@ -79,7 +79,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DtiFastMarchingCostFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(DtiFastMarchingCostFilter);
 
   /** Typedef support of level set method types for output image. */
   using LevelSetType = LevelSetTypeDefault<TLevelSet>;

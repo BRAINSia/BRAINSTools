@@ -54,7 +54,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ComputeHistogramQuantileThresholds, Object);
+  itkOverrideGetNameOfClassMacro(ComputeHistogramQuantileThresholds);
 
   /** set Quantile Threshold */
   itkSetMacro(QuantileLowerThreshold, double);

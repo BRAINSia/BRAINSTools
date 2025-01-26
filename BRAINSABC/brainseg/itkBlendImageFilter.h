@@ -41,7 +41,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BlendImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(BlendImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;

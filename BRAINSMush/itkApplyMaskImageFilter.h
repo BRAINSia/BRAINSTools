@@ -37,7 +37,7 @@ public: /* define methods available to everyone */
   itkNewMacro(Self);
 
   /** run-time type information (and related methods) */
-  itkTypeMacro(ApplyMaskImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(ApplyMaskImageFilter);
 
   /** ImageDimension enumeration */
   static constexpr unsigned int ImageDimension = TInputImage::ImageDimension;

@@ -132,7 +132,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(BRAINSFitHelperTemplate, ProcessObject);
+  itkOverrideGetNameOfClassMacro(BRAINSFitHelperTemplate);
 
   /** Set/Get the Fixed image. */
   itkSetObjectMacro(FixedVolume, FixedImageType);

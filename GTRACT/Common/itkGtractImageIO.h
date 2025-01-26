@@ -67,7 +67,7 @@ public:
   using ConstPointer = itk::SmartPointer<const Self>;
 
   itkNewMacro(Self);
-  itkTypeMacro(GtractImageIO, itk::Object);
+  itkOverrideGetNameOfClassMacro(GtractImageIO);
 
   using Short3dImageType = itk::Image<signed short, 3>;
   using Short4dImageType = itk::Image<signed short, 4>;

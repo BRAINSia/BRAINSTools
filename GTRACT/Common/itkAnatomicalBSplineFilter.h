@@ -135,7 +135,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(AnatomicalBSplineFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(AnatomicalBSplineFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(FixedImage, RegisterImageType);

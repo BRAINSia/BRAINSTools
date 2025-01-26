@@ -84,7 +84,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DtiFastMarchingTrackingFilter, itk::DtiTrackingFilterBase);
+  itkOverrideGetNameOfClassMacro(DtiFastMarchingTrackingFilter);
 
   /** Typedef support of input Cost Image Type */
   using CostImageType = TCostImageType;

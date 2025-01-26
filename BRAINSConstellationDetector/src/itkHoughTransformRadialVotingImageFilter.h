@@ -150,7 +150,7 @@ public:
   using CastFilterPointer = typename CastFilterType::Pointer;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(HoughTransformRadialVotingImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(HoughTransformRadialVotingImageFilter);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

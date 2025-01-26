@@ -106,7 +106,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(InvertBSplineFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(InvertBSplineFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, BsplineTransformType);

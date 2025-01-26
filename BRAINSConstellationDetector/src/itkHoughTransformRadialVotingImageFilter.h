@@ -116,7 +116,7 @@ public:
   using InputRegionType = typename InputImageType::RegionType;
   using InputSpacingType = typename InputImageType::SpacingType;
   using InputPointType = typename InputImageType::PointType;
-  using InputCoordType = typename InputPointType::CoordRepType;
+  using InputCoordType = typename InputPointType::CoordinateType;
 
   /** Output Image type alias */
   using OutputImageType = TOutputImage;

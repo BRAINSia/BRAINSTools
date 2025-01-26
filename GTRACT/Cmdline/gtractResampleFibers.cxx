@@ -208,8 +208,8 @@ main(int argc, char * argv[])
   DisplacementFieldType::PointType physicalPoint;
   DisplacementFieldType::IndexType indexPoint;
 
-  using CoordRepType = double;
-  using InterpolatorType = itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordRepType>;
+  using CoordinateType = double;
+  using InterpolatorType = itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordinateType>;
   InterpolatorType::Pointer interpolator = InterpolatorType::New();
   interpolator->SetInputImage(orientImageFilter->GetOutput());
 

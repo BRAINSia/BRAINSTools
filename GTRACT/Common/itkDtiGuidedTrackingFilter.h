@@ -83,7 +83,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(DtiGuidedTrackingFilter, itk::DtiTrackingFilterBase);
+  itkOverrideGetNameOfClassMacro(DtiGuidedTrackingFilter);
 
   itkSetMacro(CurvatureThreshold, double);
   itkGetMacro(CurvatureThreshold, double);

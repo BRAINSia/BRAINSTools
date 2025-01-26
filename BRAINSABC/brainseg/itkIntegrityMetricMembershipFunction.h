@@ -63,7 +63,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Strandard macros */
-  itkTypeMacro(IntegrityMetricMembershipFunction, Object);
+  itkOverrideGetNameOfClassMacro(IntegrityMetricMembershipFunction);
   itkNewMacro(Self);
 
   using SampleType = TSample;

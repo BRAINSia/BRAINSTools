@@ -60,7 +60,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ScalarImagePortionToHistogramGenerator, Object);
+  itkOverrideGetNameOfClassMacro(ScalarImagePortionToHistogramGenerator);
 
   /** standard New() method support */
   itkNewMacro(Self);

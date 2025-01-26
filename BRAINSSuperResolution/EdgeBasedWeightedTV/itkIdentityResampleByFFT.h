@@ -102,7 +102,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(IdentityResampleByFFT, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(IdentityResampleByFFT);
 
   /** Number of dimensions. */
   static constexpr unsigned int ImageDimension = TOutputImage::ImageDimension;

@@ -76,7 +76,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(DtiFreeTrackingFilter, itk::DtiTrackingFilterBase);
+  itkOverrideGetNameOfClassMacro(DtiFreeTrackingFilter);
 
   itkSetMacro(CurvatureThreshold, double);
   itkGetMacro(CurvatureThreshold, double);

@@ -60,7 +60,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TensorInterpolateImageFunction, ImageFunction);
+  itkOverrideGetNameOfClassMacro(TensorInterpolateImageFunction);
 
   /** InputImageType type alias support. */
   using InputImageType = typename Superclass::InputImageType;

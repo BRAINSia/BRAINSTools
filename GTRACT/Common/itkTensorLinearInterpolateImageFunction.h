@@ -55,7 +55,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(TensorLinearInterpolateImageFunction, TensorInterpolateImageFunction);
+  itkOverrideGetNameOfClassMacro(TensorLinearInterpolateImageFunction);
 
   /** InputImageType type alias support. */
   using InputImageType = typename Superclass::InputImageType;

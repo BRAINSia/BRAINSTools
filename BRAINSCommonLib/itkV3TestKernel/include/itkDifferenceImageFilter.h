@@ -48,7 +48,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(DifferenceImageFilter, Testing::ComparisonImageFilter);
+  itkOverrideGetNameOfClassMacro(DifferenceImageFilter);
 
   /** Some convenient type alias. */
   using InputImageType = TInputImage;

@@ -84,7 +84,7 @@ public:
   using HoughFilterPointer = typename HoughFilterType::Pointer;
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro(BRAINSHoughEyeDetector, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(BRAINSHoughEyeDetector);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);

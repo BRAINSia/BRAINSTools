@@ -83,7 +83,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(PipelineMonitorImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(PipelineMonitorImageFilter);
 
   /** Enable/Disable clearing all saved pipeline information when
    * GenerateOutputInformation is called.

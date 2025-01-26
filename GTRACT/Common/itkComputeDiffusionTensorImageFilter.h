@@ -118,7 +118,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(ComputeDiffusionTensorImageFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(ComputeDiffusionTensorImageFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);

@@ -178,7 +178,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(DtiTrackingFilterBase, itk::Object);
+  itkOverrideGetNameOfClassMacro(DtiTrackingFilterBase);
 
   itkSetObjectMacro(TensorImage, TensorImageType);
   itkSetObjectMacro(AnisotropyImage, AnisotropyImageType);

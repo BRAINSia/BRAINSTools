@@ -78,7 +78,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(LargestForegroundFilledMaskImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(LargestForegroundFilledMaskImageFilter);
 
   /** set Otsu Threshold */
   itkSetMacro(OtsuPercentileLowerThreshold, double);

@@ -63,7 +63,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(MultiModeHistogramThresholdBinaryImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(MultiModeHistogramThresholdBinaryImageFilter);
 
   itkSetMacro(LinearQuantileThreshold, double);
   itkGetConstMacro(LinearQuantileThreshold, double);

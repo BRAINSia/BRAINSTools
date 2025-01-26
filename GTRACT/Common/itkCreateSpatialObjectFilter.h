@@ -97,7 +97,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(CreateSpatialObjectFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(CreateSpatialObjectFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(Input, InputImageType);

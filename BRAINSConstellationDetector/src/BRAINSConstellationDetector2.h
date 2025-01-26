@@ -106,7 +106,7 @@ public:
   using MatrixType = vnl_matrix<double>;
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro(BRAINSConstellationDetector2, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(BRAINSConstellationDetector2);
 
   /** Method for creation through the object factory */
   itkNewMacro(Self);

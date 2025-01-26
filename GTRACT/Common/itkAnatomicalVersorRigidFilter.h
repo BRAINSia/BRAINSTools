@@ -118,7 +118,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(AnatomicalVersorRigidFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(AnatomicalVersorRigidFilter);
 
   /* SetInput and GetOutput Macros */
   itkSetObjectMacro(FixedImage, RegisterImageType);

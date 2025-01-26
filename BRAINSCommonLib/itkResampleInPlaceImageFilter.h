@@ -107,7 +107,7 @@ public:
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods) */
-  itkTypeMacro(ResampleInPlaceImageFilter, ImageToImageFilter);
+  itkOverrideGetNameOfClassMacro(ResampleInPlaceImageFilter);
 
   /** input/output image type alias */
   using InputImageType = TInputImage;

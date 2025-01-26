@@ -56,7 +56,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(StretchIntensityImageFilter, ImageSource);
+  itkOverrideGetNameOfClassMacro(StretchIntensityImageFilter);
 
   itkSetMacro(OutputMinimum, OutputPixelType);
   itkSetMacro(OutputMaximum, OutputPixelType);

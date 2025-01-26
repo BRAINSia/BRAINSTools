@@ -105,7 +105,7 @@ public:
   itkNewMacro(Self);
 
   /** Runtime information support. */
-  itkTypeMacro(EigenVectorToColorImageFilter, itk::Object);
+  itkOverrideGetNameOfClassMacro(EigenVectorToColorImageFilter);
 
   itkSetObjectMacro(Input, InputImageType);
   itkGetConstObjectMacro(Output, OutputImageType);

@@ -71,7 +71,7 @@ public:
   using ConstPointer = SmartPointer<const Self>;
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(FastMarchingCostFunction, SingleValuedCostFunction);
+  itkOverrideGetNameOfClassMacro(FastMarchingCostFunction);
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

@@ -83,7 +83,7 @@ public:
   using OutputType = typename Superclass::OutputType;
 
   /** CoordRep type alias support. */
-  using CoordRepType = TCoordRep;
+  using CoordinateType = TCoordRep;
   OutputType
   Evaluate(const PointType & point) const override
   {

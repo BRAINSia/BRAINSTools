@@ -82,7 +82,7 @@ using ImageSpacingType = ImageType::SpacingType;
 using ImageSizeType = ImageType::SizeType;
 using ImageDirectionType = ImageType::DirectionType;
 using ImageIndexType = ImageType::IndexType;
-using ImageCoordType = ImagePointType::CoordRepType;
+using ImageCoordType = ImagePointType::CoordinateType;
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 using WriterType = itk::ImageFileWriter<ImageType>;

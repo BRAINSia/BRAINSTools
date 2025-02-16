@@ -27,8 +27,8 @@
       <name>outputVolume</name>
       <flag>o</flag>
       <longflag>outputVolume</longflag>
-      <description>given a list of </description>
-      <label>NRRD File with bad gradients removed.</label>
+      <description>NRRD File with bad gradients removed. </description>
+      <label>Output Image Volume</label>
       <channel>output</channel>
       <default></default>
     </image>

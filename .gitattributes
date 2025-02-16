@@ -44,3 +44,5 @@ zap.pl           crlf=input
 
 # ghostflow-director GitHub automatic check for maximum repository file size
 #  *                     hooks-max-size=100000
+# SCM syntax highlighting
+pixi.lock linguist-language=YAML linguist-generated=true

@@ -50,3 +50,7 @@ TestData/.ExternalData_SHA512*
 CMakeUserPresets.json
 
 venv
+
+# pixi environments
+.pixi
+*.egg-info

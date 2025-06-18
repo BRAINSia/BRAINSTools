@@ -79,7 +79,7 @@ AllocateImageFromExample(const typename TemplateImageType::Pointer & TemplateIma
 
 template <typename ImageType>
 typename ImageType::Pointer
-OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
+OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
 {
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
@@ -243,7 +243,7 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   // get spacing
   SpacingType spacing = xferImage->GetSpacing();
   // get orientation
-  itk::SpatialOrientation::ValidCoordinateOrientationFlags orientation =
+  itk::SpatialOrientationEnums::ValidCoordinateOrientations orientation =
     itk::SpatialOrientationAdapter().FromDirectionCosines(xferImage->GetDirection());
   // get origin
   PointType origin = xferImage->GetOrigin();

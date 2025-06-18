@@ -357,7 +357,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
             covtmp(i, j) = numerator / (first_size * second_size);
             if (std::isnan(covtmp(i, j)))
             {
-              itkGenericExceptionMacro(<< " ERROR:  Covariance matrix with nan values.")
+              itkGenericExceptionMacro(<< " ERROR:  Covariance matrix with nan values.");
             }
           }
         }

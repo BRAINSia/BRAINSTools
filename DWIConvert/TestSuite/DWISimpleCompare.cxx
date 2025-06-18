@@ -234,7 +234,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
 
 void
 GetImageType(const std::string &                 fileName,
-             itk::ImageIOBase::IOPixelType &     pixelType,
+             itk::IOPixelEnum &     pixelType,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
@@ -254,7 +254,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::IOPixelEnum     pixelType;
   itk::ImageIOBase::IOComponentEnum componentType;
 
   try
@@ -269,38 +269,38 @@ main(int argc, char * argv[])
 
     switch (componentType)
     {
-      case itk::ImageIOBase::UCHAR:
+      case itk::IOComponentEnum::UCHAR:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<unsigned char>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::CHAR:
+      case itk::IOComponentEnum::CHAR:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<char>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::USHORT:
+      case itk::IOComponentEnum::USHORT:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<unsigned short>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::SHORT:
+      case itk::IOComponentEnum::SHORT:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<short>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::UINT:
+      case itk::IOComponentEnum::UINT:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<unsigned int>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::INT:
+      case itk::IOComponentEnum::INT:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<int>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::ULONG:
+      case itk::IOComponentEnum::ULONG:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<unsigned long>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::LONG:
+      case itk::IOComponentEnum::LONG:
         rval = DoIt(inputVolume1, inputVolume2, static_cast<long>(0), CheckDWIData);
         break;
-      case itk::ImageIOBase::FLOAT:
+      case itk::IOComponentEnum::FLOAT:
         rval = DoIt(inputVolume1, inputVolume2, 0.0f, CheckDWIData);
         // std::cout << "FLOAT type not currently supported." << std::endl;
         break;
-      case itk::ImageIOBase::DOUBLE:
+      case itk::IOComponentEnum::DOUBLE:
         std::cout << "DOUBLE type not currently supported." << std::endl;
         break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
       default:
         std::cout << "unknown component type" << std::endl;
         break;

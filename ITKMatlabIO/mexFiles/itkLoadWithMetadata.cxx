@@ -608,7 +608,7 @@ itkLoadWithMetadata(mxArray * plhs[], const mxArray * prhs[])
   //=========For now support scalar images of 2 or 3 dimensions========================
   // according to different pixel type and dimension, instantiate different LoadDWIImage
   plhs[0] = NULL;
-  itk::ImageIOBase::IOPixelType pixtype = imageIO->GetPixelType();
+  itk::IOPixelEnum pixtype = imageIO->GetPixelType();
   unsigned                      imageDimension = imageIO->GetNumberOfDimensions();
   switch (pixtype)
   {

@@ -211,7 +211,7 @@ public:
   {
     if (strategy == "Random")
     {
-      m_SamplingStrategy = AffineRegistrationType::RANDOM;
+      m_SamplingStrategy = AffineRegistrationType::MetricSamplingStrategyEnum::RANDOM;
     }
     else
     {
@@ -359,7 +359,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     // However, we want to pick all of our intended samples from the mask area, so we do sampling here.
 
     // First overwrite the sampling strategy to be none
-    this->m_SamplingStrategy = AffineRegistrationType::NONE;
+    this->m_SamplingStrategy = AffineRegistrationType::MetricSamplingStrategyEnum::NONE;
 
     // then pick the samples inside the mask and pass them to metric
     typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();

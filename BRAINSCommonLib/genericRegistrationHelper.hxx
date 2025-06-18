@@ -88,7 +88,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType,
   , // has to be provided by
     // this->Initialize().
   m_CostMetricObject(nullptr)
-  , m_SamplingStrategy(AffineRegistrationType::NONE)
+  , m_SamplingStrategy(AffineRegistrationType::MetricSamplingStrategyEnum::NONE)
 
 {
   this->SetNumberOfRequiredOutputs(1); // for the Transform
@@ -349,7 +349,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   ////////////////////////////////////////////////////////////
 
   m_Registration->SetMetricSamplingStrategy(
-    static_cast<typename RegistrationType::MetricSamplingStrategyType>(m_SamplingStrategy));
+    static_cast<typename RegistrationType::MetricSamplingStrategyEnum>(m_SamplingStrategy));
   m_Registration->SetMetricSamplingPercentage(this->m_SamplingPercentage);
   m_Registration->MetricSamplingReinitializeSeed(121212);
 

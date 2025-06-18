@@ -137,7 +137,7 @@ ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
 template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer &                       inputImage,
-            itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
+            itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
 {
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
@@ -169,7 +169,7 @@ OrientImage(typename ImageType::Pointer & inputImage, const typename ImageType::
 
 template <typename ImageType>
 typename ImageType::Pointer
-OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
+OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
 {
   typename ImageType::ConstPointer constImg(inputImage);
   return OrientImage<ImageType>(constImg, orient);
@@ -177,7 +177,7 @@ OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientation::V
 
 template <typename ImageType>
 typename ImageType::Pointer
-ReadImageAndOrient(const std::string & filename, itk::SpatialOrientation::ValidCoordinateOrientationFlags orient)
+ReadImageAndOrient(const std::string & filename, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
 {
   typename ImageType::Pointer      img = ReadImage<ImageType>(filename);
   typename ImageType::ConstPointer constImg(img);
@@ -196,7 +196,8 @@ template <typename TReadImageType>
 typename TReadImageType::Pointer
 ReadImageCoronal(const std::string & fileName)
 {
-  DirectionType CORdir = SOAdapterType().ToDirectionCosines(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
+  DirectionType CORdir = SOAdapterType().ToDirectionCosines(
+    itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RIP);
 
   return ReadImageAndOrient<TReadImageType>(fileName, CORdir);
 }

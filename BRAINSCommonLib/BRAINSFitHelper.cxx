@@ -113,7 +113,7 @@ BRAINSFitHelper::BRAINSFitHelper()
   , // Default to Mattes Mutual Information Metric
   m_SaveState("")
   , m_Helper(nullptr)
-  , m_SamplingStrategy(AffineRegistrationType::NONE)
+  , m_SamplingStrategy(AffineRegistrationType::MetricSamplingStrategyEnum::NONE)
 
 {
   vnl_sample_reseed(20181112); // Trying to get random number generation consistent

@@ -189,7 +189,7 @@ CreateField<TImage, T2Image>::Execute()
     if ((m_FixedImage->GetDirection() != m_MovingImage->GetDirection())
         // INFO:  Remove dependance on RIP from
         (itk::SpatialOrientationAdapter().FromDirectionCosines(m_FixedImage->GetDirection()) !=
-         itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP))
+         itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RIP))
     {
       std::cout << "Image Directions are not the same or are not in RIP orientation " << std::endl
                 << m_FixedImage->GetDirection() << "=============" << std::endl

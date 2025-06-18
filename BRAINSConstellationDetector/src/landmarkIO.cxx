@@ -152,7 +152,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
                       const SImageType::PointType &         VN42)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RAI);
 
   RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
@@ -260,7 +260,7 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
                         const std::string &           fname)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RAI);
   SImageType::Pointer inputStatsImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
@@ -304,7 +304,7 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
                    const std::string &              fname)
 {
   SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    itkUtil::OrientImage<SImageType>(in, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RAI);
 
   RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 

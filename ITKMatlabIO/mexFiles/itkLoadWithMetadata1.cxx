@@ -621,7 +621,7 @@ itkLoadWithMetadata(int, mxArray * plhs[], int nrhs, const mxArray * prhs[])
   //
   // For now support scalar images of 2 or 3 dimensions.  Adding more
   // isn't a problem, but it complicates how we build the matlab structure.
-  itk::ImageIOBase::IOPixelType pixtype = imageIO->GetPixelType();
+  itk::IOPixelEnum pixtype = imageIO->GetPixelType();
   unsigned                      imageDimension = imageIO->GetNumberOfDimensions();
 
   switch (pixtype)

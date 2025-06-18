@@ -199,7 +199,7 @@ DoIt(int argc, char * argv[], PixelType)
 
 void
 GetImageType(const std::string &                 fileName,
-             itk::ImageIOBase::IOPixelType &     pixelType,
+             itk::IOPixelEnum &     pixelType,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
@@ -218,7 +218,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::ImageIOBase::IOPixelType     pixelType;
+  itk::IOPixelEnum     pixelType;
   itk::ImageIOBase::IOComponentEnum componentType;
 
   try
@@ -230,49 +230,49 @@ main(int argc, char * argv[])
 
     switch (componentType)
     {
-      case itk::ImageIOBase::UCHAR:
+      case itk::IOComponentEnum::UCHAR:
       {
         return DoIt(argc, argv, static_cast<unsigned char>(0));
       }
-       case itk::ImageIOBase::CHAR:
+       case itk::IOComponentEnum::CHAR:
       {
         return DoIt(argc, argv, static_cast<char>(0));
       }
-      case itk::ImageIOBase::USHORT:
+      case itk::IOComponentEnum::USHORT:
       {
         return DoIt(argc, argv, static_cast<unsigned short>(0));
       }
-      case itk::ImageIOBase::SHORT:
+      case itk::IOComponentEnum::SHORT:
       {
         return DoIt(argc, argv, static_cast<short>(0));
       }
-      case itk::ImageIOBase::UINT:
+      case itk::IOComponentEnum::UINT:
       {
         return DoIt(argc, argv, static_cast<unsigned int>(0));
       }
-      case itk::ImageIOBase::INT:
+      case itk::IOComponentEnum::INT:
       {
         return DoIt(argc, argv, static_cast<int>(0));
       }
-      case itk::ImageIOBase::ULONG:
+      case itk::IOComponentEnum::ULONG:
       {
         return DoIt(argc, argv, static_cast<unsigned long>(0));
       }
-      case itk::ImageIOBase::LONG:
+      case itk::IOComponentEnum::LONG:
       {
         return DoIt(argc, argv, static_cast<long>(0));
       }
-      case itk::ImageIOBase::FLOAT:
+      case itk::IOComponentEnum::FLOAT:
       {
         return DoIt(argc, argv, 0.0f);
         // std::cout << "FLOAT type not currently supported." << std::endl;
       }
-      case itk::ImageIOBase::DOUBLE:
+      case itk::IOComponentEnum::DOUBLE:
       {
         std::cout << "DOUBLE type not currently supported." << std::endl;
       }
       break;
-      case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+      case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
       default:
       {
         std::cout << "unknown component type" << std::endl;

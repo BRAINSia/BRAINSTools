@@ -171,7 +171,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           return "double";
         }
         case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
-          ITK_FALLTHROUGH;
+          [[fallthrough]];
         default:
           std::cerr << "Unknown and unsupported component type!" << std::endl;
           break;

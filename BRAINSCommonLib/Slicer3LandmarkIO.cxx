@@ -442,10 +442,10 @@ WriteITKtoSlicer3Lmk(const std::string &             landmarksFilename,
       break;
     case SLICER_FCSV_BEGIN:
       itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_BEGIN)");
-      ITK_FALLTHROUGH;
+      [[fallthrough]];
     case SLICER_FCSV_END:
       itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (SLICER_FCSV_END)");
-      ITK_FALLTHROUGH;
+      [[fallthrough]];
     default:
       /* Do Nothing */
       itkGenericExceptionMacro(<< "ERROR:  MODE NOT IMPLEMENTED FOR LANDMARK WRITING (No Match): " << slicerLmkType);

@@ -54,7 +54,6 @@ ResampleImageListToFirstKeyImage(const std::string &            resamplerInterpo
   for (const auto & elem : inputImageMap)
   {
     auto         currImageIter = elem.second.begin();
-    unsigned int i(0);
     while (currImageIter != elem.second.end())
     {
       FloatImageType::Pointer tmp = ResampleImageWithIdentityTransform<FloatImageType>(
@@ -62,7 +61,6 @@ ResampleImageListToFirstKeyImage(const std::string &            resamplerInterpo
       // Add the image
       outputImageMap[elem.first].push_back(tmp);
       ++currImageIter;
-      ++i;
     }
   }
   return outputImageMap;

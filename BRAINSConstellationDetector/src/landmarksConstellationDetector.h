@@ -170,17 +170,13 @@ public:
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
     SImageType::IndexType PTIndex;
-    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "AC"),
-                                               PTIndex);
+    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "AC"));
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "PC"),
-                                               PTIndex);
+    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "PC"));
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "VN4"),
-                                               PTIndex);
+    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "VN4"));
     taggedImage->SetPixel(PTIndex, high);
-    taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "RP"),
-                                               PTIndex);
+    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "RP"));
     taggedImage->SetPixel(PTIndex, high);
     return taggedImage;
   }

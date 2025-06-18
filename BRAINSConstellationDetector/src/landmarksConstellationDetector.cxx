@@ -420,7 +420,7 @@ landmarksConstellationDetector::FindCandidatePoints(
             if ((inclusionDistance < (SI_restrictions + radii)) && (std::abs(temp[1]) < (PA_restrictions + radii)))
             {
               SImageType::IndexType index3D;
-              roiImage->TransformPhysicalPointToIndex(currentPointLocation, index3D);
+              index3D = roiImage->TransformPhysicalPointToIndex(currentPointLocation);
               roiImage->SetPixel(index3D, imInterp->Evaluate(currentPointLocation));
               roiMask->SetPixel(index3D, 1);
             }

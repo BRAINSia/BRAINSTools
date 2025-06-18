@@ -631,13 +631,13 @@ MakeLabelImage(const SImageType::Pointer &   in,
   maskImage->FillBuffer(0);
   {
     SImageType::IndexType Index;
-    maskImage->TransformPhysicalPointToIndex(RP, Index);
+    Index = maskImage->TransformPhysicalPointToIndex(RP);
     maskImage->SetPixel(Index, 250);
-    maskImage->TransformPhysicalPointToIndex(AC, Index);
+    Index = maskImage->TransformPhysicalPointToIndex(AC);
     maskImage->SetPixel(Index, 255);
-    maskImage->TransformPhysicalPointToIndex(PC, Index);
+    Index = maskImage->TransformPhysicalPointToIndex(PC);
     maskImage->SetPixel(Index, 245);
-    maskImage->TransformPhysicalPointToIndex(VN4, Index);
+    Index = maskImage->TransformPhysicalPointToIndex(VN4);
     maskImage->SetPixel(Index, 240);
   }
   itkUtil::WriteImage<SImageType>(maskImage, fname);

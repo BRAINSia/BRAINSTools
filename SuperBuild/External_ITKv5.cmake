@@ -5,7 +5,7 @@ set(${proj}_REQUIRED_VERSION 5.4)
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB)
-  list(APPEND ${proj}_DEPENDENCIES "TBB")
+  list(APPEND ${proj}_DEPENDENCIES "tbb")
 endif()
 if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
   list(APPEND ${proj}_DEPENDENCIES "VTK")
@@ -58,7 +58,7 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    v5.4.0 # 20240531
+    v5.4.4 # 20250618
     QUIET
     )
 
@@ -126,13 +126,17 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DITK_CXX_OPTIMIZATION_FLAGS:STRING=${BRAINSToools_CXX_OPTIMIZATION_FLAGS}
       -DITK_C_OPTIMIZATION_FLAGS:STRING=${BRAINSToools_C_OPTIMIZATION_FLAGS}
-      -DModule_AnisotropicDiffusionLBR:BOOL=ON
-      -DModule_GenericLabelInterpolator:BOOL=ON # Needed for ANTs
       -DModule_ITKReview:BOOL=ON
+      -DModule_AnisotropicDiffusionLBR:BOOL=ON
+      -DModule_AnisotropicDiffusionLBR_GIT_TAG:STRING=4dbdfe9dd209c0f266a821d1cc2c2135c8057bf9
+      -DModule_GenericLabelInterpolator:BOOL=ON # Needed for ANTs
+      -DModule_GenericLabelInterpolator_GIT_TAG:STRING=70b9ccc9a897043f66b7cd198343e3f5252a3d32
       -DModule_MGHIO:BOOL=ON
+      -DModule_MGHIO_GIT_TAG:STRING=969f1827d92ddac18339e9a4d9120fea0e2bc916
+      -DModule_AdaptiveDenoising:BOOL=ON # Required for ANTs
+      -DModule_AdaptiveDenoising_GIT_TAG:STRING=853934c352f83cb1e8f87e3051e1b8e75dbb41fe  # Required for ANTs
       -DModule_ITKIOMINC:BOOL=ON
       -DModule_ITKReview:BOOL=ON
-      -DModule_AdaptiveDenoising:BOOL=ON # Required for ANTs
       -DModule_ITKMetricsv4:BOOL=ON # needed for MattesMutualInformationImageToImageMetricv4
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF # HACK:  QUICK CHANGE

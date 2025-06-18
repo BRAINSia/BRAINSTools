@@ -8,18 +8,18 @@ set(${proj}_DEPENDENCIES "")
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  unset(zlib_DIR CACHE)
+  unset(ZLIB_ROOT CACHE)
   find_package(ZLIB REQUIRED)
   set(ZLIB_INCLUDE_DIR ${ZLIB_INCLUDE_DIRS})
   set(ZLIB_LIBRARY ${ZLIB_LIBRARIES})
 endif()
 
 # Sanity checks
-if(DEFINED zlib_DIR AND NOT EXISTS ${zlib_DIR})
-  message(FATAL_ERROR "zlib_DIR variable is defined but corresponds to nonexistent directory")
+if(DEFINED ZLIB_ROOT AND NOT EXISTS ${ZLIB_ROOT})
+  message(FATAL_ERROR "ZLIB_ROOT variable is defined but corresponds to nonexistent directory")
 endif()
 
-if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if(NOT DEFINED ZLIB_ROOT AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
     set(git_protocol "https")
@@ -49,6 +49,7 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
     CMAKE_CACHE_ARGS
+      ## CXX should not be needed, but it a cmake default test
       ${EXTERNAL_PROJECT_DEFAULTS}
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
@@ -64,10 +65,10 @@ if(NOT DEFINED zlib_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(zlib_DIR ${EP_INSTALL_DIR})
   set(ZLIB_ROOT ${zlib_DIR})
   set(ZLIB_INCLUDE_DIR ${zlib_DIR}/include)
-  if(BUILD_SHARED_LIBS)
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib${CMAKE_SHARED_LIBRARY_SUFFIX})
+  if(WIN32)
+    set(ZLIB_LIBRARY ${zlib_DIR}/lib/zlib.lib)
   else()
-    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib${CMAKE_STATIC_LIBRARY_SUFFIX})
+    set(ZLIB_LIBRARY ${zlib_DIR}/lib/libzlib.a)
   endif()
 else()
   # The project is provided using zlib_DIR, nevertheless since other project may depend on zlib,

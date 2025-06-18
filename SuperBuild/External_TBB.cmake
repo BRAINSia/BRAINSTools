@@ -1,5 +1,8 @@
 
-set(proj TBB)
+set(proj tbb)
+
+# Set dependency list
+set(${proj}_DEPENDENCIES "")
 
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
@@ -29,8 +32,9 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
     #68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
-    e6104c9599f7f10473caf545199f7468c0a8e52f # 20221221
+    #e6104c9599f7f10473caf545199f7468c0a8e52f # 20221221
     #v2021.5.0 # 20211223
+    v2022.2.0-rc1
     QUIET
     )
 

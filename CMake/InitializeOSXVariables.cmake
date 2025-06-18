@@ -40,13 +40,30 @@ if(APPLE)
     endif()
   endif()
 
-  set(required_deployment_target "11.0")
+  set(minimum_allowed_deployment_target "12.0")
   if("x${CMAKE_OSX_DEPLOYMENT_TARGET}x" STREQUAL "xx")
-      set(CMAKE_OSX_DEPLOYMENT_TARGET ${required_deployment_target} CACHE STRING "OSX Deployment target" FORCE)
+    execute_process(
+      COMMAND xcrun --sdk macosx --show-sdk-version
+      OUTPUT_VARIABLE autodected_deployment_target
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Detected deployment target: ${autodected_deployment_target}")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET ${autodected_deployment_target} CACHE STRING "OSX Deployment target" FORCE)
+
+    # Get the SDK path using xcrun
+    execute_process(
+      COMMAND xcrun --sdk macosx --show-sdk-path
+      OUTPUT_VARIABLE CMAKE_OSX_SYSROOT
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    # Optionally set it in the cache for consistency
+    set(CMAKE_OSX_SYSROOT "${CMAKE_OSX_SYSROOT}" CACHE PATH "Path to the macOS SDK")
+    message(STATUS "Detected macOS SDK: ${CMAKE_OSX_SYSROOT}")
   endif()
 
-  if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${required_deployment_target})
-    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET} must be ${required_deployment_target} or greater.")
+  if(CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS ${minimum_allowed_deployment_target})
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET ${CMAKE_OSX_DEPLOYMENT_TARGET} must be ${minimum_allowed_deployment_target} or greater.")
   endif()
 
   if(NOT "${CMAKE_OSX_SYSROOT}" STREQUAL "")

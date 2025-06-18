@@ -162,7 +162,6 @@ DWIMetaDataDictionaryValidator::GetGradientTable() const
 {
   DWIMetaDataDictionaryValidator::GradientTableType myGradientTable;
   DWIMetaDataDictionaryValidator::StringVectorType  allKeys = m_dict.GetKeys();
-  int                                               count = 0;
   for (auto & allKey : allKeys)
   {
     if (allKey.find("DWMRI_gradient_") != std::string::npos)
@@ -172,7 +171,6 @@ DWIMetaDataDictionaryValidator::GetGradientTable() const
       DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
       myGradientTable.push_back(curGradientDirection);
     }
-    ++count;
   }
   return myGradientTable;
 }

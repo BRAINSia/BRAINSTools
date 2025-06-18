@@ -427,7 +427,7 @@ public:
 
   using AffineTransformType = itk::AffineTransform<double, 3>;
   using AffineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
-  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyType;
+  using SamplingStrategyType = typename AffineRegistrationType::MetricSamplingStrategyEnum;
 
   using TransformInitializerType = itk::CenteredTransformInitializer<TransformType, FixedImageType, MovingImageType>;
 

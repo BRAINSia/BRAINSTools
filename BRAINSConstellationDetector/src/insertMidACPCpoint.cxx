@@ -48,11 +48,14 @@ main(int argc, char * argv[])
   const LandmarkPointType ACpoint = lmksMap["AC"];
   const LandmarkPointType PCpoint = lmksMap["PC"];
 
-  const LandmarkPointType midACPCpoint = (PCpoint - ACpoint) * 0.5;
-
-  //  std::cout << "PC :" << PCpoint[0] << ", " << PCpoint[1] << ", " << PCpoint[2] << ")" << std::endl;
-  //  std::cout << "midpoint :" << midACPCpoint[0] << ", " << midACPCpoint[1] << ", " << midACPCpoint[2] << ")" <<
-  // std::endl;
+  LandmarkPointType midACPCpoint;
+  {
+    auto                    temp = (PCpoint - ACpoint) * 0.5;
+    for (int i = 0; i < 3; i++)
+    {
+      midACPCpoint[i] = temp[i];
+    }
+  }
 
   lmksMap["midACPC"] = midACPCpoint;
 

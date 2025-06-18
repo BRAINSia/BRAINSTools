@@ -141,7 +141,7 @@ main(int argc, char * argv[])
   //
   // have to find out what type of file this is.
   itk::ImageIOBase::Pointer imageIO =
-    itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::FileModeType::ReadMode);
+    itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::IOFileModeEnum::ReadMode);
   if (imageIO.IsNotNull())
   {
     try
@@ -163,9 +163,9 @@ main(int argc, char * argv[])
   //
   // For now support scalar images of 2 or 3 dimensions.  Adding more
   // isn't a problem, but it complicates how we build the matlab structure.
-  itk::ImageIOBase::IOPixelType     pixtype = imageIO->GetPixelType();
+  itk::IOPixelEnum     pixtype = imageIO->GetPixelType();
   itk::ImageIOBase::IOComponentEnum componentType = imageIO->GetComponentType();
-  if (pixtype != itk::ImageIOBase::SCALAR)
+  if (pixtype != itk::IOPixelEnum::SCALAR)
   {
     std::cerr << "Unsupported pixel type " << itk::ImageIOBase::GetPixelTypeAsString(pixtype) << " in volume "
               << inputVolume << std::endl;
@@ -177,34 +177,34 @@ main(int argc, char * argv[])
     case 2:
       switch (componentType)
       {
-        case itk::ImageIOBase::UCHAR:
+        case itk::IOComponentEnum::UCHAR:
           return ReadAndSplitImage<itk::Image<unsigned char, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::CHAR:
+        case itk::IOComponentEnum::CHAR:
           return ReadAndSplitImage<itk::Image<char, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::USHORT:
+        case itk::IOComponentEnum::USHORT:
           return ReadAndSplitImage<itk::Image<unsigned short, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::SHORT:
+        case itk::IOComponentEnum::SHORT:
           return ReadAndSplitImage<itk::Image<short, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::UINT:
+        case itk::IOComponentEnum::UINT:
           return ReadAndSplitImage<itk::Image<unsigned int, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::INT:
+        case itk::IOComponentEnum::INT:
           return ReadAndSplitImage<itk::Image<int, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::ULONG:
+        case itk::IOComponentEnum::ULONG:
           return ReadAndSplitImage<itk::Image<unsigned long, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::LONG:
+        case itk::IOComponentEnum::LONG:
           return ReadAndSplitImage<itk::Image<long, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::FLOAT:
+        case itk::IOComponentEnum::FLOAT:
           return ReadAndSplitImage<itk::Image<float, 2>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::DOUBLE:
+        case itk::IOComponentEnum::DOUBLE:
           return ReadAndSplitImage<itk::Image<double, 2>>(inputVolume, outputVolume, transform);
           break;
         default:
@@ -214,34 +214,34 @@ main(int argc, char * argv[])
     case 3:
       switch (componentType)
       {
-        case itk::ImageIOBase::UCHAR:
+        case itk::IOComponentEnum::UCHAR:
           return ReadAndSplitImage<itk::Image<unsigned char, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::CHAR:
+        case itk::IOComponentEnum::CHAR:
           return ReadAndSplitImage<itk::Image<char, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::USHORT:
+        case itk::IOComponentEnum::USHORT:
           return ReadAndSplitImage<itk::Image<unsigned short, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::SHORT:
+        case itk::IOComponentEnum::SHORT:
           return ReadAndSplitImage<itk::Image<short, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::UINT:
+        case itk::IOComponentEnum::UINT:
           return ReadAndSplitImage<itk::Image<unsigned int, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::INT:
+        case itk::IOComponentEnum::INT:
           return ReadAndSplitImage<itk::Image<int, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::ULONG:
+        case itk::IOComponentEnum::ULONG:
           return ReadAndSplitImage<itk::Image<unsigned long, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::LONG:
+        case itk::IOComponentEnum::LONG:
           return ReadAndSplitImage<itk::Image<long, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::FLOAT:
+        case itk::IOComponentEnum::FLOAT:
           return ReadAndSplitImage<itk::Image<float, 3>>(inputVolume, outputVolume, transform);
           break;
-        case itk::ImageIOBase::DOUBLE:
+        case itk::IOComponentEnum::DOUBLE:
           return ReadAndSplitImage<itk::Image<double, 3>>(inputVolume, outputVolume, transform);
           break;
         default:

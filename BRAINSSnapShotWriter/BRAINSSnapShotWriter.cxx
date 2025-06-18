@@ -472,7 +472,8 @@ main(int argc, char ** argv)
   layout[1] = 0; // inputPlaneDirection.size();
 
   tileFilter->SetLayout(layout);
-  tileFilter->SetDefaultPixelValue(128);
+  const itk::RGBPixel<unsigned char> defaultPixelValue{128};
+  tileFilter->SetDefaultPixelValue(defaultPixelValue);
   for (unsigned int plane = 0; plane < extractingSlices.size(); plane++)
   {
     for (unsigned int i = 0; i < numberOfImgs; i++)

@@ -70,11 +70,11 @@ inputImageToStringPixelType(const std::string & inputVolume)
 {
   // https://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
   itk::ImageIOBase::Pointer imageIO =
-    itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::FileModeType::ReadMode);
+    itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::IOFileModeEnum::ReadMode);
 
   imageIO->SetFileName(inputVolume);
   imageIO->ReadImageInformation();
-  using IOPixelType = itk::ImageIOBase::IOPixelType;
+  using IOPixelType = itk::IOPixelEnum;
   const IOPixelType pixelType = imageIO->GetPixelType();
   std::cout << "Pixel Type is " << itk::ImageIOBase::GetPixelTypeAsString(pixelType) << std::endl;
 
@@ -83,14 +83,14 @@ inputImageToStringPixelType(const std::string & inputVolume)
   std::cout << "Component Type is " << imageIO->GetComponentTypeAsString(componentType) << std::endl;
   const unsigned int imageDimension = imageIO->GetNumberOfDimensions();
   std::cout << "Image Dimension is " << imageDimension << std::endl;
-  if (pixelType == itk::ImageIOBase::SCALAR)
+  if (pixelType == itk::IOPixelEnum::SCALAR)
   {
     constexpr int VDimension = 3;
     if (imageDimension == VDimension)
     {
       switch (componentType)
       {
-        case itk::ImageIOBase::UCHAR:
+        case itk::IOComponentEnum::UCHAR:
         {
           //          using PixelType = unsigned char;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -98,7 +98,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "uchar";
         }
-        case itk::ImageIOBase::CHAR:
+        case itk::IOComponentEnum::CHAR:
         {
           //          using PixelType = char;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -106,7 +106,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "char";
         }
-        case itk::ImageIOBase::USHORT:
+        case itk::IOComponentEnum::USHORT:
         {
           //          using PixelType = unsigned short;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -114,7 +114,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "ushort";
         }
-        case itk::ImageIOBase::SHORT:
+        case itk::IOComponentEnum::SHORT:
         {
           //          using PixelType = short;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -122,7 +122,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "short";
         }
-        case itk::ImageIOBase::UINT:
+        case itk::IOComponentEnum::UINT:
         {
           //          using PixelType = unsigned int;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -130,7 +130,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "uint";
         }
-        case itk::ImageIOBase::INT:
+        case itk::IOComponentEnum::INT:
         {
           //          using PixelType = int;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -138,7 +138,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "int";
         }
-        case itk::ImageIOBase::ULONG:
+        case itk::IOComponentEnum::ULONG:
         {
           //          using PixelType = unsigned long;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -146,7 +146,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "ulong";
         }
-        case itk::ImageIOBase::LONG:
+        case itk::IOComponentEnum::LONG:
         {
           //          using PixelType = long;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -154,7 +154,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "long";
         }
-        case itk::ImageIOBase::FLOAT:
+        case itk::IOComponentEnum::FLOAT:
         {
           //          using PixelType = float;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -162,7 +162,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "float";
         }
-        case itk::ImageIOBase::DOUBLE:
+        case itk::IOComponentEnum::DOUBLE:
         {
           //          using PixelType = double;
           //          using ImageType = itk::Image<PixelType, VDimension>;
@@ -170,7 +170,7 @@ inputImageToStringPixelType(const std::string & inputVolume)
           //          using TBRAINSResampleInternalImageType = itk::Image<InternalPixelType, VDimension>;
           return "double";
         }
-        case itk::ImageIOBase::UNKNOWNCOMPONENTTYPE:
+        case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
           [[fallthrough]];
         default:
           std::cerr << "Unknown and unsupported component type!" << std::endl;

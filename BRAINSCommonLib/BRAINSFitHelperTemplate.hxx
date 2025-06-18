@@ -527,7 +527,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   , m_CurrentGenericTransform(nullptr)
   , m_RestoreState(nullptr)
   , m_CostMetricObject(nullptr)
-  , m_SamplingStrategy(AffineRegistrationType::NONE)
+  , m_SamplingStrategy(AffineRegistrationType::MetricSamplingStrategyEnum::NONE)
   , m_SyNMetricType("")
   , m_SaveState("")
 
@@ -1492,7 +1492,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       bsplineRegistration->SetShrinkFactorsPerLevel(shrinkFactorsPerLevel);
       bsplineRegistration->SetSmoothingSigmasAreSpecifiedInPhysicalUnits(true);
       bsplineRegistration->SetMetricSamplingStrategy(
-        static_cast<typename BSplineRegistrationType::MetricSamplingStrategyType>(m_SamplingStrategy));
+        static_cast<typename BSplineRegistrationType::MetricSamplingStrategyEnum>(m_SamplingStrategy));
       bsplineRegistration->SetMetricSamplingPercentage(m_SamplingPercentage);
       bsplineRegistration->SetMetric(this->m_CostMetricObject);
       bsplineRegistration->SetOptimizer(LBFGSBoptimizer);

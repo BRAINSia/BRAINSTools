@@ -127,7 +127,7 @@ InitializeXi(LmkDBType & baseLmkDB)
   // Assert RP (MPJ) exists
   if (baseLmkDB.find("RP") == baseLmkDB.end())
   {
-    itkGenericExceptionMacro(<< "Error: RP (MPJ) landmark is missing!")
+    itkGenericExceptionMacro(<< "Error: RP (MPJ) landmark is missing!");
   }
 
   // for each base landmark
@@ -219,7 +219,7 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
     vnl_vector<double> D;   // eigenvalue of X_i*X_i'
     if (!vnl_symmetric_eigensystem_compute(X_i0Mean * X_i0Mean.transpose(), W_i, D))
     {
-      itkGenericExceptionMacro(<< "Error: vnl_symmetric_eigensystem_compute failed.")
+      itkGenericExceptionMacro(<< "Error: vnl_symmetric_eigensystem_compute failed.");
     }
 
     std::cout << "W_i( i = " << k << " ) = \n" << W_i << std::endl;

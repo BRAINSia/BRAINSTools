@@ -551,7 +551,14 @@ landmarksConstellationDetector::FindCandidatePoints(
     {
 
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
-      msp_lmks_algo_found["CenterOfSearchArea"] = CenterOfSearchArea;
+      {
+        SImageType::PointType centerOfSearchAreaPoint;
+        for ( unsigned int i = 0; i < centerOfSearchAreaPoint.size(); i++ )
+        {
+          centerOfSearchAreaPoint[i] = CenterOfSearchArea[i];
+        }
+        msp_lmks_algo_found["CenterOfSearchArea"] = centerOfSearchAreaPoint;
+      }
       msp_lmks_algo_found["LPS_BEGIN"] = LPS_BEGIN;
       msp_lmks_algo_found["LPS_END"] = LPS_END;
       const std::string pointsName(this->m_ResultsDir + "/NCCOutput_" + itksys::SystemTools::GetFilenameName(mapID) +

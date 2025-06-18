@@ -139,7 +139,7 @@ main(int argc, char * argv[])
     fixImageDir[1][1] = 1;
     fixImageDir[2][2] = 1;
     indexImage->SetDirection(fixImageDir);
-    EncapsulateMD(indexImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RPI);
+    EncapsulateMD(indexImage, itk::SpatialOrientationEnums::ITK_COORDINATE_ORIENTATION_RPI);
   }
   else if (setImageOrientation == "Coronal" || setImageOrientation == "CORONAL" || setImageOrientation == "coronal")
   {
@@ -148,7 +148,7 @@ main(int argc, char * argv[])
     fixImageDir[1][2] = 1;
     fixImageDir[2][1] = 1;
     indexImage->SetDirection(fixImageDir);
-    EncapsulateMD(indexImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIP);
+    EncapsulateMD(indexImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RIP);
   }
   else if (setImageOrientation == "Sagittal" || setImageOrientation == "SAGITTAL" || setImageOrientation == "sagittal")
   {
@@ -157,7 +157,7 @@ main(int argc, char * argv[])
     fixImageDir[1][1] = 1;
     fixImageDir[2][0] = 1;
     indexImage->SetDirection(fixImageDir);
-    EncapsulateMD(indexImage, itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_PIR);
+    EncapsulateMD(indexImage, itk::SpatialOrientationEnums::ITK_COORDINATE_ORIENTATION_PIR);
   }
 #undef EncapsulateMD // (image, flag)
   // else, leave it AsAcquired.

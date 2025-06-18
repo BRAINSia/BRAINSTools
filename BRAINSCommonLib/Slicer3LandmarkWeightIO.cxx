@@ -34,16 +34,11 @@ WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const Landm
     itksys::SystemTools::CollapseFullPath(landmarksWeightFilename.c_str());
 
   std::stringstream lmkWeightStream;
-
-  unsigned int numNamedLandmarks = 0;
-
   for (const auto & landmark : landmarks)
   {
     if ((landmark.first).compare("") != 0)
     {
       lmkWeightStream << landmark.first << "," << doubleConvert(landmark.second) << std::endl;
-
-      ++numNamedLandmarks;
     }
   }
 

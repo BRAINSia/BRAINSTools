@@ -21,6 +21,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "https")
+  set(tbb_ver "v2022.2.0-rc1")
   endif()
 
   ExternalProject_SetIfNotDefined(
@@ -73,50 +74,36 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     )
 
   message(STATUS "Building ${proj} against TBB_DIR:${TBB_DIR}:")
-  ExternalProject_GenerateProjectDescription_Step(${proj})
-
   set(TBB_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/TBB)
-  #${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
+  ExternalProject_GenerateProjectDescription_Step(${proj}
+    VERSION ${tbb_ver}
+    LICENSE_FILES "https://raw.githubusercontent.com/oneapi-src/oneTBB/v${tbb_ver}/LICENSE.txt"
+    )
 
   #-----------------------------------------------------------------------------
   # Launcher setting specific to build tree
 
-  set(_lib_subdir lib)
-  if(WIN32)
-    set(_lib_subdir bin)
-  endif()
-
-  # library paths
-  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD ${TBB_DIR}/${_lib_subdir}/<CMAKE_CFG_INTDIR>)
+  set(${proj}_LIBRARY_PATHS_LAUNCHER_BUILD "${TBB_BIN_DIR}")
   mark_as_superbuild(
     VARS ${proj}_LIBRARY_PATHS_LAUNCHER_BUILD
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
     )
 
-  if(Slicer_BUILD_TBBPython)
-    # pythonpath
-    set(${proj}_PYTHONPATH_LAUNCHER_BUILD
-      ${TBB_DIR}/Wrapping/Generators/Python/<CMAKE_CFG_INTDIR>
-      ${TBB_DIR}/lib/<CMAKE_CFG_INTDIR>
-      ${TBB_DIR}/lib
-      )
-    mark_as_superbuild(
-      VARS ${proj}_PYTHONPATH_LAUNCHER_BUILD
-      LABELS "PYTHONPATH_LAUNCHER_BUILD"
-      )
-  endif()
-
-  #-----------------------------------------------------------------------------
-  # Launcher setting specific to install tree
-
-  # Since TBB Wrapping is installed in the Slicer standard site-packages
-  # location, there is no need to specify custom setting for the install
-  # case.
+  set(TBB_DIR ${TBB_INSTALL_DIR}/lib/cmake/tbb)
 
 else()
+  # The project is provided using TBB_DIR, nevertheless since other project may depend on TBB,
+  # let's add an 'empty' one
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 
+mark_as_superbuild(
+  VARS
+    TBB_BIN_DIR:PATH
+    TBB_LIB_DIR:PATH
+  )
+
+ExternalProject_Message(${proj} "TBB_DIR:${TBB_DIR}")
 mark_as_superbuild(
   VARS TBB_DIR:PATH
   LABELS "FIND_PACKAGE"

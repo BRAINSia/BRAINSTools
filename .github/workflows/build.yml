@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    timeout-minutes: 360  # Added timeout
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "Ubuntu Latest GCC",
+            os: ubuntu-latest,
+            cc: "gcc",
+            cxx: "g++",
+            parallel: "$(nproc)"
+          }
+          - {
+            name: "macOS Latest Clang",
+            os: macos-latest,
+            cc: "clang",
+            cxx: "clang++",
+            parallel: "$(sysctl -n hw.ncpu)"
+          }
+#          - {
+#            name: "Windows Latest MSVC",
+#            os: windows-latest,
+#            cc: "cl",
+#            cxx: "cl",
+#            parallel: "$env:NUMBER_OF_PROCESSORS"
+#          }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Dependencies (Ubuntu)
+        if: matrix.config.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Install Dependencies (macOS)
+        if: matrix.config.os == 'macos-latest'
+        run: |
+          brew install ninja
+
+      - name: Install Dependencies (Windows)
+        if: matrix.config.os == 'windows-latest'
+        run: |
+          choco install ninja
+
+      - name: Configure CMake
+        shell: bash
+        run: |
+          cmake -B build -G Ninja \
+            -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
+            -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
+            -DCMAKE_CXX_STANDARD:STRING=17 \
+            ${{ matrix.config.os != 'windows-latest' && '-DCMAKE_CXX_FLAGS="-mtune=native -march=native"' || '' }} \
+            ${{ matrix.config.os != 'windows-latest' && '-DCMAKE_C_FLAGS="-mtune=native -march=native"' || '' }} \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=Release \
+            -DBUILD_TESTING=ON \
+            -DBUILD_SHARED_LIBS=ON \
+            -DBRAINSTools_REQUIRES_VTK=OFF \
+            -DUSE_BRAINSABC:BOOL=OFF \
+            -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF \
+            -DUSE_BRAINSDWICleanup:BOOL=OFF \
+            -DUSE_BRAINSInitializedControlPoints:BOOL=OFF \
+            -DUSE_BRAINSLabelStats:BOOL=OFF \
+            -DUSE_BRAINSLandmarkInitializer:BOOL=OFF \
+            -DUSE_BRAINSMultiModeSegment:BOOL=OFF \
+            -DUSE_BRAINSMultiSTAPLE:BOOL=OFF \
+            -DUSE_BRAINSMush:BOOL=OFF \
+            -DUSE_BRAINSPosteriorToContinuousClass:BOOL=OFF \
+            -DUSE_BRAINSResample:BOOL=ON \
+            -DUSE_BRAINSROIAuto:BOOL=OFF \
+            -DUSE_BRAINSSnapShotWriter:BOOL=OFF \
+            -DUSE_BRAINSStripRotation:BOOL=OFF \
+            -DUSE_BRAINSTransformConvert:BOOL=OFF \
+            -DUSE_ConvertBetweenFileFormats:BOOL=OFF \
+            -DUSE_ImageCalculator:BOOL=OFF \
+            -DUSE_ReferenceAtlas:BOOL=OFF \
+            -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=OFF \
+            -DUSE_DWIConvert:BOOL=OFF
+
+#           Disable testing that requires VTK
+#           -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=OFF \
+#           -DUSE_DWIConvert:BOOL=OFF
+
+      - name: Build
+        shell: bash
+        run: cmake --build build --config Release --parallel ${{ matrix.config.parallel }}
+
+      - name: Clean build/BRAINSTools-Release-EPRelease-build
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ninja clean
+
+      - name: ExperimentalStart
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ctest -D ExperimentalStart
+
+      - name: ExperimentalConfigure
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ctest -D ExperimentalConfigure
+
+      - name: ExperimentalBuild
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ctest -D ExperimentalBuild -j ${{ matrix.config.parallel }}
+
+      - name: ExperimentalTest
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ctest -D ExperimentalTest --schedule-random --output-on-failure -j ${{ matrix.config.parallel }}
+
+      - name: ExperimentalSubmit
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: ctest -D ExperimentalSubmit
+
+      - name: Upload Build Logs
+        uses: actions/upload-artifact@v4
+        if: always()  # Changed from failure() to always()
+        with:
+          name: build-logs-${{ matrix.config.name }}
+          path: |
+            build/CMakeFiles/CMakeOutput.log
+            build/CMakeFiles/CMakeError.log
+            build/Testing/Temporary/LastTest.log

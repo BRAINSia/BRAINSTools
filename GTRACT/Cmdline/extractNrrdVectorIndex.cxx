@@ -148,7 +148,7 @@ main(int argc, char * argv[])
     fixImageDir[1][2] = 1;
     fixImageDir[2][1] = 1;
     indexImage->SetDirection(fixImageDir);
-    EncapsulateMD(indexImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RIP);
+    EncapsulateMD(indexImage, itk::AnatomicalOrientation::PositiveEnum::RIP);
   }
   else if (setImageOrientation == "Sagittal" || setImageOrientation == "SAGITTAL" || setImageOrientation == "sagittal")
   {

@@ -25,6 +25,7 @@
 #include <QHBoxLayout>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <itkAnatomicalOrientation.h>
 
 QDebugImageViewerWindow::QDebugImageViewerWindow(QWidget * parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
@@ -201,13 +202,15 @@ QDebugImageViewerWindow::readImage()
   xferImage->Allocate();
 
   // set orientation
-  itk::SpatialOrientationEnums::ValidCoordinateOrientations orientation;
+  itk::AnatomicalOrientation orientation;
   if (this->SocketRead(&orientation, sizeof(orientation), 1) != 1)
   {
     std::cerr << "Error reading socket" << std::endl;
     exit(1);
   }
-  xferImage->SetDirection(itk::SpatialOrientationAdapter().ToDirectionCosines(orientation));
+  xferImage->SetDirection(
+    itk::AnatomicalOrientation(orientation).GetAsDirection()
+  );
 
   QImageDisplay::ImageType::PointType origin;
   for (unsigned i = 0; i < 3; i++)

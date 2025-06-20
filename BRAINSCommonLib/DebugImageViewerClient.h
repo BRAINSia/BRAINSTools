@@ -31,6 +31,7 @@
 #    include <itkSpatialOrientationAdapter.h>
 #    include <itkOrientImageFilter.h>
 #    include <cstdio>
+#include "itkAnatomicalOrientation.h"
 // #include <itkIO.h>
 // #include <itkIO2.h>
 
@@ -79,7 +80,7 @@ AllocateImageFromExample(const typename TemplateImageType::Pointer & TemplateIma
 
 template <typename ImageType>
 typename ImageType::Pointer
-OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
+OrientImage(typename ImageType::Pointer & inputImage, itk::AnatomicalOrientation orient)
 {
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
@@ -98,7 +99,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage, const typename ImageType::DirectionType & dirCosines)
 {
-  return OrientImage<ImageType>(inputImage, SOAdapterType().FromDirectionCosines(dirCosines));
+  return OrientImage<ImageType>(inputImage, itk::itkAnatomicalOrientation(dirCosines));
 }
 } // namespace DebugImageViewerUtil
 
@@ -243,8 +244,8 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   // get spacing
   SpacingType spacing = xferImage->GetSpacing();
   // get orientation
-  itk::SpatialOrientationEnums::ValidCoordinateOrientations orientation =
-    itk::SpatialOrientationAdapter().FromDirectionCosines(xferImage->GetDirection());
+  itk::AnatomicalOrientation orientation =
+    itk::AnatomicalOrientation(xferImage->GetDirection());
   // get origin
   PointType origin = xferImage->GetOrigin();
   for (unsigned int i = 0; i < 3; i++)

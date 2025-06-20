@@ -36,6 +36,7 @@
 #include "itkGDCMSeriesFileNames.h"
 #include "itkImageSeriesReader.h"
 #include "itkGDCMImageIO.h"
+#include "itkAnatomicalOrientation.h"
 
 namespace itkUtil
 {
@@ -137,7 +138,7 @@ ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
 template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer &                       inputImage,
-            itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
+            typename itk::AnatomicalOrientation orient)
 {
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
@@ -156,7 +157,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage, const typename ImageType::DirectionType & dirCosines)
 {
-  return OrientImage<ImageType>(inputImage, SOAdapterType().FromDirectionCosines(dirCosines));
+  return OrientImage<ImageType>(inputImage, itk::AnatomicalOrientation(dirCosines));
 }
 
 template <typename ImageType>
@@ -164,12 +165,12 @@ typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage, const typename ImageType::DirectionType & dirCosines)
 {
   typename ImageType::ConstPointer constImg(inputImage);
-  return OrientImage<ImageType>(constImg, SOAdapterType().FromDirectionCosines(dirCosines));
+  return OrientImage<ImageType>(constImg, itk::AnatomicalOrientation(dirCosines));
 }
 
 template <typename ImageType>
 typename ImageType::Pointer
-OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
+OrientImage(typename ImageType::Pointer & inputImage, itk::AnatomicalOrientation orient)
 {
   typename ImageType::ConstPointer constImg(inputImage);
   return OrientImage<ImageType>(constImg, orient);
@@ -177,7 +178,7 @@ OrientImage(typename ImageType::Pointer & inputImage, itk::SpatialOrientationEnu
 
 template <typename ImageType>
 typename ImageType::Pointer
-ReadImageAndOrient(const std::string & filename, itk::SpatialOrientationEnums::ValidCoordinateOrientations orient)
+ReadImageAndOrient(const std::string & filename, itk::AnatomicalOrientation orient)
 {
   typename ImageType::Pointer      img = ReadImage<ImageType>(filename);
   typename ImageType::ConstPointer constImg(img);
@@ -189,16 +190,14 @@ template <typename ImageType>
 typename ImageType::Pointer
 ReadImageAndOrient(const std::string & filename, const DirectionType & dir)
 {
-  return ReadImageAndOrient<ImageType>(filename, SOAdapterType().FromDirectionCosines(dir));
+  return ReadImageAndOrient<ImageType>(filename, itk::AnatomicalOrientation(dir));
 }
 
 template <typename TReadImageType>
 typename TReadImageType::Pointer
 ReadImageCoronal(const std::string & fileName)
 {
-  DirectionType CORdir = SOAdapterType().ToDirectionCosines(
-    itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RIP);
-
+  DirectionType CORdir = itk::AnatomicalOrientation(itk::AnatomicalOrientation::PositiveEnum::RIP).GetAsDirection();
   return ReadImageAndOrient<TReadImageType>(fileName, CORdir);
 }
 

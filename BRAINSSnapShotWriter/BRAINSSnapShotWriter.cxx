@@ -80,7 +80,7 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
         // fill the same value
         physicalPoints[p] = inputSliceToExtractInPhysicalPoint[i];
       }
-      referenceImage->TransformPhysicalPointToIndex(physicalPoints, dummyIndex);
+      dummyIndex=referenceImage->TransformPhysicalPointToIndex(physicalPoints);
 
       std::cout << inputSliceToExtractInPhysicalPoint[i] << "-->" << dummyIndex[planes[i]] << std::endl;
       sliceIndexToExtract.push_back(dummyIndex[planes[i]]);

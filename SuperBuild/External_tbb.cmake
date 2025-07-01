@@ -7,35 +7,42 @@ set(${proj}_DEPENDENCIES "")
 # Include dependent projects if any
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  unset(TBB_DIR CACHE)
-  find_package(TBB v2021.2.0 COMPONENTS ${${CMAKE_PROJECT_NAME}_TBB_COMPONENTS} REQUIRED NO_MODULE)
+if(Slicer_USE_SYSTEM_${proj})
+  # When adding support for finding TBB on the system, make sure to set TBB_BIN_DIR and TBB_LIB_DIR
+  message(FATAL_ERROR "Enabling Slicer_USE_SYSTEM_${proj} is not supported!")
 endif()
 
 # Sanity checks
 if(DEFINED TBB_DIR AND NOT EXISTS ${TBB_DIR})
   message(FATAL_ERROR "TBB_DIR variable is defined but corresponds to nonexistent directory")
 endif()
+if(DEFINED TBB_BIN_DIR AND NOT EXISTS ${TBB_BIN_DIR})
+  message(FATAL_ERROR "TBB_BIN_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+if(DEFINED TBB_LIB_DIR AND NOT EXISTS ${TBB_LIB_DIR})
+  message(FATAL_ERROR "TBB_LIB_DIR variable is defined but corresponds to nonexistent directory")
+endif()
 
-if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+if((NOT DEFINED TBB_DIR
+    OR NOT DEFINED TBB_BIN_DIR
+    OR NOT DEFINED TBB_LIB_DIR
+    )
+    AND NOT Slicer_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "https")
-  set(tbb_ver "v2022.2.0-rc1")
+  set(tbb_ver "v2022.2.0")
   endif()
 
   ExternalProject_SetIfNotDefined(
-     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+     Slicer_${proj}_GIT_REPOSITORY
      ${git_protocol}://github.com/oneapi-src/oneTBB.git
      QUIET
   )
 
   ExternalProject_SetIfNotDefined(
-    ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    #68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
-    #e6104c9599f7f10473caf545199f7468c0a8e52f # 20221221
-    #v2021.5.0 # 20211223
-    v2022.2.0-rc1
+    Slicer_${proj}_GIT_TAG
+    ${tbb_ver}
     QUIET
     )
 
@@ -46,8 +53,8 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
-    GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
-    GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
+    GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     CMAKE_CACHE_ARGS

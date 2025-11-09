@@ -50,10 +50,10 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   , m_writeBranded2DImage("")
   , m_backgroundFillValueString("0")
   , m_interpolationMode("Linear")
-  , m_resultsDir("./")
   , m_atlasVolume("")
   , m_atlasLandmarks("")
   , m_atlasLandmarkWeights("")
+  , m_resultsDir("./")
 {
 
 

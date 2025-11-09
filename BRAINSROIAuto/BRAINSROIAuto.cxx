@@ -66,11 +66,11 @@ using SOImageMaskType = itk::SpatialObject<3>;
 
 template <typename PixelType>
 void
-BRAINSROIAUTOWriteOutputVolume(VolumeImageType::Pointer image,
-                               VolumeMaskType::Pointer  mask,
-                               std::string &            fileName,
-                               const bool               MaskImage,
-                               const bool               CropImage)
+BRAINSROIAUTOWriteOutputVolume(const VolumeImageType::Pointer & image,
+                               const VolumeMaskType::Pointer &  mask,
+                               std::string &                    fileName,
+                               const bool                       MaskImage,
+                               const bool                       CropImage)
 {
   using WriteOutImageType = typename itk::Image<PixelType, VolumeImageType::ImageDimension>;
   typename WriteOutImageType::Pointer finalOutput;

@@ -128,7 +128,7 @@ HACK: parameters are hard coded but some of them should be passed by flags.
 */
 template <typename ImageType>
 typename ImageType::Pointer
-NormalizeImage(typename ImageType::Pointer inputImage)
+NormalizeImage(const typename ImageType::Pointer & inputImage)
 {
   using HistogramFilterType = itk::Statistics::ImageToHistogramFilter<ImageType>;
   using InputBooleanObjectType = typename HistogramFilterType::InputBooleanObjectType;
@@ -179,7 +179,7 @@ DoHistogramEqualization(typename FixedImageType::Pointer &         inputFixedIma
                         unsigned int                               numberOfHistogramBins,
                         unsigned int                               numberOfMatchPoints,
                         unsigned int                               debugLevel,
-                        std::string                                debugFileName)
+                        const std::string &                        debugFileName)
 {
   using HistogramMatchingFilterType = itk::OtsuHistogramMatchingImageFilter<FixedImageType, MovingImageType>;
   typename HistogramMatchingFilterType::Pointer histogramfilter = HistogramMatchingFilterType::New();

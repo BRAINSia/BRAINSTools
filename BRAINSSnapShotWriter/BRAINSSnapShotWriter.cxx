@@ -48,11 +48,11 @@ constexpr size_t LINEAR_INTERP = 1;
 
 template <typename TImageType>
 ExtractIndexType
-GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
-                       std::vector<int>             planes,
-                       const IndexType &            inputSliceToExtractInIndex,
-                       PercentIndexType             inputSliceToExtractInPercent,
-                       PhysicalPointIndexType       inputSliceToExtractInPhysicalPoint)
+GetSliceIndexToExtract(const typename TImageType::Pointer & referenceImage,
+                       std::vector<int>                     planes,
+                       const IndexType &                    inputSliceToExtractInIndex,
+                       PercentIndexType                     inputSliceToExtractInPercent,
+                       PhysicalPointIndexType               inputSliceToExtractInPhysicalPoint)
 {
   if (inputSliceToExtractInIndex.empty() && inputSliceToExtractInPercent.empty() &&
       inputSliceToExtractInPhysicalPoint.empty())
@@ -113,7 +113,7 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
 template <typename TImageType>
 // input parameter type
 typename TImageType::Pointer
-ChangeOrientOfImage(typename TImageType::Pointer imageVolume, itk::FixedArray<bool, 3> flipAxes)
+ChangeOrientOfImage(const typename TImageType::Pointer & imageVolume, itk::FixedArray<bool, 3> flipAxes)
 {
   using FlipImageFilterType = itk::FlipImageFilter<TImageType>;
 
@@ -230,7 +230,7 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
  */
 template <typename TInputImageType, typename TOutputImageType>
 typename TOutputImageType::Pointer
-ExtractSlice(typename TInputImageType::Pointer inputImage, int plane, int sliceNumber)
+ExtractSlice(const typename TInputImageType::Pointer & inputImage, int plane, int sliceNumber)
 {
   if (plane < 0 || plane > 3)
   {
@@ -266,7 +266,7 @@ ExtractSlice(typename TInputImageType::Pointer inputImage, int plane, int sliceN
 /* scaling between 0-255 */
 template <typename TInputImage, typename TOutputImage>
 typename TOutputImage::Pointer
-Rescale(const typename TInputImage::Pointer inputImage, const int min, const int max)
+Rescale(const typename TInputImage::Pointer & inputImage, const int min, const int max)
 {
   using RescaleFilterType = itk::RescaleIntensityImageFilter<TInputImage, TInputImage>;
 

@@ -196,7 +196,7 @@ testIndexConversion()
 #include <itkFFTWGlobalConfiguration.h>
 // This is intended to be called one time
 void
-FFTWInit(const std::string path_for_wisdom)
+FFTWInit(const std::string & path_for_wisdom)
 {
   // Environmental variables
   // itksys::SystemTools::GetEnv("ITK_FFTW_PLAN_RIGOR", "STRING");

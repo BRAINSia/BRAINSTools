@@ -22,7 +22,7 @@ main(int argc, char * argv[])
   {
     std::cout << "ERROR: Incorrrect number of arguments <Intensity_LR> <edgement_HR> <output>" << std::endl;
   }
-  FFTWInit(""); // Use default location.
+  FFTWInit(std::string("")); // Use default location.
 
   itk::TimeProbe tp;
   tp.Start();

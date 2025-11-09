@@ -9,7 +9,7 @@ using namespace std;
 
 template <unsigned long int ImageDimension>
 void
-DumpImageInfo(const std::string filename)
+DumpImageInfo(const std::string & filename)
 {
   using PixelType = double;
   using ImageType = itk::Image<PixelType, ImageDimension>;

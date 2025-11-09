@@ -31,7 +31,7 @@ int
 main(int argc, char * argv[])
 {
   PARSE_ARGS;
-  FFTWInit(""); // Initialize for FFTW in order to improve performance of subsequent runs
+  FFTWInit(std::string("")); // Initialize for FFTW in order to improve performance of subsequent runs
   BRAINSRegisterAlternateIO();
 
   // There is some multi-threading problem that has EXTREEME performance degredation

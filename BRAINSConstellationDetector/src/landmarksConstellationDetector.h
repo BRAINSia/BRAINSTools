@@ -154,7 +154,7 @@ public:
   }
 
   void
-  Compute(SImageType::Pointer orig_space_image);
+  Compute(const SImageType::Pointer & orig_space_image);
 
   SImageType::Pointer
   GetTaggedImage(const SImageType::Pointer & original_space_image) const

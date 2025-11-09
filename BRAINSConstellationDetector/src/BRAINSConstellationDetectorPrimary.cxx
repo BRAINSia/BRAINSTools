@@ -21,52 +21,53 @@
 #include "BRAINSConstellationDetectorPrimary.h"
 
 BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
+  : m_houghEyeDetectorMode(1)
+  , m_mspQualityLevel(2)
+  , m_writedebuggingImagesLevel(0)
+  , m_numberOfThreads(-1)
+  , m_otsuPercentileThreshold(0.01)
+  , m_acLowerBound(1000.0)
+  , m_trimRescaledIntensities(4.4172)
+  , m_radiusMPJ(-1)
+  , m_radiusAC(-1)
+  , m_radiusPC(-1)
+  , m_radiusVN4(-1)
+  , m_cutOutHeadInOutputVolume(false)
+  , m_rescaleIntensities(false)
+  , m_forceHoughEyeDetectorReportFailure(false)
+  , m_debug(false)
+  , m_verbose(false)
+  , m_inputVolume("")
+  , m_outputVolume("")
+  , m_outputResampledVolume("")
+  , m_outputTransform("")
+  , m_outputLandmarksInInputSpace("")
+  , m_outputLandmarksInACPCAlignedSpace("")
+  , m_outputMRML("")
+  , m_outputVerificationScript("")
+  , m_outputUntransformedClippedVolume("")
+  , orig_lmks_filename("")
+  , m_writeBranded2DImage("")
+  , m_backgroundFillValueString("0")
+  , m_interpolationMode("Linear")
+  , m_resultsDir("./")
+  , m_atlasVolume("")
+  , m_atlasLandmarks("")
+  , m_atlasLandmarkWeights("")
 {
-  this->m_houghEyeDetectorMode = 1;
-  this->m_mspQualityLevel = 2;
-  this->m_writedebuggingImagesLevel = 0;
-  this->m_numberOfThreads = -1;
-  this->m_otsuPercentileThreshold = 0.01;
-  this->m_acLowerBound = 1000.0;
-  this->m_trimRescaledIntensities = 4.4172;
 
-  this->m_radiusMPJ = -1;
-  this->m_radiusAC = -1;
-  this->m_radiusPC = -1;
-  this->m_radiusVN4 = -1;
-
-  this->m_cutOutHeadInOutputVolume = false;
-  this->m_rescaleIntensities = false;
-  this->m_forceHoughEyeDetectorReportFailure = false;
-  this->m_debug = false;
-  this->m_verbose = false;
 
   this->m_inputTemplateModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "T1.mdl";
   this->m_llsModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "LLSModel.h5";
 
-  this->m_inputVolume = "";
-  this->m_outputVolume = "";
-  this->m_outputResampledVolume = "";
-  this->m_outputTransform = "";
-  this->m_outputLandmarksInInputSpace = "";
-  this->m_outputLandmarksInACPCAlignedSpace = "";
-  this->m_outputMRML = "";
-  this->m_outputVerificationScript = "";
-  this->m_outputUntransformedClippedVolume = "";
-  this->orig_lmks_filename = "";
-  this->m_writeBranded2DImage = "";
-  this->m_backgroundFillValueString = "0";
-  this->m_interpolationMode = "Linear";
+
   this->m_rescaleIntensitiesOutputRange.push_back(40);
   this->m_rescaleIntensitiesOutputRange.push_back(4000);
   this->m_force_orig_lmk_ACPointLPS.clear();
   this->m_force_orig_lmk_PCPointLPS.clear();
   this->m_force_orig_lmk_VN4PointLPS.clear();
   this->m_force_orig_lmk_RPPointLPS.clear();
-  this->m_resultsDir = "./";
-  this->m_atlasVolume = "";
-  this->m_atlasLandmarks = "";
-  this->m_atlasLandmarkWeights = "";
+
 
   this->m_outputLandmarksInInputSpaceMap.clear();
   this->m_outputLandmarksInACPCAlignedSpaceMap.clear();

@@ -25,32 +25,28 @@ EMSParameters ::EMSParameters()
   : m_Suffix("")
   , m_AtlasDirectory("")
   , m_AtlasOrientation("RAI")
+  , m_DoAtlasWarp(true)
+  , m_AtlasWarpGridX(5)
+  , m_AtlasWarpGridY(5)
+  , m_AtlasWarpGridZ(5)
   , m_OutputDirectory("")
   , m_OutputFormat("Meta")
+  , m_FilterMethod("CurvatureFlow")
+  , m_FilterIterations(1)
+  , m_FilterTimeStep(0.01)
+  , m_MaxBiasDegree(4)
+  , m_Prior1(1.0)
+  , m_Prior2(1.0)
+  , m_Prior3(1.0)
+  , m_Prior4(1.0)
+  , m_AtlasLinearMapType("BSpline")
+  , m_ImageLinearMapType("Rigid")
 
 {
-  m_DoAtlasWarp = true;
+
 
   m_Images.clear();
   m_ImageOrientations.clear();
-
-  m_FilterMethod = "CurvatureFlow";
-  m_FilterIterations = 1;
-  m_FilterTimeStep = 0.01;
-
-  m_MaxBiasDegree = 4;
-
-  m_AtlasWarpGridX = 5;
-  m_AtlasWarpGridY = 5;
-  m_AtlasWarpGridZ = 5;
-
-  m_Prior1 = 1.0;
-  m_Prior2 = 1.0;
-  m_Prior3 = 1.0;
-  m_Prior4 = 1.0;
-
-  m_AtlasLinearMapType = "BSpline";
-  m_ImageLinearMapType = "Rigid";
 }
 
 void

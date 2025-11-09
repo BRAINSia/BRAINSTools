@@ -2,8 +2,8 @@
 set(proj VTK)
 
 set(VTK_VERSION_MAJOR 9)
-set(VTK_VERSION_MINOR 4)
-set(${proj}_REQUIRED_VERSION "9.4")  #If a required version is necessary, then set this, else leave blank
+set(VTK_VERSION_MINOR 5)
+set(${proj}_REQUIRED_VERSION "9.5")  #If a required version is necessary, then set this, else leave blank
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -141,6 +141,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   elseif("${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}" STREQUAL "9.4")
     set(_git_tag "454bb391dff78c6ff463298a5143ab5b4f0aa083") # slicer-v9.4.2-2025-03-26-13acb1a5d
     set(vtk_dist_info_version "9.4.2")
+  elseif("${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}" STREQUAL "9.5")
+    set(_git_tag "e21c90bd874fb15f1dc34986c238462b8aab4af8") # slicer-v9.5.2-2025-09-16-7c0494a68
+    set(vtk_dist_info_version "9.5.2")
   else()
     message(FATAL_ERROR "error: Unsupported VTK_VERSION_MAJOR.VTK_VERSION_MINOR: ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}")
   endif()

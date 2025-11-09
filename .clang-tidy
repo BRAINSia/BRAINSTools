@@ -1,7 +1,7 @@
 #
 Checks: <
   -*,
-  -modernize-avoid-bind,
+   modernize-avoid-bind,
   -modernize-avoid-c-arrays,
   -modernize-concat-nested-namespaces,
    modernize-deprecated-headers,

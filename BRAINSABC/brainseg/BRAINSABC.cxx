@@ -1161,13 +1161,13 @@ main(int argc, char ** argv)
 
       if (output_Volumes.size() == 1)
       {
-        for (auto mapIt = imgset.begin(); mapIt != imgset.end(); ++mapIt)
+        for (auto & mapIt : imgset)
         {
-          for (unsigned i = 0; i < mapIt->second.size(); i++)
+          for (unsigned i = 0; i < mapIt.second.size(); i++)
           {
             char buf[8192];
-            sprintf(buf, output_Volumes[0].c_str(), mapIt->first.c_str(), i);
-            outFileNames[mapIt->first].push_back(buf);
+            sprintf(buf, output_Volumes[0].c_str(), mapIt.first.c_str(), i);
+            outFileNames[mapIt.first].push_back(buf);
           }
         }
       }
@@ -1181,16 +1181,16 @@ main(int argc, char ** argv)
       {
         outFileNames = outputVolumeMap;
       }
-      for (auto mapIt = imgset.begin(); mapIt != imgset.end(); ++mapIt)
+      for (auto & mapIt : imgset)
       {
-        for (unsigned i = 0; i < mapIt->second.size(); i++)
+        for (unsigned i = 0; i < mapIt.second.size(); i++)
         {
           // using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType,
           // ShortImageType>;
           using RescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
           RescaleType::Pointer caster = RescaleType::New();
 
-          caster->SetInput(mapIt->second[i]);
+          caster->SetInput(mapIt.second[i]);
           caster->Update();
           // std::string fn
           //  = outputDir + GetStrippedImageFileNameExtension(names[i]) + std::string("_corrected")
@@ -1200,7 +1200,7 @@ main(int argc, char ** argv)
           ShortWriterType::Pointer writer = ShortWriterType::New();
 
           writer->SetInput(caster->GetOutput());
-          writer->SetFileName(outFileNames[mapIt->first][i]);
+          writer->SetFileName(outFileNames[mapIt.first][i]);
           writer->UseCompressionOn();
           writer->Update();
         }

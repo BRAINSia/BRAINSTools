@@ -91,9 +91,9 @@ AtlasDefinition::TissueTypes()
 {
   if (this->m_TissueTypes.empty())
   {
-    for (auto it = this->m_PriorMap.begin(); it != this->m_PriorMap.end(); ++it)
+    for (auto & it : this->m_PriorMap)
     {
-      this->m_TissueTypes.push_back(it->first);
+      this->m_TissueTypes.push_back(it.first);
     }
   }
   return this->m_TissueTypes;

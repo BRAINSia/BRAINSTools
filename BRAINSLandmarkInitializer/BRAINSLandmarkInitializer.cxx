@@ -133,23 +133,23 @@ PreProcessLandmarkFiles(const std::string &      inputFixedLandmarkFilename,
   }
 
   using LandmarkConstIterator = LandmarksMapType::const_iterator;
-  for (auto fixedIt = fixedLandmarks.begin(); fixedIt != fixedLandmarks.end(); ++fixedIt)
+  for (auto & fixedLandmark : fixedLandmarks)
   {
-    auto movingIt = movingLandmarks.find(fixedIt->first);
+    auto movingIt = movingLandmarks.find(fixedLandmark.first);
     if (movingIt != movingLandmarks.end())
     {
-      fixedLmks.push_back(fixedIt->second);
+      fixedLmks.push_back(fixedLandmark.second);
       movingLmks.push_back(movingIt->second);
 
       if (!landmarkWeightMap.empty())
       {
-        if (landmarkWeightMap.find(fixedIt->first) != landmarkWeightMap.end())
+        if (landmarkWeightMap.find(fixedLandmark.first) != landmarkWeightMap.end())
         {
-          landmarkWgts.push_back(landmarkWeightMap[fixedIt->first]);
+          landmarkWgts.push_back(landmarkWeightMap[fixedLandmark.first]);
         }
         else
         {
-          std::cout << "Landmark for " << fixedIt->first << " does not exist. "
+          std::cout << "Landmark for " << fixedLandmark.first << " does not exist. "
                     << "Set the weight to 0.5 " << std::endl;
           landmarkWgts.push_back(0.5F);
         }

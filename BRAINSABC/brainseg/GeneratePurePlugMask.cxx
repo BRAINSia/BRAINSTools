@@ -68,7 +68,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    inputImageModalitiesList.push_back(imgreader->GetOutput());
+    inputImageModalitiesList.emplace_back(imgreader->GetOutput());
   }
 
   // define step size based on the number of sub-samples at each direction

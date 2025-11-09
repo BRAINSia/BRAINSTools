@@ -154,7 +154,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
       mult->SetInput2(FOVMask);
       mult->Update();
 
-      rval[elem.first].push_back(mult->GetOutput());
+      rval[elem.first].emplace_back(mult->GetOutput());
       // #if !defined( INPLACE_RESCALER)
       //       (*imIt)  = rescaler->GetOutput();
       // #endif
@@ -1167,7 +1167,7 @@ main(int argc, char ** argv)
           {
             char buf[8192];
             sprintf(buf, output_Volumes[0].c_str(), mapIt.first.c_str(), i);
-            outFileNames[mapIt.first].push_back(buf);
+            outFileNames[mapIt.first].emplace_back(buf);
           }
         }
       }

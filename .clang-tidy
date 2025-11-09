@@ -42,7 +42,7 @@ Checks: <
   -modernize-use-trailing-return-type,
   -modernize-use-transparent-functors,
   -modernize-use-uncaught-exceptions,
-  -modernize-use-using,
+   modernize-use-using,
   -bugprone-incorrect-roundings,
   -cppcoreguidelines-init-variables,
   -cppcoreguidelines-prefer-member-initializer,

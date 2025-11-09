@@ -120,9 +120,8 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     using LandmarkBasedInitializerType =
       itk::LandmarkBasedTransformInitializer<LmkInitTransformType, SImageType, SImageType>;
     using LandmarkContainerType = LandmarkBasedInitializerType::LandmarkPointContainer;
-    LandmarkContainerType atlasLmks;
-    LandmarkContainerType movingLmks;
-    using LandmarkConstIterator = LandmarksMapType::const_iterator;
+    LandmarkContainerType                            atlasLmks;
+    LandmarkContainerType                            movingLmks;
     LandmarkBasedInitializerType::LandmarkWeightType landmarkWgts;
     for (auto fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end(); ++fixedIt)
     {

@@ -23,7 +23,8 @@ At_fhp(HalfHermetianImageType::Pointer inLRCoeffs,
 extern FloatImageType::Pointer
 IdentityResampleByFFT(FloatImageType::Pointer inOriginalImage, itk::ImageBase<3>::Pointer desiredOutputRef);
 
-extern HalfHermetianImageType::Pointer CreateZeroFFTCoefficients(itk::ImageBase<3>::Pointer referenceImageBase);
+extern HalfHermetianImageType::Pointer
+CreateZeroFFTCoefficients(itk::ImageBase<3>::Pointer referenceImageBase);
 extern void
 FFTWInit(const std::string path_for_wisdom);
 extern HalfHermetianImageType::Pointer

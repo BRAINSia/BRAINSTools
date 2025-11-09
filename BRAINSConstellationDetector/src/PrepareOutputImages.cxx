@@ -39,16 +39,16 @@ GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::str
 }
 
 void
-PrepareOutputImages(SImageType::Pointer &                     lOutputResampledImage,
-                    SImageType::Pointer &                     lOutputImage,
-                    SImageType::Pointer &                     lOutputUntransformedClippedVolume,
-                    const SImageType::ConstPointer &          lImageToBeResampled,
+PrepareOutputImages(SImageType::Pointer &                          lOutputResampledImage,
+                    SImageType::Pointer &                          lOutputImage,
+                    SImageType::Pointer &                          lOutputUntransformedClippedVolume,
+                    const SImageType::ConstPointer &               lImageToBeResampled,
                     const VersorRigidTransformType::ConstPointer & lVersorTransform,
-                    const double                              lACLowerBound,
-                    const short int                           BackgroundFillValue,
-                    const std::string &                       lInterpolationMode,
-                    const bool                                lCutOutHeadInOutputVolume,
-                    const double                              lOtsuPercentileThreshold)
+                    const double                                   lACLowerBound,
+                    const short int                                BackgroundFillValue,
+                    const std::string &                            lInterpolationMode,
+                    const bool                                     lCutOutHeadInOutputVolume,
+                    const double                                   lOtsuPercentileThreshold)
 {
   using ResampleIPFilterType = ResampleInPlaceImageFilter<SImageType, SImageType>;
   using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
@@ -141,7 +141,7 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
       ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
       {
         VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
-        const SImageType::PointType  centerPoint = lVersorTransform->GetCenter();
+        const SImageType::PointType       centerPoint = lVersorTransform->GetCenter();
         lInvVersorTransform->SetCenter(centerPoint);
         lInvVersorTransform->SetIdentity();
         lVersorTransform->GetInverse(lInvVersorTransform);
@@ -165,8 +165,8 @@ PrepareOutputImages(SImageType::Pointer &                     lOutputResampledIm
 
 void
 ApplyInverseOfTransformToLandmarks(const VersorRigidTransformType::ConstPointer & lVersorTransform,
-                                   const LandmarksMapType &                  inputLmks,
-                                   LandmarksMapType &                        outputLmks)
+                                   const LandmarksMapType &                       inputLmks,
+                                   LandmarksMapType &                             outputLmks)
 {
   VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
   {

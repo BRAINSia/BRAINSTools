@@ -384,7 +384,7 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
         }
       }
     } // for neighbors
-  }   // for i
+  } // for i
 
   delete[] breakArray;
 

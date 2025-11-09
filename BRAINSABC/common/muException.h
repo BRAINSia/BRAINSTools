@@ -69,15 +69,15 @@ operator<<(std::ostream & os, mu::Exception & e)
   return os;
 }
 
-#define muExceptionMacro(x)                                                                                            \
-  {                                                                                                                    \
-    muLogMacro(<< "mu::Exception, in " << __FILE__ << " line " << __LINE__; std::cerr << "\n" x << "\n");              \
-    std::stringstream oss;                                                                                             \
-    oss << "mu::Exception, in " << __FILE__ << " line " << __LINE__;                                                   \
-    oss << "\n" x << std::ends;                                                                                        \
-    mu::Exception e;                                                                                                   \
-    e.SetMessage(oss.str().c_str());                                                                                   \
-    throw e;                                                                                                           \
+#define muExceptionMacro(x)                                                                               \
+  {                                                                                                       \
+    muLogMacro(<< "mu::Exception, in " << __FILE__ << " line " << __LINE__; std::cerr << "\n" x << "\n"); \
+    std::stringstream oss;                                                                                \
+    oss << "mu::Exception, in " << __FILE__ << " line " << __LINE__;                                      \
+    oss << "\n" x << std::ends;                                                                           \
+    mu::Exception e;                                                                                      \
+    e.SetMessage(oss.str().c_str());                                                                      \
+    throw e;                                                                                              \
   }
 
 #endif

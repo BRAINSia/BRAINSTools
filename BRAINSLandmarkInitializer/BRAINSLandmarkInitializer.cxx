@@ -261,7 +261,7 @@ main(int argc, char * argv[])
   }
   else if (outputTransformType == "BSplineTransform")
   {
-    constexpr static unsigned int SplineOrder = 3;
+    static constexpr unsigned int SplineOrder = 3;
     using BSplineTransformType = itk::BSplineTransform<ParameterValueType, Dimension, SplineOrder>;
     auto transform = InitializeTransform<BSplineTransformType>(
       fixedLmks, movingLmks, landmarkWgts, referenceImage, bsplineNumberOfControlPoints);

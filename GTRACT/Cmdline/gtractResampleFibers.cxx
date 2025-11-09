@@ -262,7 +262,7 @@ main(int argc, char * argv[])
     // Compute Singluar value Decompostion of the Jacobian to find the Rotation
     // Matrix.
 
-    vnl_svd<double> svd( (J + iden).as_matrix() );
+    vnl_svd<double> svd((J + iden).as_matrix());
     vnlMatrixType   rotationMatrix(svd.U() * svd.V().transpose());
 
     vnlMatrixType rotatedTensorPixel = rotationMatrix * fullTensorPixel * rotationMatrix.transpose();

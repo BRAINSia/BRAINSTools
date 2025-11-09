@@ -61,13 +61,13 @@ value_comparer(const std::pair<std::string, float> & i, const std::pair<std::str
 }
 
 double
-get_max_value(LandmarksValueMapType const & m) // returns the max value of a map
+get_max_value(const LandmarksValueMapType & m) // returns the max value of a map
 {
   return std::max_element(m.begin(), m.end(), value_comparer)->second;
 }
 
 double
-get_min_value(LandmarksValueMapType const & m) // returns the min value of a map
+get_min_value(const LandmarksValueMapType & m) // returns the min value of a map
 {
   return std::min_element(m.begin(), m.end(), value_comparer)->second;
 }

@@ -84,11 +84,7 @@ extern "C"
 }
 } // namespace
 
-AtlasDefinition::AtlasDefinition()
-
-{
-  this->m_TissueTypes.resize(0);
-}
+AtlasDefinition::AtlasDefinition() { this->m_TissueTypes.resize(0); }
 
 const AtlasDefinition::TissueTypeVector &
 AtlasDefinition::TissueTypes()

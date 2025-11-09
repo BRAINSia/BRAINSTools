@@ -362,7 +362,8 @@ main(int argc, char * argv[])
           }
           else if (mask_value == face_rm || mask_value == auto_roi_background || mask_value == eye_boxes_code)
           {
-            const auto distanceValue = static_cast<InternalImageType::PixelType>(distanceMapInterpolator->Evaluate(imgpnt));
+            const auto distanceValue =
+              static_cast<InternalImageType::PixelType>(distanceMapInterpolator->Evaluate(imgpnt));
             // determine the correct blur value
             size_t           sigmaIndex = 0;
             constexpr double sigma_distance_ratio = 1.0; // Factor of sigma smoothing to distance ratio

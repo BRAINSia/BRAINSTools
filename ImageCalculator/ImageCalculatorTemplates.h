@@ -43,66 +43,66 @@
 #  include <itkIdentityTransform.h>
 #  include "GenericTransformImage.h"
 
-#  define FunctorClassDeclare(name, op)                                                                                \
-    template <typename PixelType>                                                                                      \
-    class name                                                                                                         \
-    {                                                                                                                  \
-    public:                                                                                                            \
-      name(const PixelType & p)                                                                                        \
-        : m_Val(p){};                                                                                                  \
-      name(){};                                                                                                        \
-      ~name(){};                                                                                                       \
-      PixelType                                                                                                        \
-      operator()(const PixelType & a) const                                                                            \
-      {                                                                                                                \
-        return static_cast<PixelType>(a op m_Val);                                                                     \
-      }                                                                                                                \
-      bool                                                                                                             \
-      operator==(const name & other) const                                                                             \
-      {                                                                                                                \
-        return this == &other;                                                                                         \
-      }                                                                                                                \
-      bool                                                                                                             \
-      operator!=(const name & other) const                                                                             \
-      {                                                                                                                \
-        return !(*this == other);                                                                                      \
-      }                                                                                                                \
-                                                                                                                       \
-    protected:                                                                                                         \
-    private:                                                                                                           \
-      name(const name &){};                                                                                            \
-      PixelType m_Val;                                                                                                 \
+#  define FunctorClassDeclare(name, op)            \
+    template <typename PixelType>                  \
+    class name                                     \
+    {                                              \
+    public:                                        \
+      name(const PixelType & p)                    \
+        : m_Val(p) {};                             \
+      name() {};                                   \
+      ~name() {};                                  \
+      PixelType                                    \
+      operator()(const PixelType & a) const        \
+      {                                            \
+        return static_cast<PixelType>(a op m_Val); \
+      }                                            \
+      bool                                         \
+      operator==(const name & other) const         \
+      {                                            \
+        return this == &other;                     \
+      }                                            \
+      bool                                         \
+      operator!=(const name & other) const         \
+      {                                            \
+        return !(*this == other);                  \
+      }                                            \
+                                                   \
+    protected:                                     \
+    private:                                       \
+      name(const name &) {};                       \
+      PixelType m_Val;                             \
     };
 
-#  define FunctorClassDeclare2(name, op)                                                                               \
-    template <typename PixelType>                                                                                      \
-    class name                                                                                                         \
-    {                                                                                                                  \
-    public:                                                                                                            \
-      name(const PixelType & p)                                                                                        \
-        : m_Val(p){};                                                                                                  \
-      name(){};                                                                                                        \
-      ~name(){};                                                                                                       \
-      PixelType                                                                                                        \
-      operator()(const PixelType & a) const                                                                            \
-      {                                                                                                                \
-        return static_cast<PixelType>(op);                                                                             \
-      }                                                                                                                \
-      bool                                                                                                             \
-      operator==(const name & other) const                                                                             \
-      {                                                                                                                \
-        return this == &other;                                                                                         \
-      }                                                                                                                \
-      bool                                                                                                             \
-      operator!=(const name & other) const                                                                             \
-      {                                                                                                                \
-        return !(*this == other);                                                                                      \
-      }                                                                                                                \
-                                                                                                                       \
-    protected:                                                                                                         \
-    private:                                                                                                           \
-      name(const name &){};                                                                                            \
-      PixelType m_Val;                                                                                                 \
+#  define FunctorClassDeclare2(name, op)    \
+    template <typename PixelType>           \
+    class name                              \
+    {                                       \
+    public:                                 \
+      name(const PixelType & p)             \
+        : m_Val(p) {};                      \
+      name() {};                            \
+      ~name() {};                           \
+      PixelType                             \
+      operator()(const PixelType & a) const \
+      {                                     \
+        return static_cast<PixelType>(op);  \
+      }                                     \
+      bool                                  \
+      operator==(const name & other) const  \
+      {                                     \
+        return this == &other;              \
+      }                                     \
+      bool                                  \
+      operator!=(const name & other) const  \
+      {                                     \
+        return !(*this == other);           \
+      }                                     \
+                                            \
+    protected:                              \
+    private:                                \
+      name(const name &) {};                \
+      PixelType m_Val;                      \
     };
 
 namespace Functor
@@ -116,23 +116,23 @@ FunctorClassDeclare2(binarydecimate, a > 0 ? 255 : 0);
 FunctorClassDeclare2(squareroot, sqrt(static_cast<double>(a)));
 } // namespace Functor
 
-#  define FunctorProcess(op, constvalue)                                                                               \
-    {                                                                                                                  \
-      Functor::op<PixelType>                                                             op##functor(constvalue);      \
-      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                   \
-      typename FilterType::Pointer                                                       filter = FilterType::New();   \
-      filter->SetFunctor(op##functor);                                                                                 \
-      filter->SetInput(IntermediateImage);                                                                             \
-      filter->Update();                                                                                                \
-      IntermediateImage = filter->GetOutput();                                                                         \
+#  define FunctorProcess(op, constvalue)                                                                             \
+    {                                                                                                                \
+      Functor::op<PixelType>                                                             op##functor(constvalue);    \
+      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                 \
+      typename FilterType::Pointer                                                       filter = FilterType::New(); \
+      filter->SetFunctor(op##functor);                                                                               \
+      filter->SetInput(IntermediateImage);                                                                           \
+      filter->Update();                                                                                              \
+      IntermediateImage = filter->GetOutput();                                                                       \
     }
-#  define FunctorProcess2(op)                                                                                          \
-    {                                                                                                                  \
-      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                   \
-      typename FilterType::Pointer                                                       filter = FilterType::New();   \
-      filter->SetInput(IntermediateImage);                                                                             \
-      filter->Update();                                                                                                \
-      IntermediateImage = filter->GetOutput();                                                                         \
+#  define FunctorProcess2(op)                                                                                        \
+    {                                                                                                                \
+      typedef itk::UnaryFunctorImageFilter<ImageType, ImageType, Functor::op<PixelType>> FilterType;                 \
+      typename FilterType::Pointer                                                       filter = FilterType::New(); \
+      filter->SetInput(IntermediateImage);                                                                           \
+      filter->Update();                                                                                              \
+      IntermediateImage = filter->GetOutput();                                                                       \
     }
 
 #  include "itkDiscreteGaussianImageFilter.h"
@@ -602,10 +602,12 @@ class string_tokenizer : public std::vector<std::string>
 {
 public:
   explicit string_tokenizer(const std::string & s, const char * const sep = " ") { this->init(s, sep); }
-  string_tokenizer & operator=(const string_tokenizer &)  = delete;
+  string_tokenizer &
+  operator=(const string_tokenizer &) = delete;
   string_tokenizer(const string_tokenizer &) = delete;
 
   explicit string_tokenizer(const char * const s, const char * const sep = " ") { this->init(std::string(s), sep); }
+
 private:
   void
   init(const std::string & input, const char * const sep = " ")
@@ -709,7 +711,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   using ReaderType = itk::ImageFileReader<ImageType>;
   using PixelType = typename ImageType::PixelType;
   // Read the first Image
-  typename ReaderType::Pointer reader= ReaderType::New();
+  typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(InputList.at(0).c_str());
   std::cout << "Reading 1st Image..." << InputList.at(0).c_str() << std::endl;
   try
@@ -736,7 +738,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
   {
     std::cout << "Reading image.... " << InputList.at(currimage).c_str() << std::endl;
 
-    typename ReaderType::Pointer reader2= ReaderType::New();
+    typename ReaderType::Pointer reader2 = ReaderType::New();
     reader2->SetFileName(InputList.at(currimage).c_str());
     try
     {

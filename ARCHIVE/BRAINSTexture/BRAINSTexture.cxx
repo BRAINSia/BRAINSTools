@@ -6,9 +6,9 @@
 #include <itkSpatialObjectToImageFilter.h>
 #include <itkScalarImageToTextureFeaturesFilter.h>
 
-//#    1) itkEllipseSpatialObject
-//#    2) itkSpatialObjectToImageFilter
-//#    3) itkSimpleContourExtractorImageFilter
+// #    1) itkEllipseSpatialObject
+// #    2) itkSpatialObjectToImageFilter
+// #    3) itkSimpleContourExtractorImageFilter
 
 #include <iostream>
 #include <itkEllipseSpatialObject.h>

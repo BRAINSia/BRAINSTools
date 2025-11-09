@@ -5,14 +5,14 @@
 #################
 #
 #mex - v outputs all the settings used for building MEX files, so it
-#we can use it to grab the important variables needed to generate
-#a well formed mex file.
+#we can use it to grab the important variables needed   to generate
+#a well formed mex                                      file.
 execute_process(COMMAND ${MATLAB_MEX_PATH} -v ${CMAKE_CURRENT_LIST_DIR}/mex_stub.cxx
   OUTPUT_VARIABLE mexOut
   ERROR_VARIABLE mexErr)
 message(STATUS "_mexOut : ${_mexOut} ")
 
-#parse mex  output.
+#parse mex                                          output.
 #parse line by line by turning file into CMake list of lines
 string(REGEX REPLACE "\r?\n" ";" _mexOut "${mexOut}")
 message(STATUS "_mexOut : ${_mexOut} ")

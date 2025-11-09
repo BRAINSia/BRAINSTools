@@ -65,7 +65,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   }
   const typename InputImageType::PixelType minPixel(statsFilter->GetMinimum());
   const typename InputImageType::PixelType maxPixel(statsFilter->GetMaximum());
-  if(print_diagnostics)
+  if (print_diagnostics)
   {
     const double variance = statsFilter->GetSigma();
     const double mean = statsFilter->GetMean();
@@ -115,7 +115,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
     relativeLowerOutputIntensity = (difference * lowerPercentile) + lowerOutputIntensity;
     relativeUpperOutputIntensity = (difference * upperPercentile) + lowerOutputIntensity;
   }
-  if(print_diagnostics)
+  if (print_diagnostics)
   {
     std::cout << "Rescaling linearly from (" << lowerPercentileValue << ", " << upperPercentileValue << ") to ("
               << relativeLowerOutputIntensity << ", " << relativeUpperOutputIntensity << ")"
@@ -133,30 +133,30 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   if (clip)
   {
     filter->SetFunctor([slope, intercept, upperOutputIntensity, lowerOutputIntensity](
-      const typename InputImageType::PixelType input_pixel_value_orig) ->
-                         typename OutputImageType::PixelType {
-      const auto input_pixel_value = static_cast<double>(input_pixel_value_orig);
-      const auto temp = input_pixel_value * slope + intercept;
-      const auto return_value = (temp > upperOutputIntensity)
-                                ? upperOutputIntensity
-                                : ((temp < lowerOutputIntensity) ? lowerOutputIntensity : temp);
-      return static_cast<typename OutputImageType::PixelType>(return_value);
-    });
+                         const typename InputImageType::PixelType input_pixel_value_orig) ->
+                       typename OutputImageType::PixelType {
+                         const auto input_pixel_value = static_cast<double>(input_pixel_value_orig);
+                         const auto temp = input_pixel_value * slope + intercept;
+                         const auto return_value = (temp > upperOutputIntensity)
+                                                     ? upperOutputIntensity
+                                                     : ((temp < lowerOutputIntensity) ? lowerOutputIntensity : temp);
+                         return static_cast<typename OutputImageType::PixelType>(return_value);
+                       });
   }
   else
   {
     filter->SetFunctor([slope, intercept](const typename InputImageType::PixelType input_pixel_value_orig) ->
-                         typename OutputImageType::PixelType {
-      const auto input_pixel_value = static_cast<double>(input_pixel_value_orig);
-      const auto temp = input_pixel_value * slope + intercept;
-      return static_cast<typename OutputImageType::PixelType>(temp);
-    });
+                       typename OutputImageType::PixelType {
+                         const auto input_pixel_value = static_cast<double>(input_pixel_value_orig);
+                         const auto temp = input_pixel_value * slope + intercept;
+                         return static_cast<typename OutputImageType::PixelType>(temp);
+                       });
   }
   filter->SetInput(input_image);
   filter->Update();
   output_image = filter->GetOutput();
 
-  if(print_diagnostics)
+  if (print_diagnostics)
   {
     using OutStatisticsFilterType = itk::StatisticsImageFilter<OutputImageType>;
     typename OutStatisticsFilterType::Pointer outStatsFilter = OutStatisticsFilterType::New();

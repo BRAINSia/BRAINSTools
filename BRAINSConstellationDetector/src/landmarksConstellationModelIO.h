@@ -647,7 +647,7 @@ public:
   }
 
   bool
-  NE(double const a, double const b)
+  NE(const double a, const double b)
   {
     if ((a < 0.0 && b >= 0.0) || (b < 0.0 && a >= 0.0))
     {

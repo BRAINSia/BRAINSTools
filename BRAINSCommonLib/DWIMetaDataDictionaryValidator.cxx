@@ -29,10 +29,7 @@
 
 #include "itkNumberToString.h"
 
-DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator()
-{
-  this->m_dict.Clear();
-}
+DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator() { this->m_dict.Clear(); }
 
 DWIMetaDataDictionaryValidator::~DWIMetaDataDictionaryValidator() = default;
 

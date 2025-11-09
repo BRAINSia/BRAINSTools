@@ -583,7 +583,7 @@ landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
             }
           }
         } // End of arbitrary landmarks detection for the rest of "new" ones
-      }   // End of arbitrary landmarks detection by linear model estimation
+      } // End of arbitrary landmarks detection by linear model estimation
 
       this->ComputeFinalRefinedACPCAlignedTransform(orig_space_image, this->m_orig_lmks_updated);
       if (globalImagedebugLevel > 1) // This may be very useful for GUI

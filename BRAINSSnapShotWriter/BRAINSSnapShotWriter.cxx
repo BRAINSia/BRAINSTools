@@ -80,7 +80,7 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
         // fill the same value
         physicalPoints[p] = inputSliceToExtractInPhysicalPoint[i];
       }
-      dummyIndex=referenceImage->TransformPhysicalPointToIndex(physicalPoints);
+      dummyIndex = referenceImage->TransformPhysicalPointToIndex(physicalPoints);
 
       std::cout << inputSliceToExtractInPhysicalPoint[i] << "-->" << dummyIndex[planes[i]] << std::endl;
       sliceIndexToExtract.push_back(dummyIndex[planes[i]]);
@@ -96,7 +96,8 @@ GetSliceIndexToExtract(typename TImageType::Pointer referenceImage,
         exit(EXIT_FAILURE);
       }
       unsigned int size = (referenceImage->GetBufferedRegion()).GetSize()[planes[i]];
-      unsigned int index = static_cast<unsigned int>(static_cast<float>(inputSliceToExtractInPercent[i]) / 100.0F) * size;
+      unsigned int index =
+        static_cast<unsigned int>(static_cast<float>(inputSliceToExtractInPercent[i]) / 100.0F) * size;
 
       std::cout << inputSliceToExtractInPercent[i] << "-->" << index << std::endl;
       sliceIndexToExtract.push_back(index);
@@ -472,7 +473,7 @@ main(int argc, char ** argv)
   layout[1] = 0; // inputPlaneDirection.size();
 
   tileFilter->SetLayout(layout);
-  const itk::RGBPixel<unsigned char> defaultPixelValue{128};
+  const itk::RGBPixel<unsigned char> defaultPixelValue{ 128 };
   tileFilter->SetDefaultPixelValue(defaultPixelValue);
   for (unsigned int plane = 0; plane < extractingSlices.size(); plane++)
   {

@@ -102,7 +102,6 @@ using RGBImageType = itk::Image<RGBPixelType, 3>;
 using RGB2DImageType = itk::Image<RGBPixelType, 2>;
 
 
-
 using PyramidFilterType = itk::MultiResolutionPyramidImageFilter<SImageType, SImageType>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<SImageType, double>;
 } // namespace
@@ -128,8 +127,8 @@ CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_M
                                 /* const
                                   SImageType::PointType
                                   finalPoint, */
-                                const SImageType::PointType         PreMSP_Point,
-                                /*const*/ SImageType::Pointer &     image,
+                                const SImageType::PointType           PreMSP_Point,
+                                /*const*/ SImageType::Pointer &       image,
                                 const Euler3DTransformType::Pointer & Point_Rotate);
 
 extern void
@@ -154,18 +153,18 @@ ComputeMSP(SImageType::Pointer           input_image,
            double &                      cc);
 
 extern SImageType::Pointer
-CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
+CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
                       const VersorRigidTransformType::Pointer & MSPTransform,
-                      const std::string &                 debugfilename);
+                      const std::string &                       debugfilename);
 
 extern void
 CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & debugfilename);
 
 extern VersorRigidTransformType::Pointer
 computeTmspFromPoints_Versor(SImageType::PointType RP,
-                      SImageType::PointType AC,
-                      SImageType::PointType PC,
-                      SImageType::PointType DesiredCenter);
+                             SImageType::PointType AC,
+                             SImageType::PointType PC,
+                             SImageType::PointType DesiredCenter);
 
 extern Euler3DTransformType::Pointer
 computeTmspFromPoints(SImageType::PointType RP,
@@ -370,8 +369,6 @@ setLowHigh(typename SImageType::Pointer &   image,
   high = static_cast<typename SImageType::PixelType>(histogram->Quantile(0, 1.0F - percent));
   return static_cast<typename SImageType::PixelType>(otsuThresholds[0]);
 }
-
-
 
 
 extern SimilarityTransformType::Pointer

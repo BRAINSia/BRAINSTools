@@ -46,17 +46,18 @@ using LOOPITERTYPE = unsigned int;
 //  std::isnan(value) || std::isinf(value) )
 #if 0 // Runtime performance penalty that can be used to find faulty code
       // during debugging.
-#  define CHECK_NAN(XXXTESTXXX, srcfile, srcline, extra_print)                                                         \
-    {                                                                                                                  \
-      if (!std::isfinite(XXXTESTXXX))                                                                                  \
-      {                                                                                                                \
-        std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << extra_print << std::endl;        \
-        raise(SIGSEGV);                                                                                                \
-      }                                                                                                                \
+#  define CHECK_NAN(XXXTESTXXX, srcfile, srcline, extra_print)                                                  \
+    {                                                                                                           \
+      if (!std::isfinite(XXXTESTXXX))                                                                           \
+      {                                                                                                         \
+        std::cout << "Found " << XXXTESTXXX << " at " << srcfile << " " << srcline << extra_print << std::endl; \
+        raise(SIGSEGV);                                                                                         \
+      }                                                                                                         \
     }
 #else
-#  define CHECK_NAN(XXXTESTXXX, srcfile, srcline, extra_print)                                                         \
-    {}
+#  define CHECK_NAN(XXXTESTXXX, srcfile, srcline, extra_print) \
+    {                                                          \
+    }
 #endif
 
 /** A utility class for holding ordered maps */
@@ -126,7 +127,7 @@ class orderedmap : public std::map<Key, T, firstInOrderingOfStrings>
 {
 public:
   orderedmap()
-    : std::map<Key, T, firstInOrderingOfStrings>(){};
+    : std::map<Key, T, firstInOrderingOfStrings>() {};
   using std::map<Key, T, firstInOrderingOfStrings>::operator[];
 };
 

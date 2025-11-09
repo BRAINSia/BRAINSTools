@@ -384,7 +384,7 @@ public:
 
   /* -- */
   Euler3DTransformType::Pointer
-  GetTransformFromParams(ParametersType const & params) const
+  GetTransformFromParams(const ParametersType & params) const
   {
     Euler3DTransformType::Pointer tempEulerAngles3DT = Euler3DTransformType::New();
 
@@ -456,7 +456,7 @@ public:
 
   /* -- */
   SImageType::Pointer
-  GetResampledImageToOutputBox(ParametersType const & params) const
+  GetResampledImageToOutputBox(const ParametersType & params) const
   {
     /*
      * Resample the image
@@ -473,7 +473,7 @@ public:
   }
 
   double
-  CenterImageReflection_crossCorrelation(ParametersType const & params) const
+  CenterImageReflection_crossCorrelation(const ParametersType & params) const
   {
     SImageType::Pointer internalResampledForReflectiveComputationImage = GetResampledImageToOutputBox(params);
 

@@ -29,8 +29,7 @@ MixtureStatisticCostFunction<TFirstImage, TSecondImage>::MixtureStatisticCostFun
 
 template <typename TFirstImage, typename TSecondImage>
 MixtureStatisticCostFunction<TFirstImage, TSecondImage>::~MixtureStatisticCostFunction()
-{
-}
+{}
 
 template <typename TFirstImage, typename TSecondImage>
 typename MixtureStatisticCostFunction<TFirstImage, TSecondImage>::MeasureType

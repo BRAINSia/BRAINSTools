@@ -345,7 +345,7 @@ main(int argc, char * argv[])
           return EXIT_FAILURE;
         }
       } // end isDICOM
-    }   // end try
+    } // end try
     catch (const itk::ExceptionObject & err)
     {
       /** If any errors have occurred, catch and print the exception and return false. */

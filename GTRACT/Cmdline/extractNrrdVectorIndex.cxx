@@ -130,8 +130,9 @@ main(int argc, char * argv[])
   itk::MetaDataDictionary       meta;
   IndexImageType::Pointer       indexImage = SelectIndexImageFilter->GetOutput();
   IndexImageType::DirectionType fixImageDir = indexImage->GetDirection();
-#define EncapsulateMD(image, flag)                                                                                     \
-  {}
+#define EncapsulateMD(image, flag) \
+  {                                \
+  }
   if (setImageOrientation == "Axial" || setImageOrientation == "AXIAL" || setImageOrientation == "axial")
   {
     fixImageDir.Fill(0);

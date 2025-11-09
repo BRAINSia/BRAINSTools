@@ -242,8 +242,7 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   // get spacing
   SpacingType spacing = xferImage->GetSpacing();
   // get orientation
-  itk::AnatomicalOrientation orientation =
-    itk::AnatomicalOrientation(xferImage->GetDirection());
+  itk::AnatomicalOrientation orientation = itk::AnatomicalOrientation(xferImage->GetDirection());
   // get origin
   PointType origin = xferImage->GetOrigin();
   for (unsigned int i = 0; i < 3; i++)

@@ -167,7 +167,7 @@ GetInterpolatorFromString(const std::string & interpolationMode)
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 DoResampleInPlace(
-  InputImageType const * const PrincipalOperandImage,
+  const InputImageType * const PrincipalOperandImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
     genericTransform)
 {
@@ -185,7 +185,7 @@ DoResampleInPlace(
         genericTempTransformFileType == "VersorRigid3DTransform")
     {
       const VersorRigid3DTransformType::ConstPointer tempTransform =
-        static_cast<VersorRigid3DTransformType const *>(genericTransform.GetPointer());
+        static_cast<const VersorRigid3DTransformType *>(genericTransform.GetPointer());
       tempInitializerITKTransform->SetFixedParameters(tempTransform->GetFixedParameters());
       tempInitializerITKTransform->SetParameters(tempTransform->GetParameters());
     }
@@ -210,7 +210,7 @@ DoResampleInPlace(
 
 template <typename InputImageType, typename DistanceMapImageType>
 typename DistanceMapImageType::ConstPointer
-local_ConvertToDistanceMap(InputImageType const * const         OperandImage,
+local_ConvertToDistanceMap(const InputImageType * const         OperandImage,
                            typename InputImageType::PixelType & suggestedDefaultValue)
 {
   /* We make the values inside the structures positive and outside negative
@@ -332,7 +332,7 @@ local_FromDistanceMap(typename DistanceMapImageType::Pointer                    
 template <typename InputImageType>
 typename InputImageType::Pointer
 GenericTransformImage(
-  InputImageType const * const                                 OperandImage,
+  const InputImageType * const                                 OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,
@@ -408,7 +408,7 @@ GenericTransformImage(
 template <typename InputImageType>
 typename InputImageType::Pointer
 SimpleGenericTransformImage(
-  InputImageType const * const                                 OperandImage,
+  const InputImageType * const                                 OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,

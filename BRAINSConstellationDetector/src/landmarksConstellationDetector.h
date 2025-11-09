@@ -170,13 +170,17 @@ public:
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
     SImageType::IndexType PTIndex;
-    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "AC"));
+    PTIndex =
+      taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "AC"));
     taggedImage->SetPixel(PTIndex, high);
-    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "PC"));
+    PTIndex =
+      taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "PC"));
     taggedImage->SetPixel(PTIndex, high);
-    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "VN4"));
+    PTIndex =
+      taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "VN4"));
     taggedImage->SetPixel(PTIndex, high);
-    PTIndex = taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "RP"));
+    PTIndex =
+      taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "RP"));
     taggedImage->SetPixel(PTIndex, high);
     return taggedImage;
   }
@@ -209,7 +213,9 @@ private:
   EulerToVersorRigid(VersorRigidTransformType::Pointer &, const Euler3DTransformType::ConstPointer &);
 
   void
-  DoResampleInPlace(const SImageType::ConstPointer &, const Euler3DTransformType::ConstPointer &, SImageType::Pointer &);
+  DoResampleInPlace(const SImageType::ConstPointer &,
+                    const Euler3DTransformType::ConstPointer &,
+                    SImageType::Pointer &);
 
   static VersorRigidTransformType::Pointer
   Compute_orig2msp_img_tfm(const SImagePointType & RP, const SImagePointType & AC, const SImagePointType & PC);
@@ -275,11 +281,11 @@ private:
   // name list of the landmarks that should be treated as midline landmarks
   std::vector<std::string> m_MidlinePointsList;
 
-  VersorRigidTransformType::Pointer  m_eyeFixed2msp_img_tfm;
+  VersorRigidTransformType::Pointer m_eyeFixed2msp_img_tfm;
   VersorRigidTransformType::Pointer m_orig2msp_img_tfm;
 
   VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm;
-  bool                         m_HoughEyeFailure;
+  bool                              m_HoughEyeFailure;
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:

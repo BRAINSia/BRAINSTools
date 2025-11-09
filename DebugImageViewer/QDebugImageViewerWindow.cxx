@@ -208,9 +208,7 @@ QDebugImageViewerWindow::readImage()
     std::cerr << "Error reading socket" << std::endl;
     exit(1);
   }
-  xferImage->SetDirection(
-    itk::AnatomicalOrientation(orientation).GetAsDirection()
-  );
+  xferImage->SetDirection(itk::AnatomicalOrientation(orientation).GetAsDirection());
 
   QImageDisplay::ImageType::PointType origin;
   for (unsigned i = 0; i < 3; i++)

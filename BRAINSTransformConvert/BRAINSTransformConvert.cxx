@@ -66,8 +66,9 @@ TransformConvertError(const itk::Transform<TScalarType, 3, 3> * inputXfrm, const
 // Convert from any type derived from MatrixOffsetTransformType to
 // AffineTransform.
 template <typename TScalarType>
-bool ExtractTransform(typename itk::AffineTransform<TScalarType, 3>::Pointer & result,
-                      const itk::Transform<TScalarType, 3, 3> *                source)
+bool
+ExtractTransform(typename itk::AffineTransform<TScalarType, 3>::Pointer & result,
+                 const itk::Transform<TScalarType, 3, 3> *                source)
 {
   result->SetIdentity();
   // always able to convert to same type
@@ -204,11 +205,11 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform<TScalarType>::Pointer 
   return false;
 }
 
-#define CHECK_PARAMETER_IS_SET(parameter, message)                                                                     \
-  if ((parameter) == "")                                                                                               \
-  {                                                                                                                    \
-    std::cerr << (message) << std::endl;                                                                               \
-    return EXIT_FAILURE;                                                                                               \
+#define CHECK_PARAMETER_IS_SET(parameter, message) \
+  if ((parameter) == "")                           \
+  {                                                \
+    std::cerr << (message) << std::endl;           \
+    return EXIT_FAILURE;                           \
   }
 
 template <typename TScalarType>

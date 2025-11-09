@@ -37,7 +37,7 @@
 #include "vtkTalairachGrid.h"
 #include "vtkStructuredGridWriter.h"
 #include "itkMacro.h" //Needed for nullptr
-#define PR(x)                                                                                                          \
+#define PR(x) \
   std::cout << #x " = " << x << "\n"; // a simple print macro for
                                       // use when debugging
 

@@ -90,12 +90,12 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
   InputImageOffsetType padding;
   for (unsigned int i = 0; i < ImageDimension; i++)
   {
-    padding[i] = static_cast<unsigned int>(std::floor(m_Padding )/ spacing[i] + 0.5);
+    padding[i] = static_cast<unsigned int>(std::floor(m_Padding) / spacing[i] + 0.5);
   }
   // Make sure padding is sensible
   for (unsigned int i = 0; i < ImageDimension; i++)
   {
-    if (static_cast<long>(size[i] )<= padding[i])
+    if (static_cast<long>(size[i]) <= padding[i])
     {
       itkExceptionMacro(<< "Bounding box padding larger than or equal to image size");
     }

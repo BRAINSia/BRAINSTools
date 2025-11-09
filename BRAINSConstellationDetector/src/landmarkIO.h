@@ -73,14 +73,14 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
 
 // Write Slicer scene file (.mrml)
 extern void
-WriteMRMLFile(const std::string &                                   outputMRML,
-              std::string                                           outputLandmarksInInputSpace,
-              std::string                                           outputLandmarksInOutputSpace,
-              const std::string &                                   inputVolume,
-              const std::string &                                   outputVolume,
-              const std::string &                                   outputTransform,
-              const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
-              const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
+WriteMRMLFile(const std::string &                                        outputMRML,
+              std::string                                                outputLandmarksInInputSpace,
+              std::string                                                outputLandmarksInOutputSpace,
+              const std::string &                                        inputVolume,
+              const std::string &                                        outputVolume,
+              const std::string &                                        outputTransform,
+              const LandmarksMapType &                                   outputLandmarksInInputSpaceMap,
+              const LandmarksMapType &                                   outputLandmarksInOutputSpaceMap,
               const LandmarkIO::VersorRigidTransformType::ConstPointer & versorTransform);
 
 // load linear least squares model for selected landmarks

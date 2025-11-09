@@ -180,7 +180,7 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
   // By eliminating possible "bright or dark" noise in the image.
   minValue = std::numeric_limits<float>::max();
   maxValue = std::numeric_limits<float>::min();
-  const auto num_pixels = image->GetBufferedRegion().GetNumberOfPixels();
+  const auto                                   num_pixels = image->GetBufferedRegion().GetNumberOfPixels();
   std::vector<typename TInputImage::PixelType> fixedList;
   fixedList.reserve(num_pixels);
   const bool maskIsNull = mask.IsNull();
@@ -192,7 +192,7 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
         image->template TransformIndexToPhysicalPoint<typename TInputImage::PointType::ValueType>(fi.GetIndex())
       };
 
-      if ( maskIsNull || (mask->IsInsideInWorldSpace(physicalPoint)))
+      if (maskIsNull || (mask->IsInsideInWorldSpace(physicalPoint)))
       // A null mask implies entire space is to be used.
       {
         const typename TInputImage::PixelType & currValue = fi.Get();
@@ -210,10 +210,10 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
   // Compute extended line through these two Quantile points
   const float LQx = Qalpha;
   const float HQx = 1.0 - Qalpha;
-  const auto list_size = fixedList.size();
-  const auto index_lowest_quantile_value = static_cast<size_t>(list_size * LQx);
+  const auto  list_size = fixedList.size();
+  const auto  index_lowest_quantile_value = static_cast<size_t>(list_size * LQx);
   const float fixedLQy = fixedList[index_lowest_quantile_value];
-  const auto index_highest_quantile_value = static_cast<size_t>(list_size * HQx);
+  const auto  index_highest_quantile_value = static_cast<size_t>(list_size * HQx);
   const float fixedHQy = fixedList[index_highest_quantile_value];
   const float fixedQSlope = (fixedHQy - fixedLQy) / (HQx - LQx);
   const float fixedZeroQy = fixedLQy - fixedQSlope * LQx;

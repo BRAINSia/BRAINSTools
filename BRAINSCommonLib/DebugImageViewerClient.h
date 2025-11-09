@@ -31,7 +31,7 @@
 #    include <itkSpatialOrientationAdapter.h>
 #    include <itkOrientImageFilter.h>
 #    include <cstdio>
-#include "itkAnatomicalOrientation.h"
+#    include "itkAnatomicalOrientation.h"
 // #include <itkIO.h>
 // #include <itkIO2.h>
 
@@ -244,8 +244,7 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   // get spacing
   SpacingType spacing = xferImage->GetSpacing();
   // get orientation
-  itk::AnatomicalOrientation orientation =
-    itk::AnatomicalOrientation(xferImage->GetDirection());
+  itk::AnatomicalOrientation orientation = itk::AnatomicalOrientation(xferImage->GetDirection());
   // get origin
   PointType origin = xferImage->GetOrigin();
   for (unsigned int i = 0; i < 3; i++)

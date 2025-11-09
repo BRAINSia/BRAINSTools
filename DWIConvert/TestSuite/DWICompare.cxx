@@ -199,7 +199,7 @@ DoIt(int argc, char * argv[], PixelType)
 
 void
 GetImageType(const std::string &                 fileName,
-             itk::IOPixelEnum &     pixelType,
+             itk::IOPixelEnum &                  pixelType,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
@@ -218,7 +218,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum                  pixelType;
   itk::ImageIOBase::IOComponentEnum componentType;
 
   try
@@ -234,7 +234,7 @@ main(int argc, char * argv[])
       {
         return DoIt(argc, argv, static_cast<unsigned char>(0));
       }
-       case itk::IOComponentEnum::CHAR:
+      case itk::IOComponentEnum::CHAR:
       {
         return DoIt(argc, argv, static_cast<char>(0));
       }

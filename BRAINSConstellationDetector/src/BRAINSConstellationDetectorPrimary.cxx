@@ -175,7 +175,7 @@ BRAINSConstellationDetectorPrimary::Compute()
    */
   if (this->orig_lmks_filename.empty()) // Only look for default files if not specified on command line.
   {
-    const static std::string fcsv_extension{ ".fcsv" };
+    static const std::string fcsv_extension{ ".fcsv" };
     const std::string        root_dir = itksys::SystemTools::GetParentDirectory(this->m_inputVolume);
     std::string              potentialLandmarkFileName =
       root_dir + "/" + itksys::SystemTools::GetFilenameWithoutExtension(this->m_inputVolume);

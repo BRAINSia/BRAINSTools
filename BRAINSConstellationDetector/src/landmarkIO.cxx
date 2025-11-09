@@ -23,8 +23,8 @@
  */
 
 #include "landmarkIO.h"
-//#include "itk_hdf5.h"
-//#include "itk_H5Cpp.h"
+// #include "itk_hdf5.h"
+// #include "itk_H5Cpp.h"
 #include "itkNumberToString.h"
 
 RGBImageType::Pointer
@@ -151,10 +151,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
                       const SImageType::PointType &         PC2,
                       const SImageType::PointType &         VN42)
 {
-  SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in,
-      itk::AnatomicalOrientation::PositiveEnum::RAI
-      );
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
 
   RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
@@ -261,8 +258,7 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
                         const SImageType::PointType & CenterPoint,
                         const std::string &           fname)
 {
-  SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
   SImageType::Pointer inputStatsImage;
   {
     LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
@@ -305,8 +301,7 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
                    const SImageType::PointType &    CM,
                    const std::string &              fname)
 {
-  SImageType::Pointer inputImage =
-    itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
+  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
 
   RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
@@ -422,14 +417,14 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
 // INFO:  Determine what the interface for WriteMRMLFile really needs to produce
 // a useful file, and then limit the interface to just that.
 extern void
-WriteMRMLFile(const std::string &                                   outputMRML,
-              std::string                                           outputLandmarksInInputSpace,
-              std::string                                           outputLandmarksInOutputSpace,
-              const std::string &                                   inputVolume,
-              const std::string &                                   outputVolume,
-              const std::string &                                   outputTransform,
-              const LandmarksMapType &                              outputLandmarksInInputSpaceMap,
-              const LandmarksMapType &                              outputLandmarksInOutputSpaceMap,
+WriteMRMLFile(const std::string &                                        outputMRML,
+              std::string                                                outputLandmarksInInputSpace,
+              std::string                                                outputLandmarksInOutputSpace,
+              const std::string &                                        inputVolume,
+              const std::string &                                        outputVolume,
+              const std::string &                                        outputTransform,
+              const LandmarksMapType &                                   outputLandmarksInInputSpaceMap,
+              const LandmarksMapType &                                   outputLandmarksInOutputSpaceMap,
               const LandmarkIO::VersorRigidTransformType::ConstPointer & versorTransform)
 {
   constexpr unsigned int      LocalImageDimension = 3;

@@ -314,7 +314,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
     }
     {
       Euler3DTransformType::Pointer orig2msp_img_tfm = myDetector.Getorig2msp_img_tfm();
-      SImageType::Pointer         msp_img =
+      SImageType::Pointer           msp_img =
         TransformResample<SImageType, SImageType>(TaggedOriginalImage.GetPointer(),
                                                   MakeIsoTropicReferenceImage().GetPointer(),
                                                   BackgroundFillValue,

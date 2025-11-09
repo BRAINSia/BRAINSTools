@@ -39,10 +39,7 @@ Log ::Log()
   m_EchoFlag = true;
 }
 
-Log ::~Log()
-{
-  this->CloseFile();
-}
+Log ::~Log() { this->CloseFile(); }
 
 Log ::Log(const Log & l)
   : m_EchoFlag(l.m_EchoFlag)

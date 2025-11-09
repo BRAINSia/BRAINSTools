@@ -271,43 +271,43 @@ main(int argc, char ** argv)
   }
   std::cerr << "Filename: " << filename << " Dimensions: " << x << " " << y << " " << z << " "
             << " Value: " << value << " Type: " << typenames[PType] << std::endl;
-#define AllTypesSwitch(dim)                                                                                            \
-  switch (PType)                                                                                                       \
-  {                                                                                                                    \
-    case Char:                                                                                                         \
-      return (MakeImage<char, dim>(filename, x, y, z, t, static_cast<char>(value)));                                   \
-      break;                                                                                                           \
-    case UnsignedChar:                                                                                                 \
-      return (MakeImage<unsigned char, dim>(filename, x, y, z, t, static_cast<unsigned char>(value)));                 \
-      break;                                                                                                           \
-    case Short:                                                                                                        \
-      return (MakeImage<short, dim>(filename, x, y, z, t, static_cast<short>(value)));                                 \
-      break;                                                                                                           \
-    case UnsignedShort:                                                                                                \
-      return (MakeImage<unsigned short, dim>(filename, x, y, z, t, static_cast<unsigned short>(value)));               \
-      break;                                                                                                           \
-    case Int:                                                                                                          \
-      return (MakeImage<int, dim>(filename, x, y, z, t, static_cast<int>(value)));                                     \
-      break;                                                                                                           \
-    case UnsignedInt:                                                                                                  \
-      return (MakeImage<unsigned int, dim>(filename, x, y, z, t, static_cast<unsigned int>(value)));                   \
-      break;                                                                                                           \
-    case Float:                                                                                                        \
-      return (MakeImage<float, dim>(filename, x, y, z, t, static_cast<float>(value)));                                 \
-      break;                                                                                                           \
-    case Double:                                                                                                       \
-      return (MakeImage<double, dim>(filename, x, y, z, t, static_cast<double>(value)));                               \
-      break;                                                                                                           \
-    case ThreeVectorComplex:                                                                                           \
-      return (MakeImage<ThreeVectorComplexPixelType, dim>(                                                             \
-        filename, x, y, z, t, static_cast<ThreeVectorComplexPixelType>(value)));                                       \
-      break;                                                                                                           \
-    case Rgb:                                                                                                          \
-      return (MakeImage<RGBPixelType, dim>(                                                                            \
-        filename, x, y, z, t, static_cast<RGBPixelType>(static_cast<unsigned char>(value))));                          \
-      break;                                                                                                           \
-    default:                                                                                                           \
-      return EXIT_FAILURE;                                                                                             \
+#define AllTypesSwitch(dim)                                                                              \
+  switch (PType)                                                                                         \
+  {                                                                                                      \
+    case Char:                                                                                           \
+      return (MakeImage<char, dim>(filename, x, y, z, t, static_cast<char>(value)));                     \
+      break;                                                                                             \
+    case UnsignedChar:                                                                                   \
+      return (MakeImage<unsigned char, dim>(filename, x, y, z, t, static_cast<unsigned char>(value)));   \
+      break;                                                                                             \
+    case Short:                                                                                          \
+      return (MakeImage<short, dim>(filename, x, y, z, t, static_cast<short>(value)));                   \
+      break;                                                                                             \
+    case UnsignedShort:                                                                                  \
+      return (MakeImage<unsigned short, dim>(filename, x, y, z, t, static_cast<unsigned short>(value))); \
+      break;                                                                                             \
+    case Int:                                                                                            \
+      return (MakeImage<int, dim>(filename, x, y, z, t, static_cast<int>(value)));                       \
+      break;                                                                                             \
+    case UnsignedInt:                                                                                    \
+      return (MakeImage<unsigned int, dim>(filename, x, y, z, t, static_cast<unsigned int>(value)));     \
+      break;                                                                                             \
+    case Float:                                                                                          \
+      return (MakeImage<float, dim>(filename, x, y, z, t, static_cast<float>(value)));                   \
+      break;                                                                                             \
+    case Double:                                                                                         \
+      return (MakeImage<double, dim>(filename, x, y, z, t, static_cast<double>(value)));                 \
+      break;                                                                                             \
+    case ThreeVectorComplex:                                                                             \
+      return (MakeImage<ThreeVectorComplexPixelType, dim>(                                               \
+        filename, x, y, z, t, static_cast<ThreeVectorComplexPixelType>(value)));                         \
+      break;                                                                                             \
+    case Rgb:                                                                                            \
+      return (MakeImage<RGBPixelType, dim>(                                                              \
+        filename, x, y, z, t, static_cast<RGBPixelType>(static_cast<unsigned char>(value))));            \
+      break;                                                                                             \
+    default:                                                                                             \
+      return EXIT_FAILURE;                                                                               \
   }
 
   switch (numdims)

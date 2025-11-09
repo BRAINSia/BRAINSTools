@@ -28,7 +28,7 @@ typename MaskType::Pointer
 ReadImageMask(const std::string & filename, typename itk::ImageBase<VDimension> * /*referenceImage*/)
 {
   using MaskPixelType = unsigned char;
-  using SpatialObjectMaskPixelType = itk::Image<MaskPixelType, 3 >;
+  using SpatialObjectMaskPixelType = itk::Image<MaskPixelType, 3>;
 
   // convert mask image to mask
   using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<SpatialObjectMaskPixelType::ImageDimension>;

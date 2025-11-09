@@ -13,7 +13,7 @@
 #include "itkComplexToComplexFFTImageFilter.h"
 #include "itkFFTWComplexToComplexFFTImageFilter.h"
 #include <itkVectorImage.h>
-//#include <itkGradientImageFilter.h>
+// #include <itkGradientImageFilter.h>
 #include <rtkForwardDifferenceGradientImageFilter.h>
 #include <rtkBackwardDifferenceDivergenceImageFilter.h>
 
@@ -44,7 +44,7 @@ using PrecisionType = float;
 using FloatImageType = itk::Image<PrecisionType, CURR_IMG_DIM>;
 using ImageBaseType = itk::ImageBase<CURR_IMG_DIM>;
 
-//#define USE_HALF_FFTW
+// #define USE_HALF_FFTW
 #ifdef USE_HALF_FFTW
 // using FloatFFTWFullFFTType = itk::FFTWRealToHalfHermitianForwardFFTImageFilter< FloatImageType >;
 // using FloatFFTWFullIFFTType = itk::FFTWHalfHermitianToRealInverseFFTImageFilter<

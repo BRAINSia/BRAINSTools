@@ -29,8 +29,8 @@
 
 // As defined in svn --username anonymous --password anonymous checkout https://www.nitrc.org/svn/abc
 // trunk/Engine/bias/LLSBiasCorrector.txx:#define LOGP(x) (logf((x)+1))
-//#define EXPP(x) std::exp((x) - 1.0)
-//#define LOGP(x) std::log((x) + 1.0)
+// #define EXPP(x) std::exp((x) - 1.0)
+// #define LOGP(x) std::log((x) + 1.0)
 inline double
 EXPP(double y)
 {

@@ -606,7 +606,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                               }
 #endif
                         } // for jchan
-                      }   // for ichan
+                      } // for ichan
                     });
 
   muLogMacro(<< "Solve " << lhs.rows() << " x " << lhs.columns() << std::endl);
@@ -751,7 +751,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                                     }
                                   }
                                   biasIntensityScaleFactor->SetPixel(
-                                    currOutIndex, static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
+                                    currOutIndex,
+                                    static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                                 } // for currOutIndex[0]
                               }
                             }
@@ -777,16 +778,16 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                                                                                     // CLAMP
                   {
                     multiplicitiveBiasCorrectionFactor = maxBiasInForegroundMask;
-                    biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                       static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
+                    biasIntensityScaleFactor->SetPixel(
+                      currOutIndex, static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                   }
                   else if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask) //
                                                                                          //
                                                                                          // CLAMP
                   {
                     multiplicitiveBiasCorrectionFactor = minBiasInForegroundMask;
-                    biasIntensityScaleFactor->SetPixel(currOutIndex,
-                                                       static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
+                    biasIntensityScaleFactor->SetPixel(
+                      currOutIndex, static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
                   }
 
                   typename MaskNNInterpolationType::OutputType allTissueMaskValue = 0;

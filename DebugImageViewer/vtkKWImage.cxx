@@ -85,7 +85,7 @@ public:
 
 /** This helper macro will instantiate the pipeline creator for a particular
  * pixel type */
-#define CreatePipelineMacro(PixelType)                                                                                 \
+#define CreatePipelineMacro(PixelType) \
   PipelineCreator<PixelType>::CreateExporter(this->ItkImage, this->Exporter, this->Importer);
 
 // ----------------------------------------------------------------------------
@@ -93,10 +93,7 @@ vtkStandardNewMacro(vtkKWImage);
 vtkCxxRevisionMacro(vtkKWImage, "$Revision: 1.1 $");
 
 // ----------------------------------------------------------------------------
-vtkKWImage::vtkKWImage()
-{
-  this->Importer = vtkImageImport::New();
-}
+vtkKWImage::vtkKWImage() { this->Importer = vtkImageImport::New(); }
 
 // ----------------------------------------------------------------------------
 vtkKWImage::~vtkKWImage()

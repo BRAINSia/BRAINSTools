@@ -53,10 +53,7 @@
 
 namespace itk
 {
-TensorToAnisotropyImageFilter ::TensorToAnisotropyImageFilter()
-{
-  m_AnisotropyType = FRACTIONAL_ANISOTROPY;
-}
+TensorToAnisotropyImageFilter ::TensorToAnisotropyImageFilter() { m_AnisotropyType = FRACTIONAL_ANISOTROPY; }
 
 void
 TensorToAnisotropyImageFilter ::Update()

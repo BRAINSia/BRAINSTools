@@ -32,11 +32,11 @@
 #include "itkTransformFileReader.h"
 
 
-#define CHECK_PARAMETER_IS_SET(parameter, message)                                                                     \
-  if ((parameter) == "")                                                                                               \
-  {                                                                                                                    \
-    std::cerr << (message) << std::endl;                                                                               \
-    return EXIT_FAILURE;                                                                                               \
+#define CHECK_PARAMETER_IS_SET(parameter, message) \
+  if ((parameter) == "")                           \
+  {                                                \
+    std::cerr << (message) << std::endl;           \
+    return EXIT_FAILURE;                           \
   }
 
 int

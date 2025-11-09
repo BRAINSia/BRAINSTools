@@ -142,7 +142,7 @@ OrientImage(typename ImageType::ConstPointer & inputImage, typename itk::Anatomi
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
 
-  orienter->SetDesiredCoordinateOrientation(orient);
+  orienter->SetDesiredCoordinateDirection(orient.GetAsDirection());
   orienter->UseImageDirectionOn();
   orienter->SetInput(inputImage);
   orienter->Update();

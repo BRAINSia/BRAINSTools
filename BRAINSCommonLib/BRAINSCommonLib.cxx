@@ -51,7 +51,7 @@ FFTWInit(const std::string & path_for_wisdom)
   //                             file to be generated.  If this is
   //                             set, then ITK_FFTW_WISDOM_CACHE_BASE
   //                             is ignored.
-  if (path_for_wisdom.length() > 0) // If empty, just use the default.
+  if (!path_for_wisdom.empty()) // If empty, just use the default.
   {
     itk::FFTWGlobalConfiguration::SetWisdomCacheBase(path_for_wisdom);
   }

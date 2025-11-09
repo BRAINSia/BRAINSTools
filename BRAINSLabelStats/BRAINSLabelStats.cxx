@@ -162,7 +162,7 @@ main(int argc, char * argv[])
 {
   PARSE_ARGS;
 
-  if ((imageVolume.length() == 0) && (labelVolume.length() == 0))
+  if ((imageVolume.empty()) && (labelVolume.empty()))
   {
     std::cout << "Error: Both the image and label must be specified" << std::endl;
     return EXIT_FAILURE;

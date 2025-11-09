@@ -37,7 +37,7 @@ Checks: <
    modernize-use-ranges,
    modernize-use-starts-ends-with,
    modernize-use-std-format,
-  -modernize-use-std-numbers,
+   modernize-use-std-numbers,
   -modernize-use-std-print,
   -modernize-use-trailing-return-type,
   -modernize-use-transparent-functors,

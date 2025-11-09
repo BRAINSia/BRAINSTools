@@ -114,7 +114,7 @@ AtlasDefinition::XMLStart(const char * el)
 double
 AtlasDefinition ::StrToD(const char * str, const char * message) const
 {
-  char *       last = nullptr;
+  char *       last = nullptr; // NOLINT
   const double rval = std::strtod(str, &last);
 
   if (str == last)
@@ -128,7 +128,7 @@ AtlasDefinition ::StrToD(const char * str, const char * message) const
 long
 AtlasDefinition ::StrToL(const char * str, const char * message) const
 {
-  char *     last = nullptr;
+  char *     last = nullptr; // NOLINT
   const long rval = std::strtol(str, &last, 10);
 
   if (str == last)

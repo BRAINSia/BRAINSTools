@@ -25,7 +25,7 @@ Checks: <
    modernize-use-bool-literals,
    modernize-use-constraints,
    modernize-use-default-member-init,
-  -modernize-use-designated-initializers,
+   modernize-use-designated-initializers,
   -modernize-use-emplace,
    modernize-use-equals-default,
    modernize-use-equals-delete,

@@ -32,7 +32,7 @@ Checks: <
   -modernize-use-integer-sign-comparison,
   -modernize-use-nodiscard,
   -modernize-use-noexcept,
-  -modernize-use-nullptr,
+   modernize-use-nullptr,
   -modernize-use-override,
   -modernize-use-ranges,
   -modernize-use-starts-ends-with,

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.16.3...3.20.3)
-cmake_policy(VERSION 3.16.3...3.20.3)
+cmake_minimum_required(VERSION 3.20.6...4.1.2 FATAL_ERROR)
+cmake_policy(VERSION 3.20.6...4.1.2)
 
 #-----------------------------------------------------------------------------
 # Enable C++17
@@ -15,7 +15,7 @@ endif()
 if(NOT CMAKE_CXX_EXTENSIONS)
   set(CMAKE_CXX_EXTENSIONS OFF)
 endif()
-set(VALID_CXX_STANDARDS "17" "20" "23")
+set(VALID_CXX_STANDARDS "17" "20" "23" "26")
 if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
    MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
 endif()

@@ -43,7 +43,7 @@ Checks: <
   -modernize-use-transparent-functors,
    modernize-use-uncaught-exceptions,
    modernize-use-using,
-  -bugprone-incorrect-roundings,
+   bugprone-incorrect-roundings,
   -cppcoreguidelines-init-variables,
   -cppcoreguidelines-prefer-member-initializer,
   -cppcoreguidelines-pro-bounds-constant-array-index,

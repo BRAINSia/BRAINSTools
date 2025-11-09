@@ -86,7 +86,7 @@ public:
               << doubleConvert(normal[2]) << " ]" << std::endl;
   }
 
-  double
+  [[nodiscard]] double
   GetRelativeLocationToPlane(LandmarkPointType x) const
   {
     double answer = normal[0] * (A[0] - x[0]) + normal[1] * (A[1] - x[1]) + normal[2] * (A[2] - x[2]);
@@ -94,7 +94,7 @@ public:
     return answer;
   }
 
-  VectorType
+  [[nodiscard]] VectorType
   GetNormal() const
   {
     return normal;

@@ -230,6 +230,7 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   wordexp(file_glob_string.c_str(), &p, 0);
   char **                  w = p.we_wordv;
   std::vector<std::string> files;
+  files.reserve(p.we_wordc);
   for (unsigned int i = 0; i < p.we_wordc; i++)
   {
     files.emplace_back(w[i]);
@@ -237,6 +238,7 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   }
 
   std::vector<std::pair<std::string, std::string>> subjects;
+  subjects.reserve(files.size());
   for (const auto & file : files)
   {
     subjects.emplace_back(get_subjectid(file), file);

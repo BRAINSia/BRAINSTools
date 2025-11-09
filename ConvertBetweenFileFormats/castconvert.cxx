@@ -213,7 +213,7 @@ main(int argc, char * argv[])
       GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
       nameGenerator->SetInputDirectory(inputDirectoryName.c_str());
       FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
-      std::string            fileName = fileNames[0];
+      const std::string &    fileName = fileNames[0];
 
       /** Create a dicom ImageIO and set it in the testReader. */
       GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();

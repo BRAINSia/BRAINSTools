@@ -681,7 +681,7 @@ landmarksConstellationDetector::LinearEstimation(LandmarksMapType &             
     std::cout << "No EPCA landmarks to be estimated." << std::endl;
     return;
   }
-  std::string           newPointName = processingList[processingList.size() - 1];
+  const std::string &   newPointName = processingList[processingList.size() - 1];
   SImageType::PointType newPoint;
   newPoint.Fill(0);
 

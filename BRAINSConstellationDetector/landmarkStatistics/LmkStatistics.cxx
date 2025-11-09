@@ -120,7 +120,7 @@ main(int argc, char * argv[])
   std::cout << "\n=============Distance Values For Each Landmarks====================" << std::endl;
   for (unsigned int j = 0; j < numNamedLandmarks; j++)
   {
-    std::string name = LandmarksNames[j];
+    const std::string & name = LandmarksNames[j];
     for (unsigned int i = 0; i < k; i++)
     {
       d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
@@ -147,8 +147,8 @@ main(int argc, char * argv[])
   std::cout << "\n=============Average Error for Each Landmarks====================" << std::endl;
   for (unsigned int j = 0; j < numNamedLandmarks; j++)
   {
-    std::string name = LandmarksNames[j];
-    double      sum = 0;
+    const std::string & name = LandmarksNames[j];
+    double              sum = 0;
     for (unsigned int i = 0; i < k; i++)
     {
       sum += LandmarksDistanceMap[name][i];
@@ -161,8 +161,8 @@ main(int argc, char * argv[])
   std::cout << "\n=============Variance of Error for Each Landmarks====================" << std::endl;
   for (unsigned int j = 0; j < numNamedLandmarks; j++)
   {
-    std::string name = LandmarksNames[j];
-    double      sum = 0;
+    const std::string & name = LandmarksNames[j];
+    double              sum = 0;
     for (unsigned int i = 0; i < k; i++)
     {
       sum += pow(LandmarksDistanceMap[name][i] - LandmarksAverageMap[name], 2);
@@ -176,7 +176,7 @@ main(int argc, char * argv[])
   std::cout << "\n=============Standard Deviation of Error for Each Landmarks====================" << std::endl;
   for (unsigned int j = 0; j < numNamedLandmarks; j++)
   {
-    std::string name = LandmarksNames[j];
+    const std::string & name = LandmarksNames[j];
     std::cout << "-" << name << ": " << LandmarksSTDMap[name] << std::endl;
   }
   std::cout << "==============================================================\n" << std::endl;

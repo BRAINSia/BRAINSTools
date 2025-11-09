@@ -338,7 +338,7 @@ DWIMetaDataDictionaryValidator::SetCenterings(const std::vector<std::string> & v
 
   for (size_t i = 0; i < outValues.size(); ++i)
   {
-    const std::string x = outValues[i];
+    const std::string & x = outValues[i];
     if ((x != _cellString) && (x != _dkString))
     {
       std::cout << "ERROR: " << i << " " << x << " Not a valid NRRD_centerings" << std::endl;

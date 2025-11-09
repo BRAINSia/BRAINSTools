@@ -143,7 +143,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
       // #if defined( INPLACE_RESCALER )
       //       rescaler->SetInPlace(true);
       // #endif
-      FloatImageType::Pointer tmp = (*imIt);
+      const FloatImageType::Pointer & tmp = (*imIt);
       rescaler->SetInput(tmp);
       rescaler->Update();
 

@@ -177,9 +177,9 @@ public:
   /** Container to hold gradient directions of the 'n' DW measurements */
   using GradientDirectionContainerType = VectorContainer<unsigned int, GradientDirectionType>;
 
-//  /** Set method to add a gradient direction and its corresponding image. */
-//  void
-//  AddGradientImage(const GradientDirectionType &, const GradientImageType * gradientImage);
+  //  /** Set method to add a gradient direction and its corresponding image. */
+  //  void
+  //  AddGradientImage(const GradientDirectionType &, const GradientImageType * gradientImage);
 
   /** Another set method to add a gradient directions and its corresponding
    * image. The image here is a VectorImage. The user is expected to pass the

@@ -86,8 +86,9 @@ Reorganize(typename ImageType1::Pointer &, typename ImageType2::Pointer &)
 
 /** Go from a Vector Image to a 4D image */
 template <typename TPixel>
-void Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer & vecImage,
-                typename itk::Image<TPixel, 4>::Pointer &       scalarImage)
+void
+Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer & vecImage,
+           typename itk::Image<TPixel, 4>::Pointer &       scalarImage)
 {
   using TVecImage = itk::VectorImage<TPixel, 3>;
   using TScalarImage = itk::Image<TPixel, 4>;
@@ -622,7 +623,7 @@ itkLoadWithMetadata(int, mxArray * plhs[], int nrhs, const mxArray * prhs[])
   // For now support scalar images of 2 or 3 dimensions.  Adding more
   // isn't a problem, but it complicates how we build the matlab structure.
   itk::IOPixelEnum pixtype = imageIO->GetPixelType();
-  unsigned                      imageDimension = imageIO->GetNumberOfDimensions();
+  unsigned         imageDimension = imageIO->GetNumberOfDimensions();
 
   switch (pixtype)
   {

@@ -90,11 +90,11 @@ private:
 } // namespace mu
 
 // Allows declarations such as: muLogMacro(<< "Message: " << 1.1234);
-#define muLogMacro(x)                                                                                                  \
-  do                                                                                                                   \
-  {                                                                                                                    \
-    std::ostringstream outss;                                                                                          \
-    outss << "" x << std::ends;                                                                                        \
-    (mu::Log::GetInstance())->WriteString(outss.str().c_str());                                                        \
+#define muLogMacro(x)                                           \
+  do                                                            \
+  {                                                             \
+    std::ostringstream outss;                                   \
+    outss << "" x << std::ends;                                 \
+    (mu::Log::GetInstance())->WriteString(outss.str().c_str()); \
   } while (0)
 #endif

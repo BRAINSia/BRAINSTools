@@ -49,7 +49,7 @@ landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
   const VersorRigidTransformType::ConstPointer & orig2msp_img_tfm)
 {
   VersorRigidTransformType::Pointer orig2msp_lmk_tfm = VersorRigidTransformType::New();
-  SImageType::PointType        centerPoint = orig2msp_img_tfm->GetCenter();
+  SImageType::PointType             centerPoint = orig2msp_img_tfm->GetCenter();
   orig2msp_lmk_tfm->SetCenter(centerPoint);
   orig2msp_lmk_tfm->SetIdentity();
   orig2msp_img_tfm->GetInverse(orig2msp_lmk_tfm);
@@ -553,7 +553,7 @@ landmarksConstellationDetector::FindCandidatePoints(
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
       {
         SImageType::PointType centerOfSearchAreaPoint;
-        for ( unsigned int i = 0; i < centerOfSearchAreaPoint.size(); i++ )
+        for (unsigned int i = 0; i < centerOfSearchAreaPoint.size(); i++)
         {
           centerOfSearchAreaPoint[i] = CenterOfSearchArea[i];
         }
@@ -630,7 +630,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 }
 
 void
-landmarksConstellationDetector::EulerToVersorRigid(VersorRigidTransformType::Pointer &           result,
+landmarksConstellationDetector::EulerToVersorRigid(VersorRigidTransformType::Pointer &        result,
                                                    const Euler3DTransformType::ConstPointer & eulerRigid)
 {
   if (result.IsNotNull() && eulerRigid.IsNotNull())
@@ -652,9 +652,9 @@ landmarksConstellationDetector::EulerToVersorRigid(VersorRigidTransformType::Poi
 
 
 void
-landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer &         inputImg,
+landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer &           inputImg,
                                                   const Euler3DTransformType::ConstPointer & rigidTx,
-                                                  SImageType::Pointer &                    inPlaceResampledImg)
+                                                  SImageType::Pointer &                      inPlaceResampledImg)
 {
   VersorRigidTransformType::Pointer versorRigidTx = VersorRigidTransformType::New();
   EulerToVersorRigid(versorRigidTx, rigidTx.GetPointer());

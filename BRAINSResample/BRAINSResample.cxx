@@ -341,7 +341,7 @@ main(int argc, char * argv[])
         {
           using LocalAffineTransformType = itk::AffineTransform<double, 3>;
           const LocalAffineTransformType::ConstPointer affineTransform =
-            static_cast<LocalAffineTransformType const *>(genericTransform.GetPointer());
+            static_cast<const LocalAffineTransformType *>(genericTransform.GetPointer());
 
           LocalAffineTransformType::Pointer Local_inverseTransform = LocalAffineTransformType::New();
           affineTransform->GetInverse(Local_inverseTransform);
@@ -357,7 +357,7 @@ main(int argc, char * argv[])
         {
           using RigidTransformType = itk::VersorRigid3DTransform<double>;
           const RigidTransformType::ConstPointer rigidTransform =
-            static_cast<RigidTransformType const *>(genericTransform.GetPointer());
+            static_cast<const RigidTransformType *>(genericTransform.GetPointer());
 
           RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
           rigidTransform->GetInverse(Local_inverseTransform);
@@ -375,7 +375,7 @@ main(int argc, char * argv[])
         {
           using Similarity3DTransformType = itk::Similarity3DTransform<double>;
           const Similarity3DTransformType::ConstPointer similarityTransform =
-            static_cast<Similarity3DTransformType const *>(genericTransform.GetPointer());
+            static_cast<const Similarity3DTransformType *>(genericTransform.GetPointer());
 
           Similarity3DTransformType::Pointer Local_inverseTransform = Similarity3DTransformType::New();
           similarityTransform->GetInverse(Local_inverseTransform);

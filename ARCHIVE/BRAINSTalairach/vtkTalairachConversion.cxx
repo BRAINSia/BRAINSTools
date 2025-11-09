@@ -27,7 +27,7 @@
 
 #include "vtkPoints.h"
 
-#define PR(x)                                                                                                          \
+#define PR(x) \
   std::cout << #x " = " << x << "\n"; // a simple print macro for
                                       // use when debugging
 

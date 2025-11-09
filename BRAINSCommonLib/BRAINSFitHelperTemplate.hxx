@@ -49,9 +49,9 @@ ValidateTransformRankOrdering(const std::vector<std::string> & transformType)
   // B-Spline is before Rigid, or any other non-sensical ordering of the
   // transform types.
   // Rigid=1, ScaleVersor3D=2, ScaleSkewVersor3D=3, Affine=4, and (BSpline or SyN)=5
-#define VTROExceptionMacroMacro()                                                                                      \
-  itkGenericExceptionMacro(<< "Ordering of transforms does not proceed from\n"                                         \
-                           << "smallest to largest.  Please review settings for transformType.\n"                      \
+#define VTROExceptionMacroMacro()                                                                 \
+  itkGenericExceptionMacro(<< "Ordering of transforms does not proceed from\n"                    \
+                           << "smallest to largest.  Please review settings for transformType.\n" \
                            << "Rigid < ScaleVersor3D < ScaleSkewVersor3D < Affine < (BSpline | SyN)")
 
   if (transformType.empty())
@@ -806,7 +806,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (transformFileType == "VersorRigid3DTransform")
           {
             const itk::VersorRigid3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<VersorRigid3DTransformType const *>(currInitTransformFormGenericComposite.GetPointer());
+              static_cast<const VersorRigid3DTransformType *>(currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if ((transformFileType == "ScaleVersor3DTransform") ||
@@ -884,13 +884,13 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (transformFileType == "VersorRigid3DTransform")
           {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              static_cast<VersorRigid3DTransformType const *>(currInitTransformFormGenericComposite.GetPointer());
+              static_cast<const VersorRigid3DTransformType *>(currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "ScaleVersor3DTransform")
           {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<itk::ScaleVersor3DTransform<double> const *>(
+              static_cast<const itk::ScaleVersor3DTransform<double> *>(
                 currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
@@ -970,20 +970,20 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (transformFileType == "VersorRigid3DTransform")
           {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              static_cast<VersorRigid3DTransformType const *>(currInitTransformFormGenericComposite.GetPointer());
+              static_cast<const VersorRigid3DTransformType *>(currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "ScaleVersor3DTransform")
           {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<itk::ScaleVersor3DTransform<double> const *>(
+              static_cast<const itk::ScaleVersor3DTransform<double> *>(
                 currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "ScaleSkewVersor3DTransform")
           {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<itk::ScaleSkewVersor3DTransform<double> const *>(
+              static_cast<const itk::ScaleSkewVersor3DTransform<double> *>(
                 currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
@@ -1061,27 +1061,27 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           if (transformFileType == "VersorRigid3DTransform")
           {
             const VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
-              static_cast<VersorRigid3DTransformType const *>(currInitTransformFormGenericComposite.GetPointer());
+              static_cast<const VersorRigid3DTransformType *>(currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "ScaleVersor3DTransform")
           {
             const itk::ScaleVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<itk::ScaleVersor3DTransform<double> const *>(
+              static_cast<const itk::ScaleVersor3DTransform<double> *>(
                 currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "ScaleSkewVersor3DTransform")
           {
             const itk::ScaleSkewVersor3DTransform<double>::ConstPointer tempInitializerITKTransform =
-              static_cast<itk::ScaleSkewVersor3DTransform<double> const *>(
+              static_cast<const itk::ScaleSkewVersor3DTransform<double> *>(
                 currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else if (transformFileType == "AffineTransform")
           {
             const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
-              static_cast<AffineTransformType const *>(currInitTransformFormGenericComposite.GetPointer());
+              static_cast<const AffineTransformType *>(currInitTransformFormGenericComposite.GetPointer());
             AssignRigid::AssignConvertedTransform(initialITKTransform, tempInitializerITKTransform);
           }
           else //  NO SUCH CASE!!
@@ -1400,7 +1400,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
 
           // Moving mask is the same in both metrics.
           typename SpatialObjectType::ConstPointer movingMask =
-            dynamic_cast<SpatialObjectType const *>(firstMetricComponent->GetMovingImageMask());
+            dynamic_cast<const SpatialObjectType *>(firstMetricComponent->GetMovingImageMask());
           if (movingMask.IsNotNull())
           {
             typename MaskImageType::Pointer warpedMovingMaskImage = GenericTransformImage<MaskImageType>(

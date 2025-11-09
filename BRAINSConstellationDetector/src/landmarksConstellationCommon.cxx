@@ -157,9 +157,9 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
 }
 
 SImageType::Pointer
-CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
+CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
                       const VersorRigidTransformType::Pointer & MSPTransform,
-                      const std::string &                 debugfilename)
+                      const std::string &                       debugfilename)
 {
   SImageType::PixelType low = 0;
 
@@ -191,7 +191,7 @@ CreatedebugPlaneImage(SImageType::Pointer                 referenceImage,
     }
   }
   {
-    SImageType::PointType               CrossHairsPoint;
+    SImageType::PointType                 CrossHairsPoint;
     SImageType::PointType::CoordinateType radius0 = std::abs(3 * imSpacing[0]);
     SImageType::PointType::CoordinateType radius1 = std::abs(3 * imSpacing[1]);
     SImageType::PointType::CoordinateType radius2 = std::abs(3 * imSpacing[2]);
@@ -445,21 +445,15 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
 
   const SImagePointType & NEWAC = DesiredCenter;
 
-  const SImagePointType NEWPC{{
-  DesiredCenter[0] + 0.0,
-  DesiredCenter[1] + ACPC.GetNorm(),
-  DesiredCenter[2] + 0.0
-  }};
+  const SImagePointType NEWPC{ { DesiredCenter[0] + 0.0, DesiredCenter[1] + ACPC.GetNorm(), DesiredCenter[2] + 0.0 } };
   // https://en.wikipedia.org/wiki/Vector_projection
-  const auto b = ACPC.GetVnlVector();
-  const auto a = ACRP.GetVnlVector();
-  const auto a1_projection = (dot_product(a, b)/dot_product(b,b))*b;
-  const auto a2_rejection = a - a1_projection;
-  const SImagePointType NEWRP{{
-  DesiredCenter[0] + 0.0,
-  DesiredCenter[0] + a1_projection.magnitude(),
-  DesiredCenter[0] + -a2_rejection.magnitude()
-  }};
+  const auto            b = ACPC.GetVnlVector();
+  const auto            a = ACRP.GetVnlVector();
+  const auto            a1_projection = (dot_product(a, b) / dot_product(b, b)) * b;
+  const auto            a2_rejection = a - a1_projection;
+  const SImagePointType NEWRP{ { DesiredCenter[0] + 0.0,
+                                 DesiredCenter[0] + a1_projection.magnitude(),
+                                 DesiredCenter[0] + -a2_rejection.magnitude() } };
 
   PointList orig;
   orig.emplace_back(AC);
@@ -477,7 +471,7 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
 }
 
 Euler3DTransformType::Pointer
-VersorToEulerTransform( VersorRigidTransformType::Pointer versorBaseTransform)
+VersorToEulerTransform(VersorRigidTransformType::Pointer versorBaseTransform)
 {
   Euler3DTransformType::Pointer result = Euler3DTransformType::New();
   result->SetIdentity();
@@ -496,8 +490,8 @@ computeTmspFromPoints(SImageType::PointType RP,
                       SImageType::PointType PC,
                       SImageType::PointType DesiredCenter)
 {
-  auto versorBaseTransform = computeTmspFromPoints_Versor(RP,AC,PC, DesiredCenter);
-  return VersorToEulerTransform( versorBaseTransform);
+  auto versorBaseTransform = computeTmspFromPoints_Versor(RP, AC, PC, DesiredCenter);
+  return VersorToEulerTransform(versorBaseTransform);
 }
 
 // F U N C T I O N S //////////////////////////////////////////////////////////
@@ -511,9 +505,9 @@ GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
   ZeroCenter.Fill(0.0);
   VersorRigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
     computeTmspFromPoints_Versor(GetNamedPointFromLandmarkList(landmarks, "RP"),
-                          orig_AC,
-                          GetNamedPointFromLandmarkList(landmarks, "PC"),
-                          ZeroCenter);
+                                 orig_AC,
+                                 GetNamedPointFromLandmarkList(landmarks, "PC"),
+                                 ZeroCenter);
   return landmarkDefinedACPCAlignedToZeroTransform;
 }
 
@@ -588,8 +582,8 @@ CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_M
                                 /* const
                                   SImageType::PointType
                                   finalPoint_MSP, */
-                                const SImageType::PointType         itkNotUsed(PreMSP_Point),
-                                /*const*/ SImageType::Pointer &     image,
+                                const SImageType::PointType           itkNotUsed(PreMSP_Point),
+                                /*const*/ SImageType::Pointer &       image,
                                 const Euler3DTransformType::Pointer & Point_Rotate)
 {
   // ////// Compose test rotation with the translated ACPC alignment

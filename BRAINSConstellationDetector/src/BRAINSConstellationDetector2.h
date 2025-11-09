@@ -314,8 +314,8 @@ protected:
   SImageType::Pointer m_OriginalInputImage;
 
   VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
-                                                        // location in the original
-                                                        // space
+                                                             // location in the original
+                                                             // space
 
   LandmarksMapType m_forced_orig_lmks;
 
@@ -329,11 +329,11 @@ protected:
   // Outputs
   VersorRigidTransformType::Pointer m_OrigToACPCVersorTransform;
   VersorRigidTransformType::Pointer m_ACPCToOrigVersorTransform;
-  LandmarksMapType             m_AlignedPoints;
-  SImageType::Pointer          m_OutputImage; // Output image w/o
-                                              // interpolation
-  SImageType::Pointer m_OutputResampledImage; // Output image w/
-                                              // interpolation
+  LandmarksMapType                  m_AlignedPoints;
+  SImageType::Pointer               m_OutputImage; // Output image w/o
+                                                   // interpolation
+  SImageType::Pointer m_OutputResampledImage;      // Output image w/
+                                                   // interpolation
   SImageType::Pointer m_OutputUntransformedClippedVolume;
   SImageType::Pointer m_CleanedIntensityOriginalInputImage;
 

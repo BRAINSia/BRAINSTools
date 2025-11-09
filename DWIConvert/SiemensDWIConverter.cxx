@@ -516,7 +516,7 @@ SiemensDWIConverter::ConvertFromCharPtr(const char * s)
   // assume little-endian
   for (unsigned i = 0; i < sizeof(unsigned int); ++i)
   {
-    rval += (static_cast<unsigned int>(s[i]) )<< (i * 8);
+    rval += (static_cast<unsigned int>(s[i])) << (i * 8);
   }
   return rval;
 }

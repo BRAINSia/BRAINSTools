@@ -53,7 +53,7 @@ ResampleImageListToFirstKeyImage(const std::string &            resamplerInterpo
   // Resample the other images
   for (const auto & elem : inputImageMap)
   {
-    auto         currImageIter = elem.second.begin();
+    auto currImageIter = elem.second.begin();
     while (currImageIter != elem.second.end())
     {
       FloatImageType::Pointer tmp = ResampleImageWithIdentityTransform<FloatImageType>(
@@ -116,7 +116,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
       const VersorRigid3DTransformType::ConstPointer tempRigidTransform =
-        dynamic_cast<VersorRigid3DTransformType const *>(xfrmIt->GetPointer());
+        dynamic_cast<const VersorRigid3DTransformType *>(xfrmIt->GetPointer());
       if (tempRigidTransform.IsNull())
       {
         std::cerr << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;

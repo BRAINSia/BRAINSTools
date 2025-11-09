@@ -507,7 +507,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
       // std::cout << "New Index: " << index << std::endl;
       // std::cout << "Vin: " << vin << std::endl;
     } // End Stop
-  }   // End - Seeds not empty
+  } // End - Seeds not empty
 
   //  fiber.clear();
   //  branchList.clear();

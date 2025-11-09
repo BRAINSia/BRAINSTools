@@ -163,7 +163,7 @@ main(int argc, char * argv[])
   //
   // For now support scalar images of 2 or 3 dimensions.  Adding more
   // isn't a problem, but it complicates how we build the matlab structure.
-  itk::IOPixelEnum     pixtype = imageIO->GetPixelType();
+  itk::IOPixelEnum                  pixtype = imageIO->GetPixelType();
   itk::ImageIOBase::IOComponentEnum componentType = imageIO->GetComponentType();
   if (pixtype != itk::IOPixelEnum::SCALAR)
   {

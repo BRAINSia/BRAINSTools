@@ -890,7 +890,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
                                    // selected
       }
     } // end of "if" Alive Point
-  }   // end neighborhood "for" loop
+  } // end neighborhood "for" loop
   // if (trialSpeedPixel == 0.0)
   // {trialSpeedPixel /= m_NormalizationFactor;}
   /*Convert alive point Offsets to neighbor Index

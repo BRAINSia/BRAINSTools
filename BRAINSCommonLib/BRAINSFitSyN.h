@@ -52,7 +52,8 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     const bool  doWinsorize(false);
     regHelper->SetWinsorizeImageIntensities(doWinsorize, lowerQuantile, upperQuantile);
     */
-  } {
+  }
+  {
     const bool doHistogramMatch(true);
     regHelper->SetUseHistogramMatching(doHistogramMatch);
   }

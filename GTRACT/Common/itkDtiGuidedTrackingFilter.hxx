@@ -331,7 +331,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         stop = true;
       }
     } // Fiber Path Loop
-  }   // Seed Loop
+  } // Seed Loop
 }
 
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
@@ -361,9 +361,9 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
     typename Self::ContinuousIndexType index1;
     this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p1, index1);
 
-    float dist =
-      std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) + std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
-                std::pow(static_cast<double>(index1[2] - index[2]), 2.0));
+    float dist = std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) +
+                           std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
+                           std::pow(static_cast<double>(index1[2] - index[2]), 2.0));
     if (dist < minDist)
     {
       minDist = dist;

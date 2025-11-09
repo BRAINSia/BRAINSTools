@@ -38,10 +38,7 @@ DWIConvert::DWIConvert(std::string inputVolume, std::string outputVolume)
   SetOutputFileName(outputVolume);
 }
 
-DWIConvert::~DWIConvert()
-{
-  delete m_converter;
-}
+DWIConvert::~DWIConvert() { delete m_converter; }
 
 int
 DWIConvert::read()

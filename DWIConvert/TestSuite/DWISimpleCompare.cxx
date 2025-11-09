@@ -234,7 +234,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
 
 void
 GetImageType(const std::string &                 fileName,
-             itk::IOPixelEnum &     pixelType,
+             itk::IOPixelEnum &                  pixelType,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
@@ -254,7 +254,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::IOPixelEnum     pixelType;
+  itk::IOPixelEnum                  pixelType;
   itk::ImageIOBase::IOComponentEnum componentType;
 
   try

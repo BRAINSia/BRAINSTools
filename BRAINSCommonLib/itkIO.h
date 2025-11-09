@@ -137,8 +137,7 @@ ImagePhysicalDimensionsAreIdentical(typename ImageType1::Pointer & inputImage1,
 
 template <typename ImageType>
 typename ImageType::Pointer
-OrientImage(typename ImageType::ConstPointer &                       inputImage,
-            typename itk::AnatomicalOrientation orient)
+OrientImage(typename ImageType::ConstPointer & inputImage, typename itk::AnatomicalOrientation orient)
 {
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();

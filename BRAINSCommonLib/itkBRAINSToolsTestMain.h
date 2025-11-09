@@ -58,8 +58,8 @@
 using MainFuncPointer = int (*)(int, char **);
 std::map<std::string, MainFuncPointer> StringToTestFunctionMap;
 
-#define REGISTER_TEST(test)                                                                                            \
-  extern int test(int, char *[]);                                                                                      \
+#define REGISTER_TEST(test)       \
+  extern int test(int, char *[]); \
   StringToTestFunctionMap[#test] = test
 
 int

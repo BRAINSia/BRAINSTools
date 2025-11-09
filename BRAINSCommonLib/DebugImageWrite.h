@@ -23,10 +23,10 @@
 #  include "itkIO.h"
 #  include "itksys/SystemTools.hxx"
 
-#  define DEFINE_DEBUG_IMAGE_COUNTER                                                                                   \
-    namespace DebugImageWrite                                                                                          \
-    {                                                                                                                  \
-    int fileSequenceNumber = 0;                                                                                        \
+#  define DEFINE_DEBUG_IMAGE_COUNTER \
+    namespace DebugImageWrite        \
+    {                                \
+    int fileSequenceNumber = 0;      \
     }
 
 namespace DebugImageWrite
@@ -67,10 +67,10 @@ DebugOutput(int LINE, const char * FILE, typename ImageType::Pointer img, int im
 }
 } // namespace DebugImageWrite
 
-#  define DebugOutput(imageType, image) DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, -1, #  image)
-#  define DebugOutputN(imageType, image, N, name)                                                                      \
+#  define DebugOutput(imageType, image) DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, -1, #image)
+#  define DebugOutputN(imageType, image, N, name) \
     DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, N, #name)
-#  define DebugOutputWName(imageType, image, name)                                                                     \
+#  define DebugOutputWName(imageType, image, name) \
     DebugImageWrite::DebugOutput<imageType>(__LINE__, __FILE__, image, -1, #name)
 
 #else

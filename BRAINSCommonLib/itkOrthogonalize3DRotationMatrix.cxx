@@ -41,7 +41,7 @@ Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
   //    std::cout << " svd Orthonormalized Rotation: " << std::endl
   //      << result << std::endl;
   itk::Matrix<double, 3, 3> Orthog;
-  Orthog.                   operator=(result);
+  Orthog.operator=(result);
 
   return Orthog;
 }

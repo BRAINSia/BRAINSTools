@@ -93,7 +93,7 @@ AssignConvertedTransform(AffineTransformPointer & result, const VnlTransformMatr
   if (result.IsNotNull())
   {
     MatrixType rotator; // can't do = conversion.
-    rotator.   operator=(matrix.extract(3, 3, 0, 0));
+    rotator.operator=(matrix.extract(3, 3, 0, 0));
 
     VectorType offset;
     for (unsigned int i = 0; i < 3; ++i)
@@ -450,7 +450,7 @@ orthogonalize(const Matrix3D & rotator)
   //    std::cout << " svd Orthonormalized Rotation: " << std::endl
   //      << result << std::endl;
   Matrix3D Orthog;
-  Orthog.  operator=(result);
+  Orthog.operator=(result);
 
   return Orthog;
 }
@@ -463,7 +463,7 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const Affi
     Matrix3D   NonOrthog = affine->GetMatrix();
     Matrix3D   Orthog(orthogonalize(NonOrthog));
     MatrixType rotator;
-    rotator.   operator=(Orthog);
+    rotator.operator=(Orthog);
 
     VersorType versor;
     versor.Set(rotator); //    --> controversial!  Is rotator

@@ -87,8 +87,9 @@ Reorganize(typename ImageType1::Pointer &, typename ImageType2::Pointer &)
 
 /** Go from a Vector Image to a 4D image */
 template <typename TPixel>
-void Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer & vecImage,
-                typename itk::Image<TPixel, 4>::Pointer &       scalarImage)
+void
+Reorganize(typename itk::VectorImage<TPixel, 3>::Pointer & vecImage,
+           typename itk::Image<TPixel, 4>::Pointer &       scalarImage)
 {
   using TVecImage = itk::VectorImage<TPixel, 3>;
   using TScalarImage = itk::Image<TPixel, 4>;
@@ -321,7 +322,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
       sizeI[axIdx] = im->GetNumberOfComponentsPerPixel();
       numPixels *= sizeI[axIdx];
     } // end if
-  }   // end data section
+  } // end data section
 
   myMexPrintf("mxNrrdDimension = %lf\n", static_cast<double>(mxNrrdDim));
   for (unsigned i = 0; i < numMxDimensions; ++i)
@@ -372,7 +373,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
         axIdx < 3 ? nrrdCenterCell : nrrdCenterUnknown; // what is this?? nrrdCenterCell is this ITK default???
       myMexPrintf("DEFAULT for centerings %d \n", centerings_temp[axIdx]);
     } // end default case
-  }   // end for
+  } // end for
   mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_centerings, centerings);
 
   /** kinds **/
@@ -402,7 +403,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
       kinds_temp[axIdx] = nrrdKindSpace;
       myMexPrintf("DEFAULT kind %d\n", kinds_temp[axIdx]);
     } // end default case
-  }   // end for
+  } // end for
   mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_kinds, kinds);
 
 
@@ -426,7 +427,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
       spacedirections_temp[count] = directions[sdIdx][axIdx] * itkSpacing[axIdx];
       ++count;
     } // end for
-  }   // end for
+  } // end for
   mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_spacedirections, spacedirections);
   myMexPrintf("DEFAULT space directions\n");
 
@@ -494,7 +495,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
         measurementframe_temp[count] = measurementFrame[axIdx][sdIdx];
         myMexPrintf("NRRD measurement frame: %lf\n", measurementframe_temp[count]);
       } // end for
-    }   // end for
+    } // end for
   }
   else
   { // Default case
@@ -505,8 +506,8 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
         measurementframe_temp[count] = 0.0;
         myMexPrintf("DEFAULT measurement frame: %lf\n", measurementframe_temp[count]);
       } // end for
-    }   // end for
-  }     // end else
+    } // end for
+  } // end else
   mxSetFieldByNumber(structMx, 0, FIELDNAME_INDEX_measurementframe, measurementframe);
 
 
@@ -609,7 +610,7 @@ itkLoadWithMetadata(mxArray * plhs[], const mxArray * prhs[])
   // according to different pixel type and dimension, instantiate different LoadDWIImage
   plhs[0] = NULL;
   itk::IOPixelEnum pixtype = imageIO->GetPixelType();
-  unsigned                      imageDimension = imageIO->GetNumberOfDimensions();
+  unsigned         imageDimension = imageIO->GetNumberOfDimensions();
   switch (pixtype)
   {
     case itk::ImageIOBase::SCALAR:

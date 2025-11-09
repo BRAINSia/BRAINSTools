@@ -52,7 +52,7 @@
 #include "itkImageMomentsCalculator.h"
 
 extern void
-debug_catch ();
+debug_catch();
 
 namespace itk
 {
@@ -137,7 +137,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   {
     const itk::Transform<double, 3, 3>::ConstPointer genericInit = this->m_CompositeTransform->GetFrontTransform();
     const typename TransformType::ConstPointer       tempInitializerITKTransform =
-      dynamic_cast<TransformType const *>(genericInit.GetPointer());
+      dynamic_cast<const TransformType *>(genericInit.GetPointer());
     if (tempInitializerITKTransform.IsNull())
     {
       std::cout << "Error in type conversion" << __FILE__ << __LINE__ << std::endl;

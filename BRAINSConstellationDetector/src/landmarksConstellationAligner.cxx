@@ -80,7 +80,7 @@ main(int argc, char * argv[])
     finalTransform->SetTranslation(ZeroCenteredTransform->GetTranslation());
     // inverse transform
     VersorRigidTransformType::Pointer invFinalTransform = VersorRigidTransformType::New();
-    SImageType::PointType        centerPoint = finalTransform->GetCenter();
+    SImageType::PointType             centerPoint = finalTransform->GetCenter();
     invFinalTransform->SetCenter(centerPoint);
     invFinalTransform->SetIdentity();
     finalTransform->GetInverse(invFinalTransform);
@@ -95,22 +95,25 @@ main(int argc, char * argv[])
     WriteITKtoSlicer3Lmk(outputLandmarksPaired, alignedLandmarks);
     std::cout << "The acpc-aligned landmark list file is written: " << outputLandmarksPaired << std::endl;
 
-      if (!outputTransform.empty()) {
-          std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;
-          {
-              using TransformWriterType = itk::TransformFileWriterTemplate<double>;
-              TransformWriterType::Pointer writer = TransformWriterType::New();
-              writer->SetInput(finalTransform);
-              writer->SetFileName(outputTransform);
-              try {
-                  writer->Update();
-              }
-              catch (const itk::ExceptionObject &excep) {
-                  std::cerr << "Cannot write the outputTransform file!" << std::endl;
-                  std::cerr << excep << std::endl;
-              }
-              std::cout << "The output rigid transform file is written." << std::endl;
-          }
+    if (!outputTransform.empty())
+    {
+      std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;
+      {
+        using TransformWriterType = itk::TransformFileWriterTemplate<double>;
+        TransformWriterType::Pointer writer = TransformWriterType::New();
+        writer->SetInput(finalTransform);
+        writer->SetFileName(outputTransform);
+        try
+        {
+          writer->Update();
+        }
+        catch (const itk::ExceptionObject & excep)
+        {
+          std::cerr << "Cannot write the outputTransform file!" << std::endl;
+          std::cerr << excep << std::endl;
+        }
+        std::cout << "The output rigid transform file is written." << std::endl;
+      }
     }
   }
   return 0;

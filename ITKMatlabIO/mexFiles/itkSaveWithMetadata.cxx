@@ -13,7 +13,7 @@ double
 getVecMagnitude(const std::vector<double> vec)
 {
   double    sum = 0.0;
-  int const size = vec.size();
+  const int size = vec.size();
   for (int i = 0; i < size; ++i)
   {
     sum += vec[i] * vec[i];
@@ -25,7 +25,7 @@ void
 normalizeVec(std::vector<double> & vec)
 {
   double    magnitude = getVecMagnitude(vec);
-  int const size = vec.size();
+  const int size = vec.size();
   for (int i = 0; i < size; ++i)
   {
     vec[i] = vec[i] / magnitude;
@@ -37,7 +37,7 @@ normalizeVec(std::vector<double> & vec)
 void
 printVecValue(const std::vector<double> vec)
 {
-  int const size = vec.size();
+  const int size = vec.size();
   for (int i = 0; i < size; ++i)
   {
     std::cerr << "i= " << i << "  vec[i]= " << vec[i] << std::endl;
@@ -266,7 +266,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
             {
               tmp.push_back(0.0);
             } // end else
-          }   // end for
+          } // end for
         }
         else
         {

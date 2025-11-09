@@ -278,17 +278,17 @@ ReadCastWriteImage(const std::string & inputFileName, const std::string & output
 // ITK's support for 64 bit types, long long etc is poor, not as exhaustive
 // as VTK. Define an alternate macro here that ignores those types. Nobody
 // will use them anyway.
-#  define vtkitkTemplateMacro(call)                                                                                    \
-    vtkTemplateMacroCase(VTK_DOUBLE, double, call);                                                                    \
-    vtkTemplateMacroCase(VTK_FLOAT, float, call);                                                                      \
-    vtkTemplateMacroCase(VTK_LONG, long, call);                                                                        \
-    vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, call);                                                      \
-    vtkTemplateMacroCase(VTK_INT, int, call);                                                                          \
-    vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, call);                                                        \
-    vtkTemplateMacroCase(VTK_SHORT, short, call);                                                                      \
-    vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, call);                                                    \
-    vtkTemplateMacroCase(VTK_CHAR, char, call);                                                                        \
-    vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, call);                                                          \
+#  define vtkitkTemplateMacro(call)                                 \
+    vtkTemplateMacroCase(VTK_DOUBLE, double, call);                 \
+    vtkTemplateMacroCase(VTK_FLOAT, float, call);                   \
+    vtkTemplateMacroCase(VTK_LONG, long, call);                     \
+    vtkTemplateMacroCase(VTK_UNSIGNED_LONG, unsigned long, call);   \
+    vtkTemplateMacroCase(VTK_INT, int, call);                       \
+    vtkTemplateMacroCase(VTK_UNSIGNED_INT, unsigned int, call);     \
+    vtkTemplateMacroCase(VTK_SHORT, short, call);                   \
+    vtkTemplateMacroCase(VTK_UNSIGNED_SHORT, unsigned short, call); \
+    vtkTemplateMacroCase(VTK_CHAR, char, call);                     \
+    vtkTemplateMacroCase(VTK_SIGNED_CHAR, signed char, call);       \
     vtkTemplateMacroCase(VTK_UNSIGNED_CHAR, unsigned char, call)
 
 template <typename TInputPixelType, typename TOutputPixelType>
@@ -346,27 +346,27 @@ ReadVTICastWriteImage(const std::string &, const std::string &, int)
  * A macro to call the dicom-conversion function.
  */
 
-#define callCorrectReadDicomWriterMacro(typeIn, typeOut)                                                               \
-  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut)                                      \
-  {                                                                                                                    \
-    using InputImageType = itk::Image<typeIn, 3>;                                                                      \
-    using OutputImageType = itk::Image<typeOut, 3>;                                                                    \
-    ReadDicomSeriesCastWriteImage<InputImageType, OutputImageType>(inputDirectoryName, outputFileName);                \
+#define callCorrectReadDicomWriterMacro(typeIn, typeOut)                                                \
+  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut)                       \
+  {                                                                                                     \
+    using InputImageType = itk::Image<typeIn, 3>;                                                       \
+    using OutputImageType = itk::Image<typeOut, 3>;                                                     \
+    ReadDicomSeriesCastWriteImage<InputImageType, OutputImageType>(inputDirectoryName, outputFileName); \
   }
 
 /** callCorrectReadWriterMacro:
  * A macro to call the conversion function.
  */
 
-#define callCorrectReadWriterMacro(typeIn, typeOut, dim)                                                               \
-  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == (dim))           \
-  {                                                                                                                    \
-    if (!ReadVTICastWriteImage<typeOut>(inputFileName, outputFileName, dim))                                           \
-    {                                                                                                                  \
-      using InputImageType = itk::Image<typeIn, dim>;                                                                  \
-      using OutputImageType = itk::Image<typeOut, dim>;                                                                \
-      ReadCastWriteImage<InputImageType, OutputImageType>(inputFileName, outputFileName);                              \
-    }                                                                                                                  \
+#define callCorrectReadWriterMacro(typeIn, typeOut, dim)                                                     \
+  if (inputPixelComponentType == #typeIn && outputPixelComponentType == #typeOut && inputDimension == (dim)) \
+  {                                                                                                          \
+    if (!ReadVTICastWriteImage<typeOut>(inputFileName, outputFileName, dim))                                 \
+    {                                                                                                        \
+      using InputImageType = itk::Image<typeIn, dim>;                                                        \
+      using OutputImageType = itk::Image<typeOut, dim>;                                                      \
+      ReadCastWriteImage<InputImageType, OutputImageType>(inputFileName, outputFileName);                    \
+    }                                                                                                        \
   }
 
 #endif // __castconverthelpers_h__

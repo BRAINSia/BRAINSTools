@@ -62,7 +62,8 @@ class AddScaledVersions:
 
 // If image types don't match, always return false!
 template <typename TPInputImage1, typename TPInputImage2>
-bool isSameImage(TPInputImage1, TPInputImage2)
+bool
+isSameImage(TPInputImage1, TPInputImage2)
 {
   return false;
 }
@@ -75,30 +76,30 @@ isSameImage(TPInputImage1 inImg1, TPInputImage1 inImg2)
 }
 
 /* Macro for generating image to image operations */
-#define MAKE_MATH_OPERATION_II(OPERATION)                                                                              \
-  {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,                                            \
-                                        typename TPInputImage2::ObjectType,                                            \
-                                        typename TPOutputImage::ObjectType>                                            \
-      OPERATION##Type;                                                                                                 \
-    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
-    do                                                                                                                 \
-      ##OPERATION->SetInput1(inImg1);                                                                                  \
-    do                                                                                                                 \
-      ##OPERATION->SetInput2(inImg2);                                                                                  \
-    if (inImg1.IsNotNull() && isSameImage(outImg, inImg1))                                                             \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->InPlaceOn();                                                                                      \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->GraftOutput(outImg);                                                                              \
-    }                                                                                                                  \
-    do                                                                                                                 \
-      ##OPERATION->Update();                                                                                           \
-    outImg = do##OPERATION->GetOutput();                                                                               \
+#define MAKE_MATH_OPERATION_II(OPERATION)                                     \
+  {                                                                           \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,   \
+                                        typename TPInputImage2::ObjectType,   \
+                                        typename TPOutputImage::ObjectType>   \
+      OPERATION##Type;                                                        \
+    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New(); \
+    do                                                                        \
+      ##OPERATION->SetInput1(inImg1);                                         \
+    do                                                                        \
+      ##OPERATION->SetInput2(inImg2);                                         \
+    if (inImg1.IsNotNull() && isSameImage(outImg, inImg1))                    \
+    {                                                                         \
+      do                                                                      \
+        ##OPERATION->InPlaceOn();                                             \
+    }                                                                         \
+    else                                                                      \
+    {                                                                         \
+      do                                                                      \
+        ##OPERATION->GraftOutput(outImg);                                     \
+    }                                                                         \
+    do                                                                        \
+      ##OPERATION->Update();                                                  \
+    outImg = do##OPERATION->GetOutput();                                      \
   }
 
 /*
@@ -182,54 +183,54 @@ opII_CVmult(TPOutputImage outImg, TPInputImage1 inImg1, const char op, TPInputIm
 }
 
 /* Macro for generating image to image operations */
-#define MAKE_MATH_OPERATION_IC(OPERATION)                                                                              \
-  {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,                                            \
-                                        typename TPInputImage1::ObjectType,                                            \
-                                        typename TPOutputImage::ObjectType>                                            \
-      OPERATION##Type;                                                                                                 \
-    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
-    do                                                                                                                 \
-      ##OPERATION->SetInput1(inImg1);                                                                                  \
-    do                                                                                                                 \
-      ##OPERATION->SetConstant2(constant2);                                                                            \
-    if (isSameImage(outImg, inImg1))                                                                                   \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->InPlaceOn();                                                                                      \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->GraftOutput(outImg);                                                                              \
-    }                                                                                                                  \
-    do                                                                                                                 \
-      ##OPERATION->Update();                                                                                           \
-    outImg = do##OPERATION->GetOutput();                                                                               \
+#define MAKE_MATH_OPERATION_IC(OPERATION)                                     \
+  {                                                                           \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType,   \
+                                        typename TPInputImage1::ObjectType,   \
+                                        typename TPOutputImage::ObjectType>   \
+      OPERATION##Type;                                                        \
+    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New(); \
+    do                                                                        \
+      ##OPERATION->SetInput1(inImg1);                                         \
+    do                                                                        \
+      ##OPERATION->SetConstant2(constant2);                                   \
+    if (isSameImage(outImg, inImg1))                                          \
+    {                                                                         \
+      do                                                                      \
+        ##OPERATION->InPlaceOn();                                             \
+    }                                                                         \
+    else                                                                      \
+    {                                                                         \
+      do                                                                      \
+        ##OPERATION->GraftOutput(outImg);                                     \
+    }                                                                         \
+    do                                                                        \
+      ##OPERATION->Update();                                                  \
+    outImg = do##OPERATION->GetOutput();                                      \
   }
 
 
 /* Macro for generating image to image operations */
-#define MAKE_UNARY_MATH_OPERATION_IC(OPERATION)                                                                        \
-  {                                                                                                                    \
-    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType, typename TPOutputImage::ObjectType>        \
-      OPERATION##Type;                                                                                                 \
-    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                          \
-    do                                                                                                                 \
-      ##OPERATION->SetInput(inImg1);                                                                                   \
-    if (isSameImage(outImg, inImg1))                                                                                   \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->InPlaceOn();                                                                                      \
-    }                                                                                                                  \
-    else                                                                                                               \
-    {                                                                                                                  \
-      do                                                                                                               \
-        ##OPERATION->GraftOutput(outImg);                                                                              \
-    }                                                                                                                  \
-    do                                                                                                                 \
-      ##OPERATION->Update();                                                                                           \
-    outImg = do##OPERATION->GetOutput();                                                                               \
+#define MAKE_UNARY_MATH_OPERATION_IC(OPERATION)                                                                 \
+  {                                                                                                             \
+    typedef itk::OPERATION##ImageFilter<typename TPInputImage1::ObjectType, typename TPOutputImage::ObjectType> \
+      OPERATION##Type;                                                                                          \
+    typename OPERATION##Type::Pointer do##OPERATION = OPERATION##Type::New();                                   \
+    do                                                                                                          \
+      ##OPERATION->SetInput(inImg1);                                                                            \
+    if (isSameImage(outImg, inImg1))                                                                            \
+    {                                                                                                           \
+      do                                                                                                        \
+        ##OPERATION->InPlaceOn();                                                                               \
+    }                                                                                                           \
+    else                                                                                                        \
+    {                                                                                                           \
+      do                                                                                                        \
+        ##OPERATION->GraftOutput(outImg);                                                                       \
+    }                                                                                                           \
+    do                                                                                                          \
+      ##OPERATION->Update();                                                                                    \
+    outImg = do##OPERATION->GetOutput();                                                                        \
   }
 
 /*

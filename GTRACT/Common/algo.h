@@ -52,22 +52,22 @@
 #include "gtractCommonWin32.h"
 
 extern GTRACT_COMMON_EXPORT TMatrix
-                            Matrix_Inverse(const TMatrix & M);
+Matrix_Inverse(const TMatrix & M);
 
 extern GTRACT_COMMON_EXPORT float
 My_lsf(TVector x, TVector y);
 
 extern GTRACT_COMMON_EXPORT TVector
-                            Eigen_Value(const TMatrix & M);
+Eigen_Value(const TMatrix & M);
 
 extern GTRACT_COMMON_EXPORT TMatrix
-                            Tensor2Matrix(TVector ADCe);
+Tensor2Matrix(TVector ADCe);
 
 extern GTRACT_COMMON_EXPORT TMatrix
-                            Tensor2Matrix(itk::FixedArray<float, 6> ADCe);
+Tensor2Matrix(itk::FixedArray<float, 6> ADCe);
 
 extern GTRACT_COMMON_EXPORT TMatrix
-                            Tensor2Matrix(itk::FixedArray<double, 6> ADCe);
+Tensor2Matrix(itk::FixedArray<double, 6> ADCe);
 
 extern GTRACT_COMMON_EXPORT float
 FA(TVector eig);
@@ -79,7 +79,7 @@ extern GTRACT_COMMON_EXPORT float
 VR(TVector eig);
 
 extern GTRACT_COMMON_EXPORT TVector
-                            DD(TVector ADC1, TVector ADC2);
+DD(TVector ADC1, TVector ADC2);
 
 extern GTRACT_COMMON_EXPORT float
 CI(TVector ADC1, TVector ADC2);
@@ -88,7 +88,7 @@ extern GTRACT_COMMON_EXPORT float
 LI(const TVector & ADC1, const TVector & ADC2);
 
 extern GTRACT_COMMON_EXPORT TVector
-                            TensorShape(TVector eigV);
+TensorShape(TVector eigV);
 
 extern GTRACT_COMMON_EXPORT float
 MeanDiffusivity(TVector eig);

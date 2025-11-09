@@ -69,12 +69,14 @@ namespace itk
  * \endcode
  */
 template <typename TInputScalarType, typename TWriteScalarType>
-extern void WriteTransformToDisk(itk::Transform<TInputScalarType, 3, 3> const * const MyTransform,
-                                 const std::string &                                  TransformFilename);
+extern void
+WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTransform,
+                     const std::string &                                  TransformFilename);
 
 template <typename TScalarType>
-extern void WriteTransformToDisk(itk::Transform<TScalarType, 3, 3> const * const MyTransform,
-                                 const std::string &                             TransformFilename);
+extern void
+WriteTransformToDisk(const itk::Transform<TScalarType, 3, 3> * const MyTransform,
+                     const std::string &                             TransformFilename);
 
 /**
  * \author Hans J. Johnson
@@ -192,7 +194,7 @@ sanitiy_check_binary_interpolation(const bool binaryFlag, const std::string & in
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 GenericTransformImage(
-  InputImageType const * const                                 OperandImage,
+  const InputImageType * const                                 OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,
@@ -218,7 +220,7 @@ GenericTransformImage(
 template <typename InputImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 SimpleGenericTransformImage(
-  InputImageType const * const                                 OperandImage,
+  const InputImageType * const                                 OperandImage,
   const itk::ImageBase<InputImageType::ImageDimension> * const ReferenceImage,
   typename itk::Transform<double, InputImageType::ImageDimension, InputImageType::ImageDimension>::ConstPointer
                                      genericTransform,

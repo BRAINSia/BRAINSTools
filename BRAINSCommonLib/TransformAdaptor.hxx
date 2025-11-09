@@ -44,7 +44,7 @@ Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
   //    std::cout << " svd Orthonormalized Rotation: " << std::endl
   //      << result << std::endl;
   itk::Matrix<double, 3, 3> Orthog;
-  Orthog.                   operator=(result);
+  Orthog.operator=(result);
 
   return Orthog;
 }
@@ -172,17 +172,17 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
     /*  address voxel floor corners on the outside, address voxel centers on the
      * inside.
      */
-    VectorType const MovingImageSpacing(GetMovingImage()->GetSpacing());
+    const VectorType MovingImageSpacing(GetMovingImage()->GetSpacing());
 
-    VectorType const FixedImageSpacing(GetFixedImage()->GetSpacing());
+    const VectorType FixedImageSpacing(GetFixedImage()->GetSpacing());
 
-    ValueType const down(-0.5);
+    const ValueType down(-0.5);
 
-    VectorType const HalfFixedVoxelDown(FixedImageSpacing.operator*(down));
+    const VectorType HalfFixedVoxelDown(FixedImageSpacing.operator*(down));
 
-    ValueType const up(0.5);
+    const ValueType up(0.5);
 
-    VectorType const HalfMovingVoxelUp(MovingImageSpacing.operator*(up));
+    const VectorType HalfMovingVoxelUp(MovingImageSpacing.operator*(up));
 
     GetCrossOverAffineSystem()->EncloseInTranslation(HalfMovingVoxelUp, HalfFixedVoxelDown);
   }
@@ -190,9 +190,9 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
   { /*  addressing voxels on the outside, addressing millimeters on the
      * inside.
      */
-    VectorType const FixedImageScaleReciprocal(Reciprocal<TCoordinateType, NDimensions>(GetFixedImage()->GetSpacing()));
+    const VectorType FixedImageScaleReciprocal(Reciprocal<TCoordinateType, NDimensions>(GetFixedImage()->GetSpacing()));
 
-    VectorType const MovingImageScale(GetMovingImage()->GetSpacing());
+    const VectorType MovingImageScale(GetMovingImage()->GetSpacing());
 
     GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal, MovingImageScale);
   }
@@ -202,18 +202,18 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
     /*  uncentered on the outside (like the b2 standard, RIP), centered on the
      * inside.
      */
-    VectorType const MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
+    const VectorType MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
 
-    VectorType const FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
+    const VectorType FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
 
     GetCrossOverAffineSystem()->EncloseInTranslation(FixedImageCenter, -MovingImageCenter);
   }
   if (false) // Turning this off made the output image pass through
              // correctly;
   {
-    VectorType const MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
+    const VectorType MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
 
-    VectorType const FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
+    const VectorType FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
 
     /*  uncentered on the outside (like the b2 standard, RIP), centered on the
      * inside.
@@ -256,17 +256,17 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
     /*  address voxel floor corners on the outside, address voxel centers on the
      * inside.
      */
-    VectorType const MovingImageSpacing(GetMovingImage()->GetSpacing());
+    const VectorType MovingImageSpacing(GetMovingImage()->GetSpacing());
 
-    VectorType const FixedImageSpacing(GetFixedImage()->GetSpacing());
+    const VectorType FixedImageSpacing(GetFixedImage()->GetSpacing());
 
-    ValueType const down(-0.5);
+    const ValueType down(-0.5);
 
-    VectorType const HalfFixedVoxelDown(FixedImageSpacing.operator*(down));
+    const VectorType HalfFixedVoxelDown(FixedImageSpacing.operator*(down));
 
-    ValueType const up(0.5);
+    const ValueType up(0.5);
 
-    VectorType const HalfMovingVoxelUp(MovingImageSpacing.operator*(up));
+    const VectorType HalfMovingVoxelUp(MovingImageSpacing.operator*(up));
 
     GetCrossOverAffineSystem()->EncloseInTranslation(HalfMovingVoxelUp, HalfFixedVoxelDown);
   }
@@ -274,9 +274,9 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
   { /*  addressing voxels on the outside, addressing millimeters on the
      * inside.
      */
-    VectorType const FixedImageScaleReciprocal(Reciprocal<TCoordinateType, NDimensions>(GetFixedImage()->GetSpacing()));
+    const VectorType FixedImageScaleReciprocal(Reciprocal<TCoordinateType, NDimensions>(GetFixedImage()->GetSpacing()));
 
-    VectorType const MovingImageScale(GetMovingImage()->GetSpacing());
+    const VectorType MovingImageScale(GetMovingImage()->GetSpacing());
 
     GetCrossOverAffineSystem()->EncloseInScaling(FixedImageScaleReciprocal, MovingImageScale);
   }
@@ -284,9 +284,9 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
   if (false) // Turning this off made the output image pass through
              // correctly;
   {
-    VectorType const MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
+    const VectorType MovingImageCenter(GetCenterMovingAffineTransform()->GetOffset());
 
-    VectorType const FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
+    const VectorType FixedImageCenter(GetCenterFixedAffineTransform()->GetOffset());
 
     /*  uncentered on the outside (like the b2 standard, RIP), centered on the
      * inside.

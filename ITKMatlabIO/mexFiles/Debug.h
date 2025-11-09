@@ -10,9 +10,9 @@
 
 #  include "mex.h"
 #  define MPRINT_MSG(_msg) mexPrintf("[%s|%s, %3d]: %s\n", __FILE__, __func__, __LINE__, _msg);
-#  define MPRINT_INT(_val) mexPrintf("[%s|%s, %3d]: %s = %d\n", __FILE__, __func__, __LINE__, #  _val, _val);
-#  define MPRINT_DBL(_val) mexPrintf("[%s|%s, %3d]: %s = %f\n", __FILE__, __func__, __LINE__, #  _val, _val);
-#  define MPRINT_PTR(_val) mexPrintf("[%s|%s, %3d]: %s = %p\n", __FILE__, __func__, __LINE__, #  _val, _val);
+#  define MPRINT_INT(_val) mexPrintf("[%s|%s, %3d]: %s = %d\n", __FILE__, __func__, __LINE__, #_val, _val);
+#  define MPRINT_DBL(_val) mexPrintf("[%s|%s, %3d]: %s = %f\n", __FILE__, __func__, __LINE__, #_val, _val);
+#  define MPRINT_PTR(_val) mexPrintf("[%s|%s, %3d]: %s = %p\n", __FILE__, __func__, __LINE__, #_val, _val);
 
 #else /* #ifdef DEBUG */
 
@@ -40,7 +40,7 @@ enum newlines
   nl
 };
 
-//#define __DEBUG 1
+// #define __DEBUG 1
 
 #if defined(__DEBUG)
 

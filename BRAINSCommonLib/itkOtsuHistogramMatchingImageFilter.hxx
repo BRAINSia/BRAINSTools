@@ -124,7 +124,7 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
     return nullptr;
   }
 
-  TInputImage const * const temp = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
+  const TInputImage * const temp = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
   if (temp == nullptr)
   {
     itkGenericExceptionMacro(<< "Invalid mask converstion attempted.");

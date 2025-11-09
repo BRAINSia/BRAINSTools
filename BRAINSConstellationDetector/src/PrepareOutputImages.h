@@ -29,20 +29,20 @@ extern SImageType::PointType
 GetNamedPointFromLandmarkList(const LandmarksMapType & landmarks, const std::string & NamedPoint);
 
 extern void
-PrepareOutputImages(SImageType::Pointer &                     lOutputResampledImage,
-                    SImageType::Pointer &                     lOutputImage,
-                    SImageType::Pointer &                     lOutputUntransformedClippedVolume,
-                    const SImageType::ConstPointer &          lImageToBeResampled,
+PrepareOutputImages(SImageType::Pointer &                          lOutputResampledImage,
+                    SImageType::Pointer &                          lOutputImage,
+                    SImageType::Pointer &                          lOutputUntransformedClippedVolume,
+                    const SImageType::ConstPointer &               lImageToBeResampled,
                     const VersorRigidTransformType::ConstPointer & lVersorTransform,
-                    const double                              lACLowerBound,
-                    const short int                           BackgroundFillValue,
-                    const std::string &                       lInterpolationMode,
-                    const bool                                lCutOutHeadInOutputVolume,
-                    const double                              lOtsuPercentileThreshold);
+                    const double                                   lACLowerBound,
+                    const short int                                BackgroundFillValue,
+                    const std::string &                            lInterpolationMode,
+                    const bool                                     lCutOutHeadInOutputVolume,
+                    const double                                   lOtsuPercentileThreshold);
 
 extern void
 ApplyInverseOfTransformToLandmarks(const VersorRigidTransformType::ConstPointer & lVersorTransform,
-                                   const LandmarksMapType &                  inputLmks,
-                                   LandmarksMapType &                        outputLmks);
+                                   const LandmarksMapType &                       inputLmks,
+                                   LandmarksMapType &                             outputLmks);
 } // namespace itk
 #endif // __PrepareOutputImages_h__

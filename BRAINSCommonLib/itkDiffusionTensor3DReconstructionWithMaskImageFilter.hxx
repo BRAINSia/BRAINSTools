@@ -34,7 +34,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<
   TGradientImagePixelType,
   TTensorPixelType>::DiffusionTensor3DReconstructionWithMaskImageFilter()
   : m_TensorBasis()
-  ,m_GradientDirectionContainer(nullptr)
+  , m_GradientDirectionContainer(nullptr)
   , m_Threshold(NumericTraits<ReferencePixelType>::min())
   , m_BValue(1.0)
   , m_GradientImageTypeEnumeration(Else)
@@ -212,7 +212,7 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
           ++(*gradientItContainer[i]);
         }
 
-        vnl_svd<double> pseudoInverseSolver{m_TensorBasis.as_matrix()};
+        vnl_svd<double> pseudoInverseSolver{ m_TensorBasis.as_matrix() };
         if (m_NumberOfGradientDirections > 6)
         {
           D = pseudoInverseSolver.solve(m_BMatrix * B);
@@ -255,7 +255,8 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
 
     // Would have liked a dynamic_cast here, but seems SGI doesn't like it
     // The enum will ensure that an inappropriate cast is not done
-    typename GradientImagesType::Pointer gradientImagePointer = dynamic_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
+    typename GradientImagesType::Pointer gradientImagePointer =
+      dynamic_cast<GradientImagesType *>(this->ProcessObject::GetInput(0));
 
     GradientIteratorType git(gradientImagePointer, outputRegionForThread);
     git.GoToBegin();
@@ -399,9 +400,9 @@ DiffusionTensor3DReconstructionWithMaskImageFilter<TReferenceImagePixelType,
   m_BMatrix.inplace_transpose();
 }
 //
-//template <typename TReferenceImagePixelType, typename TGradientImagePixelType, typename TTensorPixelType>
-//void
-//DiffusionTensor3DReconstructionWithMaskImageFilter<
+// template <typename TReferenceImagePixelType, typename TGradientImagePixelType, typename TTensorPixelType>
+// void
+// DiffusionTensor3DReconstructionWithMaskImageFilter<
 //  TReferenceImagePixelType,
 //  TGradientImagePixelType,
 //  TTensorPixelType>::AddGradientImage(const GradientDirectionType & gradientDirection,

@@ -367,7 +367,7 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
     else // Process landmark lines
     {
       //             0 1 2 3  4  5  6  7   8   9   10    11   12               13
-      //# columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
+      // # columns = id,x,y,z,ow,ox,oy,oz,vis,sel,lock,label,desc,associatedNodeID
       std::vector<std::string> asTokens = split(line, ',');
       const std::string        name = asTokens[11]; // 11 position is label name
       LandmarkPointType        labelPos;

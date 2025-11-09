@@ -327,7 +327,7 @@ WriteHDFStringList(H5::H5File & file, const char * const name, const std::vector
   H5::DataSpace strSpace(1, &numStrings);
   H5::DataSet   strSet = file.createDataSet(name, strType, strSpace);
 
-  std::vector<char const *> stringListCstr;
+  std::vector<const char *> stringListCstr;
 
   stringListCstr.reserve(numStrings);
   for (const auto & it : stringList)

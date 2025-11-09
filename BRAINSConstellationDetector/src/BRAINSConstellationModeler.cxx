@@ -316,7 +316,8 @@ main(int argc, char * argv[])
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
     // AC and PC points
-    VersorRigidTransformType::Pointer ACPC_AlignedTransform = computeTmspFromPoints_Versor(origRP, origAC, origPC, origin);
+    VersorRigidTransformType::Pointer ACPC_AlignedTransform =
+      computeTmspFromPoints_Versor(origRP, origAC, origPC, origin);
 
     // We cannot easily compute the Inverse transform by the following two lines, we need to use versor for precise
     // transformation
@@ -333,8 +334,8 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ACPC_AlignedTransform->GetTranslation());
     // inverse transform
-    VersorRigidTransformType::Pointer  ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
-    const SImageType::PointType & centerPoint = finalTransform->GetCenter();
+    VersorRigidTransformType::Pointer ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
+    const SImageType::PointType &     centerPoint = finalTransform->GetCenter();
     ACPC_AlignedTransform_INV->SetCenter(centerPoint);
     ACPC_AlignedTransform_INV->SetIdentity();
     finalTransform->GetInverse(ACPC_AlignedTransform_INV);

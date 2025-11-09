@@ -22,12 +22,12 @@
 
 #define muDisplayMacro(varname) std::cout << #varname << " = " << varname << std::endl;
 
-#define muStringMacro(strname, s)                                                                                      \
-  std::string strname;                                                                                                 \
-  {                                                                                                                    \
-    std::ostringstream outss;                                                                                          \
-    outss << "" s << std::ends;                                                                                        \
-    strname = outss.str();                                                                                             \
+#define muStringMacro(strname, s) \
+  std::string strname;            \
+  {                               \
+    std::ostringstream outss;     \
+    outss << "" s << std::ends;   \
+    strname = outss.str();        \
   }
 
 int

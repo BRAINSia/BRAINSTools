@@ -40,7 +40,7 @@
 
 // A little dummy function to make it easy to stop the debugger.
 void
-debug_catch ( )
+debug_catch()
 {
   std::cout << "HERE" << __FILE__ << " " << __LINE__ << std::endl;
 }
@@ -51,7 +51,7 @@ ExtractConstPointerToImageMaskFromImageSpatialObject(const SpatialObjectType::Co
 {
   using MaskImageType = itk::Image<unsigned char, 3>;
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
-  auto const * const temp = dynamic_cast<ImageMaskSpatialObjectType const *>(inputSpatialObject.GetPointer());
+  const auto * const temp = dynamic_cast<const ImageMaskSpatialObjectType *>(inputSpatialObject.GetPointer());
 
   if (temp == nullptr)
   {

@@ -47,7 +47,7 @@ Minimal Input Example:
 #include "itkImageRegionConstIterator.h"
 #include "itkNumericTraits.h"
 #include "itkBinaryBallStructuringElement.h"
-//#include "itkLevenbergMarquardtOptimizer.h"
+// #include "itkLevenbergMarquardtOptimizer.h"
 #include "itkMixtureStatisticCostFunction.h"
 
 #include "BRAINSMushCLP.h"

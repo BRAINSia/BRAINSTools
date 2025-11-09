@@ -106,10 +106,10 @@ main(int argc, char * argv[])
   // Computing the average coordinate for each landmark
   for (unsigned int j = 0; j < numNamedLandmarks; j++)
   {
-    double      x_ave = 0.0;
-    double      y_ave = 0.0;
-    double      z_ave = 0.0;
-    std::string name = LandmarksNames[j];
+    double              x_ave = 0.0;
+    double              y_ave = 0.0;
+    double              z_ave = 0.0;
+    const std::string & name = LandmarksNames[j];
     for (unsigned int i = 0; i < k; i++)
     {
       x_ave += LandmarksMapVector[i][name][0];

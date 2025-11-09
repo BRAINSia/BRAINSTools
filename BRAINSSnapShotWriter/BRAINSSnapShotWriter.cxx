@@ -408,8 +408,8 @@ main(int argc, char ** argv)
     for (unsigned int i = 0; i < numberOfImgs; i++)
     {
       /** get slicer */
-      Image3DVolumeType::Pointer current3DImage = image3DVolumes[i];
-      Image2DVolumeType::Pointer imageSlice = ExtractSlice<Image3DVolumeType, Image2DVolumeType>(
+      const Image3DVolumeType::Pointer & current3DImage = image3DVolumes[i];
+      Image2DVolumeType::Pointer         imageSlice = ExtractSlice<Image3DVolumeType, Image2DVolumeType>(
         current3DImage, inputPlaneDirection[plane], extractingSlices[plane]);
 
       OutputGreyImageType::Pointer greyScaleSlice = Rescale<Image2DVolumeType, OutputGreyImageType>(imageSlice, 0, 255);
@@ -479,7 +479,6 @@ main(int argc, char ** argv)
   {
     for (unsigned int i = 0; i < numberOfImgs; i++)
     {
-      OutputRGBImageType::Pointer img = rgbSlices[i + plane * numberOfImgs];
       tileFilter->SetInput(i + plane * numberOfImgs, rgbSlices[i + plane * numberOfImgs]);
     }
   }

@@ -72,7 +72,7 @@ ProcessArgs(int           argc,
 {
   while (--argc)
   {
-    std::string arg(argv[1]);
+    const std::string arg(argv[1]);
     ++argv;
     if (arg == "-2")
     {
@@ -227,7 +227,7 @@ MakeImage(const std::string & filename,
     RegionType region;
     region.SetSize(size);
 
-    ImagePointerType image = ImageType::New();
+    const ImagePointerType image = ImageType::New();
     image->SetRegions(region);
     image->Allocate();
     IteratorType it(image, region);
@@ -235,7 +235,7 @@ MakeImage(const std::string & filename,
     {
       it.Set(value);
     }
-    ImageFileWriterPointerType writer = ImageFileWriterType::New();
+    const ImageFileWriterPointerType writer = ImageFileWriterType::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(image);
     writer->Write();

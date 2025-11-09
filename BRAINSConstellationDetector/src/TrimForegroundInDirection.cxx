@@ -84,7 +84,7 @@ TrimForegroundInDirection(SImageType::Pointer & foreground,
                           SImageType::PixelType BackgroundFillValue)
 {
   using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(volOrig);
   findCenterFilter->SetAxis(axis);
   findCenterFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);

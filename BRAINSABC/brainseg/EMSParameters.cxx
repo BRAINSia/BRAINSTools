@@ -66,7 +66,7 @@ EMSParameters ::ClearImages()
 void
 EMSParameters ::PrintSelf(std::ostream & os, itk::Indent) const
 {
-  itk::NumberToString<double> doubleConvert;
+  const itk::NumberToString<double> doubleConvert;
 
   os << "Suffix = " << m_Suffix << std::endl;
   os << "Atlas directory = " << m_AtlasDirectory << std::endl;

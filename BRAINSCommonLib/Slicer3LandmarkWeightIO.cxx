@@ -28,7 +28,7 @@
 void
 WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const LandmarksWeightMapType & landmarks)
 {
-  itk::NumberToString<double> doubleConvert;
+  const itk::NumberToString<double> doubleConvert;
 
   const std::string fullPathLandmarksWeightFileName =
     itksys::SystemTools::CollapseFullPath(landmarksWeightFilename.c_str());
@@ -71,7 +71,7 @@ extern LandmarksWeightMapType
 ReadSlicer3toITKLmkWts(const std::string & landmarksWeightFilename)
 {
   LandmarksWeightMapType landmarks;
-  std::string            landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksWeightFilename.c_str());
+  const std::string      landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksWeightFilename.c_str());
   std::ifstream          myfile(landmarksFilenameTmp.c_str());
 
   if (!myfile.is_open())
@@ -85,7 +85,7 @@ ReadSlicer3toITKLmkWts(const std::string & landmarksWeightFilename)
   {
     if (line.compare(0, 1, "#") != 0) // Skip lines starting with a #
     {
-      size_t            pos1 = line.find(',', 0);
+      const size_t      pos1 = line.find(',', 0);
       const std::string name = line.substr(0, pos1);
       double            weight = NAN;
       const size_t      pos2 = line.find(' ', pos1 + 1);

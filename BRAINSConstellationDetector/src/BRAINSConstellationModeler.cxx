@@ -196,7 +196,7 @@ main(int argc, char * argv[])
     // Since these are oriented images, the reorientation should not be
     // necessary.
     // //////////////////////////////////////////////////////////////////////////
-    SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(mDef[currentDataset].GetImageFilename());
+    const SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(mDef[currentDataset].GetImageFilename());
     if (volOrig.IsNull())
     {
       printf("\nCould not open image %s, aborting ...\n\n", mDef[currentDataset].GetImageFilename().c_str());
@@ -206,11 +206,11 @@ main(int argc, char * argv[])
 
     if (rescaleIntensities == true)
     {
-      itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+      const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
       stats->SetInput(volOrig);
       stats->Update();
-      SImageType::PixelType minPixel(stats->GetMinimum());
-      SImageType::PixelType maxPixel(stats->GetMaximum());
+      const SImageType::PixelType minPixel(stats->GetMinimum());
+      SImageType::PixelType       maxPixel(stats->GetMaximum());
 
       if (trimRescaledIntensities > 0.0)
       {
@@ -220,8 +220,8 @@ main(int argc, char * argv[])
         // min,
         // then I know Something about extreme outliers.
 
-        double meanOrig(stats->GetMean());
-        double sigmaOrig(stats->GetSigma());
+        const double meanOrig(stats->GetMean());
+        const double sigmaOrig(stats->GetSigma());
 
         // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
         // It only makes sense to trim the upper bound since the lower bound
@@ -236,15 +236,15 @@ main(int argc, char * argv[])
         // deviations of normal.
         // Naturally, the constant should default at the command line, ...
 
-        double variationBound((maxPixel - meanOrig) / sigmaOrig);
-        double trimBound(variationBound - trimRescaledIntensities);
+        const double variationBound((maxPixel - meanOrig) / sigmaOrig);
+        const double trimBound(variationBound - trimRescaledIntensities);
         if (trimBound > 0.0)
         {
           maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
         }
       }
 
-      itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
+      const itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
         itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
@@ -268,34 +268,34 @@ main(int argc, char * argv[])
     // That are consistent with ITK images that they were collected from Dicom
     // coordinate system
     // No conversion is necessary
-    SImageType::PointType origRP = mDef[currentDataset].GetNamedPoint("RP");
-    SImageType::PointType origAC = mDef[currentDataset].GetNamedPoint("AC");
-    SImageType::PointType origPC = mDef[currentDataset].GetNamedPoint("PC");
-    SImageType::PointType origVN4 = mDef[currentDataset].GetNamedPoint("VN4");
-    SImageType::PointType origLE = mDef[currentDataset].GetNamedPoint("LE");
-    SImageType::PointType origRE = mDef[currentDataset].GetNamedPoint("RE");
-    SImageType::PointType origCEC;
+    const SImageType::PointType origRP = mDef[currentDataset].GetNamedPoint("RP");
+    const SImageType::PointType origAC = mDef[currentDataset].GetNamedPoint("AC");
+    const SImageType::PointType origPC = mDef[currentDataset].GetNamedPoint("PC");
+    const SImageType::PointType origVN4 = mDef[currentDataset].GetNamedPoint("VN4");
+    const SImageType::PointType origLE = mDef[currentDataset].GetNamedPoint("LE");
+    const SImageType::PointType origRE = mDef[currentDataset].GetNamedPoint("RE");
+    SImageType::PointType       origCEC;
     origCEC.SetToMidPoint(origLE, origRE);
 
-    SImageType::PointType orig_lmk_CenterOfHeadMass = GetCenterOfHeadMass(image);
+    const SImageType::PointType orig_lmk_CenterOfHeadMass = GetCenterOfHeadMass(image);
 
     // original input volume from the training set
     // transforms image to MSP aligned voxel lattice
 
     double c_c = 0;
 
-    VersorRigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
+    const VersorRigidTransformType::Pointer eyeFixed2msp_lmk_tfm =
       ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
     const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
-      StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      const StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);
       statisticsFilter->Update();
       const SImageType::PixelType local_minPixelValue = statisticsFilter->GetMinimum();
       return local_minPixelValue;
     }(image);
 
-    SImageType::Pointer volumeMSP =
+    const SImageType::Pointer volumeMSP =
       TransformResample<SImageType, SImageType>(image.GetPointer(),
                                                 MakeIsoTropicReferenceImage().GetPointer(),
                                                 minPixelValue,
@@ -316,7 +316,7 @@ main(int argc, char * argv[])
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
     // AC and PC points
-    VersorRigidTransformType::Pointer ACPC_AlignedTransform =
+    const VersorRigidTransformType::Pointer ACPC_AlignedTransform =
       computeTmspFromPoints_Versor(origRP, origAC, origPC, origin);
 
     // We cannot easily compute the Inverse transform by the following two lines, we need to use versor for precise
@@ -325,7 +325,7 @@ main(int argc, char * argv[])
     //    ACPC_AlignedTransform_INV->GetInverse(ACPC_AlignedTransform);
 
     // AC-PC aligned TRANSFORM
-    VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
+    const VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ACPC_AlignedTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation; // was commented before
     const itk::Matrix<double, 3, 3> & NewCleanedOrthogonalized =
@@ -334,8 +334,8 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ACPC_AlignedTransform->GetTranslation());
     // inverse transform
-    VersorRigidTransformType::Pointer ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
-    const SImageType::PointType &     centerPoint = finalTransform->GetCenter();
+    const VersorRigidTransformType::Pointer ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
+    const SImageType::PointType &           centerPoint = finalTransform->GetCenter();
     ACPC_AlignedTransform_INV->SetCenter(centerPoint);
     ACPC_AlignedTransform_INV->SetIdentity();
     finalTransform->GetInverse(ACPC_AlignedTransform_INV);
@@ -356,7 +356,7 @@ main(int argc, char * argv[])
       const SImageType::PointType finalPC = ACPC_AlignedTransform_INV->TransformPoint(origPC);
       const SImageType::PointType finalVN4 = ACPC_AlignedTransform_INV->TransformPoint(origVN4);
 
-      SImageType::Pointer volumeACPC_Aligned =
+      const SImageType::Pointer volumeACPC_Aligned =
         TransformResample<SImageType, SImageType>(image.GetPointer(),
                                                   image.GetPointer(),
                                                   BackgroundFillValue,
@@ -393,11 +393,11 @@ main(int argc, char * argv[])
           myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep() * currentAngle;
         const float current_angle = degree_current_angle * itk::Math::pi / 180;
 
-        Euler3DTransformType::Pointer Point_Rotate = Euler3DTransformType::New();
+        const Euler3DTransformType::Pointer Point_Rotate = Euler3DTransformType::New();
         Point_Rotate->SetCenter(transformedPoint);
         Point_Rotate->SetRotation(current_angle, 0, 0);
 
-        SImageType::Pointer image_TestRotated =
+        const SImageType::Pointer image_TestRotated =
           CreateTestCenteredRotatedImage2(ACPC_AlignedTransform, origPoint, image, Point_Rotate);
         if (globalImagedebugLevel > 5)
         {
@@ -413,7 +413,7 @@ main(int argc, char * argv[])
         // and it should be  straight forward to refactor this into a single function
         // extractZeroMeanNormalizedVector that has the same signature as extractArray, but has many fewer
         // loop iterations.
-        LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
+        const LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
         imInterp->SetInputImage(image_TestRotated);
         // Resize the model internal vector.
         myModel.AccessTemplate(it->first, currentDataset, currentAngle)
@@ -551,7 +551,7 @@ main(int argc, char * argv[])
 
     // JOB2: CMtoRPMean
     // // NOTE:  This needs to be the average distance from the center of gravity.
-    SImageType::PointType::VectorType RPDistanceFromCenterOfMass =
+    const SImageType::PointType::VectorType RPDistanceFromCenterOfMass =
       rp_InMSPAlignedSpace[currentDataset] - cm_InMSPAlignedSpace[currentDataset];
     CMtoRPMean += RPDistanceFromCenterOfMass;
   }

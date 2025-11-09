@@ -14,11 +14,11 @@ DumpImageInfo(const std::string & filename)
   using PixelType = double;
   using ImageType = itk::Image<PixelType, ImageDimension>;
   using ReaderType = typename itk::ImageFileReader<ImageType>;
-  typename ReaderType::Pointer reader = ReaderType::New();
+  const typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename);
   reader->Update();
 
-  typename ImageType::Pointer finalImage = reader->GetOutput();
+  const typename ImageType::Pointer finalImage = reader->GetOutput();
   cout << finalImage << endl;
 }
 

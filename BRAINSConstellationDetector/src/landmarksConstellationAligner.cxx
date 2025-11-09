@@ -64,13 +64,13 @@ main(int argc, char * argv[])
 
   if ((!outputLandmarksPaired.empty()) && (!inputLandmarksPaired.empty()))
   {
-    LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksPaired);
-    LandmarksMapType alignedLandmarks;
+    const LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksPaired);
+    LandmarksMapType       alignedLandmarks;
 
     // computing the forward and inverse transform
-    VersorRigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
+    const VersorRigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
 
-    VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
+    const VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ZeroCenteredTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation;
     const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
@@ -79,8 +79,8 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ZeroCenteredTransform->GetTranslation());
     // inverse transform
-    VersorRigidTransformType::Pointer invFinalTransform = VersorRigidTransformType::New();
-    SImageType::PointType             centerPoint = finalTransform->GetCenter();
+    const VersorRigidTransformType::Pointer invFinalTransform = VersorRigidTransformType::New();
+    const SImageType::PointType             centerPoint = finalTransform->GetCenter();
     invFinalTransform->SetCenter(centerPoint);
     invFinalTransform->SetIdentity();
     finalTransform->GetInverse(invFinalTransform);
@@ -100,7 +100,7 @@ main(int argc, char * argv[])
       std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;
       {
         using TransformWriterType = itk::TransformFileWriterTemplate<double>;
-        TransformWriterType::Pointer writer = TransformWriterType::New();
+        const TransformWriterType::Pointer writer = TransformWriterType::New();
         writer->SetInput(finalTransform);
         writer->SetFileName(outputTransform);
         try

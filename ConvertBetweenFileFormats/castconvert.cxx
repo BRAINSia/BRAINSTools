@@ -124,9 +124,9 @@ main(int argc, char * argv[])
     }
 
     /**  Get  the  inputs. */
-    std::string input = argv[1];
-    std::string outputFileName = argv[2];
-    std::string outputPixelComponentType = "";
+    std::string       input = argv[1];
+    const std::string outputFileName = argv[2];
+    std::string       outputPixelComponentType = "";
     if (argc >= 4)
     {
       outputPixelComponentType = argv[3];
@@ -141,9 +141,9 @@ main(int argc, char * argv[])
     }
 
     /** Check if input is a file or a directory. */
-    bool        exists = itksys::SystemTools::FileExists(input.c_str());
-    bool        isDir = itksys::SystemTools::FileIsDirectory(input.c_str());
-    bool        isVTI = (input.rfind(".vti") == (input.size() - 4));
+    const bool  exists = itksys::SystemTools::FileExists(input.c_str());
+    const bool  isDir = itksys::SystemTools::FileIsDirectory(input.c_str());
+    const bool  isVTI = (input.rfind(".vti") == (input.size() - 4));
     bool        isDICOM = false;
     std::string inputFileName;
 
@@ -199,7 +199,7 @@ main(int argc, char * argv[])
     using FileNamesContainerType = std::vector<std::string>;
 
     /** Create a testReader. */
-    ReaderType::Pointer testReader = ReaderType::New();
+    const ReaderType::Pointer testReader = ReaderType::New();
 
     /** Setup the testReader. */
     if (!isDICOM && !isVTI)
@@ -210,13 +210,13 @@ main(int argc, char * argv[])
     else if (!isVTI)
     {
       /** Get a name of a 2D image. */
-      GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+      const GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
       nameGenerator->SetInputDirectory(inputDirectoryName.c_str());
       FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
       const std::string &    fileName = fileNames[0];
 
       /** Create a dicom ImageIO and set it in the testReader. */
-      GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
+      const GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
       testReader->SetImageIO(dicomIO);
 
       /** Set the name of the 2D dicom image in the testReader. */
@@ -237,7 +237,7 @@ main(int argc, char * argv[])
       testReader->Update();
 
       /** Extract the ImageIO from the testReader. */
-      ImageIOBaseType::Pointer testImageIOBase = testReader->GetModifiableImageIO();
+      const ImageIOBaseType::Pointer testImageIOBase = testReader->GetModifiableImageIO();
 
       numberOfComponents = testImageIOBase->GetNumberOfComponents();
       inputDimension = testImageIOBase->GetNumberOfDimensions();

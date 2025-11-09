@@ -45,7 +45,7 @@ public:
   void
   SetNormal()
   {
-    itk::NumberToString<double> doubleConvert;
+    const itk::NumberToString<double> doubleConvert;
     // Determine AB and AC vector components
     VectorType AB;
 
@@ -68,7 +68,7 @@ public:
     normal[1] = -1 * ((AB[0] * AC[2]) - (AC[0] * AB[2]));
     normal[2] = (AB[0] * AC[1]) - (AC[0] * AB[1]);
 
-    double magnitude = std::sqrt(normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]);
+    const double magnitude = std::sqrt(normal[0] * normal[0] + normal[1] * normal[1] + normal[2] * normal[2]);
 
     std::cout << "Normal::: Before Norm[" << doubleConvert(normal[0]) << ", " << doubleConvert(normal[1]) << ", "
               << doubleConvert(normal[2]) << " ]" << std::endl;
@@ -89,7 +89,7 @@ public:
   [[nodiscard]] double
   GetRelativeLocationToPlane(LandmarkPointType x) const
   {
-    double answer = normal[0] * (A[0] - x[0]) + normal[1] * (A[1] - x[1]) + normal[2] * (A[2] - x[2]);
+    const double answer = normal[0] * (A[0] - x[0]) + normal[1] * (A[1] - x[1]) + normal[2] * (A[2] - x[2]);
 
     return answer;
   }
@@ -271,11 +271,11 @@ main(int argc, char * argv[])
 
   using ImageReaderType = itk::ImageFileReader<ImageType>;
 
-  ImageReaderType::Pointer imageReader = ImageReaderType::New();
+  const ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName(inputBinaryVolume);
   imageReader->Update();
 
-  ImageType::Pointer inputVolume = imageReader->GetOutput();
+  const ImageType::Pointer inputVolume = imageReader->GetOutput();
 
   // read landmark file in
   std::cout << "Reading: " << inputLandmarksFilename << std::endl;
@@ -283,7 +283,7 @@ main(int argc, char * argv[])
 
   // duplicate image
   using ImageDuplicatorType = itk::ImageDuplicator<ImageType>;
-  ImageDuplicatorType::Pointer duplicator = ImageDuplicatorType::New();
+  const ImageDuplicatorType::Pointer duplicator = ImageDuplicatorType::New();
   duplicator->SetInputImage(inputVolume);
   duplicator->Update();
 
@@ -380,7 +380,7 @@ main(int argc, char * argv[])
   // write output volume
 
   using OutputImageWriterType = itk::ImageFileWriter<ImageType>;
-  OutputImageWriterType::Pointer writer = OutputImageWriterType::New();
+  const OutputImageWriterType::Pointer writer = OutputImageWriterType::New();
 
   writer->SetInput(outputVolume);
   writer->SetFileName(outputBinaryVolume);

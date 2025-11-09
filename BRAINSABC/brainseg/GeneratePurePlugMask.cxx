@@ -55,7 +55,7 @@ main(int argc, char * argv[])
   {
     std::cout << "Reading image: " << inputFileNames[i] << std::endl;
 
-    LocalReaderPointer imgreader = LocalReaderType::New();
+    const LocalReaderPointer imgreader = LocalReaderType::New();
     imgreader->SetFileName(inputFileNames[i].c_str());
 
     try
@@ -77,11 +77,11 @@ main(int argc, char * argv[])
   numberOfContinuousIndexSubSamples[1] = numberOfSubSamples[1];
   numberOfContinuousIndexSubSamples[2] = numberOfSubSamples[2];
 
-  MaskImageType::Pointer mask = GeneratePurePlugMask<FloatImageType, MaskImageType>(
+  const MaskImageType::Pointer mask = GeneratePurePlugMask<FloatImageType, MaskImageType>(
     inputImageModalitiesList, threshold, numberOfContinuousIndexSubSamples, false, verbose);
 
   using MaskWriterType = itk::ImageFileWriter<MaskImageType>;
-  MaskWriterType::Pointer writer = MaskWriterType::New();
+  const MaskWriterType::Pointer writer = MaskWriterType::New();
   writer->SetInput(mask);
   writer->SetFileName(outputMaskFile);
   writer->UseCompressionOn();

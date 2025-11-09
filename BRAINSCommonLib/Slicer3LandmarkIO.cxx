@@ -122,7 +122,7 @@ ReadLandmarkWeights(const std::string & weightFilename)
 static void
 WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const LandmarksMapType & landmarks)
 {
-  itk::NumberToString<double> doubleConvert;
+  const itk::NumberToString<double> doubleConvert;
   const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
 
   std::stringstream lmkPointStream;
@@ -173,7 +173,7 @@ WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const Land
 static void
 WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const LandmarksMapType & landmarks)
 {
-  itk::NumberToString<double> doubleConvert;
+  const itk::NumberToString<double> doubleConvert;
   const std::string fullPathLandmarksFileName = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
 
   std::stringstream lmkPointStream;
@@ -218,15 +218,15 @@ WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const Landmar
 static LandmarksMapType
 ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
 {
-  LandmarksMapType landmarks;
-  std::string      landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
-  std::ifstream    myfile(landmarksFilenameTmp.c_str());
+  LandmarksMapType  landmarks;
+  const std::string landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
+  std::ifstream     myfile(landmarksFilenameTmp.c_str());
 
   if (!myfile.is_open())
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    const std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
@@ -243,8 +243,8 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       if (line.find("version") != std::string::npos)
       {
         // Extract version number
-        std::regex  re("# *Markups *fiducial *file *version *= (.*)");
-        std::smatch match;
+        const std::regex re("# *Markups *fiducial *file *version *= (.*)");
+        std::smatch      match;
         if (std::regex_search(line, match, re) && match.size() > 1)
         {
           version_major_str = match.str(1);
@@ -254,8 +254,8 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       else if (line.find("CoordinateSystem") != std::string::npos)
       {
         // extract coordinate system.
-        std::regex  re("# *CoordinateSystem *= *(.*)");
-        std::smatch match;
+        const std::regex re("# *CoordinateSystem *= *(.*)");
+        std::smatch      match;
         if (std::regex_search(line, match, re) && match.size() > 1)
         {
           coordinate_str = match.str(1);
@@ -312,14 +312,14 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
 {
   LandmarksMapType landmarks;
 
-  std::string   landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
-  std::ifstream myfile(landmarksFilenameTmp.c_str());
+  const std::string landmarksFilenameTmp = itksys::SystemTools::CollapseFullPath(landmarksFilename.c_str());
+  std::ifstream     myfile(landmarksFilenameTmp.c_str());
 
   if (!myfile.is_open())
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    const std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }
@@ -336,8 +336,8 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
       if (line.find("version") != std::string::npos)
       {
         // Extract version number
-        std::regex  re("# *Markups *fiducial *file *version *= ([0-9]*)\\.([0-9]*)");
-        std::smatch match;
+        const std::regex re("# *Markups *fiducial *file *version *= ([0-9]*)\\.([0-9]*)");
+        std::smatch      match;
         if (std::regex_search(line, match, re) && match.size() > 1)
         {
           version_major_str = match.str(1);
@@ -347,8 +347,8 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
       else if (line.find("CoordinateSystem") != std::string::npos)
       {
         // extract coordinate system.
-        std::regex  re("# *CoordinateSystem *= *(.*)");
-        std::smatch match;
+        const std::regex re("# *CoordinateSystem *= *(.*)");
+        std::smatch      match;
         if (std::regex_search(line, match, re) && match.size() > 1)
         {
           coordinate_str = match.str(1);
@@ -404,7 +404,7 @@ ReadSlicer3toITKLmk(const std::string & landmarksFilename)
   {
     std::cerr << "Error: Failed to load landmarks file!" << std::endl;
     std::cerr.flush();
-    std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
+    const std::string errorMsg = std::string("Couldn't open landmarks file for reading: ") + landmarksFilename;
     throw itk::ImageFileReaderException(__FILE__, __LINE__, errorMsg.c_str(), ITK_LOCATION);
     // do not return empty landmarks
   }

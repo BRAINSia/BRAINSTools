@@ -72,16 +72,16 @@ DoIt(const std::string & inputVolume,
 
   // Since these are oriented images, the reorientation should not be necessary.
   using LOCALImageType = SImageType;
-  typename TInputImagePixelType::Pointer volOrig = itkUtil::ReadImage<TInputImagePixelType>(inputVolume);
+  const typename TInputImagePixelType::Pointer volOrig = itkUtil::ReadImage<TInputImagePixelType>(inputVolume);
   if (volOrig.IsNull())
   {
     printf("\nCould not open image %s, aborting ...\n\n", inputVolume.c_str());
     return EXIT_FAILURE;
   }
 
-  LOCALImageType::Pointer internal_image = [=]() -> LOCALImageType::Pointer {
-    typename itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::Pointer remapIntensityFilter =
-      itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::New();
+  const LOCALImageType::Pointer internal_image = [=]() -> LOCALImageType::Pointer {
+    const typename itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::Pointer
+      remapIntensityFilter = itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::New();
     remapIntensityFilter->SetInput(volOrig);
     remapIntensityFilter->SetOutputMaximum(std::numeric_limits<LOCALImageType::PixelType>::max());
     remapIntensityFilter->SetOutputMinimum(std::numeric_limits<LOCALImageType::PixelType>::min());
@@ -106,7 +106,7 @@ DoIt(const std::string & inputVolume,
     // Estimate the center of head mass
     std::cout << "\nFinding center of head mass..." << std::endl;
     using FindCenterFilter = itk::FindCenterOfBrainFilter<LOCALImageType>;
-    FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+    const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
     findCenterFilter->SetInput(internal_image);
     findCenterFilter->SetAxis(2);
     findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -121,7 +121,7 @@ DoIt(const std::string & inputVolume,
 
   if (!resampleMSPLandmarkPoints.empty() && !LandmarkPoints.empty())
   {
-    Euler3DTransformType::Pointer orig2msp_lmk_tfm = Euler3DTransformType::New();
+    const Euler3DTransformType::Pointer orig2msp_lmk_tfm = Euler3DTransformType::New();
     orig2msp_img_tfm->GetInverse(orig2msp_lmk_tfm);
     if (orig2msp_lmk_tfm.IsNull())
     {
@@ -153,12 +153,12 @@ DoIt(const std::string & inputVolume,
     typename TInputImagePixelType::Pointer image;
     if (rescaleIntensities)
     {
-      typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats =
+      const typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats =
         itk::StatisticsImageFilter<TInputImagePixelType>::New();
       stats->SetInput(volOrig);
       stats->Update();
-      typename TInputImagePixelType::PixelType minPixel(stats->GetMinimum());
-      typename TInputImagePixelType::PixelType maxPixel(stats->GetMaximum());
+      const typename TInputImagePixelType::PixelType minPixel(stats->GetMinimum());
+      typename TInputImagePixelType::PixelType       maxPixel(stats->GetMaximum());
 
       if (trimRescaledIntensities > 0.0)
       {
@@ -167,8 +167,8 @@ DoIt(const std::string & inputVolume,
         // I did this because it seemed to me if I knew mean, sigma, max and min,
         // then I know Something about extreme outliers.
 
-        double meanOrig(stats->GetMean());
-        double sigmaOrig(stats->GetSigma());
+        const double meanOrig(stats->GetMean());
+        const double sigmaOrig(stats->GetSigma());
 
         // REFACTOR:  In percentiles, 0.0005 two-tailed has worked in the past.
         // It only makes sense to trim the upper bound since the lower bound would
@@ -183,15 +183,15 @@ DoIt(const std::string & inputVolume,
         // deviations of normal.
         // Naturally, the constant should default at the command line, ...
 
-        double variationBound((maxPixel - meanOrig) / sigmaOrig);
-        double trimBound(variationBound - trimRescaledIntensities);
+        const double variationBound((maxPixel - meanOrig) / sigmaOrig);
+        const double trimBound(variationBound - trimRescaledIntensities);
         if (trimBound > 0.0)
         {
           maxPixel = static_cast<typename TInputImagePixelType::PixelType>(maxPixel - trimBound * sigmaOrig);
         }
       }
 
-      typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer
+      const typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer
         remapIntensityFilter = itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
@@ -204,7 +204,7 @@ DoIt(const std::string & inputVolume,
     }
     else
     {
-      typename itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer caster =
+      const typename itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer caster =
         itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       caster->SetInput(volOrig);
       caster->Update();
@@ -218,13 +218,13 @@ DoIt(const std::string & inputVolume,
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 
-      VersorRigid3DTransformType::Pointer result = VersorRigid3DTransformType::New();
+      const VersorRigid3DTransformType::Pointer result = VersorRigid3DTransformType::New();
       result->SetIdentity();
       //      result->SetCenter(orig2msp_img_tfm->GetCenter());
       //      result->SetMatrix(orig2msp_img_tfm->GetMatrix());
       //      result->SetTranslation(orig2msp_img_tfm->GetTranslation());
       result->Compose(orig2msp_img_tfm);
-      ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+      const ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
       resampleIPFilter->SetInputImage(volOrig);
       resampleIPFilter->SetRigidTransform(result);
       resampleIPFilter->Update();
@@ -268,7 +268,7 @@ main(int argc, char * argv[])
   globalImagedebugLevel = writedebuggingImagesLevel;
 
   // https://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
-  itk::ImageIOBase::Pointer imageIO =
+  const itk::ImageIOBase::Pointer imageIO =
     itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::IOFileModeEnum::ReadMode);
 
   imageIO->SetFileName(inputVolume);

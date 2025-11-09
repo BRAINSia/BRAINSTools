@@ -48,8 +48,8 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  bool   result = false; // test result default = no failure
-  double tol = 1.e-3;    // tolerance
+  bool         result = false; // test result default = no failure
+  const double tol = 1.e-3;    // tolerance
 
   // Image, filter, transform typedef
   constexpr unsigned int LocalImageDimension = 3;
@@ -70,7 +70,7 @@ main(int argc, char * argv[])
   // Read in input test image
   ImagePointer inputImage;
   {
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(argv[1]);
     try
     {
@@ -87,21 +87,21 @@ main(int argc, char * argv[])
   itk::Vector<double, 3> rotationAxis;
   rotationAxis.Fill(0.);
   rotationAxis[0] = 1.;
-  double                 rotationAngle = .5; // in rad
+  const double           rotationAngle = .5; // in rad
   itk::Vector<double, 3> translation;
   translation.Fill(0.);
   translation[1] = 300.; // in mm along P-axis
-  TransformType::Pointer transform = TransformType::New();
+  const TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();
   transform->SetRotation(rotationAxis, rotationAngle);
   transform->Translate(translation, true);
 
   // Set up the resample filter
-  FilterType::Pointer filter = FilterType::New();
+  const FilterType::Pointer filter = FilterType::New();
   filter->SetInputImage(inputImage);
   filter->SetRigidTransform(transform);
   filter->Update();
-  ImagePointer outputImage = filter->GetOutput();
+  const ImagePointer outputImage = filter->GetOutput();
 
   // Get image info
   ImagePointType     origin = outputImage->GetOrigin();
@@ -111,7 +111,7 @@ main(int argc, char * argv[])
   // Read in baseline image
   ImagePointer baselineImage = nullptr;
   {
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(argv[2]);
     try
     {
@@ -150,7 +150,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
-  WriterType::Pointer writer = WriterType::New();
+  const WriterType::Pointer writer = WriterType::New();
   writer->SetFileName(argv[3]);
   writer->SetInput(outputImage);
   writer->Update();

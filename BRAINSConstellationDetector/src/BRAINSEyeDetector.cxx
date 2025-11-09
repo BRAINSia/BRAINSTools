@@ -61,7 +61,7 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  ReaderType::Pointer reader = ReaderType::New();
+  const ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(inputVolume);
   try
   {
@@ -74,7 +74,7 @@ main(int argc, char * argv[])
 
   // Find center of head mass
   std::cout << "Finding center of head mass..." << std::endl;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(reader->GetOutput());
   findCenterFilter->SetAxis(2);
   findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -82,11 +82,11 @@ main(int argc, char * argv[])
   findCenterFilter->SetHeadSizeLimit(700);
   findCenterFilter->SetBackgroundValue(0);
   findCenterFilter->Update();
-  ImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
+  const ImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
 
   // Find eye centers with BRAINS Hough Eye Detector
   std::cout << "Finding eye centers..." << std::endl;
-  HoughEyeDetectorType::Pointer houghEyeDetector = HoughEyeDetectorType::New();
+  const HoughEyeDetectorType::Pointer houghEyeDetector = HoughEyeDetectorType::New();
   houghEyeDetector->SetInput(reader->GetOutput());
   houghEyeDetector->SetHoughEyeDetectorMode(1); // For T1 images
   houghEyeDetector->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
@@ -95,16 +95,16 @@ main(int argc, char * argv[])
                                                      // accumulator images
   houghEyeDetector->Update();
 
-  ImagePointType leftEye = houghEyeDetector->Getorig_lmk_LE();
-  ImagePointType rightEye = houghEyeDetector->Getorig_lmk_RE();
+  const ImagePointType leftEye = houghEyeDetector->Getorig_lmk_LE();
+  const ImagePointType rightEye = houghEyeDetector->Getorig_lmk_RE();
 
-  itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm =
+  const itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm =
     houghEyeDetector->GetModifiableorig2eyeFixedTransform();
-  itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
+  const itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
   orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
 
-  ImagePointType alignedLE = orig2eyeFixed_lmk_tfm->TransformPoint(leftEye);
-  ImagePointType alignedRE = orig2eyeFixed_lmk_tfm->TransformPoint(rightEye);
+  const ImagePointType alignedLE = orig2eyeFixed_lmk_tfm->TransformPoint(leftEye);
+  const ImagePointType alignedRE = orig2eyeFixed_lmk_tfm->TransformPoint(rightEye);
 
   std::cout << "Left eye = " << leftEye << std::endl;
   std::cout << "Right eye = " << rightEye << std::endl;
@@ -112,7 +112,7 @@ main(int argc, char * argv[])
   std::cout << "Aligned right eye = " << alignedRE << std::endl;
 
   // Write aligned image
-  WriterType::Pointer writer = WriterType::New();
+  const WriterType::Pointer writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName(outputVolume);
   writer->SetInput(houghEyeDetector->GetOutput());

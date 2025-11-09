@@ -80,7 +80,7 @@ BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
   // ------------------------------------
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
 
   findCenterFilter->SetAxis(2);
   findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -148,7 +148,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
   using AtlasReaderType = itk::ImageFileReader<DImageType3D>;
-  AtlasReaderType::Pointer reader = AtlasReaderType::New();
+  const AtlasReaderType::Pointer reader = AtlasReaderType::New();
   reader->SetFileName(this->m_inputVolume);
   try
   {
@@ -160,15 +160,15 @@ BRAINSConstellationDetectorPrimary::Compute()
   }
   std::cout << "Processing: " << this->m_inputVolume << std::endl;
 
-  DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity<DImageType3D, ByteImageType>(
+  const DImageType3D::Pointer rescaledInputVolume = StandardizeMaskIntensity<DImageType3D, ByteImageType>(
     reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE);
 
   using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
-  CasterType::Pointer caster = CasterType::New();
+  const CasterType::Pointer caster = CasterType::New();
   caster->SetInput(rescaledInputVolume);
   caster->Update();
 
-  SImageType::Pointer orig_img = caster->GetOutput();
+  const SImageType::Pointer orig_img = caster->GetOutput();
 
   /*
    * Look for existing manually identified landmark point files adjacent
@@ -190,7 +190,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     potentialLandmarkFileName += fcsv_extension;
 
 
-    std::string output_sidecar = local_replace(this->m_outputLandmarksInInputSpace, ".fcsv", "_fixed.fcsv");
+    const std::string output_sidecar = local_replace(this->m_outputLandmarksInInputSpace, ".fcsv", "_fixed.fcsv");
     if (itksys::SystemTools::FileExists(potentialLandmarkFileName, true))
     {
       std::cerr << "NOTE: Using the side-car landmark override file to pre-load landmarks!: "
@@ -208,9 +208,9 @@ BRAINSConstellationDetectorPrimary::Compute()
       std::cerr << "NOTE: Side-car landmark file not found to pre-load landmarks!"
                 << "\n         " << potentialLandmarkFileName << "\n         " << output_sidecar << std::endl;
       // Now looking for file encoded as meta data in header.
-      const char * const        metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
-      itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
-      std::string               ImageMetaDataEMSPFileOverride = "";
+      const char * const              metaDataEMSP_FCSVName = "EMSP_FCSV_FILENAME";
+      const itk::MetaDataDictionary & dict = reader->GetOutput()->GetMetaDataDictionary();
+      std::string                     ImageMetaDataEMSPFileOverride = "";
       // if it exists and the string matches what we put in on the image to write, AOK.
       if (itk::ExposeMetaData<std::string>(dict, metaDataEMSP_FCSVName, ImageMetaDataEMSPFileOverride) != false)
       {
@@ -230,7 +230,7 @@ BRAINSConstellationDetectorPrimary::Compute()
 
   // ------------------------------------
   // Find eye centers with BRAINS Hough Eye Detector
-  HoughEyeDetectorType::Pointer                houghEyeDetector = HoughEyeDetectorType::New();
+  const HoughEyeDetectorType::Pointer          houghEyeDetector = HoughEyeDetectorType::New();
   itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm = nullptr;
   itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = nullptr;
 
@@ -313,7 +313,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   // ------------------------------------
   // Find MPJ, AC, PC, and VN4 points with BRAINS Constellation Detector
   std::cout << "\nFinding named points with BRAINS Constellation Detector..." << std::endl;
-  itk::BRAINSConstellationDetector2<ImageType, ImageType>::Pointer constellation2 =
+  const itk::BRAINSConstellationDetector2<ImageType, ImageType>::Pointer constellation2 =
     itk::BRAINSConstellationDetector2<ImageType, ImageType>::New();
 
 
@@ -447,7 +447,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   std::cout << "\nWriting results to files..." << std::endl;
   if (this->m_outputTransform.compare("") != 0)
   {
-    TransformWriterType::Pointer writer = TransformWriterType::New();
+    const TransformWriterType::Pointer writer = TransformWriterType::New();
     writer->SetInput(constellation2->GetOrigToACPCVersorTransform());
     writer->SetFileName(this->m_outputTransform);
     try
@@ -468,7 +468,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     preferedOutputReferenceImage = this->m_outputVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-    WriterType::Pointer writer = WriterType::New();
+    const WriterType::Pointer writer = WriterType::New();
     writer->SetFileName(this->m_outputVolume);
     writer->SetInput(constellation2->GetOutput());
     writer->SetUseCompression(true);
@@ -489,7 +489,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     preferedOutputReferenceImage = this->m_outputResampledVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-    WriterType::Pointer writer = WriterType::New();
+    const WriterType::Pointer writer = WriterType::New();
     writer->SetFileName(this->m_outputResampledVolume);
     writer->SetInput(constellation2->GetOutputResampledImage());
     writer->SetUseCompression(true);
@@ -541,7 +541,7 @@ BRAINSConstellationDetectorPrimary::Compute()
 
   if (this->m_outputUntransformedClippedVolume.compare("") != 0)
   {
-    WriterType::Pointer writer = WriterType::New();
+    const WriterType::Pointer writer = WriterType::New();
     writer->SetFileName(this->m_outputUntransformedClippedVolume);
     writer->SetInput(constellation2->GetOutputUntransformedClippedVolume());
     writer->SetUseCompression(true);

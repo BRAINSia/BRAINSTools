@@ -95,8 +95,8 @@ GetSliceIndexToExtract(const typename TImageType::Pointer & referenceImage,
         std::cout << "ERROR: Percent has to be between 0 and 100 " << std::endl;
         exit(EXIT_FAILURE);
       }
-      unsigned int size = (referenceImage->GetBufferedRegion()).GetSize()[planes[i]];
-      unsigned int index =
+      const unsigned int size = (referenceImage->GetBufferedRegion()).GetSize()[planes[i]];
+      unsigned int       index =
         static_cast<unsigned int>(static_cast<float>(inputSliceToExtractInPercent[i]) / 100.0F) * size;
 
       std::cout << inputSliceToExtractInPercent[i] << "-->" << index << std::endl;
@@ -117,7 +117,7 @@ ChangeOrientOfImage(const typename TImageType::Pointer & imageVolume, itk::Fixed
 {
   using FlipImageFilterType = itk::FlipImageFilter<TImageType>;
 
-  typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New();
+  const typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New();
 
   flipFilter->SetInput(imageVolume);
   flipFilter->SetFlipAxes(flipAxes);
@@ -149,18 +149,18 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
   using ResampleType = itk::ResampleImageFilter<OutImageType, OutImageType>;
 
   using NNIterpType = itk::NearestNeighborInterpolateImageFunction<OutImageType, double>;
-  typename NNIterpType::Pointer myNNIterp = NNIterpType::New();
+  const typename NNIterpType::Pointer myNNIterp = NNIterpType::New();
   using LinearIterpType = itk::LinearInterpolateImageFunction<OutImageType, double>;
-  typename LinearIterpType::Pointer myLinearIterp = LinearIterpType::New();
+  const typename LinearIterpType::Pointer myLinearIterp = LinearIterpType::New();
   using TransformType = itk::IdentityTransform<double, 3>;
-  typename TransformType::Pointer myIdentityTransform = TransformType::New();
+  const typename TransformType::Pointer myIdentityTransform = TransformType::New();
 
   TImageVectorType imageVector;
   for (unsigned int i = 0; i < filenameVector.size(); i++)
   {
     std::cout << "Reading image " << i + 1 << ": " << filenameVector[i] << "...\n";
 
-    ReaderPointer reader = TReaderType::New();
+    const ReaderPointer reader = TReaderType::New();
     reader->SetFileName(filenameVector[i].c_str());
 
     try
@@ -173,16 +173,16 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
       exit(EXIT_FAILURE);
     }
 
-    OutputImagePointerType image = reader->GetOutput();
+    const OutputImagePointerType image = reader->GetOutput();
 
     itk::FixedArray<bool, 3> flipAxes;
     flipAxes[0] = false;
     flipAxes[1] = false;
     flipAxes[2] = true;
-    OutputImagePointerType orientedImage = ChangeOrientOfImage<OutImageType>(image, flipAxes);
+    const OutputImagePointerType orientedImage = ChangeOrientOfImage<OutImageType>(image, flipAxes);
     if (i > 0)
     {
-      typename ResampleType::Pointer resampler = ResampleType::New();
+      const typename ResampleType::Pointer resampler = ResampleType::New();
       resampler->SetTransform(myIdentityTransform);
 
       if (interpType == NN_INTERP)
@@ -240,9 +240,9 @@ ExtractSlice(const typename TInputImageType::Pointer & inputImage, int plane, in
   /* extract 2D plain */
   using ExtractVolumeFilterType = itk::Testing::ExtractSliceImageFilter<TInputImageType, TOutputImageType>;
 
-  typename ExtractVolumeFilterType::Pointer extractVolumeFilter = ExtractVolumeFilterType::New();
+  const typename ExtractVolumeFilterType::Pointer extractVolumeFilter = ExtractVolumeFilterType::New();
 
-  typename TInputImageType::RegionType region = inputImage->GetBufferedRegion();
+  const typename TInputImageType::RegionType region = inputImage->GetBufferedRegion();
 
   typename TInputImageType::SizeType size = region.GetSize();
   size[plane] = 0;
@@ -270,7 +270,7 @@ Rescale(const typename TInputImage::Pointer & inputImage, const int min, const i
 {
   using RescaleFilterType = itk::RescaleIntensityImageFilter<TInputImage, TInputImage>;
 
-  typename RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
+  const typename RescaleFilterType::Pointer rescaler = RescaleFilterType::New();
 
   rescaler->SetInput(inputImage);
   rescaler->SetOutputMinimum(min);
@@ -278,7 +278,7 @@ Rescale(const typename TInputImage::Pointer & inputImage, const int min, const i
 
   using CastingFilterType = typename itk::CastImageFilter<TInputImage, TOutputImage>;
 
-  typename CastingFilterType::Pointer caster = CastingFilterType::New();
+  const typename CastingFilterType::Pointer caster = CastingFilterType::New();
   caster->SetInput(rescaler->GetOutput());
   caster->Update();
 
@@ -359,7 +359,7 @@ main(int argc, char ** argv)
                                                                                 inputSliceToExtractInPhysicalPoint);
 
   /* combine binary images */
-  Image3DVolumeType::Pointer labelMap = Image3DVolumeType::New();
+  const Image3DVolumeType::Pointer labelMap = Image3DVolumeType::New();
   if (!image3DBinaries.empty())
   {
     labelMap->CopyInformation(image3DBinaries[0]);
@@ -384,7 +384,7 @@ main(int argc, char ** argv)
       {
         for (unsigned int i = 0; i < image3DBinaries.size(); i++)
         {
-          Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
+          const Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
           if (image3DBinaries[i]->GetPixel(index) > 0)
           {
             binaryIterator.Set(i + 1); // label color zero is grey
@@ -409,17 +409,18 @@ main(int argc, char ** argv)
     {
       /** get slicer */
       const Image3DVolumeType::Pointer & current3DImage = image3DVolumes[i];
-      Image2DVolumeType::Pointer         imageSlice = ExtractSlice<Image3DVolumeType, Image2DVolumeType>(
+      const Image2DVolumeType::Pointer   imageSlice = ExtractSlice<Image3DVolumeType, Image2DVolumeType>(
         current3DImage, inputPlaneDirection[plane], extractingSlices[plane]);
 
-      OutputGreyImageType::Pointer greyScaleSlice = Rescale<Image2DVolumeType, OutputGreyImageType>(imageSlice, 0, 255);
+      const OutputGreyImageType::Pointer greyScaleSlice =
+        Rescale<Image2DVolumeType, OutputGreyImageType>(imageSlice, 0, 255);
 
       /** binaries */
       OutputGreyImageType::Pointer labelSlice;
       if (!image3DBinaries.empty())
       {
         /** rgb creator */
-        LabelOverlayFilter::Pointer rgbComposer = LabelOverlayFilter::New();
+        const LabelOverlayFilter::Pointer rgbComposer = LabelOverlayFilter::New();
 
         labelSlice = ExtractSlice<Image3DVolumeType, OutputGreyImageType>(
           labelMap, inputPlaneDirection[plane], extractingSlices[plane]);
@@ -441,7 +442,7 @@ main(int argc, char ** argv)
       }
       else /** ----------------------------------------------------- */
       {
-        RGBComposeFilter::Pointer rgbComposer = RGBComposeFilter::New();
+        const RGBComposeFilter::Pointer rgbComposer = RGBComposeFilter::New();
 
         rgbComposer->SetInput1(greyScaleSlice);
         rgbComposer->SetInput2(greyScaleSlice);
@@ -465,7 +466,7 @@ main(int argc, char ** argv)
   /* tile the images */
   using TileFilterType = itk::TileImageFilter<OutputRGBImageType, OutputRGBImageType>;
 
-  TileFilterType::Pointer tileFilter = TileFilterType::New();
+  const TileFilterType::Pointer tileFilter = TileFilterType::New();
 
   itk::FixedArray<unsigned int, 2> layout;
 
@@ -486,7 +487,7 @@ main(int argc, char ** argv)
   /* write out 2D image */
   using RGBFileWriterType = itk::ImageFileWriter<OutputRGBImageType>;
 
-  RGBFileWriterType::Pointer rgbFileWriter = RGBFileWriterType::New();
+  const RGBFileWriterType::Pointer rgbFileWriter = RGBFileWriterType::New();
 
   rgbFileWriter->SetInput(tileFilter->GetOutput());
   rgbFileWriter->SetFileName(outputFilename);

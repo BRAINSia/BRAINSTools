@@ -116,7 +116,7 @@ GetStrippedImageFileNameExtension(const std::string & ImageFileName)
   std::string returnString = itksys::SystemTools::GetFilenameName(ImageFileName);
   for (auto & elem : ExtensionsToRemove)
   {
-    size_t rfind_location = returnString.rfind(elem);
+    const size_t rfind_location = returnString.rfind(elem);
     if ((rfind_location != std::string::npos) && (rfind_location == (returnString.size() - elem.size())))
     {
       returnString.replace(rfind_location, elem.size(), "");
@@ -136,7 +136,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
     for (auto imIt = elem.second.begin(); imIt != elem.second.end(); ++imIt)
     {
       using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, FloatImageType>;
-      RescaleType::Pointer rescaler = RescaleType::New();
+      const RescaleType::Pointer rescaler = RescaleType::New();
       rescaler->SetOutputMinimum(1);
       rescaler->SetOutputMaximum(MAX_IMAGE_OUTPUT_VALUE);
       // #define INPLACE_RESCALER 0 // HACK Test this out
@@ -149,7 +149,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
 
       using MultType = itk::MultiplyImageFilter<FloatImageType, ByteImageType, FloatImageType>;
 
-      MultType::Pointer mult = MultType::New();
+      const MultType::Pointer mult = MultType::New();
       mult->SetInput1(rescaler->GetOutput());
       mult->SetInput2(FOVMask);
       mult->Update();
@@ -190,7 +190,8 @@ get_default_num_threads()
 #if __TBB_MIC_OFFLOAD
 #  pragma offload target(mic) out(default_num_threads)
 #endif // __TBB_MIC_OFFLOAD
-  static size_t default_num_threads = tbb::global_control::active_value(tbb::global_control::max_allowed_parallelism);
+  static size_t const default_num_threads =
+    tbb::global_control::active_value(tbb::global_control::max_allowed_parallelism);
   return static_cast<int>(default_num_threads);
 }
 } // namespace tbb_utility
@@ -215,7 +216,7 @@ main(int argc, char ** argv)
   //   type, and destruction of the "global_control" object pops
   //   the 'parameter' type and returns the active value
   //   to it's original state.
-  tbb::global_control BRAINSABC_tbb_global_context(
+  const tbb::global_control BRAINSABC_tbb_global_context(
     tbb::global_control::max_allowed_parallelism,
     std::min<int>(tbb_utility::get_default_num_threads(), itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads()));
 
@@ -296,7 +297,7 @@ main(int argc, char ** argv)
   timer.Start();
 
   // Directory separator string
-  std::string separator = std::string("/");
+  const std::string separator = std::string("/");
   //  separator[0] = MU_DIR_SEPARATOR; // always a '/' -- windows can handle
   // that fine...
 
@@ -320,8 +321,8 @@ main(int argc, char ** argv)
   (mu::Log::GetInstance())->SetOutputFileName(logfn.c_str());
 
   // Set up suffix string for images
-  std::string fmt = outputFormat;
-  std::string outext = ".mha";
+  const std::string fmt = outputFormat;
+  std::string       outext = ".mha";
   if (itksys::SystemTools::Strucmp(fmt.c_str(), "Nrrd") == 0)
   {
     outext = ".nrrd";
@@ -489,7 +490,7 @@ main(int argc, char ** argv)
     }
     muLogMacro(<< "Reading mask : " << templateMask << "...\n");
 
-    ReaderPointer imgreader = ReaderType::New();
+    const ReaderPointer imgreader = ReaderType::New();
     imgreader->SetFileName(templateMask.c_str());
 
     try
@@ -535,10 +536,10 @@ main(int argc, char ** argv)
       templateVolumes[elem.first].push_back(temp);
     }
   }
-  ByteImagePointerType ResampledToFirstFOVMask = nullptr;
-  std::vector<bool>    candidateDuplicatesList;
+  ByteImagePointerType    ResampledToFirstFOVMask = nullptr;
+  const std::vector<bool> candidateDuplicatesList;
   {
-    AtlasRegType::Pointer atlasreg = AtlasRegType::New();
+    const AtlasRegType::Pointer atlasreg = AtlasRegType::New();
 
     if (debuglevel > 0)
     {
@@ -581,7 +582,7 @@ main(int argc, char ** argv)
               muLogMacro(<< "\n***Reading image "
                          << ": " << (*imIt) << "...\n");
 
-              LocalReaderPointer imgreader = LocalReaderType::New();
+              const LocalReaderPointer imgreader = LocalReaderType::New();
               imgreader->SetFileName(imIt->c_str());
 
               try
@@ -594,11 +595,11 @@ main(int argc, char ** argv)
                 return EXIT_FAILURE;
               }
               // Initialize with file read in
-              FloatImagePointer typewiseEqualizedToFirstImage = imgreader->GetOutput();
+              const FloatImagePointer typewiseEqualizedToFirstImage = imgreader->GetOutput();
 
               // Normalize Image Intensities:
               muLogMacro(<< "Standardizing Intensities: ...\n");
-              FloatImagePointer curImage =
+              const FloatImagePointer curImage =
                 StandardizeMaskIntensity<FloatImageType, ByteImageType>(typewiseEqualizedToFirstImage,
                                                                         nullptr,
                                                                         0.0005,
@@ -610,8 +611,8 @@ main(int argc, char ** argv)
               intraSubjectRawImageMap[typeIt->first].push_back(curImage);
               muLogMacro(<< "done.\n");
               {
-                std::vector<unsigned int> unused_gridSize;
-                double                    localFilterTimeStep = filterTimeStep;
+                const std::vector<unsigned int> unused_gridSize;
+                double                          localFilterTimeStep = filterTimeStep;
                 if (localFilterTimeStep <= 0)
                 {
                   FloatImageType::SpacingType::ValueType minPixelSize =
@@ -625,7 +626,7 @@ main(int argc, char ** argv)
                     ((minPixelSize - std::numeric_limits<FloatImageType::SpacingType::ValueType>::epsilon()) /
                      (std::pow(2.0, static_cast<double>(FloatImageType::ImageDimension + 1))));
                 }
-                FloatImagePointer denoisedImage = DenoiseFiltering<FloatImageType>(
+                const FloatImagePointer denoisedImage = DenoiseFiltering<FloatImageType>(
                   curImage, filterMethod, filterIteration, localFilterTimeStep, unused_gridSize);
                 intraSubjectNoiseRemovedImageMap[typeIt->first].push_back(denoisedImage);
                 if (KeyImageFirstRead.IsNull()) // The very first image nees to be the key image.
@@ -637,7 +638,7 @@ main(int argc, char ** argv)
                 {
                   // DEBUG:  This code is for debugging purposes only;
                   using WriterType = itk::ImageFileWriter<FloatImageType>;
-                  WriterType::Pointer writer = WriterType::New();
+                  const WriterType::Pointer writer = WriterType::New();
                   writer->UseCompressionOn();
 
                   std::stringstream template_index_stream("");
@@ -649,7 +650,7 @@ main(int argc, char ** argv)
                   muLogMacro(<< "DEBUG:  Wrote image " << fn << std::endl);
                 }
               }
-              std::string intraSubjectTransformFileName =
+              const std::string intraSubjectTransformFileName =
                 std::string("")
                   .append(outputDir)
                   .append(GetStrippedImageFileNameExtension(imIt->c_str()))
@@ -681,7 +682,7 @@ main(int argc, char ** argv)
           {
             const std::string curAtlasName = FindPathFromAtlasXML(*(mapIt->second.begin()), atlasDefinitionPath);
             muLogMacro(<< "\n***Reading atlas image " << mapIt->first << ": " << curAtlasName << "...\n");
-            LocalReaderPointer imgreader = LocalReaderType::New();
+            const LocalReaderPointer imgreader = LocalReaderType::New();
             imgreader->SetFileName(curAtlasName.c_str());
             try
             {
@@ -693,7 +694,7 @@ main(int argc, char ** argv)
               return EXIT_FAILURE;
             }
             muLogMacro(<< "Standardizing Intensities: ...");
-            FloatImagePointer img_i =
+            const FloatImagePointer img_i =
               StandardizeMaskIntensity<FloatImageType, ByteImageType>(imgreader->GetOutput(),
                                                                       atlasBrainMask,
                                                                       0.0005,
@@ -712,10 +713,10 @@ main(int argc, char ** argv)
             if (debuglevel > 7)
             {
               using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
-              FloatWriterType::Pointer writer = FloatWriterType::New();
+              const FloatWriterType::Pointer writer = FloatWriterType::New();
 
-              std::stringstream write_atlas_index_stream("");
-              const std::string fn = std::string("")
+              const std::stringstream write_atlas_index_stream("");
+              const std::string       fn = std::string("")
                                        .append(outputDir)
                                        .append("RenormalizedAtlasTemplate_")
                                        .append(mapIt->first)
@@ -903,20 +904,20 @@ main(int argc, char ** argv)
         }
 
         regtimer.Stop();
-        itk::RealTimeClock::TimeStampType elapsedTime = regtimer.GetTotal();
+        const itk::RealTimeClock::TimeStampType elapsedTime = regtimer.GetTotal();
         muLogMacro(<< "Registration took " << elapsedTime << " " << regtimer.GetUnit() << std::endl);
 
-        AtlasRegType::MapOfTransformLists intraSubjectTransforms = atlasreg->GetIntraSubjectTransforms();
+        const AtlasRegType::MapOfTransformLists intraSubjectTransforms = atlasreg->GetIntraSubjectTransforms();
 
         // ::ResampleImages() and clip all images to FOV setting backgrounds to exactly zero
         {
-          MapOfMaskImageVectors intraSubjectRegisteredFOVMap;
-          MapOfMaskImageVectors intraSubjectRegisteredRawFOVMap;
+          const MapOfMaskImageVectors intraSubjectRegisteredFOVMap;
+          const MapOfMaskImageVectors intraSubjectRegisteredRawFOVMap;
           // muLogMacro(<< "ResampleImages");
-          ByteImagePointerType FOVMaskNoNoise = ResampleToFirstImageList(resamplerInterpolatorType,
-                                                                         intraSubjectNoiseRemovedImageMap,
-                                                                         intraSubjectTransforms,
-                                                                         intraSubjectRegisteredImageMap);
+          const ByteImagePointerType FOVMaskNoNoise = ResampleToFirstImageList(resamplerInterpolatorType,
+                                                                               intraSubjectNoiseRemovedImageMap,
+                                                                               intraSubjectTransforms,
+                                                                               intraSubjectRegisteredImageMap);
 
           ResampledToFirstFOVMask = ResampleToFirstImageList(resamplerInterpolatorType,
                                                              intraSubjectRawImageMap,
@@ -953,7 +954,7 @@ main(int argc, char ** argv)
 
           using ResampleType = itk::ResampleImageFilter<FloatImageType, FloatImageType>;
           using ResamplePointer = ResampleType::Pointer;
-          ResamplePointer resampler = ResampleType::New();
+          const ResamplePointer resampler = ResampleType::New();
 
           resampler->SetInput(GetMapVectorFirstElement(atlasOriginalImageList));
           resampler->SetTransform(atlasToSubjectPreSegmentationTransform);
@@ -963,14 +964,14 @@ main(int argc, char ** argv)
           resampler->SetDefaultPixelValue(0);
           resampler->Update();
           using ShortRescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
-          ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
+          const ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
           rescaler->SetInput(resampler->GetOutput());
           rescaler->Update();
 
           using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-          ShortWriterType::Pointer writer = ShortWriterType::New();
+          const ShortWriterType::Pointer writer = ShortWriterType::New();
 
-          std::string fn = outputDir + std::string("AtlasToSubjectInitialization_") + suffstr;
+          const std::string fn = outputDir + std::string("AtlasToSubjectInitialization_") + suffstr;
 
           writer->SetInput(rescaler->GetOutput());
           writer->SetFileName(fn.c_str());
@@ -984,20 +985,20 @@ main(int argc, char ** argv)
           {
             using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
 
-            ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
+            const ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
             rescaler->SetOutputMinimum(0);
             rescaler->SetOutputMaximum(MAX_IMAGE_OUTPUT_VALUE);
             rescaler->SetInput(elem.second[i]);
             rescaler->Update();
 
-            std::string fn = std::string("")
-                               .append(outputDir)
-                               .append(GetStrippedImageFileNameExtension(inputVolumeMap[elem.first][i]))
-                               .append(std::string("_registered"))
-                               .append(suffstr);
+            const std::string fn = std::string("")
+                                     .append(outputDir)
+                                     .append(GetStrippedImageFileNameExtension(inputVolumeMap[elem.first][i]))
+                                     .append(std::string("_registered"))
+                                     .append(suffstr);
 
             using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-            ShortWriterType::Pointer writer = ShortWriterType::New();
+            const ShortWriterType::Pointer writer = ShortWriterType::New();
 
             writer->SetInput(rescaler->GetOutput());
             writer->SetFileName(fn.c_str());
@@ -1058,7 +1059,7 @@ main(int argc, char ** argv)
 
   for (unsigned int segmentationLevel = 0; segmentationLevel < 1; segmentationLevel++)
   {
-    SegFilterType::Pointer segfilter = SegFilterType::New();
+    const SegFilterType::Pointer segfilter = SegFilterType::New();
     segfilter->SetUseKNN(useKNN);
 
     segfilter->SetUsePurePlugs(usePurePlugs);
@@ -1072,12 +1073,12 @@ main(int argc, char ** argv)
     {
       using LocalReaderType = itk::ImageFileReader<FloatImageType>;
       using LocalReaderPointer = LocalReaderType::Pointer;
-      LocalReaderPointer priorReader = LocalReaderType::New();
-      const std::string  curPriorAtlasName =
+      const LocalReaderPointer priorReader = LocalReaderType::New();
+      const std::string        curPriorAtlasName =
         FindPathFromAtlasXML(atlasDefinitionParser.GetPriorFilename(PriorNames[i]), atlasDefinitionPath);
       priorReader->SetFileName(curPriorAtlasName);
       priorReader->Update();
-      FloatImageType::Pointer temp = priorReader->GetOutput();
+      const FloatImageType::Pointer temp = priorReader->GetOutput();
       atlasOriginalPriors[i] = temp;
       // Set the index for the background values.
       if (PriorNames[i] == std::string("AIR"))
@@ -1188,7 +1189,7 @@ main(int argc, char ** argv)
           // using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType,
           // ShortImageType>;
           using RescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
-          RescaleType::Pointer caster = RescaleType::New();
+          const RescaleType::Pointer caster = RescaleType::New();
 
           caster->SetInput(mapIt.second[i]);
           caster->Update();
@@ -1197,7 +1198,7 @@ main(int argc, char ** argv)
           //    + suffstr;
 
           using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-          ShortWriterType::Pointer writer = ShortWriterType::New();
+          const ShortWriterType::Pointer writer = ShortWriterType::New();
 
           writer->SetInput(caster->GetOutput());
           writer->SetFileName(outFileNames[mapIt.first][i]);
@@ -1207,7 +1208,7 @@ main(int argc, char ** argv)
       }
     }
 
-    AtlasRegType::MapOfFloatImageVectors imgset = segfilter->GetRawCorrected();
+    const AtlasRegType::MapOfFloatImageVectors imgset = segfilter->GetRawCorrected();
     // Average together all the input images of a given type
     for (auto & elem : imgset)
     {
@@ -1219,22 +1220,22 @@ main(int argc, char ** argv)
         continue;
       }
 
-      FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
+      const FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
       // Write out average image.
       using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
-      RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();
+      const RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();
       rescaleInstensityFilter->SetOutputMinimum(0);
       rescaleInstensityFilter->SetOutputMaximum(4096);
       rescaleInstensityFilter->SetInput(avgImage);
       rescaleInstensityFilter->Update();
 
-      std::string avgFileName =
+      const std::string avgFileName =
         std::string("").append(outputDir).append(volumeType).append(std::string("_average")).append(suffstr);
 
       muLogMacro(<< "Writing averaged corrected input images... " << avgFileName << std::endl);
 
       using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-      ShortWriterType::Pointer writer = ShortWriterType::New();
+      const ShortWriterType::Pointer writer = ShortWriterType::New();
 
       writer->SetInput(rescaleInstensityFilter->GetOutput());
       writer->SetFileName(avgFileName);
@@ -1252,14 +1253,14 @@ main(int argc, char ** argv)
         {
           using ByteRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ByteImageType>;
 
-          ByteRescaleType::Pointer rescaler = ByteRescaleType::New();
+          const ByteRescaleType::Pointer rescaler = ByteRescaleType::New();
           rescaler->SetOutputMinimum(0);
           rescaler->SetOutputMaximum(255);
           rescaler->SetInput(elem.second[index]);
           rescaler->Update();
 
           using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-          ByteWriterType::Pointer writer = ByteWriterType::New();
+          const ByteWriterType::Pointer writer = ByteWriterType::New();
 
           const std::string fn = outputDir + GetStrippedImageFileNameExtension(templateVolumes[elem.first][index]) +
                                  std::string("_to_") +
@@ -1285,7 +1286,7 @@ main(int argc, char ** argv)
         // the primary
         // smart pointer is gaunteed to exists during lifespan of all aliases.
         muLogMacro(<< "Writing final atlas to subject template... " << postSegmentationTransformFileName << std::endl);
-        GenericTransformType::Pointer atlasToSubjectPostSegmentationTransform =
+        const GenericTransformType::Pointer atlasToSubjectPostSegmentationTransform =
           segfilter->GetTemplateGenericTransform();
         itk::WriteTransformToDisk<double, float>(atlasToSubjectPostSegmentationTransform,
                                                  postSegmentationTransformFileName);
@@ -1296,7 +1297,7 @@ main(int argc, char ** argv)
     muLogMacro(<< "Writing labels...\n");
     {
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      ByteWriterType::Pointer writer = ByteWriterType::New();
+      const ByteWriterType::Pointer writer = ByteWriterType::New();
 
       writer->SetInput(segfilter->GetOutput());
       std::string fn;
@@ -1317,7 +1318,7 @@ main(int argc, char ** argv)
     }
     {
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      ByteWriterType::Pointer writer = ByteWriterType::New();
+      const ByteWriterType::Pointer writer = ByteWriterType::New();
 
       std::string fn;
       if (outputLabels.empty())
@@ -1391,9 +1392,9 @@ main(int argc, char ** argv)
         fn = buf;
       }
       using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
-      FloatWriterType::Pointer writer = FloatWriterType::New();
+      const FloatWriterType::Pointer writer = FloatWriterType::New();
 
-      FloatImageType::Pointer currPosterior = segfilter->GetPosteriors()[probabilityIndex];
+      const FloatImageType::Pointer currPosterior = segfilter->GetPosteriors()[probabilityIndex];
       writer->SetInput(currPosterior);
       writer->SetFileName(fn.c_str());
       writer->UseCompressionOn();

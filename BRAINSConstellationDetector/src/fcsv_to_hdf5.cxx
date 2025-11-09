@@ -228,7 +228,7 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   wordexp_t p;
 
   wordexp(file_glob_string.c_str(), &p, 0);
-  char **                  w = p.we_wordv;
+  char * const * const     w = p.we_wordv;
   std::vector<std::string> files;
   files.reserve(p.we_wordc);
   for (unsigned int i = 0; i < p.we_wordc; i++)
@@ -373,7 +373,7 @@ main(int argc, char * argv[])
 
   print_arguments_for_user(cleanedGlobPattern, outputFile, landmarkTypesFile);
 
-  SubjectFilenameVector subjects = get_subject_filename_tuples(cleanedGlobPattern);
+  const SubjectFilenameVector subjects = get_subject_filename_tuples(cleanedGlobPattern);
 
   std::vector<std::string> subjectIDVec;
   for (auto & subject : subjects)
@@ -426,7 +426,7 @@ main(int argc, char * argv[])
   {
     std::string groupName("/");
     groupName += landmark_type.first; // baseLandmarks or newLandmarks
-    H5::Group group = output.createGroup(groupName);
+    const H5::Group group = output.createGroup(groupName);
 
     for (auto lit = byClassLandmarkMatrix[landmark_type.first].begin();
          lit != byClassLandmarkMatrix[landmark_type.first].end();
@@ -521,7 +521,8 @@ main(int argc, char * argv[])
        kit != byClassLandmarkMatrix["baseLandmarks"].end();
        ++kit)
   {
-    vnl_matrix<double> lmkVec = ((kit->second) - (byClassLandmarkMatrix["baseLandmarks"].begin()->second)).transpose();
+    const vnl_matrix<double> lmkVec =
+      ((kit->second) - (byClassLandmarkMatrix["baseLandmarks"].begin()->second)).transpose();
     Xi.update(lmkVec, (nb - 2) * dim, 0);
     ++nb;
   }
@@ -530,18 +531,18 @@ main(int argc, char * argv[])
 
   // Test Stuff
 
-  vnl_matrix<double> ratioPC1(numNewLandmarks, 1, 0.0);
-  vnl_matrix<double> ratioPC(numNewLandmarks, 1, 0.0);
+  vnl_matrix<double>       ratioPC1(numNewLandmarks, 1, 0.0);
+  const vnl_matrix<double> ratioPC(numNewLandmarks, 1, 0.0);
   for (unsigned int i = 0; i < numNewLandmarks; i++)
   {
     if (i > 0)
     {
-      vnl_matrix<double> lmkVec =
+      const vnl_matrix<double> lmkVec =
         ((byClassLandmarkMatrix["newLandmarks"][i - 1].second) - (byClassLandmarkMatrix["baseLandmarks"][0].second))
           .transpose();
 
       // instead of  " Xi = [Xi; lmkVec] " we write:
-      vnl_matrix<double> Xi_temp = Xi;
+      const vnl_matrix<double> Xi_temp = Xi;
       Xi.set_size(Xi.rows() + lmkVec.rows(), Xi.columns());
       Xi.update(Xi_temp, 0, 0);
       Xi.update(lmkVec, Xi_temp.rows(), 0);
@@ -592,9 +593,9 @@ main(int argc, char * argv[])
     vnl_matrix<double> Xi_demeaned(Xi.rows(), Xi.cols());
     Xi_demeaned = Xi - I_si;
 
-    vnl_symmetric_eigensystem<double> eig(Xi_demeaned * Xi_demeaned.transpose());
-    vnl_matrix<double>                V{ eig.V };
-    vnl_matrix<double>                D{ eig.D.as_matrix() };
+    const vnl_symmetric_eigensystem<double> eig(Xi_demeaned * Xi_demeaned.transpose());
+    const vnl_matrix<double>                V{ eig.V };
+    const vnl_matrix<double>                D{ eig.D.as_matrix() };
 
     ratioPC1(i, 0) = D.absolute_value_max() / D.absolute_value_sum();
 
@@ -608,7 +609,7 @@ main(int argc, char * argv[])
     // tolXi = 100;
     // numPCs = rank(Xi_demeaned, tolXi);
 
-    unsigned int numPCs = 10;
+    const unsigned int numPCs = 10;
     W.push_back(V.extract(V.rows(), numPCs, 0, V.cols() - numPCs));
 
     /*  //////PRINT FOR TEST/////
@@ -622,8 +623,8 @@ main(int argc, char * argv[])
     // Training phase-2
     // Train optimal linear relationship between already known landmark
     // vector space and the EPCA landmark to be estimated in each iteration.
-    vnl_matrix<double> Zi = W[i].transpose() * Xi_demeaned; // PCA mapped space
-    vnl_matrix<double> Yi =
+    const vnl_matrix<double> Zi = W[i].transpose() * Xi_demeaned; // PCA mapped space
+    const vnl_matrix<double> Yi =
       (byClassLandmarkMatrix["newLandmarks"][i].second) - (byClassLandmarkMatrix["baseLandmarks"][0].second);
 
     const vnl_matrix<double>   tmp = vnl_matrix_inverse<double>(Zi * Zi.transpose().as_ref()).as_matrix();
@@ -632,8 +633,8 @@ main(int argc, char * argv[])
     M.push_back(W[i] * Ci);
 
     // Compute the estimation errors for training datasets
-    vnl_matrix<double> Xi_t((numBaseLandmarks + i - 1) * dim, 1, 0.0);
-    vnl_matrix<double> x1_t = byClassLandmarkMatrix["baseLandmarks"][0].second;
+    vnl_matrix<double>       Xi_t((numBaseLandmarks + i - 1) * dim, 1, 0.0);
+    const vnl_matrix<double> x1_t = byClassLandmarkMatrix["baseLandmarks"][0].second;
 
     vnl_matrix<double> I_si_t((Xi_mean.rows()) * (numBaseLandmarks + i - 1),
                               (Xi_mean.cols()) * 1); //
@@ -793,7 +794,7 @@ main(int argc, char * argv[])
   LLSModel::LLSSearchRadiiType searchRadii;
   for (unsigned int i = 0; i < numNewLandmarks; i++)
   {
-    std::string         lmName(byClassLandmarkMatrix["newLandmarks"][i].first);
+    const std::string   lmName(byClassLandmarkMatrix["newLandmarks"][i].first);
     std::vector<double> curVec(dim);
     for (unsigned int d = 0; d < dim; d++)
     {

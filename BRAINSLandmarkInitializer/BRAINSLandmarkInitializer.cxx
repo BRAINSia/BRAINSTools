@@ -93,7 +93,7 @@ ComputeIsotropicScaleFactor(const LandmarkPointContainer & fixedLmks,
   const auto & mov_ref = movingLmks[0];
   for (size_t i = 1; i < numLmks; ++i)
   {
-    double weight = (has_lmk_weights) ? landmarkWgts[i] : 1.0;
+    const double weight = (has_lmk_weights) ? landmarkWgts[i] : 1.0;
     fix_dist_sum += weight * fix_ref.EuclideanDistanceTo(fixedLmks[i]);
     mov_dist_sum += weight * mov_ref.EuclideanDistanceTo(movingLmks[i]);
   }
@@ -117,7 +117,7 @@ PreProcessLandmarkFiles(const std::string &      inputFixedLandmarkFilename,
   /** read in *fcsv file */
   /** check four landmarks */
   std::cout << "Reading fixed landmarks set: " << inputFixedLandmarkFilename << std::endl;
-  LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk(inputFixedLandmarkFilename);
+  const LandmarksMapType fixedLandmarks = ReadSlicer3toITKLmk(inputFixedLandmarkFilename);
 
   std::cout << "Reading moving landmarks set: " << inputMovingLandmarkFilename << std::endl;
   LandmarksMapType movingLandmarks = ReadSlicer3toITKLmk(inputMovingLandmarkFilename);
@@ -174,7 +174,7 @@ InitializeTransform(const LandmarkPointContainer & fixedLmks,
 
   using LandmarkBasedInitializerType = itk::LandmarkBasedTransformInitializer<LocalTransformType, ImageType, ImageType>;
 
-  typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+  const typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
 
 
   /** set weights */
@@ -224,7 +224,7 @@ main(int argc, char * argv[])
   if (!inputReferenceImageFilename.empty())
   {
     using ReaderType = itk::ImageFileReader<ImageType>;
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(inputReferenceImageFilename);
     try
     {
@@ -277,7 +277,7 @@ main(int argc, char * argv[])
     if (outputTransformType == "Similarity3DTransform")
     { // Now Add isotropic scaling
       using Similarity3DTransformType = itk::Similarity3DTransform<ParameterValueType>;
-      Similarity3DTransformType::Pointer simTransform = Similarity3DTransformType::New();
+      const Similarity3DTransformType::Pointer simTransform = Similarity3DTransformType::New();
 
       simTransform->SetMatrix(transform->GetMatrix());
       const double isotropic_scale_factor = ComputeIsotropicScaleFactor(fixedLmks, movingLmks, landmarkWgts);

@@ -102,7 +102,7 @@ AtlasDefinition::TissueTypes()
 void
 AtlasDefinition::XMLStart(const char * el)
 {
-  std::string El(el);
+  const std::string El(el);
 
   this->m_XMLElementStack.push_back(El);
   if (El == "Prior")
@@ -114,10 +114,10 @@ AtlasDefinition::XMLStart(const char * el)
 double
 AtlasDefinition ::StrToD(const char * str, const char * message) const
 {
-  char * last = nullptr;
-  double rval = strtod(str, &last);
+  char *       last = nullptr;
+  const double rval = std::strtod(str, &last);
 
-  if (str == static_cast<const char *>(last))
+  if (str == last)
   {
     std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
     throw;
@@ -128,10 +128,10 @@ AtlasDefinition ::StrToD(const char * str, const char * message) const
 long
 AtlasDefinition ::StrToL(const char * str, const char * message) const
 {
-  char * last = nullptr;
-  long   rval = strtol(str, &last, 10);
+  char *     last = nullptr;
+  const long rval = std::strtol(str, &last, 10);
 
-  if (str == static_cast<const char *>(last))
+  if (str == last)
   {
     std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
     throw;
@@ -142,8 +142,8 @@ AtlasDefinition ::StrToL(const char * str, const char * message) const
 void
 AtlasDefinition::XMLEnd(const char * el)
 {
-  std::string  El(el);
-  const char * start = this->m_LastXMLString.c_str();
+  const std::string  El(el);
+  const char * const start = this->m_LastXMLString.c_str();
 
   // pop the current element name off the stack.
   this->m_XMLElementStack.pop_back();
@@ -249,9 +249,9 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
     std::cout << "ERROR:  XML file " << XMLFilename << " can not be read properly " << std::flush << std::endl;
     throw;
   }
-  std::streamsize fSize = itksys::SystemTools::FileLength(XMLFilename.c_str());
+  const std::streamsize fSize = itksys::SystemTools::FileLength(XMLFilename.c_str());
 
-  XML_Parser parser = XML_ParserCreate(nullptr);
+  const XML_Parser parser = XML_ParserCreate(nullptr);
   XML_SetUserData(parser, static_cast<void *>(this));
   XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
   XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
@@ -293,7 +293,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 void
 AtlasDefinition::DebugPrint()
 {
-  itk::NumberToString<double> doubleConvert;
+  const itk::NumberToString<double> doubleConvert;
   std::cout << "<Atlas>" << std::endl;
 
   for (auto & elem : m_TemplateVolumes)

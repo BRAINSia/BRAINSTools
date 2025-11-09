@@ -62,7 +62,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
 {
   std::cout << "\nEstimating MSP..." << std::endl;
 
-  VersorRigidTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorRigidTransformType::New();
+  const VersorRigidTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorRigidTransformType::New();
   this->m_orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
   const SImagePointType eyeFixed_lmk_CenterOfHeadMass =
     orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("CM"));
@@ -84,7 +84,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
   {
     const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
-      StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      const StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);
       statisticsFilter->Update();
       return statisticsFilter->GetMinimum();
@@ -155,7 +155,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
   }
 
   // INFO: Compute Center of Head Mass differently
-  VersorRigidTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorRigidTransformType::New();
+  const VersorRigidTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorRigidTransformType::New();
   this->m_eyeFixed2msp_img_tfm->GetInverse(local_eyeFixed2msp_lmk_tfm);
 
   SImageType::PointType msp_center_of_head_mass =
@@ -293,7 +293,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
       std::cout << "Processing AC..." << std::endl;
 
       // RPtoAC = this->m_InputTemplateModel.GetRPtoXMean( "AC" );
-      SImageType::PointType::VectorType RPtoAC = FindVectorFromPointAndVectors(
+      const SImageType::PointType::VectorType RPtoAC = FindVectorFromPointAndVectors(
         RPtoCEC, this->m_InputTemplateModel.GetRPtoCECMean(), this->m_InputTemplateModel.GetRPtoXMean("AC"), 1);
       double cc_AC_Max = 0;
       if (mapHasKey(m_orig_lmks_forced, "AC"))
@@ -328,7 +328,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
       std::cout << "Processing PC..." << std::endl;
 
       // RPtoPC = this->m_InputTemplateModel.GetRPtoXMean( "PC" );
-      SImageType::PointType::VectorType RPtoPC = FindVectorFromPointAndVectors(
+      const SImageType::PointType::VectorType RPtoPC = FindVectorFromPointAndVectors(
         RPtoCEC, this->m_InputTemplateModel.GetRPtoCECMean(), this->m_InputTemplateModel.GetRPtoXMean("PC"), 1);
       double cc_PC_Max = 0;
       if (mapHasKey(m_orig_lmks_forced, "PC"))
@@ -360,7 +360,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
 
       if (globalImagedebugLevel > 1)
       {
-        std::string BrandedImageAName(this->m_ResultsDir + "/BrandedImage.png");
+        const std::string BrandedImageAName(this->m_ResultsDir + "/BrandedImage.png");
 
         MakeBrandeddebugImage(this->m_msp_img.GetPointer(),
                               this->m_InputTemplateModel,
@@ -375,7 +375,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
                               msp_lmks_algo_found["VN4"]);
         if (globalImagedebugLevel > 3)
         {
-          std::string LabelImageAName(this->m_ResultsDir + "/MSP_Mask.nii.gz");
+          const std::string LabelImageAName(this->m_ResultsDir + "/MSP_Mask.nii.gz");
           MakeLabelImage(this->m_msp_img,
                          msp_lmks_algo_found["RP"],
                          msp_lmks_algo_found["AC"],
@@ -426,7 +426,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
       {
         if (globalImagedebugLevel > 3)
         {
-          std::string ResampledMaskmageName(this->m_ResultsDir + "/Resampled_Mask.nii.gz");
+          const std::string ResampledMaskmageName(this->m_ResultsDir + "/Resampled_Mask.nii.gz");
           MakeLabelImage(this->m_eyeFixed_img,
                          msp_lmks_algo_found["RP"],
                          msp_lmks_algo_found["AC"],
@@ -434,7 +434,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
                          msp_lmks_algo_found["VN4"],
                          ResampledMaskmageName);
 
-          std::string OrigMaskImageName(this->m_ResultsDir + "/Orig_Mask.nii.gz");
+          const std::string OrigMaskImageName(this->m_ResultsDir + "/Orig_Mask.nii.gz");
           MakeLabelImage(this->m_eyeFixed_img,
                          this->m_orig_lmks_updated.at("RP"),
                          this->m_orig_lmks_updated.at("AC"),
@@ -451,7 +451,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
       this->m_orig2msp_img_tfm = this->Compute_orig2msp_img_tfm(
         this->m_orig_lmks_updated["RP"], this->m_orig_lmks_updated["AC"], this->m_orig_lmks_updated["PC"]);
       // NOTE: LandmarkTransforms are inverse of ImageTransforms, (You pull images, you push landmarks)
-      VersorRigidTransformType::Pointer orig2msp_lmk_tfm =
+      const VersorRigidTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform(this->m_orig2msp_img_tfm.GetPointer());
 
 
@@ -485,11 +485,11 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
         // order: RP, AC, PC, VN4, LE, RE, ...
         // Note this order should comply with the order we defined in LLS model
         std::vector<std::string> processingList = base_lmk_names;
-        unsigned int             numBaseLandmarks = processingList.size();
+        const unsigned int       numBaseLandmarks = processingList.size();
         // Initialize the iteratively updated lmks (addinga new lmk each time through
         // the loop, from the initial 6 main lmks.
 
-        unsigned int dim = 3;
+        const unsigned int dim = 3;
         for (unsigned int LlsMat_idx = 1; LlsMat_idx <= m_LlsMatrices.size(); ++LlsMat_idx)
         {
           // The processing order is indicated by the length of EPCA coefficient

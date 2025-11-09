@@ -62,7 +62,7 @@ main(int argc, char ** argv)
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
   using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
   using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
-  VersorRigid3DTransformType::Pointer        versorRigidTransform = CreateTransform<VersorRigid3DTransformType>();
+  const VersorRigid3DTransformType::Pointer  versorRigidTransform = CreateTransform<VersorRigid3DTransformType>();
   VersorRigid3DTransformType::InputPointType center;
   VersorRigid3DTransformType::AxisType       axis;
 
@@ -80,7 +80,7 @@ main(int argc, char ** argv)
   versorRigidName += "/VersorRigidTransform.txt";
   itk::WriteTransformToDisk<double>(versorRigidTransform.GetPointer(), versorRigidName);
 
-  ScaleVersor3DTransformType::Pointer          scaleVersorTransform = CreateTransform<ScaleVersor3DTransformType>();
+  const ScaleVersor3DTransformType::Pointer    scaleVersorTransform = CreateTransform<ScaleVersor3DTransformType>();
   ScaleVersor3DTransformType::OutputVectorType translation;
 
   translation[0] = 0.5;
@@ -108,7 +108,8 @@ main(int argc, char ** argv)
   scaleVersorName += "/ScaleVersorTransform.txt";
   itk::WriteTransformToDisk<double>(scaleVersorTransform, scaleVersorName);
 
-  ScaleSkewVersor3DTransformType::Pointer scaleSkewVersorTransform = CreateTransform<ScaleSkewVersor3DTransformType>();
+  const ScaleSkewVersor3DTransformType::Pointer scaleSkewVersorTransform =
+    CreateTransform<ScaleSkewVersor3DTransformType>();
   translation[0] = -0.5;
   translation[1] = 0.6;
   translation[2] = -0.73;
@@ -134,7 +135,7 @@ main(int argc, char ** argv)
   itk::WriteTransformToDisk<double>(scaleSkewVersorTransform, scaleSkewVersorName);
 
   using AffineTransformType = itk::AffineTransform<double, 3>;
-  AffineTransformType::Pointer affineTransform = CreateTransform<AffineTransformType>();
+  const AffineTransformType::Pointer affineTransform = CreateTransform<AffineTransformType>();
 
   translation[0] = -1.5;
   translation[1] = -0.7;
@@ -181,7 +182,7 @@ main(int argc, char ** argv)
   origin[1] = -10;
   origin[2] = 10;
 
-  ImageType::Pointer testImage = itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);
+  const ImageType::Pointer testImage = itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);
 
   vnl_random randgen;
   randgen.reseed(getpid());
@@ -194,7 +195,7 @@ main(int argc, char ** argv)
   testImageName += "/TransformConvertTestImage.nii.gz";
   itkUtil::WriteImage<ImageType>(testImage, testImageName);
 
-  BSplineDeformableTransformType::Pointer bsplineTransform = CreateTransform<BSplineDeformableTransformType>();
+  const BSplineDeformableTransformType::Pointer bsplineTransform = CreateTransform<BSplineDeformableTransformType>();
 
   translation[0] = -1.0;
   translation[1] = 0.6;

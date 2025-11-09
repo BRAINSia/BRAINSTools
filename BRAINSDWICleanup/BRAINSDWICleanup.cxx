@@ -40,7 +40,7 @@ template <typename TImage>
 TImage *
 AllocVecImage(const itk::ImageBase<TImage::ImageDimension> * templateImage, unsigned long vecSize)
 {
-  typename TImage::Pointer p1 = TImage::New();
+  const typename TImage::Pointer p1 = TImage::New();
   p1->CopyInformation(templateImage);
   p1->SetRegions(templateImage->GetLargestPossibleRegion());
   p1->SetNumberOfComponentsPerPixel(vecSize);
@@ -58,7 +58,7 @@ public:
   bool
   operator()(const int & value)
   {
-    for (int i : valueList)
+    for (const int i : valueList)
     {
       if (i == value)
       {
@@ -92,7 +92,7 @@ main(int argc, char * argv[])
     std::cerr << "Missing output NRRD file name" << std::endl;
     return 1;
   }
-  ReaderType::Pointer imageReader = ReaderType::New();
+  const ReaderType::Pointer imageReader = ReaderType::New();
   imageReader->SetFileName(inputVolume);
   try
   {
@@ -104,10 +104,10 @@ main(int argc, char * argv[])
     throw;
   }
   std::cout << "Read Input Image..." << std::endl;
-  NrrdImageType::Pointer inImage = imageReader->GetOutput();
+  const NrrdImageType::Pointer inImage = imageReader->GetOutput();
 
-  unsigned int numInputGradients = inImage->GetNumberOfComponentsPerPixel();
-  unsigned int newGradientCount = numInputGradients - badGradients.size();
+  const unsigned int numInputGradients = inImage->GetNumberOfComponentsPerPixel();
+  const unsigned int newGradientCount = numInputGradients - badGradients.size();
 
   //
   // make an index list containing the list of gradients/volumes to keep.
@@ -117,7 +117,7 @@ main(int argc, char * argv[])
     keepIndices.push_back(i); // add all indicies
   }
   // remove the indices in badGradients
-  inBadList pred(badGradients);
+  const inBadList pred(badGradients);
   keepIndices.remove_if(pred);
 
   if (keepIndices.size() != newGradientCount)
@@ -129,7 +129,7 @@ main(int argc, char * argv[])
   }
 
   // create output volume
-  NrrdImageType::Pointer outImage = AllocVecImage<NrrdImageType>(inImage, newGradientCount);
+  const NrrdImageType::Pointer outImage = AllocVecImage<NrrdImageType>(inImage, newGradientCount);
 
   // copy input vector pixels to output, skipping the bad gradients.
   itk::ImageRegionConstIterator<NrrdImageType> inIt(inImage, inImage->GetLargestPossibleRegion());
@@ -169,7 +169,7 @@ main(int argc, char * argv[])
   outImage->SetMetaDataDictionary(nrrdMetaDataValidator.GetMetaDataDictionary());
 
   std::cout << "Write Output Image..." << std::endl;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  const WriterType::Pointer nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(outImage);

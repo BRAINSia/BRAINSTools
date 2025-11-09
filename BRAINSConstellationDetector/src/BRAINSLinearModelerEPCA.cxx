@@ -66,7 +66,7 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
     auto             itLmk = lmkMap.begin();
     while (itLmk != lmkMap.end())
     {
-      std::string name = itLmk->first;
+      const std::string name = itLmk->first;
       // Save base landmarks
       if ((name.compare("AC") == 0) || (name.compare("PC") == 0) || (name.compare("RP") == 0) ||
           (name.compare("VN4") == 0) || (name.compare("LE") == 0) || (name.compare("RE") == 0))
@@ -85,8 +85,8 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
   // Check if the number of landmarks are the same in each landmark list file
   // First check for number of base landmarks
   {
-    auto         itDB = baseLmkDB.begin();
-    unsigned int numLmks = itDB->second.size();
+    auto               itDB = baseLmkDB.begin();
+    const unsigned int numLmks = itDB->second.size();
     while (itDB != baseLmkDB.end())
     {
       if (itDB->second.size() != numLmks)
@@ -100,8 +100,8 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
 
   // Then check for the number of EPCA landmarks
   {
-    auto         itDB = EPCALmkDB.begin();
-    unsigned int numLmks = itDB->second.size();
+    auto               itDB = EPCALmkDB.begin();
+    const unsigned int numLmks = itDB->second.size();
     while (itDB != EPCALmkDB.end())
     {
       if (itDB->second.size() != numLmks)
@@ -142,8 +142,8 @@ InitializeXi(LmkDBType & baseLmkDB)
       auto           itDataset = datasetMap.begin();
       while (itDataset != datasetMap.end())
       {
-        std::string     datasetId = itDataset->first;
-        const PointType lmkRP(baseLmkDB["RP"][datasetId]);
+        const std::string datasetId = itDataset->first;
+        const PointType   lmkRP(baseLmkDB["RP"][datasetId]);
         for (unsigned int dim = 0; dim < PointDim; ++dim)
         {
           X_i(k * PointDim + dim, j) = itDataset->second[dim] - lmkRP[dim];
@@ -164,7 +164,7 @@ void
 ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBType & baseLmkDB, LmkDBType & EPCALmkDB)
 {
   // Deliberately add the following line to eliminate the "unused warning"
-  MatrixType bogusMMatrix;
+  const MatrixType bogusMMatrix;
 
   MMatrixMap["bogus M_i matrix"] = bogusMMatrix;
 
@@ -181,7 +181,7 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
     // Update X_i
     if (k > 0)
     {
-      MatrixType X_iLast(X_i);
+      const MatrixType X_iLast(X_i);
       X_i.set_size(X_iLast.rows() + PointDim, X_iLast.columns());
       for (unsigned int row = 0; row < X_iLast.rows(); ++row)
       {
@@ -194,8 +194,8 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
       auto               itDataset = datasetMap.begin();
       while (itDataset != datasetMap.end())
       {
-        std::string     datasetId = itDataset->first;
-        const PointType lmkRP(baseLmkDB["RP"][datasetId]);
+        const std::string datasetId = itDataset->first;
+        const PointType   lmkRP(baseLmkDB["RP"][datasetId]);
         for (unsigned int dim = 0; dim < PointDim; ++dim)
         {
           X_i((numBaseLmks + k - 2) * PointDim + dim, j) = itDataset->second[dim] - lmkRP[dim];
@@ -206,13 +206,13 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
     }
 
     // Compute si
-    VectorType s_i(ComputeSVector(X_i));
+    const VectorType s_i(ComputeSVector(X_i));
     SVectorMap[EPCALmkDB.begin()->first] = s_i;
 
     // remove I_si of X_i
-    MatrixType I_si(ComputeIsiMatrix(X_i.rows(), X_i.columns(), s_i));
+    const MatrixType I_si(ComputeIsiMatrix(X_i.rows(), X_i.columns(), s_i));
 
-    MatrixType X_i0Mean = X_i - I_si;
+    const MatrixType X_i0Mean = X_i - I_si;
 
     // Compute W_i
     MatrixType         W_i; // principal components/eigenvectors of X_i*X_i'

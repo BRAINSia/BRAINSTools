@@ -31,20 +31,20 @@ Resample(const std::string & inputVolume, const std::string & outputVolume, cons
   typename ImageType::Pointer inputImage;
   inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
 
-  typename ImageType::RegionType  region = inputImage->GetLargestPossibleRegion();
-  typename ImageType::SizeType    size(region.GetSize());
-  typename ImageType::SpacingType spacing(inputImage->GetSpacing());
+  const typename ImageType::RegionType region = inputImage->GetLargestPossibleRegion();
+  typename ImageType::SizeType         size(region.GetSize());
+  typename ImageType::SpacingType      spacing(inputImage->GetSpacing());
 
   using FilterType = typename itk::ResampleImageFilter<ImageType, ImageType>;
-  typename FilterType::Pointer filter(FilterType::New());
+  const typename FilterType::Pointer filter(FilterType::New());
 
   using TransformType = typename itk::IdentityTransform<double, ImageType::ImageDimension>;
-  typename TransformType::Pointer transform(TransformType::New());
+  const typename TransformType::Pointer transform(TransformType::New());
   transform->SetIdentity();
   filter->SetTransform(transform);
 
   using InterpolatorType = typename itk::LinearInterpolateImageFunction<ImageType, double>;
-  typename InterpolatorType::Pointer interpolator(InterpolatorType::New());
+  const typename InterpolatorType::Pointer interpolator(InterpolatorType::New());
   filter->SetInterpolator(interpolator);
   for (unsigned i = 0; i < 3; i++)
   {

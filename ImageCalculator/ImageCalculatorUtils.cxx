@@ -45,9 +45,8 @@ ReplaceSubWithSub(std::string & s, const char * o, const char * n)
 {
   if (!s.empty())
   {
-    std::string from(o);
-
-    std::string            to(n);
+    const std::string      from(o);
+    const std::string      to(n);
     std::string::size_type start = 0;
     while ((start = s.find(from, start)) != std::string::npos)
     {
@@ -88,7 +87,7 @@ ImageCalculatorProcess3D(const std::string & InType, MetaCommand & command);
 bool
 ValidPixelType(const std::string & PixelType)
 {
-  const char * s = PixelType.c_str();
+  const char * const s = PixelType.c_str();
 
   // check to see if valid type
   if ((CompareNoCase(s, std::string("UCHAR"))) && (CompareNoCase(s, std::string("SHORT"))) &&

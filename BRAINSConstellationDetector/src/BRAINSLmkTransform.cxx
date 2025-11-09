@@ -114,14 +114,14 @@ main(int argc, char * argv[])
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
   // Read in landmarks
-  PointSetType::Pointer sourceLandmarks = PointSetType::New();
-  PointSetType::Pointer targetLandmarks = PointSetType::New();
+  const PointSetType::Pointer sourceLandmarks = PointSetType::New();
+  const PointSetType::Pointer targetLandmarks = PointSetType::New();
   {
-    PointSetType::PointsContainer::Pointer sourceLandmarkContainer = sourceLandmarks->GetPoints();
-    PointSetType::PointsContainer::Pointer targetLandmarkContainer = targetLandmarks->GetPoints();
-    PointIdType                            id = itk::NumericTraits<PointIdType>::ZeroValue();
-    LandmarksVectorType                    targetLandmarksVec = LoadLandmarks(inputMovingLandmarks);
-    LandmarksVectorType                    sourceLandmarksVec = LoadLandmarks(inputFixedLandmarks);
+    const PointSetType::PointsContainer::Pointer sourceLandmarkContainer = sourceLandmarks->GetPoints();
+    const PointSetType::PointsContainer::Pointer targetLandmarkContainer = targetLandmarks->GetPoints();
+    PointIdType                                  id = itk::NumericTraits<PointIdType>::ZeroValue();
+    LandmarksVectorType                          targetLandmarksVec = LoadLandmarks(inputMovingLandmarks);
+    LandmarksVectorType                          sourceLandmarksVec = LoadLandmarks(inputFixedLandmarks);
 
     // Sanity check
     if (targetLandmarksVec.size() != sourceLandmarksVec.size())
@@ -139,14 +139,14 @@ main(int argc, char * argv[])
   }
 
   // Estimate affine transform
-  AffineTransformType::Pointer affine = AffineTransformType::New();
+  const AffineTransformType::Pointer affine = AffineTransformType::New();
   {
-    TPSTransformType::Pointer tps = TPSTransformType::New();
+    const TPSTransformType::Pointer tps = TPSTransformType::New();
     tps->SetSourceLandmarks(sourceLandmarks);
     tps->SetTargetLandmarks(targetLandmarks);
     tps->ComputeWMatrix();
-    itk::Matrix<double, ImageDimension, ImageDimension> aMatrix(tps->GetAMatrix());
-    itk::Vector<double, ImageDimension>                 bVector;
+    const itk::Matrix<double, ImageDimension, ImageDimension> aMatrix(tps->GetAMatrix());
+    itk::Vector<double, ImageDimension>                       bVector;
     bVector.SetVnlVector(vnl_vector<double>(tps->GetBVector()));
     itk::Matrix<double, ImageDimension, ImageDimension> identity;
     identity.SetIdentity();
@@ -157,7 +157,7 @@ main(int argc, char * argv[])
   // Write output aligning transform
   if (outputAffineTransform.compare("") != 0)
   {
-    TransformWriterType::Pointer writer = TransformWriterType::New();
+    const TransformWriterType::Pointer writer = TransformWriterType::New();
     writer->SetInput(affine);
     writer->SetFileName(outputAffineTransform);
     writer->SetUseCompression(true);
@@ -175,7 +175,7 @@ main(int argc, char * argv[])
   // Read in images
   ImageType::Pointer movingImage;
   {
-    ImageReaderType::Pointer reader = ImageReaderType::New();
+    const ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName(inputMovingVolume);
     try
     {
@@ -192,7 +192,7 @@ main(int argc, char * argv[])
 
   ImageType::Pointer referenceImage;
   {
-    ImageReaderType::Pointer reader = ImageReaderType::New();
+    const ImageReaderType::Pointer reader = ImageReaderType::New();
     reader->SetFileName(inputReferenceVolume);
     try
     {
@@ -208,9 +208,9 @@ main(int argc, char * argv[])
   }
 
   // Resample moving image
-  ResamplerType::Pointer resampler = ResamplerType::New();
+  const ResamplerType::Pointer resampler = ResamplerType::New();
   {
-    InterpolatorType::Pointer interpolator = InterpolatorType::New();
+    const InterpolatorType::Pointer interpolator = InterpolatorType::New();
     resampler->SetUseReferenceImage(true);
     resampler->SetInput(movingImage);
     resampler->SetReferenceImage(referenceImage);
@@ -221,7 +221,7 @@ main(int argc, char * argv[])
   // Write aligned image
   if (outputResampledVolume.compare("") != 0)
   {
-    ImageWriterType::Pointer writer = ImageWriterType::New();
+    const ImageWriterType::Pointer writer = ImageWriterType::New();
     writer->SetInput(resampler->GetOutput());
     writer->SetFileName(outputResampledVolume);
     writer->SetUseCompression(true);
@@ -255,10 +255,10 @@ LoadLandmarks(const std::string & filename)
   {
     if (line.compare(0, 1, "#") != 0)
     {
-      unsigned int i = 0;
-      int          pos1 = line.find(',', 0);
-      int          pos2 = 0;
-      std::string  name = line.substr(0, pos1);
+      unsigned int      i = 0;
+      int               pos1 = line.find(',', 0);
+      int               pos2 = 0;
+      const std::string name = line.substr(0, pos1);
       if (name.compare("CM") == 0) // exclude CM
       {
         continue;

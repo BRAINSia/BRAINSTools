@@ -45,7 +45,7 @@ typename ImageType::Pointer
 ExtractImage(typename InputImageType::Pointer & inputImage, unsigned int InputImageTimeIndex)
 {
   using ExtractImageFilterType = typename itk::ExtractImageFilter<InputImageType, ImageType>;
-  typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+  const typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
   extractImageFilter->SetDirectionCollapseToSubmatrix();
 
   // fixedVolumeReader->GetOutput();
@@ -84,7 +84,7 @@ typename ImageType::Pointer
 DoMedian(typename ImageType::Pointer & input, typename ImageType::SizeType indexRadius)
 {
   using MedianFilterType = typename itk::MedianImageFilter<ImageType, ImageType>;
-  typename MedianFilterType::Pointer medianFilter = MedianFilterType::New();
+  const typename MedianFilterType::Pointer medianFilter = MedianFilterType::New();
 
   medianFilter->SetRadius(indexRadius);
   medianFilter->SetInput(input);
@@ -129,7 +129,7 @@ main(int argc, char * argv[])
     std::cout << " " << itk::MultiThreaderBase::GetGlobalDefaultNumberOfThreads() << std::endl;
   }
 
-  std::string localInitializeTransformMode = initializeTransformMode;
+  const std::string localInitializeTransformMode = initializeTransformMode;
 
   std::vector<int> BSplineGridSize(3, 0);
   {
@@ -386,7 +386,7 @@ main(int argc, char * argv[])
     }
     {
       using ROIAutoType = itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3>>;
-      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractFixedVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
       ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -395,7 +395,7 @@ main(int argc, char * argv[])
     }
     {
       using ROIAutoType = itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3>>;
-      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractMovingVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
       ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -434,7 +434,7 @@ main(int argc, char * argv[])
   if (!initialTransform.empty())
   {
     currentGenericTransform = CompositeTransformType::New();
-    GenericTransformType::Pointer movingInitialTransform = itk::ReadTransformFromDisk(initialTransform);
+    const GenericTransformType::Pointer movingInitialTransform = itk::ReadTransformFromDisk(initialTransform);
     currentGenericTransform->AddTransform(movingInitialTransform);
   }
 
@@ -447,7 +447,7 @@ main(int argc, char * argv[])
 
   {
     using HelperType = itk::BRAINSFitHelper;
-    HelperType::Pointer myHelper = HelperType::New();
+    const HelperType::Pointer myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume(extractFixedVolume);
     myHelper->SetMovingVolume(extractMovingVolume);
@@ -499,7 +499,7 @@ main(int argc, char * argv[])
     myHelper->SetWriteOutputTransformInFloat(writeOutputTransformInFloat);
 
     // HACK: create a flag for normalization
-    bool NormalizeInputImages = false;
+    const bool NormalizeInputImages = false;
     myHelper->SetNormalizeInputImages(NormalizeInputImages);
 
     if (debugLevel > 7)
@@ -527,7 +527,7 @@ main(int argc, char * argv[])
     {
       itkGenericExceptionMacro(<< "ERROR: Output transform is null.");
     }
-    CompositeTransformType::Pointer outputComposite =
+    const CompositeTransformType::Pointer outputComposite =
       static_cast<CompositeTransformType *>(currentGenericTransform.GetPointer());
 
     MovingVolumeType::ConstPointer preprocessedMovingVolume = myHelper->GetPreprocessedMovingVolume();
@@ -588,7 +588,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<float, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
@@ -599,7 +599,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<signed short, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
@@ -610,7 +610,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<unsigned short, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
@@ -621,7 +621,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<signed int, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
@@ -632,7 +632,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<unsigned int, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);
@@ -643,7 +643,7 @@ main(int argc, char * argv[])
       // FixedVolumeType::ImageDimension>,
       // FixedVolumeType>(resampledImage,outputVolume);
       using WriteOutImageType = itk::Image<unsigned char, FixedVolumeType::ImageDimension>;
-      WriteOutImageType::Pointer CastImage =
+      const WriteOutImageType::Pointer CastImage =
         (scaleOutputValues == true) ? (itkUtil::PreserveCast<FixedVolumeType, WriteOutImageType>(resampledImage))
                                     : (itkUtil::TypeCast<FixedVolumeType, WriteOutImageType>(resampledImage));
       itkUtil::WriteImage<WriteOutImageType>(CastImage, outputVolume);

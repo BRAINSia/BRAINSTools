@@ -20,7 +20,7 @@ Checks: <
    modernize-return-braced-init-list,
    modernize-shrink-to-fit,
    modernize-type-traits,
-  -modernize-unary-static-assert,
+   modernize-unary-static-assert,
    modernize-use-auto,
    modernize-use-bool-literals,
   -modernize-use-constraints,

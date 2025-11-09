@@ -101,7 +101,7 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  LandmarksMapType::const_iterator it = origLandmarks.begin();
+  auto it = origLandmarks.begin();
   for (; it != origLandmarks.end(); it++)
   {
     transformedLandmarks[it->first] = lmk_transform->TransformPoint(it->second);

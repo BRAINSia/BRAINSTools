@@ -291,7 +291,7 @@ main(int argc, char * argv[])
 
   // cut by landmarks
   using stringVectorIteratorType = std::vector<std::string>::const_iterator;
-  for (stringVectorIteratorType ldmkIt = inputLandmarkNames.begin(), dircIt = setCutDirectionForLandmark.begin();
+  for (auto ldmkIt = inputLandmarkNames.begin(), dircIt = setCutDirectionForLandmark.begin();
        ldmkIt < inputLandmarkNames.end();
        ++ldmkIt, ++dircIt)
   {
@@ -328,7 +328,7 @@ main(int argc, char * argv[])
               << inputLandmarkNamesForObliquePlane.size() << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  stringVectorIteratorType planeDir = setCutDirectionForObliquePlane.begin();
+  auto planeDir = setCutDirectionForObliquePlane.begin();
 
   if (!inputLandmarkNamesForObliquePlane.empty())
   {
@@ -340,7 +340,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
   }
-  for (LandMarkForPlaneType::const_iterator inputLdmrIt = inputLandmarkNamesForObliquePlane.begin();
+  for (auto inputLdmrIt = inputLandmarkNamesForObliquePlane.begin();
        inputLdmrIt < inputLandmarkNamesForObliquePlane.end();
        ++inputLdmrIt)
   {

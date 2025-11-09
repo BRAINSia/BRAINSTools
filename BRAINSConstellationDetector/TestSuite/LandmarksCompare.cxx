@@ -76,8 +76,8 @@ main(int argc, char * argv[])
     bool allSame = true;
     while (lmk1iter != landmarks1.end())
     {
-      const LandmarksMapType::const_iterator       lmk2iter = landmarks2.find(lmk1iter->first);
-      const LandmarksWeightMapType::const_iterator wtsiter = weight_values.find(lmk1iter->first);
+      const auto   lmk2iter = landmarks2.find(lmk1iter->first);
+      const auto   wtsiter = weight_values.find(lmk1iter->first);
       const double lmk_tolerance = (wtsiter == weight_values.end()) ? 5.0 : wtsiter->second;
       if (wtsiter == weight_values.end())
       {

@@ -428,8 +428,7 @@ main(int argc, char * argv[])
     groupName += landmark_type.first; // baseLandmarks or newLandmarks
     H5::Group group = output.createGroup(groupName);
 
-    for (std::vector<std::pair<std::string, vnl_matrix<double>>>::const_iterator lit =
-           byClassLandmarkMatrix[landmark_type.first].begin();
+    for (auto lit = byClassLandmarkMatrix[landmark_type.first].begin();
          lit != byClassLandmarkMatrix[landmark_type.first].end();
          ++lit)
     {
@@ -518,8 +517,7 @@ main(int argc, char * argv[])
   // Initialize the landmark vector space
   vnl_matrix<double> Xi(dim * (numBaseLandmarks - 1), numDatasets);
   unsigned int       nb = 2;
-  for (std::vector<std::pair<std::string, vnl_matrix<double>>>::const_iterator kit =
-         ++(byClassLandmarkMatrix["baseLandmarks"].begin());
+  for (auto kit = ++(byClassLandmarkMatrix["baseLandmarks"].begin());
        kit != byClassLandmarkMatrix["baseLandmarks"].end();
        ++kit)
   {

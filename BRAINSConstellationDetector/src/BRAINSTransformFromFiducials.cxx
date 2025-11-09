@@ -104,10 +104,9 @@ main(int argc, char * argv[])
       // NOTE: ReadSlicer3toITKLmk returns points in LPS system
       LocalLandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk(fixedLandmarksFile);
       LocalLandmarksMapType movingLandmarkMap = ReadSlicer3toITKLmk(movingLandmarksFile);
-      for (LocalLandmarksMapType::const_iterator fmapit = fixedLandmarkMap.begin(); fmapit != fixedLandmarkMap.end();
-           ++fmapit)
+      for (auto fmapit = fixedLandmarkMap.begin(); fmapit != fixedLandmarkMap.end(); ++fmapit)
       {
-        LocalLandmarksMapType::const_iterator mmapit = movingLandmarkMap.find(fmapit->first);
+        auto mmapit = movingLandmarkMap.find(fmapit->first);
         if (mmapit != movingLandmarkMap.end())
         {
           fixedPoints.push_back(fmapit->second);

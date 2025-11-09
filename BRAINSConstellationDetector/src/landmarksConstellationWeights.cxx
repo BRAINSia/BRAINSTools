@@ -137,7 +137,7 @@ main(int argc, char * argv[])
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
   std::vector<std::string> LandmarksNames;
-  for (LandmarksMapType::const_iterator it = LandmarksMapVector[0].begin(); it != LandmarksMapVector[0].end(); ++it)
+  for (auto it = LandmarksMapVector[0].begin(); it != LandmarksMapVector[0].end(); ++it)
   {
     if ((it->first).compare("") != 0)
     {

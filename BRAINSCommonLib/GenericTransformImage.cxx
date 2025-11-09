@@ -292,9 +292,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
                                  << "FATAL ERROR: Failed to read transform" << initialTransform);
       }
       unsigned i = 0;
-      for (typename TransformListType::const_iterator it = currentTransformList.begin();
-           it != currentTransformList.end();
-           ++it, ++i)
+      for (auto it = currentTransformList.begin(); it != currentTransformList.end(); ++it, ++i)
       {
         std::cout << "HACK: " << i << "  " << (*(it))->GetNameOfClass() << std::endl;
       }
@@ -412,9 +410,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       typename BRAINSCompositeTransformType::Pointer tempCopy = BRAINSCompositeTransformType::New();
 
-      for (typename TransformListType::const_iterator it = currentTransformList.begin();
-           it != currentTransformList.end();
-           ++it)
+      for (auto it = currentTransformList.begin(); it != currentTransformList.end(); ++it)
       {
         tempCopy->AddTransform(static_cast<itk::Transform<TScalarType, 3, 3> *>(it->GetPointer()));
       }

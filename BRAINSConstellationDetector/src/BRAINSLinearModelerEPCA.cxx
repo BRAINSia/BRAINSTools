@@ -62,8 +62,8 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
   while (getline(myfile, line))
   {
     // for each landmark in the landmark list file
-    LandmarksMapType                 lmkMap = ReadSlicer3toITKLmk(line);
-    LandmarksMapType::const_iterator itLmk = lmkMap.begin();
+    LandmarksMapType lmkMap = ReadSlicer3toITKLmk(line);
+    auto             itLmk = lmkMap.begin();
     while (itLmk != lmkMap.end())
     {
       std::string name = itLmk->first;
@@ -85,8 +85,8 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
   // Check if the number of landmarks are the same in each landmark list file
   // First check for number of base landmarks
   {
-    LmkDBType::const_iterator itDB = baseLmkDB.begin();
-    unsigned int              numLmks = itDB->second.size();
+    auto         itDB = baseLmkDB.begin();
+    unsigned int numLmks = itDB->second.size();
     while (itDB != baseLmkDB.end())
     {
       if (itDB->second.size() != numLmks)
@@ -100,8 +100,8 @@ CreateLmkDB(const std::string & filename, LmkDBType & baseLmkDB, LmkDBType & EPC
 
   // Then check for the number of EPCA landmarks
   {
-    LmkDBType::const_iterator itDB = EPCALmkDB.begin();
-    unsigned int              numLmks = itDB->second.size();
+    auto         itDB = EPCALmkDB.begin();
+    unsigned int numLmks = itDB->second.size();
     while (itDB != EPCALmkDB.end())
     {
       if (itDB->second.size() != numLmks)
@@ -131,15 +131,15 @@ InitializeXi(LmkDBType & baseLmkDB)
   }
 
   // for each base landmark
-  unsigned int              k = 0; // landmark index
-  LmkDBType::const_iterator itDB = baseLmkDB.begin();
+  unsigned int k = 0; // landmark index
+  auto         itDB = baseLmkDB.begin();
   while (itDB != baseLmkDB.end())
   {
     if (itDB->first.compare("RP") != 0)
     {
-      unsigned int                     j = 0; // dataset index
-      DatasetMapType                   datasetMap = itDB->second;
-      LandmarksMapType::const_iterator itDataset = datasetMap.begin();
+      unsigned int   j = 0; // dataset index
+      DatasetMapType datasetMap = itDB->second;
+      auto           itDataset = datasetMap.begin();
       while (itDataset != datasetMap.end())
       {
         std::string     datasetId = itDataset->first;
@@ -172,8 +172,8 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
   MatrixType X_i = InitializeXi(baseLmkDB);
 
   // Evolutionarily construct X_i, compute s_i, W_i, and M_i in each iteration
-  LmkDBType::const_iterator itDB = EPCALmkDB.begin();
-  unsigned int              k = 0; // landmark index
+  auto         itDB = EPCALmkDB.begin();
+  unsigned int k = 0; // landmark index
   // while ( itDB != EPCALmkDB.end() - 1 ) // NO end() - 1 in map iterator?
   const unsigned int numEPCALmks = EPCALmkDB.size();
   while (k < numEPCALmks)
@@ -188,10 +188,10 @@ ComputeEPCAModel(MatrixMapType & MMatrixMap, VectorMapType & SVectorMap, LmkDBTy
         X_i.set_row(row, X_iLast.get_row(row));
       }
 
-      const unsigned int               numBaseLmks(baseLmkDB.size());
-      unsigned int                     j = 0; // dataset index
-      DatasetMapType                   datasetMap = itDB->second;
-      LandmarksMapType::const_iterator itDataset = datasetMap.begin();
+      const unsigned int numBaseLmks(baseLmkDB.size());
+      unsigned int       j = 0; // dataset index
+      DatasetMapType     datasetMap = itDB->second;
+      auto               itDataset = datasetMap.begin();
       while (itDataset != datasetMap.end())
       {
         std::string     datasetId = itDataset->first;

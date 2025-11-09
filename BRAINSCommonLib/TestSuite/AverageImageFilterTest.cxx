@@ -41,7 +41,7 @@ main(int, char *[])
     random->SetMax(1000.0);
     random->SetSize(randomSize);
     random->Update();
-    inputImages.push_back(random->GetOutput());
+    inputImages.emplace_back(random->GetOutput());
     FloatImageConstIterator curIt = FloatImageConstIterator(inputImages[i], inputImages[i]->GetLargestPossibleRegion());
     inputIterators.push_back(curIt);
   }

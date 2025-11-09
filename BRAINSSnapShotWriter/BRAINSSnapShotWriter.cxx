@@ -437,7 +437,7 @@ main(int argc, char ** argv)
           exit(EXIT_FAILURE);
         }
 
-        rgbSlices.push_back(rgbComposer->GetOutput());
+        rgbSlices.emplace_back(rgbComposer->GetOutput());
       }
       else /** ----------------------------------------------------- */
       {
@@ -457,7 +457,7 @@ main(int argc, char ** argv)
           std::cout << "ERROR:  " << e.what() << std::endl;
           exit(EXIT_FAILURE);
         }
-        rgbSlices.push_back(rgbComposer->GetOutput());
+        rgbSlices.emplace_back(rgbComposer->GetOutput());
       }
     }
   }

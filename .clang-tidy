@@ -29,7 +29,7 @@ Checks: <
    modernize-use-emplace,
    modernize-use-equals-default,
    modernize-use-equals-delete,
-  -modernize-use-integer-sign-comparison,
+   modernize-use-integer-sign-comparison,
    modernize-use-nodiscard,
    modernize-use-noexcept,
    modernize-use-nullptr,

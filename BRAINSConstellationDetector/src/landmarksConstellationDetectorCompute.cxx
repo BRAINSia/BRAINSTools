@@ -58,7 +58,7 @@ lmk_check_differences(const LandmarksMapType & ref,
 }
 
 void
-landmarksConstellationDetector::Compute(SImageType::Pointer orig_space_image)
+landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_image)
 {
   std::cout << "\nEstimating MSP..." << std::endl;
 

@@ -73,6 +73,7 @@ extern void
 WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTransform,
                      const std::string &                                  TransformFilename);
 
+
 template <typename TScalarType>
 extern void
 WriteTransformToDisk(const itk::Transform<TScalarType, 3, 3> * const MyTransform,
@@ -146,9 +147,9 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
  */
 template <typename TInputScalarType, typename TWriteScalarType>
 extern int
-WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
-                          const std::string &                                                 outputTransform,
-                          const std::string &                                                 strippedOutputTransform);
+WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer & genericTransformToWrite,
+                          const std::string &                                                   outputTransform,
+                          const std::string & strippedOutputTransform);
 
 /**
  * \author Hans J. Johnson
@@ -158,8 +159,8 @@ WriteBothTransformsToDisk(const typename itk::Transform<TInputScalarType, 3, 3>:
 template <typename TInputScalarType, typename TWriteScalarType>
 extern int
 WriteStrippedRigidTransformToDisk(
-  const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer genericTransformToWrite,
-  const std::string &                                                 strippedOutputTransform);
+  const typename itk::Transform<TInputScalarType, 3, 3>::ConstPointer & genericTransformToWrite,
+  const std::string &                                                   strippedOutputTransform);
 } // namespace itk
 
 /**

@@ -17,7 +17,7 @@ main(int argc, char * argv[])
   {
     std::cout << "ERROR: Incorrrect number of arguments <Intensity_LR> <edgement_HR> <output>" << std::endl;
   }
-  FFTWInit(""); // Just use the default in the home account
+  FFTWInit(std::string("")); // Just use the default in the home account
   itk::TimeProbe tp;
   tp.Start();
   using ReaderType = itk::ImageFileReader<FloatImageType>;

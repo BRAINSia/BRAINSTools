@@ -471,7 +471,7 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
 }
 
 Euler3DTransformType::Pointer
-VersorToEulerTransform(VersorRigidTransformType::Pointer versorBaseTransform)
+VersorToEulerTransform(const VersorRigidTransformType::Pointer & versorBaseTransform)
 {
   Euler3DTransformType::Pointer result = Euler3DTransformType::New();
   result->SetIdentity();

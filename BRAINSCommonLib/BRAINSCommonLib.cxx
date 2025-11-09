@@ -29,7 +29,7 @@ BRAINSRegisterAlternateIO()
 
 // This is intended to be called one time
 void
-FFTWInit(const std::string path_for_wisdom)
+FFTWInit(const std::string & path_for_wisdom)
 {
   // Environmental variables
   // itksys::SystemTools::GetEnv("ITK_FFTW_PLAN_RIGOR", "STRING");
@@ -71,7 +71,7 @@ FFTWInit(const std::string path_for_wisdom)
 }
 #else
 void
-FFTWInit(const std::string /* Not used in the stub file : path_for_wisdom */)
+FFTWInit(const std::string & /* Not used in the stub file : path_for_wisdom */)
 {
   std::cout << "ITK was not built with ITK_USE_FFTWF:BOOL=ON && ITK_USE_FFTWD:BOOL=ON,"
             << "so performance of tools that depend on fft's (like this one) will be substantially slower" << std::endl;

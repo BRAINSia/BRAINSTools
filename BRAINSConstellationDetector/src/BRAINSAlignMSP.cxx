@@ -55,16 +55,16 @@
 #include "GenericTransformImage.h"
 template <typename TInputImagePixelType>
 int
-DoIt(std::string         inputVolume,
+DoIt(const std::string & inputVolume,
      const std::string & LandmarkPoints,
-     std::string         resampleMSP,
+     const std::string & resampleMSP,
      const std::string & resampleMSPLandmarkPoints,
      int                 mspQualityLevel,
      bool                rescaleIntensities,
      double              trimRescaledIntensities,
      std::vector<int>    rescaleIntensitiesOutputRange,
      const std::string & backgroundFillValueString,
-     std::string         interpolationMode)
+     const std::string & interpolationMode)
 {
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, allocate some memories, and

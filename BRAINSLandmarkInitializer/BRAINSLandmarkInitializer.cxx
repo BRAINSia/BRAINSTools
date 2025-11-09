@@ -164,7 +164,7 @@ typename TTransformType::Pointer
 InitializeTransform(const LandmarkPointContainer & fixedLmks,
                     const LandmarkPointContainer & movingLmks,
                     LandmarkWeightType &           landmarkWgts,
-                    ImageType::Pointer             referenceImage,
+                    const ImageType::Pointer &     referenceImage,
                     int                            bsplineNumberOfControlPoints)
 {
   /** Landmark Initializaer */

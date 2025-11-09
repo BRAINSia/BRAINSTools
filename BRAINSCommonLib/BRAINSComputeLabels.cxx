@@ -27,7 +27,7 @@ GetMinLabelCount(ByteImageType::Pointer & labelsImage, const vnl_vector<unsigned
       labelCountMap[labelValue] = 0;
     }
   }
-  for (LabelCountMapType::const_iterator it = labelCountMap.begin(); it != labelCountMap.end(); ++it)
+  for (auto it = labelCountMap.begin(); it != labelCountMap.end(); ++it)
   {
     std::cout << "label: " << static_cast<size_t>(it->first) << " count: " << it->second << std::endl;
   }

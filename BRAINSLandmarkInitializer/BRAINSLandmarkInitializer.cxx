@@ -133,9 +133,9 @@ PreProcessLandmarkFiles(const std::string &      inputFixedLandmarkFilename,
   }
 
   using LandmarkConstIterator = LandmarksMapType::const_iterator;
-  for (LandmarkConstIterator fixedIt = fixedLandmarks.begin(); fixedIt != fixedLandmarks.end(); ++fixedIt)
+  for (auto fixedIt = fixedLandmarks.begin(); fixedIt != fixedLandmarks.end(); ++fixedIt)
   {
-    LandmarkConstIterator movingIt = movingLandmarks.find(fixedIt->first);
+    auto movingIt = movingLandmarks.find(fixedIt->first);
     if (movingIt != movingLandmarks.end())
     {
       fixedLmks.push_back(fixedIt->second);

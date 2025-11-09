@@ -530,7 +530,7 @@ main(int argc, char ** argv)
       std::cerr << "ERROR:  Atlas image of type: " << elem.first << " not found in xml file." << std::endl;
       throw;
     }
-    for (AtlasRegType::StringVector::const_iterator imIt = elem.second.begin(); imIt != elem.second.end(); ++imIt)
+    for (auto imIt = elem.second.begin(); imIt != elem.second.end(); ++imIt)
     {
       templateVolumes[elem.first].push_back(temp);
     }
@@ -576,8 +576,7 @@ main(int argc, char ** argv)
           unsigned int                     i = 0;
           for (auto typeIt = inputVolumeMap.begin(); typeIt != inputVolumeMap.end(); ++typeIt)
           {
-            for (AtlasRegType::StringVector::const_iterator imIt = typeIt->second.begin(); imIt != typeIt->second.end();
-                 ++imIt, ++i)
+            for (auto imIt = typeIt->second.begin(); imIt != typeIt->second.end(); ++imIt, ++i)
             {
               muLogMacro(<< "\n***Reading image "
                          << ": " << (*imIt) << "...\n");
@@ -1162,8 +1161,7 @@ main(int argc, char ** argv)
 
       if (output_Volumes.size() == 1)
       {
-        for (AtlasRegType::MapOfFloatImageVectors::const_iterator mapIt = imgset.begin(); mapIt != imgset.end();
-             ++mapIt)
+        for (auto mapIt = imgset.begin(); mapIt != imgset.end(); ++mapIt)
         {
           for (unsigned i = 0; i < mapIt->second.size(); i++)
           {
@@ -1183,7 +1181,7 @@ main(int argc, char ** argv)
       {
         outFileNames = outputVolumeMap;
       }
-      for (AtlasRegType::MapOfFloatImageVectors::const_iterator mapIt = imgset.begin(); mapIt != imgset.end(); ++mapIt)
+      for (auto mapIt = imgset.begin(); mapIt != imgset.end(); ++mapIt)
       {
         for (unsigned i = 0; i < mapIt->second.size(); i++)
         {

@@ -124,8 +124,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     LandmarkContainerType movingLmks;
     using LandmarkConstIterator = LandmarksMapType::const_iterator;
     LandmarkBasedInitializerType::LandmarkWeightType landmarkWgts;
-    for (LandmarkConstIterator fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end();
-         ++fixedIt)
+    for (auto fixedIt = referenceAtlasLandmarks.begin(); fixedIt != referenceAtlasLandmarks.end(); ++fixedIt)
     {
       auto movingIt = updated_orig_lmks.find(fixedIt->first);
       if (movingIt != updated_orig_lmks.cend())

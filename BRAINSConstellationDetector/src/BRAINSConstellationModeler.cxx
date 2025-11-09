@@ -79,9 +79,9 @@ sample_variance(const std::vector<DType> & x, DType * mean, DType * var)
     *var = 0.0;
   }
 
-  DType                                             sum_of_sq = 0.0;
-  DType                                             sum = 0.0;
-  const typename std::vector<DType>::const_iterator theEnd = x.end();
+  DType      sum_of_sq = 0.0;
+  DType      sum = 0.0;
+  const auto theEnd = x.end();
   for (auto it = x.begin(); it != theEnd; ++it)
   {
     const DType & value = *it;

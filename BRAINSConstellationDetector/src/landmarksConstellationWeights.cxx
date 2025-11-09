@@ -137,11 +137,11 @@ main(int argc, char * argv[])
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
   std::vector<std::string> LandmarksNames;
-  for (auto it = LandmarksMapVector[0].begin(); it != LandmarksMapVector[0].end(); ++it)
+  for (auto & it : LandmarksMapVector[0])
   {
-    if ((it->first).compare("") != 0)
+    if ((it.first).compare("") != 0)
     {
-      LandmarksNames.push_back(it->first);
+      LandmarksNames.push_back(it.first);
       ++numNamedLandmarks;
     }
   }

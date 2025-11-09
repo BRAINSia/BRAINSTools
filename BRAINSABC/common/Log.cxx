@@ -34,10 +34,9 @@ Log ::GetInstance()
 }
 
 Log ::Log()
-  : m_OutputFileName("")
-{
-  m_EchoFlag = true;
-}
+  : m_EchoFlag(true)
+  , m_OutputFileName("")
+{}
 
 Log ::~Log() { this->CloseFile(); }
 

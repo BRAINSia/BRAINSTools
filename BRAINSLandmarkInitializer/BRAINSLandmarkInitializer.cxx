@@ -132,7 +132,6 @@ PreProcessLandmarkFiles(const std::string &      inputFixedLandmarkFilename,
     CheckLandmarks(movingLandmarks, landmarkWeightMap);
   }
 
-  using LandmarkConstIterator = LandmarksMapType::const_iterator;
   for (auto & fixedLandmark : fixedLandmarks)
   {
     auto movingIt = movingLandmarks.find(fixedLandmark.first);

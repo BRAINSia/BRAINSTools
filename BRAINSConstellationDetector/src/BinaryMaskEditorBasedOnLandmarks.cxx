@@ -290,7 +290,6 @@ main(int argc, char * argv[])
   ImageType::Pointer outputVolume = duplicator->GetOutput();
 
   // cut by landmarks
-  using stringVectorIteratorType = std::vector<std::string>::const_iterator;
   for (auto ldmkIt = inputLandmarkNames.begin(), dircIt = setCutDirectionForLandmark.begin();
        ldmkIt < inputLandmarkNames.end();
        ++ldmkIt, ++dircIt)
@@ -312,7 +311,6 @@ main(int argc, char * argv[])
 
   // string vector to read in a vector of three elements.
   // ex) (LE, RE, PC) --> plane for left and right eyes with posterior commissure.
-  using LandMarkForPlaneType = std::vector<std::string>;
 
   // a set of plane description
   // ex) 1: (LE, RE, PC)

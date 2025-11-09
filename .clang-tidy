@@ -28,7 +28,7 @@ Checks: <
   -modernize-use-designated-initializers,
   -modernize-use-emplace,
    modernize-use-equals-default,
-  -modernize-use-equals-delete,
+   modernize-use-equals-delete,
   -modernize-use-integer-sign-comparison,
   -modernize-use-nodiscard,
   -modernize-use-noexcept,

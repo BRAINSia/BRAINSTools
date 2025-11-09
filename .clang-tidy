@@ -54,7 +54,7 @@ Checks: <
   -misc-unused-include,
   -misc-unused-parameters,
   -misc-use-internal-linkage,
-  -performance-enum-size,
+   performance-enum-size,
   -performance-faster-string-find,
   -performance-for-range-copy,
   -performance-implicit-conversion-in-loop,

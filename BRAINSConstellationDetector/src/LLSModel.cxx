@@ -46,17 +46,17 @@ const char * const LLSModel::m_LLSSearchRadiiGroupName = "LLSSearchRadii";
 void
 LLSModel ::WriteVector(const std::string & path, const std::vector<double> & vec)
 {
-  hsize_t dim(vec.size());
-  auto *  buf(new double[dim]);
+  const hsize_t dim(vec.size());
+  auto *        buf(new double[dim]);
 
   for (unsigned i(0); i < dim; ++i)
   {
     buf[i] = vec[i];
   }
 
-  H5::DataSpace vecSpace(1, &dim);
-  H5::PredType  vecType = H5::PredType::NATIVE_DOUBLE;
-  H5::DataSet   vecSet = this->m_H5File->createDataSet(path, vecType, vecSpace);
+  const H5::DataSpace vecSpace(1, &dim);
+  const H5::PredType  vecType = H5::PredType::NATIVE_DOUBLE;
+  H5::DataSet         vecSet = this->m_H5File->createDataSet(path, vecType, vecSpace);
   vecSet.write(buf, vecType);
   vecSet.close();
   delete[] buf;
@@ -73,8 +73,8 @@ LLSModel ::WriteMatrix(const std::string & path, const MatrixType & matrix)
   auto * buffer = new double[dims[0] * dims[1]];
   matrix.copy_out(buffer);
 
-  H5::DataSpace matrixSpace(2, dims);
-  H5::DataSet   matrixSet = this->m_H5File->createDataSet(path, H5::PredType::NATIVE_DOUBLE, matrixSpace);
+  const H5::DataSpace matrixSpace(2, dims);
+  H5::DataSet         matrixSet = this->m_H5File->createDataSet(path, H5::PredType::NATIVE_DOUBLE, matrixSpace);
   matrixSet.write(buffer, H5::PredType::NATIVE_DOUBLE, matrixSpace);
   matrixSet.close();
   delete[] buffer;
@@ -83,10 +83,10 @@ LLSModel ::WriteMatrix(const std::string & path, const MatrixType & matrix)
 void
 LLSModel ::WriteScalar(const std::string & path, const double & value)
 {
-  hsize_t       numScalars(1);
-  H5::DataSpace scalarSpace(1, &numScalars);
-  H5::PredType  scalarType = H5::PredType::NATIVE_DOUBLE;
-  H5::DataSet   scalarSet = this->m_H5File->createDataSet(path, scalarType, scalarSpace);
+  const hsize_t       numScalars(1);
+  const H5::DataSpace scalarSpace(1, &numScalars);
+  const H5::PredType  scalarType = H5::PredType::NATIVE_DOUBLE;
+  H5::DataSet         scalarSet = this->m_H5File->createDataSet(path, scalarType, scalarSpace);
 
   scalarSet.write(&value, scalarType);
   scalarSet.close();
@@ -98,10 +98,10 @@ LLSModel ::WriteString(const std::string & path, const std::string & strname)
   const H5std_string & SET_NAME(path);
   const H5std_string & SET_DATA(strname);
 
-  hsize_t       numStrings(1);
-  H5::DataSpace strSpace(1, &numStrings);
-  H5::StrType   strType(H5::PredType::C_S1, H5T_VARIABLE);
-  H5::DataSet   strSet = this->m_H5File->createDataSet(SET_NAME, strType, strSpace);
+  const hsize_t       numStrings(1);
+  const H5::DataSpace strSpace(1, &numStrings);
+  const H5::StrType   strType(H5::PredType::C_S1, H5T_VARIABLE);
+  H5::DataSet         strSet = this->m_H5File->createDataSet(SET_NAME, strType, strSpace);
   strSet.write(SET_DATA, strType);
   strSet.close();
 }
@@ -187,7 +187,7 @@ LLSModel ::ReadVector(const std::string & DataSetName)
   std::vector<double> vec;
   hsize_t             dim = 0;
   H5::DataSet         vecSet = this->m_H5File->openDataSet(DataSetName);
-  H5::DataSpace       Space = vecSet.getSpace();
+  const H5::DataSpace Space = vecSet.getSpace();
 
   if (Space.getSimpleExtentNdims() != 1)
   {
@@ -212,9 +212,9 @@ LLSModel ::ReadVector(const std::string & DataSetName)
 LLSModel::MatrixType
 LLSModel ::ReadMatrix(const std::string & DataSetName)
 {
-  hsize_t       dims[2];
-  H5::DataSet   matrixSet = this->m_H5File->openDataSet(DataSetName);
-  H5::DataSpace matrixSpace = matrixSet.getSpace();
+  hsize_t             dims[2];
+  H5::DataSet         matrixSet = this->m_H5File->openDataSet(DataSetName);
+  const H5::DataSpace matrixSpace = matrixSet.getSpace();
 
   if (matrixSpace.getSimpleExtentNdims() != 2)
   {
@@ -232,9 +232,9 @@ LLSModel ::ReadMatrix(const std::string & DataSetName)
 double
 LLSModel ::ReadScalar(const std::string & DataSetName)
 {
-  hsize_t       dim = 0;
-  H5::DataSet   scalarSet = this->m_H5File->openDataSet(DataSetName);
-  H5::DataSpace Space = scalarSet.getSpace();
+  hsize_t             dim = 0;
+  H5::DataSet         scalarSet = this->m_H5File->openDataSet(DataSetName);
+  const H5::DataSpace Space = scalarSet.getSpace();
 
   if (Space.getSimpleExtentNdims() != 1)
   {
@@ -260,7 +260,7 @@ LLSModel ::ReadString(const std::string & DataSetName)
   hsize_t     dim = 0;
   H5::DataSet strSet = this->m_H5File->openDataSet(DataSetName);
 
-  H5::DataSpace Space = strSet.getSpace();
+  const H5::DataSpace Space = strSet.getSpace();
   if (Space.getSimpleExtentNdims() != 1)
   {
     std::cerr << "Wrong #of dims for TransformType "
@@ -273,8 +273,8 @@ LLSModel ::ReadString(const std::string & DataSetName)
               << "in HDF5 File" << std::endl;
     ;
   }
-  H5std_string versionID;
-  H5::StrType  strType(H5::PredType::C_S1, H5T_VARIABLE);
+  H5std_string      versionID;
+  const H5::StrType strType(H5::PredType::C_S1, H5T_VARIABLE);
   strSet.read(versionID, strType);
   strSet.close();
   std::cout << "LLSModel File Version: " << versionID << std::endl;
@@ -306,35 +306,35 @@ LLSModel ::Read()
 
     H5::Group MeansGroup(this->m_H5File->openGroup(LLSModel::m_LLSMeansGroupName));
 
-    hsize_t numLLSMeans = MeansGroup.getNumObjs();
+    const hsize_t numLLSMeans = MeansGroup.getNumObjs();
     for (hsize_t i = 0; i < numLLSMeans; ++i)
     {
-      std::string LLSMeanName = MeansGroup.getObjnameByIdx(i);
-      std::string curVecName(LLSModel::m_LLSMeansGroupName);
+      const std::string LLSMeanName = MeansGroup.getObjnameByIdx(i);
+      std::string       curVecName(LLSModel::m_LLSMeansGroupName);
       curVecName += "/";
       curVecName += LLSMeanName;
       this->m_LLSMeans[LLSMeanName] = this->ReadVector(curVecName);
     }
     MeansGroup.close();
 
-    H5::Group MatricesGroup(this->m_H5File->openGroup(LLSModel::m_LLSMatricesGroupName));
-    hsize_t   numLLSMatrices = MatricesGroup.getNumObjs();
+    H5::Group     MatricesGroup(this->m_H5File->openGroup(LLSModel::m_LLSMatricesGroupName));
+    const hsize_t numLLSMatrices = MatricesGroup.getNumObjs();
     for (hsize_t i = 0; i < numLLSMatrices; ++i)
     {
-      std::string LLSMatrixName = MatricesGroup.getObjnameByIdx(i);
-      std::string curMatName(LLSModel::m_LLSMatricesGroupName);
+      const std::string LLSMatrixName = MatricesGroup.getObjnameByIdx(i);
+      std::string       curMatName(LLSModel::m_LLSMatricesGroupName);
       curMatName += "/";
       curMatName += LLSMatrixName;
       this->m_LLSMatrices[LLSMatrixName] = this->ReadMatrix(curMatName);
     }
     MatricesGroup.close();
 
-    H5::Group SearchRadiiGroup(this->m_H5File->openGroup(LLSModel::m_LLSSearchRadiiGroupName));
-    hsize_t   numSearchRadii = SearchRadiiGroup.getNumObjs();
+    H5::Group     SearchRadiiGroup(this->m_H5File->openGroup(LLSModel::m_LLSSearchRadiiGroupName));
+    const hsize_t numSearchRadii = SearchRadiiGroup.getNumObjs();
     for (hsize_t i = 0; i < numSearchRadii; ++i)
     {
-      std::string SearchRadiusName = SearchRadiiGroup.getObjnameByIdx(i);
-      std::string curRadiusName(LLSModel::m_LLSSearchRadiiGroupName);
+      const std::string SearchRadiusName = SearchRadiiGroup.getObjnameByIdx(i);
+      std::string       curRadiusName(LLSModel::m_LLSSearchRadiiGroupName);
       curRadiusName += "/";
       curRadiusName += SearchRadiusName;
       this->m_LLSSearchRadii[SearchRadiusName] = this->ReadScalar(curRadiusName);

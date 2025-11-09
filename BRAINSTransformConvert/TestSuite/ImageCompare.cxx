@@ -28,9 +28,9 @@ main(int argc, char ** argv)
     exit(1);
   }
 
-  std::string input1Name(argv[1]);
+  const std::string input1Name(argv[1]);
 
-  std::string input2Name(argv[2]);
+  const std::string input2Name(argv[2]);
 
   using ImageType = itk::Image<short, 3>;
 

@@ -27,7 +27,7 @@ main(int argc, char ** argv)
     std::cerr.flush();
     return EXIT_FAILURE;
   }
-  std::string                                filename(argv[1]);
+  const std::string                          filename(argv[1]);
   landmarksConstellationTrainingDefinitionIO m;
   if (m.ReadFile(filename) == -1)
   {

@@ -112,7 +112,7 @@ main(int argc, char * argv[])
   {
     std::cout << "PROCESSING:" << mDef[currentDataset].GetImageFilename() << std::endl;
 
-    SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(mDef[currentDataset].GetImageFilename());
+    const SImageType::Pointer volOrig = itkUtil::ReadImage<SImageType>(mDef[currentDataset].GetImageFilename());
     if (volOrig.IsNull())
     {
       printf("\nCould not open image %s, aborting ...\n\n", mDef[currentDataset].GetImageFilename().c_str());
@@ -146,7 +146,7 @@ main(int argc, char * argv[])
     }
   }
 
-  unsigned int k = mDef.GetNumDataSets();
+  const unsigned int k = mDef.GetNumDataSets();
   // So the LandmarkMapVector contains 2*k landmark files
 
   std::cout << "\n====================================================================================" << std::endl;
@@ -218,10 +218,10 @@ std::cout << "==============================================================\n" 
   // Computing LandmarksWeightMap
   // the weight of a landmark point, which has the lowest std, should be mapped to ONE, and weights of the other
   // landmarks should be calculated correspondingly
-  double Margin = 0.05;
-  double minValue = get_min_value(LandmarksSTDMap);
-  double maxValue = get_max_value(LandmarksSTDMap);
-  double UpperBound = Margin + minValue + maxValue;
+  const double Margin = 0.05;
+  const double minValue = get_min_value(LandmarksSTDMap);
+  const double maxValue = get_max_value(LandmarksSTDMap);
+  const double UpperBound = Margin + minValue + maxValue;
   /*
   // TEST PRINT FOR TRACKING
   std::cout << "minValue = " << minValue << std::endl;

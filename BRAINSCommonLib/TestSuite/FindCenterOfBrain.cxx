@@ -47,14 +47,14 @@ main(int argc, char ** argv)
   using FindCenterFilterType = itk::FindCenterOfBrainFilter<ImageType>;
   using MaskImageType = FindCenterFilterType::MaskImageType;
 
-  ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(InputVolume);
+  const ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(InputVolume);
   if (inputImage.IsNull())
   {
     std::cerr << "FindCenterOfBrain: Can't read input image " << InputVolume << std::endl;
     return 2;
   }
 
-  FindCenterFilterType::Pointer filter = FindCenterFilterType::New();
+  const FindCenterFilterType::Pointer filter = FindCenterFilterType::New();
   filter->SetInput(inputImage);
 
   MaskImageType::Pointer imageMask;
@@ -86,14 +86,14 @@ main(int argc, char ** argv)
     std::cerr << err << std::endl;
     return 4;
   }
-  FindCenterFilterType::PointType center = filter->GetCenterOfBrain();
-  itk::NumberToString<double>     doubleConvert;
+  FindCenterFilterType::PointType   center = filter->GetCenterOfBrain();
+  const itk::NumberToString<double> doubleConvert;
   std::cout << "Center Of Brain:"
             << " " << doubleConvert(center[0]) << " " << doubleConvert(center[1]) << " " << doubleConvert(center[2])
             << std::endl;
   if (!ClippedImageMask.empty())
   {
-    MaskImageType::Pointer clippedMask = const_cast<MaskImageType *>(filter->GetClippedImageMask());
+    const MaskImageType::Pointer clippedMask = const_cast<MaskImageType *>(filter->GetClippedImageMask());
     itkUtil::WriteImage<MaskImageType>(clippedMask, ClippedImageMask);
   }
   if (!GenerateDebugImages)
@@ -102,27 +102,27 @@ main(int argc, char ** argv)
   }
   if (!DebugDistanceImage.empty())
   {
-    FindCenterFilterType::DistanceImagePointer distImage = filter->GetDebugDistanceImage();
+    const FindCenterFilterType::DistanceImagePointer distImage = filter->GetDebugDistanceImage();
     itkUtil::WriteImage<FindCenterFilterType::DistanceImageType>(distImage, DebugDistanceImage);
   }
   if (!DebugGridImage.empty())
   {
-    FindCenterFilterType::InputImagePointer gridImage = filter->GetDebugGridImage();
+    const FindCenterFilterType::InputImagePointer gridImage = filter->GetDebugGridImage();
     itkUtil::WriteImage<ImageType>(gridImage, DebugGridImage);
   }
   if (!DebugAfterGridComputationsForegroundImage.empty())
   {
-    MaskImageType::Pointer afterImage = filter->GetDebugAfterGridComputationsForegroundImage();
+    const MaskImageType::Pointer afterImage = filter->GetDebugAfterGridComputationsForegroundImage();
     itkUtil::WriteImage<MaskImageType>(afterImage, DebugAfterGridComputationsForegroundImage);
   }
   if (!DebugClippedImageMask.empty())
   {
-    MaskImageType::Pointer clippedMask = filter->GetDebugClippedImageMask();
+    const MaskImageType::Pointer clippedMask = filter->GetDebugClippedImageMask();
     itkUtil::WriteImage<MaskImageType>(clippedMask, DebugClippedImageMask);
   }
   if (!DebugTrimmedImage.empty())
   {
-    ImageType::Pointer trimmedImage = filter->GetDebugTrimmedImage();
+    const ImageType::Pointer trimmedImage = filter->GetDebugTrimmedImage();
     itkUtil::WriteImage<ImageType>(trimmedImage, DebugTrimmedImage);
   }
   return EXIT_SUCCESS;

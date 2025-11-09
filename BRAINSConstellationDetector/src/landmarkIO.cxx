@@ -38,19 +38,19 @@ ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
   // of the input image through that
   SImageType::Pointer inputStatsImage;
   {
-    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
+    const LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+  const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
 
   stats->SetInput(inputStatsImage);
   stats->Update();
 
-  SImageType::PixelType minPixel(stats->GetMinimum());
-  SImageType::PixelType maxPixel(stats->GetMaximum());
+  const SImageType::PixelType minPixel(stats->GetMinimum());
+  const SImageType::PixelType maxPixel(stats->GetMaximum());
 
   // std::cout << "size of inputImage: " << inputImage->GetLargestPossibleRegion().GetSize()[0] << ","
   //    << inputImage->GetLargestPossibleRegion().GetSize()[1] << "," <<
@@ -58,7 +58,7 @@ ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
 
   //  itkUtil::WriteImage<SImageType>(inputImage, "inputImage.nii.gz");
 
-  RGBImageType::Pointer rgbImage = RGBImageType::New();
+  const RGBImageType::Pointer rgbImage = RGBImageType::New();
   rgbImage->CopyInformation(inputImage);
   rgbImage->SetRegions(inputImage->GetLargestPossibleRegion());
   rgbImage->Allocate();
@@ -68,8 +68,8 @@ ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
   itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
   for (; !sIt.IsAtEnd(); ++rgbIt, ++sIt)
   {
-    unsigned char charVal(ShortToUChar(sIt.Value(), minPixel, maxPixel));
-    RGBPixelType  pixel;
+    const unsigned char charVal(ShortToUChar(sIt.Value(), minPixel, maxPixel));
+    RGBPixelType        pixel;
     pixel.SetRed(charVal);
     pixel.SetGreen(charVal);
     pixel.SetBlue(charVal);
@@ -151,9 +151,10 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
                       const SImageType::PointType &         PC2,
                       const SImageType::PointType &         VN42)
 {
-  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
+  const SImageType::Pointer inputImage =
+    itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
 
-  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
+  const RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
   for (unsigned int which = 0; which < 4; which++)
   {
@@ -202,8 +203,8 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
     itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
-      SImageType::IndexType index = rgbIt.GetIndex();
-      SImageType::PointType p;
+      const SImageType::IndexType index = rgbIt.GetIndex();
+      SImageType::PointType       p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
 
       if (IsOnCylinder(p, pt, pt2, radius, height))
@@ -246,7 +247,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
     }
   }
 
-  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
+  const RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
 
   itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
   itkUtil::WriteImage<RGBImageType>(orientedImage, fname + "_ThreeDRGB.nii.gz");
@@ -258,29 +259,30 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
                         const SImageType::PointType & CenterPoint,
                         const std::string &           fname)
 {
-  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
+  const SImageType::Pointer inputImage =
+    itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
   SImageType::Pointer inputStatsImage;
   {
-    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
+    const LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+  const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
 
   stats->SetInput(inputStatsImage);
   stats->Update();
-  SImageType::PixelType maxPixel(stats->GetMaximum());
+  const SImageType::PixelType maxPixel(stats->GetMaximum());
 
-  SImageType::PointType pt = CenterPoint;
-  double                radius = 3.0;
+  const SImageType::PointType pt = CenterPoint;
+  const double                radius = 3.0;
 
   itk::ImageRegionIterator<SImageType> sIt(inputImage, inputImage->GetLargestPossibleRegion());
   for (; !sIt.IsAtEnd(); ++sIt)
   {
-    SImageType::IndexType index = sIt.GetIndex();
-    SImageType::PointType p;
+    const SImageType::IndexType index = sIt.GetIndex();
+    SImageType::PointType       p;
     inputImage->TransformIndexToPhysicalPoint(index, p);
     if (IsOnSphere(p, pt, radius))
     {
@@ -301,9 +303,10 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
                    const SImageType::PointType &    CM,
                    const std::string &              fname)
 {
-  SImageType::Pointer inputImage = itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
+  const SImageType::Pointer inputImage =
+    itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
 
-  RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
+  const RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
   for (unsigned int which = 0; which < 5; which++)
   {
@@ -350,8 +353,8 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
     itk::ImageRegionIterator<SImageType>   sIt(inputImage, inputImage->GetLargestPossibleRegion());
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
-      SImageType::IndexType index = rgbIt.GetIndex();
-      SImageType::PointType p;
+      const SImageType::IndexType index = rgbIt.GetIndex();
+      SImageType::PointType       p;
       orientedImage->TransformIndexToPhysicalPoint(index, p);
       if (IsOnCylinder(p, pt, pt, radius, thickness))
       {
@@ -409,7 +412,7 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
     }
   }
 
-  RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
+  const RGB2DImageType::Pointer TwoDImage = GenerateRGB2DImage(orientedImage);
 
   itkUtil::WriteImage<RGB2DImageType>(TwoDImage, fname);
 }
@@ -427,22 +430,22 @@ WriteMRMLFile(const std::string &                                        outputM
               const LandmarksMapType &                                   outputLandmarksInOutputSpaceMap,
               const LandmarkIO::VersorRigidTransformType::ConstPointer & versorTransform)
 {
-  constexpr unsigned int      LocalImageDimension = 3;
-  itk::NumberToString<double> doubleToString;
+  constexpr unsigned int            LocalImageDimension = 3;
+  const itk::NumberToString<double> doubleToString;
 
   using PixelType = short;
   using ImageType = itk::Image<PixelType, LocalImageDimension>;
   using ReaderType = itk::ImageFileReader<ImageType>;
 
-  std::string mrmlFullFilename = itksys::SystemTools::CollapseFullPath(outputMRML.c_str());
-  std::string outputLandmarksInInputSpaceFullFilenameWithoutExtension = "";
-  std::string outputLandmarksInOutputSpaceFullFilenameWithoutExtension = "";
-  std::string inputVolumeFullFilename = "";
-  std::string inputVolumeFilenameWithoutPath = "";
-  std::string outputVolumeFullFilename = "";
-  std::string outputVolumeFilenameWithoutPath = "";
-  std::string outputTransformFullFilename = "";
-  std::string outputTransformFilenameWithoutPath = "";
+  const std::string mrmlFullFilename = itksys::SystemTools::CollapseFullPath(outputMRML.c_str());
+  std::string       outputLandmarksInInputSpaceFullFilenameWithoutExtension = "";
+  std::string       outputLandmarksInOutputSpaceFullFilenameWithoutExtension = "";
+  std::string       inputVolumeFullFilename = "";
+  std::string       inputVolumeFilenameWithoutPath = "";
+  std::string       outputVolumeFullFilename = "";
+  std::string       outputVolumeFilenameWithoutPath = "";
+  std::string       outputTransformFullFilename = "";
+  std::string       outputTransformFilenameWithoutPath = "";
 
   if (outputLandmarksInInputSpace.compare("") != 0)
   {
@@ -621,7 +624,7 @@ WriteMRMLFile(const std::string &                                        outputM
   // For output volume
   if (outputVolume.compare("") != 0)
   {
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(outputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();
@@ -662,7 +665,7 @@ WriteMRMLFile(const std::string &                                        outputM
   // For input volume
   if (inputVolume.compare("") != 0)
   {
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     reader->SetFileName(inputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();
@@ -746,10 +749,10 @@ loadLLSModel(const std::string &                             llsModelFilename,
     // skip newline or comments between landmarks
     if ((line.compare(0, 1, "#") != 0) && (line.compare(0, 1, "\0") != 0))
     {
-      unsigned int dimension = 3; // for 3D parameters
+      const unsigned int dimension = 3; // for 3D parameters
 
       // read in the landmark name
-      std::string name = line;
+      const std::string name = line;
 
       if (!getline(myfile, line))
       {

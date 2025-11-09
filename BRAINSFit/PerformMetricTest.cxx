@@ -66,14 +66,14 @@ main(int argc, char * argv[])
   using MetricSamplePointSetType = GenericMetricType::FixedSampledPointSetType;
 
   // Read input images
-  FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
+  const FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
   fixedReader->SetFileName(inputFixedImage);
-  FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
+  const FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
-  MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
+  const MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
   movingReader->SetFileName(inputMovingImage);
-  MovingImageType::Pointer movingImage = movingReader->GetOutput();
+  const MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
   // Set input transform
@@ -81,7 +81,7 @@ main(int argc, char * argv[])
   if (!inputBSplineTransform.empty())
   {
     std::cout << "Read transform file from the disk ..." << std::endl;
-    itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
+    const itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
     transReader->SetFileName(inputBSplineTransform);
     try
     {
@@ -110,7 +110,7 @@ main(int argc, char * argv[])
   GenericMetricType::Pointer metric;
   if (metricType == "MMI")
   {
-    MIMetricType::Pointer mattesMetric = MIMetricType::New();
+    const MIMetricType::Pointer mattesMetric = MIMetricType::New();
     mattesMetric->SetNumberOfHistogramBins(numberOfHistogramBins);
     mattesMetric->SetUseFixedImageGradientFilter(false);
     mattesMetric->SetUseMovingImageGradientFilter(false);
@@ -118,7 +118,7 @@ main(int argc, char * argv[])
   }
   else if (metricType == "MSE")
   {
-    MSEMetricType::Pointer msqMetric = MSEMetricType::New();
+    const MSEMetricType::Pointer msqMetric = MSEMetricType::New();
     metric = msqMetric;
   }
   else
@@ -147,7 +147,7 @@ main(int argc, char * argv[])
   std::cout << "Number of All Samples: " << numberOfAllSamples << std::endl;
   std::cout << "Sampling Percentage: " << samplingPercentage << std::endl;
 
-  MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+  const MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
   using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;

@@ -66,7 +66,7 @@ main(int argc, char * argv[])
     const bool isLandmarkTransform = !inputTransformFile.empty();
 
     using ReaderType = itk::TransformFileReader;
-    ReaderType::Pointer reader = ReaderType::New();
+    const ReaderType::Pointer reader = ReaderType::New();
     if (isLandmarkTransform)
     {
       reader->SetFileName(inputTransformFile);

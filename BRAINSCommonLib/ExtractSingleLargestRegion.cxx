@@ -36,7 +36,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   using ByteImageType = itk::Image<unsigned char, 3>;
   using CCImageType = itk::Image<unsigned int, 3>;
   using FilterType = itk::ConnectedComponentImageFilter<ByteImageType, CCImageType>;
-  FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
+  const FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
   //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
   //  watcher.QuietOn();
 
@@ -49,7 +49,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
     StructElementType openStruct;
     openStruct.SetRadius(openingSize);
     openStruct.CreateStructuringElement();
-    ErodeType::Pointer erode = ErodeType::New();
+    const ErodeType::Pointer erode = ErodeType::New();
     erode->SetErodeValue(1);
     erode->SetKernel(openStruct);
     erode->SetInput(Mask);
@@ -62,7 +62,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   }
 
   using RelabelType = itk::RelabelComponentImageFilter<CCImageType, CCImageType>;
-  RelabelType::Pointer relabel = RelabelType::New();
+  const RelabelType::Pointer relabel = RelabelType::New();
   labelConnectedComponentsFilter->Update();
   relabel->SetInput(labelConnectedComponentsFilter->GetOutput());
   relabel->SetMinimumObjectSize(1);
@@ -77,7 +77,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   }
 
   using BinaryThresholdFilter = itk::BinaryThresholdImageFilter<CCImageType, ByteImageType>;
-  BinaryThresholdFilter::Pointer labelThreshold = BinaryThresholdFilter::New();
+  const BinaryThresholdFilter::Pointer labelThreshold = BinaryThresholdFilter::New();
   labelThreshold->SetInput(relabel->GetOutput());
   labelThreshold->SetInsideValue(1);
   labelThreshold->SetOutsideValue(0);
@@ -85,8 +85,8 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   labelThreshold->SetUpperThreshold(1); // Only the largest label
   labelThreshold->Update();
 
-  ByteImageType::Pointer largestLabel = labelThreshold->GetOutput();
-  ByteImageType::Pointer dilateImage = largestLabel;
+  const ByteImageType::Pointer largestLabel = labelThreshold->GetOutput();
+  ByteImageType::Pointer       dilateImage = largestLabel;
   if (closingSize > 0)
   {
     using DilateType = itk::BinaryDilateImageFilter<ByteImageType, ByteImageType, StructElementType>;
@@ -94,7 +94,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
     StructElementType closeStruct;
     closeStruct.SetRadius(openingSize + closingSize);
     closeStruct.CreateStructuringElement();
-    DilateType::Pointer dil = DilateType::New();
+    const DilateType::Pointer dil = DilateType::New();
     dil->SetDilateValue(1);
     dil->SetKernel(closeStruct);
     dil->SetInput(largestLabel);
@@ -110,7 +110,7 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
     StructElementType remainderStruct;
     remainderStruct.SetRadius(finalOpeningSize);
     remainderStruct.CreateStructuringElement();
-    ErodeType::Pointer finalErode = ErodeType::New();
+    const ErodeType::Pointer finalErode = ErodeType::New();
     finalErode->SetErodeValue(1);
     finalErode->SetKernel(remainderStruct);
     finalErode->SetInput(dilateImage);
@@ -119,12 +119,12 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   }
 
   using multFilter = itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>;
-  multFilter::Pointer myMult1 = multFilter::New();
+  const multFilter::Pointer myMult1 = multFilter::New();
   myMult1->SetInput1(safetyImage);
   myMult1->SetInput2(Mask);
   myMult1->Update();
 
-  multFilter::Pointer myMult2 = multFilter::New();
+  const multFilter::Pointer myMult2 = multFilter::New();
   myMult2->SetInput1(myMult1->GetOutput());
   myMult2->SetInput2(inputLabelImage);
   myMult2->Update();
@@ -141,7 +141,7 @@ ExtractSingleLargestRegion(const unsigned char                           thresho
 {
   using ByteImageType = itk::Image<unsigned char, 3>;
   using BinaryThresholdFilter = itk::BinaryThresholdImageFilter<ByteImageType, ByteImageType>;
-  BinaryThresholdFilter::Pointer threshold = BinaryThresholdFilter::New();
+  const BinaryThresholdFilter::Pointer threshold = BinaryThresholdFilter::New();
   threshold->SetInput(inputLabelImage);
   threshold->SetInsideValue(1);
   threshold->SetOutsideValue(0);

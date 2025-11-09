@@ -87,7 +87,7 @@ DWIMetaDataDictionaryValidator::GetMeasurementFrame() const
 void
 DWIMetaDataDictionaryValidator::SetMeasurementFrame(const RotationMatrixType & input)
 {
-  std::string key = "NRRD_measurement frame";
+  const std::string key = "NRRD_measurement frame";
   using MFTYPE = std::vector<std::vector<double>>;
   MFTYPE dictInput;
   dictInput.resize(input.RowDimensions);
@@ -106,7 +106,7 @@ DWIMetaDataDictionaryValidator::Double3x1ArrayType
 DWIMetaDataDictionaryValidator::GetGradient(int index) const
 {
   DWIMetaDataDictionaryValidator::Double3x1ArrayType currentGradient;
-  std::string                                        key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
+  const std::string                                  key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
   if (m_dict.HasKey(key))
   {
     std::string NrrdValue;
@@ -123,18 +123,18 @@ DWIMetaDataDictionaryValidator::GetGradient(int index) const
 void
 DWIMetaDataDictionaryValidator::SetGradient(int index, DWIMetaDataDictionaryValidator::Double3x1ArrayType & gradient)
 {
-  std::string key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
-  char        tmp[64];
+  const std::string key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
+  char              tmp[64];
   sprintf(tmp, "%lf %lf %lf", gradient[0], gradient[1], gradient[2]);
-  std::string value(tmp);
+  const std::string value(tmp);
   DWIMetaDataDictionaryValidator::SetStringDictObject(key, value);
 }
 
 int
 DWIMetaDataDictionaryValidator::GetGradientCount()
 {
-  DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
-  int                                              count = 0;
+  const DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
+  int                                                    count = 0;
   for (auto & key : keys)
   {
     if (key.find("DWMRI_gradient_") != std::string::npos)
@@ -157,15 +157,15 @@ DWIMetaDataDictionaryValidator::GetGradientCount()
 DWIMetaDataDictionaryValidator::GradientTableType
 DWIMetaDataDictionaryValidator::GetGradientTable() const
 {
-  DWIMetaDataDictionaryValidator::GradientTableType myGradientTable;
-  DWIMetaDataDictionaryValidator::StringVectorType  allKeys = m_dict.GetKeys();
+  DWIMetaDataDictionaryValidator::GradientTableType      myGradientTable;
+  const DWIMetaDataDictionaryValidator::StringVectorType allKeys = m_dict.GetKeys();
   for (auto & allKey : allKeys)
   {
     if (allKey.find("DWMRI_gradient_") != std::string::npos)
     {
-      std::string                                        gradientString = allKey.substr(15, 4);
-      int                                                index = std::atoi(gradientString.c_str());
-      DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
+      const std::string                                        gradientString = allKey.substr(15, 4);
+      const int                                                index = std::atoi(gradientString.c_str());
+      const DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
       myGradientTable.push_back(curGradientDirection);
     }
   }
@@ -192,7 +192,7 @@ DWIMetaDataDictionaryValidator::SetGradientTable(GradientTableType & myGradientT
 void
 DWIMetaDataDictionaryValidator::DeleteGradientTable()
 {
-  DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
+  const DWIMetaDataDictionaryValidator::StringVectorType keys = m_dict.GetKeys();
   for (auto & key : keys)
   {
     if (key.find("DWMRI_gradient_") != std::string::npos)
@@ -217,9 +217,9 @@ DWIMetaDataDictionaryValidator::GetBValue() const
 void
 DWIMetaDataDictionaryValidator::SetBValue(const double bvalue)
 {
-  const std::string           key = "DWMRI_b-value";
-  itk::NumberToString<double> doubleConvert;
-  const std::string           valstr(doubleConvert(bvalue));
+  const std::string                 key = "DWMRI_b-value";
+  const itk::NumberToString<double> doubleConvert;
+  const std::string                 valstr(doubleConvert(bvalue));
   DWIMetaDataDictionaryValidator::SetStringDictObject(key, valstr);
 }
 

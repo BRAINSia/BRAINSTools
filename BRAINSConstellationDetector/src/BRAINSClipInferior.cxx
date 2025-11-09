@@ -61,7 +61,7 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  bool                                                  verbose = true;
+  const bool                                            verbose = true;
 
   std::cout << "================================================================" << std::endl;
   std::cout << "Processing: " << inputVolume << std::endl;
@@ -91,7 +91,7 @@ main(int argc, char * argv[])
     BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
   }
   // //////////////////////////////////////////////////////////////////////////
-  SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);
+  const SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);
   if (image.IsNull())
   {
     printf("\nCould not open image %s, aborting ...\n\n", inputVolume.c_str());
@@ -103,7 +103,7 @@ main(int argc, char * argv[])
   constexpr double thousand = 1000.0;
   if (acLowerBound != thousand)
   {
-    double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;
+    const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;
     ChopImageBelowLowerBound<SImageType>(image, BackgroundFillValue, PhysicalLowerBound);
   }
   itkUtil::WriteImage<SImageType>(image, outputVolume);

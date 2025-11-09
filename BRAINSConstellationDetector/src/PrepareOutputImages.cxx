@@ -55,9 +55,9 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
 
   const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - lACLowerBound;
   {
-    const SImageType * constImage(lImageToBeResampled.GetPointer());
+    const SImageType * const constImage(lImageToBeResampled.GetPointer());
 
-    ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+    const ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
     resampleIPFilter->SetInputImage(constImage);
     resampleIPFilter->SetRigidTransform(lVersorTransform.GetPointer());
     resampleIPFilter->Update();
@@ -91,7 +91,7 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
       ChopImageBelowLowerBound<SImageType>(lOutputImage, BackgroundFillValue, PhysicalLowerBound);
 
       // Second Create a mask for inverse resampling to original space
-      SImageType::Pointer ZeroOneImage = SImageType::New();
+      const SImageType::Pointer ZeroOneImage = SImageType::New();
       ZeroOneImage->CopyInformation(lOutputResampledImage);
       ZeroOneImage->SetRegions(lOutputResampledImage->GetLargestPossibleRegion());
       ZeroOneImage->Allocate();
@@ -104,12 +104,12 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
         //  No double opportunity when generating both kinds of images.
         constexpr unsigned int closingSize = 7;
         using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
-        LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+        const LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
         LFF->SetInput(lOutputResampledImage);
         LFF->SetOtsuPercentileThreshold(lOtsuPercentileThreshold);
         LFF->SetClosingSize(closingSize);
         LFF->Update();
-        SImageType::Pointer HeadOutlineMaskImage = LFF->GetOutput();
+        const SImageType::Pointer HeadOutlineMaskImage = LFF->GetOutput();
 
         IteratorType ItZeroOneImage(ZeroOneImage, ZeroOneImage->GetRequestedRegion());
         ItZeroOneImage.GoToBegin();
@@ -132,27 +132,27 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
       // Map the ZeroOne image through the inverse zero-centered transform
       // to make the clipping factor image:
       using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<SImageType, double>;
-      NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
+      const NearestNeighborInterpolatorType::Pointer interpolator = NearestNeighborInterpolatorType::New();
       using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
-      ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
+      const ResampleFilterType::Pointer ResampleFilter = ResampleFilterType::New();
       ResampleFilter->SetInput(ZeroOneImage);
       ResampleFilter->SetInterpolator(interpolator);
       ResampleFilter->SetDefaultPixelValue(0);
       ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
       {
-        VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
-        const SImageType::PointType       centerPoint = lVersorTransform->GetCenter();
+        const VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
+        const SImageType::PointType             centerPoint = lVersorTransform->GetCenter();
         lInvVersorTransform->SetCenter(centerPoint);
         lInvVersorTransform->SetIdentity();
         lVersorTransform->GetInverse(lInvVersorTransform);
         ResampleFilter->SetTransform(lInvVersorTransform);
       }
       ResampleFilter->Update();
-      SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
+      const SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
 
       // Multiply the raw input image by the clipping factor image:
       using MultiplyFilterType = itk::MultiplyImageFilter<SImageType, SImageType>;
-      MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
+      const MultiplyFilterType::Pointer MultiplyFilter = MultiplyFilterType::New();
       MultiplyFilter->SetInput1(lImageToBeResampled);
       MultiplyFilter->SetInput2(lClippingFactorImage);
       MultiplyFilter->Update();
@@ -168,7 +168,7 @@ ApplyInverseOfTransformToLandmarks(const VersorRigidTransformType::ConstPointer 
                                    const LandmarksMapType &                       inputLmks,
                                    LandmarksMapType &                             outputLmks)
 {
-  VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
+  const VersorRigidTransformType::Pointer lInvVersorTransform = VersorRigidTransformType::New();
   {
     const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
     lInvVersorTransform->SetCenter(centerPoint);

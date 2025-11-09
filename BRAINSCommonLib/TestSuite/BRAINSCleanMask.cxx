@@ -29,11 +29,11 @@ main(int argc, char ** argv)
   }
   using ImageType = itk::Image<unsigned char, 3>;
 
-  std::string inputName(argv[1]);
+  const std::string inputName(argv[1]);
 
-  std::string outputName(argv[2]);
+  const std::string outputName(argv[2]);
 
-  ImageType::Pointer input = itkUtil::ReadImage<ImageType>(inputName);
-  ImageType::Pointer output = CleanBrainLabelMap<ImageType, ImageType>(input);
+  const ImageType::Pointer input = itkUtil::ReadImage<ImageType>(inputName);
+  const ImageType::Pointer output = CleanBrainLabelMap<ImageType, ImageType>(input);
   itkUtil::WriteImage<ImageType>(output, outputName);
 }

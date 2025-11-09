@@ -69,7 +69,7 @@ std::string
 inputImageToStringPixelType(const std::string & inputVolume)
 {
   // https://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
-  itk::ImageIOBase::Pointer imageIO =
+  const itk::ImageIOBase::Pointer imageIO =
     itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::IOFileModeEnum::ReadMode);
 
   imageIO->SetFileName(inputVolume);
@@ -270,7 +270,7 @@ main(int argc, char * argv[])
   {
     TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage; // image to be warped
     using ReaderType = itk::ImageFileReader<TBRAINSResampleInternalImageType>;
-    ReaderType::Pointer imageReader = ReaderType::New();
+    const ReaderType::Pointer imageReader = ReaderType::New();
     imageReader->SetFileName(inputVolume);
     imageReader->Update();
     PrincipalOperandImage = imageReader->GetOutput();
@@ -283,7 +283,7 @@ main(int argc, char * argv[])
     // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
     TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
 
-    ReaderType::Pointer refImageReader = ReaderType::New();
+    const ReaderType::Pointer refImageReader = ReaderType::New();
     if (!referenceVolume.empty())
     {
       refImageReader->SetFileName(referenceVolume);
@@ -305,11 +305,11 @@ main(int argc, char * argv[])
       DisplacementFieldType::Pointer DisplacementField;
 
       using DefFieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
-      DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
+      const DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName(deformationVolume);
       fieldImageReader->Update();
       DisplacementField = fieldImageReader->GetOutput();
-      DisplacementFieldTransformType::Pointer dispTransform = DisplacementFieldTransformType::New();
+      const DisplacementFieldTransformType::Pointer dispTransform = DisplacementFieldTransformType::New();
       dispTransform->SetDisplacementField(DisplacementField.GetPointer());
       genericTransform = dispTransform.GetPointer();
     }
@@ -319,7 +319,7 @@ main(int argc, char * argv[])
       {
         if (warpTransform == "Identity")
         {
-          itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
+          const itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
           rigidIdentity->SetIdentity();
           genericTransform = rigidIdentity.GetPointer();
         }
@@ -335,7 +335,7 @@ main(int argc, char * argv[])
       }
       if (inverseTransform)
       {
-        std::string transformFileType = genericTransform->GetNameOfClass();
+        const std::string transformFileType = genericTransform->GetNameOfClass();
         std::cout << "Transform File Type:: " << transformFileType << std::endl;
         if (transformFileType == "AffineTransform")
         {
@@ -343,7 +343,7 @@ main(int argc, char * argv[])
           const LocalAffineTransformType::ConstPointer affineTransform =
             static_cast<const LocalAffineTransformType *>(genericTransform.GetPointer());
 
-          LocalAffineTransformType::Pointer Local_inverseTransform = LocalAffineTransformType::New();
+          const LocalAffineTransformType::Pointer Local_inverseTransform = LocalAffineTransformType::New();
           affineTransform->GetInverse(Local_inverseTransform);
 
           genericTransform = Local_inverseTransform;
@@ -359,7 +359,7 @@ main(int argc, char * argv[])
           const RigidTransformType::ConstPointer rigidTransform =
             static_cast<const RigidTransformType *>(genericTransform.GetPointer());
 
-          RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
+          const RigidTransformType::Pointer Local_inverseTransform = RigidTransformType::New();
           rigidTransform->GetInverse(Local_inverseTransform);
 
           genericTransform = Local_inverseTransform;
@@ -377,7 +377,7 @@ main(int argc, char * argv[])
           const Similarity3DTransformType::ConstPointer similarityTransform =
             static_cast<const Similarity3DTransformType *>(genericTransform.GetPointer());
 
-          Similarity3DTransformType::Pointer Local_inverseTransform = Similarity3DTransformType::New();
+          const Similarity3DTransformType::Pointer Local_inverseTransform = Similarity3DTransformType::New();
           similarityTransform->GetInverse(Local_inverseTransform);
           genericTransform = Local_inverseTransform;
           if (genericTransform.IsNull())
@@ -408,11 +408,11 @@ main(int argc, char * argv[])
       // find min/max pixels for image
       using StatisticsFilterType = itk::StatisticsImageFilter<TBRAINSResampleInternalImageType>;
 
-      StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
+      const StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
       statsFilter->SetInput(TransformedImage);
       statsFilter->Update();
-      TBRAINSResampleInternalImageType::PixelType minPixel(statsFilter->GetMinimum());
-      TBRAINSResampleInternalImageType::PixelType maxPixel(statsFilter->GetMaximum());
+      const TBRAINSResampleInternalImageType::PixelType minPixel(statsFilter->GetMinimum());
+      const TBRAINSResampleInternalImageType::PixelType maxPixel(statsFilter->GetMaximum());
 
       DisplacementFieldType::Pointer DisplacementField;
       // create the grid
@@ -420,7 +420,7 @@ main(int argc, char * argv[])
       { // HACK:  Need to make handeling of transforms more elegant as is done
         // in BRAINSFitHelper.
         using ConverterType = itk::TransformToDisplacementFieldFilter<DisplacementFieldType, double>;
-        ConverterType::Pointer myConverter = ConverterType::New();
+        const ConverterType::Pointer myConverter = ConverterType::New();
         myConverter->SetTransform(genericTransform);
         myConverter->SetReferenceImage(TransformedImage);
         myConverter->SetUseReferenceImage(true);
@@ -429,7 +429,7 @@ main(int argc, char * argv[])
       }
       using MaxFilterType = itk::MaximumImageFilter<TBRAINSResampleInternalImageType>;
       using GFType = itk::GridForwardWarpImageFilterNew<DisplacementFieldType, TBRAINSResampleInternalImageType>;
-      GFType::Pointer GFFilter = GFType::New();
+      const GFType::Pointer GFFilter = GFType::New();
       GFFilter->SetInput(DisplacementField);
       GFType::GridSpacingType GridOffsets;
       GridOffsets[0] = gridSpacing[0];
@@ -439,7 +439,7 @@ main(int argc, char * argv[])
       GFFilter->SetBackgroundValue(minPixel);
       GFFilter->SetForegroundValue(maxPixel);
       // merge grid with warped image
-      MaxFilterType::Pointer MFilter = MaxFilterType::New();
+      const MaxFilterType::Pointer MFilter = MaxFilterType::New();
       MFilter->SetInput1(GFFilter->GetOutput());
       MFilter->SetInput2(TransformedImage);
       MFilter->Update();
@@ -454,13 +454,13 @@ main(int argc, char * argv[])
       using MaskPixelType = short int;
       using MaskImageType = itk::Image<MaskPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, MaskImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
 
-      MaskImageType::Pointer outputImage = castFilter->GetOutput();
+      const MaskImageType::Pointer outputImage = castFilter->GetOutput();
       using WriterType = itk::ImageFileWriter<MaskImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -480,12 +480,12 @@ main(int argc, char * argv[])
       using NewPixelType = unsigned char;
       using NewImageType = itk::Image<NewPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
 
       using WriterType = itk::ImageFileWriter<NewImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -505,12 +505,12 @@ main(int argc, char * argv[])
       using NewPixelType = signed short;
       using NewImageType = itk::Image<NewPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
 
       using WriterType = itk::ImageFileWriter<NewImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -530,12 +530,12 @@ main(int argc, char * argv[])
       using NewPixelType = unsigned short;
       using NewImageType = itk::Image<NewPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
 
       using WriterType = itk::ImageFileWriter<NewImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -555,12 +555,12 @@ main(int argc, char * argv[])
       using NewPixelType = int;
       using NewImageType = itk::Image<NewPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
 
       using WriterType = itk::ImageFileWriter<NewImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -580,11 +580,11 @@ main(int argc, char * argv[])
       using NewPixelType = unsigned int;
       using NewImageType = itk::Image<NewPixelType, 3>;
       using CastImageFilter = itk::CastImageFilter<TBRAINSResampleInternalImageType, NewImageType>;
-      CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      const CastImageFilter::Pointer castFilter = CastImageFilter::New();
       castFilter->SetInput(TransformedImage);
       castFilter->Update();
       using WriterType = itk::ImageFileWriter<NewImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(castFilter->GetOutput());
@@ -602,7 +602,7 @@ main(int argc, char * argv[])
     else if (pixelDataStorageType == "float")
     {
       using WriterType = itk::ImageFileWriter<TBRAINSResampleInternalImageType>;
-      WriterType::Pointer imageWriter = WriterType::New();
+      const WriterType::Pointer imageWriter = WriterType::New();
       imageWriter->UseCompressionOn();
       imageWriter->SetFileName(outputVolume);
       imageWriter->SetInput(TransformedImage);

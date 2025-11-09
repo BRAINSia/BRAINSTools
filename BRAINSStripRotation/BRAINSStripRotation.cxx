@@ -28,7 +28,7 @@ itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char, 3>::DirectionType & dir)
 {
   using TransformType = itk::VersorTransform<TPrecision>;
-  typename TransformType::Pointer rval = TransformType::New();
+  const typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval << rval->GetMatrix() << std::endl;
   rval.GetPointer()->Register();
@@ -40,7 +40,7 @@ itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char, 2>::DirectionType & dir)
 {
   using TransformType = itk::CenteredRigid2DTransform<TPrecision>;
-  typename TransformType::Pointer rval = TransformType::New();
+  const typename TransformType::Pointer rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval << rval->GetMatrix() << std::endl;
   return rval;
@@ -92,10 +92,10 @@ ReadAndSplitImage(const std::string & inputVolume, const std::string & outputVol
 
   using TransformType = typename TransformFileWriterType::TransformType;
 
-  typename TransformFileWriterType::Pointer xfrmWriter = TransformFileWriterType::New();
+  const typename TransformFileWriterType::Pointer xfrmWriter = TransformFileWriterType::New();
 
   // create a rigid transform from the direction matrix.
-  typename TransformType::Pointer xfrm = NewTransform<XFRMPrecisionType>(direction);
+  const typename TransformType::Pointer xfrm = NewTransform<XFRMPrecisionType>(direction);
 
   xfrmWriter->SetInput(xfrm.GetPointer());
 
@@ -140,7 +140,7 @@ main(int argc, char * argv[])
   }
   //
   // have to find out what type of file this is.
-  itk::ImageIOBase::Pointer imageIO =
+  const itk::ImageIOBase::Pointer imageIO =
     itk::ImageIOFactory::CreateImageIO(inputVolume.c_str(), itk::ImageIOFactory::IOFileModeEnum::ReadMode);
   if (imageIO.IsNotNull())
   {
@@ -163,15 +163,15 @@ main(int argc, char * argv[])
   //
   // For now support scalar images of 2 or 3 dimensions.  Adding more
   // isn't a problem, but it complicates how we build the matlab structure.
-  itk::IOPixelEnum                  pixtype = imageIO->GetPixelType();
-  itk::ImageIOBase::IOComponentEnum componentType = imageIO->GetComponentType();
+  const itk::IOPixelEnum                  pixtype = imageIO->GetPixelType();
+  const itk::ImageIOBase::IOComponentEnum componentType = imageIO->GetComponentType();
   if (pixtype != itk::IOPixelEnum::SCALAR)
   {
     std::cerr << "Unsupported pixel type " << itk::ImageIOBase::GetPixelTypeAsString(pixtype) << " in volume "
               << inputVolume << std::endl;
     return 1;
   }
-  unsigned imageDimension = imageIO->GetNumberOfDimensions();
+  const unsigned imageDimension = imageIO->GetNumberOfDimensions();
   switch (imageDimension)
   {
     case 2:

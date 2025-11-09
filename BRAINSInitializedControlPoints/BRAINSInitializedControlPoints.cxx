@@ -111,7 +111,7 @@ main(int argc, char * argv[])
   try
   {
     using FixedVolumeReaderType = itk::ImageFileReader<FixedVolumeType>;
-    FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
+    const FixedVolumeReaderType::Pointer fixedVolumeReader = FixedVolumeReaderType::New();
     fixedVolumeReader->SetFileName(inputVolume);
     fixedVolumeReader->Update();
     using PermuterType = itk::PermuteAxesImageFilter<FixedVolumeType>;
@@ -119,7 +119,7 @@ main(int argc, char * argv[])
     myOrdering[0] = permuteOrder[0];
     myOrdering[1] = permuteOrder[1];
     myOrdering[2] = permuteOrder[2];
-    PermuterType::Pointer myPermuter = PermuterType::New();
+    const PermuterType::Pointer myPermuter = PermuterType::New();
     myPermuter->SetInput(fixedVolumeReader->GetOutput());
     myPermuter->SetOrder(myOrdering);
     myPermuter->Update();
@@ -133,11 +133,11 @@ main(int argc, char * argv[])
   }
 
   using BSplineTransformType = itk::BSplineTransform<float, 3, 3>;
-  BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
+  const BSplineTransformType::Pointer initialBSplineTransform = BSplineTransformType::New();
   initialBSplineTransform->SetIdentity();
 
   using InitializerType = itk::BSplineTransformInitializer<BSplineTransformType, FixedVolumeType>;
-  InitializerType::Pointer transformInitializer = InitializerType::New();
+  const InitializerType::Pointer transformInitializer = InitializerType::New();
 
   transformInitializer->SetTransform(initialBSplineTransform);
   transformInitializer->SetImage(fixedImage);
@@ -165,11 +165,11 @@ main(int argc, char * argv[])
   // that
   //        is present in the BSplineTransformationCode between the differing
   //        representations of the parameters
-  BSplineTransformType::ParametersType temp = initialBSplineTransform->GetParameters();
+  const BSplineTransformType::ParametersType temp = initialBSplineTransform->GetParameters();
   initialBSplineTransform->SetParameters(temp);
   // std::cout << transformInitializer << std::endl;
 
-  BSplineTransformType::ImagePointer coefficientImage = initialBSplineTransform->GetCoefficientImages()[0];
+  const BSplineTransformType::ImagePointer coefficientImage = initialBSplineTransform->GetCoefficientImages()[0];
   std::cout << "fixedImage\n" << fixedImage << std::endl;
   std::cout << "coefficientImage\n" << coefficientImage << std::endl;
   std::cout << "initialBSplineTransform\n" << initialBSplineTransform << std::endl;
@@ -193,7 +193,7 @@ main(int argc, char * argv[])
   }
 
   using FixedVolumeWriterType = itk::ImageFileWriter<FixedVolumeType>;
-  FixedVolumeWriterType::Pointer permutedWriter = FixedVolumeWriterType::New();
+  const FixedVolumeWriterType::Pointer permutedWriter = FixedVolumeWriterType::New();
   permutedWriter->SetInput(fixedImage);
   permutedWriter->SetFileName(outputVolume);
   permutedWriter->Update();

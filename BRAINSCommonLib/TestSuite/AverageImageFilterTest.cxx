@@ -42,11 +42,12 @@ main(int, char *[])
     random->SetSize(randomSize);
     random->Update();
     inputImages.emplace_back(random->GetOutput());
-    FloatImageConstIterator curIt = FloatImageConstIterator(inputImages[i], inputImages[i]->GetLargestPossibleRegion());
+    const FloatImageConstIterator curIt =
+      FloatImageConstIterator(inputImages[i], inputImages[i]->GetLargestPossibleRegion());
     inputIterators.push_back(curIt);
   }
   // do a manual average to compare with the filter output
-  FloatImage2DType::Pointer testAvg = FloatImage2DType::New();
+  const FloatImage2DType::Pointer testAvg = FloatImage2DType::New();
   testAvg->CopyInformation(inputImages[0]);
   testAvg->SetRegions(randomSize);
   testAvg->Allocate();
@@ -62,17 +63,17 @@ main(int, char *[])
     avgIt.Set(sum / numTestImages);
   }
   // run the filter
-  AverageImageFilterType::Pointer avgFilter = AverageImageFilterType::New();
+  const AverageImageFilterType::Pointer avgFilter = AverageImageFilterType::New();
   for (unsigned i = 0; i < numTestImages; ++i)
   {
     avgFilter->SetInput(i, inputImages[i]);
   }
 
-  SubtractFilterType::Pointer subFilter = SubtractFilterType::New();
+  const SubtractFilterType::Pointer subFilter = SubtractFilterType::New();
   subFilter->SetInput1(testAvg);
   subFilter->SetInput2(avgFilter->GetOutput());
 
-  StatFilterType::Pointer statFilter = StatFilterType::New();
+  const StatFilterType::Pointer statFilter = StatFilterType::New();
   statFilter->SetInput(subFilter->GetOutput());
 
   statFilter->Update();

@@ -102,8 +102,8 @@ main(int argc, char * argv[])
       using LocalLandmarksMapType = std::map<std::string, ImagePointType>;
 
       // NOTE: ReadSlicer3toITKLmk returns points in LPS system
-      LocalLandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk(fixedLandmarksFile);
-      LocalLandmarksMapType movingLandmarkMap = ReadSlicer3toITKLmk(movingLandmarksFile);
+      const LocalLandmarksMapType fixedLandmarkMap = ReadSlicer3toITKLmk(fixedLandmarksFile);
+      LocalLandmarksMapType       movingLandmarkMap = ReadSlicer3toITKLmk(movingLandmarksFile);
       for (auto & fmapit : fixedLandmarkMap)
       {
         auto mmapit = movingLandmarkMap.find(fmapit.first);
@@ -134,14 +134,14 @@ main(int argc, char * argv[])
 
   if (transformType == "Rigid")
   {
-    VersorRigidTransformType::Pointer rigidTransform =
+    const VersorRigidTransformType::Pointer rigidTransform =
       ComputeRigidTransformFromLandmarkLists(fixedPoints, movingPoints);
     // do nothing
     genericTransform = rigidTransform.GetPointer();
   }
   else if (transformType == "Translation")
   {
-    VersorRigidTransformType::Pointer rigidTransform =
+    const VersorRigidTransformType::Pointer rigidTransform =
       ComputeRigidTransformFromLandmarkLists(fixedPoints, movingPoints);
     // Clear out the computed rotation if we only requested translation
     itk::Versor<double> v;
@@ -151,7 +151,7 @@ main(int argc, char * argv[])
   }
   else if (transformType == "Similarity")
   {
-    SimilarityTransformType::Pointer similarityTransform = DoIt_Similarity(fixedPoints, movingPoints);
+    const SimilarityTransformType::Pointer similarityTransform = DoIt_Similarity(fixedPoints, movingPoints);
     genericTransform = similarityTransform.GetPointer();
   }
   /*else if (transformType == "Affine")

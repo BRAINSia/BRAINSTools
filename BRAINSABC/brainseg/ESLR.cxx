@@ -36,12 +36,12 @@ main(int argc, char * argv[])
   using ByteImageType = itk::Image<unsigned char, 3>;
   using ReaderType = itk::ImageFileReader<ByteImageType>;
 
-  ReaderType::Pointer myReader = ReaderType::New();
+  const ReaderType::Pointer myReader = ReaderType::New();
   myReader->SetFileName(inputVolume);
   myReader->Update();
-  ByteImageType::Pointer myDirtyRegion = myReader->GetOutput();
+  const ByteImageType::Pointer myDirtyRegion = myReader->GetOutput();
 
-  ByteImageType::Pointer myCleanRegion =
+  const ByteImageType::Pointer myCleanRegion =
     ExtractSingleLargestRegion(low, high, openingSize, closingSize, safetySize, myDirtyRegion);
 
   if (static_cast<int>(preserveOutside) == true) // For values outside the specified range,
@@ -66,7 +66,7 @@ main(int argc, char * argv[])
   }
 
   using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
-  OutputWriterType::Pointer writer = OutputWriterType::New();
+  const OutputWriterType::Pointer writer = OutputWriterType::New();
 
   writer->SetInput(myCleanRegion);
   writer->UseCompressionOn();

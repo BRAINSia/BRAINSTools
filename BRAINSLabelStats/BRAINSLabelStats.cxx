@@ -50,13 +50,13 @@ GetXmlLabelName(const std::string & fileName, int label)
   std::string labelName = "Error";
 
   // Load the XML File
-  itk::DOMNodeXMLReader::Pointer xmlReader = itk::DOMNodeXMLReader::New();
+  const itk::DOMNodeXMLReader::Pointer xmlReader = itk::DOMNodeXMLReader::New();
 
   xmlReader->SetFileName(fileName);
   xmlReader->Update();
 
   // Find the labels and extract name of specified label
-  itk::DOMNode::Pointer          labelXmlInfo = xmlReader->GetOutput();
+  const itk::DOMNode::Pointer    labelXmlInfo = xmlReader->GetOutput();
   itk::DOMNode::ChildrenListType elementList;
   labelXmlInfo->GetAllChildren(elementList);
   for (auto & it : elementList)
@@ -73,11 +73,11 @@ GetXmlLabelName(const std::string & fileName, int label)
         // std::cout << *lt << std::endl;
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
-        std::string attributeValue = lt->GetAttribute("index");
-        int         currentLabel = std::stoi(attributeValue.c_str());
+        const std::string attributeValue = lt->GetAttribute("index");
+        const int         currentLabel = std::stoi(attributeValue.c_str());
         if (currentLabel == label)
         {
-          itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
+          const itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
           labelName = textNode->GetText();
         }
       }
@@ -118,11 +118,11 @@ GetAntsLabelName(const std::string & fileName, int label)
       labelFile >> x2 >> y2 >> z2;
       std::getline(labelFile, txtLabel);
 
-      int currentLabel = std::stoi(value.c_str());
+      const int currentLabel = std::stoi(value.c_str());
       if (currentLabel == label)
       {
-        unsigned first = txtLabel.find('"');
-        unsigned last = txtLabel.rfind('"');
+        const unsigned first = txtLabel.find('"');
+        const unsigned last = txtLabel.rfind('"');
         labelName = txtLabel.substr(first + 1, last - first - 1);
         labelFile.close();
         return labelName;
@@ -216,7 +216,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<float, 3>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
-  ImageReaderType::Pointer imageReader = ImageReaderType::New();
+  const ImageReaderType::Pointer imageReader = ImageReaderType::New();
   imageReader->SetFileName(imageVolume);
   imageReader->UpdateLargestPossibleRegion();
 
@@ -231,7 +231,7 @@ main(int argc, char * argv[])
 
   using LabelType = itk::Image<short, 3>;
   using LabelReaderType = itk::ImageFileReader<LabelType>;
-  LabelReaderType::Pointer labelReader = LabelReaderType::New();
+  const LabelReaderType::Pointer labelReader = LabelReaderType::New();
   labelReader->SetFileName(labelVolume);
   labelReader->UpdateLargestPossibleRegion();
 
@@ -282,7 +282,7 @@ main(int argc, char * argv[])
   else if (minMaxType == "image")
   {
     using MinMaxFilterType = itk::MinimumMaximumImageFilter<ImageType>;
-    MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
+    const MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
     minMaxFilter->SetInput(imageReader->GetOutput());
     minMaxFilter->UpdateLargestPossibleRegion();
     minValue = minMaxFilter->GetMinimum();
@@ -301,7 +301,7 @@ main(int argc, char * argv[])
   }
 
   using StatsFilterType = itk::LabelStatisticsImageFilter<ImageType, LabelType>;
-  StatsFilterType::Pointer statsFilter = StatsFilterType::New();
+  const StatsFilterType::Pointer statsFilter = StatsFilterType::New();
   statsFilter->SetInput(imageReader->GetOutput());
   statsFilter->SetLabelInput(labelReader->GetOutput());
   if (computeGlobalHistogram)
@@ -321,9 +321,9 @@ main(int argc, char * argv[])
   {
     if (statsFilter->HasLabel(*vIt))
     {
-      LabelPixelType labelValue = *vIt;
+      const LabelPixelType labelValue = *vIt;
 
-      std::string labelName = GetLabelName(mode, labelNameFile, labelValue);
+      const std::string labelName = GetLabelName(mode, labelNameFile, labelValue);
       for (const auto & outputPrefixColumnValue : outputPrefixColumnValues)
       {
         std::cout << outputPrefixColumnValue << ", ";
@@ -338,7 +338,7 @@ main(int argc, char * argv[])
       {
         minValue = statsFilter->GetMinimum(labelValue);
         maxValue = statsFilter->GetMaximum(labelValue);
-        StatsFilterType::Pointer labelStatsFilter = StatsFilterType::New();
+        const StatsFilterType::Pointer labelStatsFilter = StatsFilterType::New();
         labelStatsFilter->SetInput(imageReader->GetOutput());
         labelStatsFilter->SetLabelInput(labelReader->GetOutput());
         labelStatsFilter->UseHistogramsOn();

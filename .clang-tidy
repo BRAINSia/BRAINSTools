@@ -55,7 +55,7 @@ Checks: <
   -misc-unused-parameters,
   -misc-use-internal-linkage,
    performance-enum-size,
-  -performance-faster-string-find,
+   performance-faster-string-find,
   -performance-for-range-copy,
   -performance-implicit-conversion-in-loop,
   -performance-inefficient-algorithm,

@@ -15,14 +15,14 @@
       <longflag>inputProbabilityVolume</longflag>
       <flag>i</flag>
       <channel>input</channel>
-      <description>The list of proobabilityimages.</description>
+      <description>The list of probability images.</description>
     </image>
 
     <integer-vector>
       <name>priorLabelCodes</name>
       <label>Prior Label Codes</label>
       <longflag>priorLabelCodes</longflag>
-      <description>A list of PriorLabelCode values used for coding the output label images</description>
+      <description>A list of Prior Label Code values used for coding the output label images.</description>
       <default></default>
     </integer-vector>
 
@@ -39,7 +39,7 @@
       <label>Non-air Region Mask</label>
       <longflag>nonAirRegionMask</longflag>
       <channel>input</channel>
-      <description>a mask representing the "NonAirRegion" -- Just force pixels in this region to zero</description>
+      <description>A mask representing the "NonAirRegion" -- just force pixels in this region to zero.</description>
     </image>
 
     <double>

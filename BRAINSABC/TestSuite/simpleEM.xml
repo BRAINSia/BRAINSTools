@@ -45,7 +45,7 @@
     <string-vector>
       <name>priorsList</name>
       <longflag>priorsList</longflag>
-      <description> number of input should same to the number of priorsList</description>
+      <description>The number of inputs should match the number of priors in priorsList.</description>
       <default></default>
     </string-vector>
     <double-vector>

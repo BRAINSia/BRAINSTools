@@ -17,7 +17,7 @@
     <image multiple="true">
       <name>inputVolumes</name>
       <longflag>inputVolumes</longflag>
-      <description>The Input probaiblity images to be computed for lable maps</description>
+      <description>The input probability images to be computed for label maps.</description>
       <channel>input</channel>
       <label>Input Image</label>
     </image>

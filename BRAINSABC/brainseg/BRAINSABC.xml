@@ -3,9 +3,8 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>Intra-subject registration, bias Correction, and tissue classification (BRAINS)</title>
-  <description>Atlas-based tissue segmentation method.  This is an algorithmic extension of work done by XXXX at UNC and Utah XXXX need more description here.
-  </description>
-  <!-- INFO: Need a much more descriptive explanation of the evolution of this work from the work performed by and contributed to NAMIC by Marcel Prastawa -->
+  <description>Atlas-based tissue segmentation method. This is an algorithmic extension of work performed at UNC and Utah, with significant contributions from Marcel Prastawa and the NAMIC project.</description>
+  <!-- INFO: This method builds upon previous work contributed to NAMIC by Marcel Prastawa. -->
 
   <parameters advanced="true">
     <label>Input</label>

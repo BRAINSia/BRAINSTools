@@ -26,6 +26,7 @@
 #  include <itkSpatialOrientation.h>
 #  include <itkSpatialOrientationAdapter.h>
 #  include <itkOrientImageFilter.h>
+#  include "itkAnatomicalOrientation.h"
 #  include <cstdio>
 // #include <itkIO.h>
 // #include <itkIO2.h>
@@ -83,7 +84,18 @@ OrientImage(typename ImageType::Pointer & inputImage, itk::AnatomicalOrientation
   typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
     itk::OrientImageFilter<ImageType, ImageType>::New();
 
-  orienter->SetDesiredCoordinateOrientation(orient);
+  // AnatomicalOrientation::GetAsDirection() uses "positive axis" convention;
+  // SpatialOrientationAdapter uses "origin corner" (opposite sign). Negate.
+  typename ImageType::DirectionType negDir;
+  const auto                        posDir = orient.GetAsDirection();
+  for (unsigned int i = 0; i < ImageType::ImageDimension; ++i)
+  {
+    for (unsigned int j = 0; j < ImageType::ImageDimension; ++j)
+    {
+      negDir[i][j] = -posDir[i][j];
+    }
+  }
+  orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientationAdapter().FromDirectionCosines(negDir));
   orienter->UseImageDirectionOn();
   orienter->SetInput(inputImage);
   orienter->Update();

@@ -21,12 +21,13 @@
 #include <QWidget>
 #include <vtkRenderer.h>
 
-#include "QVTKWidget.h"
+#include "QVTKOpenGLNativeWidget.h"
 #include <list>
 
+class vtkImageData;
 class vtkImageViewer2;
 
-class QImageViewerWidget : public QVTKWidget
+class QImageViewerWidget : public QVTKOpenGLNativeWidget
 {
   Q_OBJECT
 public slots:

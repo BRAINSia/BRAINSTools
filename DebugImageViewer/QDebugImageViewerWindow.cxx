@@ -202,7 +202,7 @@ QDebugImageViewerWindow::readImage()
   xferImage->Allocate();
 
   // set orientation
-  itk::AnatomicalOrientation orientation;
+  itk::AnatomicalOrientation orientation(itk::AnatomicalOrientation::PositiveEnum::LPS);
   if (this->SocketRead(&orientation, sizeof(orientation), 1) != 1)
   {
     std::cerr << "Error reading socket" << std::endl;

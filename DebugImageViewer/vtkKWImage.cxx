@@ -90,7 +90,6 @@ public:
 
 // ----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkKWImage);
-vtkCxxRevisionMacro(vtkKWImage, "$Revision: 1.1 $");
 
 // ----------------------------------------------------------------------------
 vtkKWImage::vtkKWImage() { this->Importer = vtkImageImport::New(); }
@@ -148,49 +147,49 @@ vtkKWImage::GetITKImageBase() const
 vtkKWImage::ITKScalarPixelType
 vtkKWImage::GetITKScalarPixelType() const
 {
-  ITKScalarPixelType pixelType = itk::ImageIOBase::UCHAR;
+  ITKScalarPixelType pixelType = itk::ImageIOBase::IOComponentEnum::UCHAR;
 
   ImageBaseType * itkImageBase = this->ItkImage.GetPointer();
 
   if (dynamic_cast<itk::Image<unsigned char, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::UCHAR;
+    pixelType = itk::ImageIOBase::IOComponentEnum::UCHAR;
   }
   else if (dynamic_cast<itk::Image<char, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::CHAR;
+    pixelType = itk::ImageIOBase::IOComponentEnum::CHAR;
   }
   else if (dynamic_cast<itk::Image<short, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::SHORT;
+    pixelType = itk::ImageIOBase::IOComponentEnum::SHORT;
   }
   else if (dynamic_cast<itk::Image<unsigned short, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::USHORT;
+    pixelType = itk::ImageIOBase::IOComponentEnum::USHORT;
   }
   else if (dynamic_cast<itk::Image<int, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::INT;
+    pixelType = itk::ImageIOBase::IOComponentEnum::INT;
   }
   else if (dynamic_cast<itk::Image<unsigned int, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::UINT;
+    pixelType = itk::ImageIOBase::IOComponentEnum::UINT;
   }
   else if (dynamic_cast<itk::Image<long, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::LONG;
+    pixelType = itk::ImageIOBase::IOComponentEnum::LONG;
   }
   else if (dynamic_cast<itk::Image<unsigned long, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::ULONG;
+    pixelType = itk::ImageIOBase::IOComponentEnum::ULONG;
   }
   else if (dynamic_cast<itk::Image<float, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::FLOAT;
+    pixelType = itk::ImageIOBase::IOComponentEnum::FLOAT;
   }
   else if (dynamic_cast<itk::Image<double, 3> *>(itkImageBase))
   {
-    pixelType = itk::ImageIOBase::DOUBLE;
+    pixelType = itk::ImageIOBase::IOComponentEnum::DOUBLE;
   }
 
   return pixelType;

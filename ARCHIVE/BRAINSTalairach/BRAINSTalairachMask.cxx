@@ -30,6 +30,7 @@
 
 =========================================================================*/
 
+#include <fstream>
 #include "vtksys/SystemTools.hxx"
 #include "vtkStructuredGridReader.h"
 #include "vtkXMLStructuredGridReader.h"
@@ -89,8 +90,8 @@ main(int argc, char * argv[])
   }
   tConv->SetSegmentationMode(expand);
 
-  ifstream    fin(talairachBox.c_str());
-  std::string line;
+  std::ifstream fin(talairachBox.c_str());
+  std::string   line;
   getline(fin, line);
 
   while (!line.empty())

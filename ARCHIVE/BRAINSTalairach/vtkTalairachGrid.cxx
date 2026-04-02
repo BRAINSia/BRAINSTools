@@ -55,13 +55,15 @@ vtkTalairachGrid::Initialize()
 int *
 vtkTalairachGrid::GetBoundingBoxDimensions()
 {
-  return (this->boundingBoxGrid)->GetDimensions();
+  (this->boundingBoxGrid)->GetDimensions(this->m_BoundingBoxDims);
+  return this->m_BoundingBoxDims;
 }
 
 int *
 vtkTalairachGrid::GetTalairachGridDimensions()
 {
-  return (this->talairachGrid)->GetDimensions();
+  (this->talairachGrid)->GetDimensions(this->m_TalairachGridDims);
+  return this->m_TalairachGridDims;
 }
 
 void

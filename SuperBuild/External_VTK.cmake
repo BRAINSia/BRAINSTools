@@ -83,6 +83,20 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     -DQt5_DIR:FILEPATH=${Qt5_DIR}
     )
 
+  # Wire Qt5 into VTK when Qt5_DIR is provided (needed for DebugImageViewer
+  # and BRAINSConstellationDetectorGUI).  VTK_QT_ARGS is referenced in the
+  # ExternalProject_Add CMAKE_CACHE_ARGS block below.
+  if(Qt5_DIR)
+    set(VTK_QT_ARGS
+      -DVTK_QT_VERSION:STRING=5
+      -DVTK_GROUP_ENABLE_Qt:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=NO
+      -DVTK_MODULE_ENABLE_VTK_InteractionImage:STRING=YES
+      -DQt5_DIR:PATH=${Qt5_DIR}
+      )
+  endif()
+
   if(Slicer_USE_TBB)
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
       -DTBB_DIR:PATH=${TBB_DIR}

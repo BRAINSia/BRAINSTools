@@ -1,17 +1,6 @@
 ##- project(MedicalSlicerViewerGui)
 
-  set(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
-  set(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
-  set(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
-  set(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
-
-  # Find Qt.
-  find_package(Qt4 REQUIRED)
-  if(QT_USE_FILE)
-    include(${QT_USE_FILE})
-  else()
-    set(QT_LIBRARIES ${QT_QT_LIBRARY})
-  endif()
+  find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 
   set( BRAINSConstellationDetectorGUI_SRC
    QSliceViewer.cxx
@@ -41,9 +30,7 @@
   ${QT_QTCORE_INCLUDE_DIR}
   )
 
-  QT4_WRAP_CPP( HEADERS_MOC ${HEADERS} )
-
-  add_definitions( ${QT_DEFINITIONS} )
+  qt5_wrap_cpp( HEADERS_MOC ${HEADERS} )
 
 add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
   ${BRAINSConstellationDetectorGUI_SRC}
@@ -63,15 +50,11 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES COMPILE_FLAGS "-fPIC")
 endif()
 
-if(VTK_USE_QVTK)
-  set(LOCAL_VTK_QVTK_LIB QVTK)
-endif()
   target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB
  BRAINSCommonLib
- ${LOCAL_VTK_QVTK_LIB}
- ${QT_LIBRARIES}
+ VTK::GUISupportQt
+ Qt5::Core Qt5::Widgets
  ${BRAINSConstellationDetector_ITK_LIBRARIES}
- # BRAINSConstellationDetectorCOMMONLIB
  ${VTK_LIBRARIES}
   )
 

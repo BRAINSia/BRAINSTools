@@ -11,12 +11,7 @@ FindITKUtil( DebugImageViewer_ITK
   ITKImageIntensity
 )
 
-set(VTK_LIBRARIES QVTK vtkCommon vtkRendering)
-
-if(NOT QT4_FOUND)
-  find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
-  include(${QT_USE_FILE})
-endif()
+find_package(Qt5 COMPONENTS Core Widgets Network REQUIRED)
 
 set(DebugImageViewerQT_HDRS
 QDebugImageViewerWindow.h
@@ -24,7 +19,7 @@ QImageViewerWidget.h
 QImageDisplay.h
 )
 
-QT4_WRAP_CPP(MOCSrc ${DebugImageViewerQT_HDRS} )
+qt5_wrap_cpp(MOCSrc ${DebugImageViewerQT_HDRS} )
 
 set(EXE_SRCS
   DebugImageViewer.cxx
@@ -44,8 +39,12 @@ add_executable(DebugImageViewer
 
 target_link_libraries(DebugImageViewer
   ${DebugImageViewer_ITK_LIBRARIES}
-  ${VTK_LIBRARIES}
-  ${QT_LIBRARIES})
+  VTK::GUISupportQt
+  VTK::RenderingOpenGL2
+  VTK::InteractionImage
+  VTK::InteractionStyle
+  VTK::CommonSystem
+  Qt5::Core Qt5::Widgets Qt5::Network)
 
 set_target_properties(DebugImageViewer PROPERTIES FOLDER ${MODULE_FOLDER})
 

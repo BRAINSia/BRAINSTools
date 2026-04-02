@@ -36,7 +36,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 
-#include "QVTKWidget.h"
+#include "QVTKOpenGLNativeWidget.h"
 #include <QObject>
 #include <QWheelEvent>
 #include <QListWidget>
@@ -45,12 +45,12 @@
 
 #include "itkMacro.h" //Needed for nullptr
 
-class QSliceViewer : public QVTKWidget
+class QSliceViewer : public QVTKOpenGLNativeWidget
 {
   Q_OBJECT
 public:
   QSliceViewer(int type, QWidget * myParent = nullptr)
-    : QVTKWidget(myParent)
+    : QVTKOpenGLNativeWidget(myParent)
     , m_bound(nullptr)
   {
     m_actors = vtkActor2DCollection::New();

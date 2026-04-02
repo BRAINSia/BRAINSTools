@@ -82,10 +82,10 @@ QSliceViewer::deleteLabelSlot()
 {
   if (m_actor != nullptr)
   {
-    this->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
+    this->renderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
     m_actors->RemoveItem(m_actor);
     m_actor->Delete();
-    this->GetRenderWindow()->Render();
+    this->renderWindow()->Render();
     m_actors->InitTraversal();
     m_actor = m_actors->GetNextActor2D();
     Highlight();
@@ -99,7 +99,7 @@ QSliceViewer::deleteAllLabelSlot()
   m_actor = m_actors->GetNextActor2D();
   while (m_actor != nullptr)
   {
-    this->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
+    this->renderWindow()->GetRenderers()->GetFirstRenderer()->RemoveActor(m_actor);
     m_actors->RemoveItem(m_actor);
     m_actor->Delete();
     m_actor = m_actors->GetNextActor2D();
@@ -107,7 +107,7 @@ QSliceViewer::deleteAllLabelSlot()
 
   // reset the color seed
   m_color = 0;
-  this->GetRenderWindow()->Render();
+  this->renderWindow()->Render();
 }
 
 void
@@ -141,7 +141,7 @@ QSliceViewer::moveLabelSlot(double * labelPos)
     // get current position for each viewer
     int              currPos[2];
     int              eventSize[2];
-    QVTKInteractor * interactor = this->GetInteractor();
+    QVTKInteractor * interactor = this->interactor();
     interactor->GetSize(eventSize);
     double * bound = m_bound;
     double   cPos[3]; // camera position
@@ -198,7 +198,7 @@ QSliceViewer::moveLabelSlot(double * labelPos)
 
     // move sphere
     m_actor->SetPosition(currPos[0], currPos[1]);
-    this->GetRenderWindow()->Render();
+    this->renderWindow()->Render();
   }
 }
 
@@ -235,7 +235,7 @@ QSliceViewer::wheelSlot(double * labelPos)
       actor = m_actors->GetNextActor2D();
     }
 
-    this->GetRenderWindow()->Render();
+    this->renderWindow()->Render();
   }
 }
 
@@ -248,7 +248,7 @@ QSliceViewer::GenSphere()
   sphere->SetRadius(3.0);
   sphere->SetThetaResolution(20);
   sphere->SetPhiResolution(10);
-  QVTKInteractor * interactor = this->GetInteractor();
+  QVTKInteractor * interactor = this->interactor();
   int              eventSize[2];
   interactor->GetSize(eventSize);
   double sphereCenter[3] = { eventSize[0] / 2.0, eventSize[1] / 2.0, 0 };
@@ -265,7 +265,7 @@ QSliceViewer::GenSphere()
   // actor coordinates geometry, properties, transformation
   vtkActor2D * actor = vtkActor2D::New();
   actor->SetMapper(map);
-  this->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(actor);
+  this->renderWindow()->GetRenderers()->GetFirstRenderer()->AddActor(actor);
 
   m_actor = actor; // set current label to new created actor
 
@@ -291,7 +291,7 @@ QSliceViewer::Highlight()
     sphere2->SetThetaResolution(20);
     sphere2->SetPhiResolution(10);
 
-    QVTKInteractor * interactor = this->GetInteractor();
+    QVTKInteractor * interactor = this->interactor();
     int              eventSize[2];
     interactor->GetSize(eventSize);
     double sphereCenter[3] = { eventSize[0] / 2.0, eventSize[1] / 2.0, 0 };
@@ -340,7 +340,7 @@ QSliceViewer::Highlight()
       actor = m_actors->GetNextActor2D();
     }
 
-    this->GetRenderWindow()->Render();
+    this->renderWindow()->Render();
   }
 }
 
@@ -403,6 +403,6 @@ QSliceViewer::visibilityUpdate(int * table)
       actor = m_actors->GetNextActor2D();
     }
 
-    this->GetRenderWindow()->Render();
+    this->renderWindow()->Render();
   }
 }

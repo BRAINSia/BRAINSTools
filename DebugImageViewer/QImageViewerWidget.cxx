@@ -21,20 +21,24 @@
 #include <QInputEvent>
 #include "QImageViewerWidget.h"
 #include "vtkCamera.h"
+#include "vtkGenericOpenGLRenderWindow.h"
 #include "vtkImageViewer2.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkImageViewer2.h"
 #include "vtkInteractorStyleImage.h"
 #include "vtkCommand.h"
+#include <vtkSmartPointer.h>
 
 QImageViewerWidget::QImageViewerWidget(QWidget * parent)
-  : QVTKWidget(parent)
-  , m_ImageViewer(0)
+  : QVTKOpenGLNativeWidget(parent)
+  , m_ImageViewer(nullptr)
 {
+  auto renWin = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+  this->setRenderWindow(renWin);
   this->m_ImageViewer = vtkImageViewer2::New();
-  this->SetRenderWindow(this->m_ImageViewer->GetRenderWindow());
-  this->m_ImageViewer->SetupInteractor(this->m_ImageViewer->GetRenderWindow()->GetInteractor());
+  this->m_ImageViewer->SetRenderWindow(renWin);
+  this->m_ImageViewer->SetupInteractor(renWin->GetInteractor());
 }
 
 QImageViewerWidget::~QImageViewerWidget() {}
@@ -84,7 +88,7 @@ QImageViewerWidget::SetColorLevel(double s)
 void
 QImageViewerWidget::SetInput(vtkImageData * in)
 {
-  return this->m_ImageViewer->SetInput(in);
+  return this->m_ImageViewer->SetInputData(in);
 }
 
 void

@@ -46,6 +46,7 @@
 #include "vtkCamera.h"
 #include "vtkImageActor.h"
 #include "vtkRenderer.h"
+#include "vtkGenericOpenGLRenderWindow.h"
 #include "vtkRenderWindow.h"
 #include "vtkInteractorStyleImage.h"
 
@@ -489,18 +490,18 @@ main(int argc, char * argv[])
   renderer3->AddActor(actor3);
   renderer3->SetBackground(0.45, 0.65, 0.45);
 
-  // set up the render window
-  vtkRenderWindow * window1 = vtkRenderWindow::New();
+  // set up the render window (VTK9+Qt5 requires vtkGenericOpenGLRenderWindow)
+  vtkGenericOpenGLRenderWindow * window1 = vtkGenericOpenGLRenderWindow::New();
   window1->AddRenderer(renderer1);
-  sliceViewer1.SetRenderWindow(window1);
+  sliceViewer1.setRenderWindow(window1);
 
-  vtkRenderWindow * window2 = vtkRenderWindow::New();
+  vtkGenericOpenGLRenderWindow * window2 = vtkGenericOpenGLRenderWindow::New();
   window2->AddRenderer(renderer2);
-  sliceViewer2.SetRenderWindow(window2);
+  sliceViewer2.setRenderWindow(window2);
 
-  vtkRenderWindow * window3 = vtkRenderWindow::New();
+  vtkGenericOpenGLRenderWindow * window3 = vtkGenericOpenGLRenderWindow::New();
   window3->AddRenderer(renderer3);
-  sliceViewer3.SetRenderWindow(window3);
+  sliceViewer3.setRenderWindow(window3);
 
   // set up the interaction
   vtkInteractorStyleImage * imageStyle1 = vtkInteractorStyleImage::New();

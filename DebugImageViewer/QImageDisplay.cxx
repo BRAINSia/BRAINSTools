@@ -101,8 +101,8 @@ QImageDisplay::SetBlankImage()
 void
 QImageDisplay::SetImage(const std::string & fileName)
 {
-  ReadImageType::Pointer readImage =
-    itkUtil::ReadImageAndOrient<ReadImageType>(fileName, itk::SpatialOrientationEnums::ITK_COORDINATE_ORIENTATION_RAI);
+  ReadImageType::Pointer readImage = itkUtil::ReadImageAndOrient<ReadImageType>(
+    fileName, itk::SpatialOrientationEnums::ValidCoordinateOrientations::ITK_COORDINATE_ORIENTATION_RAI);
   ImageType::Pointer image = DebugImageViewerUtil::ScaleAndCast<ReadImageType, ImageType>(readImage, 0, 255);
 
   this->SetImage(image);

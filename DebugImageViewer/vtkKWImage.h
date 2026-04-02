@@ -56,7 +56,7 @@ public:
   static vtkKWImage *
   New();
 
-  vtkTypeRevisionMacro(vtkKWImage, vtkObject);
+  vtkTypeMacro(vtkKWImage, vtkObject);
 
   using ImageBaseType = itk::ImageBase<3>;
   using ImagePointer = ImageBaseType::Pointer;

@@ -134,7 +134,7 @@ QVTKInteractionCallback::Execute(vtkObject *, unsigned long myEvent, void *)
 #endif
   vtkMatrix4x4 * matrix = reslice->GetResliceAxes();
   double         zPhysicalLocation; // pyhysical position along normal vector
-  double         center[4] = { (*matrix)[0][3], (*matrix)[1][3], (*matrix)[2][3], 1.0 };
+  double         center[4] = { matrix->GetElement(0, 3), matrix->GetElement(1, 3), matrix->GetElement(2, 3), 1.0 };
   QString        labelPosString;   // label postion for viewer-list communication
   double         labelPosRatio[3]; // label postion for inter-viewer
                                    // communication

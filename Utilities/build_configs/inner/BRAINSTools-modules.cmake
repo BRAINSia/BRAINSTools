@@ -55,7 +55,8 @@ set(USE_BRAINSStripRotation     ON  CACHE BOOL "" FORCE)
 # -----------------------------------------------------------------------
 # Archived / disabled tools
 # -----------------------------------------------------------------------
-set(USE_BRAINSTalairach                OFF CACHE BOOL "" FORCE)  # source in ARCHIVE/
+set(BUILD_ARCHIVE                       ON  CACHE BOOL "Build old tools from ARCHIVE/" FORCE)
+set(USE_BRAINSTalairach                ON  CACHE BOOL "" FORCE)
 # Qt5 installed via Homebrew at /opt/homebrew/opt/qt@5
 set(Qt5_DIR "/opt/homebrew/opt/qt@5/lib/cmake/Qt5" CACHE PATH "Qt5 cmake config directory" FORCE)
 set(USE_DebugImageViewer               ON  CACHE BOOL "" FORCE)

@@ -175,6 +175,10 @@ private:
   /* The data extent */
   int Extent[6];
 
+  /* Cache for GetDimensions() return values (VTK9 changed to void API) */
+  int m_BoundingBoxDims[3];
+  int m_TalairachGridDims[3];
+
   vtkTalairachGrid(const vtkTalairachGrid &) = delete; /* Not implemented. */
   void
   operator=(const vtkTalairachGrid &) = delete; /* Not implemented. */

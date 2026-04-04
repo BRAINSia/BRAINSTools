@@ -141,12 +141,15 @@ ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
   GIT_REPOSITORY ${${proj}_REPOSITORY}
   GIT_TAG ${${proj}_GIT_TAG}
+  GIT_SHALLOW ${BRAINSTools_EP_GIT_SHALLOW}  # ON in CI; OFF for local builds
+  UPDATE_DISCONNECTED TRUE  # skip git-update step; cached source is at correct commit
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
   BINARY_DIR ${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build
-  LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
-  LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
-  LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
-  LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
+  LOG_CONFIGURE ON         # Suppress configure output; show only on failure
+  LOG_BUILD ON             # Suppress EP build warnings from CI log
+  LOG_TEST ON              # Suppress test output
+  LOG_INSTALL ON           # Suppress install output
+  LOG_OUTPUT_ON_FAILURE ON # Print logs to CI only when step fails
   ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS -Wno-dev --no-warn-unused-cli

@@ -45,9 +45,15 @@ if(NOT DEFINED ZLIB_ROOT AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
+    GIT_SHALLOW ${BRAINSTools_EP_GIT_SHALLOW}  # ON in CI; OFF for local builds
+    UPDATE_DISCONNECTED TRUE  # skip git-update step; cached source is at correct commit
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
+    LOG_CONFIGURE ON         # Suppress configure output; show only on failure
+    LOG_BUILD ON             # Suppress EP build warnings from CI log
+    LOG_INSTALL ON           # Suppress install output
+    LOG_OUTPUT_ON_FAILURE ON # Print logs to CI only when step fails
     CMAKE_CACHE_ARGS
       ## CXX should not be needed, but it a cmake default test
       -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.20

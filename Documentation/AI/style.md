@@ -67,6 +67,22 @@ In addition to the git hooks, pre-commit enforces:
 - **pyupgrade** (Python modernization, py310+)
 - No direct commits to `main`, `release`, `dashboard` branches
 
+## Cross-Platform Shell and Script Portability
+
+All shell scripts, Python scripts, CI workflow steps, and configuration
+files must work on **both macOS (BSD toolchain) and Linux (GNU toolchain)**.
+
+| Avoid (GNU-only) | Use instead (portable) |
+|------------------|------------------------|
+| `grep -P '\d+'` | `grep -E '[0-9]+'` |
+| `grep -oP '...'` | `grep -oE '...'` |
+| `sed -i 's/a/b/'` (GNU in-place) | `sed -i '' 's/a/b/'` breaks on Linux; use a tmp-file or `perl -i -pe` |
+| `date -d 'yesterday'` (GNU) | `date -v-1d` (BSD) — prefer `python3` for date math |
+| `readlink -f` (GNU) | `python3 -c "import os,sys; print(os.path.realpath(sys.argv[1]))"` |
+
+When in doubt, use `python3` for any non-trivial text processing to avoid
+shell dialect differences entirely.
+
 ## CI/CD
 
 - **Azure Pipelines** — Linux, macOS (configured via `.azure_BRAINSTools_common.cmake`)

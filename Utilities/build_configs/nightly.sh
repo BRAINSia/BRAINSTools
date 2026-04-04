@@ -57,18 +57,18 @@ OsName=$(uname)
 if [ "${OsName}" = "Darwin" ] ; then
     Compiler=clang-`clang -v 2>&1 | head -1 | awk '{print $4}'`
     Compiler=${Compiler}-`clang -v 2>&1 | tail -2 | head -1 | awk '{print $2}'`
-    export CC=`which clang`
-    export CXX=`which clang++`
+    export CC=$(command -v clang)
+    export CXX=$(command -v clang++)
 else
-    which gcc > /dev/null 2>&1
+    command -v gcc > /dev/null 2>&1
     if [ $? == 0 ] ; then
         Compiler=gcc-`gcc -dumpversion`-`gcc -dumpmachine`
-        export CC=`which gcc`
-        export CXX=`which g++`
+        export CC=$(command -v gcc)
+        export CXX=$(command -v g++)
     else
         Compiler=unknown
-        export CC=`which cc`
-        export CXX=`which cxx`
+        export CC=$(command -v cc)
+        export CXX=$(command -v cxx)
     fi
 fi
 
@@ -139,7 +139,7 @@ do
   LDFLAGS="${LDFLAGS} -fprofile-arcs -ftest-coverage"
     fi
     if [ "$BUILD_TYPE" = "Debug" -a "$doValgrind" = "1" ] ; then
-        VALGRINDFLAGS=-DMEMORYCHECK_COMMAND:FILEPATH=`which valgrind`
+        VALGRINDFLAGS=-DMEMORYCHECK_COMMAND:FILEPATH=$(command -v valgrind)
     else
         VALGRINDFLAGS=""
     fi

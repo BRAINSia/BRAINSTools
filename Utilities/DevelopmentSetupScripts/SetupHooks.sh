@@ -21,7 +21,7 @@
 # Run this script to set up the git hooks for committing changes to BRAINS.
 
 egrep-q() {
-  egrep "$@" >/dev/null 2>/dev/null
+  grep -E "$@" >/dev/null 2>/dev/null
 }
 
 die() {

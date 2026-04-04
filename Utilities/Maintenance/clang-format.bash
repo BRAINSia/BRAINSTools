@@ -86,7 +86,7 @@ tools='
 '
 if test "x$clang_format" = "x"; then
     for tool in $tools; do
-        if type -p "$tool" >/dev/null; then
+        if command -v "$tool" >/dev/null 2>&1; then
             clang_format="$tool"
             break
         fi
@@ -94,7 +94,7 @@ if test "x$clang_format" = "x"; then
 fi
 
 # Verify that we have a tool.
-if ! type -p "$clang_format" >/dev/null; then
+if ! command -v "$clang_format" >/dev/null 2>&1; then
     echo "Unable to locate a 'clang-format' tool."
     exit 1
 fi

@@ -2,14 +2,14 @@
 # \author
 
 
-git grep  -l "\<atoi\> *(" |fgrep "(.cxx|.cpp|.cc|.h|.hxx|.hpp|.txx)" > /tmp/atoi_files.list
+git grep  -l "\<atoi\> *(" | grep -F ".cxx .cpp .cc .h .hxx .hpp .txx" > /tmp/atoi_files.list
 for ff in $(cat /tmp/atoi_files.list); do
-  sed -i "" 's/ atoi *(/ std::stoi(/g' $ff
+  sed 's/ atoi *(/ std::stoi(/g' "$ff" > "${ff}.tmp" && mv "${ff}.tmp" "$ff"
 done
 
-git grep  -l "\<atof\> *(" |fgrep "(.cxx|.cpp|.cc|.h|.hxx|.hpp|.txx)" > /tmp/atoi_files.list
+git grep  -l "\<atof\> *(" | grep -F ".cxx .cpp .cc .h .hxx .hpp .txx" > /tmp/atof_files.list
 for ff in $(cat /tmp/atof_files.list); do
-  sed -i "" 's/ atof *(/ std::stod(/g' $ff
+  sed 's/ atof *(/ std::stod(/g' "$ff" > "${ff}.tmp" && mv "${ff}.tmp" "$ff"
 done
 
 echo > /tmp/COMMIT_MESSAGE_atoi <<EOF

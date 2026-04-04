@@ -48,6 +48,10 @@ if(NOT DEFINED ZLIB_ROOT AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
     INSTALL_DIR ${EP_INSTALL_DIR}
+    LOG_CONFIGURE ON         # Suppress configure output; show only on failure
+    LOG_BUILD ON             # Suppress EP build warnings from CI log
+    LOG_INSTALL ON           # Suppress install output
+    LOG_OUTPUT_ON_FAILURE ON # Print logs to CI only when step fails
     CMAKE_CACHE_ARGS
       ## CXX should not be needed, but it a cmake default test
       -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.20

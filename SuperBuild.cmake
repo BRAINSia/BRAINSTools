@@ -217,8 +217,32 @@ ExternalProject_Include_Dependencies( ${LOCAL_PROJECT_NAME}
 # message(FATAL_ERROR "${MYBRAINSTools_EP_ARGS}")
 if(${LOCAL_PROJECT_NAME}_PKGBUILD)
 #------------------------------------------------------------------------------
-# Configure and build ${PROJECT_NAME}
+# Configure (and optionally build) the inner BRAINSTools product.
+#
+# BRAINSTools_EP_BUILD_BRAINSTOOLS (default ON):
+#   ON  — full configure + build of the inner project (normal CI / developer mode)
+#   OFF — configure only; the inner build tree is created and cmake-configured
+#         but no compilation or tests are run via the SuperBuild step.
+#         Use this in CI to separate "build all EPs" from "build BRAINSTools"
+#         so that each phase appears as its own workflow step.
 #------------------------------------------------------------------------------
+option(BRAINSTools_EP_BUILD_BRAINSTOOLS
+  "Build the inner BRAINSTools project as part of the SuperBuild EP step. \
+Set OFF to configure-only (all ExternalProject dependencies still build)."
+  ON)
+mark_as_advanced(BRAINSTools_EP_BUILD_BRAINSTOOLS)
+
+if(NOT BRAINSTools_EP_BUILD_BRAINSTOOLS)
+  set(_bt_build_cmd   BUILD_COMMAND   "")
+  set(_bt_install_cmd INSTALL_COMMAND "")
+  message(STATUS
+    "BRAINSTools_EP_BUILD_BRAINSTOOLS=OFF: inner project will be configured but NOT built by SuperBuild. \
+Run the inner build separately (e.g. via CTest Experimental steps).")
+else()
+  set(_bt_build_cmd   "")
+  set(_bt_install_cmd "")
+endif()
+
 ExternalProject_Add(${LOCAL_PROJECT_NAME}
   DEPENDS ${${LOCAL_PROJECT_NAME}_DEPENDENCIES}
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
@@ -237,9 +261,11 @@ ExternalProject_Add(${LOCAL_PROJECT_NAME}
         -DCMAKE_INSTALL_PREFIX_SET:BOOL=TRUE
         -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
         ${MYBRAINSTools_EP_ARGS}  # This appends the "mark_as_superbuild" variables to the written out cache for clion use
-        #INSTALL_COMMAND ""
-        LOG_CONFIGURE ON
-        LOG_BUILD ON
+        ${_bt_build_cmd}
+        ${_bt_install_cmd}
+        LOG_CONFIGURE ON         # Suppress configure output; show only on failure
+        LOG_BUILD ON             # Suppress inner build warnings from CI log
+        LOG_OUTPUT_ON_FAILURE ON # Print logs to CI only when step fails
         )
 endif()
 

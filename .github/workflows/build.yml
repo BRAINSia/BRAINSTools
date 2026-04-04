@@ -20,14 +20,23 @@ jobs:
             os: ubuntu-latest,
             cc: "gcc",
             cxx: "g++",
-            parallel: "$(nproc)"
+            parallel: "$(nproc)",
+            # x86-64-v3: AVX2 + FMA + BMI + BMI2 (Intel Haswell 2013+, AMD Zen1 2017+).
+            # All GitHub-hosted ubuntu-latest runners (Azure Xeon Platinum 8370C / Ice Lake)
+            # support this level.  Fixed string keeps ccache keys stable across runner hosts.
+            arch_flags: "-march=x86-64-v3 -mtune=generic"
           }
           - {
             name: "macOS Latest Clang",
             os: macos-latest,
             cc: "clang",
             cxx: "clang++",
-            parallel: "$(sysctl -n hw.ncpu)"
+            parallel: "$(sysctl -n hw.ncpu)",
+            # GitHub macos-15 runners use Apple M1 (arm64).  -mcpu=apple-m1 enables
+            # all M1 ISA extensions (NEON, SVE, SHA3, AES) without runtime probing.
+            # M1-compiled code runs unchanged on M2/M3 (AArch64 is backward-compatible),
+            # so this flag remains correct if GitHub upgrades to newer Apple Silicon.
+            arch_flags: "-mcpu=apple-m1"
           }
 #          - {
 #            name: "Windows Latest MSVC",
@@ -81,12 +90,39 @@ jobs:
       - name: Install Dependencies (macOS)
         if: matrix.config.os == 'macos-latest'
         run: |
-          brew install ninja
+          brew install ninja ccache
 
       - name: Install Dependencies (Windows)
         if: matrix.config.os == 'windows-latest'
         run: |
-          choco install ninja
+          choco install ninja ccache --yes
+
+      - name: Configure ccache
+        shell: bash
+        run: |
+          echo "CCACHE_BASEDIR=${GITHUB_WORKSPACE}"       >> "$GITHUB_ENV"
+          echo "CCACHE_COMPILERCHECK=content"             >> "$GITHUB_ENV"
+          echo "CCACHE_NOHASHDIR=true"                    >> "$GITHUB_ENV"
+          echo "CCACHE_SLOPPINESS=pch_defines,time_macros" >> "$GITHUB_ENV"
+          echo "CCACHE_DIR=${{ runner.temp }}/ccache"     >> "$GITHUB_ENV"
+          echo "CCACHE_MAXSIZE=5G"                        >> "$GITHUB_ENV"
+          echo "CCACHE_COMPRESSLEVEL=1"                   >> "$GITHUB_ENV"
+
+      - name: Restore compiler cache
+        id: restore-ccache
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ runner.temp }}/ccache
+          key: ccache-v1-${{ runner.os }}-${{ matrix.config.cxx }}-${{ github.sha }}
+          restore-keys: |
+            ccache-v1-${{ runner.os }}-${{ matrix.config.cxx }}-
+
+      - name: Show ccache config and maintenance
+        shell: bash
+        run: |
+          ccache --zero-stats
+          ccache --evict-older-than 7d
+          ccache --show-config
 
       - name: Configure CMake
         shell: bash
@@ -94,9 +130,11 @@ jobs:
           cmake -B build -G Ninja \
             -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_STANDARD:STRING=17 \
-            ${{ matrix.config.os != 'windows-latest' && '-DCMAKE_CXX_FLAGS="-mtune=native -march=native"' || '' }} \
-            ${{ matrix.config.os != 'windows-latest' && '-DCMAKE_C_FLAGS="-mtune=native -march=native"' || '' }} \
+            -DCMAKE_C_FLAGS="${{ matrix.config.arch_flags }}" \
+            -DCMAKE_CXX_FLAGS="${{ matrix.config.arch_flags }}" \
             -DCMAKE_BUILD_TYPE=Release \
             -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=Release \
             -DBUILD_TESTING=ON \
@@ -130,6 +168,18 @@ jobs:
       - name: Build
         shell: bash
         run: cmake --build build --config Release --parallel ${{ matrix.config.parallel }}
+
+      - name: Save compiler cache
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ runner.temp }}/ccache
+          key: ccache-v1-${{ runner.os }}-${{ matrix.config.cxx }}-${{ github.sha }}
+
+      - name: ccache stats
+        if: always()
+        shell: bash
+        run: ccache --show-stats
 
       - name: Clean build/BRAINSTools-Release-EPRelease-build
         working-directory: build/BRAINSTools-Release-EPRelease-build

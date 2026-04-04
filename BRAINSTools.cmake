@@ -228,6 +228,14 @@ endif()
 # --include_directories(${ITK_INSTALL_PREFIX}/install)
 
 #-----------------------------------------------------------------------------
+# Detect logical CPU count once for all CTest PROCESSORS properties.
+# Individual test CMakeLists files use _brainstools_test_nproc directly;
+# they must NOT call cmake_host_system_information themselves.
+#-----------------------------------------------------------------------------
+cmake_host_system_information(RESULT _brainstools_test_nproc QUERY NUMBER_OF_LOGICAL_CORES)
+message(STATUS "CTest PROCESSORS default: ${_brainstools_test_nproc} logical cores")
+
+#-----------------------------------------------------------------------------
 # Add module sub-directory if USE_<MODULENAME> is both defined and true
 #-----------------------------------------------------------------------------
 set(BRAINSToolsModules "")

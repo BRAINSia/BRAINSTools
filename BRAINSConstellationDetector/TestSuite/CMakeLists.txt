@@ -2,9 +2,7 @@
 ##
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-# Detect logical CPU count so CTest budgets the right number of slots for
-# CPU-intensive BCD tests (ITK multi-threaded resampling, FFT correlation).
-cmake_host_system_information(RESULT _bcd_nproc QUERY NUMBER_OF_LOGICAL_CORES)
+# _brainstools_test_nproc is set once in BRAINSTools.cmake for all modules.
 
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
@@ -251,7 +249,7 @@ set(BCDTestName BCDTest_ForceACPoint)
     --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_InputSpace.fcsv
     )
    set_tests_properties(BCDTest_ForceACPoint PROPERTIES TIMEOUT 3000  ## Set extra long for dashboard testing.
-                                                        PROCESSORS ${_bcd_nproc})
+                                                        PROCESSORS ${_brainstools_test_nproc})
 
   set(PARENT_TEST BCDTest_ForceACPoint)
   set(BCDTestName chk_${PARENT_TEST})
@@ -565,7 +563,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     --rVN4 10
     --rac 10
     --rpc 10)
-  set_tests_properties(BCDTest_rVN4-rpc-rac-rmpj PROPERTIES PROCESSORS ${_bcd_nproc})
+  set_tests_properties(BCDTest_rVN4-rpc-rac-rmpj PROPERTIES PROCESSORS ${_brainstools_test_nproc})
 
   set(BCDTestName BCDTest_T1_outputResampledVolume)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
@@ -631,7 +629,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
     --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}}
     --writeBranded2DImage ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.png)
-  set_tests_properties(BCDTest_writeBranded2DImage PROPERTIES PROCESSORS ${_bcd_nproc})
+  set_tests_properties(BCDTest_writeBranded2DImage PROPERTIES PROCESSORS ${_brainstools_test_nproc})
 
 if (0)
   set(BCDTestName BCDTest_inputLandmarksEMSP)
@@ -666,7 +664,7 @@ endif()
     --outputLandmarksInInputSpace ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_InputSpace_aligned.fcsv
     --outputVerificationScript ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.sh
     )
-  set_tests_properties(${BCDTestName} PROPERTIES TIMEOUT 9876 PROCESSORS ${_bcd_nproc})
+  set_tests_properties(${BCDTestName} PROPERTIES TIMEOUT 9876 PROCESSORS ${_brainstools_test_nproc})
 
   set(PARENT_TEST BCDTestForLandmarkCompare)
   set(BCDTestName chk_a_${PARENT_TEST})

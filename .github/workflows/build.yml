@@ -49,6 +49,17 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Extract BRAINSTools version
+        id: btversion
+        shell: bash
+        run: |
+          # Parse VERSION from the project() call in CMakeLists.txt, e.g. "VERSION 5.8.0"
+          VERSION=$(grep -m1 '^ *VERSION [0-9]' CMakeLists.txt | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          MAJOR_MINOR=$(echo "${VERSION}" | cut -d. -f1,2)
+          echo "version=${VERSION}"       >> "$GITHUB_OUTPUT"
+          echo "major_minor=${MAJOR_MINOR}" >> "$GITHUB_OUTPUT"
+          echo "BRAINSTools version: ${VERSION}  (MAJOR.MINOR: ${MAJOR_MINOR})"
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -124,6 +135,30 @@ jobs:
           ccache --evict-older-than 7d
           ccache --show-config
 
+      - name: Restore ExternalData object store
+        id: restore-externaldata
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ runner.temp }}/ExternalData
+          # Key includes MAJOR.MINOR so the cache survives patch releases
+          # (bug fixes that don't add new test data) but is invalidated when
+          # a new minor version introduces new test data hashes.
+          # github.sha makes the save key unique so new hashes added within
+          # a minor version are accumulated across runs.
+          key: ExternalData-BRAINSTools-v${{ steps.btversion.outputs.major_minor }}-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            ExternalData-BRAINSTools-v${{ steps.btversion.outputs.major_minor }}-${{ runner.os }}-
+
+      - name: Set ExternalData_OBJECT_STORES
+        shell: bash
+        run: |
+          # BRAINSToolsExternalData.cmake reads this env var at cmake configure
+          # time and adds it as the first search path for ExternalData objects.
+          # Objects already in the store are used directly; missing ones are
+          # downloaded to ExternalData_BINARY_ROOT then copied back below.
+          mkdir -p "${{ runner.temp }}/ExternalData"
+          echo "ExternalData_OBJECT_STORES=${{ runner.temp }}/ExternalData" >> "$GITHUB_ENV"
+
       - name: Configure CMake
         shell: bash
         run: |
@@ -180,6 +215,33 @@ jobs:
         if: always()
         shell: bash
         run: ccache --show-stats
+
+      - name: Populate ExternalData object store from build output
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          # ExternalData downloads objects into ExternalData_BINARY_ROOT/Objects/
+          # (set in CMake/BRAINSToolsExternalData.cmake as CMAKE_BINARY_DIR/ExternalData).
+          # Copy any newly downloaded objects back to the persistent object store
+          # so they are available on the next run without re-downloading.
+          BINARY_OBJECTS="${GITHUB_WORKSPACE}/build/BRAINSTools-Release-EPRelease-build/ExternalData/Objects"
+          if [ -d "${BINARY_OBJECTS}" ]; then
+            echo "Syncing new ExternalData objects to store..."
+            rsync -a --ignore-existing "${BINARY_OBJECTS}/." "${{ runner.temp }}/ExternalData/" 2>/dev/null || true
+            echo "Object store contents:"
+            find "${{ runner.temp }}/ExternalData" -type f | wc -l
+          else
+            echo "No ExternalData binary objects directory found (no test data downloaded this run)."
+          fi
+
+      - name: Save ExternalData object store
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ runner.temp }}/ExternalData
+          # SHA-keyed save always writes a new entry; restore-keys fallback
+          # finds the most recent entry for this MAJOR.MINOR + OS combination.
+          key: ExternalData-BRAINSTools-v${{ steps.btversion.outputs.major_minor }}-${{ runner.os }}-${{ github.sha }}
 
       - name: Clean build/BRAINSTools-Release-EPRelease-build
         working-directory: build/BRAINSTools-Release-EPRelease-build

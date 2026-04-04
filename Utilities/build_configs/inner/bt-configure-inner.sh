@@ -16,6 +16,8 @@
 #   -s, --source-dir DIR   BRAINSTools source root                   (default: auto-detect)
 #   -m, --modules FILE     CMake init-cache with USE_* flags         (default: sibling BRAINSTools-modules.cmake)
 #   -f, --force            Re-configure even if CMakeCache.txt exists
+#   -D, --cmake-args ARGS  Extra -D flags passed verbatim to cmake (repeatable)
+#   -n, --name-suffix SFX  Append -SFX to the inner build directory name
 #   -h, --help             Show this message
 #
 # Auto-detection:
@@ -34,6 +36,8 @@ set -euo pipefail
 # -----------------------------------------------------------------------
 BUILD_TYPE="Debug"
 FORCE=0
+NAME_SUFFIX=""          # optional extra suffix for the inner build directory
+EXTRA_CMAKE_ARGS=()     # accumulates --cmake-args / -D entries
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Source dir: three levels up from Utilities/build_configs/inner/
@@ -57,6 +61,8 @@ while [[ $# -gt 0 ]]; do
     -s|--source-dir)   SOURCE_DIR="$2"; shift 2 ;;
     -m|--modules)      MODULES_FILE="$2"; shift 2 ;;
     -f|--force)        FORCE=1; shift ;;
+    -D|--cmake-args)   EXTRA_CMAKE_ARGS+=("$2"); shift 2 ;;
+    -n|--name-suffix)  NAME_SUFFIX="-$2"; shift 2 ;;
     -h|--help)
       sed -n '2,/^set -/p' "$0" | grep '^#' | sed 's/^# \{0,1\}//'
       exit 0 ;;
@@ -119,7 +125,7 @@ done
 # -----------------------------------------------------------------------
 # Inner build directory
 # -----------------------------------------------------------------------
-INNER_BUILD_DIR="${SUPERBUILD_DIR}/BRAINSTools-${BUILD_TYPE}-EP${EP_BUILD_TYPE}-build"
+INNER_BUILD_DIR="${SUPERBUILD_DIR}/BRAINSTools-${BUILD_TYPE}${NAME_SUFFIX}-EP${EP_BUILD_TYPE}-build"
 
 if [[ -f "${INNER_BUILD_DIR}/CMakeCache.txt" && "${FORCE}" -eq 0 ]]; then
   echo "INFO: ${INNER_BUILD_DIR}/CMakeCache.txt already exists — skipping configure."
@@ -176,7 +182,8 @@ cmake \
   -DANTs_SOURCE_DIR:PATH="${ANTS_SRC}" \
   -DANTs_LIBRARY_DIR:PATH="${ANTS_LIB}" \
   -DBRAINSToools_CXX_OPTIMIZATION_FLAGS:STRING="${OPT_FLAGS}" \
-  -DBRAINSToools_C_OPTIMIZATION_FLAGS:STRING="${OPT_FLAGS}"
+  -DBRAINSToools_C_OPTIMIZATION_FLAGS:STRING="${OPT_FLAGS}" \
+  "${EXTRA_CMAKE_ARGS[@]+"${EXTRA_CMAKE_ARGS[@]}"}"
 
 echo ""
 echo "Configure succeeded: ${INNER_BUILD_DIR}"

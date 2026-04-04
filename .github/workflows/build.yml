@@ -46,11 +46,37 @@ jobs:
           python-version: '3.12'
           cache: pip
 
+      - name: Free Disk Space (Ubuntu)
+        if: matrix.config.os == 'ubuntu-latest'
+        uses: BRAINSia/free-disk-space@v2
+        with:
+          removalmode: "rmz"
+          # BRAINSTools SuperBuild builds ITK, ANTs, SEM, TBB, and the inner
+          # BRAINSTools tools.  On ubuntu-latest (~14 GB free by default) the
+          # full build consumes 8-12 GB.  Freeing pre-installed language
+          # runtimes and unused tool-cache entries recovers 15-20 GB, ensuring
+          # the build never runs out of disk space.
+          #
+          # TIME_REPORT for this action on ubuntu-latest (approximate):
+          #   swap-storage  |  0 s  | 4.0 GiB freed
+          #   haskell       | 10 s  | 6.2 GiB freed
+          #   dotnet        | 27 s  | 3.3 GiB freed
+          #   tool-cache    | 90 s  | 5.3 GiB freed
+          #   mandb         |  2 s  | speeds apt-get (no man pages in CI)
+          swap-storage:   "true"
+          haskell:        "true"
+          dotnet:         "true"
+          docker-images:  "false"  # Too slow (~80 s) for only 3.4 GiB
+          tool-cache:     "true"
+          android:        "false"  # Too slow (~300 s) for only 8.8 GiB
+          large-packages: "false"  # Too slow for marginal gain in this build
+          mandb:          "true"
+
       - name: Install Dependencies (Ubuntu)
         if: matrix.config.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build
+          sudo apt-get install -y ninja-build ccache
 
       - name: Install Dependencies (macOS)
         if: matrix.config.os == 'macos-latest'

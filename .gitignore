@@ -45,7 +45,16 @@ CMakeFiles/*
 DartConfiguration.tcl
 crash*
 
-Testing/Temporary/LastTest.log
+# CTest output tree and configuration
+Testing/
+DartConfiguration.tcl
+
+# BRAINSFit debug artifacts written to the source-tree working directory
+/DEBUGInitialTransform_BF*.h5
+/DEBUGScriptBF*.sh
+
+# BRAINSABC test transform artifacts written to the source-tree working directory
+/BRAINSABCSmall_atlas_to_subject_transform*.h5
 
 TestData/.ExternalData_SHA512*
 CMakeUserPresets.json

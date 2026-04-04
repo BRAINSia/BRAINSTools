@@ -1,6 +1,13 @@
 
 MakeTestDriverFromSEMTool(BRAINSFit BRAINSFitTest.cxx)
 
+# Debug verbosity for all BRAINSFit tests.  Default 0 (silent) is correct for
+# CI and normal test runs.  Raise to 7 to dump full helper state + command line,
+# or 3 for PrintSelf output, without editing individual test commands.
+set(BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL 0 CACHE STRING
+  "Default --debugLevel value passed to BRAINSFit tests (0=silent, 3=PrintSelf, 7=command-line dump)")
+mark_as_advanced(BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL)
+
 if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create the test suite, but are not needed for actual testing!
   # The following program was used to generate TestData/test2.nii.gz
   # from test.nii.gz
@@ -53,7 +60,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
   --writeOutputTransformInFloat
-  --debugLevel 50
+  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_AffineRotationNoMasks)
@@ -948,7 +955,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 50
+  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_NCScaleSkewVersorRotationMasks)
@@ -1030,7 +1037,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 50
+  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MSEScaleSkewVersorRotationMasks)
@@ -1087,7 +1094,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --movingBinaryVolume DATA{${TestData_DIR}/rotation.test_mask.nii.gz}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 50
+  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
 )
 
 set(BRAINSFitTestName BRAINSFitTest_MIHScaleSkewVersorRotationMasks)
@@ -1416,7 +1423,7 @@ if(RUN_EXTRA_METRIC_TESTS)
     --movingBinaryVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nii.gz
     --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-    --debugLevel 50
+    --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
   )
 
   set(BRAINSFitTestName BRAINSFitTest_KSScaleSkewVersorRotationMasks)
@@ -1629,6 +1636,6 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --movingBinaryVolume DATA{${TestData_DIR}/ProstatePreopMask.nrrd}
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.test.nrrd
   --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --debugLevel 0
+  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
 )
 endif()

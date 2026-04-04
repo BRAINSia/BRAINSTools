@@ -231,7 +231,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 1500
-  --numberOfHistogramBins 200
+  --numberOfHistogramBins 100
   --splineGridSize 7,5,6
   --samplingPercentage 0.5
   --translationScale 250
@@ -263,7 +263,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
   --costMetric MMI
   --failureExitCode -1 --writeTransformOnFailure
   --numberOfIterations 2500,2500,500
-  --numberOfHistogramBins 200
+  --numberOfHistogramBins 100
   --splineGridSize 7,5,6
   --samplingPercentage 0.5
   --translationScale 250

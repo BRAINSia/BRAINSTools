@@ -49,15 +49,15 @@ if [[ -z "${INNER_BUILD_DIR}" ]]; then
     "${SUPERBUILD_DIR}/BRAINSTools-Release-Profiling-EPRelease-build" \
     "${SUPERBUILD_DIR}/BRAINSTools-Release-EPRelease-build"
   do
-    if [[ -d "${candidate}/bin" ]]; then
+    if [[ -f "${candidate}/BRAINSFit/TestSuite/BRAINSFitTestDriver" ]]; then
       INNER_BUILD_DIR="${candidate}"
       break
     fi
   done
 fi
 
-if [[ -z "${INNER_BUILD_DIR}" || ! -d "${INNER_BUILD_DIR}/bin" ]]; then
-  echo "ERROR: Could not find an inner build directory. Use --build-dir or build first." >&2
+if [[ -z "${INNER_BUILD_DIR}" || ! -f "${INNER_BUILD_DIR}/BRAINSFit/TestSuite/BRAINSFitTestDriver" ]]; then
+  echo "ERROR: Could not find an inner build directory with test drivers. Use --build-dir or build first." >&2
   exit 1
 fi
 

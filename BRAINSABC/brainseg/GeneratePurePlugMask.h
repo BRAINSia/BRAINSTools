@@ -194,6 +194,12 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   stepSize[1] = 1.0 / numberOfSubSamples[1];
   stepSize[2] = 1.0 / numberOfSubSamples[2];
 
+  // Pre-allocate the sample list once outside the loop.  Re-using a single
+  // object avoids calling itk::ObjectFactoryBase::CreateInstance() (which
+  // performs O(N_factories) string comparisons) for every voxel.
+  SampleType::Pointer sample = SampleType::New();
+  sample->SetMeasurementVectorSize(numberOfImageModalities);
+
   // Now iterate through the mask image
   using MaskItType = typename itk::ImageRegionIteratorWithIndex<ByteImageType>;
   MaskItType maskIt(mask, mask->GetLargestPossibleRegion());
@@ -208,9 +214,8 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
       muLogMacro(<< "current index: " << idx << std::endl);
     }
 
-    // A sample list is created for every index that is inside all input images buffers
-    SampleType::Pointer sample = SampleType::New();
-    sample->SetMeasurementVectorSize(numberOfImageModalities);
+    // Clear and reuse the pre-allocated sample list for this voxel.
+    sample->Clear();
 
     // flag that helps to break from loops if the current continous index is
     // not inside the buffer of any input modality image

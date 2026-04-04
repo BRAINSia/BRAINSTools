@@ -24,13 +24,14 @@ egrep-q() {
 # First argument is file containing commit message.
 commit_msg="$1"
 
-# Check for our extra instructions.
+# Check for our extra instructions (idempotent).
 egrep-q "^# Start BRAINSTools commit messages" -- "$commit_msg" && return 0
 
-# Insert our extra instructions.
+# Insert our extra instructions after the "# On branch ..." line so the
+# branch name is still visible in the editor.
 commit_msg_tmp="$commit_msg.$$"
-sed 's/^# On branch.*/'\
-'# Start BRAINSTools commit messages with a standard prefix (and a space):\
+instructions='#\
+# Start BRAINSTools commit messages with a standard prefix (and a space):\
 #   BUG:    - fix for runtime crash or incorrect result\
 #   COMP:   - compiler error or warning fix\
 #   DOC:    - documentation change\
@@ -38,8 +39,15 @@ sed 's/^# On branch.*/'\
 #   PERF:   - performance improvement\
 #   STYLE:  - no logic impact (indentation, comments)\
 #   WIP:    - Work In Progress not ready for merge\
-# To reference JIRA issue XY, add " (#XY)" to the END of the FIRST line.\
-#/' "$commit_msg" > "$commit_msg_tmp" &&
+#\
+# The first line should preferably be 72 characters or less;\
+# the maximum allowed is 78 characters.\
+#\
+# Follow the first line with an empty line, then a detailed description\
+# in one or more paragraphs.\
+#\
+# To reference a GitHub issue XY, add " (#XY)" to the END of the FIRST line.\
+#' &&
 sed '/^# On branch.*$/ a\
 '"$instructions"'
 /^# Not currently on any branch.*$/ a\

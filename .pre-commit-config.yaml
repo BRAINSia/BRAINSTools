@@ -1,3 +1,6 @@
+fail_fast: true
+default_stages: [pre-commit]
+
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v5.0.0
@@ -40,6 +43,7 @@ repos:
      args: ['--branch','dashboard','--branch','python-builds','--branch','release','--branch','hooks','--branch', 'main','--branch','main','--pattern','release-*']
    - id: trailing-whitespace
      exclude: "\\.(sha|sha512|svg|vtk|vtp)$|\\/ThirdParty\\/|\\/Data\\/"
+
 - repo: https://github.com/pre-commit/mirrors-clang-format
   rev: v19.1.7
   hooks:
@@ -47,27 +51,52 @@ repos:
     args: ['--style=file']
     files: '\.(c|cc|h|cxx|hxx)$'
     exclude: "\\/ThirdParty\\/|\\/Data\\/"
-# need to keep version for black in .pre-commit-config.yaml, requirements_dev.txt, and .github/workflows/prostatid_ci.yml
+
+# keep version for black in sync with requirements_dev.txt and CI workflows
 - repo: https://github.com/psf/black
   rev: 24.2.0
-  hooks: # check conformance to black formatting
+  hooks:
    - id: black
-     #args: ['--diff', '-v', '--target-version', 'py39' ] # if run without arguments, will fail and will format the files
-     args: ['--target-version', 'py310' ] # Allow black to fail and provide auto-formatting to files that need it for compliance
+     args: ['--target-version', 'py310']
      exclude: ".*build.*|\\/ThirdParty\\/|\\/Data\\/"
--   repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.1
-    hooks:
-    -   id: pyupgrade
-        exclude: ".*build.*|\\/ThirdParty\\/|\\/Data\\/"
-        args: [--py310-plus]
+
+- repo: https://github.com/asottile/pyupgrade
+  rev: v3.21.1
+  hooks:
+  - id: pyupgrade
+    exclude: ".*build.*|\\/ThirdParty\\/|\\/Data\\/"
+    args: [--py310-plus]
 
 - repo: https://github.com/kynan/nbstripout
   rev: 0.7.1
   hooks:
     - id: nbstripout
+
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: "0.33.0"
   hooks:
     - id: check-dependabot
     - id: check-github-workflows
+
+# Local hooks from Utilities/Hooks/ — enforce BRAINSTools commit-message
+# conventions (same prefix rules as ITK: BUG/COMP/DOC/ENH/PERF/STYLE/WIP).
+# These run in addition to the third-party hooks above so that developers
+# who install pre-commit hooks via `pre-commit install --hook-type commit-msg`
+# get the same validation as the manually installed .git/hooks/ scripts.
+- repo: local
+  hooks:
+  - id: brainstools-prepare-commit-msg
+    name: BRAINSTools prepare-commit-msg instructions
+    language: script
+    entry: Utilities/Hooks/prepare-commit-msg
+    stages: [prepare-commit-msg]
+    always_run: true
+    pass_filenames: false
+
+  - id: brainstools-commit-msg
+    name: BRAINSTools commit message format (prefix + length)
+    language: python
+    entry: python3 Utilities/Hooks/kw-commit-msg.py
+    stages: [commit-msg]
+    always_run: true
+    pass_filenames: true

@@ -16,6 +16,11 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
 add_dependencies(BRAINSABCTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
+# Detect logical CPU count so CTest budgets the right number of slots for
+# this heavily multi-threaded TBB test.  Without this, CTest may schedule
+# multiple instances concurrently and thrash the CPUs.
+cmake_host_system_information(RESULT _brainsabc_nproc QUERY NUMBER_OF_LOGICAL_CORES)
+
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCSmallTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
   --compare DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}
@@ -47,6 +52,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME B
    --posteriorTemplate ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallPOST_%s.nii.gz
    --purePlugsThreshold 0.2
 )
+set_tests_properties(BRAINSABCSmallTest PROPERTIES PROCESSORS ${_brainsabc_nproc})
 
 #if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
 #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCLongTest

@@ -71,6 +71,48 @@ set(CTEST_CUSTOM_MEMCHECK_IGNORE
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_ERRORS   1000)
 set(CTEST_CUSTOM_MAXIMUM_NUMBER_OF_WARNINGS 1000)
 
+# ---------------------------------------------------------------------------
+# BCD (BRAINSConstellationDetector) tests are excluded from CTest runs that
+# go through CTestCustom because they exceed 5 minutes on any CI runner.
+# Timings measured on GitHub-hosted Ubuntu runner (2026-04-05):
+#
+#   BCDTestForLandmarkCompare       4531 s  (75 min)  — passed
+#   BCDTest_ForceACPoint            3000 s  (50 min)  — failed (timeout)
+#   BCDTest_rVN4-rpc-rac-rmpj       1303 s  (21 min)  — passed
+#   BCDTest_{rVN4,ForceVN4Point,…}  1500 s  (25 min)  — failed (timeout ×20)
+#
+# CTEST_CUSTOM_TESTS_IGNORE is honoured by `ctest -D Experimental*` and any
+# CTest script that calls ctest_test().  It does NOT affect `ctest -R` or
+# `ctest -E` filters added manually on the command line.  Run BCD tests
+# locally with `ctest -R '^BCD'` in the BRAINSTools inner-build directory.
+# ---------------------------------------------------------------------------
+set(CTEST_CUSTOM_TESTS_IGNORE
+  ${CTEST_CUSTOM_TESTS_IGNORE}
+  BCDTestForLandmarkCompare
+  BCDTest_ForceACPoint
+  BCDTest_rescaleIntensityRange
+  BCDTest_rescaleIntensity
+  BCDTest_rVN4
+  BCDTest_ForceVN4Point
+  BCDTest_ForceRPPoint
+  BCDTest_outputUntransformedClippedVolume
+  BCDTest_cutOutHeadInOutputResampledVolume
+  BCDTest_ForcePCPoint
+  BCDTest_rmpj
+  BCDTest_interpolationMode
+  BCDTest_backgroundValue
+  BCDTest_T1_outputResampledVolume
+  BCDTest_trimRescaledIntensities
+  BCDTest_rpc
+  BCDTest_rac
+  BCDTest_otsuThreshold
+  BCDTest_mspLevel
+  BCDTest_cutOutHeadInOutputVolume
+  BCDTest_acLowerBound
+  BCDTest_T1_outputVolume
+  BCDTest_rVN4-rpc-rac-rmpj
+  )
+
 set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   # Ignore zlib fallthrough warnings

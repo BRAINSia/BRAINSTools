@@ -16,7 +16,7 @@
     <label>IO</label>
     <description>Input/output parameters</description>
 
-    <file>
+    <file fileExtensions=".fcsv">
       <name>inputLandmarkFile</name>
       <longflag>--inputLandmarkFile</longflag>
       <label>Input landmark file</label>
@@ -24,7 +24,7 @@
       <description>Input landmark file (.fcsv)</description>
     </file>
 
-    <file>
+    <file fileExtensions=".fcsv">
       <name>outputLandmarkFile</name>
       <longflag>--outputLandmarkFile</longflag>
       <label>Output landmark file</label>

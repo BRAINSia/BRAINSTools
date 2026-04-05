@@ -1,0 +1,34 @@
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# Build artifacts
+build/
+Build/
+*-build/
+*-Release-*/
+*-Debug-*/
+
+# IDE / editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# CI and agent config
+.claude/
+.github/
+
+# Documentation (not needed for build)
+Documentation/
+*.md
+LICENSE
+
+# macOS metadata
+.DS_Store
+
+# Python caches
+__pycache__/
+*.pyc

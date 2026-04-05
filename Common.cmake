@@ -279,6 +279,12 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
 string(APPEND CMAKE_SHARED_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
 string(APPEND CMAKE_MODULE_LINKER_FLAGS " ${ITK_REQUIRED_LINK_FLAGS}")
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+  # GCC note about -fvar-tracking-assignments on large SEM-generated CLP
+  # headers is harmless; suppress it. See GitHub issue #425.
+  string(APPEND CMAKE_CXX_FLAGS " -fno-var-tracking-assignments")
+endif()
+
 #-----------------------------------------------------------------------------
 # Add needed flag for gnu on linux like enviroments to build static common libs
 # suitable for linking with shared object libs.

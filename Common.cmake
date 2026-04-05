@@ -642,6 +642,28 @@ set( EXTERNAL_PROJECT_DEFAULTS
   ${APPLE_CONFIGURATION_DEFAULTS}
 )
 
+# Auto-detect ccache and set as compiler launcher if not already specified.
+# Follows the Modern CMake pattern: find_program(CCACHE_PROGRAM ccache).
+# An explicit -DCMAKE_C_COMPILER_LAUNCHER=... at configure time takes precedence.
+if(NOT CMAKE_C_COMPILER_LAUNCHER AND NOT CMAKE_CXX_COMPILER_LAUNCHER)
+  find_program(CCACHE_PROGRAM ccache)
+  if(CCACHE_PROGRAM)
+    message(STATUS "ccache found: ${CCACHE_PROGRAM} -- enabling as compiler launcher")
+    set(CMAKE_C_COMPILER_LAUNCHER   "${CCACHE_PROGRAM}" CACHE STRING "C compiler launcher"   FORCE)
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_PROGRAM}" CACHE STRING "CXX compiler launcher" FORCE)
+  endif()
+endif()
+
+# Forward compiler launcher to all ExternalProject dependencies
+if(CMAKE_C_COMPILER_LAUNCHER)
+  list(APPEND EXTERNAL_PROJECT_DEFAULTS
+    -DCMAKE_C_COMPILER_LAUNCHER:STRING=${CMAKE_C_COMPILER_LAUNCHER})
+endif()
+if(CMAKE_CXX_COMPILER_LAUNCHER)
+  list(APPEND EXTERNAL_PROJECT_DEFAULTS
+    -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=${CMAKE_CXX_COMPILER_LAUNCHER})
+endif()
+
 
 #------------------------------------------------------------------------------
 # Configure and build

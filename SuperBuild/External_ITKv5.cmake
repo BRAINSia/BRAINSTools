@@ -47,8 +47,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       set(git_protocol "https")
   endif()
 
-  # HINT: -DUSE BRAINSTools_ITKv5_GIT_REPOSITORY:STRING=git@github.com:hjmjohnson/ITK.git to override
-  # HINT: -DUSE BRAINSTools_ITKv5_GIT_TAG:STRING=fix-some-error-pr-request
+  # HINT: -DBRAINSTools_ITKv5_GIT_REPOSITORY:STRING=https://github.com/hjmjohnson/ITK.git to override
+  # HINT: -DBRAINSTools_ITKv5_GIT_TAG:STRING=fftw-compute-optimized-defaults
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
      ${git_protocol}://github.com/InsightSoftwareConsortium/ITK.git

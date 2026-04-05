@@ -135,6 +135,7 @@ add_test(NAME ${GTRACTTestName}_Concat_Dicom
         --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.dicom.test.nrrd
         )
+set_property(TEST ${GTRACTTestName}_Concat_Dicom APPEND PROPERTY DEPENDS Uncompress_PhilipsAchieva1.tar.gz)
 
 if(USE_DWIConvert)  #dependancy needed for data creation
 # new added test case for GTRACT to support multi Dicom
@@ -168,6 +169,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
     --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
 )
 
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/compareTwoCSVFiles.py.in ${CMAKE_CURRENT_BINARY_DIR}/compareTwoCSVFiles.py @ONLY IMMEDIATE)
 
 ## The following set of tests verify that gtractResampleDWIInPlace
@@ -199,7 +201,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot15z)
 set(GTRACTTestName chk_${PARENT_TEST})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+  COMMAND ${LAUNCH_EXE} ${Python3_EXECUTABLE} compareTwoCSVFiles.py
     --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )
@@ -223,7 +225,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot-15z)
 set(GTRACTTestName chk_${PARENT_TEST})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+  COMMAND ${LAUNCH_EXE} ${Python3_EXECUTABLE} compareTwoCSVFiles.py
     --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )
@@ -247,7 +249,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot45z)
 set(GTRACTTestName chk_${PARENT_TEST})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+  COMMAND ${LAUNCH_EXE} ${Python3_EXECUTABLE} compareTwoCSVFiles.py
     --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )
@@ -271,7 +273,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot30x)
 set(GTRACTTestName chk_${PARENT_TEST})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+  COMMAND ${LAUNCH_EXE} ${Python3_EXECUTABLE} compareTwoCSVFiles.py
     --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )
@@ -295,7 +297,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(PARENT_TEST GTRACTTest_gtractResampleDWIInPlace_Rot30y)
 set(GTRACTTestName chk_${PARENT_TEST})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-  COMMAND ${LAUNCH_EXE} python compareTwoCSVFiles.py
+  COMMAND ${LAUNCH_EXE} ${Python3_EXECUTABLE} compareTwoCSVFiles.py
     --csvReferenceFile DATA{${TestData_DIR}/${GTRACTTestName}_metaData.standard.csv}
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )

@@ -124,9 +124,23 @@ NrrdToFSL(const std::string & inputVolume,
   {
     return EXIT_FAILURE;
   }
+  // Issue #370: Guard against a zero-component image that would produce a
+  // vacuous copy loop and an empty output.  An Nrrd file that has no
+  // diffusion encoding metadata (or was written without a 4th dimension)
+  // can arrive here with 0 components, causing a silent no-op or crash in
+  // downstream metadata recovery.
+  const unsigned int numComponents = inputVol->GetNumberOfComponentsPerPixel();
+  if (numComponents == 0)
+  {
+    std::cerr << "ERROR: Input volume '" << inputVolume << "' has 0 components per pixel.  "
+              << "Verify that the Nrrd file contains a valid 4-D DWI volume." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Volume4DType::Pointer                         niftiVolume = CreateVolume(inputVol);
   const VectorVolume4DType::SizeType            inputSize(inputVol->GetLargestPossibleRegion().GetSize());
-  const Volume4DType::IndexType::IndexValueType vecLength = inputVol->GetNumberOfComponentsPerPixel();
+  const Volume4DType::IndexType::IndexValueType vecLength =
+    static_cast<Volume4DType::IndexType::IndexValueType>(numComponents);
 
   VectorVolume4DType::IndexType vecIndex;
   Volume4DType::IndexType       volIndex;

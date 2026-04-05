@@ -175,6 +175,8 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   using DoGVectorType = typename DoGFunctionType::VectorType;
 
   DoGFunctionPointer DoGFunction = DoGFunctionType::New();
+  // GH-359: Changed from false to true for correct non-isotropic spacing behavior.
+  // Test baselines were regenerated to match.
   DoGFunction->SetUseImageSpacing(true);
 
   DoGFunction->SetInputImage(inputImage);

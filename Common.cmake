@@ -588,6 +588,13 @@ if(NOT Slicer_BUILD_BRAINSTOOLS)
       # NOT USED EXTERNAL_PROJECT_BUILD_TYPE:STRING
       CMAKE_CXX_COMPILER:FILEPATH
       CMAKE_C_COMPILER:FILEPATH
+      # Compiler launchers (ccache / sccache / distcc) — propagate to ALL EPs so
+      # ITK, VTK, TBB, ANTs, SEM, zlib all populate the same ccache hash store
+      # as the inner BRAINSTools compile.  Without these, only the Phase II
+      # inner build benefits from ccache and the ~90% of build volume in the
+      # external projects bypasses the cache entirely.
+      CMAKE_C_COMPILER_LAUNCHER:FILEPATH
+      CMAKE_CXX_COMPILER_LAUNCHER:FILEPATH
       CMAKE_CXX_STANDARD:STRING
       CMAKE_CXX_STANDARD_REQUIRED:BOOL
       CMAKE_CXX_EXTENSIONS:BOOL

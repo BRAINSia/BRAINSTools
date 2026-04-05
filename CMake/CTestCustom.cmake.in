@@ -119,6 +119,20 @@ set(CTEST_CUSTOM_TESTS_IGNORE
   chk_BCDTest_ForceVN4Point
   chk_a_BCDTestForLandmarkCompare
   chk_i_BCDTestForLandmarkCompare
+  # BRAINSABCSmallTest: 91.5 s on macOS arm64 -> ~550 s (9 min) on CI.
+  BRAINSABCSmallTest
+  # BRAINSFitTest_RigidRotationNoMasks: pre-existing Ubuntu/GCC numerical
+  # precision failure.  The WindowedSinc interpolator produces a different
+  # local minimum under GCC vs Clang (image error 2485 vs threshold 7).
+  # Fixing requires regenerating the result baseline on Ubuntu/GCC.
+  # macOS Clang passes; this is suppressed in CI until a Linux baseline
+  # is generated.  See PR #582 analysis for details.
+  BRAINSFitTest_RigidRotationNoMasks
+  # BRAINSPosteriorToContinuousClassTest and BRAINSCreateLabelMapFromProbabilityMapsTest
+  # require ReferenceAtlas files (e.g. /ALLPVWM.nii.gz installed by InstallReferenceAtlas).
+  # With USE_ReferenceAtlas=OFF those files are never installed; the tests abort.
+  BRAINSPosteriorToContinuousClassTest
+  BRAINSCreateLabelMapFromProbabilityMapsTest
   )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION

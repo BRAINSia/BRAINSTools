@@ -271,7 +271,7 @@ jobs:
           # Parse and compute everything in python3 (one logical line so YAML
           # indentation rules are satisfied; python3 top-level code cannot be
           # indented, so a heredoc is not usable inside a YAML literal block).
-          eval "$(python3 -c 'import re; t=open("/tmp/ccache-stats.txt").read(); F=re.IGNORECASE|re.MULTILINE; fi=lambda p,d=0: int(m.group(1)) if (m:=re.search(p,t,F)) else d; ff=lambda p,d=0.0: float(m.group(1)) if (m:=re.search(p,t,F)) else d; dh=fi(r"^\s+Direct[^:]*:\s+(\d+)"); ph=fi(r"^\s+Preprocessed[^:]*:\s+(\d+)"); cm=fi(r"^\s+Misses[^:]*:\s+(\d+)"); csm=int(ff(r"Cache size \(GB\)[^:]*:\s+([\d.]+)")*1024); th=dh+ph; tl=th+cm; hr=f\"{100*th/tl:.1f}\" if tl>0 else \"n/a\"; [print(f\"{k}={v}\") for k,v in [(\"direct_hit\",dh),(\"preprocessed_hit\",ph),(\"cache_miss\",cm),(\"total_hit\",th),(\"total_lookups\",tl),(\"hit_rate\",hr),(\"cache_size_mib\",csm)]]'"
+          eval "$(python3 -c 'import re; t=open("/tmp/ccache-stats.txt").read(); F=re.IGNORECASE|re.MULTILINE; fi=lambda p,d=0: next((int(m.group(1)) for m in [re.search(p,t,F)] if m),d); ff=lambda p,d=0.0: next((float(m.group(1)) for m in [re.search(p,t,F)] if m),d); dh=fi(r"^\s+Direct[^:]*:\s+(\d+)"); ph=fi(r"^\s+Preprocessed[^:]*:\s+(\d+)"); cm=fi(r"^\s+Misses[^:]*:\s+(\d+)"); csm=int(ff(r"Cache size \(GB\)[^:]*:\s+([\d.]+)")*1024); th=dh+ph; tl=th+cm; hr=f"{100*th/tl:.1f}" if tl>0 else "n/a"; [print(f"{k}={v}") for k,v in [("direct_hit",dh),("preprocessed_hit",ph),("cache_miss",cm),("total_hit",th),("total_lookups",tl),("hit_rate",hr),("cache_size_mib",csm)]]')"
 
           {
             echo "## ccache hit rate — ${{ matrix.config.name }}"

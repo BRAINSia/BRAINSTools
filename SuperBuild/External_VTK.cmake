@@ -220,8 +220,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       ${${proj}_DEPENDENCIES}
     )
   ### --- End Project specific additions
-  set(${proj}_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/vtk-${${proj}_REQUIRED_VERSION})
-  #${CMAKE_CURRENT_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
+  set(${proj}_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib/cmake/vtk-${${proj}_REQUIRED_VERSION})
 
   set(VTK_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
 

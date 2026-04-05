@@ -164,6 +164,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${Slicer_${proj}_GIT_TAG}"
+    GIT_SUBMODULES ""  # VTK 9.x has no submodules; prevents false-failure in CMake 3.26
     SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build
     CMAKE_ARGS -Wno-dev --no-warn-unused-cli

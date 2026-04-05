@@ -246,7 +246,7 @@ ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME D
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/GeSignaHDx.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDx
-  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxTest.nrrd
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxBMatrixTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )
@@ -298,7 +298,7 @@ ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME D
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>
   -D TEST_BASELINE=DATA{${DWIBASELINE_DIR}/PhilipsAchieva1.nrrd}
   -D TEST_INPUT=${DWIConvert_BINARY_DIR}/PhilipsAchieva1
-  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchieva1Test.nrrd
+  -D TEST_TEMP_OUTPUT=${TstOutput}/PhilipsAchievaBMatrixTest.nrrd
   -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
   -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdDWICompareTest.cmake
   )

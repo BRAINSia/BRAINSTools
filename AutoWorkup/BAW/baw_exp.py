@@ -78,9 +78,6 @@ def do_single_subject_processing(sp_args):
     :param sp_args:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     (
         CACHE_ATLASPATH,
@@ -156,7 +153,7 @@ def do_single_subject_processing(sp_args):
                 pass
             baw200.run(
                 plugin=SGEFlavor,
-                plugin_args=OrderedDict(
+                plugin_args=dict(
                     template=JOB_SCRIPT,
                     qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                     qstatProgramPath=QSTAT_IMMEDIATE_EXE,
@@ -172,7 +169,7 @@ def do_single_subject_processing(sp_args):
             SGEFlavor = "SGEGraph"  # Use the SGEGraph processing
             baw200.run(
                 plugin=SGEFlavor,
-                plugin_args=OrderedDict(
+                plugin_args=dict(
                     template=JOB_SCRIPT,
                     qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                     qstatProgramPath=QSTAT_IMMEDIATE_EXE,
@@ -187,7 +184,7 @@ def do_single_subject_processing(sp_args):
             print("Running On ipl_OSX")
             baw200.run(
                 plugin=SGEFlavor,
-                plugin_args=OrderedDict(
+                plugin_args=dict(
                     template=JOB_SCRIPT,
                     qsub_args=modify_qsub_args(CLUSTER_QUEUE, 2, 1, 1),
                     qstatProgramPath=QSTAT_IMMEDIATE_EXE,
@@ -244,9 +241,6 @@ def master_processing_controller(argv=None):
     :param argv: None
     :return: 0
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
     import argparse
     import configparser
 
@@ -318,7 +312,7 @@ def master_processing_controller(argv=None):
                 environment["virtualenv_dir"],
                 "exec",
             ),
-            OrderedDict(__file__=environment["virtualenv_dir"]),
+            dict(__file__=environment["virtualenv_dir"]),
         )
     ###### Now ensure that all the required packages can be read in from this custom path
     # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/

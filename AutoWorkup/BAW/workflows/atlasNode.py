@@ -106,9 +106,9 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
                 "template_t2_clipped.nii.gz",
             ]
         )
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
+    # Python 3.7+ guarantees dict insertion order as part of the language
+    # specification, so a plain dict is sufficient here — OrderedDict is no
+    # longer required.
 
     atlas_file_names = list(set(atlas_file_names))  # Make a unique listing
     # # Remove filename extensions for images, but replace . with _ for other file types
@@ -116,9 +116,7 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
         os.path.basename(fn).replace(".nii.gz", "").replace(".", "_").replace("-", "_")
         for fn in atlas_file_names
     ]
-    atlas_outputs_filename_match = OrderedDict(
-        list(zip(atlas_file_keys, atlas_file_names))
-    )
+    atlas_outputs_filename_match = dict(list(zip(atlas_file_keys, atlas_file_names)))
 
     node = pe.Node(
         interface=nio.DataGrabber(force_output=False, outfields=atlas_file_keys),
@@ -131,14 +129,12 @@ def make_atlas_node(atlasDirectory, name, atlasParts):
     node.inputs.template = "*"
     ## Prefix every filename with atlasDirectory
     atlas_search_paths = [f"{fn}" for fn in atlas_file_names]
-    node.inputs.field_template = OrderedDict(
-        list(zip(atlas_file_keys, atlas_search_paths))
-    )
+    node.inputs.field_template = dict(list(zip(atlas_file_keys, atlas_search_paths)))
     ## Give 'atlasDirectory' as the substitution argument
     atlas_template_args_match = [
         [[]] for i in atlas_file_keys
     ]  # build a list of proper length with repeated entries
-    node.inputs.template_args = OrderedDict(
+    node.inputs.template_args = dict(
         list(zip(atlas_file_keys, atlas_template_args_match))
     )
     # print "+" * 100
@@ -161,6 +157,7 @@ def create_atlas_xml_and_cleaned_deformed_averages(
     """
     import os
     import sys
+
     import SimpleITK as sitk
 
     patternDict = {
@@ -215,7 +212,7 @@ def create_atlas_xml_and_cleaned_deformed_averages(
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
     # print("\n\n\nALL_FILES: {0}\n\n\n".format(deformed_list))
-    load_images_list = OrderedDict()
+    load_images_list = {}
     for full_pathname in deformed_list:
         full_pathname = str(full_pathname)
         base_name = os.path.basename(full_pathname)

@@ -23,14 +23,11 @@ class UpdateAutoWorkup:
         This function...
         :return: blackListDict, list(blackListDict.keys())
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         handle = csv.reader(
             open(inputArguments.blackList, "rb"), delimiter=",", quotechar='"'
         )
-        blackListDict = OrderedDict()
+        blackListDict = dict()
         for row in handle:
             if len(row) == 3:
                 blackListDict[row[0]] = row[1]
@@ -53,9 +50,6 @@ class UpdateAutoWorkup:
         """
         This function...
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         newPath = self._generate_new_path_name()
         newFile = csv.writer(open(newPath, "wb"), quoting=csv.QUOTE_ALL)
@@ -70,7 +64,7 @@ class UpdateAutoWorkup:
             ## skip header
             if oldFile.line_num > 1:
                 scanDict = eval(row[3])
-                newScanDict = OrderedDict()
+                newScanDict = dict()
                 for scan in list(scanDict.keys()):
                     filepaths = scanDict[scan]
                     for path in filepaths:
@@ -87,7 +81,7 @@ class UpdateAutoWorkup:
                                 newScanDict[scan] = [path]
                             else:
                                 newScanDict[scan].append(path)
-                if newScanDict != OrderedDict():
+                if newScanDict != dict():
                     project = row[0]
                     subject = row[1]
                     session = row[2]

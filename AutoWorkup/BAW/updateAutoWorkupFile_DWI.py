@@ -68,11 +68,8 @@ class MakeNewImageDict:
 
     def __init__(self):
         """This function..."""
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
-        self.newImageDict = OrderedDict()
+        self.newImageDict = dict()
         self.commandList = list()
         self.dbName = "NewImages.db"
         self.dbTableName = "NewImages"

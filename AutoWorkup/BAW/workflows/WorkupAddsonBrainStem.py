@@ -118,11 +118,7 @@ def brainstem(
 
         return os.path.abspath(outputImageFilename)
 
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
-    myLandmark = OrderedDict()
+    myLandmark = dict()
     with open(landmarkFilename) as myLandmarkFile:
         all_lines = myLandmarkFile.readlines()
 

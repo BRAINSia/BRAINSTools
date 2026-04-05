@@ -163,11 +163,10 @@ def create_and_run(
     """
     from BAW.baw_exp import open_subject_database
     from BAW.utilities.misc import add_dict
-    from collections import OrderedDict
 
     from BAW.workflows.utils import run_workflow
 
-    master_config = OrderedDict()
+    master_config = dict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
 
@@ -193,7 +192,7 @@ def create_and_run(
         print(f"Doing sessions {sessions}")
         print("!=" * 40)
         for session in sessions:
-            _dict = OrderedDict()
+            _dict = dict()
             t1_list = database.get_filenames_by_scan_type(session, ["T1-15", "T1-30"])
             if len(t1_list) == 0:
                 print(

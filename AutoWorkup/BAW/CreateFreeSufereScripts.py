@@ -487,15 +487,12 @@ else:
     ExperimentDatabase = SessionDB.SessionDB(subjectDatabaseFile, single_subject)
 
 import pickle
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
 pickled_good_list_fn = "good_list.obj"
 if os.path.exists(pickled_good_list_fn):
     good_list = pickle.load(open(pickled_good_list_fn))
 else:
-    good_list = OrderedDict()
+    good_list = dict()
 
 
 # pickle.dump(obj, file[, protocol])

@@ -65,9 +65,6 @@ def main(
     :param kwargs:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     if outdir is not None:
         EXPERIMENT = EXPERIMENT.rstrip(os.path.sep)
@@ -115,7 +112,7 @@ def main(
                         pass
                 # END HACK
                 print(outpath)
-            outdict = OrderedDict()
+            outdict = dict()
             olddict = eval(row["imagefiles"])
             for key in list(olddict.keys()):
                 if key.startswith("T1"):

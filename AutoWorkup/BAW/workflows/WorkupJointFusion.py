@@ -117,11 +117,8 @@ def read_malf_atlas_db_base(dictionaryFilename):
     :param dictionaryFilename:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    jointFusionAtlasDict = OrderedDict()
+    jointFusionAtlasDict = dict()
     # scanID, ['atlasID', 't1', 't2' ,'label', 'lmks']
     import ast
 
@@ -207,15 +204,11 @@ def create_joint_fusion_workflow(
         name="outputspec",
     )
 
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
-    BLICreator = OrderedDict()
-    A2SantsRegistrationPreJointFusion_SyN = OrderedDict()
-    movingROIAuto = OrderedDict()
-    labelMapResample = OrderedDict()
-    NewlabelMapResample = OrderedDict()
+    BLICreator = dict()
+    A2SantsRegistrationPreJointFusion_SyN = dict()
+    movingROIAuto = dict()
+    labelMapResample = dict()
+    NewlabelMapResample = dict()
 
     jointFusion_atlas_mergeindex = 0
     merge_input_offset = 1  # Merge nodes are indexed from 1, not zero!
@@ -276,9 +269,9 @@ def create_joint_fusion_workflow(
         master_config["jointfusion_atlas_db_base"]
     )
     number_of_atlas_sources = len(jointFusionAtlasDict)
-    jointFusionAtlases = OrderedDict()
-    atlasMakeMultimodalInput = OrderedDict()
-    t2Resample = OrderedDict()
+    jointFusionAtlases = dict()
+    atlasMakeMultimodalInput = dict()
+    t2Resample = dict()
     warpedAtlasLblMergeNode = pe.Node(
         interface=Merge(number_of_atlas_sources), name="LblMergeAtlas"
     )
@@ -806,11 +799,8 @@ def create_joint_fusion_workflow(
         injectSurfaceCSFandVBIntoLabelMap.inputs.outFN = (
             "JointFusion_HDAtlas20_2015_CSFVBInjected_label.nii.gz"
         )
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
-        FREESURFER_DICT = OrderedDict(
+        FREESURFER_DICT = dict(
             {
                 "BRAINSTEM": 16,
                 "RH_CSF": 24,

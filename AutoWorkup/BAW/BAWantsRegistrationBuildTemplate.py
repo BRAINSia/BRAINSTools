@@ -64,11 +64,7 @@ def make_transform_list_with_gradient_warps(averageAffineTranform, gradientStepW
 def renest_deformed_passive_images(
     deformedPassiveImages, flattened_image_nametypes, interpolationMapping
 ):
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
-    """ Now make a list of lists of images where the outter list is per image type,
+    """Now make a list of lists of images where the outter list is per image type,
     and the inner list is the same size as the number of subjects to be averaged.
     In this case, the first element will be a list of all the deformed T2's, and
     the second element will be a list of all deformed POSTERIOR_AIR,  etc..
@@ -79,7 +75,7 @@ def renest_deformed_passive_images(
     :return:
     """
     all_images_size = len(deformedPassiveImages)
-    image_dictionary_of_lists = OrderedDict()
+    image_dictionary_of_lists = dict()
     nested_imagetype_list = list()
     outputAverageImageName_list = list()
     image_type_list = list()
@@ -279,16 +275,13 @@ def get_passive_images(ListOfImagesDictionaries, registrationImageTypes):
     :param registrationImageTypes:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     if len(registrationImageTypes) != 1:
         print("ERROR:  Multivariate imageing not supported yet!")
-        return [OrderedDict()]
+        return [dict()]
     passive_images = list()
     for mdict in ListOfImagesDictionaries:
-        ThisSubjectPassiveImages = OrderedDict()
+        ThisSubjectPassiveImages = dict()
         for key, value in list(mdict.items()):
             if key not in registrationImageTypes:
                 ThisSubjectPassiveImages[key] = value

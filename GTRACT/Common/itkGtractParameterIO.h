@@ -69,7 +69,7 @@ public:
   using Superclass = itk::Object;
   using Pointer = itk::SmartPointer<Self>;
   using ConstPointer = itk::SmartPointer<const Self>;
-  itkOverrideGetNameOfClassMacro(gtractParameterIO);
+  itkOverrideGetNameOfClassMacro(GtractParameterIO);
   itkNewMacro(Self);
 
   /*** Get/Set the Images for I/O Routines ***/

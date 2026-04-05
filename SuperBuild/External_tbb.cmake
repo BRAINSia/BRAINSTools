@@ -21,12 +21,12 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
       set(git_protocol "https")
-  set(tbb_ver "v2022.2.0-rc1")
+  set(tbb_ver "v2022.3.0")
   endif()
 
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-     ${git_protocol}://github.com/oneapi-src/oneTBB.git
+     ${git_protocol}://github.com/uxlfoundation/oneTBB.git
      QUIET
   )
 
@@ -35,7 +35,8 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     #68e075cbb96de2b92d1a95832754c24a07b31cc8 # 20210713
     #e6104c9599f7f10473caf545199f7468c0a8e52f # 20221221
     #v2021.5.0 # 20211223
-    v2022.2.0-rc1
+    #v2022.2.0-rc1
+    v2022.3.0
     QUIET
     )
 
@@ -83,7 +84,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(TBB_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/TBB)
   ExternalProject_GenerateProjectDescription_Step(${proj}
     VERSION ${tbb_ver}
-    LICENSE_FILES "https://raw.githubusercontent.com/oneapi-src/oneTBB/v${tbb_ver}/LICENSE.txt"
+    LICENSE_FILES "https://raw.githubusercontent.com/uxlfoundation/oneTBB/${tbb_ver}/LICENSE.txt"
     )
 
   #-----------------------------------------------------------------------------

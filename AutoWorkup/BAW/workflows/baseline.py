@@ -423,11 +423,8 @@ def generate_single_session_template_wf(
         )
         template_DG.inputs.base_directory = master_config["previousresult"]
         template_DG.inputs.subject = subjectid
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
-        template_DG.inputs.field_template = OrderedDict(
+        template_DG.inputs.field_template = dict(
             {
                 "outAtlasXMLFullPath": "%s/Atlas/AtlasDefinition_%s.xml",
                 "hncma_atlas": "%s/Atlas/AVG_hncma_atlas.nii.gz",
@@ -441,7 +438,7 @@ def generate_single_session_template_wf(
                 "template_headregion": "%s/Atlas/AVG_template_headregion.nii.gz",
             }
         )
-        template_DG.inputs.template_args = OrderedDict(
+        template_DG.inputs.template_args = dict(
             {
                 "outAtlasXMLFullPath": [["subject", "subject"]],
                 "hncma_atlas": [["subject"]],
@@ -1057,11 +1054,7 @@ def generate_single_session_template_wf(
         ##
         ##
 
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
-
-        BResample = OrderedDict()
+        BResample = dict()
         AtlasLabelMapsToResample = [
             "hncma_atlas",
             "template_WMPM2_labels",

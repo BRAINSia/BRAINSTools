@@ -109,9 +109,6 @@ class BRAINSABCext(BRAINSABC):
 
         :return:
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         custom_implied_outputs_with_no_inputs = [
             "posteriorImages",
@@ -122,12 +119,12 @@ class BRAINSABCext(BRAINSABC):
             "atlasToSubjectInverseTransform",
         ]
         full_outputs = self.output_spec().get()
-        pruned_outputs = OrderedDict()
+        pruned_outputs = dict()
         for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value
         outputs = super()._outputs_from_inputs(pruned_outputs)
-        input_check = OrderedDict(
+        input_check = dict(
             {
                 "T1": ("outputT1AverageImage", "t1_average_BRAINSABC.nii.gz"),
                 "T2": ("outputT2AverageImage", "t2_average_BRAINSABC.nii.gz"),

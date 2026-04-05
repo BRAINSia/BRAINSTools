@@ -32,11 +32,8 @@ with open(input_cache_file_from_superbuild) as fid:
 
 
 ## By placing all values into a dictionary, only the last processed value is stored
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
-options_dict = OrderedDict()
+options_dict = dict()
 for line in lines:
     ll = line.replace("set(", "").replace(")", "")
     elems = shlex.split(ll)

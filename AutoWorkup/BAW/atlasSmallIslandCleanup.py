@@ -22,7 +22,6 @@ class DustCleanup:
     """
 
     def __init__(self, arguments):
-        from collections import OrderedDict
 
         self.inputAtlasPath = arguments["--inputAtlasPath"]
         self.outputAtlasPath = arguments["--outputAtlasPath"]
@@ -40,7 +39,7 @@ class DustCleanup:
         ]
         self.forceSuspiciousLabelChange = arguments["--forceSuspiciousLabelChange"]
         self.noDilation = arguments["--noDilation"]
-        self.islandStatistics = OrderedDict(
+        self.islandStatistics = dict(
             {"Total": {"numberOfIslandsCleaned": 0, "numberOfIslands": 0}}
         )
 
@@ -154,12 +153,9 @@ class DustCleanup:
         :param label_key:
         :return: labelImage
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         label_key = str(label_key)  # all keys must be strings in order to sort
-        self.islandStatistics[label_key] = OrderedDict({"numberOfIslandsCleaned": 0})
+        self.islandStatistics[label_key] = dict({"numberOfIslandsCleaned": 0})
         label_value = int(label_key)
         for currentIslandSize in range(1, self.maximumIslandVoxelCount + 1):
             maskForCurrentLabel = sitk.BinaryThreshold(
@@ -412,11 +408,8 @@ class DustCleanup:
         :param inputLabelImage:
         :return: squareRootDiffLabelDict
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
-        squareRootDiffLabelDict = OrderedDict()
+        squareRootDiffLabelDict = dict()
         labelStatsT1WithInputLabelImage = self.get_label_stats_object(
             inputT1VolumeImage, inputLabelImage
         )

@@ -149,11 +149,8 @@ def convert_sessions_list_of_posterior_list_to_dictionary_of_session_lists(
     :return:
     """
     from os.path import basename
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    dictionary_of_session_list = OrderedDict()
+    dictionary_of_session_list = dict()
     assert dg_list_list is not None, "Input must be a list, not None"
     assert isinstance(dg_list_list, list), "Input must be a list, not {}".format(
         type(postList)
@@ -188,15 +185,12 @@ def accumulate_like_tissue_posteriors(posteriorImages):
     """
     import os
     import SimpleITK as sitk
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     ## Now clean up the posteriors based on anatomical knowlege.
     ## sometimes the posteriors are not relevant for priors
     ## due to anomolies around the edges.
 
-    load_images_list = OrderedDict()
+    load_images_list = dict()
     for full_pathname in posteriorImages:
         base_name = os.path.basename(full_pathname)
         load_images_list[base_name] = sitk.ReadImage(full_pathname)

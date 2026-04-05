@@ -24,11 +24,8 @@ def make_label_dictionary(inputColorLookUpTableFilename):
     """
     # inputColorLookUpTableFilename="/Shared/johnsonhj/HDNI/ReferenceData/20150709_HDAdultAtlas/BAWHDAdultAtlas_FreeSurferConventionColorLUT_20150709.txt"
     # import csv
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    labelDictionary = OrderedDict()
+    labelDictionary = dict()
     with open(inputColorLookUpTableFilename) as f:
         contents = f.readlines()
         for line in contents:
@@ -65,9 +62,6 @@ def get_label_volumes(labelVolume, RefVolume, labelDictionary):
     """
     import SimpleITK as sitk
     import os
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     labelImg = sitk.ReadImage(labelVolume, sitk.sitkInt64)
     RefImg = sitk.ReadImage(RefVolume, sitk.sitkFloat64)
@@ -83,7 +77,7 @@ def get_label_volumes(labelVolume, RefVolume, labelDictionary):
             * ImageSpacing[2]
             * labelStatFilter.GetCount(value)
         )
-        labelVolDict = OrderedDict()
+        labelVolDict = dict()
         labelVolDict["Volume_mm3"] = structVolume
 
         if value in list(labelDictionary.keys()):

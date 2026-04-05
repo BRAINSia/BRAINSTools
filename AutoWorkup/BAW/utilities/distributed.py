@@ -11,9 +11,6 @@ Usage:
 """
 
 import math
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
 
 def load_cluster(modules=[]):
@@ -45,7 +42,7 @@ def source_virtualenv(virtualenv_dir=""):
     return f"source {virtualenv_dir}"
 
 
-def prepend_env(environment=OrderedDict()):
+def prepend_env(environment=dict()):
     """
     This Function takes in...
 
@@ -81,11 +78,8 @@ def create_global_sge_script(cluster, environment):
 
     import os
     from string import Template
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    sub_dict = OrderedDict(
+    sub_dict = dict(
         LOAD_MODULES=load_cluster(cluster["modules"]),
         VIRTUALENV_DIR=source_virtualenv(environment["virtualenv_dir"]),
         EXPORT_ENV=prepend_env(environment["env"]),

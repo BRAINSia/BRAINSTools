@@ -122,9 +122,6 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
         :return:
         """
         import SimpleITK as sitk
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         #### Util Funcs ####
         def create_labels_dictionary(labelCodesFile):
@@ -136,7 +133,7 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
             """
             import csv
 
-            labelsDictionary = OrderedDict()
+            labelsDictionary = dict()
             with open(labelCodesFile) as lf:
                 reader = csv.reader(lf, delimiter=",")
                 for line in reader:
@@ -244,7 +241,7 @@ def create_measurement_workflow(WFname, LABELS_CONFIG_FILE):
         T2LabelMap = sitk.ReadImage(T2LabelMapVolume)
         DWILabelMap = sitk.ReadImage(DWILabelMapVolume)
         labelsDictionary = create_labels_dictionary(labelCodesFile)
-        statisticsDictionary = OrderedDict()
+        statisticsDictionary = dict()
         voxelVolume = compute_voxel_volume(resampledRISVolume)
         for key in labelsDictionary:
             labelID = int(key)

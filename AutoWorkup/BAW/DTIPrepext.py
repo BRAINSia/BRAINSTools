@@ -53,9 +53,6 @@ class DTIPrepext(DTIPrep):
         This function...
         :return:
         """
-        from collections import (
-            OrderedDict,
-        )  # Need OrderedDict internally to ensure consistent ordering
 
         custom_implied_outputs_with_no_inputs = [
             "outputVolume",
@@ -63,7 +60,7 @@ class DTIPrepext(DTIPrep):
             "outputReportTxt",
         ]
         full_outputs = self._outputs().get()
-        pruned_outputs = OrderedDict()
+        pruned_outputs = dict()
         for key, value in list(full_outputs.items()):
             if key not in custom_implied_outputs_with_no_inputs:
                 pruned_outputs[key] = value

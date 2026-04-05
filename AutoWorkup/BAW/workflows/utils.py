@@ -9,12 +9,8 @@ Usage:
 
 """
 
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
-
-def run_workflow(workflow, plugin="Linear", plugin_args=OrderedDict()):
+def run_workflow(workflow, plugin="Linear", plugin_args=dict()):
     """
     Run workflow object and catch traceback for printing to stdout
 

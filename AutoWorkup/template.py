@@ -139,9 +139,6 @@ def get_subjects_sessions_dictionary(
     :return:
     """
     import random
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     _temp = open_subject_database(cache, ["all"], prefix, dbfile)
     if "all" in input_subjects:
@@ -159,7 +156,7 @@ def get_subjects_sessions_dictionary(
 
     if shuffle:
         random.shuffle(subjects)  # randomly shuffle to get max cluster efficiency
-    subject_sessions_dictionary = OrderedDict()
+    subject_sessions_dictionary = dict()
     for subject in subjects:
         subject_sessions_dictionary[subject] = _temp.get_sessions_from_subject(subject)
     return subjects, subject_sessions_dictionary
@@ -169,42 +166,38 @@ def get_subjects_sessions_dictionary(
 def merge_by_extended_list_elements(
     t1s, t2s, pds, fls, labels, posteriors, passive_intensities, passive_masks
 ):
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
     """
-  *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
+    *** NOTE:  All input lists MUST have the same number of elements (even if they are null) ***
 
-  output = [{'T1':        os.path.join(mydatadir, '01_T1_half.nii.gz'),
-             'INV_T1':    os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
-             'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
-            },
-            {'T1':        os.path.join(mydatadir, '02_T1_half.nii.gz'),
-             'INV_T1':    os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
-             'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
-            },
-            {'T1':        os.path.join(mydatadir, '03_T1_half.nii.gz'),
-             'INV_T1':    os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
-             'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
-            }
-           ]
-  #          SUBJECT_01                    SUBJECT_02                        SUBJECT_03
-  labels = ['brain_label_seg.nii.gz',      'brain_label_seg.nii.gz',          ...      ]
-  pds    = [None,                          None,                              ...      ]
-  t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
-  t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
+    output = [{'T1':        os.path.join(mydatadir, '01_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '01_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '01_T1_inv_half.nii.gz')
+              },
+              {'T1':        os.path.join(mydatadir, '02_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '02_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '02_T1_inv_half.nii.gz')
+              },
+              {'T1':        os.path.join(mydatadir, '03_T1_half.nii.gz'),
+               'INV_T1':    os.path.join(mydatadir, '03_T1_inv_half.nii.gz'),
+               'LABEL_MAP': os.path.join(mydatadir, '03_T1_inv_half.nii.gz')
+              }
+             ]
+    #          SUBJECT_01                    SUBJECT_02                        SUBJECT_03
+    labels = ['brain_label_seg.nii.gz',      'brain_label_seg.nii.gz',          ...      ]
+    pds    = [None,                          None,                              ...      ]
+    t1s    = ['t1_average_BRAINSABC.nii.gz', 't1_average_BRAINSABC.nii.gz',     ...      ]
+    t2s    = ['t2_average_BRAINSABC.nii.gz', 't2_average_BRAINSABC.nii.gz',     ...      ]
 
-  :param t1s:
-  :param t2s:
-  :param pds:
-  :param fls:
-  :param labels:
-  :param posteriors:
-  :param passive_intensities:
-  :param passive_masks:
-  :return:
-  """
+    :param t1s:
+    :param t2s:
+    :param pds:
+    :param fls:
+    :param labels:
+    :param posteriors:
+    :param passive_intensities:
+    :param passive_masks:
+    :return:
+    """
     # print "t1s", t1s
     # print "t2s", t2s
     # print "pds", pds
@@ -213,7 +206,7 @@ def merge_by_extended_list_elements(
     # print "$$$$$$$$$$$$$$$$$$$$$$$"
     # print "posteriors", posteriors
     ListOfImagesDictionaries = [
-        OrderedDict() for i in t1s
+        dict() for i in t1s
     ]  # Initial list with empty dictionaries
     # HACK:  Need to make it so that AVG_AIR.nii.gz has a background value of 1
     registrationImageTypes = ["T1"]  # ['T1','T2'] someday.

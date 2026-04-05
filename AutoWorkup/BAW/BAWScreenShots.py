@@ -41,9 +41,6 @@ def read_input_file(inputFilename):
     :param inputFilename:
     :return: inputList
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     inputList = []
     with open(inputFilename) as infile:
@@ -53,7 +50,7 @@ def read_input_file(inputFilename):
             if isinstance(sessionInfo, list):
                 pass
             else:
-                sessionDict = OrderedDict()
+                sessionDict = dict()
                 sessionDict["project"] = sessionInfo[0]
                 sessionDict["subject"] = sessionInfo[1]
                 sessionDict["session"] = sessionInfo[2]

@@ -13,7 +13,6 @@ import csv
 import os
 import sqlite3 as lite
 import sys
-from collections import OrderedDict
 
 
 class SessionDB:
@@ -115,11 +114,11 @@ class SessionDB:
             if row[0] == "project":
                 # continue if header line
                 continue
-            currDict = OrderedDict()
+            currDict = dict()
             validEntry = True
             if len(row) == 4:
                 currDict = {"project": row[0], "subj": row[1], "session": row[2]}
-                rawDict = OrderedDict(eval(row[3]))
+                rawDict = dict(eval(row[3]))
                 dictionary_keys = list(rawDict.keys())
                 if not (("T1-15" in dictionary_keys) or ("T1-30" in dictionary_keys)):
                     print(

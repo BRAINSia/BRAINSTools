@@ -28,11 +28,8 @@ def fix_label_map_from_neuromorphemetrics_2012(
     """
     import SimpleITK as sitk
     import os
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    posterior_dict = OrderedDict(posteriorListOfTuples)
+    posterior_dict = dict(posteriorListOfTuples)
 
     def force_mask_insert(inlabels, newmask, newmaskvalue):
         """
@@ -115,7 +112,7 @@ def fix_label_map_from_neuromorphemetrics_2012(
     fusionIm = sitk.Cast(sitk.ReadImage(fusionFN), sitk.sitkUInt32)
     FixedHead = sitk.Cast(sitk.ReadImage(FixedHeadFN), sitk.sitkUInt32)
 
-    BRAINSABC_DICT = OrderedDict({"BRAINSTEM": 30, "CSF": 4, "BLOOD": 5})
+    BRAINSABC_DICT = dict({"BRAINSTEM": 30, "CSF": 4, "BLOOD": 5})
 
     ## Intialize by cloning
     outlabels = sitk.Image(fusionIm)
@@ -179,7 +176,7 @@ def fix_label_map_from_neuromorphemetrics_2012(
     ## Now extend brainstem lower
     ## BrainStem often mislabled to Cerebellum WM (label 7 and 46)
     ## Fix for brainstem for the mislabeld Cerebellum as well.
-    misLabelDict = OrderedDict({"none": 0, "leftCrblWM": 7, "rightCrblWM": 46})
+    misLabelDict = dict({"none": 0, "leftCrblWM": 7, "rightCrblWM": 46})
     for misLabel in misLabelDict:
         brain_stem = (FixedHead == BRAINSABC_DICT["BRAINSTEM"]) * (
             outlabels == misLabelDict[misLabel]

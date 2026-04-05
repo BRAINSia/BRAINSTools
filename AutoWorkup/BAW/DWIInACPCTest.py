@@ -52,9 +52,6 @@ Pipeline Steps for CreateDWIWorkflow:
 """
 import os
 import sys
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 #####################################################################################
@@ -64,7 +61,7 @@ PROGRAM_PATHS = PROGRAM_PATHS.split(":")
 PROGRAM_PATHS.extend(os.environ["PATH"].split(":"))
 os.environ["PATH"] = ":".join(PROGRAM_PATHS)
 
-CUSTOM_ENVIRONMENT = OrderedDict()
+CUSTOM_ENVIRONMENT = dict()
 
 CLUSTER_QUEUE_LONG = "-q OSX"
 CLUSTER_QUEUE = "-q OSX"
@@ -81,14 +78,8 @@ import nipype.interfaces.io as nio  # Data i/oS
 import nipype.pipeline.engine as pe  # pypeline engine
 from nipype.interfaces.semtools import *
 
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
-
-def get_global_sge_script(
-    pythonPathsList, binPathsList, customEnvironment=OrderedDict()
-):
+def get_global_sge_script(pythonPathsList, binPathsList, customEnvironment=dict()):
     """This is a wrapper script for running commands on an SGE cluster
     so that all the python modules and commands are pathed properly
 
@@ -138,9 +129,6 @@ def merge_by_extended_list_elements(FAImageList):
     :param FAImageList:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     ## Initial list with empty dictionaries
     ListOfImagesDictionaries = list()
@@ -157,7 +145,7 @@ def merge_by_extended_list_elements(FAImageList):
     # DefaultContinuousInterpolationType='LanczosWindowedSinc' ## Could also be Linear for speed.
     DefaultContinuousInterpolationType = "Linear"
     DTIinterpolationType = "ResampleDTIlogEuclidean"
-    interpolationMapping = OrderedDict(
+    interpolationMapping = dict(
         {
             "T1": DefaultContinuousInterpolationType,
             "T2": DefaultContinuousInterpolationType,

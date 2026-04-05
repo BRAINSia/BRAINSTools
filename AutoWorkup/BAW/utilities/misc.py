@@ -488,11 +488,8 @@ def generate_separate_image_type_list(inFileList, inTypeList):
     :param inTypeList:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    allListDict = OrderedDict()
+    allListDict = dict()
     allListDict["T1"] = list()
     allListDict["T2"] = list()
     allListDict["PD"] = list()

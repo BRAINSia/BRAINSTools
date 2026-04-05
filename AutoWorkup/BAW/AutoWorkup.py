@@ -42,9 +42,6 @@ def setup_environment(argv):
     from BAW.utilities.configFileParser import resolve_data_sink_option, parse_file
     from BAW.utilities.pathHandling import validate_path
     from BAW.utilities import misc
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     environment, experiment, pipeline, cluster = parse_file(
         argv["--ExperimentConfig"], argv["--pe"], argv["--workphase"]
@@ -79,7 +76,7 @@ def setup_environment(argv):
 
     exec(
         open(configure_env).read(),
-        OrderedDict(
+        dict(
             __file__=__file__,
             append_os_path=environment["env"]["PATH"],
             append_sys_path=environment["env"]["PYTHONPATH"],
@@ -106,7 +103,7 @@ def setup_environment(argv):
         )
         exec(
             open(configure_FS).read(),
-            OrderedDict(FS_VARS=misc.FS_VARS, env=environment["env"]),
+            dict(FS_VARS=misc.FS_VARS, env=environment["env"]),
         )
         print(
             "FREESURFER needs to check for sane environment here!"

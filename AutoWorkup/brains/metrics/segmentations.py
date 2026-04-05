@@ -17,9 +17,6 @@ import SimpleITK as sitk
 
 from ..common import check_file
 from ..config import _config
-from collections import (
-    OrderedDict,
-)  # Need OrderedDict internally to ensure consistent ordering
 
 labels = ["caudate", "putamen", "hippocampus", "thalamus", "accumben", "globus", "icv"]
 
@@ -47,13 +44,10 @@ def _module_create_labels(labels):
     :param labels:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     full_labels, numbers = construct_labels(labels)
     labelMap = zip_longest(full_labels, numbers)
-    return OrderedDict(labelMap)  # Use this variable
+    return dict(labelMap)  # Use this variable
 
 
 def format_labels(label):
@@ -110,7 +104,7 @@ def calculate_icv(dirname):
     calculate_binary_volume(filename)
 
 
-def get_volume(args=[], kwds=OrderedDict()):
+def get_volume(args=[], kwds=dict()):
     """
     This function...
 

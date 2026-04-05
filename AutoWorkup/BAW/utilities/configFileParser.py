@@ -73,15 +73,12 @@ def parse_environment(parser, environment):
 
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    retval = OrderedDict()
+    retval = dict()
     if parser.has_option(environment, "ENVAR_DICT"):
         retval["env"] = eval(get_ascii_from_parser(parser, environment, "ENVAR_DICT"))
     else:
-        retval["env"] = OrderedDict()
+        retval["env"] = dict()
     if "PYTHONPATH" in list(retval["env"].keys()):
         pythonpath = append_path_list(
             get_ascii_from_parser(parser, environment, "APPEND_PYTHONPATH"),
@@ -114,7 +111,7 @@ def parse_environment(parser, environment):
         )
     else:
         retval["virtualenv_dir"] = None
-    retval_cluster = OrderedDict()
+    retval_cluster = dict()
     retval_cluster["modules"] = eval(
         get_ascii_from_parser(parser, environment, "MODULES")
     )
@@ -166,11 +163,8 @@ def parse_experiment(parser, workflow_phase):
     :param workflow_phase:
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    retval = OrderedDict()
+    retval = dict()
     dirname = validate_path(
         get_ascii_from_parser(parser, "EXPERIMENT", "BASE_OUTPUT_DIR"), False, True
     )
@@ -299,11 +293,7 @@ def parse_nipype(parser):
     :return:
     """
 
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
-    retval = OrderedDict()
+    retval = dict()
     retval["ds_overwrite"] = parser.getboolean("NIPYPE", "GLOBAL_DATA_SINK_REWRITE")
 
     if parser.has_option("NIPYPE", "CRASHDUMP_DIR"):
@@ -430,9 +420,6 @@ def _nipype_plugin_config(wfrun, cluster, template=""):
     :param template: empty string
     :return:
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     assert wfrun in _WFRUN_VALID_TYPES, "Unknown workflow run environment: {}".format(
         wfrun
@@ -452,14 +439,14 @@ def _nipype_plugin_config(wfrun, cluster, template=""):
         plugin_args = {"n_procs": proc_count}
     elif wfrun == "ds_runner":
         plugin_name = _create_DS_runner()
-        plugin_args = OrderedDict()
+        plugin_args = dict()
     else:
         assert wfrun in [
             "local",
             "ds_runner",
         ], f"You must specify a valid run environment type.  Invalid: {wfrun}"
         plugin_name = "Linear"
-        plugin_args = OrderedDict()
+        plugin_args = dict()
 
     return plugin_name, plugin_args
 

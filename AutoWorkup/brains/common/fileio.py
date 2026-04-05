@@ -33,14 +33,11 @@ def parse_labels_file():
     """
     import os.path
     from ..config import _config
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     build_tree = _config.get("Resources", "build_directory")
     filename = _config.get("Resources", "label_template")
     fullname = check_file(os.path.join(build_tree, filename))
-    labelDict = OrderedDict()
+    labelDict = dict()
     with open(fullname) as fid:
         for line in fid.readlines():
             if line[0] != "#":

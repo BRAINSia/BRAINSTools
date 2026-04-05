@@ -16,9 +16,6 @@ def configure_env_test():
     """
     This function...
     """
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
     config_env = os.path.join(os.path.dirname(utilities.__file__), "configure_env.py")
     for p in range(10):
@@ -26,7 +23,7 @@ def configure_env_test():
 
     exec(
         compile(open(config_env).read(), config_env, "exec"),
-        OrderedDict(
+        dict(
             __file__=__file__,
             append_os_path=[
                 "/my/test/path/1:/my/test/path/2",

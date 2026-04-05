@@ -101,11 +101,8 @@ def write_cvsubset_file(
     :return:
     """
     from utilities.misc import add_dict
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
 
-    master_config = OrderedDict()
+    master_config = dict()
     for configDict in [environment, experiment, pipeline, cluster]:
         master_config = add_dict(master_config, configDict)
 
@@ -265,10 +262,6 @@ class CrossValidationJointFusionWorkflow(Workflow):
     :param Workflow:
     """
 
-    from collections import (
-        OrderedDict,
-    )  # Need OrderedDict internally to ensure consistent ordering
-
     csv_file = None
     hasHeader = None
     sample_size = None
@@ -311,7 +304,7 @@ class CrossValidationJointFusionWorkflow(Workflow):
         print(csvOut.outputs.__dict__)
         print("=" * 80)
 
-        iters = OrderedDict()
+        iters = dict()
         label = list(csvOut.outputs.__dict__.keys())[0]
         result = eval(f"csvOut.outputs.{label}")
         iters["tests"], iters["trains"] = sample_crossvalidation_set(

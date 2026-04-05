@@ -30,6 +30,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+#include <iostream>
 #include "vtkObjectFactory.h"
 #include "vtkInformation.h"
 #include "vtkStructuredGrid.h"

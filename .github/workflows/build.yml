@@ -352,6 +352,19 @@ jobs:
         shell: bash
         run: ctest -D ExperimentalBuild -j ${{ matrix.config.parallel }}
 
+      - name: "Inner Build: Report compiler warnings and errors"
+        # Always run so warnings/errors are visible even when the build fails.
+        # Parses the CTest Build.xml artifact and prints each <Warning> and
+        # <Error> element directly to the CI log — they are otherwise only
+        # visible on CDash.  Script sourced from InsightSoftwareConsortium/ITK
+        # Testing/ContinuousIntegration/report_build_diagnostics.py.
+        if: always()
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        run: |
+          python3 "${GITHUB_WORKSPACE}/Utilities/misc/report_build_diagnostics.py" \
+            "${GITHUB_WORKSPACE}/build/BRAINSTools-Release-EPRelease-build" || true
+
       - name: "Inner Build: Run tests and collect results"
         # Disallow build: do not run tests when the build step failed.
         # ctest -D ExperimentalBuild exits non-zero when compilation errors

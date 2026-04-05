@@ -96,8 +96,6 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     LABELS "LIBRARY_PATHS_LAUNCHER_BUILD"
     )
 
-  set(TBB_DIR ${TBB_INSTALL_DIR}/lib/cmake/tbb)
-
 else()
   # The project is provided using TBB_DIR, nevertheless since other project may depend on TBB,
   # let's add an 'empty' one

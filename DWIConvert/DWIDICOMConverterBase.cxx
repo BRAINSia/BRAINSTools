@@ -99,6 +99,25 @@ DWIDICOMConverterBase::LoadDicomDirectory()
   }
   m_thickness = readThicknessFromDicom();
 
+  // Issue #457: Warn when DICOM PixelRepresentation=0 (unsigned 16-bit).
+  // DWIConvert uses PixelValueType = short (signed 16-bit) throughout its
+  // pipeline.  Unsigned data where any voxel value exceeds 32767 will be
+  // reinterpreted as a negative signed value, producing incorrect results.
+  // A full fix requires refactoring the entire PixelValueType to be
+  // dynamically chosen from the DICOM header — left as future work since
+  // DWIConvert is deprecated in favour of dcm2niix (see README.md).
+  {
+    unsigned short pixelRep = 1; // default: signed; absence is not unsigned
+    m_Headers[0]->GetElementUS(0x0028, 0x0103, pixelRep, false);
+    if (pixelRep == 0)
+    {
+      std::cerr << "WARNING [#457]: DICOM PixelRepresentation=0 (unsigned 16-bit data). "
+                << "DWIConvert reads all pixel data as signed short (int16). "
+                << "Voxel intensities > 32767 will be read as negative values. "
+                << "Use dcm2niix instead for correct handling of unsigned data." << std::endl;
+    }
+  }
+
   // a map of ints keyed by the slice location string
   // reported in the dicom file.  The number of slices per
   // volume is the same as the number of unique slice locations

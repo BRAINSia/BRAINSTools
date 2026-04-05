@@ -100,6 +100,24 @@ protected:
 
   /** track if images is interleaved */
   bool m_IsInterleaved;
+
+  /**
+   * @brief Try to extract DWI gradient data using the DICOM Supplement 49
+   *   standard tags (shared by Hitachi scanners and other vendors that follow
+   *   the standard): b-value from (0018,9087) and gradient direction from
+   *   (0018,9089) inside the SharedFunctionalGroupsSequence (5200,9229).
+   *
+   *   This method fills m_BValues and m_DiffusionVectors and returns true on
+   *   success.  Returns false (without modifying the member vectors) if the
+   *   tags are absent or cannot be read, allowing the caller to fall back to
+   *   vendor-specific tag parsing.
+   *
+   *   Addresses issue #294: vendor converters can call this as a fallback so
+   *   that scanners emitting only the standard Supplement 49 tags are
+   *   supported without a dedicated converter class.
+   */
+  bool
+  TryExtractSupp49DWIData();
 };
 
 #endif // BRAINSTOOLS_DWIDICOMCONVERTERBASE_H

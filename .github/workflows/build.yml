@@ -346,7 +346,18 @@ jobs:
         # continue-on-error: test failures must not block ExperimentalSubmit —
         # CDash is most useful when it receives failure data.
         continue-on-error: true
-        run: ctest -D ExperimentalTest --schedule-random --output-on-failure -j ${{ matrix.config.parallel }}
+        run: |
+          # Exclude BCD (BRAINSConstellationDetector) tests: all exceed 5 minutes
+          # on GitHub-hosted runners and collectively consumed 4–75 minutes each
+          # in the 2026-04-05 Ubuntu run (job 69973921651).  Worst offender:
+          #   BCDTestForLandmarkCompare  4531 s  (75 min)
+          #   BCDTest_ForceACPoint       3000 s  (50 min, timed out)
+          #   BCDTest_rVN4-rpc-rac-rmpj  1303 s  (21 min)
+          # These tests are valuable locally but are too slow for CI runners
+          # that share limited compute time across all branches.
+          ctest -D ExperimentalTest --schedule-random --output-on-failure \
+            -j ${{ matrix.config.parallel }} \
+            -E '^BCD'
 
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build

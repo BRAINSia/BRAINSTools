@@ -111,6 +111,14 @@ set(CTEST_CUSTOM_TESTS_IGNORE
   BCDTest_acLowerBound
   BCDTest_T1_outputVolume
   BCDTest_rVN4-rpc-rac-rmpj
+  # Checker tests that verify BCD output files; they abort when their BCD
+  # parent test was excluded and no output was produced.
+  chk_BCDTest_ForceRPPoint
+  chk_BCDTest_ForceACPoint
+  chk_BCDTest_ForcePCPoint
+  chk_BCDTest_ForceVN4Point
+  chk_a_BCDTestForLandmarkCompare
+  chk_i_BCDTestForLandmarkCompare
   )
 
 set(CTEST_CUSTOM_WARNING_EXCEPTION

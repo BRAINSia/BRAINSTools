@@ -349,21 +349,24 @@ jobs:
         if: steps.inner_build.outcome == 'success'
         working-directory: build/BRAINSTools-Release-EPRelease-build
         shell: bash
-        # continue-on-error: test failures must not block ExperimentalSubmit —
-        # CDash is most useful when it receives failure data.
-        continue-on-error: true
+        # DO NOT use continue-on-error here.  ExperimentalSubmit already runs
+        # unconditionally via `if: always()`, so CDash receives failure data
+        # even when this step exits non-zero.  Using continue-on-error would
+        # mask test failures from the GitHub Actions status check, causing the
+        # PR to show a green checkmark despite failing tests.
         run: |
-          # Exclude BCD (BRAINSConstellationDetector) tests via -E as a
+          # Exclude slow BCD (BRAINSConstellationDetector) tests via -E as a
           # belt-and-suspenders guard alongside CTEST_CUSTOM_TESTS_IGNORE in
-          # CMake/CTestCustom.cmake.in.  CTEST_CUSTOM_TESTS_IGNORE is honoured
-          # by ctest_test() / ctest -D Experimental*; the -E flag ensures
-          # exclusion even before CTestCustom.cmake has been generated (e.g.
-          # on a fresh CMake configure that writes CTestCustom.cmake only after
-          # the first ctest_configure()).  All BCD tests exceeded 5 minutes on
-          # GitHub-hosted runners (worst: BCDTestForLandmarkCompare = 75 min).
+          # CMake/CTestCustom.cmake.in.  The regex covers:
+          #   ^BCD         — primary BCD tests (BCDTest_*, BCDTestForLandmarkCompare)
+          #   ^chk_.*BCD   — checker tests (chk_BCDTest_*, chk_a_BCDTest*,
+          #                  chk_i_BCDTest*) that abort when their BCD parent
+          #                  was excluded and no output file was produced.
+          # All BCD tests exceeded 5 minutes on GitHub-hosted runners
+          # (worst: BCDTestForLandmarkCompare = 75 min).
           ctest -D ExperimentalTest --schedule-random --output-on-failure \
             -j ${{ matrix.config.parallel }} \
-            -E '^BCD'
+            -E '^(BCD|chk_.*BCD)'
 
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build

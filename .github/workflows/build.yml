@@ -125,7 +125,8 @@ jobs:
         if: matrix.config.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build ccache
+          sudo apt-get install -y ninja-build ccache \
+            libx11-dev libxt-dev libgl1-mesa-dev libglu1-mesa-dev
 
       - name: Install Dependencies (macOS)
         if: matrix.config.os == 'macos-latest'
@@ -203,31 +204,41 @@ jobs:
             -DCMAKE_CXX_STANDARD:STRING=17 \
             -DCMAKE_C_FLAGS="${{ matrix.config.arch_flags }}" \
             -DCMAKE_CXX_FLAGS="${{ matrix.config.arch_flags }}" \
+            ${{ matrix.config.os == 'ubuntu-latest' && '-DOpenGL_GL_PREFERENCE:STRING=GLVND' || '' }} \
             -DCMAKE_BUILD_TYPE=Release \
             -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=Release \
             -DBUILD_TESTING=ON \
             -DBUILD_SHARED_LIBS=ON \
-            -DBRAINSTools_REQUIRES_VTK=OFF \
-            -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=OFF \
-            -DUSE_DWIConvert:BOOL=OFF \
-            -DUSE_BRAINSABC:BOOL=OFF \
-            -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF \
+            -DBRAINSTools_REQUIRES_VTK=ON \
+            -DBRAINSTools_USE_GIT_PROTOCOL:BOOL=OFF \
+            -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=ON \
+            -DUSE_BRAINSABC:BOOL=ON \
+            -DUSE_BRAINSConstellationDetector:BOOL=ON \
+            -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON \
+            -DUSE_BRAINSDeface:BOOL=ON \
             -DUSE_BRAINSDWICleanup:BOOL=OFF \
-            -DUSE_BRAINSInitializedControlPoints:BOOL=OFF \
-            -DUSE_BRAINSLabelStats:BOOL=OFF \
-            -DUSE_BRAINSLandmarkInitializer:BOOL=OFF \
+            -DUSE_BRAINSInitializedControlPoints:BOOL=ON \
+            -DUSE_BRAINSIntensityNormalize:BOOL=ON \
+            -DUSE_BRAINSLabelStats:BOOL=ON \
+            -DUSE_BRAINSLandmarkInitializer:BOOL=ON \
             -DUSE_BRAINSMultiModeSegment:BOOL=OFF \
             -DUSE_BRAINSMultiSTAPLE:BOOL=OFF \
             -DUSE_BRAINSMush:BOOL=OFF \
-            -DUSE_BRAINSPosteriorToContinuousClass:BOOL=OFF \
+            -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON \
             -DUSE_BRAINSResample:BOOL=ON \
-            -DUSE_BRAINSROIAuto:BOOL=OFF \
+            -DUSE_BRAINSROIAuto:BOOL=ON \
             -DUSE_BRAINSSnapShotWriter:BOOL=OFF \
             -DUSE_BRAINSStripRotation:BOOL=OFF \
-            -DUSE_BRAINSTransformConvert:BOOL=OFF \
-            -DUSE_ConvertBetweenFileFormats:BOOL=OFF \
-            -DUSE_ImageCalculator:BOOL=OFF \
-            -DUSE_ReferenceAtlas:BOOL=OFF
+            -DUSE_BRAINSTransformConvert:BOOL=ON \
+            -DUSE_ConvertBetweenFileFormats:BOOL=ON \
+            -DUSE_DWIConvert:BOOL=ON \
+            -DUSE_GTRACT:BOOL=ON \
+            -DUSE_ImageCalculator:BOOL=ON \
+            -DUSE_ReferenceAtlas:BOOL=OFF \
+            -DUSE_AutoWorkup:BOOL=OFF \
+            -DUSE_BRAINSConstellationDetectorGUI:BOOL=OFF \
+            -DUSE_DebugImageViewer:BOOL=OFF \
+            -DUSE_BRAINSSuperResolution:BOOL=OFF
 
       - name: "SuperBuild: Build (EP dependencies + inner BRAINSTools)"
         shell: bash
@@ -364,9 +375,13 @@ jobs:
           #                  was excluded and no output file was produced.
           # All BCD tests exceeded 5 minutes on GitHub-hosted runners
           # (worst: BCDTestForLandmarkCompare = 75 min).
+          # Exclusion regex: tests that exceed 5 minutes on CI runners.
+          # Timings measured locally on macOS arm64; CI is ~6x slower.
+          #   BRAINSABCSmallTest          91.5 s local -> ~550 s (9 min) CI
+          #   BCD tests + checkers:       already excluded (75-4531 s on CI)
           ctest -D ExperimentalTest --schedule-random --output-on-failure \
             -j ${{ matrix.config.parallel }} \
-            -E '^(BCD|chk_.*BCD)'
+            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest)'
 
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build

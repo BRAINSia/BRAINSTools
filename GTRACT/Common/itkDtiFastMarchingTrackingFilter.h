@@ -117,16 +117,16 @@ public:
   itkSetObjectMacro(CostImage, CostImageType);
   itkGetConstObjectMacro(CostImage, CostImageType);
 
-  itkSetMacro(MaxStepSize, double);              // for Gradient Descent with
-                                                 // default set to 1.0
-  itkSetMacro(MinStepSize, double);              // for Gradient Descent with
-                                                 // default set to 0.01
-  itkSetMacro(NumberOfIterations, unsigned long) // for Gradient Descent with
-                                                 // default set to 150;
+  itkSetMacro(MaxStepSize, double);               // for Gradient Descent with
+                                                  // default set to 1.0
+  itkSetMacro(MinStepSize, double);               // for Gradient Descent with
+                                                  // default set to 0.01
+  itkSetMacro(NumberOfIterations, unsigned long); // for Gradient Descent with
+                                                  // default set to 150
 
-    /* For Cost Funtion neighborhood iterator; Size 1 default with smaller size
-      for partial voxel */
-    itkSetMacro(CostFunctionStepSize, float);
+  /* For Cost Funtion neighborhood iterator; Size 1 default with smaller size
+    for partial voxel */
+  itkSetMacro(CostFunctionStepSize, float);
 
   void
   Update(); // InitializeSeeds() and starts data generation

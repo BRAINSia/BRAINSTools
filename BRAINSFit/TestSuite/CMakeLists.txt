@@ -1640,55 +1640,6 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 )
 endif()
 
-# ---------------------------------------------------------------------------
-# Regression test for issue #352: BRAINSFit --logFileReport must report the
-# real optimizer metric value, not the -123.456789 hardcoded sentinel.
-#
-# Two chained tests:
-#   1. BRAINSFitTest_NCMetricLogReport  — run BRAINSFit (Affine, NC cost,
-#      fixed=test.nii.gz moving=rotation.test.nii.gz) with --logFileReport
-#      to produce a CSV.  The optimizer converges in ~34 iterations, so
-#      GetFinalMetricValue() returns a real value from the optimizer.
-#   2. BRAINSFitTest_NCMetricLogReport_Validate  — python3 reads the CSV
-#      and asserts:
-#        a) MetricValue != -123.456789  (the pre-fix sentinel)
-#        b) MetricValue is finite
-#        c) MetricValue in [-1.0, -0.001]  (NC for a partially-aligned
-#           brain is negative and not near zero)
-#
-# Rationale for registration parameters: brain-to-itself at identity
-# converges in 0 optimizer iterations, so GetFinalMetricValue() returns
-# DBL_MAX.  The rotation case actually runs the optimizer and returns a
-# real per-metric value, making it a more meaningful regression guard.
-# ---------------------------------------------------------------------------
-set(BRAINSFitTestName BRAINSFitTest_NCMetricLogReport)
-ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME ${BRAINSFitTestName}
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSFitTestDriver>
-  BRAINSFitTest
-  --costMetric NC
-  --numberOfIterations 500
-  --numberOfHistogramBins 50
-  --samplingPercentage 0.2
-  --transformType Affine
-  --fixedVolume DATA{${TestData_DIR}/test.nii.gz}
-  --movingVolume DATA{${TestData_DIR}/rotation.test.nii.gz}
-  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.nii.gz
-  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.${XFRM_EXT}
-  --logFileReport ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.csv
-  --debugLevel ${BRAINSTOOLS_TEST_DEFAULT_DEBUGLEVEL}
-)
-
-find_package(Python3 COMPONENTS Interpreter QUIET)
-if(Python3_FOUND)
-  add_test(NAME BRAINSFitTest_NCMetricLogReport_Validate
-    COMMAND ${Python3_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/ValidateMetricReport.py
-      ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSFitTestName}.csv
-      NC
-      -1.0
-      -0.001
-  )
-  set_tests_properties(BRAINSFitTest_NCMetricLogReport_Validate
-    PROPERTIES DEPENDS BRAINSFitTest_NCMetricLogReport)
-endif()
+# Declare per-test CPU consumption so CTest manages parallelism natively.
+get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
+set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

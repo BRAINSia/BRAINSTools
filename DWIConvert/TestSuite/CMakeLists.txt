@@ -487,3 +487,7 @@ ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  
         -P ${CMAKE_CURRENT_LIST_DIR}/FSLMultiShellDataTest.cmake
         )
 AddDataDependency(DWIConvertMultiShellFSITestSmallSize)
+
+# Declare per-test CPU consumption so CTest manages parallelism natively.
+get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
+set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

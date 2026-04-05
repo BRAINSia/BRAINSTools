@@ -14,3 +14,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME B
   --cropOutput
   --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/BRAINSROIAutoTest_GenerateBrain_clipped_cropped.nii.gz
   )
+
+# Declare per-test CPU consumption so CTest manages parallelism natively.
+get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
+set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

@@ -144,9 +144,24 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DModule_ITKReview:BOOL=ON
       -DModule_ITKMetricsv4:BOOL=ON # needed for MattesMutualInformationImageToImageMetricv4
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
-      -DITK_WRAPPING:BOOL=OFF # HACK:  QUICK CHANGE
+      -DITK_WRAPPING:BOOL=OFF
       -DITK_WRAP_PYTHON:BOOL=OFF
       -DExternalData_OBJECT_STORES:PATH=${ExternalData_OBJECT_STORES}
+      # Disable GPU modules — BRAINSTools has no CUDA/OpenCL dependency
+      -DITK_USE_GPU:BOOL=OFF
+      # Disable video pipeline — not used by any BRAINSTools module
+      -DModule_ITKVideoCore:BOOL=OFF
+      -DModule_ITKVideoFiltering:BOOL=OFF
+      -DModule_ITKVideoIO:BOOL=OFF
+      -DModule_ITKVideoBridgeOpenCV:BOOL=OFF
+      -DModule_ITKVideoBridgeVXL:BOOL=OFF
+      # Disable test/benchmark infrastructure in production EP build
+      -DModule_ITKGoogleTest:BOOL=OFF
+      -DModule_ITKIntegratedTest:BOOL=OFF
+      # Disable Python bridge (no Python wrapping in this build)
+      -DModule_ITKBridgeNumPy:BOOL=OFF
+      # Disable deprecated ITK API
+      -DModule_ITKDeprecated:BOOL=OFF
       # VTK
       ${ITK_VTK_OPTIONS}
       # RTK

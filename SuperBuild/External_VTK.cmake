@@ -66,17 +66,20 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       )
   endif()
 
-  # Markups module needs vtkFrenetSerretFrame, which is available in
-  # SplineDrivenImageSlicer remote module.
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
-    -DVTK_MODULE_ENABLE_VTK_SplineDrivenImageSlicer:BOOL=YES
-    )
+  # BRAINSTools does not use Slicer Markups / SplineDrivenImageSlicer
+  # list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+  #   -DVTK_MODULE_ENABLE_VTK_SplineDrivenImageSlicer:BOOL=YES
+  #   )
 
+  # ChartsCore/Context2D/ViewsContext2D are Slicer-specific; BRAINSTools
+  # does not render charts — disable to reduce build footprint.
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
-    -DVTK_MODULE_ENABLE_VTK_ChartsCore:STRING=YES
-    -DVTK_MODULE_ENABLE_VTK_ViewsContext2D:STRING=YES
-    -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=YES
-    -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=YES
+    -DVTK_MODULE_ENABLE_VTK_ChartsCore:STRING=DONT_WANT
+    -DVTK_MODULE_ENABLE_VTK_ViewsContext2D:STRING=DONT_WANT
+    -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=DONT_WANT
+    -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=DONT_WANT
+    # Parallel VTK not used by BRAINSTools
+    -DVTK_GROUP_ENABLE_Parallel:STRING=DONT_WANT
     )
 
   list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS

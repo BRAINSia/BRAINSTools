@@ -31,13 +31,13 @@ if(NOT DEFINED ZLIB_ROOT AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/commontk/zlib.git"
+    "${git_protocol}://github.com/Slicer/zlib-ng.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-    "66a753054b356da85e1838a081aa94287226823e" # 20210122
+    "de0aca6040339aad56d96ab1c29850b00ec36a9b"  # slicer-2.2.4-2025-02-10-860e4cf
     QUIET
     )
 
@@ -56,12 +56,15 @@ if(NOT DEFINED ZLIB_ROOT AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     LOG_OUTPUT_ON_FAILURE ON # Print logs to CI only when step fails
     CMAKE_CACHE_ARGS
       ## CXX should not be needed, but it a cmake default test
-      -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.20
       ${EXTERNAL_PROJECT_DEFAULTS}
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
-      -DZLIB_MANGLE_PREFIX:STRING=slicer_zlib_
+      -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
+      -DZLIB_COMPAT:BOOL=ON
+      -DZLIB_ENABLE_TESTS:BOOL=OFF
+      -DZLIB_SYMBOL_PREFIX:STRING=slicer_zlib_
+      -DCMAKE_INSTALL_LIBDIR:STRING=lib
       -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
     DEPENDS
       ${${proj}_DEPENDENCIES}

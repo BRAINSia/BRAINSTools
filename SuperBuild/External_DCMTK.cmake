@@ -37,20 +37,18 @@ if(NOT DEFINED DCMTK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
-    "${git_protocol}://github.com/BRAINSia/dcmtk"
+    "${git_protocol}://github.com/DCMTK/DCMTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
-    # Official DCMTK master as of 20180621
-    # http://git.dcmtk.org/?p=dcmtk.git;a=commit;h=29f9de10c2e8576147f16475b156bba98d14ba7d
-    # plus the following patch:
-    # * Set CMP0067 to ensure try_compile work as expected
+    # Official DCMTK repository
     ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
     #"b0a30fb0fcb46ca765e9e2d88a92405946fa9d7e" # 20200312
     #"3e299bc08f16da786883da73c6a4d35457b7838e" # 20210122
     # "62899a5e84e0f9918b520218effa75a0c9059e2f"   20210805
-    "ea07125078cd097245867a71d8fba8b36fd92878" # patched-DCMTK-3.6.8_20241024
+    #"ea07125078cd097245867a71d8fba8b36fd92878" # patched-DCMTK-3.6.8_20241024 (BRAINSia fork)
+    "a7369385d91f40e19a9b2d4ef922c61370dfc5b1" # DCMTK 3.7.0++ 2026-01-22
     QUIET
     )
 

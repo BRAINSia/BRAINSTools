@@ -600,7 +600,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
     finalTransform = appMutualRegistration->GetTransform(); // finalTransform is a composite transform
 
     // Find the metric value (It is needed when logFileReport flag is ON).
-    // this->m_FinalMetricValue = appMutualRegistration->GetFinalMetricValue();
+    this->m_FinalMetricValue = appMutualRegistration->GetFinalMetricValue();
 
     this->m_ActualNumberOfIterations = appMutualRegistration->GetActualNumberOfIterations();
     this->m_PermittedNumberOfIterations = numberOfIterations;

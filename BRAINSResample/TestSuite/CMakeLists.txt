@@ -178,3 +178,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME V
 #  --warpTransform DATA{${TestData_DIR}/Transforms_h5/syn.benchmark.transform.h5}
 #  )
 #endif()
+
+# Declare per-test CPU consumption so CTest manages parallelism natively.
+get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
+set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

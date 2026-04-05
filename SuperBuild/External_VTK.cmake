@@ -82,21 +82,21 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     -DVTK_GROUP_ENABLE_Parallel:STRING=DONT_WANT
     )
 
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
-    -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES
-    -DVTK_GROUP_ENABLE_Qt:STRING=YES
-    )
-
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
-    -DVTK_QT_VERSION:STRING=5
-    -DVTK_Group_Qt:BOOL=ON
-    -DQt5_DIR:FILEPATH=${Qt5_DIR}
-    )
-
-  # Wire Qt5 into VTK when Qt5_DIR is provided (needed for DebugImageViewer
+  # Wire Qt5 into VTK only when Qt5_DIR is provided (needed for DebugImageViewer
   # and BRAINSConstellationDetectorGUI).  VTK_QT_ARGS is referenced in the
   # ExternalProject_Add CMAKE_CACHE_ARGS block below.
+  # Without this guard the Qt VTK modules are forced to YES even when Qt5 is
+  # not installed, causing a fatal configure error on headless CI runners.
   if(Qt5_DIR)
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES
+      -DVTK_GROUP_ENABLE_Qt:STRING=YES
+      )
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
+      -DVTK_QT_VERSION:STRING=5
+      -DVTK_Group_Qt:BOOL=ON
+      -DQt5_DIR:FILEPATH=${Qt5_DIR}
+      )
     set(VTK_QT_ARGS
       -DVTK_QT_VERSION:STRING=5
       -DVTK_GROUP_ENABLE_Qt:STRING=YES
@@ -104,6 +104,11 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=NO
       -DVTK_MODULE_ENABLE_VTK_InteractionImage:STRING=YES
       -DQt5_DIR:PATH=${Qt5_DIR}
+      )
+  else()
+    list(APPEND EXTERNAL_PROJECT_OPTIONAL_VTK9_CMAKE_CACHE_ARGS
+      -DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=DONT_WANT
+      -DVTK_GROUP_ENABLE_Qt:STRING=DONT_WANT
       )
   endif()
 
@@ -214,7 +219,24 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_ENABLE_WRAPPING:BOOL=OFF
       -DVTK_GROUP_ENABLE_Views:STRING=DONT_WANT
       -DVTK_GROUP_ENABLE_Web:STRING=DONT_WANT
-      -DVTK_GROUP_ENABLE_Rendering:STRING=DONT_WANT
+      # ITK Bridge/VtkGlue/CMakeLists.txt requires these VTK targets:
+      #   IOImage, ImagingSources, RenderingOpenGL2, RenderingFreeType,
+      #   InteractionStyle, InteractionWidgets
+      # Explicitly enable each to guarantee they are present in VTKConfig.cmake
+      # regardless of VTK's default enablement policy on headless CI runners.
+      -DVTK_GROUP_ENABLE_Rendering:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_RenderingOpenGL2:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_RenderingFreeType:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=DONT_WANT
+      -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=DONT_WANT
+      -DVTK_MODULE_ENABLE_VTK_RenderingQt:STRING=DONT_WANT
+      -DVTK_GROUP_ENABLE_Interaction:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_InteractionStyle:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_InteractionWidgets:STRING=YES
+      -DVTK_GROUP_ENABLE_IO:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_IOImage:STRING=YES
+      -DVTK_GROUP_ENABLE_Imaging:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_ImagingSources:STRING=YES
       ##
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}

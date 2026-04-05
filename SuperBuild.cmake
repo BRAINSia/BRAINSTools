@@ -251,7 +251,7 @@ if(NOT BRAINSTools_EP_BUILD_BRAINSTOOLS)
 Run the inner build separately (e.g. via CTest Experimental steps).")
 else()
   set(_bt_build_cmd   "")
-  set(_bt_install_cmd "")
+  set(_bt_install_cmd INSTALL_COMMAND "")  # inner build installs via cmake --install separately
 endif()
 
 ExternalProject_Add(${LOCAL_PROJECT_NAME}

@@ -255,48 +255,23 @@ jobs:
         if: always()
         shell: bash
         run: |
-          # Parse ccache counters and compute the direct+preprocessed hit rate
-          # for the SuperBuild run, then write a markdown table to the GitHub
-          # step summary and an annotation visible on the PR "Checks" tab.
+          # Parse ccache --show-stats output and compute the hit rate.
+          # Uses python3 for parsing and arithmetic so the step works on both
+          # macOS (bash 3.2, ccache 4.9+ JSON --print-stats) and Linux (bash 5.x).
           #
-          # Uses `ccache --print-stats` (machine-readable `key\tvalue`) which
-          # is available in ccache 4.x on both Ubuntu (apt) and macOS (brew).
-          # Falls back to parsing `--show-stats` if --print-stats is absent.
+          # Two bugs were present in the prior awk+bash implementation:
+          #   1. ccache 4.9+ changed --print-stats to JSON output; the awk
+          #      key=value parser silently returned empty for every field.
+          #   2. ${var:0:-1} (negative length) is not supported in bash 3.2
+          #      (macOS /bin/bash), causing "hit_rate: unbound variable" when
+          #      total_lookups > 0.
           set -euo pipefail
+          ccache --show-stats > /tmp/ccache-stats.txt || true
 
-          if ccache --print-stats >/tmp/ccache-stats.txt 2>/dev/null; then
-            get() { awk -v k="$1" '$1==k {print $2; exit}' /tmp/ccache-stats.txt; }
-            direct_hit=$(get direct_cache_hit)
-            preprocessed_hit=$(get preprocessed_cache_hit)
-            cache_miss=$(get cache_miss)
-            uncacheable=$(get uncacheable)
-            cache_size=$(get cache_size_kibibyte)
-          else
-            ccache --show-stats > /tmp/ccache-stats.txt
-            parse() { awk -F':' -v k="$1" 'tolower($1) ~ k {gsub(/[^0-9]/,"",$2); print $2; exit}' /tmp/ccache-stats.txt; }
-            direct_hit=$(parse "direct")
-            preprocessed_hit=$(parse "preprocessed")
-            cache_miss=$(parse "cache miss")
-            uncacheable=$(parse "uncacheable")
-            cache_size=0
-          fi
-
-          direct_hit=${direct_hit:-0}
-          preprocessed_hit=${preprocessed_hit:-0}
-          cache_miss=${cache_miss:-0}
-          uncacheable=${uncacheable:-0}
-          cache_size=${cache_size:-0}
-
-          total_hit=$(( direct_hit + preprocessed_hit ))
-          total_lookups=$(( total_hit + cache_miss ))
-          if [ "$total_lookups" -gt 0 ]; then
-            # Integer percentage with one decimal place, bash-only (no bc).
-            hit_rate_x10=$(( total_hit * 1000 / total_lookups ))
-            hit_rate="${hit_rate_x10:0:-1}.${hit_rate_x10: -1}"
-          else
-            hit_rate="n/a"
-          fi
-          cache_size_mib=$(( cache_size / 1024 ))
+          # Parse and compute everything in python3 (one logical line so YAML
+          # indentation rules are satisfied; python3 top-level code cannot be
+          # indented, so a heredoc is not usable inside a YAML literal block).
+          eval "$(python3 -c 'import re; t=open("/tmp/ccache-stats.txt").read(); F=re.IGNORECASE|re.MULTILINE; fi=lambda p,d=0: int(m.group(1)) if (m:=re.search(p,t,F)) else d; ff=lambda p,d=0.0: float(m.group(1)) if (m:=re.search(p,t,F)) else d; dh=fi(r"^\s+Direct[^:]*:\s+(\d+)"); ph=fi(r"^\s+Preprocessed[^:]*:\s+(\d+)"); cm=fi(r"^\s+Misses[^:]*:\s+(\d+)"); csm=int(ff(r"Cache size \(GB\)[^:]*:\s+([\d.]+)")*1024); th=dh+ph; tl=th+cm; hr=f\"{100*th/tl:.1f}\" if tl>0 else \"n/a\"; [print(f\"{k}={v}\") for k,v in [(\"direct_hit\",dh),(\"preprocessed_hit\",ph),(\"cache_miss\",cm),(\"total_hit\",th),(\"total_lookups\",tl),(\"hit_rate\",hr),(\"cache_size_mib\",csm)]]'"
 
           {
             echo "## ccache hit rate — ${{ matrix.config.name }}"
@@ -306,7 +281,6 @@ jobs:
             echo "| Direct hits        | ${direct_hit} |"
             echo "| Preprocessed hits  | ${preprocessed_hit} |"
             echo "| Cache misses       | ${cache_miss} |"
-            echo "| Uncacheable        | ${uncacheable} |"
             echo "| **Total hits**     | **${total_hit}** |"
             echo "| **Total lookups**  | **${total_lookups}** |"
             echo "| **Hit rate (%)**   | **${hit_rate}** |"

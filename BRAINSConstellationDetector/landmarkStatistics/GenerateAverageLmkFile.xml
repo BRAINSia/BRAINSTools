@@ -24,7 +24,7 @@
       <description>Input landmark files names (.fcsv or .wts).</description>
     </string-vector>
 
-    <file>
+    <file fileExtensions=".txt">
       <name>inputLandmarkListFile</name>
       <longflag>inputLandmarkListFile</longflag>
       <label>Input landmark list file name</label>
@@ -33,7 +33,7 @@
       <default></default>
     </file>
 
-    <file>
+    <file fileExtensions=".fcsv,.wts">
       <name>outputLandmarkFile</name>
       <longflag>outputLandmarkFile</longflag>
       <label>Output file name</label>

@@ -16,7 +16,7 @@
     <label>IO</label>
     <description>Input/output parameters</description>
 
-    <file>
+    <file fileExtensions=".fcsv,.wts">
       <name>inputLandmarkFile1</name>
       <longflag>--inputLandmarkFile1</longflag>
       <label>First input file</label>
@@ -32,7 +32,7 @@
       <description>Second input landmark file. This can be a vector of baseline file names (.fcsv or .wts)</description>
     </string-vector>
 
-    <file>
+    <file fileExtensions=".wts">
       <name>weights</name>
       <longflag>--weights</longflag>
       <label>Weights file for adjusting weight tolerances</label>

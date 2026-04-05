@@ -485,20 +485,8 @@ BRAINSFitHelper::RunRegistration()
   this->m_CurrentGenericTransform = myHelper->GetCurrentGenericTransform();
   this->m_ActualNumberOfIterations = myHelper->GetActualNumberOfIterations();
   this->m_PermittedNumberOfIterations = myHelper->GetPermittedNumberOfIterations();
-  /*
-    // Find the final metric value based on the used metric type and returned output transform
-    // using GenericMetricType = typename HelperType::MetricType;
-    const typename GenericMetricType::Pointer returnMetric = myHelper->GetModifiableCostMetricObject();
-    typename TLocalCostMetric::Pointer finalMetric = dynamic_cast<TLocalCostMetric *>(returnMetric.GetPointer() );
-    if( finalMetric.IsNull() )
-      {
-      std::cout << "ERROR:  Invalid CostMetric conversion" << __FILE__ << " " << __LINE__ << std::endl;
-      }
-    finalMetric->SetTransform(this->m_CurrentGenericTransform);
-    finalMetric->Initialize();
-    this->m_FinalMetricValue = finalMetric->GetValue();
-  */
-  this->m_FinalMetricValue = -123.456789;
+  // Retrieve the final metric value computed during registration.
+  this->m_FinalMetricValue = myHelper->GetFinalMetricValue();
 }
 } // end namespace itk
 

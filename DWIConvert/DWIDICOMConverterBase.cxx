@@ -512,3 +512,60 @@ DWIDICOMConverterBase::getDicomSpacing(double * const spacing) const
   }
   return rval;
 }
+
+// ---------------------------------------------------------------------------
+// Fix for issue #294: Supplement 49 standard gradient tag reading.
+//
+// DICOM Supplement 49 (ftp://medical.nema.org/medical/dicom/final/sup49_ft.pdf)
+// defines [0018,9087] (DiffusionBValue) and [0018,9089] (DiffusionGradientOrientation)
+// inside the SharedFunctionalGroupsSequence (5200,9229).  Hitachi scanners have
+// always used these tags; other vendors (e.g. Toshiba, some generic implementations)
+// also emit them.  This method is a shared fallback so that any
+// DWIDICOMConverterBase subclass can call it when vendor-specific tags are absent.
+// ---------------------------------------------------------------------------
+bool
+DWIDICOMConverterBase::TryExtractSupp49DWIData()
+{
+  // Require at least one header and at least one slice per volume.
+  if (this->m_Headers.empty() || this->m_SlicesPerVolume == 0)
+  {
+    return false;
+  }
+
+  std::vector<double>                      bValues;
+  std::vector<vnl_vector_fixed<double, 3>> diffusionVectors;
+
+  for (unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
+  {
+    itk::DCMTKSequence sharedFGS;
+    // (5200,9229) SharedFunctionalGroupsSequence
+    if (this->m_Headers[k]->GetElementSQ(0x5200, 0x9229, sharedFGS) != EXIT_SUCCESS)
+    {
+      return false; // tags not present; caller should try vendor-specific path
+    }
+
+    double b = 0.0;
+    if (sharedFGS.GetElementFD(0x0018, 0x9087, b) != EXIT_SUCCESS)
+    {
+      return false;
+    }
+    bValues.push_back(b);
+
+    double doubleArray[3] = { 0.0, 0.0, 0.0 };
+    if (sharedFGS.GetElementFD(0x0018, 0x9089, 3, doubleArray) != EXIT_SUCCESS)
+    {
+      return false;
+    }
+    vnl_vector_fixed<double, 3> vect3d;
+    for (unsigned int g = 0; g < 3; ++g)
+    {
+      vect3d[g] = doubleArray[g];
+    }
+    diffusionVectors.push_back(vect3d);
+  }
+
+  // Only commit results if we successfully read all volumes.
+  this->m_BValues = bValues;
+  this->m_DiffusionVectors = diffusionVectors;
+  return true;
+}

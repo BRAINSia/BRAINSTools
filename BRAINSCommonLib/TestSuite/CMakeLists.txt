@@ -8,6 +8,14 @@ target_link_libraries(PrettyPrintTableTest BRAINSCommonLib)
 set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 set_target_properties(PrettyPrintTableTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
+# Unit test for LocaleSafeConversions.h (issue #403)
+# Header-only; only needs BRAINSCommonLib for the include path — no ITK required.
+add_executable(LocaleSafeConversionsTest LocaleSafeConversionsTest.cxx)
+target_link_libraries(LocaleSafeConversionsTest BRAINSCommonLib)
+set_target_properties(LocaleSafeConversionsTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_LIBRARIES})
@@ -49,6 +57,11 @@ ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME Slicer3LandmarkIOExceptionTest
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Slicer3LandmarkIOExceptionTest>
   ## No arguments
+  )
+
+# LocaleSafeConversions: no ExternalData needed — pure arithmetic/string test.
+add_test(NAME LocaleSafeConversionsTest
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LocaleSafeConversionsTest>
   )
 
 ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}

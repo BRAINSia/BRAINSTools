@@ -104,6 +104,9 @@ option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK "Determine if tools depending
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB "Determine if tools depending on TBB need to be built." ON)
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_TBB)
+# FFTW enables ITK_USE_FFTWF/ITK_USE_FFTWD in External_ITKv5.cmake, which
+# accelerates itk::MaskedFFTNormalizedCorrelationImageFilter used by
+# BRAINSConstellationDetector for landmark template matching (see #295).
 option(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_FFTW "Determine if tools depending on FFTW need to be built." ON)
 mark_as_advanced(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_FFTW)
 

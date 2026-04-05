@@ -1,7 +1,9 @@
 ###  This is the test suite
 
 MakeTestDriverFromSEMTool(BRAINSCreateLabelMapFromProbabilityMaps BRAINSCreateLabelMapFromProbabilityMapsTest.cxx)
-add_dependencies(BRAINSCreateLabelMapFromProbabilityMapsTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
+if(TARGET InstallReferenceAtlas)
+  add_dependencies(BRAINSCreateLabelMapFromProbabilityMapsTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
+endif()
 
 set(DIRTYLABELS ${CMAKE_CURRENT_BINARY_DIR}/DirtyLabels.nii.gz)
 set(CLEANLABELS ${CMAKE_CURRENT_BINARY_DIR}/CleanLabels.nii.gz)

@@ -85,5 +85,6 @@ shell dialect differences entirely.
 
 ## CI/CD
 
-- **Azure Pipelines** — Linux, macOS (configured via `.azure_BRAINSTools_common.cmake`)
+- **GitHub Actions** — Linux builds via `.github/workflows/build.yml`
+  (Ubuntu latest, ccache, ExternalData caching, CDash submission).
 - **CDash** — build/test results at https://www.cdash.org/CDash/index.php?project=BRAINSTools

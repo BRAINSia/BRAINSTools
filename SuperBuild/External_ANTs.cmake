@@ -134,7 +134,8 @@ set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
 ## set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
 set(${proj}_GIT_TAG
   #ebc7430177db73f3cdef7d28c3f716cd9a399b93  # 20240531 - Update to new ITK version
-  193e36eedbdc4183d5c749ba3e8b270ae399ee42  # 20250617 - Update to new ITK version
+  #193e36eedbdc4183d5c749ba3e8b270ae399ee42  # 20250617 - Update to new ITK version
+  1766655ca9e00c0b95c765fea2d2468436c94ceb  # 20260325 - Latest master
 )
 
 ExternalProject_Add(${proj}

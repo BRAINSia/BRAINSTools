@@ -47,7 +47,8 @@ set(OpenBLAS_SEARCH_PATHS
   ${CMAKE_PREFIX_PATH}
   /usr
   /usr/local
-  /usr/local/opt/openblas  ## Mac Homebrew install path
+  /usr/local/opt/openblas    ## Mac Homebrew install path (Intel)
+  /opt/homebrew/opt/openblas ## Mac Homebrew install path (Apple Silicon)
   /opt/OpenBLAS
 )
 

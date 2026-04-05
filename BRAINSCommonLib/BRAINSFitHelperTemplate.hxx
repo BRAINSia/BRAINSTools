@@ -1137,14 +1137,23 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           using ResampleFilterType = itk::ResampleImageFilter<MaskImageType, MaskImageType, double>;
           ResampleFilterType::Pointer resampler = ResampleFilterType::New();
 
+          // Resample the moving mask into fixed image space.
+          // When a prior transform exists (e.g. from Rigid/Affine stages),
+          // use it; otherwise use an identity transform so the resampler
+          // still maps the moving mask onto the fixed image grid.
           if (m_CurrentGenericTransform.IsNotNull())
           {
-            // resample the moving mask, if available
             resampler->SetTransform(m_CurrentGenericTransform);
-            resampler->SetInput(movingImageMask->GetImage());
-            resampler->SetOutputParametersFromImage(m_FixedVolume);
-            resampler->Update();
           }
+          else
+          {
+            using IdentityTransformType = itk::IdentityTransform<double, FixedImageType::ImageDimension>;
+            typename IdentityTransformType::Pointer identity = IdentityTransformType::New();
+            resampler->SetTransform(identity);
+          }
+          resampler->SetInput(movingImageMask->GetImage());
+          resampler->SetOutputParametersFromImage(m_FixedVolume);
+          resampler->Update();
           if (m_FixedBinaryVolume.GetPointer() != nullptr)
           {
             using AddFilterType = itk::AddImageFilter<MaskImageType, MaskImageType>;

@@ -1147,8 +1147,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           }
           else
           {
-            using IdentityTransformType = itk::IdentityTransform<double, FixedImageType::ImageDimension>;
-            typename IdentityTransformType::Pointer identity = IdentityTransformType::New();
+            using LocalIdentityTransformType = itk::IdentityTransform<double, FixedImageType::ImageDimension>;
+            typename LocalIdentityTransformType::Pointer identity = LocalIdentityTransformType::New();
             resampler->SetTransform(identity);
           }
           resampler->SetInput(movingImageMask->GetImage());

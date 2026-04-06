@@ -41,6 +41,7 @@ PURPOSE.  See the above copyright notices for more information.
 #include "itkDOMNode.h"
 
 #include "BRAINSLabelStatsCLP.h"
+#include "LocaleSafeConversions.h"
 
 
 std::string
@@ -74,7 +75,7 @@ GetXmlLabelName(const std::string & fileName, int label)
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
         const std::string attributeValue = lt->GetAttribute("index");
-        const int         currentLabel = std::stoi(attributeValue.c_str());
+        const int         currentLabel = BRAINSTools::safe_stoi(attributeValue);
         if (currentLabel == label)
         {
           const itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
@@ -118,7 +119,7 @@ GetAntsLabelName(const std::string & fileName, int label)
       labelFile >> x2 >> y2 >> z2;
       std::getline(labelFile, txtLabel);
 
-      const int currentLabel = std::stoi(value.c_str());
+      const int currentLabel = BRAINSTools::safe_stoi(value);
       if (currentLabel == label)
       {
         const unsigned first = txtLabel.find('"');

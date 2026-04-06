@@ -87,14 +87,14 @@ public:
   }
 
 protected:
-  BlendImageFilter();
+  BlendImageFilter() = default;
   ~BlendImageFilter() override = default;
 
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   void
-  ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId) override;
+  DynamicThreadedGenerateData(const OutputImageRegionType & outputRegionForThread) override;
 
 private:
   double m_Blend1{ 1.0 }, m_Blend2{ 1.0 };

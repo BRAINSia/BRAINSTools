@@ -20,25 +20,16 @@
 
 #include "itkBlendImageFilter.h"
 #include "itkImageRegionIterator.h"
-#include "itkProgressReporter.h"
 
 namespace itk
 {
-/**
- * Constructor
- */
-template <typename TInputImage, typename TOutputImage>
-BlendImageFilter<TInputImage, TOutputImage>::BlendImageFilter()
-
-  = default;
-
 /**
  * GenerateData Performs the accumulation
  */
 template <typename TInputImage, typename TOutputImage>
 void
-BlendImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                                                                  ThreadIdType                  threadId)
+BlendImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
+  const OutputImageRegionType & outputRegionForThread)
 {
   // We use dynamic_cast since inputs are stored as DataObjects.  The
   // ImageToImageFilter::GetInput(int) always returns a pointer to a
@@ -47,26 +38,16 @@ BlendImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const OutputIm
   InputImagePointer  inputPtr2 = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
   OutputImagePointer outputPtr = dynamic_cast<TOutputImage *>(this->GetOutput(0));
 
-  ImageRegionIterator<TInputImage> inputIt1(inputPtr1, outputRegionForThread);
-  ImageRegionIterator<TInputImage> inputIt2(inputPtr2, outputRegionForThread);
-
+  ImageRegionIterator<TInputImage>  inputIt1(inputPtr1, outputRegionForThread);
+  ImageRegionIterator<TInputImage>  inputIt2(inputPtr2, outputRegionForThread);
   ImageRegionIterator<TOutputImage> outputIt(outputPtr, outputRegionForThread);
 
-  ProgressReporter progress(this, threadId, outputRegionForThread.GetNumberOfPixels());
-
-  inputIt1.GoToBegin();
-  inputIt2.GoToBegin();
-  outputIt.GoToBegin();
-
-  while (!inputIt1.IsAtEnd())
+  for (inputIt1.GoToBegin(), inputIt2.GoToBegin(), outputIt.GoToBegin(); !inputIt1.IsAtEnd();
+       ++inputIt1, ++inputIt2, ++outputIt)
   {
-    double acc = static_cast<double>(inputIt1.Get()) * this->m_Blend1;
-    acc += static_cast<double>(inputIt2.Get()) * this->m_Blend2;
+    const double acc =
+      static_cast<double>(inputIt1.Get()) * this->m_Blend1 + static_cast<double>(inputIt2.Get()) * this->m_Blend2;
     outputIt.Set(static_cast<typename TOutputImage::PixelType>(acc));
-    ++inputIt2;
-    ++inputIt1;
-    ++outputIt;
-    progress.CompletedPixel(); // potential exception thrown here
   }
 }
 

@@ -105,9 +105,15 @@ set_tests_properties(BRAINSABCSmallTest PROPERTIES PROCESSORS ${_brainstools_tes
 #set_tests_properties(BRAINSABCLongTest PROPERTIES TIMEOUT 6500)
 #endif()
 #
-#if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 8) # This should be restored after fixing.
-#  add_executable(BlendImageFilterTest BlendImageFilterTest.cxx)
-#  target_link_libraries(BlendImageFilterTest ${BRAINSABC_ITK_LIBRARIES})
-#  set_target_properties(BlendImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
-#  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BlendImageFilterTest COMMAND ${LAUNCH_EXE}  $<TARGET_FILE:BlendImageFilterTest> )
-#endif()
+# GTest port of BlendImageFilterTest (issue #403).
+# The original was guarded behind BRAINSTools_MAX_TEST_LEVEL > 8; GTest makes
+# the test unconditional and reports each failing pixel individually.
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(BlendImageFilterGTest BlendImageFilterGTest.cxx)
+target_link_libraries(BlendImageFilterGTest PRIVATE ${BRAINSABC_ITK_LIBRARIES} GTest::gtest_main)
+set_target_properties(BlendImageFilterGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+include(GoogleTest)
+gtest_discover_tests(BlendImageFilterGTest DISCOVERY_TIMEOUT 120)

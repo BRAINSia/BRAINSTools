@@ -9,8 +9,8 @@ of every <Warning> and <Error> element so diagnostics appear directly
 in CI logs.
 
 Exit codes:
-  0  — no errors found (warnings are printed but are informational only)
-  1  — one or more build errors found (intended to fail CI)
+  0  — no BRAINSTools diagnostics found
+  1  — any BRAINSTools warnings or errors found (intended to fail CI)
   2  — usage error
 
 Usage:
@@ -115,7 +115,7 @@ def main() -> int:
 
     # Exit 1 only when errors are present: CI fails on errors, warnings are
     # informational.
-    return 1 if errors else 0
+    return 1 if (errors or warnings) else 0
 
 
 if __name__ == "__main__":

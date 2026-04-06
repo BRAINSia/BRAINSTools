@@ -388,8 +388,8 @@ jobs:
         # Behaviour:
         #   - Filters to BRAINSTools source only; ExternalProject (ITK, VTK,
         #     ANTs…) diagnostics from build/ subtree are suppressed.
-        #   - Exits 0 if there are only warnings  → CI step passes (informational)
-        #   - Exits 1 if there are any errors     → CI step fails, PR is red
+        #   - Exits 0 if no BRAINSTools diagnostics found
+        #   - Exits 1 if any warnings or errors found → CI step fails, PR is red
         #
         # Testing is already skipped on build failure via
         # `if: steps.inner_build.outcome == 'success'` above; this step adds a

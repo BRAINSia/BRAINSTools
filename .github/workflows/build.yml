@@ -352,16 +352,6 @@ jobs:
         shell: bash
         run: ctest -D ExperimentalBuild -j ${{ matrix.config.parallel }}
 
-      - name: "Inner Build: Report compiler warnings and errors"
-        # Always run so warnings/errors are visible even when the build fails.
-        # Parses CTest's Build.xml and prints each <Warning>/<Error> to the
-        # CI log — they are otherwise only visible on CDash.
-        if: always()
-        shell: bash
-        run: |
-          python3 "${GITHUB_WORKSPACE}/Utilities/misc/report_build_diagnostics.py" \
-            "${GITHUB_WORKSPACE}/build/BRAINSTools-Release-EPRelease-build" || true
-
       - name: "Inner Build: Run tests and collect results"
         # Disallow build: do not run tests when the build step failed.
         # ctest -D ExperimentalBuild exits non-zero when compilation errors
@@ -405,6 +395,27 @@ jobs:
         env:
           CTEST_AUTHTOKEN: ${{ secrets.CDASH_TOKEN }}
         run: ctest -D ExperimentalSubmit --verbose
+
+      - name: "Inner Build: Report BRAINSTools compiler warnings and errors"
+        # Runs AFTER CDash submission so CDash always receives the full build
+        # record before this step can fail the job.
+        #
+        # Behaviour:
+        #   - Filters to BRAINSTools source only; ExternalProject (ITK, VTK,
+        #     ANTs…) diagnostics from build/ subtree are suppressed.
+        #   - Exits 0 if there are only warnings  → CI step passes (informational)
+        #   - Exits 1 if there are any errors     → CI step fails, PR is red
+        #
+        # Testing is already skipped on build failure via
+        # `if: steps.inner_build.outcome == 'success'` above; this step adds a
+        # second gate that makes build errors visible even when ctest itself
+        # masked the error code.
+        if: always()
+        shell: bash
+        run: |
+          python3 "${GITHUB_WORKSPACE}/Utilities/misc/report_build_diagnostics.py" \
+            "${GITHUB_WORKSPACE}/build/BRAINSTools-Release-EPRelease-build" \
+            "${GITHUB_WORKSPACE}"
 
       # ── Artifact upload ────────────────────────────────────────────────────────
       - name: Upload Build Logs

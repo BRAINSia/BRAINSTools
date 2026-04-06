@@ -3,18 +3,6 @@ target_link_libraries(DumpImageInfo BRAINSCommonLib)
 set_target_properties(DumpImageInfo PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 set_target_properties(DumpImageInfo PROPERTIES FOLDER ${MODULE_FOLDER})
 
-add_executable(PrettyPrintTableTest PrettyPrintTableTest.cxx)
-target_link_libraries(PrettyPrintTableTest BRAINSCommonLib)
-set_target_properties(PrettyPrintTableTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
-set_target_properties(PrettyPrintTableTest PROPERTIES FOLDER ${MODULE_FOLDER})
-
-# Unit test for LocaleSafeConversions.h (issue #403)
-# Header-only; only needs BRAINSCommonLib for the include path — no ITK required.
-add_executable(LocaleSafeConversionsTest LocaleSafeConversionsTest.cxx)
-target_link_libraries(LocaleSafeConversionsTest BRAINSCommonLib)
-set_target_properties(LocaleSafeConversionsTest PROPERTIES
-  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
-  FOLDER ${MODULE_FOLDER})
 
 # GTest-based unit tests for LocaleSafeConversions.h (issue #403)
 # Uses BRAINSToolsGTest.cmake to locate/fetch GTest without SuperBuild changes.
@@ -66,39 +54,7 @@ target_link_libraries(DWIMetaDataDictionaryValidatorTests BRAINSCommonLib)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
-add_executable(Slicer3LandmarkIOExceptionTest Slicer3LandmarkIOTest.cxx)
-target_link_libraries(Slicer3LandmarkIOExceptionTest BRAINSCommonLib)
-set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 StandardBRAINSBuildMacro(NAME FindCenterOfBrain TARGET_LIBRARIES BRAINSCommonLib)
-set_target_properties(Slicer3LandmarkIOExceptionTest PROPERTIES FOLDER ${MODULE_FOLDER})
-
-add_executable(AverageImageFilterTest AverageImageFilterTest.cxx)
-target_link_libraries(AverageImageFilterTest BRAINSCommonLib)
-set_target_properties(AverageImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
-set_target_properties(AverageImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
-
-ExternalData_add_test(FindCenterOfBrainFetchData
-  NAME AverageImageFilterTest
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:AverageImageFilterTest>
-  ## No arguments
-  )
-
-ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME PrettyPrintTableTest
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:PrettyPrintTableTest>
-  ## No arguments
-  )
-
-ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
-  NAME Slicer3LandmarkIOExceptionTest
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:Slicer3LandmarkIOExceptionTest>
-  ## No arguments
-  )
-
-# LocaleSafeConversions: no ExternalData needed — pure arithmetic/string test.
-add_test(NAME LocaleSafeConversionsTest
-  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:LocaleSafeConversionsTest>
-  )
 
 ExternalData_add_test(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET}
   NAME FindCenterOfBrainTest

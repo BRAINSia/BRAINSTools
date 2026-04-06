@@ -26,6 +26,7 @@
 #include "vtkStructuredGrid.h"
 
 #include "vtkPoints.h"
+#include "LocaleSafeConversions.h"
 
 #define PR(x) \
   std::cout << #x " = " << x << "\n"; // a simple print macro for
@@ -307,7 +308,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     }
     else
     {
-      boxDistancePercentage = std::stod(distance.c_str());
+      boxDistancePercentage = BRAINSTools::safe_stod(distance);
     }
 
     /* Base the Distance on the High Resolution Grid */
@@ -387,7 +388,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     }
     else
     {
-      boxDistancePercentage = std::stod(distance.c_str());
+      boxDistancePercentage = BRAINSTools::safe_stod(distance);
     }
 
     /* Base the Distance on the High Resolution Grid */
@@ -447,7 +448,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
       }
       else
       {
-        boxDistancePercentage = std::stod(distance.c_str());
+        boxDistancePercentage = BRAINSTools::safe_stod(distance);
       }
 
       /* Base the Distance on the High Resolution Grid */
@@ -481,7 +482,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
       }
       else
       {
-        boxDistancePercentage = std::stod(distance.c_str());
+        boxDistancePercentage = BRAINSTools::safe_stod(distance);
       }
 
       /* Base the Distance on the High Resolution Grid */
@@ -519,7 +520,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
       }
       else
       {
-        boxDistancePercentage = std::stod(distance.c_str());
+        boxDistancePercentage = BRAINSTools::safe_stod(distance);
       }
 
       /* Base the Distance on the High Resolution Grid */
@@ -559,7 +560,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
       }
       else
       {
-        boxDistancePercentage = std::stod(distance.c_str());
+        boxDistancePercentage = BRAINSTools::safe_stod(distance);
       }
 
       /* Base the Distance on the High Resolution Grid */
@@ -590,7 +591,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     std::string zEnd = tokens[4].substr(0, pos);
     // std::cout << "zEnd: " << zEnd << std::endl;
 
-    zGridEndIndex = TALAIRACH_Z_POINTS - static_cast<int>(floor(std::stod(zEnd.c_str())));
+    zGridEndIndex = TALAIRACH_Z_POINTS - static_cast<int>(floor(BRAINSTools::safe_stod(zEnd)));
 
     if (pos > 0 && pos < 3)
     {
@@ -607,7 +608,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     }
     else
     {
-      boxDistancePercentage = std::stod(distance.c_str());
+      boxDistancePercentage = BRAINSTools::safe_stod(distance);
     }
 
     // std::cout << "zEndIndex: " << zGridEndIndex << std::endl;
@@ -626,7 +627,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     pos = tokens[5].find(".");
     std::string zStart = tokens[5].substr(0, pos);
     // std::cout << "zStart: " << zStart << std::endl;
-    zGridStartIndex = TALAIRACH_Z_POINTS - static_cast<int>(floor(std::stod(zStart.c_str())));
+    zGridStartIndex = TALAIRACH_Z_POINTS - static_cast<int>(floor(BRAINSTools::safe_stod(zStart)));
 
     // std::cout << "zGridStartIndex: " << zGridStartIndex << std::endl;
 
@@ -645,7 +646,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     }
     else
     {
-      boxDistancePercentage = std::stod(distance.c_str());
+      boxDistancePercentage = BRAINSTools::safe_stod(distance);
     }
 
     // std::cout << "boxDistancePercentage1: " << boxDistancePercentage <<

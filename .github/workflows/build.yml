@@ -89,6 +89,21 @@ jobs:
           echo "major_minor=${MAJOR_MINOR}" >> "$GITHUB_OUTPUT"
           echo "BRAINSTools version: ${VERSION}  (MAJOR.MINOR: ${MAJOR_MINOR})"
 
+      - name: Compute CDash build-name suffix
+        id: cdash_suffix
+        shell: bash
+        run: |
+          # PR number: set for pull_request events, empty for push events.
+          PR_NUM="${{ github.event.number }}"
+          # Branch name: head_ref (PRs) or ref_name (direct pushes).
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          # Slugify: lowercase, collapse non-alphanumeric runs to '-', strip edges.
+          SLUG=$(echo "${BRANCH}" | tr '[:upper:]' '[:lower:]' \
+                   | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
+          SUFFIX=":${PR_NUM:-0}:${SLUG}"
+          echo "suffix=${SUFFIX}" >> "$GITHUB_OUTPUT"
+          echo "CDash BuildName suffix: ${SUFFIX}"
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -335,6 +350,28 @@ jobs:
         working-directory: build/BRAINSTools-Release-EPRelease-build
         shell: bash
         run: ninja clean
+
+      - name: "Inner Build: Append PR + branch suffix to CDash BuildName"
+        # DartConfiguration.tcl is the file CTest reads for BuildName; it is
+        # generated during the SuperBuild and contains a line such as:
+        #   BuildName: Linux-g++
+        # Appending :PR:slug lets CDash group and filter submissions by PR/branch.
+        # python3 is used instead of sed to avoid BSD/GNU sed -i portability issues.
+        shell: bash
+        env:
+          CDASH_SUFFIX: ${{ steps.cdash_suffix.outputs.suffix }}
+          DART: build/BRAINSTools-Release-EPRelease-build/DartConfiguration.tcl
+        run: |
+          python3 -c "
+          import os, re
+          dart   = os.environ['DART']
+          suffix = os.environ['CDASH_SUFFIX']
+          txt    = open(dart).read()
+          txt    = re.sub(r'^(BuildName:.*)$', r'\1' + suffix, txt, flags=re.MULTILINE)
+          open(dart, 'w').write(txt)
+          m = re.search(r'^BuildName:.*$', txt, re.MULTILINE)
+          print('BuildName is now:', m.group() if m else '(not found)')
+          "
 
       - name: "Inner Build: CTest dashboard start (initialise build record)"
         working-directory: build/BRAINSTools-Release-EPRelease-build

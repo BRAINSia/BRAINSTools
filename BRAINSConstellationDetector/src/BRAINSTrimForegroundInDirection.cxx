@@ -51,6 +51,7 @@
 #include "TrimForegroundInDirection.h"
 #include "landmarkIO.h"
 #include "BRAINSThreadControl.h"
+#include "LocaleSafeConversions.h"
 
 //
 //
@@ -97,7 +98,7 @@ main(int argc, char * argv[])
   }
   else
   {
-    BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
+    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////

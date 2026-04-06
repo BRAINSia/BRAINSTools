@@ -33,6 +33,7 @@
 #include "itkCastImageFilter.h"
 #include "GenericTransformImage.h"
 #include "landmarksConstellationDetector.h"
+#include "LocaleSafeConversions.h"
 
 namespace itk
 {
@@ -122,7 +123,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
   }
   else
   {
-    BackgroundFillValue = std::stoi(this->m_BackgroundFillValueString.c_str());
+    BackgroundFillValue = BRAINSTools::safe_stoi(this->m_BackgroundFillValueString);
   }
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, and initialize some variables

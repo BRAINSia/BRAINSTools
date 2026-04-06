@@ -61,6 +61,7 @@
 #include "GenericTransformImage.h"
 
 #include "itkOrthogonalize3DRotationMatrix.h"
+#include "LocaleSafeConversions.h"
 
 
 // //////////////////////////////////////////////////////////////
@@ -126,7 +127,7 @@ main(int argc, char * argv[])
   }
   else
   {
-    BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
+    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////

@@ -51,6 +51,7 @@
 #include "landmarksConstellationCommon.h"
 
 #include "ChopImageBelowLowerBound.h"
+#include "LocaleSafeConversions.h"
 
 //
 //
@@ -88,7 +89,7 @@ main(int argc, char * argv[])
   }
   else
   {
-    BackgroundFillValue = std::stoi(backgroundFillValueString.c_str());
+    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
   }
   // //////////////////////////////////////////////////////////////////////////
   const SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);

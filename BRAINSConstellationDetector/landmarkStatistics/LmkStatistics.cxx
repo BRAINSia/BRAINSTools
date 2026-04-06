@@ -52,6 +52,7 @@ case n:     PCn1         PCn2
 
 #include "Slicer3LandmarkIO.h"
 #include "itkImage.h"
+#include "LocaleSafeConversions.h"
 
 
 int
@@ -62,7 +63,7 @@ main(int argc, char * argv[])
     std::cerr << "Usage : " << argv[0] << " <#of landmark pairs> <lmk-pair1> <lmk-pair2> ... <lmk-pairN>" << std::endl;
     return EXIT_FAILURE;
   }
-  const unsigned int k = std::stoi(argv[1]); // Number of landmark pairs
+  const unsigned int k = BRAINSTools::safe_stoi(argv[1]); // Number of landmark pairs
   // So the number of input landmark files = 2*k
 
   if ((argc % 2 != 0) || (static_cast<unsigned int>(argc) != (2 * (k + 1))))

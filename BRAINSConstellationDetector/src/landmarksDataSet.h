@@ -30,6 +30,7 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
+#include "LocaleSafeConversions.h"
 
 /*
  * This class contains a single set of landmarks and it's associated intensity image file.
@@ -106,7 +107,7 @@ public:
           throw landmarksDataSet::shortLine;
         }
         std::string datum = CSVs.substr(posA + 1, posB - (posA + 1));
-        tempPoint[j] = std::stod(datum.c_str());
+        tempPoint[j] = BRAINSTools::safe_stod(datum);
         posA = posB;
       }
       // NOTE:  RAS is was slicer requires, but ITK is internall LPS, so we need

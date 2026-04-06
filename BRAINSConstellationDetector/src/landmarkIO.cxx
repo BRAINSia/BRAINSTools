@@ -26,6 +26,7 @@
 // #include "itk_hdf5.h"
 // #include "itk_H5Cpp.h"
 #include "itkNumberToString.h"
+#include "LocaleSafeConversions.h"
 
 RGBImageType::Pointer
 ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
@@ -766,7 +767,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
         unsigned int i = 0;
         while (pos2 < line.size())
         {
-          llsMeans[name].push_back(std::stod(line.substr(pos1, pos2 - pos1).c_str()));
+          llsMeans[name].push_back(BRAINSTools::safe_stod(line.substr(pos1, pos2 - pos1)));
           ++i;
           pos1 = pos2 + 1;
           pos2 = line.find(' ', pos1 + 1);
@@ -785,7 +786,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
       }
       else
       {
-        searchRadii[name] = std::stod(line.c_str());
+        searchRadii[name] = BRAINSTools::safe_stod(line);
       }
 
       // read in the number of linear model coefficients
@@ -796,7 +797,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
       }
       else
       {
-        numParameters = std::stoi(line.c_str());
+        numParameters = BRAINSTools::safe_stoi(line);
       }
 
       LandmarkIO::MatrixType coefficients; // linear model coefficients
@@ -814,7 +815,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
           unsigned int i = 0;
           while (pos2 < line.size())
           {
-            coefficients(j, i++) = std::stod(line.substr(pos1, pos2 - pos1).c_str());
+            coefficients(j, i++) = BRAINSTools::safe_stod(line.substr(pos1, pos2 - pos1));
             pos1 = pos2 + 1;
             pos2 = line.find(' ', pos1 + 1);
           }

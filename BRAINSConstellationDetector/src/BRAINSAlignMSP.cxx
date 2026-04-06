@@ -53,6 +53,7 @@
 #include "itkIO.h"
 #include "BRAINSAlignMSPCLP.h"
 #include "GenericTransformImage.h"
+#include "LocaleSafeConversions.h"
 template <typename TInputImagePixelType>
 int
 DoIt(const std::string & inputVolume,
@@ -145,7 +146,7 @@ DoIt(const std::string & inputVolume,
     {
       return -32768;
     }
-    return std::stoi(backgroundFillValueString.c_str());
+    return BRAINSTools::safe_stoi(backgroundFillValueString);
   }();
 
   // Now write out the resampled image

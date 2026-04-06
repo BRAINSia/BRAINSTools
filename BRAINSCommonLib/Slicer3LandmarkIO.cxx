@@ -27,6 +27,7 @@
 #include "itkImageFileReaderException.h"
 #include <cctype>
 #include <regex>
+#include "LocaleSafeConversions.h"
 
 // COPIED FROM Slicer3D
 /// Coordinate system options
@@ -112,7 +113,7 @@ ReadLandmarkWeights(const std::string & weightFilename)
     {
       continue;
     }
-    const float weight = std::stod((line.substr(firstComma + 1, line.length() - 1)).c_str());
+    const float weight = BRAINSTools::safe_stod((line.substr(firstComma + 1, line.length() - 1)));
     landmarkWeightMap[landmark] = weight;
   }
   return landmarkWeightMap;
@@ -279,7 +280,7 @@ ReadSlicer3toITKLmkOldSlicer(const std::string & landmarksFilename)
       for (unsigned int i = 0; i < 3; ++i)
       {
         const size_t pos2 = line.find(',', pos1 + 1);
-        labelPos[i] = std::stod(line.substr(pos1 + 1, pos2 - pos1 - 1).c_str());
+        labelPos[i] = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
         if (!useLPS && i < 2) // Negate first two components for RAS -> LPS is the file is NOT an LPS file
         {
           labelPos[i] *= -1;
@@ -373,15 +374,15 @@ ReadSlicer3toITKLmkSlicer4(const std::string & landmarksFilename)
       LandmarkPointType        labelPos;
       if (useLPS)
       {
-        labelPos[0] = +atof(asTokens[1].c_str()); // L -> L (+)
-        labelPos[1] = +atof(asTokens[2].c_str()); // P -> P (+)
+        labelPos[0] = +BRAINSTools::safe_stod(asTokens[1]); // L -> L (+)
+        labelPos[1] = +BRAINSTools::safe_stod(asTokens[2]); // P -> P (+)
       }
       else
       {
-        labelPos[0] = -atof(asTokens[1].c_str()); // R -> L (-)
-        labelPos[1] = -atof(asTokens[2].c_str()); // A -> P (-)
+        labelPos[0] = -BRAINSTools::safe_stod(asTokens[1]); // R -> L (-)
+        labelPos[1] = -BRAINSTools::safe_stod(asTokens[2]); // A -> P (-)
       }
-      labelPos[2] = +atof(asTokens[3].c_str()); // S -> S (+)
+      labelPos[2] = +BRAINSTools::safe_stod(asTokens[3]); // S -> S (+)
       landmarks[name] = labelPos;
     }
   }

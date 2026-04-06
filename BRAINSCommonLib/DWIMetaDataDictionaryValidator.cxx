@@ -28,6 +28,7 @@
 #include "DWIMetaDataDictionaryValidator.h"
 
 #include "itkNumberToString.h"
+#include "LocaleSafeConversions.h"
 
 DWIMetaDataDictionaryValidator::DWIMetaDataDictionaryValidator() { this->m_dict.Clear(); }
 
@@ -164,7 +165,7 @@ DWIMetaDataDictionaryValidator::GetGradientTable() const
     if (allKey.find("DWMRI_gradient_") != std::string::npos)
     {
       const std::string                                        gradientString = allKey.substr(15, 4);
-      const int                                                index = std::atoi(gradientString.c_str());
+      const int                                                index = BRAINSTools::safe_stoi(gradientString);
       const DWIMetaDataDictionaryValidator::Double3x1ArrayType curGradientDirection = GetGradient(index);
       myGradientTable.push_back(curGradientDirection);
     }

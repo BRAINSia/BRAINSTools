@@ -38,6 +38,7 @@
 #include <string>
 #include <iostream>
 #include "itkNumberToString.h"
+#include "LocaleSafeConversions.h"
 
 namespace itk
 {
@@ -516,7 +517,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIntellXPointType
   {
     return false;
   }
-  const int NumberOfPoints = std::stoi(buffer);
+  const int NumberOfPoints = BRAINSTools::safe_stoi(buffer);
   for (int p = 0; p < NumberOfPoints; ++p)
   {
     // Extract Landmark Name
@@ -657,7 +658,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::ReadIntellXPointType
   {
     return false;
   }
-  const int NumberOfPoints = std::stoi(buffer);
+  const int NumberOfPoints = BRAINSTools::safe_stoi(buffer);
 
   // Assigning the dimensions from the parameters
   ImageDims[0] = XDim;

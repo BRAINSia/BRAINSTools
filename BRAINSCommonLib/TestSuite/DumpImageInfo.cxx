@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <itkImageFileReader.h>
+#include "LocaleSafeConversions.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  const int requestedDim = std::stoi(argv[1]);
+  const int requestedDim = BRAINSTools::safe_stoi(argv[1]);
   switch (requestedDim)
   {
     case 2:

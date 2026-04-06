@@ -210,7 +210,7 @@ ProcessArguments(int * ac, ArgumentStringType * av, ProcessedOutputType * proces
       threadEnv += (*av)[i + 1];
       itksys::SystemTools::PutEnv(threadEnv.c_str());
       // and set the number of threads locally for the comparison
-      itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(atoi((*av)[i + 1]));
+      itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(BRAINSTools::safe_stoi((*av)[i + 1]));
       *av += 2;
       *ac -= 2;
     }
@@ -228,7 +228,7 @@ ProcessArguments(int * ac, ArgumentStringType * av, ProcessedOutputType * proces
         usage();
         return 1;
       }
-      regressionTestParameters.numberOfPixelsTolerance = std::stoi((*av)[i + 1]);
+      regressionTestParameters.numberOfPixelsTolerance = BRAINSTools::safe_stoi((*av)[i + 1]);
       *av += 2;
       *ac -= 2;
     }
@@ -239,7 +239,7 @@ ProcessArguments(int * ac, ArgumentStringType * av, ProcessedOutputType * proces
         usage();
         return 1;
       }
-      regressionTestParameters.radiusTolerance = std::stoi((*av)[i + 1]);
+      regressionTestParameters.radiusTolerance = BRAINSTools::safe_stoi((*av)[i + 1]);
       (*av) += 2;
       *ac -= 2;
     }
@@ -250,7 +250,7 @@ ProcessArguments(int * ac, ArgumentStringType * av, ProcessedOutputType * proces
         usage();
         return 1;
       }
-      regressionTestParameters.intensityTolerance = std::stod((*av)[i + 1]);
+      regressionTestParameters.intensityTolerance = BRAINSTools::safe_stod((*av)[i + 1]);
       (*av) += 2;
       *ac -= 2;
     }
@@ -592,5 +592,6 @@ RegressionTestBaselines(char * baselineFilename)
 
 // Needed for explicit instantiation
 #include "itkTestingComparisonImageFilter.hxx"
+#include "LocaleSafeConversions.h"
 
 #endif

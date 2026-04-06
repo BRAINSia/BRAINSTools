@@ -52,6 +52,7 @@
 #include "DWIMetaDataDictionaryValidator.h"
 #include <BRAINSCommonLib.h>
 #include "DWIConvertLib.h"
+#include "LocaleSafeConversions.h"
 
 int
 buildDirectionLut(itk::Array<int> &               lut,
@@ -334,13 +335,13 @@ areDirectionsEqual(const std::string & direction1,
   strncpy(tmpDir1, direction1.c_str(), MAXSTR - 1);
   strncpy(tmpDir2, direction2.c_str(), MAXSTR - 1);
 
-  const double x1 = std::stod(strtok(tmpDir1, " "));
-  const double y1 = std::stod(strtok(nullptr, " "));
-  const double z1 = std::stod(strtok(nullptr, " "));
+  const double x1 = BRAINSTools::safe_stod(strtok(tmpDir1, " "));
+  const double y1 = BRAINSTools::safe_stod(strtok(nullptr, " "));
+  const double z1 = BRAINSTools::safe_stod(strtok(nullptr, " "));
 
-  const double x2 = std::stod(strtok(tmpDir2, " "));
-  const double y2 = std::stod(strtok(nullptr, " "));
-  const double z2 = std::stod(strtok(nullptr, " "));
+  const double x2 = BRAINSTools::safe_stod(strtok(tmpDir2, " "));
+  const double y2 = BRAINSTools::safe_stod(strtok(nullptr, " "));
+  const double z2 = BRAINSTools::safe_stod(strtok(nullptr, " "));
 
   if (averageB0only)
   {

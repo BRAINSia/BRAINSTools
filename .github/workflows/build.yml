@@ -126,7 +126,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ninja-build ccache \
-            libx11-dev libxt-dev libgl1-mesa-dev libglu1-mesa-dev
+            libx11-dev libxt-dev libgl1-mesa-dev libglu1-mesa-dev \
+            locales
+          # Generate a comma-decimal locale so that LocaleSafeConversionsTest
+          # can exercise locale-independence on the CI runner.
+          # Pattern adopted from ITK's CI workflow (pixi.yml / arm.yml).
+          sudo locale-gen de_DE.UTF-8
 
       - name: Install Dependencies (macOS)
         if: matrix.config.os == 'macos-latest'

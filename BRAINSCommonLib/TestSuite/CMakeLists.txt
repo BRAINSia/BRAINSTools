@@ -16,6 +16,18 @@ set_target_properties(LocaleSafeConversionsTest PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
   FOLDER ${MODULE_FOLDER})
 
+# GTest-based unit tests for LocaleSafeConversions.h (issue #403)
+# Uses BRAINSToolsGTest.cmake to locate/fetch GTest without SuperBuild changes.
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(LocaleSafeConversionsGTest LocaleSafeConversionsGTest.cxx)
+target_link_libraries(LocaleSafeConversionsGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(LocaleSafeConversionsGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+include(GoogleTest)
+gtest_discover_tests(LocaleSafeConversionsGTest DISCOVERY_TIMEOUT 120)
+
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_LIBRARIES})

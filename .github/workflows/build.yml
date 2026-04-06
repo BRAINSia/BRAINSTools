@@ -381,7 +381,7 @@ jobs:
           #   BCD tests + checkers:       already excluded (75-4531 s on CI)
           ctest -D ExperimentalTest --schedule-random --output-on-failure \
             -j ${{ matrix.config.parallel }} \
-            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest)'
+            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
 
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build

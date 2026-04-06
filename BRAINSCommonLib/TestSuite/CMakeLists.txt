@@ -28,6 +28,30 @@ set_target_properties(LocaleSafeConversionsGTest PROPERTIES
 include(GoogleTest)
 gtest_discover_tests(LocaleSafeConversionsGTest DISCOVERY_TIMEOUT 120)
 
+# GTest port of PrettyPrintTableTest (issue #403)
+add_executable(PrettyPrintTableGTest PrettyPrintTableGTest.cxx)
+target_link_libraries(PrettyPrintTableGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(PrettyPrintTableGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(PrettyPrintTableGTest DISCOVERY_TIMEOUT 120)
+
+# GTest port of Slicer3LandmarkIOExceptionTest (issue #403)
+add_executable(Slicer3LandmarkIOGTest Slicer3LandmarkIOGTest.cxx)
+target_link_libraries(Slicer3LandmarkIOGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(Slicer3LandmarkIOGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(Slicer3LandmarkIOGTest DISCOVERY_TIMEOUT 120)
+
+# GTest port of AverageImageFilterTest (issue #403)
+add_executable(AverageImageFilterGTest AverageImageFilterGTest.cxx)
+target_link_libraries(AverageImageFilterGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(AverageImageFilterGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(AverageImageFilterGTest DISCOVERY_TIMEOUT 120)
+
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_LIBRARIES})

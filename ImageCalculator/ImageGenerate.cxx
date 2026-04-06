@@ -23,6 +23,7 @@
 #include "itkImageFileWriter.h"
 #include "itkImageRegionIterator.h"
 #include "itkRGBPixel.h"
+#include "LocaleSafeConversions.h"
 enum PixelTypes
 {
   Char,
@@ -106,7 +107,7 @@ ProcessArgs(int           argc,
       }
       --argc;
       ++argv;
-      value = std::stod(*argv);
+      value = BRAINSTools::safe_stod(*argv);
     }
     else if (arg == "-d" || arg == "--dim")
     {
@@ -117,15 +118,15 @@ ProcessArgs(int           argc,
       }
       if (argc >= numdims)
       {
-        x = std::stoi(argv[1]);
-        y = std::stoi(argv[2]);
+        x = BRAINSTools::safe_stoi(argv[1]);
+        y = BRAINSTools::safe_stoi(argv[2]);
         if (numdims > 2)
         {
-          z = std::stoi(argv[3]);
+          z = BRAINSTools::safe_stoi(argv[3]);
         }
         if (numdims > 3)
         {
-          t = std::stoi(argv[4]);
+          t = BRAINSTools::safe_stoi(argv[4]);
         }
         argv += numdims;
         argc -= numdims;

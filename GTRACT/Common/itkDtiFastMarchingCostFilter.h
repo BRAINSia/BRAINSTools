@@ -118,7 +118,7 @@ public:
     }
 
   private:
-    int m_Axis;
+    int m_Axis{ 0 };
   };
 
   enum

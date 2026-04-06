@@ -358,8 +358,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
     p1[0] = currentPoint[0];
     p1[1] = currentPoint[1];
     p1[2] = currentPoint[2];
-    typename Self::ContinuousIndexType index1;
-    this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p1, index1);
+    auto index1 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p1);
 
     float dist = std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) +
                            std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
@@ -374,7 +373,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         p3[0] = currentPoint[0];
         p3[1] = currentPoint[1];
         p3[2] = currentPoint[2];
-        this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p3, index3);
+        index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
         for (int j = 0; j < 3; j++)
         {
           direction[j] = index1[j] - index3[j];
@@ -386,7 +385,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         p3[0] = currentPoint[0];
         p3[1] = currentPoint[1];
         p3[2] = currentPoint[2];
-        this->m_AnisotropyImage->TransformPhysicalPointToContinuousIndex(p3, index3);
+        index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
         for (int j = 0; j < 3; j++)
         {
           direction[j] = index3[j] - index1[j];

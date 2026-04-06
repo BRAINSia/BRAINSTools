@@ -242,7 +242,7 @@ main(int argc, char * argv[])
     physicalPoint[0] = fiberPoint[0];
     physicalPoint[1] = fiberPoint[1];
     physicalPoint[2] = fiberPoint[2];
-    forwardDeformationField->TransformPhysicalPointToIndex(physicalPoint, indexPoint);
+    indexPoint = forwardDeformationField->TransformPhysicalPointToIndex(physicalPoint);
     bit.SetLocation(indexPoint);
     bit.GoToBegin();
     // compute Jacobian

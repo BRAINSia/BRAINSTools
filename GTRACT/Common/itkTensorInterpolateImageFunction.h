@@ -87,9 +87,7 @@ public:
   OutputType
   Evaluate(const PointType & point) const override
   {
-    ContinuousIndexType index;
-
-    this->GetInputImage()->TransformPhysicalPointToContinuousIndex(point, index);
+    const auto index = this->GetInputImage()->template TransformPhysicalPointToContinuousIndex<double>(point);
     return this->EvaluateAtContinuousIndex(index);
   }
 

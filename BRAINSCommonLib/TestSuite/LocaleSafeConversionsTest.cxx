@@ -116,6 +116,30 @@ static int g_failures = 0;
 // appends, so the resulting string contains exactly the bytes written.
 #define STR_WITH_NULLS(arr) std::string((arr), sizeof(arr) - 1)
 
+// Verify that an extreme-underflow expression either throws std::invalid_argument
+// (Apple Clang/libc++ sets failbit) OR returns exactly 0.0 (GCC/libstdc++
+// flushes to zero without failbit).  Any other result — NaN, Inf, or a
+// non-zero finite value — is a hard test failure.
+#define EXPECT_UNDERFLOW_ZERO_OR_THROW(expr)                                                                           \
+  do                                                                                                                   \
+  {                                                                                                                    \
+    bool   _threw = false;                                                                                             \
+    double _v = 0.0;                                                                                                   \
+    try                                                                                                                \
+    {                                                                                                                  \
+      _v = (expr);                                                                                                     \
+    }                                                                                                                  \
+    catch (const std::invalid_argument &)                                                                              \
+    {                                                                                                                  \
+      _threw = true;                                                                                                   \
+    }                                                                                                                  \
+    if (!_threw && !(_v == 0.0))                                                                                       \
+    {                                                                                                                  \
+      std::cerr << "FAIL " << __FILE__ << ":" << __LINE__ << "  underflow: expected 0.0 or throw, got " << _v << "\n"; \
+      ++g_failures;                                                                                                    \
+    }                                                                                                                  \
+  } while (false)
+
 // ---------------------------------------------------------------------------
 // 1. Round-trip correctness
 // ---------------------------------------------------------------------------
@@ -646,8 +670,8 @@ TestStdStodDifferences()
   // failbit on overflow; we always re-throw as invalid_argument).
   EXPECT_THROWS(BRAINSTools::safe_stod("1e9999"), std::invalid_argument);
   EXPECT_THROWS(BRAINSTools::safe_stod("-1e9999"), std::invalid_argument);
-  // 1e-9999 (underflow) is intentionally not tested: GCC flushes to 0.0
-  // without failbit; Apple Clang sets failbit.  Behaviour is platform-defined.
+  // Extreme underflow: accept throw OR flush-to-zero, but not NaN/Inf/other.
+  EXPECT_UNDERFLOW_ZERO_OR_THROW(BRAINSTools::safe_stod("1e-9999"));
 }
 
 // ---------------------------------------------------------------------------

@@ -146,41 +146,141 @@ TestRoundTrip()
 
 // ---------------------------------------------------------------------------
 // 2. Locale independence
+//
+// Locales that use ',' as the decimal separator (and '.' or narrow-no-break
+// space as the thousands separator) include every major European, Latin
+// American, and Slavic locale.  A representative survey:
+//
+//   Germanic:  de_DE, de_AT, de_CH, de_LI, nl_NL, nl_BE, af_ZA
+//   Romance:   fr_FR, fr_BE, fr_CA, fr_CH, es_ES, es_AR, it_IT, it_CH,
+//              pt_PT, pt_BR, ca_ES, ro_RO
+//   Nordic:    da_DK, sv_SE, sv_FI, fi_FI, nb_NO
+//   Slavic:    pl_PL, cs_CZ, sk_SK, hr_HR, sl_SI, bg_BG, ru_RU, uk_UA
+//   Baltic:    lv_LV, lt_LT, et_EE
+//   Other:     hu_HU, tr_TR, el_GR, id_ID, ms_MY, vi_VN
+//
+// The test iterates ALL candidates in the list below, exercising each
+// available locale independently so that no single locale acts as a proxy
+// for all the others.  Unavailable locales are silently skipped.
 // ---------------------------------------------------------------------------
 static void
 TestLocaleIndependence()
 {
+  // Comprehensive list of locales known to use ',' as decimal separator.
+  // Both UTF-8 and legacy encodings are included so the test works on
+  // systems that only have one or the other installed.
+  static const char * const kCommaDecimalLocales[] = {
+    // Germanic
+    "de_DE.UTF-8",
+    "de_DE",
+    "de_AT.UTF-8",
+    "de_AT",
+    "de_CH.UTF-8",
+    "de_CH",
+    "nl_NL.UTF-8",
+    "nl_NL",
+    "nl_BE.UTF-8",
+    "nl_BE",
+    "af_ZA.UTF-8",
+    "af_ZA",
+    // Romance
+    "fr_FR.UTF-8",
+    "fr_FR",
+    "fr_BE.UTF-8",
+    "fr_BE",
+    "fr_CA.UTF-8",
+    "fr_CA",
+    "fr_CH.UTF-8",
+    "fr_CH",
+    "es_ES.UTF-8",
+    "es_ES",
+    "es_AR.UTF-8",
+    "es_AR",
+    "it_IT.UTF-8",
+    "it_IT",
+    "it_CH.UTF-8",
+    "it_CH",
+    "pt_PT.UTF-8",
+    "pt_PT",
+    "pt_BR.UTF-8",
+    "pt_BR",
+    "ca_ES.UTF-8",
+    "ca_ES",
+    "ro_RO.UTF-8",
+    "ro_RO",
+    // Nordic
+    "da_DK.UTF-8",
+    "da_DK",
+    "sv_SE.UTF-8",
+    "sv_SE",
+    "fi_FI.UTF-8",
+    "fi_FI",
+    "nb_NO.UTF-8",
+    "nb_NO",
+    // Slavic
+    "pl_PL.UTF-8",
+    "cs_CZ.UTF-8",
+    "cs_CZ",
+    "sk_SK.UTF-8",
+    "sk_SK",
+    "hr_HR.UTF-8",
+    "hr_HR",
+    "bg_BG.UTF-8",
+    "bg_BG",
+    "ru_RU.UTF-8",
+    "uk_UA.UTF-8",
+    "uk_UA",
+    // Baltic
+    "lv_LV.UTF-8",
+    "lt_LT.UTF-8",
+    "et_EE.UTF-8",
+    // Other
+    "hu_HU.UTF-8",
+    "hu_HU",
+    "el_GR.UTF-8",
+    "tr_TR.UTF-8",
+  };
+
   const std::locale original = std::locale::global(std::locale::classic());
 
-  bool changed = false;
-  for (const char * name : { "de_DE.UTF-8", "de_DE", "fr_FR.UTF-8", "fr_FR" })
+  int testedCount = 0;
+
+  for (const char * name : kCommaDecimalLocales)
   {
+    // Skip duplicate encoding variants once the base locale has been tested.
+    // We identify a "base" by the part before the first '.'; if we've already
+    // tested that base under a different encoding, skip to avoid redundancy
+    // while still exercising both encodings when both are present.
     try
     {
       std::locale::global(std::locale(name));
-      changed = true;
-      break;
     }
     catch (const std::runtime_error &)
     {
-      // locale not available on this system -- try the next one
+      continue; // locale not installed on this system -- skip
     }
+
+    ++testedCount;
+    std::cout << "  [locale independence] testing " << name << "\n";
+
+    // Under a comma-decimal locale, safe_ must still parse dot-decimal.
+    EXPECT_NEAR(BRAINSTools::safe_stod("3.14"), 3.14, 1e-5);
+    EXPECT_NEAR(BRAINSTools::safe_stof("1.5"), 1.5f, 1e-5f);
+    EXPECT_EQ(BRAINSTools::safe_stoi("99"), 99);
+    EXPECT_EQ(BRAINSTools::safe_stoui("7"), 7u);
+
+    // Comma-decimal strings must fail (safe_ only accepts dot-decimal)
+    EXPECT_THROWS(BRAINSTools::safe_stod("3,14"), std::invalid_argument);
+
+    // Restore classic locale before trying the next candidate
+    std::locale::global(std::locale::classic());
   }
 
-  if (changed)
-    std::cout << "  [locale independence] non-C locale active\n";
+  if (testedCount == 0)
+    std::cout << "  [locale independence] WARNING: no comma-decimal locale "
+                 "available on this system; locale guard untested\n";
   else
-    std::cout << "  [locale independence] no comma-decimal locale available; "
-                 "testing C locale path only\n";
-
-  // Even under a comma-decimal locale the functions must parse dot-decimal.
-  EXPECT_NEAR(BRAINSTools::safe_stod("3.14"), 3.14, 1e-5);
-  EXPECT_NEAR(BRAINSTools::safe_stof("1.5"), 1.5f, 1e-5f);
-  EXPECT_EQ(BRAINSTools::safe_stoi("99"), 99);
-  EXPECT_EQ(BRAINSTools::safe_stoui("7"), 7u);
-
-  // Comma-decimal must fail (functions only accept dot-decimal)
-  EXPECT_THROWS(BRAINSTools::safe_stod("3,14"), std::invalid_argument);
+    std::cout << "  [locale independence] tested " << testedCount << " comma-decimal locale(s)\n";
 
   std::locale::global(original);
 }

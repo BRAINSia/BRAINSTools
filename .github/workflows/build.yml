@@ -182,6 +182,13 @@ jobs:
           # across all platforms and commits.  It is only invalidated when the
           # MAJOR.MINOR version bumps (new test data hashes introduced).
           key: ExternalData-BRAINSTools-v${{ steps.btversion.outputs.major_minor }}
+          # Fallback: accept any ExternalData cache from a prior version so
+          # that already-downloaded objects are reused even after a version bump.
+          # restore-keys performs a prefix search; the most-recently-saved entry
+          # whose key starts with the prefix is selected.
+          restore-keys: |
+            ExternalData-BRAINSTools-v${{ steps.btversion.outputs.major_minor }}
+            ExternalData-BRAINSTools-
 
       - name: Set ExternalData_OBJECT_STORES env var
         shell: bash
@@ -306,7 +313,10 @@ jobs:
           echo "::notice title=ccache hit rate (${{ matrix.config.name }})::${hit_rate}% (${total_hit}/${total_lookups}), size ${cache_size_mib} MiB"
 
       - name: Populate ExternalData object store from build output
-        if: ${{ !cancelled() }}
+        # Only populate (and later save) when there was a cache miss or a
+        # restore-keys fallback hit.  On an exact-key hit the store is already
+        # up-to-date; writing it again would waste I/O and cache quota.
+        if: ${{ !cancelled() && steps.restore-externaldata.outputs.cache-hit != 'true' }}
         shell: bash
         run: |
           # ExternalData downloads objects into ExternalData_BINARY_ROOT/Objects/.
@@ -323,7 +333,11 @@ jobs:
           fi
 
       - name: Save ExternalData object store
-        if: ${{ !cancelled() }}
+        # Only save on a cache miss (exact key not found) — including fallback
+        # restore-keys hits, which also leave cache-hit='false'.  Skipping the
+        # save on an exact-key hit avoids redundant writes and conserves the
+        # 10 GB per-repo GitHub Actions cache quota.
+        if: ${{ !cancelled() && steps.restore-externaldata.outputs.cache-hit != 'true' }}
         uses: actions/cache/save@v5
         with:
           path: ${{ runner.temp }}/ExternalData

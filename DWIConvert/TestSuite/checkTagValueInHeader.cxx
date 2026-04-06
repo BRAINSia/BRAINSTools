@@ -7,6 +7,7 @@
 #include <cmath>   /* fabs */
 #include <cstdlib> /* atof */
 #include <cstring> /* strcmp */
+#include "LocaleSafeConversions.h"
 
 void
 printUsage(char * argv0)
@@ -58,11 +59,11 @@ main(int argc, char * argv[])
     }
     else if (0 == strcmp("--section", argv[i]))
     {
-      sectionIndex = std::stoi(argv[i + 1]);
+      sectionIndex = BRAINSTools::safe_stoi(argv[i + 1]);
     }
     else if (0 == strcmp("--subsection", argv[i]))
     {
-      subsectionIndex = std::stoi(argv[i + 1]);
+      subsectionIndex = BRAINSTools::safe_stoi(argv[i + 1]);
     }
     else if (0 == strcmp("--v", argv[i]))
     {
@@ -70,7 +71,7 @@ main(int argc, char * argv[])
     }
     else if (0 == strcmp("--numtype", argv[i]))
     {
-      numType = std::stoi(argv[i + 1]) > 0;
+      numType = BRAINSTools::safe_stoi(argv[i + 1]) > 0;
     }
     else
     {
@@ -148,8 +149,8 @@ main(int argc, char * argv[])
       // compare the value
       if (numType)
       {
-        double verifyingNum = std::stod(verifyingValue.c_str());
-        double tagNum = std::stod(valueStr.c_str());
+        double verifyingNum = BRAINSTools::safe_stod(verifyingValue);
+        double tagNum = BRAINSTools::safe_stod(valueStr);
         if (fabs(verifyingNum - tagNum) <= 1e-3)
         {
           result = 0;

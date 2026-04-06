@@ -2,6 +2,7 @@
 // Created by Hui Xie on 12/19/16.
 //
 #include "SiemensDWIConverter.h"
+#include "LocaleSafeConversions.h"
 
 SiemensDWIConverter::SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
                                          DWIConverter::FileNamesContainer &       inputFileNames,
@@ -617,7 +618,7 @@ SiemensDWIConverter::ExtractSiemensDiffusionInformation(const std::string &   ta
       return 0;
     }
     const std::string valueString = infoAsString.substr(offset + 16, itemLength);
-    const double      componentValue = std::stod(valueString.c_str());
+    const double      componentValue = BRAINSTools::safe_stod(valueString);
     valueArray.push_back(componentValue);
     offset += 16 + strideSize;
   }

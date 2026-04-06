@@ -145,7 +145,7 @@ TestRoundTrip()
 }
 
 // ---------------------------------------------------------------------------
-// 2. Locale independence
+// 2a. Locale independence — comma-decimal locales
 //
 // Locales that use ',' as the decimal separator (and '.' or narrow-no-break
 // space as the thousands separator) include every major European, Latin
@@ -157,7 +157,7 @@ TestRoundTrip()
 //   Nordic:    da_DK, sv_SE, sv_FI, fi_FI, nb_NO
 //   Slavic:    pl_PL, cs_CZ, sk_SK, hr_HR, sl_SI, bg_BG, ru_RU, uk_UA
 //   Baltic:    lv_LV, lt_LT, et_EE
-//   Other:     hu_HU, tr_TR, el_GR, id_ID, ms_MY, vi_VN
+//   Other:     hu_HU, tr_TR, el_GR
 //
 // The test iterates ALL candidates in the list below, exercising each
 // available locale independently so that no single locale acts as a proxy
@@ -286,6 +286,97 @@ TestLocaleIndependence()
 }
 
 // ---------------------------------------------------------------------------
+// 2b. Locale independence — dot-decimal locales
+//
+// Locales that use '.' as the decimal separator include English-speaking
+// countries, East Asian locales, South/Southeast Asian locales, and several
+// Middle Eastern locales.  Under these locales both std::stod and safe_stod
+// naturally parse dot-decimal strings, but it is still important to confirm
+// that setting the global locale to a dot-decimal locale does not cause any
+// unexpected interaction with the "C"-locale-imbued istringstream inside
+// safe_stod/safe_stof/safe_stoi/safe_stoui.
+//
+//   English:        en_US, en_GB, en_AU, en_CA, en_IE, en_NZ, en_ZA
+//   East Asian:     ja_JP, zh_CN, zh_TW, ko_KR
+//   SE Asian:       th_TH, ms_MY, id_ID, vi_VN
+//   Middle East:    ar_SA, ar_EG, he_IL
+//   South Asian:    hi_IN
+//
+// For dot-decimal locales the assertions are identical to comma-decimal:
+// safe_stod("3.14") must succeed and safe_stod("3,14") must throw.
+// ---------------------------------------------------------------------------
+static void
+TestDotLocaleIndependence()
+{
+  static const char * const kDotDecimalLocales[] = {
+    // English
+    "en_US.UTF-8",
+    "en_US",
+    "en_GB.UTF-8",
+    "en_GB",
+    "en_AU.UTF-8",
+    "en_CA.UTF-8",
+    "en_IE.UTF-8",
+    "en_NZ.UTF-8",
+    "en_ZA.UTF-8",
+    // East Asian
+    "ja_JP.UTF-8",
+    "zh_CN.UTF-8",
+    "zh_TW.UTF-8",
+    "ko_KR.UTF-8",
+    // Southeast Asian
+    "th_TH.UTF-8",
+    "ms_MY.UTF-8",
+    "id_ID.UTF-8",
+    "vi_VN.UTF-8",
+    // Middle Eastern
+    "ar_SA.UTF-8",
+    "ar_EG.UTF-8",
+    "he_IL.UTF-8",
+    // South Asian
+    "hi_IN.UTF-8",
+  };
+
+  const std::locale original = std::locale::global(std::locale::classic());
+
+  int testedCount = 0;
+
+  for (const char * name : kDotDecimalLocales)
+  {
+    try
+    {
+      std::locale::global(std::locale(name));
+    }
+    catch (const std::runtime_error &)
+    {
+      continue; // locale not installed on this system -- skip
+    }
+
+    ++testedCount;
+    std::cout << "  [dot locale independence] testing " << name << "\n";
+
+    // Under a dot-decimal locale, safe_ must still parse dot-decimal.
+    EXPECT_NEAR(BRAINSTools::safe_stod("3.14"), 3.14, 1e-5);
+    EXPECT_NEAR(BRAINSTools::safe_stof("1.5"), 1.5f, 1e-5f);
+    EXPECT_EQ(BRAINSTools::safe_stoi("99"), 99);
+    EXPECT_EQ(BRAINSTools::safe_stoui("7"), 7u);
+
+    // Comma-decimal strings must still be rejected (locale::classic() is always dot).
+    EXPECT_THROWS(BRAINSTools::safe_stod("3,14"), std::invalid_argument);
+
+    std::locale::global(std::locale::classic());
+  }
+
+  if (testedCount == 0)
+    std::cout << "  [dot locale independence] WARNING: no dot-decimal locale "
+                 "available on this system; dot locale guard untested\n";
+  else
+    std::cout << "  [dot locale independence] tested " << testedCount << " dot-decimal locale(s)\n";
+
+  std::locale::global(original);
+}
+
+// ---------------------------------------------------------------------------
 // 3. DICOM CSA header padding patterns
 //    Siemens: values stored as ASCII padded with '\n' then '\0' to 4-byte boundary
 //    Philips: integer fields stored as "0000\0\0\0\0"
@@ -387,7 +478,6 @@ TestErrorHandling()
 //   - Discards leading whitespace (std::isspace).
 //   - Accepts optional sign (+/-).
 //   - Accepts scientific notation (e/E with optional sign in exponent).
-//   - Accepts hexadecimal floating-point (0x prefix, binary exponent p/P).
 //   - Accepts leading zeros in mantissa (treated as decimal digits).
 //   - Throws std::invalid_argument if no conversion performed.
 //   - Throws std::out_of_range on overflow.
@@ -397,6 +487,9 @@ TestErrorHandling()
 // safe_stod preserves all behaviours listed above EXCEPT:
 //   - Partial parse: std::stod("3.14abc") -> 3.14; safe_stod throws.
 //   - inf/nan: not parsed by istringstream on Apple Clang/libc++.
+//   - Hexadecimal floating-point ("0x1.8p+1"): std::stod parses these on all
+//     platforms, but istringstream with locale::classic() does NOT on
+//     GCC/libstdc++.  See TestStdStodDifferences for the hex float note.
 // ---------------------------------------------------------------------------
 static void
 TestStdStodBehaviorMatch()
@@ -417,11 +510,6 @@ TestStdStodBehaviorMatch()
   EXPECT_NEAR(BRAINSTools::safe_stod("1.5e-3"), 0.0015, 1e-9);
   EXPECT_NEAR(BRAINSTools::safe_stod("1e0"), 1.0, 1e-15);
   EXPECT_NEAR(BRAINSTools::safe_stof("2.5E2"), 250.0f, 1e-3f);
-
-  // Hexadecimal floating-point (C99/C++11: 0x1.8p+1 = 1.5 * 2^1 = 3.0)
-  // std::stod supports these; istringstream with locale::classic() also does.
-  EXPECT_NEAR(BRAINSTools::safe_stod("0x1.8p+1"), 3.0, 1e-12);
-  EXPECT_NEAR(BRAINSTools::safe_stod("0x0.8p+0"), 0.5, 1e-12);
 
   // Leading zeros in mantissa (decimal digits, not octal)
   EXPECT_NEAR(BRAINSTools::safe_stod("007.5"), 7.5, 1e-10);
@@ -512,6 +600,15 @@ TestStdStoiBehaviorMatch()
 //                safe_stod("1e9999") -> throws std::invalid_argument
 //                (istringstream sets failbit on overflow; we always throw
 //                invalid_argument regardless of the failure cause)
+//
+//   e) Hexadecimal floating-point:
+//                std::stod("0x1.8p+1") -> 3.0 on all platforms (C99/C++11)
+//                safe_stod("0x1.8p+1") -> platform-dependent:
+//                  Apple Clang/libc++: istringstream parses hex floats -> 3.0
+//                  GCC/libstdc++:      istringstream does NOT -> throws
+//                safe_stod does NOT guarantee hex float support.  Callers
+//                that need to parse hexadecimal floating-point literals must
+//                use std::stod or std::from_chars directly.
 // ---------------------------------------------------------------------------
 static void
 TestStdStodDifferences()
@@ -675,7 +772,10 @@ main(int, char **)
   std::cout << "  round-trip: done\n";
 
   TestLocaleIndependence();
-  std::cout << "  locale independence: done\n";
+  std::cout << "  locale independence (comma): done\n";
+
+  TestDotLocaleIndependence();
+  std::cout << "  locale independence (dot): done\n";
 
   TestDicomPadding();
   std::cout << "  DICOM padding patterns: done\n";

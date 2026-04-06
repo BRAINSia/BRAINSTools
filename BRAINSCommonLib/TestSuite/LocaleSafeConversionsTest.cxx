@@ -600,6 +600,10 @@ TestStdStoiBehaviorMatch()
 //                safe_stod("1e9999") -> throws std::invalid_argument
 //                (istringstream sets failbit on overflow; we always throw
 //                invalid_argument regardless of the failure cause)
+//                NOTE: extreme UNDERFLOW ("1e-9999") is platform-dependent:
+//                  Apple Clang/libc++: sets failbit -> throws
+//                  GCC/libstdc++:      flushes to 0.0, no failbit -> returns 0.0
+//                Only overflow (too large) is tested here.
 //
 //   e) Hexadecimal floating-point:
 //                std::stod("0x1.8p+1") -> 3.0 on all platforms (C99/C++11)
@@ -642,7 +646,8 @@ TestStdStodDifferences()
   // failbit on overflow; we always re-throw as invalid_argument).
   EXPECT_THROWS(BRAINSTools::safe_stod("1e9999"), std::invalid_argument);
   EXPECT_THROWS(BRAINSTools::safe_stod("-1e9999"), std::invalid_argument);
-  EXPECT_THROWS(BRAINSTools::safe_stod("1e-9999"), std::invalid_argument);
+  // 1e-9999 (underflow) is intentionally not tested: GCC flushes to 0.0
+  // without failbit; Apple Clang sets failbit.  Behaviour is platform-defined.
 }
 
 // ---------------------------------------------------------------------------

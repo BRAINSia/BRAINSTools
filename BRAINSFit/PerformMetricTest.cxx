@@ -149,7 +149,6 @@ main(int argc, char * argv[])
 
   const MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
-  using SamplePointType = MetricSamplePointSetType::PointType;
   unsigned long index = 0;
 
   const auto sampleCount = static_cast<unsigned long>(std::ceil(1.0 / samplingPercentage));

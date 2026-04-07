@@ -365,7 +365,6 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
     samplePointSet->Initialize();
 
-    using SamplePointType = typename MetricSamplePointSetType::PointType;
     const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
 
     const auto sampleCount = static_cast<unsigned long>(std::ceil(numberOfAllSamples * this->m_SamplingPercentage));

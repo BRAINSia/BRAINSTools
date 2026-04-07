@@ -290,7 +290,7 @@ DoConversion(int argc, char * argv[])
          ++it)
     {
       const DisplacementFieldType::IndexType dispIndex = it.GetIndex();
-      const auto                       fixedPoint = displacementField->TransformIndexToPhysicalPoint<double>(dispIndex);
+      const auto fixedPoint = displacementField->template TransformIndexToPhysicalPoint<double>(dispIndex);
       DisplacementFieldType::PointType movingPoint;
       movingPoint = inputXfrm->TransformPoint(fixedPoint);
       const VectorType displacement = movingPoint - fixedPoint;

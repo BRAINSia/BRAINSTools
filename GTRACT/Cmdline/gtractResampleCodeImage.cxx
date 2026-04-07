@@ -165,7 +165,7 @@ main(int argc, char * argv[])
   imageIndex[0] = 0;
   imageIndex[1] = 0;
   imageIndex[2] = 0;
-  const auto p1 = codeImageReader->GetOutput()->TransformContinuousIndexToPhysicalPoint<double>(imageIndex);
+  const auto p1 = codeImageReader->GetOutput()->template TransformContinuousIndexToPhysicalPoint<double>(imageIndex);
   p2 = resample->GetTransform()->TransformPoint(p1);
   std::cout << "Point " << p1 << " mapped to " << p2 << std::endl;
 

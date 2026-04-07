@@ -117,7 +117,7 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
   fixedIter.GoToBegin();
   while (!fixedIter.IsAtEnd())
   {
-    const auto location = fixedMaskImage->TransformIndexToPhysicalPoint<double>(fixedIter.GetIndex());
+    const auto location = fixedMaskImage->template TransformIndexToPhysicalPoint<double>(fixedIter.GetIndex());
     if (location[2] < fixedInferior[2])
     {
       fixedIter.Set(zero);
@@ -129,7 +129,7 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
   movingIter.GoToBegin();
   while (!movingIter.IsAtEnd())
   {
-    const auto location = movingMaskImage->TransformIndexToPhysicalPoint<double>(movingIter.GetIndex());
+    const auto location = movingMaskImage->template TransformIndexToPhysicalPoint<double>(movingIter.GetIndex());
     if (location[2] < movingInferior[2])
     {
       movingIter.Set(zero);

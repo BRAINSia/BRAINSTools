@@ -294,7 +294,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
       bool isPure = true;
       if (m_UsePurePlugs && purePlugsMaskInterp.IsNotNull())
       {
-        const auto physicalSamplePoint = labelsImage->TransformIndexToPhysicalPoint<double>(currentIndex);
+        const auto physicalSamplePoint = labelsImage->template TransformIndexToPhysicalPoint<double>(currentIndex);
         if (purePlugsMaskInterp->IsInsideBuffer(physicalSamplePoint))
         {
           isPure = bool(purePlugsMaskInterp->Evaluate(physicalSamplePoint));
@@ -361,7 +361,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
       // have the same voxel lattice, so the current index should be transformed
       // to a physical point, and the image values should be evaluated in physical location.
       //
-      const auto currPoint = labelsImage->TransformIndexToPhysicalPoint<double>(*vit);
+      const auto currPoint = labelsImage->template TransformIndexToPhysicalPoint<double>(*vit);
 
       for (typename InputImageInterpolatorVector::const_iterator interpIt = inputImageNNInterpolatorsVector.begin();
            interpIt != inputImageNNInterpolatorsVector.end();
@@ -504,7 +504,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
 
             // convert current test index to physical point
             const auto currTestPoint =
-              GetMapVectorFirstElement(intensityImages)->TransformIndexToPhysicalPoint<double>(currTestIndex);
+              GetMapVectorFirstElement(intensityImages)->template TransformIndexToPhysicalPoint<double>(currTestIndex);
 
             unsigned int colIndex = 0;
             auto         interpIt = inputImageNNInterpolatorsVector.begin();
@@ -1185,7 +1185,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
           {
             const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
             // transform posterior image index to physical point
-            const auto currPoint = post->TransformIndexToPhysicalPoint<double>(currIndex);
+            const auto currPoint = post->template TransformIndexToPhysicalPoint<double>(currIndex);
 
             // At a minimum, every class has at least a 0.001% chance of being
             // true no matter what.

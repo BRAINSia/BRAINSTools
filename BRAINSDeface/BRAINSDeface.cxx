@@ -149,7 +149,7 @@ main(int argc, char * argv[])
         constexpr double                                 mm_below_AC = 80.0;
         while (!mit.IsAtEnd())
         {
-          const auto                   maskpnt = mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex());
+          const auto maskpnt = mask_labels->template TransformIndexToPhysicalPoint<double>(mit.GetIndex());
           InternalImageType::IndexType imgindex;
           const bool                   isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
           const bool                   inferior_to_mm_below_AC = (maskpnt[SI] < AC_pnt[SI] - mm_below_AC);
@@ -350,7 +350,7 @@ main(int argc, char * argv[])
       while (!iit.IsAtEnd())
       {
         const auto & curr_index{ iit.GetIndex() };
-        const auto   imgpnt = curr_img->TransformIndexToPhysicalPoint<double>(curr_index);
+        const auto   imgpnt = curr_img->template TransformIndexToPhysicalPoint<double>(curr_index);
         if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
         {
           const auto mask_value = static_cast<MaskImageType::PixelType>(maskInterpolator->Evaluate(imgpnt));

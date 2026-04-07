@@ -183,7 +183,7 @@ main(int argc, char * argv[])
   unsigned int     locationCount = 0;
   while (!coefItr.IsAtEnd())
   {
-    const auto        currentPoint = coefficientImage->TransformIndexToPhysicalPoint<double>(coefItr.GetIndex());
+    const auto currentPoint = coefficientImage->template TransformIndexToPhysicalPoint<double>(coefItr.GetIndex());
     std::stringstream tmpName("p");
     tmpName << locationCount;
     ++locationCount;

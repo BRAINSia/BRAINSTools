@@ -162,13 +162,12 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrepareKer
   ot.GoToBegin();
 
   OutputPixelType               value;
-  Point<double, ImageDimension> sourcePoint;
   Point<double, ImageDimension> targetPoint;
 
   while (!ot.IsAtEnd())
   {
     value = ot.Get();
-    sampledInput->TransformIndexToPhysicalPoint(ot.GetIndex(), sourcePoint);
+    const auto sourcePoint = sampledInput->TransformIndexToPhysicalPoint(ot.GetIndex());
 
     source->InsertElement(landmarkId, sourcePoint);
     for (unsigned int i = 0; i < ImageDimension; i++)
@@ -228,8 +227,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
   using InputPointType = typename KernelTransformType::InputPointType;
   using OutputPointType = typename KernelTransformType::OutputPointType;
 
-  InputPointType outputPoint; // Coordinates of current output pixel
-
   // Support for progress methods/callbacks
   ProgressReporter progress(this, 0, region.GetNumberOfPixels(), 10);
 
@@ -240,7 +237,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
   {
     // Determine the index of the current output pixel
     outputIndex = outIt.GetIndex();
-    outputPtr->TransformIndexToPhysicalPoint(outputIndex, outputPoint);
+    const auto outputPoint = outputPtr->TransformIndexToPhysicalPoint(outputIndex);
 
     // Compute corresponding inverse displacement vector
     OutputPointType interpolation = m_KernelTransform->TransformPoint(outputPoint);

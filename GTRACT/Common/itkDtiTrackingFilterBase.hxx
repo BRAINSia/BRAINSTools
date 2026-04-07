@@ -84,7 +84,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::C
   typename Self::ContinuousIndexType & index,
   PointType &                          p)
 {
-  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index, p);
+  p = this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index);
 }
 
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
@@ -117,11 +117,8 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::S
   typename Self::ContinuousIndexType & oldIndex,
   TVector &                            vec)
 {
-  PointType oldpt;
-
-  PointType newpt;
-
-  this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(oldIndex, oldpt);
+  PointType  newpt;
+  const auto oldpt = this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(oldIndex);
   // std::cerr << "Converted " << oldIndex << " to " << oldpt << std::endl;
   // Calculate the new point
   for (int i = 0; i < 3; i++)

@@ -81,13 +81,12 @@ InvertBSplineFilter::Update()
     {
       for (float x = 0; x <= imageSize[0] + 1; x += xinr)
       {
-        PointType                       p1;
         PointType                       p2;
         itk::ContinuousIndex<double, 3> imageIndex;
         imageIndex[0] = x;
         imageIndex[1] = y;
         imageIndex[2] = z;
-        m_ExampleImage->TransformContinuousIndexToPhysicalPoint(imageIndex, p1);
+        const auto p1 = m_ExampleImage->TransformContinuousIndexToPhysicalPoint(imageIndex);
         p2 = m_Input->TransformPoint(p1);
 
         // Add Points and the Landmark Point Lists

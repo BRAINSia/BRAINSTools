@@ -78,9 +78,6 @@ main(int argc, char * argv[])
   constexpr int auto_roi_background = 4;
   constexpr int eye_boxes_code = 5;
   // Find all the out of FOV spaces fro the mask image
-  MaskImageType::PointType     maskpnt;
-  InternalImageType::IndexType imgindex;
-
   using FadeMapType = itk::Image<float, 3>;
 
   MaskImageType::Pointer mask_labels;
@@ -152,9 +149,10 @@ main(int argc, char * argv[])
         constexpr double                                 mm_below_AC = 80.0;
         while (!mit.IsAtEnd())
         {
-          mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex(), maskpnt);
-          const bool isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
-          const bool inferior_to_mm_below_AC = (maskpnt[SI] < AC_pnt[SI] - mm_below_AC);
+          const auto                   maskpnt = mask_labels->TransformIndexToPhysicalPoint<double>(mit.GetIndex());
+          InternalImageType::IndexType imgindex;
+          const bool                   isInside = curr_img->TransformPhysicalPointToIndex(maskpnt, imgindex);
+          const bool                   inferior_to_mm_below_AC = (maskpnt[SI] < AC_pnt[SI] - mm_below_AC);
 
           if (!isInside && inferior_to_mm_below_AC)
           {
@@ -348,12 +346,11 @@ main(int argc, char * argv[])
       }
 
       const bool                                           use_zeros_face = (defaceMode == "zero");
-      InternalImageType::PointType                         imgpnt;
       itk::ImageRegionIteratorWithIndex<InternalImageType> iit(curr_img, curr_img->GetLargestPossibleRegion());
       while (!iit.IsAtEnd())
       {
         const auto & curr_index{ iit.GetIndex() };
-        curr_img->TransformIndexToPhysicalPoint<double>(curr_index, imgpnt);
+        const auto   imgpnt = curr_img->TransformIndexToPhysicalPoint<double>(curr_index);
         if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
         {
           const auto mask_value = static_cast<MaskImageType::PixelType>(maskInterpolator->Evaluate(imgpnt));

@@ -384,8 +384,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     unsigned long samplesInsideMask = 0;
     while (!NRit.IsAtEnd() && (samplesInsideMask < sampleCount))
     {
-      SamplePointType testPoint;
-      this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex(), testPoint);
+      auto testPoint = this->m_FixedVolume->TransformIndexToPhysicalPoint(NRit.GetIndex());
       if (this->m_FixedBinaryVolume->IsInsideInWorldSpace(testPoint))
       {
         // randomly perturb the point within a voxel (approximately)

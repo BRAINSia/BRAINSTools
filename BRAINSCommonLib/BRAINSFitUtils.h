@@ -111,14 +111,13 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
 
   //  Here we will set the appropriate parts of the f/m MaskImages to zeros....
   typename MaskImageType::PixelType zero = 0;
-  typename MaskImageType::PointType location;
   using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
 
   MaskIteratorType fixedIter(fixedMaskImage, fixedMaskImage->GetLargestPossibleRegion());
   fixedIter.GoToBegin();
   while (!fixedIter.IsAtEnd())
   {
-    fixedMaskImage->TransformIndexToPhysicalPoint(fixedIter.GetIndex(), location);
+    const auto location = fixedMaskImage->TransformIndexToPhysicalPoint(fixedIter.GetIndex());
     if (location[2] < fixedInferior[2])
     {
       fixedIter.Set(zero);
@@ -130,7 +129,7 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
   movingIter.GoToBegin();
   while (!movingIter.IsAtEnd())
   {
-    movingMaskImage->TransformIndexToPhysicalPoint(movingIter.GetIndex(), location);
+    const auto location = movingMaskImage->TransformIndexToPhysicalPoint(movingIter.GetIndex());
     if (location[2] < movingInferior[2])
     {
       movingIter.Set(zero);

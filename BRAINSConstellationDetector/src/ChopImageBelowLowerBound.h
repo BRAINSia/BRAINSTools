@@ -60,11 +60,10 @@ ChopImageBelowLowerBound(typename ImageType::Pointer         inputVolume,
   // And now, we are going to chop out everything inferior to
   // PhysicalLowerBound:
   using IteratorType = typename itk::ImageRegionIterator<ImageType>;
-  IteratorType                  ItPixel(inputVolume, inputVolume->GetLargestPossibleRegion());
-  typename ImageType::PointType PixelPhysicalPoint;
+  IteratorType ItPixel(inputVolume, inputVolume->GetLargestPossibleRegion());
   while (!ItPixel.IsAtEnd())
   {
-    inputVolume->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
+    const auto PixelPhysicalPoint = inputVolume->TransformIndexToPhysicalPoint(ItPixel.GetIndex());
     if (PixelPhysicalPoint[2] < PhysicalLowerBound)
     {
       ItPixel.Set(BackgroundFillValue);

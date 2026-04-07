@@ -42,6 +42,7 @@ _build
 .svn
 CMakeCache.txt
 CMakeFiles/*
+DartConfiguration.tcl
 crash*
 
 Testing/Temporary/LastTest.log

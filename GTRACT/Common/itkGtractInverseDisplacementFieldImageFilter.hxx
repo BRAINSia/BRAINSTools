@@ -224,7 +224,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
   // to an output pixel
   IndexType outputIndex; // Index to current output pixel
 
-  using InputPointType = typename KernelTransformType::InputPointType;
   using OutputPointType = typename KernelTransformType::OutputPointType;
 
   // Support for progress methods/callbacks

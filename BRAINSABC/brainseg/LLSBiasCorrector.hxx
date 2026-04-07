@@ -524,7 +524,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                 recon /= sumW;
 
                 // transform probability image index to physical point
-                const auto currProbPoint = m_BiasPosteriors[0]->TransformIndexToPhysicalPoint(currProbIndex);
+                const auto currProbPoint = m_BiasPosteriors[0]->TransformIndexToPhysicalPoint<double>(currProbIndex);
 
                 typename InputImageNNInterpolationType::OutputType inputImageValue = 1; // default value must be 1
                 if (inputImageInterp->IsInsideBuffer(currProbPoint))
@@ -686,74 +686,74 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
         double minBiasInForegroundMask = std::numeric_limits<double>::max();
 
         const InputImageSizeType outsize = curOutput->GetLargestPossibleRegion().GetSize();
-        tbb::parallel_for(tbb::blocked_range3d<long>(0, outsize[2], 0, outsize[1], 0, outsize[0]),
-                          [=, &maxBiasInForegroundMask, &minBiasInForegroundMask](tbb::blocked_range3d<long> & r) {
-                            for (long kk = r.pages().begin(); kk < r.pages().end(); ++kk)
-                            {
-                              for (long jj = r.rows().begin(); jj < r.rows().end(); ++jj)
-                              {
-                                for (long ii = r.cols().begin(); ii < r.cols().end(); ++ii)
-                                {
-                                  const InternalImageIndexType currOutIndex = { { ii, jj, kk } }; // index of currOutput
-                                  // Masks and probability image should be evaluated in physical space, since
-                                  // they may not have the same voxel lattice as the current output image.
-                                  const auto currOutPoint = curOutput->TransformIndexToPhysicalPoint(currOutIndex);
+        tbb::parallel_for(
+          tbb::blocked_range3d<long>(0, outsize[2], 0, outsize[1], 0, outsize[0]),
+          [=, &maxBiasInForegroundMask, &minBiasInForegroundMask](tbb::blocked_range3d<long> & r) {
+            for (long kk = r.pages().begin(); kk < r.pages().end(); ++kk)
+            {
+              for (long jj = r.rows().begin(); jj < r.rows().end(); ++jj)
+              {
+                for (long ii = r.cols().begin(); ii < r.cols().end(); ++ii)
+                {
+                  const InternalImageIndexType currOutIndex = { { ii, jj, kk } }; // index of currOutput
+                  // Masks and probability image should be evaluated in physical space, since
+                  // they may not have the same voxel lattice as the current output image.
+                  const auto currOutPoint = curOutput->TransformIndexToPhysicalPoint<double>(currOutIndex);
 
-                                  double       logFitValue = 0.0;
-                                  unsigned int c = ichan * numCoefficients;
-                                  for (unsigned int order = 0; order <= m_MaxDegree; order++)
-                                  {
-                                    for (unsigned int xorder = 0; xorder <= order; xorder++)
-                                    {
-                                      for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++)
-                                      {
-                                        const int zorder = order - xorder - yorder;
+                  double       logFitValue = 0.0;
+                  unsigned int c = ichan * numCoefficients;
+                  for (unsigned int order = 0; order <= m_MaxDegree; order++)
+                  {
+                    for (unsigned int xorder = 0; xorder <= order; xorder++)
+                    {
+                      for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++)
+                      {
+                        const int zorder = order - xorder - yorder;
 
-                                        const double xc = (currOutIndex[0] - m_XMu[0]) / m_XStd[0];
-                                        const double yc = (currOutIndex[1] - m_XMu[1]) / m_XStd[1];
-                                        const double zc = (currOutIndex[2] - m_XMu[2]) / m_XStd[2];
+                        const double xc = (currOutIndex[0] - m_XMu[0]) / m_XStd[0];
+                        const double yc = (currOutIndex[1] - m_XMu[1]) / m_XStd[1];
+                        const double zc = (currOutIndex[2] - m_XMu[2]) / m_XStd[2];
 
-                                        const double poly = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
+                        const double poly = mypow(xc, xorder) * mypow(yc, yorder) * mypow(zc, zorder);
 
-                                        // logFitValue += coeffs[c] * poly;
-                                        logFitValue += coeffs(c, 0) * poly;
-                                        ++c;
-                                      }
-                                    }
-                                  }
+                        // logFitValue += coeffs[c] * poly;
+                        logFitValue += coeffs(c, 0) * poly;
+                        ++c;
+                      }
+                    }
+                  }
 
-                                  ByteImagePixelType maskValue = 0;
-                                  if (foregroundBrainMaskInterp->IsInsideBuffer(currOutPoint))
-                                  {
-                                    maskValue = foregroundBrainMaskInterp->Evaluate(currOutPoint);
-                                  }
-                                  /* NOTE:  For regions listed as background, clamp the outputs[ichan
-                                   */
-                                  if (std::isnan(logFitValue) || std::isinf(logFitValue))
-                                  {
-                                    std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
-                                    logFitValue = 0.0;
-                                  }
-                                  const double denom = EXPP(logFitValue);
-                                  const double multiplicitiveBiasCorrectionFactor = 1.0 / denom;
-                                  if (maskValue != 0)
-                                  {
-                                    if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask)
-                                    {
-                                      maxBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
-                                    }
-                                    if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask)
-                                    {
-                                      minBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
-                                    }
-                                  }
-                                  biasIntensityScaleFactor->SetPixel(
-                                    currOutIndex,
-                                    static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
-                                } // for currOutIndex[0]
-                              }
-                            }
-                          });
+                  ByteImagePixelType maskValue = 0;
+                  if (foregroundBrainMaskInterp->IsInsideBuffer(currOutPoint))
+                  {
+                    maskValue = foregroundBrainMaskInterp->Evaluate(currOutPoint);
+                  }
+                  /* NOTE:  For regions listed as background, clamp the outputs[ichan
+                   */
+                  if (std::isnan(logFitValue) || std::isinf(logFitValue))
+                  {
+                    std::cout << "WARNING:  Bad Scale Value Computed!" << std::endl;
+                    logFitValue = 0.0;
+                  }
+                  const double denom = EXPP(logFitValue);
+                  const double multiplicitiveBiasCorrectionFactor = 1.0 / denom;
+                  if (maskValue != 0)
+                  {
+                    if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask)
+                    {
+                      maxBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
+                    }
+                    if (multiplicitiveBiasCorrectionFactor < minBiasInForegroundMask)
+                    {
+                      minBiasInForegroundMask = multiplicitiveBiasCorrectionFactor;
+                    }
+                  }
+                  biasIntensityScaleFactor->SetPixel(
+                    currOutIndex, static_cast<InternalImagePixelType>(multiplicitiveBiasCorrectionFactor));
+                } // for currOutIndex[0]
+              }
+            }
+          });
         std::cout << "Foreground Mask Bias Correction MIN: " << minBiasInForegroundMask
                   << " MAX: " << maxBiasInForegroundMask << std::endl;
         // Correct image using (clamped) bias field)
@@ -766,7 +766,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                 for (auto ii = r.cols().begin(); ii < r.cols().end(); ++ii)
                 {
                   const InternalImageIndexType currOutIndex = { { ii, jj, kk } }; // index of currOutput
-                  const auto                   currOutPoint = curOutput->TransformIndexToPhysicalPoint(currOutIndex);
+                  const auto currOutPoint = curOutput->TransformIndexToPhysicalPoint<double>(currOutIndex);
 
                   double multiplicitiveBiasCorrectionFactor = biasIntensityScaleFactor->GetPixel(currOutIndex);
                   if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask) //

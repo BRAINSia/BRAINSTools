@@ -108,7 +108,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     SImageType::SizeType  volOrigSize = volOrig->GetLargestPossibleRegion().GetSize();
     SImageType::IndexType U, V;
     V.Fill(0);
-    auto limitV = volOrig->TransformIndexToPhysicalPoint(V);
+    auto limitV = volOrig->TransformIndexToPhysicalPoint<double>(V);
     extremum = limitV[axis];
     for (unsigned int i = 0; i < volOrigSize[0]; i += volOrigSize[0] - 1)
     {
@@ -119,7 +119,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
         for (unsigned int k = 0; k < volOrigSize[2]; k += volOrigSize[2] - 1)
         {
           U[2] = k;
-          const auto limitU = volOrig->TransformIndexToPhysicalPoint(U);
+          const auto limitU = volOrig->TransformIndexToPhysicalPoint<double>(U);
           if (maximize ? limitU[axis] > limitV[axis] : limitU[axis] < limitV[axis])
           {
             extremum = limitU[axis];
@@ -147,7 +147,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     {
       if (ItPixel.Get() != 0)
       {
-        const auto PixelPhysicalPoint = volOrig->TransformIndexToPhysicalPoint(ItPixel.GetIndex());
+        const auto PixelPhysicalPoint = volOrig->TransformIndexToPhysicalPoint<double>(ItPixel.GetIndex());
         ItPixel.Set(
           static_cast<SImageType::PixelType>(itk::Math::rnd(itk::Math::abs(extremum - PixelPhysicalPoint[axis]))));
       }
@@ -259,12 +259,12 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     {
       SImageType::IndexType origin;
       origin.Fill(0);
-      const auto                      physOrigin = volOrig->TransformIndexToPhysicalPoint(origin);
+      const auto                      physOrigin = volOrig->TransformIndexToPhysicalPoint<double>(origin);
       itk::ContinuousIndex<double, 3> originPlusOne;
       originPlusOne[0] = volOrig->GetSpacing()[0];
       originPlusOne[1] = volOrig->GetSpacing()[1];
       originPlusOne[2] = volOrig->GetSpacing()[2];
-      const auto physOriginPlusOne = volOrig->TransformContinuousIndexToPhysicalPoint(originPlusOne);
+      const auto physOriginPlusOne = volOrig->TransformContinuousIndexToPhysicalPoint<double>(originPlusOne);
       // std::cout << "physOrigin         " << physOrigin        << std::endl;
       // std::cout << "physOriginPlusOne  " << physOriginPlusOne << std::endl;
       const double RL_thickness = itk::Math::abs(physOrigin[0] - physOriginPlusOne[0]) * 0.1;

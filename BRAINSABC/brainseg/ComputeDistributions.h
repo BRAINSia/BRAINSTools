@@ -151,7 +151,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                     {
                       const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
                       // transform probability image index to physical point
-                      const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex);
+                      const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint<double>(currIndex);
                       // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                       if (currentCandidateRegion->GetPixel(currIndex))
                       {
@@ -281,7 +281,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                         {
                           const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
                           // transform probability image index to physical point
-                          const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex);
+                          const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint<double>(currIndex);
                           // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                           if (currentCandidateRegion->GetPixel(currIndex))
                           {

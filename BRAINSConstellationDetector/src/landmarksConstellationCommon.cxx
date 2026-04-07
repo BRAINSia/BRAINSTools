@@ -145,7 +145,7 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
     for (; !mspIt.IsAtEnd(); ++mspIt)
     {
       const SImageType::IndexType Index = mspIt.GetIndex();
-      const auto                  Location = MSPImage->TransformIndexToPhysicalPoint(Index);
+      const auto                  Location = MSPImage->TransformIndexToPhysicalPoint<double>(Index);
       if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
       {
         mspIt.Set(high);
@@ -177,7 +177,7 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
     for (; !mspIt.IsAtEnd(); ++mspIt)
     {
       const SImageType::IndexType Index = mspIt.GetIndex();
-      const auto                  Location = MSPImage->TransformIndexToPhysicalPoint(Index);
+      const auto                  Location = MSPImage->TransformIndexToPhysicalPoint<double>(Index);
       if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
       {
         mspIt.Set(high);
@@ -646,7 +646,7 @@ GetImageCenterPhysicalPoint(SImageType::Pointer & image)
   {
     centerIndex[q] = 0.5 * (static_cast<double>(imageOverallSize[q]) - 1.0);
   }
-  const auto centerLocation = image->TransformContinuousIndexToPhysicalPoint(centerIndex);
+  const auto centerLocation = image->TransformContinuousIndexToPhysicalPoint<double>(centerIndex);
   return centerLocation;
 }
 

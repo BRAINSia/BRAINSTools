@@ -77,7 +77,7 @@ CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Update()
     {
       //      ++count;
       InputImageIndexType index = it.GetIndex();
-      auto                p = m_Input->TransformIndexToPhysicalPoint(index);
+      auto                p = m_Input->TransformIndexToPhysicalPoint<double>(index);
       p = m_Transform->TransformPoint(p);
       BlobPointType blobPoint;
       blobPoint.SetPosition(p);
@@ -134,7 +134,7 @@ if(it.Get() > 0){
 InputImageType::IndexType index = it.GetIndex();
 //std::cout << "Index: " << index << std::endl;
 typename TTransformType::InputPointType    p;
-maskImage->TransformIndexToPhysicalPoint(index,p);
+maskImage->TransformIndexToPhysicalPoint<double>(index,p);
 //std::cout << "Location: " << p << std::endl;
 BlobPointType  blobPoint;
 blobPoint.SetPosition(p);

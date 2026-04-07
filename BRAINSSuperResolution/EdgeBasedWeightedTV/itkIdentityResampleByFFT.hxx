@@ -338,7 +338,7 @@ ResampleImageFilter<TInputImage, TOutputImage, TInterpolatorPrecisionType, TTran
   while (!outIt.IsAtEnd())
   {
     // Determine the index of the current output pixel
-    const auto outputPoint = outputPtr->TransformIndexToPhysicalPoint(outIt.GetIndex());
+    const auto outputPoint = outputPtr->TransformIndexToPhysicalPoint<double>(outIt.GetIndex());
 
     // Compute corresponding input pixel position
     inputPoint = transformPtr->TransformPoint(outputPoint);
@@ -435,7 +435,7 @@ ResampleImageFilter<TInputImage, TOutputImage, TInterpolatorPrecisionType, TTran
 
   // Determine the position of the first pixel in the scanline
   index = outIt.GetIndex();
-  outputPoint = outputPtr->TransformIndexToPhysicalPoint(index);
+  outputPoint = outputPtr->TransformIndexToPhysicalPoint<double>(index);
 
   // Compute corresponding input pixel position
   inputPoint = transformPtr->TransformPoint(outputPoint);
@@ -458,7 +458,7 @@ ResampleImageFilter<TInputImage, TOutputImage, TInterpolatorPrecisionType, TTran
   // are both handled properly (taking into account the direction cosines).
   //
   ++index[0];
-  tmpOutputPoint = outputPtr->TransformIndexToPhysicalPoint(index);
+  tmpOutputPoint = outputPtr->TransformIndexToPhysicalPoint<double>(index);
   tmpInputPoint = transformPtr->TransformPoint(tmpOutputPoint);
   tmpInputIndex = inputPtr->template TransformPhysicalPointToContinuousIndex<TInterpolatorPrecisionType>(tmpInputPoint);
   delta = tmpInputIndex - inputIndex;
@@ -471,7 +471,7 @@ ResampleImageFilter<TInputImage, TOutputImage, TInterpolatorPrecisionType, TTran
 
     // First get the position of the pixel in the output coordinate frame
     index = outIt.GetIndex();
-    outputPoint = outputPtr->TransformIndexToPhysicalPoint(index);
+    outputPoint = outputPtr->TransformIndexToPhysicalPoint<double>(index);
 
     // Compute corresponding input pixel continuous index, this index
     // will incremented in the scanline loop

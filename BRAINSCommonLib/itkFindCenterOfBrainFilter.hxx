@@ -117,10 +117,10 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
     MaskIteratorType ItPixel(LFFimage, LFFimage->GetLargestPossibleRegion());
 
     ItPixel.GoToBegin();
-    maxSIDirection = LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex())[m_Axis];
+    maxSIDirection = LFFimage->TransformIndexToPhysicalPoint<double>(ItPixel.GetIndex())[m_Axis];
     for (; !ItPixel.IsAtEnd(); ++ItPixel)
     {
-      const auto PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex());
+      const auto PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint<double>(ItPixel.GetIndex());
       if (PixelPhysicalPoint[m_Axis] > maxSIDirection)
       {
         maxSIDirection = PixelPhysicalPoint[m_Axis];
@@ -154,8 +154,8 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
       if (ItPixel.Get() != 0)
       {
         const typename MaskImageType::IndexType tempIndex = ItPixel.GetIndex();
-        const auto                              PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint(tempIndex);
-        double val = itk::Math::rnd(itk::Math::abs(maxSIDirection - PixelPhysicalPoint[m_Axis]));
+        const auto PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint<double>(tempIndex);
+        double     val = itk::Math::rnd(itk::Math::abs(maxSIDirection - PixelPhysicalPoint[m_Axis]));
         distanceMap->SetPixel(tempIndex, static_cast<typename DistanceImageType::PixelType>(val));
       }
       // else, leave the LFFimage coded zero, not some positive distance from
@@ -323,7 +323,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
     ClippedImagePixel.GoToBegin();
     while ((!ClippedImagePixel.IsAtEnd()))
     {
-      const auto currLoc = this->m_TrimmedImage->TransformIndexToPhysicalPoint(ClippedImagePixel.GetIndex());
+      const auto currLoc = this->m_TrimmedImage->TransformIndexToPhysicalPoint<double>(ClippedImagePixel.GetIndex());
       if (currLoc[2] > inferiorCutOff && (ClippedMaskPixel.Get() != 0))
       // If this mask voxel is in the foreground AND above the inferiorCutOff
       {

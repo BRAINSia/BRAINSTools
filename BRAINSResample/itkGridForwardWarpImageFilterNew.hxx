@@ -132,7 +132,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>::GenerateData()
     if (numGridIntersect == nonZeroGridDirections) // else do nothing!
     {
       // we are on a grid refPoint => transform it
-      auto refPoint = outputPtr->TransformIndexToPhysicalPoint(index);
+      auto refPoint = outputPtr->TransformIndexToPhysicalPoint<double>(index);
       // compute the mapped refPoint
       {
         // get the required displacement
@@ -164,7 +164,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>::GenerateData()
           targetIndex[dim] += m_GridPixelSpacing[dim]; // For non-collapsed
                                                        // dimension.
           // compute the mapped targetPoint
-          auto targetPoint = outputPtr->TransformIndexToPhysicalPoint(targetIndex);
+          auto targetPoint = outputPtr->TransformIndexToPhysicalPoint<double>(targetIndex);
           {
             // get the required targetDisplacement
             DisplacementType targetDisplacement = fieldPtr->GetPixel(targetIndex);

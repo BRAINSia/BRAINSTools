@@ -1,0 +1,209 @@
+# BRAINSTools pyproject.toml
+# Centralizes Python tool configuration, dependency management (via pixi),
+# and CMake build/test task commands.  Replaces AutoWorkup/requirements*.txt.
+#
+# Usage:
+#   pixi install                    # create the environment
+#   pixi run configure              # cmake configure (SuperBuild)
+#   pixi run build                  # cmake build
+#   pixi run test                   # ctest (excludes slow BCD tests)
+#   pixi run pre-commit-install     # install git hooks
+#   pixi run lint                   # black + ruff check
+#
+# Environments:
+#   pixi run -e dev ...             # C++ dev tools (cmake, ninja, ccache)
+#   pixi run -e cxx ...             # C++ configure/build/test tasks
+#   pixi run -e autoworkup ...      # AutoWorkup Python pipeline
+#   pixi run -e pre-commit ...      # pre-commit hooks only
+
+# ──────────────────────────────────────────────
+# Python tool configuration
+# ──────────────────────────────────────────────
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+extend-exclude = '''
+/(
+    build
+  | \.git
+  | ThirdParty
+  | Data
+)/
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+extend-exclude = ["build", "ThirdParty", "Data"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "I",    # isort
+]
+
+[tool.pytest.ini_options]
+testpaths = ["AutoWorkup/TestSuite"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+# ──────────────────────────────────────────────
+# Pixi workspace
+# ──────────────────────────────────────────────
+
+[tool.pixi.workspace]
+name = "BRAINSTools"
+channels = ["conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64"]
+
+[tool.pixi.dependencies]
+python = ">=3.10,<3.14"
+
+# ── Feature: dev (C++ build tools) ───────────
+
+[tool.pixi.feature.dev.dependencies]
+cmake = ">=3.20.6,<5"
+cxx-compiler = ">=1.10.0,<2"
+ninja = ">=1.13.0,<2"
+ccache = ">=4.10,<5"
+
+# ── Feature: pre-commit ─────────────────────
+
+[tool.pixi.feature.pre-commit.dependencies]
+pre-commit = ">=4.1.0,<5"
+
+[tool.pixi.feature.pre-commit.tasks]
+pre-commit-install = { cmd = "pre-commit install -f -t pre-commit -t prepare-commit-msg -t commit-msg", description = "Install pre-commit hooks (pre-commit + commit-msg stages)" }
+pre-commit-run = { cmd = "pre-commit run --all-files", description = "Run all pre-commit hooks on every file" }
+
+# ── Feature: lint (Python code quality) ──────
+
+[tool.pixi.feature.lint.dependencies]
+black = ">=24.2.0,<25"
+ruff = ">=0.8.0,<1"
+
+[tool.pixi.feature.lint.tasks]
+lint = { cmd = "ruff check . && black --check .", description = "Check Python code style (ruff + black)" }
+format = { cmd = "ruff check --fix . && black .", description = "Auto-format Python code (ruff + black)" }
+
+# ── Feature: autoworkup (Python pipeline) ────
+
+[tool.pixi.feature.autoworkup.dependencies]
+simpleitk = ">=2.4.0,<3"
+nipype = ">=1.8.6,<2"
+docopt = ">=0.6.2,<1"
+pytest = ">=8.0,<9"
+numpy = ">=1.26,<3"
+
+[tool.pixi.feature.autoworkup.tasks]
+test-python = { cmd = "pytest AutoWorkup/TestSuite -v", description = "Run AutoWorkup Python tests" }
+
+# ── Feature: cxx (C++ SuperBuild tasks) ──────
+
+[tool.pixi.feature.cxx.dependencies]
+
+[tool.pixi.feature.cxx.tasks.configure]
+cmd = '''cmake
+  -Bbuild
+  -S.
+  -GNinja
+  -DCMAKE_BUILD_TYPE:STRING=Release
+  -DBRAINSTools_SUPERBUILD:BOOL=ON
+  -DBUILD_TESTING:BOOL=ON
+  -DUSE_BRAINSFit:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSABC:BOOL=ON
+  -DUSE_BRAINSConstellationDetector:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_GTRACT:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON'''
+description = "Configure BRAINSTools SuperBuild (Release)"
+outputs = ["build/CMakeFiles/"]
+
+[tool.pixi.feature.cxx.tasks.configure-ci]
+cmd = '''cmake
+  -Bbuild
+  -S.
+  -GNinja
+  -DCMAKE_BUILD_TYPE:STRING=Release
+  -DBRAINSTools_SUPERBUILD:BOOL=ON
+  -DBUILD_TESTING:BOOL=ON
+  -DCMAKE_C_COMPILER_LAUNCHER:STRING=ccache
+  -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache
+  -DUSE_BRAINSFit:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSABC:BOOL=ON
+  -DUSE_BRAINSConstellationDetector:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_GTRACT:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON'''
+description = "Configure BRAINSTools SuperBuild for CI (with ccache)"
+outputs = ["build/CMakeFiles/"]
+
+[tool.pixi.feature.cxx.tasks.build]
+cmd = "cmake --build build --parallel"
+description = "Build BRAINSTools (SuperBuild + inner project)"
+depends-on = ["configure"]
+
+[tool.pixi.feature.cxx.tasks.test]
+cmd = '''ctest --test-dir build --output-on-failure --schedule-random
+  -j4
+  -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)"'''
+description = "Run CTest (excludes slow BCD and known-divergent tests)"
+depends-on = ["build"]
+
+[tool.pixi.feature.cxx.tasks.configure-debug]
+cmd = '''cmake
+  -Bbuild-debug
+  -S.
+  -GNinja
+  -DCMAKE_BUILD_TYPE:STRING=Debug
+  -DBRAINSTools_SUPERBUILD:BOOL=ON
+  -DBUILD_TESTING:BOOL=ON
+  -DUSE_BRAINSFit:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSABC:BOOL=ON
+  -DUSE_BRAINSConstellationDetector:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_GTRACT:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON'''
+description = "Configure BRAINSTools SuperBuild (Debug)"
+outputs = ["build-debug/CMakeFiles/"]
+
+[tool.pixi.feature.cxx.tasks.build-debug]
+cmd = "cmake --build build-debug --parallel"
+description = "Build BRAINSTools (Debug)"
+depends-on = ["configure-debug"]
+
+[tool.pixi.feature.cxx.tasks.test-debug]
+cmd = '''ctest --test-dir build-debug --output-on-failure --schedule-random
+  -j4
+  -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest)"'''
+description = "Run CTest (Debug, excludes slow tests)"
+depends-on = ["build-debug"]
+
+# ── Common tasks (no feature required) ───────
+
+[tool.pixi.tasks]
+clean = { cmd = "git clean -fdx -e DartConfiguration.tcl -e .claude/", description = "Clean build artifacts (preserves DartConfiguration.tcl and .claude/)" }
+
+# ── Environments ─────────────────────────────
+
+[tool.pixi.environments]
+dev = ["dev"]
+cxx = ["dev", "cxx"]
+autoworkup = ["autoworkup"]
+lint = ["lint"]
+pre-commit = ["pre-commit"]

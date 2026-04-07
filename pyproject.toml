@@ -150,17 +150,20 @@ cmd = '''cmake
 description = "Configure BRAINSTools SuperBuild for CI (with ccache)"
 outputs = ["build/CMakeFiles/"]
 
-[tool.pixi.feature.cxx.tasks.build]
+[tool.pixi.feature.cxx.tasks.build-EP]
 cmd = "cmake --build build --parallel"
-description = "Build BRAINSTools (SuperBuild + inner project)"
+description = "Build everything: external projects (ITK, VTK, ANTs, …) + inner BRAINSTools"
 depends-on = ["configure"]
+
+[tool.pixi.feature.cxx.tasks.build]
+cmd = "cmake --build build/BRAINSTools-Release-EPRelease-build --parallel"
+description = "Rebuild inner BRAINSTools only (fast — skips EPs, requires build-EP first)"
 
 [tool.pixi.feature.cxx.tasks.test]
 cmd = '''ctest --test-dir build --output-on-failure --schedule-random
   -j4
   -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)"'''
 description = "Run CTest (excludes slow BCD and known-divergent tests)"
-depends-on = ["build"]
 
 [tool.pixi.feature.cxx.tasks.configure-debug]
 cmd = '''cmake
@@ -182,17 +185,20 @@ cmd = '''cmake
 description = "Configure BRAINSTools SuperBuild (Debug)"
 outputs = ["build-debug/CMakeFiles/"]
 
-[tool.pixi.feature.cxx.tasks.build-debug]
+[tool.pixi.feature.cxx.tasks.build-EP-debug]
 cmd = "cmake --build build-debug --parallel"
-description = "Build BRAINSTools (Debug)"
+description = "Build everything (Debug): external projects + inner BRAINSTools"
 depends-on = ["configure-debug"]
+
+[tool.pixi.feature.cxx.tasks.build-debug]
+cmd = "cmake --build build-debug/BRAINSTools-Debug-EPRelease-build --parallel"
+description = "Rebuild inner BRAINSTools only (Debug, fast — requires build-EP-debug first)"
 
 [tool.pixi.feature.cxx.tasks.test-debug]
 cmd = '''ctest --test-dir build-debug --output-on-failure --schedule-random
   -j4
   -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest)"'''
 description = "Run CTest (Debug, excludes slow tests)"
-depends-on = ["build-debug"]
 
 # ── Common tasks (no feature required) ───────
 

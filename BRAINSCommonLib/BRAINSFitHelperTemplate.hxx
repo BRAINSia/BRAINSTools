@@ -1238,7 +1238,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         typename FixedImageType::SpacingType roiSpacing = m_FixedVolume->GetSpacing();
 
         roiOriginIdx.Fill(0);
-        const auto roiOriginPt = m_FixedVolume->TransformIndexToPhysicalPoint<double>(roiRegion.GetIndex());
+        const auto roiOriginPt = m_FixedVolume->template TransformIndexToPhysicalPoint<double>(roiRegion.GetIndex());
         roiRegion.SetIndex(roiOriginIdx);
         roiImage->SetRegions(roiRegion);
         roiImage->Allocate();

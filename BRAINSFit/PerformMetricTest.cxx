@@ -161,7 +161,7 @@ main(int argc, char * argv[])
     if (count == sampleCount)
     {
       count = 0; // Reset counter
-      const auto point = fixedImage->TransformIndexToPhysicalPoint<double>(It.GetIndex());
+      const auto point = fixedImage->template TransformIndexToPhysicalPoint<double>(It.GetIndex());
       samplePointSet->SetPoint(index, point);
       ++index;
     }

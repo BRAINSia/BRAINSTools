@@ -237,7 +237,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
           // All input modality images are aligned in physical space,
           // so we need to transform each continuous index to physical point,
           // so it represent the same location in all input images
-          const auto currPoint = mask->TransformContinuousIndexToPhysicalPoint<double>(cidx);
+          const auto currPoint = mask->template TransformContinuousIndexToPhysicalPoint<double>(cidx);
 
           if (verbose)
           {

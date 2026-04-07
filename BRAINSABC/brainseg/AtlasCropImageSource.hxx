@@ -176,7 +176,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
 
   // Store origin information
   m_InputOrigin = probs[0]->GetOrigin();
-  m_CropOrigin = probs[0]->TransformIndexToPhysicalPoint<double>(m_LowerBound);
+  m_CropOrigin = probs[0]->template TransformIndexToPhysicalPoint<double>(m_LowerBound);
 
   // m_CropInfo.offset =
   // m_CropInfo.size =

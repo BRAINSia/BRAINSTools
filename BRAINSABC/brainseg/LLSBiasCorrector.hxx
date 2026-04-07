@@ -504,40 +504,42 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
         {
           typename InputImageNNInterpolationType::Pointer inputImageInterp = InputImageNNInterpolationType::New();
           inputImageInterp->SetInputImage(mapIt2->second[imIndex].GetPointer());
-          tbb::parallel_for(
-            tbb::blocked_range<unsigned int>(0, numEquations, 1),
-            [=, &R_i](const tbb::blocked_range<unsigned int> & r) {
-              for (unsigned int eq = r.begin(); eq < r.end(); eq++)
-              {
-                const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
-                // Compute reconstructed intensity, weighted by prob * invCov
-                double sumW = DBL_EPSILON;
-                double recon = 0;
-                for (unsigned int iclass = 0; iclass < numClasses; iclass++)
-                {
-                  const MatrixType & invCov = invCovars[iclass];
+          tbb::parallel_for(tbb::blocked_range<unsigned int>(0, numEquations, 1),
+                            [=, &R_i](const tbb::blocked_range<unsigned int> & r) {
+                              for (unsigned int eq = r.begin(); eq < r.end(); eq++)
+                              {
+                                const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
+                                // Compute reconstructed intensity, weighted by prob * invCov
+                                double sumW = DBL_EPSILON;
+                                double recon = 0;
+                                for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+                                {
+                                  const MatrixType & invCov = invCovars[iclass];
 
-                  const double w = m_BiasPosteriors[iclass]->GetPixel(currProbIndex) * invCov(modality1, modality2);
-                  sumW += w;
-                  recon += w * this->m_ListOfClassStatistics[iclass].m_Means[mapIt2->first];
-                }
-                recon /= sumW;
+                                  const double w =
+                                    m_BiasPosteriors[iclass]->GetPixel(currProbIndex) * invCov(modality1, modality2);
+                                  sumW += w;
+                                  recon += w * this->m_ListOfClassStatistics[iclass].m_Means[mapIt2->first];
+                                }
+                                recon /= sumW;
 
-                // transform probability image index to physical point
-                const auto currProbPoint = m_BiasPosteriors[0]->TransformIndexToPhysicalPoint<double>(currProbIndex);
+                                // transform probability image index to physical point
+                                const auto currProbPoint =
+                                  m_BiasPosteriors[0]->template TransformIndexToPhysicalPoint<double>(currProbIndex);
 
-                typename InputImageNNInterpolationType::OutputType inputImageValue = 1; // default value must be 1
-                if (inputImageInterp->IsInsideBuffer(currProbPoint))
-                {
-                  inputImageValue = inputImageInterp->Evaluate(currProbPoint);
-                }
+                                typename InputImageNNInterpolationType::OutputType inputImageValue =
+                                  1; // default value must be 1
+                                if (inputImageInterp->IsInsideBuffer(currProbPoint))
+                                {
+                                  inputImageValue = inputImageInterp->Evaluate(currProbPoint);
+                                }
 
-                const double bias = LOGP(inputImageValue) - recon;
-                //,&R_,&R_,&R_iii divide by # of images of current modality -- in essence
-                // you're averaging them.
-                R_i(eq, 0) += (sumW * bias) / numCurModalityImages;
-              }
-            });
+                                const double bias = LOGP(inputImageValue) - recon;
+                                //,&R_,&R_,&R_iii divide by # of images of current modality -- in essence
+                                // you're averaging them.
+                                R_i(eq, 0) += (sumW * bias) / numCurModalityImages;
+                              }
+                            });
         }
       } // for jchan
 
@@ -698,7 +700,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                   const InternalImageIndexType currOutIndex = { { ii, jj, kk } }; // index of currOutput
                   // Masks and probability image should be evaluated in physical space, since
                   // they may not have the same voxel lattice as the current output image.
-                  const auto currOutPoint = curOutput->TransformIndexToPhysicalPoint<double>(currOutIndex);
+                  const auto currOutPoint = curOutput->template TransformIndexToPhysicalPoint<double>(currOutIndex);
 
                   double       logFitValue = 0.0;
                   unsigned int c = ichan * numCoefficients;
@@ -766,7 +768,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                 for (auto ii = r.cols().begin(); ii < r.cols().end(); ++ii)
                 {
                   const InternalImageIndexType currOutIndex = { { ii, jj, kk } }; // index of currOutput
-                  const auto currOutPoint = curOutput->TransformIndexToPhysicalPoint<double>(currOutIndex);
+                  const auto currOutPoint = curOutput->template TransformIndexToPhysicalPoint<double>(currOutIndex);
 
                   double multiplicitiveBiasCorrectionFactor = biasIntensityScaleFactor->GetPixel(currOutIndex);
                   if (multiplicitiveBiasCorrectionFactor > maxBiasInForegroundMask) //

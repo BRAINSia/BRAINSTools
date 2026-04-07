@@ -63,7 +63,7 @@ ChopImageBelowLowerBound(typename ImageType::Pointer         inputVolume,
   IteratorType ItPixel(inputVolume, inputVolume->GetLargestPossibleRegion());
   while (!ItPixel.IsAtEnd())
   {
-    const auto PixelPhysicalPoint = inputVolume->TransformIndexToPhysicalPoint<double>(ItPixel.GetIndex());
+    const auto PixelPhysicalPoint = inputVolume->template TransformIndexToPhysicalPoint<double>(ItPixel.GetIndex());
     if (PixelPhysicalPoint[2] < PhysicalLowerBound)
     {
       ItPixel.Set(BackgroundFillValue);

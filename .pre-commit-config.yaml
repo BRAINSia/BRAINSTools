@@ -52,7 +52,7 @@ repos:
     files: '\.(c|cc|h|cxx|hxx)$'
     exclude: "\\/ThirdParty\\/|\\/Data\\/"
 
-# keep version for black in sync with requirements_dev.txt and CI workflows
+# keep version for black in sync with pyproject.toml [tool.pixi.feature.lint.dependencies] and CI workflows
 - repo: https://github.com/psf/black
   rev: 24.2.0
   hooks:

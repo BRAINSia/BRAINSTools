@@ -294,8 +294,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
       bool isPure = true;
       if (m_UsePurePlugs && purePlugsMaskInterp.IsNotNull())
       {
-        ByteImageType::PointType physicalSamplePoint;
-        labelsImage->TransformIndexToPhysicalPoint(currentIndex, physicalSamplePoint);
+        const auto physicalSamplePoint = labelsImage->TransformIndexToPhysicalPoint(currentIndex);
         if (purePlugsMaskInterp->IsInsideBuffer(physicalSamplePoint))
         {
           isPure = bool(purePlugsMaskInterp->Evaluate(physicalSamplePoint));
@@ -362,8 +361,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
       // have the same voxel lattice, so the current index should be transformed
       // to a physical point, and the image values should be evaluated in physical location.
       //
-      ByteImageType::PointType currPoint;
-      labelsImage->TransformIndexToPhysicalPoint(*vit, currPoint);
+      const auto currPoint = labelsImage->TransformIndexToPhysicalPoint(*vit);
 
       for (typename InputImageInterpolatorVector::const_iterator interpIt = inputImageNNInterpolatorsVector.begin();
            interpIt != inputImageNNInterpolatorsVector.end();
@@ -505,8 +503,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
             bool fgflag = priorIsForegroundPriorVector[indexMaxPosteriorClassValue];
 
             // convert current test index to physical point
-            typename InputImageType::PointType currTestPoint;
-            GetMapVectorFirstElement(intensityImages)->TransformIndexToPhysicalPoint(currTestIndex, currTestPoint);
+            const auto currTestPoint =
+              GetMapVectorFirstElement(intensityImages)->TransformIndexToPhysicalPoint(currTestIndex);
 
             unsigned int colIndex = 0;
             auto         interpIt = inputImageNNInterpolatorsVector.begin();
@@ -1187,8 +1185,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
           {
             const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
             // transform posterior image index to physical point
-            typename TProbabilityImage::PointType currPoint;
-            post->TransformIndexToPhysicalPoint(currIndex, currPoint);
+            const auto currPoint = post->TransformIndexToPhysicalPoint(currIndex);
 
             // At a minimum, every class has at least a 0.001% chance of being
             // true no matter what.

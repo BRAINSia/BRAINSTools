@@ -423,13 +423,11 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
       }
     }
     {
-      typename InternalImageType::PointType firstEyeCenter;
-      accumulatorSearchSpace->TransformIndexToPhysicalPoint(idx, firstEyeCenter);
+      const auto firstEyeCenter = accumulatorSearchSpace->TransformIndexToPhysicalPoint(idx);
       // Limit area where second eye is searched for.
       ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, accumulatorSearchSpace->GetBufferedRegion());
       It.GoToBegin();
-      typename InternalImageType::PointType currPnt;
-      constexpr float                       max_eye_radius = 13.;
+      constexpr float max_eye_radius = 13.;
       // From empirical measurements.
       constexpr float si_min_max_eye_offset = 12. + max_eye_radius;
       constexpr float pa_min_max_eye_offset = 12. + max_eye_radius;
@@ -437,7 +435,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
       {
         constexpr double mindistance_IPD = 51.0;
         constexpr double maxdistance_IPD = 77.0;
-        accumulatorSearchSpace->TransformIndexToPhysicalPoint(It.GetIndex(), currPnt);
+        const auto       currPnt = accumulatorSearchSpace->TransformIndexToPhysicalPoint(It.GetIndex());
         if (std::abs(currPnt[2] - firstEyeCenter[2]) > si_min_max_eye_offset ||
             std::abs(currPnt[1] - firstEyeCenter[1]) > pa_min_max_eye_offset ||
             std::abs(currPnt[0] - firstEyeCenter[0]) < mindistance_IPD - 2. * max_eye_radius ||

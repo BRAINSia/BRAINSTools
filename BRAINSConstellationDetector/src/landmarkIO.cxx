@@ -205,8 +205,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       const SImageType::IndexType index = rgbIt.GetIndex();
-      SImageType::PointType       p;
-      orientedImage->TransformIndexToPhysicalPoint(index, p);
+      const auto                  p = orientedImage->TransformIndexToPhysicalPoint(index);
 
       if (IsOnCylinder(p, pt, pt2, radius, height))
       {
@@ -283,8 +282,7 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
   for (; !sIt.IsAtEnd(); ++sIt)
   {
     const SImageType::IndexType index = sIt.GetIndex();
-    SImageType::PointType       p;
-    inputImage->TransformIndexToPhysicalPoint(index, p);
+    const auto                  p = inputImage->TransformIndexToPhysicalPoint(index);
     if (IsOnSphere(p, pt, radius))
     {
       sIt.Set(maxPixel);
@@ -355,8 +353,7 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       const SImageType::IndexType index = rgbIt.GetIndex();
-      SImageType::PointType       p;
-      orientedImage->TransformIndexToPhysicalPoint(index, p);
+      const auto                  p = orientedImage->TransformIndexToPhysicalPoint(index);
       if (IsOnCylinder(p, pt, pt, radius, thickness))
       {
         RGBPixelType pixel = rgbIt.Value();

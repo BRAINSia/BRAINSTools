@@ -77,8 +77,8 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
     stopIndex[0] = startIndex[0] + size[0] - 1;
     stopIndex[1] = startIndex[1] + size[1] - 1;
     stopIndex[2] = startIndex[2] + size[2] - 1;
-    image->TransformIndexToPhysicalPoint(startIndex, physicalStartLocation);
-    image->TransformIndexToPhysicalPoint(stopIndex, physicalStopLocation);
+    physicalStartLocation = image->TransformIndexToPhysicalPoint(startIndex);
+    physicalStopLocation = image->TransformIndexToPhysicalPoint(stopIndex);
   }
 
   // Space coordinate origin -> center of eye centers of input image
@@ -248,10 +248,9 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
       OutputImageIteratorWithIndex ROIIter(localROIImage, region);
       ROIIter.GoToBegin();
 
-      InputPointType currPt;
       while (!(ImageIter.IsAtEnd() || ROIIter.IsAtEnd()))
       {
-        image->TransformIndexToPhysicalPoint(ROIIter.GetIndex(), currPt);
+        const auto currPt = image->TransformIndexToPhysicalPoint(ROIIter.GetIndex());
         // Center of head mass to current vector
         const typename InputPointType::VectorType CMtoCurrVec = currPt - this->m_orig_lmk_CenterOfHeadMass;
 
@@ -412,12 +411,8 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
     indexEye2[i] = static_cast<unsigned long int>((*itSpheres)->GetObjectToParentTransform()->GetOffset()[i]);
   }
 
-  InputPointType physicalEye1;
-  InputPointType physicalEye2;
-  {
-    image->TransformIndexToPhysicalPoint(indexEye1, physicalEye1);
-    image->TransformIndexToPhysicalPoint(indexEye2, physicalEye2);
-  }
+  const auto physicalEye1 = image->TransformIndexToPhysicalPoint(indexEye1);
+  const auto physicalEye2 = image->TransformIndexToPhysicalPoint(indexEye2);
 
   // We will determine the left and right of the eyes
   // Assuming that the degradation of the image does not

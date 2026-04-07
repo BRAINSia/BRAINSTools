@@ -77,8 +77,7 @@ CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::Update()
     {
       //      ++count;
       InputImageIndexType index = it.GetIndex();
-      InputImagePointType p;
-      m_Input->TransformIndexToPhysicalPoint(index, p);
+      auto                p = m_Input->TransformIndexToPhysicalPoint(index);
       p = m_Transform->TransformPoint(p);
       BlobPointType blobPoint;
       blobPoint.SetPosition(p);

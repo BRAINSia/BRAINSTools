@@ -116,8 +116,7 @@ CutBinaryVolumeByPlaneWithDirection(typename TImageType::Pointer * _imageVolume,
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
-    LandmarkPointType currentPhysicalLocation;
-    (*_imageVolume)->TransformIndexToPhysicalPoint(it.GetIndex(), currentPhysicalLocation);
+    const auto currentPhysicalLocation = (*_imageVolume)->TransformIndexToPhysicalPoint(it.GetIndex());
 
     if ((direction == "true" && (*currentPlane).GetRelativeLocationToPlane(currentPhysicalLocation) > 0.0F) ||
         (direction == "false" && (*currentPlane).GetRelativeLocationToPlane(currentPhysicalLocation) < 0.0F))
@@ -180,8 +179,7 @@ CutBinaryVolumeByPointWithDirection(typename TImageType::Pointer * _imageVolume,
   std::cout << __LINE__ << "::" << __FILE__ << std::endl;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
-    LandmarkPointType currentPhysicalLocation;
-    (*_imageVolume)->TransformIndexToPhysicalPoint(it.GetIndex(), currentPhysicalLocation);
+    const auto currentPhysicalLocation = (*_imageVolume)->TransformIndexToPhysicalPoint(it.GetIndex());
 
     switch (myDirection)
     {

@@ -143,7 +143,6 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
               tbb::blocked_range3d<long>(0, size[2], 1, 0, size[1], size[1] / 2, 0, size[0], 512),
               CompensatedSummationType(),
               [=](const tbb::blocked_range3d<long> & rng, CompensatedSummationType muSum) -> CompensatedSummationType {
-                typename TProbabilityImage::PointType currPoint;
                 for (long kk = rng.pages().begin(); kk < rng.pages().end(); ++kk)
                 {
                   for (long jj = rng.rows().begin(); jj < rng.rows().end(); ++jj)
@@ -152,7 +151,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                     {
                       const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
                       // transform probability image index to physical point
-                      PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex, currPoint);
+                      const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex);
                       // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                       if (currentCandidateRegion->GetPixel(currIndex))
                       {
@@ -282,8 +281,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                         {
                           const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
                           // transform probability image index to physical point
-                          typename TProbabilityImage::PointType currPoint;
-                          PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex, currPoint);
+                          const auto currPoint = PosteriorsList[0]->TransformIndexToPhysicalPoint(currIndex);
                           // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                           if (currentCandidateRegion->GetPixel(currIndex))
                           {

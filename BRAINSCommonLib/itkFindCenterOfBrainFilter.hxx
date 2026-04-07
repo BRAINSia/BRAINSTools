@@ -116,13 +116,11 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
     using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
     MaskIteratorType ItPixel(LFFimage, LFFimage->GetLargestPossibleRegion());
 
-    typename MaskImageType::PointType PixelPhysicalPoint;
     ItPixel.GoToBegin();
-    LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
-    maxSIDirection = PixelPhysicalPoint[m_Axis];
+    maxSIDirection = LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex())[m_Axis];
     for (; !ItPixel.IsAtEnd(); ++ItPixel)
     {
-      LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
+      const auto PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint(ItPixel.GetIndex());
       if (PixelPhysicalPoint[m_Axis] > maxSIDirection)
       {
         maxSIDirection = PixelPhysicalPoint[m_Axis];
@@ -151,14 +149,12 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
     //    DistanceImageIteratorType ItDistPixel( distanceMap,
     // distanceMap->GetLargestPossibleRegion() );
 
-    typename MaskImageType::PointType PixelPhysicalPoint;
-    PixelPhysicalPoint.Fill(0.0);
     for (ItPixel.GoToBegin(); !ItPixel.IsAtEnd(); ++ItPixel)
     {
       if (ItPixel.Get() != 0)
       {
         const typename MaskImageType::IndexType tempIndex = ItPixel.GetIndex();
-        LFFimage->TransformIndexToPhysicalPoint(tempIndex, PixelPhysicalPoint);
+        const auto                              PixelPhysicalPoint = LFFimage->TransformIndexToPhysicalPoint(tempIndex);
         double val = itk::Math::rnd(itk::Math::abs(maxSIDirection - PixelPhysicalPoint[m_Axis]));
         distanceMap->SetPixel(tempIndex, static_cast<typename DistanceImageType::PixelType>(val));
       }
@@ -327,8 +323,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
     ClippedImagePixel.GoToBegin();
     while ((!ClippedImagePixel.IsAtEnd()))
     {
-      typename TInputImage::PointType currLoc;
-      this->m_TrimmedImage->TransformIndexToPhysicalPoint(ClippedImagePixel.GetIndex(), currLoc);
+      const auto currLoc = this->m_TrimmedImage->TransformIndexToPhysicalPoint(ClippedImagePixel.GetIndex());
       if (currLoc[2] > inferiorCutOff && (ClippedMaskPixel.Get() != 0))
       // If this mask voxel is in the foreground AND above the inferiorCutOff
       {

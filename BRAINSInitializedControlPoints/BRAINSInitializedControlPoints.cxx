@@ -183,8 +183,7 @@ main(int argc, char * argv[])
   unsigned int     locationCount = 0;
   while (!coefItr.IsAtEnd())
   {
-    BSplineTransformType::ImageType::PointType currentPoint;
-    coefficientImage->TransformIndexToPhysicalPoint(coefItr.GetIndex(), currentPoint);
+    const auto        currentPoint = coefficientImage->TransformIndexToPhysicalPoint(coefItr.GetIndex());
     std::stringstream tmpName("p");
     tmpName << locationCount;
     ++locationCount;

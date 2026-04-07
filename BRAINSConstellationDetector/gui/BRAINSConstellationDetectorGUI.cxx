@@ -261,11 +261,9 @@ main(int argc, char * argv[])
   direction2(2, 2) = 1.0;
   image->SetDirection(direction2);
 
-  double         physicalExtentIdentity[6];
-  ImagePointType physicalStartLocation;
-  ImagePointType physicalStopLocation;
-  image->TransformIndexToPhysicalPoint(startIndex, physicalStartLocation);
-  image->TransformIndexToPhysicalPoint(stopIndex, physicalStopLocation);
+  double physicalExtentIdentity[6];
+  auto   physicalStartLocation = image->TransformIndexToPhysicalPoint(startIndex);
+  auto   physicalStopLocation = image->TransformIndexToPhysicalPoint(stopIndex);
   physicalExtentIdentity[0] = physicalStartLocation[0];
   physicalExtentIdentity[2] = physicalStartLocation[1];
   physicalExtentIdentity[4] = physicalStartLocation[2];
@@ -283,8 +281,8 @@ main(int argc, char * argv[])
   // recalculate the image extent of a directional image in physical space
   double physicalExtent[6];
   image->SetDirection(direction);
-  image->TransformIndexToPhysicalPoint(startIndex, physicalStartLocation);
-  image->TransformIndexToPhysicalPoint(stopIndex, physicalStopLocation);
+  physicalStartLocation = image->TransformIndexToPhysicalPoint(startIndex);
+  physicalStopLocation = image->TransformIndexToPhysicalPoint(stopIndex);
   physicalExtent[0] = physicalStartLocation[0];
   physicalExtent[2] = physicalStartLocation[1];
   physicalExtent[4] = physicalStartLocation[2];

@@ -107,9 +107,8 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
   {
     SImageType::SizeType  volOrigSize = volOrig->GetLargestPossibleRegion().GetSize();
     SImageType::IndexType U, V;
-    SImageType::PointType limitU, limitV;
     V.Fill(0);
-    volOrig->TransformIndexToPhysicalPoint(V, limitV);
+    auto limitV = volOrig->TransformIndexToPhysicalPoint(V);
     extremum = limitV[axis];
     for (unsigned int i = 0; i < volOrigSize[0]; i += volOrigSize[0] - 1)
     {
@@ -120,7 +119,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
         for (unsigned int k = 0; k < volOrigSize[2]; k += volOrigSize[2] - 1)
         {
           U[2] = k;
-          volOrig->TransformIndexToPhysicalPoint(U, limitU);
+          const auto limitU = volOrig->TransformIndexToPhysicalPoint(U);
           if (maximize ? limitU[axis] > limitV[axis] : limitU[axis] < limitV[axis])
           {
             extremum = limitU[axis];
@@ -143,15 +142,12 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     SImageIteratorType ItPixel(foreground, foreground->GetLargestPossibleRegion());
 
-    SImageType::PointType PixelPhysicalPoint;
-    PixelPhysicalPoint.Fill(0.0);
-
     ItPixel.Begin();
     for (; !ItPixel.IsAtEnd(); ++ItPixel)
     {
       if (ItPixel.Get() != 0)
       {
-        volOrig->TransformIndexToPhysicalPoint(ItPixel.GetIndex(), PixelPhysicalPoint);
+        const auto PixelPhysicalPoint = volOrig->TransformIndexToPhysicalPoint(ItPixel.GetIndex());
         ItPixel.Set(
           static_cast<SImageType::PixelType>(itk::Math::rnd(itk::Math::abs(extremum - PixelPhysicalPoint[axis]))));
       }
@@ -261,20 +257,14 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     double SupInf_thickness = 0;
     double RLbyAP_area = 0;
     {
-      SImageType::PointType physOrigin;
-      {
-        SImageType::IndexType origin;
-        origin[0] = 0;
-        origin[1] = 0;
-        origin[2] = 0;
-        volOrig->TransformIndexToPhysicalPoint(origin, physOrigin);
-      }
-      SImageType::PointType           physOriginPlusOne;
+      SImageType::IndexType origin;
+      origin.Fill(0);
+      const auto                      physOrigin = volOrig->TransformIndexToPhysicalPoint(origin);
       itk::ContinuousIndex<double, 3> originPlusOne;
       originPlusOne[0] = volOrig->GetSpacing()[0];
       originPlusOne[1] = volOrig->GetSpacing()[1];
       originPlusOne[2] = volOrig->GetSpacing()[2];
-      volOrig->TransformContinuousIndexToPhysicalPoint(originPlusOne, physOriginPlusOne);
+      const auto physOriginPlusOne = volOrig->TransformContinuousIndexToPhysicalPoint(originPlusOne);
       // std::cout << "physOrigin         " << physOrigin        << std::endl;
       // std::cout << "physOriginPlusOne  " << physOriginPlusOne << std::endl;
       const double RL_thickness = itk::Math::abs(physOrigin[0] - physOriginPlusOne[0]) * 0.1;

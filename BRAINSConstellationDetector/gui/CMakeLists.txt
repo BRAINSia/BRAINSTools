@@ -46,7 +46,7 @@ set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES FOLDER 
 # could be used instead:
 # set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
   target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB PUBLIC

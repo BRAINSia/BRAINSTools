@@ -20,7 +20,7 @@ set_target_properties(landmarksConstellationCOMMONLIB PROPERTIES FOLDER ${MODULE
 # could be used instead:
 # set_target_properties(landmarksConstellationCOMMONLIB PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set_target_properties(landmarksConstellationCOMMONLIB PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(landmarksConstellationCOMMONLIB PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 ## Build all the programs

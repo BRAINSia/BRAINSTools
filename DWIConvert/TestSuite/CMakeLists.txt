@@ -90,29 +90,40 @@ endfunction()
 #
 include_regular_expression("^.*$")
 
-include_directories(${DWIConvert_SOURCE_DIR})
-include_directories(${DWIConvert_BINARY_DIR})
-include_directories(${ModuleDescriptionParser_SOURCE_DIR})
-
 #
 # build compare programs
 foreach(CLP DWICompare DWISimpleCompare)
   set ( ${CLP}_SOURCE ${CLP}.cxx)
   generateclp(${CLP}_SOURCE ${CLP}.xml)
   add_executable(${CLP} ${${CLP}_SOURCE})
-  target_link_libraries (${CLP} DWIConvertSupportLib BRAINSCommonLib )
+  target_include_directories(${CLP} PRIVATE
+    ${DWIConvert_SOURCE_DIR}
+    ${DWIConvert_BINARY_DIR}
+    ${ModuleDescriptionParser_SOURCE_DIR}
+  )
+  target_link_libraries (${CLP} PRIVATE DWIConvertSupportLib BRAINSCommonLib )
   set_target_properties(${CLP} PROPERTIES FOLDER ${MODULE_FOLDER})
 endforeach()
 
 ## Tool for comparing if BVec and BVal files are the same.
 add_executable(BFileCompareTool BFileCompareTool.cpp)
-target_link_libraries(BFileCompareTool DWIConvertSupportLib BRAINSCommonLib )
+target_include_directories(BFileCompareTool PRIVATE
+  ${DWIConvert_SOURCE_DIR}
+  ${DWIConvert_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+)
+target_link_libraries(BFileCompareTool PRIVATE DWIConvertSupportLib BRAINSCommonLib )
 set_target_properties(BFileCompareTool PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
 # build FSL test program
 add_executable(FSLTextFileCompare FSLTextFileCompare.cxx)
-target_link_libraries (FSLTextFileCompare DWIConvertSupportLib BRAINSCommonLib )
+target_include_directories(FSLTextFileCompare PRIVATE
+  ${DWIConvert_SOURCE_DIR}
+  ${DWIConvert_BINARY_DIR}
+  ${ModuleDescriptionParser_SOURCE_DIR}
+)
+target_link_libraries (FSLTextFileCompare PRIVATE DWIConvertSupportLib BRAINSCommonLib )
 set_target_properties(FSLTextFileCompare PROPERTIES FOLDER ${MODULE_FOLDER})
 
 # Check Tag-Value pair in Header file
@@ -123,7 +134,7 @@ set_target_properties(checkTagValueInHeader PROPERTIES FOLDER ${MODULE_FOLDER})
 # This program not currently used but hey, might come in
 # handy.
 add_executable(NrrdToNIfTI NrrdToNIfTI.cxx)
-target_link_libraries(NrrdToNIfTI DWIConvertSupportLib BRAINSCommonLib )
+target_link_libraries(NrrdToNIfTI PRIVATE DWIConvertSupportLib BRAINSCommonLib )
 set_target_properties(NrrdToNIfTI PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #

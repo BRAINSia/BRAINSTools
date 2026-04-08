@@ -7,16 +7,18 @@ include_regular_expression("^.*$")
 find_package(SlicerExecutionModel REQUIRED GenerateCLP)
 include(${GenerateCLP_USE_FILE})
 
-include_directories(${DWIConvert_SOURCE_DIR})
-include_directories(${DWIConvert_BINARY_DIR})
 #include_directories(${ModuleDescriptionParser_SOURCE_DIR})
 #include_directories (${TCLAP_SOURCE_DIR}/include)
 
 set (CLP DWIConvert)
 add_executable(${CLP}Test ${CLP}Test.cxx)
+target_include_directories(${CLP}Test PRIVATE
+  ${DWIConvert_SOURCE_DIR}
+  ${DWIConvert_BINARY_DIR}
+)
 add_dependencies(${CLP}Test ${CLP})
 
-target_link_libraries(${CLP}Test ${CLP}Lib ${LIBICONV_LIBRARIES})
+target_link_libraries(${CLP}Test PRIVATE ${CLP}Lib ${LIBICONV_LIBRARIES})
 
 set_target_properties(${CLP}Test PROPERTIES LABELS ${CLP})
 set_target_properties(${CLP}Test PROPERTIES FOLDER ${MODULE_FOLDER})

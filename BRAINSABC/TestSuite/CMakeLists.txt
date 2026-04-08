@@ -1,9 +1,3 @@
-include_directories(
-  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
-  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
-  ${BRAINSTools_BINARY_DIR}/BRAINSABC/brainseg
-  )
-
 configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
                 ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallExtendedAtlasDefinition.xml
                 @ONLY IMMEDIATE)
@@ -14,6 +8,11 @@ configure_file( BRAINSABCSmallExtendedAtlasDefinition.xml.in
 #set_target_properties(TestLinearRegressionTesting PROPERTIES FOLDER ${MODULE_FOLDER})
 
 MakeTestDriverFromSEMTool(BRAINSABC BRAINSABCTest.cxx)
+target_include_directories(BRAINSABCTestDriver PRIVATE
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
+  ${BRAINSTools_BINARY_DIR}/BRAINSABC/brainseg
+)
 add_dependencies(BRAINSABCTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 
 # _brainstools_test_nproc is set once in BRAINSTools.cmake for all modules.
@@ -111,6 +110,11 @@ set_tests_properties(BRAINSABCSmallTest PROPERTIES PROCESSORS ${_brainstools_tes
 include(BRAINSToolsGTest)
 brainstools_enable_gtest()
 add_executable(BlendImageFilterGTest BlendImageFilterGTest.cxx)
+target_include_directories(BlendImageFilterGTest PRIVATE
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
+  ${BRAINSTools_BINARY_DIR}/BRAINSABC/brainseg
+)
 target_link_libraries(BlendImageFilterGTest PRIVATE ${BRAINSABC_ITK_LIBRARIES} GTest::gtest_main)
 set_target_properties(BlendImageFilterGTest PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin

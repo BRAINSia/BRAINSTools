@@ -20,7 +20,13 @@
   include/QHelpDialog.h
   )
 
-  include_directories(
+  qt5_wrap_cpp( HEADERS_MOC ${HEADERS} )
+
+add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
+  ${BRAINSConstellationDetectorGUI_SRC}
+  ${HEADERS_MOC}
+  )
+target_include_directories(BRAINSConstellationDetectorGUICOMMONLIB PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/BRAINSHoughEyeDetector
@@ -28,14 +34,7 @@
   ${QT_INCLUDE_DIR}
   ${QT_QTGUI_INCLUDE_DIR}
   ${QT_QTCORE_INCLUDE_DIR}
-  )
-
-  qt5_wrap_cpp( HEADERS_MOC ${HEADERS} )
-
-add_library( BRAINSConstellationDetectorGUICOMMONLIB STATIC
-  ${BRAINSConstellationDetectorGUI_SRC}
-  ${HEADERS_MOC}
-  )
+)
 set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #
@@ -50,7 +49,7 @@ if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
   set_target_properties(BRAINSConstellationDetectorGUICOMMONLIB PROPERTIES COMPILE_FLAGS "-fPIC")
 endif()
 
-  target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB
+  target_link_libraries( BRAINSConstellationDetectorGUICOMMONLIB PUBLIC
  BRAINSCommonLib
  VTK::GUISupportQt
  Qt5::Core Qt5::Widgets

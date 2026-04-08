@@ -57,7 +57,8 @@ set(DWIConvertSupportLib_SRCS
 set(MODULE_FOLDER "Module-DWIConvert")
 
 add_library(DWIConvertSupportLib STATIC ${DWIConvertSupportLib_SRCS})
-target_link_libraries(DWIConvertSupportLib ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
+target_include_directories(DWIConvertSupportLib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(DWIConvertSupportLib PUBLIC ${DWIConvert_ITK_LIBRARIES} BRAINSCommonLib)
 set_target_properties(DWIConvertSupportLib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(PROGS_LIST_1
@@ -65,7 +66,7 @@ set(PROGS_LIST_1
   )
 foreach(prog ${PROGS_LIST_1})
   add_executable(${prog} ${prog}.cxx)
-  target_link_libraries(${prog} DWIConvertSupportLib)
+  target_link_libraries(${prog} PRIVATE DWIConvertSupportLib)
   set_target_properties(${prog} PROPERTIES FOLDER ${MODULE_FOLDER})
 endforeach()
 

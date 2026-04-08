@@ -1,11 +1,6 @@
 
 
 
-include_directories(
-  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
-  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
-)
-
 #set(QHULL_SRCS
 #  QHullMSTClusteringProcess.cxx
 #  )
@@ -27,6 +22,10 @@ set(BRAINSABCCOMMONLIB_SRCS
 ## Build BRAINSABCCOMMONLIB library
 ##
 add_library(BRAINSABCCOMMONLIB STATIC ${BRAINSABCCOMMONLIB_SRCS})
+target_include_directories(BRAINSABCCOMMONLIB PUBLIC
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg
+  ${BRAINSTools_SOURCE_DIR}/BRAINSABC/common
+)
 add_dependencies(BRAINSABCCOMMONLIB InstallReferenceAtlas )
 #set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD ${CMAKE_CXX_STANDARD})
 #set_property(TARGET BRAINSABCCOMMONLIB PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -44,7 +43,7 @@ set(BRAINSABCCOMMONLIBLibraries BRAINSCommonLib ${BRAINSABC_ITK_LIBRARIES} ${TBB
 
 DebugImageViewerLibAdditions(BRAINSABCCOMMONLIBLibraries)
 
-target_link_libraries(BRAINSABCCOMMONLIB ${BRAINSABCCOMMONLIBLibraries} )
+target_link_libraries(BRAINSABCCOMMONLIB PUBLIC ${BRAINSABCCOMMONLIBLibraries} )
 
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
@@ -76,6 +75,6 @@ if(0)
 
   ## A utility program
   add_executable(StandardizeMaskIntensity StandardizeMaskIntensity.cxx)
-  target_link_libraries(StandardizeMaskIntensity ${BRAINSABC_ITK_LIBRARIES})
+  target_link_libraries(StandardizeMaskIntensity PRIVATE ${BRAINSABC_ITK_LIBRARIES})
   set_target_properties(StandardizeMaskIntensity PROPERTIES FOLDER ${MODULE_FOLDER})
 endif()

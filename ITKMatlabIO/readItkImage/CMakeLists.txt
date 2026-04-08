@@ -6,8 +6,7 @@
 find_package(ITK)
 find_package(Matlab COMPONENTS MX_LIBRARY ENG_LIBRARY REQUIRED)
 
-include_directories(${ITK_INCLUDE_DIRS})
-include_directories(${Matlab_INCLUDE_DIRS})
+# ITK include dirs are provided transitively by ITK_USE_FILE and target LINK_TO
 
 #add_executable(itkReadImage itkReadImage.cpp convertItkImageToMxArray.cpp)
 #target_link_libraries(itkReadImage ${ITK_LIBRARIES} ${VTK_LIBRARIES})
@@ -48,3 +47,4 @@ matlab_add_mex(
         #--      [DOCUMENTATION file.txt]
         LINK_TO ${ITK_LIBRARIES} ${VTK_LIBRARIES}
 )
+target_include_directories(itkReadImage PRIVATE ${Matlab_INCLUDE_DIRS})

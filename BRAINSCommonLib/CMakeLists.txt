@@ -41,11 +41,6 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLib.h
   )
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
 set(BRAINSCommonLib_SRCS
   BRAINSCommonLib.cxx
   GenericTransformImage.cxx
@@ -64,12 +59,16 @@ set(MODULE_FOLDER "Module-BRAINSCommon")
 
 ## Always build BRAINSCommonLib as static
 add_library(BRAINSCommonLib STATIC ${BRAINSCommonLib_SRCS})
-target_link_libraries(BRAINSCommonLib ${BRAINSCommonLib_ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
+target_include_directories(BRAINSCommonLib PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
+target_link_libraries(BRAINSCommonLib PUBLIC ${BRAINSCommonLib_ITK_LIBRARIES} ${ANTS_LIBS} ${double-conversion_LIBRARIES})
 # DebugImageViewerClient.h includes <vtkClientSocket.h> when USE_DebugImageViewer is ON.
 # VTK::CommonSystem owns that header; link it so the include path propagates
 # to all downstream targets that use BRAINSCommonLib headers.
 if(USE_DebugImageViewer)
-  target_link_libraries(BRAINSCommonLib VTK::CommonSystem)
+  target_link_libraries(BRAINSCommonLib PUBLIC VTK::CommonSystem)
 endif()
 set_target_properties(BRAINSCommonLib PROPERTIES FOLDER ${MODULE_FOLDER})
 

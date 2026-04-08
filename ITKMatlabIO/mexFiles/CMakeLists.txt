@@ -1,7 +1,6 @@
 ## NOTE: On mavericks you need to edit mexopts.sh to match required compiler options.
 ##  vim /Applications/Matlab_R2013b.app/bin/mexopts.sh
 find_package(Matlab COMPONENTS MX_LIBRARY ENG_LIBRARY REQUIRED)
-include_directories(${Matlab_INCLUDE_DIRS})
 
 find_package(VTK 7 REQUIRED)
 include(${VTK_USE_FILE})
@@ -18,7 +17,6 @@ include(${ITK_USE_FILE})
 # \author Kent Williams norman-k-williams@uiowa.edu
 # \author Hans J. Johnson hans-johnson@uiowa.edu
 include(CMakeParseArguments)
-include_directories(${Matlab_INCLUDE_DIRS})
 #
 # BuildMex -- arguments
 # MEXNAME = root of mex library name
@@ -48,6 +46,7 @@ matlab_add_mex(
 #--      [DOCUMENTATION file.txt]
       LINK_TO ${ITK_LIBRARIES} ${VTK_LIBRARIES}
 )
+target_include_directories(itkLoadWithMetadata PRIVATE ${Matlab_INCLUDE_DIRS})
 
 matlab_add_mex(
       NAME itkSaveWithMetadata
@@ -55,6 +54,7 @@ matlab_add_mex(
 #--      [DOCUMENTATION file.txt]
       LINK_TO ${ITK_LIBRARIES} ${VTK_LIBRARIES}
 )
+target_include_directories(itkSaveWithMetadata PRIVATE ${Matlab_INCLUDE_DIRS})
 
 matlab_add_mex(
       NAME vtkLoadPolyData
@@ -62,6 +62,7 @@ matlab_add_mex(
 #--      [DOCUMENTATION file.txt]
       LINK_TO ${VTK_LIBRARIES}
 )
+target_include_directories(vtkLoadPolyData PRIVATE ${Matlab_INCLUDE_DIRS})
 
 matlab_add_mex(
       NAME vtkSavePolyData
@@ -69,6 +70,7 @@ matlab_add_mex(
 #--      [DOCUMENTATION file.txt]
       LINK_TO ${VTK_LIBRARIES}
 )
+target_include_directories(vtkSavePolyData PRIVATE ${Matlab_INCLUDE_DIRS})
 
 
 if(0)

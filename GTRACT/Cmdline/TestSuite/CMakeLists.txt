@@ -43,7 +43,7 @@ set(DWIBASELINE_DIR ${TestData_DIR}/DWI_TestData_OUTPUTS)
 
 ## Test for gtractCoregBvalues
 add_executable( gtractCoregBvaluesTests gtractCoregBvaluesTests.cxx )
-target_link_libraries( gtractCoregBvaluesTests GTRACTCommon BRAINSCommonLib DWIConvertSupportLib)
+target_link_libraries( gtractCoregBvaluesTests PRIVATE GTRACTCommon BRAINSCommonLib DWIConvertSupportLib)
 set_target_properties(gtractCoregBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractCoregBvaluesTests PROPERTIES FOLDER ${MODULE_FOLDER})
 add_dependencies(gtractCoregBvaluesTests gtractCoregBvalues)
@@ -74,7 +74,7 @@ add_dependencies(gtractCoregBvaluesTests gtractCoregBvalues)
 
 ## Test for gtractAverageBvalues
 add_executable( gtractAverageBvaluesTests gtractAverageBvaluesTests.cxx )
-target_link_libraries( gtractAverageBvaluesTests BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
+target_link_libraries( gtractAverageBvaluesTests PRIVATE BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractAverageBvaluesTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractAverageBvaluesTests PROPERTIES FOLDER ${MODULE_FOLDER})
 add_dependencies(gtractAverageBvaluesTests gtractAverageBvalues)
@@ -95,7 +95,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 
 ## Test for gtractConcatDwi
 add_executable( gtractConcatDwiTests gtractConcatDwiTests.cxx )
-target_link_libraries( gtractConcatDwiTests BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
+target_link_libraries( gtractConcatDwiTests PRIVATE BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractConcatDwiTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractConcatDwiTests PROPERTIES FOLDER ${MODULE_FOLDER})
 add_dependencies(gtractConcatDwiTests gtractConcatDwi)
@@ -150,7 +150,7 @@ endif()
 
 ## A set of tests for gtractResampleDWIInPlace
 add_executable( gtractResampleDWIInPlaceTests gtractResampleDWIInPlaceTests.cxx )
-target_link_libraries( gtractResampleDWIInPlaceTests  BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
+target_link_libraries( gtractResampleDWIInPlaceTests PRIVATE BRAINSCommonLib GTRACTCommon DWIConvertSupportLib)
 set_target_properties(gtractResampleDWIInPlaceTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_target_properties(gtractResampleDWIInPlaceTests PROPERTIES FOLDER ${MODULE_FOLDER})
 add_dependencies(gtractResampleDWIInPlaceTests gtractResampleDWIInPlace)

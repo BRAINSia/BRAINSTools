@@ -38,7 +38,7 @@ set(BRAINSTalairachSupportLib_SRCS
 set(MODULE_FOLDER "Module-BRAINSTalairach")
 
 add_library(BRAINSTalairachSupportLib STATIC ${BRAINSTalairachSupportLib_SRCS})
-target_link_libraries(BRAINSTalairachSupportLib BRAINSCommonLib ${VTK_LIBRARIES})
+target_link_libraries(BRAINSTalairachSupportLib PUBLIC BRAINSCommonLib ${VTK_LIBRARIES})
 set_target_properties(BRAINSTalairachSupportLib PROPERTIES FOLDER ${MODULE_FOLDER})
 
 #

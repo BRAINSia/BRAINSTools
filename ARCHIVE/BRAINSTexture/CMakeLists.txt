@@ -7,7 +7,7 @@ find_package(ITK REQUIRED) # NO_MODULE)
 include(${ITK_USE_FILE})
 
 add_executable(BRAINSTexture BRAINSTexture.cxx)
-target_link_libraries(BRAINSTexture ${ITK_LIBRARIES})
+target_link_libraries(BRAINSTexture PRIVATE ${ITK_LIBRARIES})
 
 #    1) itkEllipseSpatialObject
 #    2) itkSpatialObjectToImageFilter

@@ -221,8 +221,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
 
   m_ValidIndicies.resize(0);
   {
-    // Not parallizable! ORDER IS IMPORTANT  //#pragma omp parallel for
-    // reduction(+:numEquations) default(shared)
+    // Not parallelizable — iteration order determines m_ValidIndicies layout
     for (long kk = 0; kk < static_cast<long>(size[2]); kk += skips[2])
     {
       for (long jj = 0; jj < static_cast<long>(size[1]); jj += skips[1])

@@ -21,7 +21,6 @@ list(REMOVE_DUPLICATES CMAKE_PREFIX_PATH)
 
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
-find_package(OpenMP QUIET)
 include(${CMAKE_CURRENT_LIST_DIR}/../../CMake/LinAlgSelector.cmake)
 
 ## Compiler flags -- TODO This could be better, see ITK it won't work on windows builds
@@ -67,8 +66,7 @@ set(MODULE_FOLDER "Module-EdgeBaseWeightedTV")
 
 add_library(SR_support FFTWUpsample.cpp OpWeightedL2.cpp)
 # -- RTK now part of ITK remote modules target_link_libraries(SR_support ${BRAINSSuperResolution_ITK_LIBRARIES} ${RTK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
-target_link_libraries(SR_support PUBLIC ${BRAINSSuperResolution_ITK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES}
-  $<$<BOOL:${OpenMP_FOUND}>:OpenMP::OpenMP_CXX>)
+target_link_libraries(SR_support PUBLIC ${BRAINSSuperResolution_ITK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
 set_target_properties(SR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(TestSR SRmain.cpp)

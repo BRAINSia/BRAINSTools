@@ -75,8 +75,6 @@ MultiplyVectors(ImagePointerType & OutImg, ImagePointerType & xImg, ImagePointer
   const PrecisionType * x_End = x_Start + N;
   const PrecisionType * y = GetFirstPointer(yImg);
   PrecisionType *       o = GetFirstPointer(OutImg);
-  // HACK ADD open_MP here
-  // HACK end = x+N : while x < end
   for (PrecisionType * x = x_Start; x < x_End; ++x)
   {
     (*o) = (*y) * (*x);

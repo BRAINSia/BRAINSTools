@@ -266,6 +266,148 @@ cmd = '''ctest --test-dir build-debug/BRAINSTools-Debug-EPRelease-build --output
 description = "Run CTest on inner build (Debug, excludes slow tests)"
 depends-on = ["build-debug"]
 
+# ── Feature: coverage (code coverage analysis) ──
+
+[tool.pixi.feature.coverage.dependencies]
+gcovr = ">=7.0,<9"
+
+# Coverage reuses EPs from the regular Release build (pixi run -e cxx build-EP).
+# Only BRAINSTools source is recompiled with --coverage; EPs are linked as-is.
+# This avoids a 20+ minute EP rebuild and keeps coverage data focused.
+
+[tool.pixi.feature.coverage.tasks.configure-coverage]
+cmd = """
+EP="$(pwd)/build/BRAINSTools-Debug-5.8.0" && cmake \
+  -Bbuild-coverage -S. -GNinja \
+  -DCMAKE_BUILD_TYPE:STRING=Debug \
+  "-DCMAKE_C_FLAGS:STRING=--coverage" \
+  "-DCMAKE_CXX_FLAGS:STRING=--coverage" \
+  "-DCMAKE_EXE_LINKER_FLAGS:STRING=--coverage" \
+  -DBRAINSTools_SUPERBUILD:BOOL=OFF \
+  -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=ON \
+  -DBRAINSTools_REQUIRES_VTK:BOOL=ON \
+  -DBRAINSTools_REQUIRES_TBB:BOOL=ON \
+  -DBUILD_TESTING:BOOL=ON \
+  -DITK_DIR:PATH="$EP/lib/cmake/ITK-5.4" \
+  -DVTK_DIR:PATH="$(pwd)/build/VTK-Release-build/lib/cmake/vtk-9.6" \
+  -DTBB_DIR:PATH="$EP/lib/cmake/TBB" \
+  -DSlicerExecutionModel_DIR:PATH="$(pwd)/build/SlicerExecutionModel-Release-build" \
+  -DANTs_SOURCE_DIR:PATH="$(pwd)/build/ANTs" \
+  -DANTs_LIBRARY_DIR:PATH="$EP/lib" \
+  -DZLIB_ROOT:PATH="$EP" \
+  -DUSE_AutoWorkup:BOOL=ON \
+  -DUSE_BRAINSABC:BOOL=ON \
+  -DUSE_BRAINSConstellationDetector:BOOL=ON \
+  -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON \
+  -DUSE_BRAINSDeface:BOOL=ON \
+  -DUSE_BRAINSDWICleanup:BOOL=ON \
+  -DUSE_BRAINSFit:BOOL=ON \
+  -DUSE_BRAINSInitializedControlPoints:BOOL=ON \
+  -DUSE_BRAINSIntensityNormalize:BOOL=ON \
+  -DUSE_BRAINSLabelStats:BOOL=ON \
+  -DUSE_BRAINSLandmarkInitializer:BOOL=ON \
+  -DUSE_BRAINSMultiModeSegment:BOOL=ON \
+  -DUSE_BRAINSMultiSTAPLE:BOOL=ON \
+  -DUSE_BRAINSMush:BOOL=ON \
+  -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON \
+  -DUSE_BRAINSResample:BOOL=ON \
+  -DUSE_BRAINSROIAuto:BOOL=ON \
+  -DUSE_BRAINSSnapShotWriter:BOOL=ON \
+  -DUSE_BRAINSStripRotation:BOOL=ON \
+  -DUSE_BRAINSSuperResolution:BOOL=ON \
+  -DUSE_BRAINSTransformConvert:BOOL=ON \
+  -DUSE_ConvertBetweenFileFormats:BOOL=ON \
+  -DUSE_DWIConvert:BOOL=ON \
+  -DUSE_GTRACT:BOOL=ON \
+  -DUSE_ImageCalculator:BOOL=ON \
+  -DUSE_ReferenceAtlas:BOOL=ON \
+  -DBUILD_ARCHIVE:BOOL=ON \
+  -DUSE_BRAINSTalairach:BOOL=ON \
+  -DUSE_ITKMatlabIO:BOOL=OFF"""
+description = "Configure inner BRAINSTools with --coverage (reuses EPs from build/)"
+outputs = ["build-coverage/CMakeFiles/"]
+
+[tool.pixi.feature.coverage.tasks.build-coverage]
+cmd = "cmake --build build-coverage --parallel"
+description = "Build BRAINSTools with coverage instrumentation (EPs already built)"
+depends-on = ["configure-coverage"]
+
+[tool.pixi.feature.coverage.tasks.test-coverage]
+cmd = '''ctest --test-dir build-coverage
+  --output-on-failure --schedule-random -j4
+  -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)"'''
+description = "Run tests to generate coverage data (.gcda files)"
+depends-on = ["build-coverage"]
+
+[tool.pixi.feature.coverage.tasks.coverage-report]
+cmd = '''TS=$(date +%Y%m%d%H%M%S) &&
+  REPORT_DIR="build-coverage/reports/${TS}" &&
+  mkdir -p "${REPORT_DIR}" &&
+  gcovr
+  --root .
+  --search-path build-coverage
+  --filter 'BRAINSABC/'
+  --filter 'BRAINSCommonLib/'
+  --filter 'BRAINSConstellationDetector/'
+  --filter 'BRAINSDeface/'
+  --filter 'BRAINSFit/'
+  --filter 'BRAINSInitializedControlPoints/'
+  --filter 'BRAINSLabelStats/'
+  --filter 'BRAINSLandmarkInitializer/'
+  --filter 'BRAINSMultiModeSegment/'
+  --filter 'BRAINSMultiSTAPLE/'
+  --filter 'BRAINSMush/'
+  --filter 'BRAINSPosteriorToContinuousClass/'
+  --filter 'BRAINSResample/'
+  --filter 'BRAINSROIAuto/'
+  --filter 'BRAINSSnapShotWriter/'
+  --filter 'BRAINSStripRotation/'
+  --filter 'BRAINSSuperResolution/'
+  --filter 'BRAINSTransformConvert/'
+  --filter 'ConvertBetweenFileFormats/'
+  --filter 'DWIConvert/'
+  --filter 'GTRACT/'
+  --filter 'ImageCalculator/'
+  --filter 'DebugImageViewer/'
+  --filter 'BRAINSIntensityNormalize/'
+  --filter 'BRAINSDWICleanup/'
+  --exclude '.*TestSuite/.*'
+  --exclude '.*Testing/.*'
+  --exclude '.*/TestData/.*'
+  --exclude 'ARCHIVE/'
+  --cobertura "${REPORT_DIR}/coverage.xml"
+  --html-nested "${REPORT_DIR}/html/"
+  --json "${REPORT_DIR}/coverage.json"
+  --print-summary
+  --sort uncovered-number
+  --decisions &&
+  ln -sfn "${TS}" build-coverage/reports/latest'''
+description = "Generate timestamped coverage reports (XML + JSON + HTML)"
+depends-on = ["test-coverage"]
+
+[tool.pixi.feature.coverage.tasks.code-coverage]
+cmd = '''LATEST=$(readlink build-coverage/reports/latest) &&
+  echo "" &&
+  echo "════════════════════════════════════════════════════════" &&
+  echo "  Coverage report: ${LATEST}" &&
+  echo "    XML (Cobertura):  build-coverage/reports/${LATEST}/coverage.xml" &&
+  echo "    JSON (diffable):  build-coverage/reports/${LATEST}/coverage.json" &&
+  echo "    HTML (browsable): build-coverage/reports/${LATEST}/html/index.html" &&
+  echo "" &&
+  echo "  All reports:        build-coverage/reports/" &&
+  echo "  Latest symlink:     build-coverage/reports/latest → ${LATEST}" &&
+  echo "════════════════════════════════════════════════════════" &&
+  echo "" &&
+  echo "  Open HTML report:" &&
+  echo "    open build-coverage/reports/latest/html/index.html" &&
+  echo "" &&
+  echo "  Compare two runs (requires diff or meld):" &&
+  echo "    diff build-coverage/reports/<older>/coverage.json \\" &&
+  echo "         build-coverage/reports/<newer>/coverage.json" &&
+  echo ""'''
+description = "Full pipeline: configure → build → test → timestamped coverage report"
+depends-on = ["coverage-report"]
+
 # ── Common tasks (no feature required) ───────
 
 [tool.pixi.tasks]
@@ -276,6 +418,7 @@ clean = { cmd = "git clean -fdx -e DartConfiguration.tcl -e .claude/", descripti
 [tool.pixi.environments]
 dev = ["dev"]
 cxx = ["dev", "cxx"]
+coverage = ["dev", "coverage"]
 autoworkup = ["autoworkup"]
 lint = ["lint"]
 pre-commit = ["pre-commit"]

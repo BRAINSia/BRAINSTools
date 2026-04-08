@@ -128,14 +128,15 @@ set(DWITestFileDir ${DWIConvert_BINARY_DIR})
 #        --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.nii.test.nrrd
 #        )
 
-# new added test case for GTRACT to support Dicom
-add_test(NAME ${GTRACTTestName}_Concat_Dicom
-        COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
-        gtractConcatDwiTest
-        --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
-        --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.dicom.test.nrrd
-        )
-set_property(TEST ${GTRACTTestName}_Concat_Dicom APPEND PROPERTY DEPENDS Uncompress_PhilipsAchieva1.tar.gz)
+# DISABLED: GTRACTTest_gtractConcatDwi_Concat_Dicom — flaky on CI.
+# See https://github.com/BRAINSia/BRAINSTools/issues/596 for details.
+# add_test(NAME ${GTRACTTestName}_Concat_Dicom
+#         COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractConcatDwiTests>
+#         gtractConcatDwiTest
+#         --inputVolume ${DWITestFileDir}/PhilipsAchieva1,${DWITestFileDir}/PhilipsAchieva1
+#         --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.dicom.test.nrrd
+#         )
+# set_property(TEST ${GTRACTTestName}_Concat_Dicom APPEND PROPERTY DEPENDS Uncompress_PhilipsAchieva1.tar.gz)
 
 if(USE_DWIConvert)  #dependancy needed for data creation
 # new added test case for GTRACT to support multi Dicom

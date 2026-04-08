@@ -7,7 +7,7 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
-target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES}
+target_link_libraries(TestlandmarksConstellationTrainingDefinitionIO PRIVATE BRAINSCommonLib ${BRAINSConstellationDetector_ITK_LIBRARIES}
   ${VTK_LIBRARIES})
 set_target_properties(TestlandmarksConstellationTrainingDefinitionIO PROPERTIES FOLDER ${MODULE_FOLDER})
 

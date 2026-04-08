@@ -87,7 +87,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME c
 set_tests_properties(compare_nifti PROPERTIES DEPENDS ccvnt_from_nifti)
 
 add_executable(ImageCompareTests ImageCompareTests.cxx)
-target_link_libraries(ImageCompareTests ${ConvertBetweenFileFormats_ITK_LIBRARIES})
+target_link_libraries(ImageCompareTests PRIVATE ${ConvertBetweenFileFormats_ITK_LIBRARIES})
 set_target_properties(ImageCompareTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 

@@ -13,7 +13,7 @@ if(COMPILE_TEST_GENERATION_PROGRAMS)  ## These were programs needed to create th
   # from test.nii.gz
   if(MakeMakeXfrmImage)
     add_executable(makexfrmedImage makexfrmedImage.cxx)
-    target_link_libraries(makexfrmedImage ${BRAINSFit_ITK_LIBRARIES})
+    target_link_libraries(makexfrmedImage PRIVATE ${BRAINSFit_ITK_LIBRARIES})
     set_target_properties(makexfrmedImage PROPERTIES FOLDER ${MODULE_FOLDER})
   endif()
 endif()
@@ -27,7 +27,7 @@ set(CenterOfROIInitTestLibraries BRAINSCommonLib ${BRAINSFit_ITK_LIBRARIES} ${OP
 
 DebugImageViewerLibAdditions(CenterOfROIInitTestLibraries)
 
-target_link_libraries(CenterOfROIInitTest ${CenterOfROIInitTestLibraries} )
+target_link_libraries(CenterOfROIInitTest PRIVATE ${CenterOfROIInitTestLibraries} )
 
 set_target_properties(CenterOfROIInitTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${BRAINSTools_BINARY_DIR})
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME CenterOfROIInitTest

@@ -1,5 +1,5 @@
 add_executable(DumpImageInfo DumpImageInfo.cxx)
-target_link_libraries(DumpImageInfo BRAINSCommonLib)
+target_link_libraries(DumpImageInfo PRIVATE BRAINSCommonLib)
 set_target_properties(DumpImageInfo PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 set_target_properties(DumpImageInfo PROPERTIES FOLDER ${MODULE_FOLDER})
 
@@ -42,15 +42,15 @@ gtest_discover_tests(AverageImageFilterGTest DISCOVERY_TIMEOUT 120)
 
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
-target_link_libraries( itkResampleInPlaceImageFilterTest ${BRAINSCommonLib_ITK_LIBRARIES})
+target_link_libraries( itkResampleInPlaceImageFilterTest PRIVATE BRAINSCommonLib)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(BRAINSCleanMask BRAINSCleanMask.cxx)
-target_link_libraries(BRAINSCleanMask ${BRAINSCommonLib_ITK_LIBRARIES})
+target_link_libraries(BRAINSCleanMask PRIVATE BRAINSCommonLib)
 set_target_properties(BRAINSCleanMask PROPERTIES FOLDER ${MODULE_FOLDER})
 
 add_executable(DWIMetaDataDictionaryValidatorTests DWIMetaDataDictionaryValidatorTests.cxx)
-target_link_libraries(DWIMetaDataDictionaryValidatorTests BRAINSCommonLib)
+target_link_libraries(DWIMetaDataDictionaryValidatorTests PRIVATE BRAINSCommonLib)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 set_target_properties(DWIMetaDataDictionaryValidatorTests PROPERTIES FOLDER ${MODULE_FOLDER})
 

@@ -37,7 +37,7 @@ add_executable(DebugImageViewer
   ${EXE_SRCS}
 )
 
-target_link_libraries(DebugImageViewer
+target_link_libraries(DebugImageViewer PUBLIC
   ${DebugImageViewer_ITK_LIBRARIES}
   VTK::GUISupportQt
   VTK::RenderingOpenGL2
@@ -51,7 +51,7 @@ set_target_properties(DebugImageViewer PROPERTIES FOLDER ${MODULE_FOLDER})
 ###
 add_executable(DebugImageViewerClientTest DebugImageViewerClientTest.cxx )
 
-target_link_libraries(DebugImageViewerClientTest
+target_link_libraries(DebugImageViewerClientTest PRIVATE
 ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
@@ -61,7 +61,7 @@ set_target_properties(DebugImageViewerClientTest PROPERTIES FOLDER ${MODULE_FOLD
 ###
 add_executable(DebugImageViewerClientTest2 DebugImageViewerClientTest2.cxx )
 
-target_link_libraries(DebugImageViewerClientTest2
+target_link_libraries(DebugImageViewerClientTest2 PRIVATE
 ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )
@@ -71,7 +71,7 @@ set_target_properties(DebugImageViewerClientTest2 PROPERTIES FOLDER ${MODULE_FOL
 ###
 add_executable(DebugImageViewerVectorClientTest DebugImageViewerVectorClientTest.cxx
 )
-target_link_libraries(DebugImageViewerVectorClientTest
+target_link_libraries(DebugImageViewerVectorClientTest PRIVATE
 ${DebugImageViewer_ITK_LIBRARIES}
 ${VTK_LIBRARIES}
 )

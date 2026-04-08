@@ -40,6 +40,38 @@ set_target_properties(AverageImageFilterGTest PROPERTIES
   FOLDER ${MODULE_FOLDER})
 gtest_discover_tests(AverageImageFilterGTest DISCOVERY_TIMEOUT 120)
 
+# GTest coverage for DWIMetaDataDictionaryValidator (issue #403)
+add_executable(DWIMetaDataDictionaryValidatorGTest DWIMetaDataDictionaryValidatorGTest.cxx)
+target_link_libraries(DWIMetaDataDictionaryValidatorGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(DWIMetaDataDictionaryValidatorGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(DWIMetaDataDictionaryValidatorGTest DISCOVERY_TIMEOUT 120)
+
+# GTest coverage for itkIO.h utilities (issue #403)
+add_executable(itkIOGTest itkIOGTest.cxx)
+target_link_libraries(itkIOGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(itkIOGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(itkIOGTest DISCOVERY_TIMEOUT 120)
+
+# GTest port of ConvertToRigidAffine tests (issue #403)
+add_executable(ConvertToRigidAffineGTest ConvertToRigidAffineGTest.cxx)
+target_link_libraries(ConvertToRigidAffineGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(ConvertToRigidAffineGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(ConvertToRigidAffineGTest DISCOVERY_TIMEOUT 120)
+
+# GTest coverage for Imgmath.h template functions (issue #403)
+add_executable(ImgmathGTest ImgmathGTest.cxx)
+target_link_libraries(ImgmathGTest PRIVATE BRAINSCommonLib GTest::gtest_main)
+set_target_properties(ImgmathGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(ImgmathGTest DISCOVERY_TIMEOUT 120)
+
 add_executable( itkResampleInPlaceImageFilterTest itkResampleInPlaceImageFilterTest.cxx)
 set_target_properties(itkResampleInPlaceImageFilterTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
 target_link_libraries( itkResampleInPlaceImageFilterTest PRIVATE BRAINSCommonLib)

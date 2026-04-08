@@ -1,4 +1,17 @@
 #########
+# GTest-based unit tests for ImageCalculatorUtils (issue #403)
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(ImageCalculatorUtilsGTest ImageCalculatorUtilsGTest.cxx
+  ../ImageCalculatorUtils.cxx ../ImageCalculatorProcess2D.cxx ../ImageCalculatorProcess3D.cxx)
+target_include_directories(ImageCalculatorUtilsGTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_link_libraries(ImageCalculatorUtilsGTest PRIVATE ${ImageCalculator_ITK_LIBRARIES} BRAINSCommonLib GTest::gtest_main)
+set_target_properties(ImageCalculatorUtilsGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+include(GoogleTest)
+gtest_discover_tests(ImageCalculatorUtilsGTest DISCOVERY_TIMEOUT 120)
+
 add_executable(ImageCalculatorTests
   ../ImageCalculatorTests.cxx ../ImageCalculatorUtils.cxx
   ../ImageCalculatorProcess2D.cxx

@@ -116,16 +116,36 @@ cmd = '''cmake
   -DCMAKE_BUILD_TYPE:STRING=Release
   -DBRAINSTools_SUPERBUILD:BOOL=ON
   -DBUILD_TESTING:BOOL=ON
-  -DUSE_BRAINSFit:BOOL=ON
-  -DUSE_BRAINSResample:BOOL=ON
-  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_AutoWorkup:BOOL=ON
   -DUSE_BRAINSABC:BOOL=ON
   -DUSE_BRAINSConstellationDetector:BOOL=ON
-  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON
+  -DUSE_BRAINSDeface:BOOL=ON
+  -DUSE_BRAINSDWICleanup:BOOL=ON
+  -DUSE_BRAINSFit:BOOL=ON
   -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_BRAINSIntensityNormalize:BOOL=ON
+  -DUSE_BRAINSLabelStats:BOOL=ON
+  -DUSE_BRAINSLandmarkInitializer:BOOL=ON
+  -DUSE_BRAINSMultiModeSegment:BOOL=ON
+  -DUSE_BRAINSMultiSTAPLE:BOOL=ON
+  -DUSE_BRAINSMush:BOOL=ON
+  -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSSnapShotWriter:BOOL=ON
+  -DUSE_BRAINSStripRotation:BOOL=ON
+  -DUSE_BRAINSSuperResolution:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_ConvertBetweenFileFormats:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON
   -DUSE_GTRACT:BOOL=ON
-  -DUSE_DWIConvert:BOOL=ON'''
-description = "Configure BRAINSTools SuperBuild (Release)"
+  -DUSE_ImageCalculator:BOOL=ON
+  -DUSE_ReferenceAtlas:BOOL=ON
+  -DBUILD_ARCHIVE:BOOL=ON
+  -DUSE_BRAINSTalairach:BOOL=ON
+  -DUSE_ITKMatlabIO:BOOL=OFF'''
+description = "Configure BRAINSTools SuperBuild (Release, all modules)"
 outputs = ["build/CMakeFiles/"]
 
 [tool.pixi.feature.cxx.tasks.configure-ci]
@@ -138,16 +158,36 @@ cmd = '''cmake
   -DBUILD_TESTING:BOOL=ON
   -DCMAKE_C_COMPILER_LAUNCHER:STRING=ccache
   -DCMAKE_CXX_COMPILER_LAUNCHER:STRING=ccache
-  -DUSE_BRAINSFit:BOOL=ON
-  -DUSE_BRAINSResample:BOOL=ON
-  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_AutoWorkup:BOOL=ON
   -DUSE_BRAINSABC:BOOL=ON
   -DUSE_BRAINSConstellationDetector:BOOL=ON
-  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON
+  -DUSE_BRAINSDeface:BOOL=ON
+  -DUSE_BRAINSDWICleanup:BOOL=ON
+  -DUSE_BRAINSFit:BOOL=ON
   -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_BRAINSIntensityNormalize:BOOL=ON
+  -DUSE_BRAINSLabelStats:BOOL=ON
+  -DUSE_BRAINSLandmarkInitializer:BOOL=ON
+  -DUSE_BRAINSMultiModeSegment:BOOL=ON
+  -DUSE_BRAINSMultiSTAPLE:BOOL=ON
+  -DUSE_BRAINSMush:BOOL=ON
+  -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSSnapShotWriter:BOOL=ON
+  -DUSE_BRAINSStripRotation:BOOL=ON
+  -DUSE_BRAINSSuperResolution:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_ConvertBetweenFileFormats:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON
   -DUSE_GTRACT:BOOL=ON
-  -DUSE_DWIConvert:BOOL=ON'''
-description = "Configure BRAINSTools SuperBuild for CI (with ccache)"
+  -DUSE_ImageCalculator:BOOL=ON
+  -DUSE_ReferenceAtlas:BOOL=ON
+  -DBUILD_ARCHIVE:BOOL=ON
+  -DUSE_BRAINSTalairach:BOOL=ON
+  -DUSE_ITKMatlabIO:BOOL=OFF'''
+description = "Configure BRAINSTools SuperBuild for CI (with ccache, all modules)"
 outputs = ["build/CMakeFiles/"]
 
 [tool.pixi.feature.cxx.tasks.build-EP]
@@ -162,10 +202,10 @@ description = "Rebuild inner BRAINSTools only (fast — falls through build-EP i
 depends-on = ["build-EP"]
 
 [tool.pixi.feature.cxx.tasks.test]
-cmd = '''ctest --test-dir build --output-on-failure --schedule-random
+cmd = '''ctest --test-dir build/BRAINSTools-Release-EPRelease-build --output-on-failure --schedule-random
   -j4
   -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)"'''
-description = "Run CTest (excludes slow BCD and known-divergent tests)"
+description = "Run CTest on inner build (excludes slow BCD and known-divergent tests)"
 depends-on = ["build"]
 
 [tool.pixi.feature.cxx.tasks.configure-debug]
@@ -176,16 +216,36 @@ cmd = '''cmake
   -DCMAKE_BUILD_TYPE:STRING=Debug
   -DBRAINSTools_SUPERBUILD:BOOL=ON
   -DBUILD_TESTING:BOOL=ON
-  -DUSE_BRAINSFit:BOOL=ON
-  -DUSE_BRAINSResample:BOOL=ON
-  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_AutoWorkup:BOOL=ON
   -DUSE_BRAINSABC:BOOL=ON
   -DUSE_BRAINSConstellationDetector:BOOL=ON
-  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON
+  -DUSE_BRAINSDeface:BOOL=ON
+  -DUSE_BRAINSDWICleanup:BOOL=ON
+  -DUSE_BRAINSFit:BOOL=ON
   -DUSE_BRAINSInitializedControlPoints:BOOL=ON
+  -DUSE_BRAINSIntensityNormalize:BOOL=ON
+  -DUSE_BRAINSLabelStats:BOOL=ON
+  -DUSE_BRAINSLandmarkInitializer:BOOL=ON
+  -DUSE_BRAINSMultiModeSegment:BOOL=ON
+  -DUSE_BRAINSMultiSTAPLE:BOOL=ON
+  -DUSE_BRAINSMush:BOOL=ON
+  -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON
+  -DUSE_BRAINSResample:BOOL=ON
+  -DUSE_BRAINSROIAuto:BOOL=ON
+  -DUSE_BRAINSSnapShotWriter:BOOL=ON
+  -DUSE_BRAINSStripRotation:BOOL=ON
+  -DUSE_BRAINSSuperResolution:BOOL=ON
+  -DUSE_BRAINSTransformConvert:BOOL=ON
+  -DUSE_ConvertBetweenFileFormats:BOOL=ON
+  -DUSE_DWIConvert:BOOL=ON
   -DUSE_GTRACT:BOOL=ON
-  -DUSE_DWIConvert:BOOL=ON'''
-description = "Configure BRAINSTools SuperBuild (Debug)"
+  -DUSE_ImageCalculator:BOOL=ON
+  -DUSE_ReferenceAtlas:BOOL=ON
+  -DBUILD_ARCHIVE:BOOL=ON
+  -DUSE_BRAINSTalairach:BOOL=ON
+  -DUSE_ITKMatlabIO:BOOL=OFF'''
+description = "Configure BRAINSTools SuperBuild (Debug, all modules)"
 outputs = ["build-debug/CMakeFiles/"]
 
 [tool.pixi.feature.cxx.tasks.build-EP-debug]
@@ -200,10 +260,10 @@ description = "Rebuild inner BRAINSTools only (Debug, fast — falls through bui
 depends-on = ["build-EP-debug"]
 
 [tool.pixi.feature.cxx.tasks.test-debug]
-cmd = '''ctest --test-dir build-debug --output-on-failure --schedule-random
+cmd = '''ctest --test-dir build-debug/BRAINSTools-Debug-EPRelease-build --output-on-failure --schedule-random
   -j4
   -E "^(BCD|chk_.*BCD|BRAINSABCSmallTest)"'''
-description = "Run CTest (Debug, excludes slow tests)"
+description = "Run CTest on inner build (Debug, excludes slow tests)"
 depends-on = ["build-debug"]
 
 # ── Common tasks (no feature required) ───────

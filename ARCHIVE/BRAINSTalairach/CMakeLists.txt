@@ -50,7 +50,7 @@ set_target_properties(BRAINSTalairachSupportLib PROPERTIES FOLDER ${MODULE_FOLDE
 # could be used instead:
 # set_target_properties(BRAINSTalairachSupportLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set_target_properties(BRAINSTalairachSupportLib PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(BRAINSTalairachSupportLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 set(BRAINSTalairachLibraries BRAINSTalairachSupportLib )

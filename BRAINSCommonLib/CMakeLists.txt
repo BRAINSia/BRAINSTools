@@ -81,7 +81,7 @@ set_target_properties(BRAINSCommonLib PROPERTIES FOLDER ${MODULE_FOLDER})
 # could be used instead:
 # set_target_properties(BRAINSCommonLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-  set_target_properties(BRAINSCommonLib PROPERTIES COMPILE_FLAGS "-fPIC")
+  set_target_properties(BRAINSCommonLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 set(BRAINSCommonLib_TARGETS_FILE "${CMAKE_CURRENT_BINARY_DIR}/BRAINSCommonLibTargets.cmake")

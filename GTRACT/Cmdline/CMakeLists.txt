@@ -18,8 +18,6 @@ option(DEBUGGING_PRINT_IMAGES "Use the DEBUG_IMAGE_VIEWER for debugging" ON)
 ### A local macro for configuring all these programs consistantly for the different platforms.
 ###
 
-include_directories(${CMAKE_SOURCE_DIR}/DWIConvert)
-
 set(ALL_PROGS_LIST
   gtractImageConformity               # support DWI interface
   gtractInvertRigidTransform          # No need DWI interface

@@ -1,8 +1,7 @@
-include_directories(
-  ${BRAINSPosteriorToContinuousClass_SOURCE_DIR}/BRAINSPosteriorToContinuousClass
-  )
-
 MakeTestDriverFromSEMTool(BRAINSPosteriorToContinuousClass BRAINSPosteriorToContinuousClassTest.cxx)
+target_include_directories(BRAINSPosteriorToContinuousClassTestDriver PRIVATE
+  ${BRAINSPosteriorToContinuousClass_SOURCE_DIR}/BRAINSPosteriorToContinuousClass
+)
 if(TARGET InstallReferenceAtlas)
   add_dependencies(BRAINSPosteriorToContinuousClassTestDriver InstallReferenceAtlas) ## Needed to ensure data is installed
 endif()

@@ -28,15 +28,15 @@ set(MODULE_FOLDER "Modules-ConvertBetweenFileFormats")
 add_executable(ConvertBetweenFileFormats castconvert.cxx  castconvertDicomScalar.cxx castconvertScalar.cxx  castconvertScalar2D.cxx castconvertScalar3D.cxx castconvertScalar4D.cxx castconvertScalar4DA.cxx castconvertScalar2DA.cxx castconvertScalar3DA.cxx castconvertDicomScalarA.cxx)
 set_target_properties(ConvertBetweenFileFormats PROPERTIES FOLDER ${MODULE_FOLDER})
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    )
+target_include_directories(ConvertBetweenFileFormats PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+)
 
-target_link_libraries(ConvertBetweenFileFormats  ${ConvertBetweenFileFormats_ITK_LIBRARIES} )
+target_link_libraries(ConvertBetweenFileFormats PRIVATE ${ConvertBetweenFileFormats_ITK_LIBRARIES} )
 if(VTK_FOUND)
-  target_link_libraries(ConvertBetweenFileFormats ${VTK_LIBRARIES})
-  include_directories( ${ITKApps_SOURCE_DIR}/Auxiliary/vtk )
+  target_link_libraries(ConvertBetweenFileFormats PRIVATE ${VTK_LIBRARIES})
+  target_include_directories(ConvertBetweenFileFormats PRIVATE ${ITKApps_SOURCE_DIR}/Auxiliary/vtk)
 endif()
 
 install_targets(/bin ConvertBetweenFileFormats)

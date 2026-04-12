@@ -44,10 +44,8 @@ main(int, char **)
   ImageType::Pointer image1 = ImageType::New(), image2 = ImageType::New();
 
   ImageType::RegionType region;
-  ImageType::SizeType   size;
-  ImageType::IndexType  origin;
-  size.Fill(100);
-  origin.Fill(0);
+  auto                  size = itk::MakeFilled<ImageType::SizeType>(100);
+  ImageType::IndexType  origin{};
   region.SetSize(size);
   region.SetIndex(origin);
 
@@ -63,8 +61,8 @@ main(int, char **)
   TransformType::Pointer tfm = TransformType::New();
   tfm->SetIdentity();
 
-  TransformType::OutputVectorType rotAxis;
-  TransformType::OutputVectorType transVector;
+  auto rotAxis = itk::MakeFilled<TransformType::OutputVectorType>(1.);
+  auto transVector = itk::MakeFilled<TransformType::OutputVectorType>(50);
 
   // and two ellipses, one of which is rotated and translated
   EllipseSOType::ArrayType ePar;
@@ -72,7 +70,6 @@ main(int, char **)
   ePar[1] = 20;
   ePar[2] = 40;
 
-  transVector.Fill(50);
 
   tfm->Translate(transVector);
   ellipse->SetRadius(ePar);
@@ -86,7 +83,6 @@ main(int, char **)
   e2image->Update();
   ImageType::Pointer eImage = e2image->GetOutput();
 
-  rotAxis.Fill(1.);
   float rotAngle = 3.14 / 3.;
   tfm->Rotate3D(rotAxis, rotAngle);
   transVector[0] = 10;

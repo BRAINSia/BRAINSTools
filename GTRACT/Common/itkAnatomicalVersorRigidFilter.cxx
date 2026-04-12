@@ -96,9 +96,8 @@ AnatomicalVersorRigidFilter::Update()
             << std::endl;
 
   VersorType rotation;
-  VectorType axis;
+  VectorType axis{};
 
-  axis[0] = 0.0;
   axis[1] = 0.0;
   axis[2] = 0.0;
   axis[m_InitialRotationAxis] = 1.0;

@@ -196,8 +196,7 @@ main(int argc, char * argv[])
 
   using boundaryConditionType = itk::ConstantBoundaryCondition<DisplacementFieldType>;
   using ConstNeighborhoodIteratorType = itk::ConstNeighborhoodIterator<DisplacementFieldType, boundaryConditionType>;
-  ConstNeighborhoodIteratorType::RadiusType radius;
-  radius[0] = 1;
+  auto radius = ConstNeighborhoodIteratorType::RadiusType::Filled(1);
   radius[1] = 1;
   radius[2] = 1;
 

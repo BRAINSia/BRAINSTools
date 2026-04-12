@@ -234,8 +234,7 @@ public:
   virtual const RadiusType
   GetNeighborhoodRadius() const
   {
-    RadiusType r1;
-    r1.Fill(1);
+    auto r1 = itk::MakeFilled<RadiusType>(1);
     return r1;
   }
 

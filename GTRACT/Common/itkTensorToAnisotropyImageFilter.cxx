@@ -181,8 +181,7 @@ TensorToAnisotropyImageFilter ::computNeighborhoodVoxelAnisotropy()
   using NeighborhoodIteratorType = itk::ConstNeighborhoodIterator<InputImageType>;
   NeighborhoodIteratorType it;
 
-  NeighborhoodIteratorType::RadiusType radius;
-  radius.Fill(1);
+  auto radius = itk::MakeFilled<NeighborhoodIteratorType::RadiusType>(1);
   radius[2] = 0;
 
   // boundary condition

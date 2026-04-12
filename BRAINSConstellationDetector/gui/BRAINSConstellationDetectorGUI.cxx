@@ -254,8 +254,7 @@ main(int argc, char * argv[])
 
   // calculate the physical image extent of input image with identity
   // direction
-  ImageDirectionType direction2;
-  direction2.Fill(0);
+  ImageDirectionType direction2{};
   direction2(0, 0) = 1.0;
   direction2(1, 1) = 1.0;
   direction2(2, 2) = 1.0;

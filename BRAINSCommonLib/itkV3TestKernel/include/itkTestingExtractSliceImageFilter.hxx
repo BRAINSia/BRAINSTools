@@ -74,12 +74,10 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::SetExtractionRegion(InputIma
 {
   m_ExtractionRegion = extractRegion;
 
-  unsigned int        nonzeroSizeCount = 0;
-  InputImageSizeType  inputSize = extractRegion.GetSize();
-  OutputImageSizeType outputSize;
-  outputSize.Fill(0);
-  OutputImageIndexType outputIndex;
-  outputIndex.Fill(0);
+  unsigned int         nonzeroSizeCount = 0;
+  InputImageSizeType   inputSize = extractRegion.GetSize();
+  OutputImageSizeType  outputSize{};
+  OutputImageIndexType outputIndex{};
   /**
    * check to see if the number of non-zero entries in the extraction region
    * matches the number of dimensions in the output image.

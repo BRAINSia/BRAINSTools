@@ -100,8 +100,7 @@ AssignConvertedTransform(AffineTransformPointer & result, const VnlTransformMatr
     {
       offset[i] = matrix.get(i, 3);
     }
-    itk::Point<double, 3> ZeroCenter;
-    ZeroCenter.Fill(0.0);
+    itk::Point<double, 3> ZeroCenter{};
     result->SetIdentity();
     result->SetCenter(ZeroCenter); // Assume that rotation is about 0.0
     result->SetMatrix(rotator);

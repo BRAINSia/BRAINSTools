@@ -314,8 +314,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     /* Base the Distance on the High Resolution Grid */
     yStart1 = this->TalairachGrid->GetPoint(yGridStartIndex * TALAIRACH_X_POINTS)[1];
     yStart2 = this->TalairachGrid->GetPoint((yGridStartIndex + 1) * TALAIRACH_X_POINTS)[1];
-    vtkTalairachConversion::ImageType::PointType regionStart;
-    regionStart.Fill(0.0);
+    vtkTalairachConversion::ImageType::PointType regionStart{};
     regionStart[1] = yStart1 + boxDistancePercentage * (yStart2 - yStart1);
 
     if ((this->SegmentationMode) && (yGridStartIndex == 0) && (boxDistancePercentage == 0.0))
@@ -395,8 +394,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     yEnd1 = this->TalairachGrid->GetPoint(yGridEndIndex * TALAIRACH_X_POINTS)[1];
     yEnd2 = this->TalairachGrid->GetPoint((yGridEndIndex + 1) * TALAIRACH_X_POINTS)[1];
 
-    ImageType::PointType regionEnd;
-    regionEnd.Fill(0.0);
+    ImageType::PointType regionEnd{};
     regionEnd[1] = yEnd1 + boxDistancePercentage * (yEnd2 - yEnd1);
 
     if ((this->SegmentationMode) && (yGridEndIndex == 10) && (boxDistancePercentage == 1.0))

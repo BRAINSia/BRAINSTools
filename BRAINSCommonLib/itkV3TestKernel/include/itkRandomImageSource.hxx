@@ -200,9 +200,8 @@ void
 RandomImageSource<TOutputImage>::GenerateOutputInformation()
 {
   TOutputImage * output;
-  IndexType      index;
+  IndexType      index{};
 
-  index.Fill(0);
 
   output = this->GetOutput(0);
 

@@ -496,11 +496,10 @@ computeTmspFromPoints(SImageType::PointType RP,
 VersorRigidTransformType::Pointer
 GetACPCAlignedZeroCenteredTransform(const LandmarksMapType & landmarks)
 {
-  SImageType::PointType ZeroCenter;
+  SImageType::PointType ZeroCenter{};
 
   const auto orig_AC = GetNamedPointFromLandmarkList(landmarks, "AC");
 
-  ZeroCenter.Fill(0.0);
   VersorRigidTransformType::Pointer landmarkDefinedACPCAlignedToZeroTransform =
     computeTmspFromPoints_Versor(GetNamedPointFromLandmarkList(landmarks, "RP"),
                                  orig_AC,
@@ -660,13 +659,10 @@ MakeIsoTropicReferenceImage()
   SImageType::DirectionType Ident;
 
   Ident.SetIdentity();
-  SImageType::PointType Origin;
-  Origin.Fill(-127.5);
-  SImageType::SpacingType Spacing;
-  Spacing.Fill(1.0);
+  auto Origin = itk::MakeFilled<SImageType::PointType>(-127.5);
+  auto Spacing = itk::MakeFilled<SImageType::SpacingType>(1.0);
 
-  SImageType::SizeType Size;
-  Size.Fill(256);
+  auto                   Size = itk::MakeFilled<SImageType::SizeType>(256);
   SImageType::RegionType Region;
   Region.SetSize(Size);
 

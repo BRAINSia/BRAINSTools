@@ -41,8 +41,7 @@ main(int, char * argv[])
   ImageType::RegionType::IndexType index;
   index[0] = index[1] = index[2] = 0;
   region.SetIndex(index);
-  ImageType::RegionType::SizeType size;
-  size[0] = imageDim;
+  auto size = ImageType::RegionType::SizeType::Filled(imageDim);
   size[1] = imageDim;
   size[2] = imageDim;
   region.SetSize(size);

@@ -257,8 +257,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     double SupInf_thickness = 0;
     double RLbyAP_area = 0;
     {
-      SImageType::IndexType origin;
-      origin.Fill(0);
+      SImageType::IndexType           origin{};
       const auto                      physOrigin = volOrig->template TransformIndexToPhysicalPoint<double>(origin);
       itk::ContinuousIndex<double, 3> originPlusOne;
       originPlusOne[0] = volOrig->GetSpacing()[0];

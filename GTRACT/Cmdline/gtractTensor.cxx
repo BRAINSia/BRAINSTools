@@ -245,9 +245,7 @@ main(int argc, char * argv[])
       resampler->SetDefaultPixelValue(0);
 
       IndexImageType::SpacingType spacing;
-      spacing[0] = voxelSize;
-      spacing[1] = voxelSize;
-      spacing[2] = voxelSize;
+      spacing.Fill(voxelSize);
       resampler->SetOutputSpacing(spacing);
 
       // Use the same origin

@@ -70,8 +70,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::DtiFastMarchingCostFilter()
 {
   this->ProcessObject::SetNumberOfRequiredInputs(0);
 
-  OutputSizeType outputSize;
-  outputSize.Fill(16);
+  auto                                  outputSize = MakeFilled<OutputSizeType>(16);
   typename LevelSetImageType::IndexType outputIndex;
   outputIndex.Fill(0);
 
@@ -487,16 +486,14 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::InitializeTrialPoints(
 
   // Get complete neighborhood of alive point to process as trial points
 
-  ConstNeighborhoodIteratorType::RadiusType radius;
-  radius.Fill(1);
+  auto                          radius = MakeFilled<ConstNeighborhoodIteratorType::RadiusType>(1);
   ConstNeighborhoodIteratorType eigNeighborIt(
     radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion());
 
   eigNeighborIt.SetLocation(neighIndex); // set center at alive point index
 
   EigenvectorImageType::IndexType           eigIndex = eigNeighborIt.GetIndex();
-  ConstNeighborhoodIteratorType::OffsetType eigoffset;
-  eigoffset.Fill(0);
+  ConstNeighborhoodIteratorType::OffsetType eigoffset{};
   for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
   {
     eigIndex = eigNeighborIt.GetIndex(i); // eigIndex is new trial point
@@ -610,8 +607,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::UpdateNeighbors(
   // Get complete neighborhood of alive point to process as trial points
   using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
 
-  ConstNIterType::RadiusType radius;
-  radius.Fill(1);
+  auto           radius = MakeFilled<ConstNIterType::RadiusType>(1);
   ConstNIterType eigNeighborIt(radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion());
 
   eigNeighborIt.SetLocation(neighIndex); // set center at alive point index
@@ -689,13 +685,11 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   // Get complete neighborhood of trial point to calculate normal
 
   using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
-  ConstNIterType::RadiusType radius;
-  radius.Fill(1);
+  auto           radius = MakeFilled<ConstNIterType::RadiusType>(1);
   ConstNIterType eigNeighborIt(radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion());
 
   eigNeighborIt.SetLocation(neighIndex); // set center at trial point index
-  ConstNIterType::OffsetType eigoffset;
-  eigoffset.Fill(0);
+  ConstNIterType::OffsetType eigoffset{};
   offsetList.clear();
   for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
   {
@@ -843,13 +837,11 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   // Get complete neighborhood of trial point to calculate normal
 
   using ConstNIterType = itk::ConstNeighborhoodIterator<EigenvectorImageType>;
-  ConstNIterType::RadiusType radius;
-  radius.Fill(1);
+  auto           radius = MakeFilled<ConstNIterType::RadiusType>(1);
   ConstNIterType eigNeighborIt(radius, m_EigenvectorImage, m_EigenvectorImage->GetLargestPossibleRegion());
 
   eigNeighborIt.SetLocation(neighIndex); // set center at trial point index
-  ConstNIterType::OffsetType eigoffset;
-  eigoffset.Fill(0);
+  ConstNIterType::OffsetType eigoffset{};
   eigIndex = eigNeighborIt.GetIndex();
   for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
   {

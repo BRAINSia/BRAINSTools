@@ -134,12 +134,10 @@ main(int argc, char * argv[])
     throw;
   }
 
-  itk::Array<int> lut;
-  lut.SetSize(imageReader->GetOutput()->GetVectorLength());
+  itk::Array<int> lut(imageReader->GetOutput()->GetVectorLength(), 0);
   lut.Fill(0);
 
-  itk::Array<int> count;
-  count.SetSize(imageReader->GetOutput()->GetVectorLength());
+  itk::Array<int> count(imageReader->GetOutput()->GetVectorLength(), 0);
   count.Fill(0);
 
   if (debug)

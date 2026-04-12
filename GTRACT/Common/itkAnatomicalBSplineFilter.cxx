@@ -103,12 +103,11 @@ AnatomicalBSplineFilter::Update()
   /*** Setup the B-SPline Parameters ***/
   TransformRegionType bsplineRegion;
   TransformSizeType   gridSizeOnImage;
-  TransformSizeType   gridBorderSize;
+  auto                gridBorderSize = itk::MakeFilled<TransformSizeType>(m_GridBorderSize);
   TransformSizeType   totalGridSize;
 
   gridSizeOnImage.SetSize(m_GridSize.GetSize());
-  gridBorderSize.Fill(m_GridBorderSize); // Border for spline order = 3 ( 1
-                                         // lower, 2 upper )
+  // lower, 2 upper )
   totalGridSize = gridSizeOnImage + gridBorderSize;
 
   // bsplineRegion.SetSize( totalGridSize );

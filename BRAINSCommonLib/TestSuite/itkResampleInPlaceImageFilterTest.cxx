@@ -84,12 +84,10 @@ main(int argc, char * argv[])
   }
 
   // Set up transforms
-  itk::Vector<double, 3> rotationAxis;
-  rotationAxis.Fill(0.);
+  auto rotationAxis = itk::MakeFilled<itk::Vector<double, 3>>(0.);
   rotationAxis[0] = 1.;
-  const double           rotationAngle = .5; // in rad
-  itk::Vector<double, 3> translation;
-  translation.Fill(0.);
+  const double rotationAngle = .5; // in rad
+  auto         translation = itk::MakeFilled<itk::Vector<double, 3>>(0.);
   translation[1] = 300.; // in mm along P-axis
   const TransformType::Pointer transform = TransformType::New();
   transform->SetIdentity();

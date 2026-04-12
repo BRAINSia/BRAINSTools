@@ -161,8 +161,7 @@ main(int argc, char * argv[])
   referenceImageReader->GetOutput()->Print(std::cout);
 
   CodeImageType::PointType        p2;
-  itk::ContinuousIndex<double, 3> imageIndex;
-  imageIndex[0] = 0;
+  itk::ContinuousIndex<double, 3> imageIndex{};
   imageIndex[1] = 0;
   imageIndex[2] = 0;
   const auto p1 = codeImageReader->GetOutput()->template TransformContinuousIndexToPhysicalPoint<double>(imageIndex);

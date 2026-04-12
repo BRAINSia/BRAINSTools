@@ -132,8 +132,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
     LandmarksMapType zeroEyeCenters;
     if (this->m_HoughEyeFailure)
     {
-      SImageType::PointType zeroPoint;
-      zeroPoint.Fill(0);
+      SImageType::PointType zeroPoint{};
 
       zeroEyeCenters["LE"] = zeroPoint;
       zeroEyeCenters["RE"] = zeroPoint;

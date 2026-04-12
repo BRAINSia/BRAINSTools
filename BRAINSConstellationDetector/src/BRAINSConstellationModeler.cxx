@@ -261,8 +261,7 @@ main(int argc, char * argv[])
       image = volOrig;
     }
 
-    SImageType::PointType origin;
-    origin.Fill(0);
+    SImageType::PointType origin{};
 
     // This section assumes that the landmarks are defined as
     // ITK compliant physical space
@@ -534,8 +533,7 @@ main(int argc, char * argv[])
   std::vector<float> RPPC_to_RPAC_angle(myModel.GetNumDataSets());
   std::vector<float> RPAC_over_RPPC(myModel.GetNumDataSets());
   // Initializing CMtoRPMean
-  SImageType::PointType::VectorType CMtoRPMean;
-  CMtoRPMean.Fill(0.0);
+  SImageType::PointType::VectorType CMtoRPMean{};
   // This for loop does two jobs
   for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
   {

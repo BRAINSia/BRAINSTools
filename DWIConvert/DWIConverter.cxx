@@ -23,8 +23,7 @@ DWIConverter::~DWIConverter() = default;
 DWIConverter::RotationMatrixType
 DWIConverter::GetSpacingMatrix() const
 {
-  RotationMatrixType SpacingMatrix;
-  SpacingMatrix.Fill(0.0);
+  RotationMatrixType SpacingMatrix{};
   SpacingMatrix[0][0] = this->m_Volume->GetSpacing()[0];
   SpacingMatrix[1][1] = this->m_Volume->GetSpacing()[1];
   SpacingMatrix[2][2] = this->m_Volume->GetSpacing()[2];
@@ -521,8 +520,7 @@ DWIConverter::ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) con
     size4D[1] = size3D[1];
     size4D[2] = size3D[2] / nVolumes;
     size4D[3] = nVolumes;
-    Volume4DType::IndexType index4D;
-    index4D.Fill(0);
+    Volume4DType::IndexType index4D{};
     region4D.SetIndex(index4D);
     region4D.SetSize(size4D);
 
@@ -535,10 +533,8 @@ DWIConverter::ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) con
   }
   Volume4DType::DirectionType direction4D;
   direction4D.SetIdentity();
-  Volume4DType::SpacingType spacing4D;
-  spacing4D.Fill(1.0);
-  Volume4DType::PointType origin4D;
-  origin4D.Fill(0.0);
+  auto                    spacing4D = itk::MakeFilled<Volume4DType::SpacingType>(1.0);
+  Volume4DType::PointType origin4D{};
   for (unsigned i = 0; i < 3; ++i)
   {
     for (unsigned j = 0; j < 3; ++j)
@@ -588,8 +584,7 @@ DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
     const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
     size3D[2] = size4D[2] * nVolumes;
 
-    Volume3DUnwrappedType::IndexType index3D;
-    index3D.Fill(0);
+    Volume3DUnwrappedType::IndexType index3D{};
     region3D.SetIndex(index3D);
     region3D.SetSize(size3D);
 
@@ -602,10 +597,8 @@ DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
   }
   Volume3DUnwrappedType::DirectionType direction3D;
   direction3D.SetIdentity();
-  Volume3DUnwrappedType::SpacingType spacing3D;
-  spacing3D.Fill(1.0);
-  Volume3DUnwrappedType::PointType origin3D;
-  origin3D.Fill(0.0);
+  auto                             spacing3D = itk::MakeFilled<Volume3DUnwrappedType::SpacingType>(1.0);
+  Volume3DUnwrappedType::PointType origin3D{};
   for (unsigned i = 0; i < 3; ++i)
   {
     for (unsigned j = 0; j < 3; ++j)

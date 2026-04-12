@@ -251,10 +251,8 @@ main(int argc, char * argv[])
     maskInterpolator->SetInputImage(mask_labels);
 
     // pad the distance map
-    MaskImageType::SizeType lowerPadBound;
-    lowerPadBound.Fill(80); // 40 mm @ 0.5 mm spacing
-    MaskImageType::SizeType upperPadBound;
-    upperPadBound.Fill(80); // 40 mm @ 0.5 mm spacing
+    auto lowerPadBound = itk::MakeFilled<MaskImageType::SizeType>(80);
+    auto upperPadBound = itk::MakeFilled<MaskImageType::SizeType>(80);
 
     const itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::Pointer padImageFilter =
       itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::New();

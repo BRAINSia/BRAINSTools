@@ -52,8 +52,7 @@ main(int, char **)
   using CastType = itk::CastImageFilter<ImageType, LocalMaskImageType>;
   using CompositeTransformType = itk::CompositeTransform<double, 3>;
 
-  ImageType::SizeType size;
-  size.Fill(100);
+  auto size = itk::MakeFilled<ImageType::SizeType>(100);
 
   const TransformType::Pointer tfm = TransformType::New();
   tfm->SetIdentity();
@@ -85,8 +84,7 @@ main(int, char **)
 
   ImageType::Pointer eTfmImage;
   {
-    TransformType::OutputVectorType rotAxis;
-    rotAxis.Fill(1.);
+    auto        rotAxis = itk::MakeFilled<TransformType::OutputVectorType>(1.);
     const float rotAngle = 3.14 / 3.;
     tfm->Rotate3D(rotAxis, rotAngle);
     transVector[0] = 10;

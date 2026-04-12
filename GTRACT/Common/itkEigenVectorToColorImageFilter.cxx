@@ -74,8 +74,7 @@ EigenVectorToColorImageFilter ::Update()
   {
     index = it.GetIndex();
     InputPixelType  tensor = m_Input->GetPixel(index);
-    OutputPixelType currentVoxel;
-    currentVoxel.Fill(0);
+    OutputPixelType currentVoxel{};
     if (tensor.GetNorm() != 0)
     {
       TMatrix                          M = Tensor2Matrix(tensor);

@@ -73,8 +73,7 @@ int
 main(int argc, char * argv[])
 {
   const std::complex<float>                     Zero(0.8F, 0.8F);
-  HalfHermetianImageType::RegionType::IndexType startIndex;
-  startIndex.Fill(0);
+  HalfHermetianImageType::RegionType::IndexType startIndex{};
   HalfHermetianImageType::RegionType region;
   region.SetIndex(startIndex);
   HalfHermetianImageType::RegionType::SizeType size;
@@ -162,16 +161,13 @@ main(int argc, char * argv[])
   using Image2D = itk::Image<float,3>;
   Image2D::Pointer im2 = Image2D::New();
   Image2D::RegionType region;
-  Image2D::RegionType::SizeType size;
-  size.Fill(IM2DSIZE);
+  auto size = itk::MakeFilled<Image2D::RegionType::SizeType>(IM2DSIZE);
   region.SetSize(size);
-  Image2D::SpacingType spacing;
-  spacing.Fill(1.25);
+  auto spacing = itk::MakeFilled<Image2D::SpacingType>(1.25);
   im2->SetSpacing(spacing);
   im2->SetRegions(region);
   im2->Allocate();
-  Image2D::IndexType idx;
-  idx.Fill(IM2DSIZE/2);
+  auto idx = itk::MakeFilled<Image2D::IndexType>(IM2DSIZE/2);
   idx.Fill(0);
   im2->SetPixel(idx,1.0F);
   //using GradientType = itk::GradientImageFilter<Image2D>;

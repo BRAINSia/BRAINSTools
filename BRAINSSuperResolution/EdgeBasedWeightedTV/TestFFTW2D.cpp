@@ -59,8 +59,7 @@ main(int argc, char * argv[])
   CImageType::Pointer CR = CImageType::New();
   {
     CImageType::RegionType region;
-    CImageType::SizeType   size;
-    size.Fill(9);
+    auto size = itk::MakeFilled<CImageType::SizeType>(9);
     region.SetSize(size);
     CR->SetRegions(region);
   }

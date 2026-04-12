@@ -61,8 +61,7 @@ landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType &
                                                          const SImagePointType & AC,
                                                          const SImagePointType & PC)
 {
-  SImageType::PointType ZeroCenter;
-  ZeroCenter.Fill(0.0);
+  SImageType::PointType ZeroCenter{};
 
   const Euler3DTransformType::Pointer orig2msp_lmk_tfm_estimate = computeTmspFromPoints(RP, AC, PC, ZeroCenter);
 
@@ -372,8 +371,7 @@ landmarksConstellationDetector::FindCandidatePoints(
     roiSize[1] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[1] - LPS_BEGIN[1]);
     roiSize[2] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[2] - LPS_BEGIN[2]);
     // start index
-    SImageType::IndexType roiStart;
-    roiStart.Fill(0);
+    SImageType::IndexType roiStart{};
     // region
     const SImageType::RegionType roiRegion(roiStart, roiSize);
     roiImage->SetRegions(roiRegion);
@@ -499,8 +497,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   mi_size[0] = 2 * height + 1;
   mi_size[1] = 2 * radii + 1;
   mi_size[2] = 2 * radii + 1;
-  FImageType3D::IndexType mi_start;
-  mi_start.Fill(0);
+  FImageType3D::IndexType        mi_start{};
   const FImageType3D::RegionType mi_region(mi_start, mi_size);
   lmkTemplateImage->SetRegions(mi_region);
   lmkTemplateImage->Allocate();
@@ -682,8 +679,7 @@ landmarksConstellationDetector::LinearEstimation(LandmarksMapType &             
     return;
   }
   const std::string &   newPointName = processingList[processingList.size() - 1];
-  SImageType::PointType newPoint;
-  newPoint.Fill(0);
+  SImageType::PointType newPoint{};
 
   // Construct Xi_t
   VectorType Xi_t;

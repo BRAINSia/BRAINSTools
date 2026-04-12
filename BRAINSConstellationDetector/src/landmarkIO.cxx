@@ -84,9 +84,8 @@ GenerateRGB2DImage(const RGBImageType::Pointer & orientedImage)
 {
   // Alocate 2DImage
   RGB2DImageType::Pointer   TwoDImage = RGB2DImageType::New();
-  RGB2DImageType::IndexType TwoDIndex;
+  RGB2DImageType::IndexType TwoDIndex{};
 
-  TwoDIndex[0] = 0;
   TwoDIndex[1] = 0;
   RGB2DImageType::SizeType TwoDSize;
   TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];

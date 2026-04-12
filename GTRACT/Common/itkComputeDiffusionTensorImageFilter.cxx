@@ -130,8 +130,7 @@ ComputeDiffusionTensorImageFilter ::Update()
       TensorIndex[i] = ADCIndex[i];
     }
 
-    OutputPixelType currentVoxel;
-    currentVoxel.Fill(0);
+    OutputPixelType currentVoxel{};
 
     if (ADC0 > m_BackgroundThreshold)
     {

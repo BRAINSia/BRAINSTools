@@ -112,8 +112,7 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::GenerateInputReques
   // get a copy of the input requested region (should equal the output requested region)
   typename TInputImage::RegionType inputRequestedRegion = inputPtr->GetRequestedRegion();
 
-  RadiusType r1;
-  r1.Fill(1);
+  auto r1 = MakeFilled<RadiusType>(1);
   // pad the input requested region by the operator radius
   inputRequestedRegion.PadByRadius(r1);
 
@@ -207,8 +206,7 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::ThreadedGenerateDat
   // Find the data-set boundary "faces"
   typename NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<RealVectorImageType>::FaceListType faceList;
   NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<RealVectorImageType>                        bC;
-  RadiusType                                                                                      r1;
-  r1.Fill(1);
+  auto r1 = MakeFilled<RadiusType>(1);
   faceList =
     bC(dynamic_cast<const RealVectorImageType *>(m_RealValuedInputImage.GetPointer()), outputRegionForThread, r1);
 

@@ -138,8 +138,7 @@ static FloatImageType::Pointer
 GetDiracDeltaImage(FloatImageType::Pointer edgemask)
 {
   FloatImageType::Pointer   p_image = CreateEmptyImage<FloatImageType>(edgemask);
-  FloatImageType::IndexType zeroIdx;
-  zeroIdx.Fill(0);
+  FloatImageType::IndexType zeroIdx{};
   p_image->SetPixel(zeroIdx, 1);
   return p_image;
 }

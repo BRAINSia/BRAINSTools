@@ -434,8 +434,7 @@ public:
     }
 
     // Define start index
-    SImageType::IndexType outputImageStartIndex;
-    outputImageStartIndex.Fill(0);
+    SImageType::IndexType outputImageStartIndex{};
 
     // Define the output image direction identical
     SImageType::DirectionType outputImageDirection;

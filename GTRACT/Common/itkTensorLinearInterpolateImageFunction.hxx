@@ -93,8 +93,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
    * neighbors. The weight for each neighbour is the fraction overlap
    * of the neighbor pixel with respect to a pixel centered on point.
    */
-  OutputType output;
-  output.Fill(0.0);
+  OutputType output{};
 
   RealType totalOverlap = 0.0;
   for (unsigned int counter = 0; counter < m_Neighbors; counter++)

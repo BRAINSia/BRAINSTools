@@ -37,9 +37,7 @@ main(int, char **)
   region.SetIndex(2, 0);
 
   ImageType::SpacingType spacing;
-  spacing[0] = 1.0;
-  spacing[1] = 1.0;
-  spacing[2] = 1.0;
+  spacing.Fill(1.0);
 
   ImageType::Pointer   img = itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);
   ImageType::IndexType index;

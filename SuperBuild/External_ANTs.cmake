@@ -130,12 +130,9 @@ if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
-set(${proj}_REPOSITORY "https://github.com/ANTsX/ANTs.git")
-## set(${proj}_REPOSITORY "https://github.com/BRAINSia/ANTs.git")
+set(${proj}_REPOSITORY "https://github.com/hjmjohnson/ANTs.git")
 set(${proj}_GIT_TAG
-  #ebc7430177db73f3cdef7d28c3f716cd9a399b93  # 20240531 - Update to new ITK version
-  #193e36eedbdc4183d5c749ba3e8b270ae399ee42  # 20250617 - Update to new ITK version
-  1766655ca9e00c0b95c765fea2d2468436c94ceb  # 20260325 - Latest master
+  31faec49e3e82dc39f21139d70034be65dfc9a95  # 20260512 - antsconfig-cmake-modernize (ANTsX/ANTs#1973)
 )
 
 ExternalProject_Add(${proj}
@@ -163,11 +160,14 @@ ExternalProject_Add(${proj}
 
 set(${proj}_SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj})
 set(${proj}_LIBRARY_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-#${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}-${CMAKE_BUILD_TYPE}-EP${EXTERNAL_PROJECT_BUILD_TYPE}-build/lib)
+# Once ANTsX/ANTs#1973 lands and an ANTs release containing it ships,
+# downstream consumes ANTs via find_package(ANTS) -> ${ANTS_DIR}/ANTSConfig.cmake.
+set(ANTS_DIR ${CMAKE_INSTALL_PREFIX}/lib/cmake/ANTS)
 
 mark_as_superbuild(
   VARS
      ${proj}_SOURCE_DIR:PATH
      ${proj}_LIBRARY_DIR:PATH
+     ANTS_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

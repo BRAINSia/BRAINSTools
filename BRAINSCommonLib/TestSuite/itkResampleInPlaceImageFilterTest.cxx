@@ -34,7 +34,7 @@
 inline bool
 Validate(double input, double desired, double tolerance)
 {
-  return std::abs<double>(input - desired) > tolerance * std::abs<double>(desired);
+  return std::abs(input - desired) > tolerance * std::abs(desired);
 }
 
 int

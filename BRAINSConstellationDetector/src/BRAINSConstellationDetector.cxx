@@ -69,15 +69,10 @@ main(int argc, char * argv[])
   // set the template model to default
   if (inputTemplateModel.compare("") == 0)
   {
-    std::string pathOut;
-    std::string errorMsg;
-
-    if (!itksys::SystemTools::FindProgramPath(argv[0], pathOut, errorMsg))
-
+    std::string pathOut = itksys::SystemTools::FindProgram(argv[0]);
+    if (pathOut.empty())
     {
       std::cerr << "Error: Input Template Model File not found" << std::endl;
-      std::cerr << errorMsg << std::endl;
-
       return 1;
     }
 
@@ -89,15 +84,10 @@ main(int argc, char * argv[])
   // set the llsModel to default
   if (llsModel.empty())
   {
-    std::string pathOut;
-    std::string errorMsg;
-
-    if (!itksys::SystemTools::FindProgramPath(argv[0], pathOut, errorMsg))
-
+    std::string pathOut = itksys::SystemTools::FindProgram(argv[0]);
+    if (pathOut.empty())
     {
       std::cerr << "Error: Input LLSModel File not found" << std::endl;
-      std::cerr << errorMsg << std::endl;
-
       return 1;
     }
 

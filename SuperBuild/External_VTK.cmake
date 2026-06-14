@@ -189,6 +189,9 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
 
+  # GCC 14 errors on implicit-function-declaration; bundled VTK hdf5 uses vasprintf without _GNU_SOURCE.
+  string(APPEND ep_CMAKE_C_FLAGS " -Wno-error=implicit-function-declaration")
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"

@@ -174,7 +174,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     set(_git_tag "08210fbecda09bea2544dbb80777d634e1bfea25") # slicer-v9.5.2-2025-09-16-7c0494a68
     set(vtk_dist_info_version "9.5.2")
   elseif("${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}" STREQUAL "9.6")
-    set(_git_tag "a0bea7a6f58008e3599142594d9f9c8845618645") # slicer-v9.6.1-2026-03-24-d3ad22cd8
+    set(_git_tag "ddd10cf957df01f54eca6546e975e502ea248645") # slicer-v9.6.2-2026-05-15-f49a1dbaf
     set(vtk_dist_info_version "9.6.1")
   else()
     message(FATAL_ERROR "error: Unsupported VTK_VERSION_MAJOR.VTK_VERSION_MINOR: ${VTK_VERSION_MAJOR}.${VTK_VERSION_MINOR}")

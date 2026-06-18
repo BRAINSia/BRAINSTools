@@ -130,15 +130,25 @@ if(${SUPERBUILD_TOPLEVEL_PROJECT}_USE_QT)
   list(APPEND ${proj}_CMAKE_OPTIONS -DANTS_USE_QT:BOOL=ON)
 endif()
 ### --- End Project specific additions
-set(${proj}_REPOSITORY "https://github.com/hjmjohnson/ANTs.git")
-set(${proj}_GIT_TAG
-  31faec49e3e82dc39f21139d70034be65dfc9a95  # 20260512 - antsconfig-cmake-modernize (ANTsX/ANTs#1973)
-)
+
+# HINT: -DBRAINSTools_ANTs_GIT_REPOSITORY:STRING=https://github.com/hjmjohnson/ANTs.git to override
+# HINT: -DBRAINSTools_ANTs_GIT_TAG:STRING=antsconfig-cmake-modernize
+ExternalProject_SetIfNotDefined(
+  ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
+  "https://github.com/ANTsX/ANTs.git"
+  QUIET
+  )
+
+ExternalProject_SetIfNotDefined(
+  ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
+  d2fbf8bd525f0b9f907b9c6ebd35ab26a4d8927a # 20260618 - ANTsX/ANTs main
+  QUIET
+  )
 
 ExternalProject_Add(${proj}
   ${${proj}_EP_ARGS}
-  GIT_REPOSITORY ${${proj}_REPOSITORY}
-  GIT_TAG ${${proj}_GIT_TAG}
+  GIT_REPOSITORY "${${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY}"
+  GIT_TAG "${${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG}"
   GIT_SHALLOW ${BRAINSTools_EP_GIT_SHALLOW}  # ON in CI; OFF for local builds
   UPDATE_DISCONNECTED TRUE  # skip git-update step; cached source is at correct commit
   SOURCE_DIR ${SOURCE_DOWNLOAD_CACHE}/${proj}

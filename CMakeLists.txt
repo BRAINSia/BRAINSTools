@@ -17,7 +17,7 @@ if(NOT CMAKE_CXX_EXTENSIONS)
 endif()
 set(VALID_CXX_STANDARDS "17" "20" "23" "26")
 if(NOT CMAKE_CXX_STANDARD IN_LIST VALID_CXX_STANDARDS )
-   MESSAGE(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
+   message(FATAL_ERROR "CMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} not in know standards list\n ${VALID_CXX_STANDARDS}  for BRAINSTools version 5 and greater.")
 endif()
 
 #-----------------------------------------------------------------------------

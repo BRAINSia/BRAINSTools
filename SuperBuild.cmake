@@ -55,6 +55,7 @@ cmake_dependent_option(
   )
 
 option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
+option(USE_SYSTEM_ANTs "Build using an externally defined version of ANTs (find_package(ANTS); set ANTS_DIR)" OFF)
 option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
 option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
 option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)

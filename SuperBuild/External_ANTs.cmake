@@ -13,6 +13,26 @@ endif()
 # Set dependency list
 ExternalProject_Include_Dependencies(${proj} PROJECT_VAR proj DEPENDS_VAR ${proj}_DEPENDENCIES)
 
+# Consume a pre-built ANTs instead of building it when USE_SYSTEM_ANTs is ON or
+# an ANTS_DIR is supplied (mirrors External_ITKv5 / External_VTK). The inner
+# build resolves ANTs via find_package(ANTS CONFIG) using ANTS_DIR.
+if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  unset(ANTS_DIR CACHE)
+  find_package(ANTS CONFIG REQUIRED)
+endif()
+
+if(DEFINED ANTS_DIR AND NOT EXISTS ${ANTS_DIR})
+  message(FATAL_ERROR "ANTS_DIR variable is defined but corresponds to nonexistent directory")
+endif()
+
+if(DEFINED ANTS_DIR OR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  # ANTs supplied externally: add a no-op target so dependents resolve, expose
+  # ANTS_DIR to the inner build, and skip building ANTs.
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  mark_as_superbuild(VARS ANTS_DIR:PATH LABELS "FIND_PACKAGE")
+  return()
+endif()
+
 
 
 ### --- Project specific additions here

@@ -223,7 +223,7 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::ThreadedGenerateDat
   {
     bit = ConstNeighborhoodIteratorType(
       r1, dynamic_cast<const RealVectorImageType *>(m_RealValuedInputImage.GetPointer()), *fit);
-    it = ImageRegionIterator<TOutputImage>(this->GetOutput(), *fit);
+    it = ImageRegionIterator(this->GetOutput(), *fit);
     bit.OverrideBoundaryCondition(&nbc);
     bit.GoToBegin();
 

@@ -85,7 +85,7 @@ TestCreateRotationVersorFromAngles(const double alpha, const double beta, const 
  * Versor produces consistent results.
  */
 int
-RotationMatrixToVersorTest(void)
+RotationMatrixToVersorTest()
 {
   int errorCount = 0;
   // const double onedegree=1e-10*itk::Math::pi/180.0;

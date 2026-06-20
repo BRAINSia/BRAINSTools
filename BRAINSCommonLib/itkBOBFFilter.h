@@ -71,7 +71,7 @@ public:
   }
 
   const InputImageType *
-  GetInputImage(void)
+  GetInputImage()
   {
     return this->GetInput();
   }
@@ -82,7 +82,7 @@ public:
 
   /** Get the input mask */
   const InputImageType *
-  GetInputMask(void);
+  GetInputMask();
 
   /** Set seed point. */
 

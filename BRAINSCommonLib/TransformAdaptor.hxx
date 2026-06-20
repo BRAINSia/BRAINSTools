@@ -140,7 +140,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ExecuteOutput()
 
 template <typename TCoordinateType, unsigned int NDimensions, typename TInputImage>
 void
-TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverSystemForAir16(void)
+TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverSystemForAir16()
 {
   /*
    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing
@@ -235,7 +235,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
 
 template <typename TCoordinateType, unsigned int NDimensions, typename TInputImage>
 void
-TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverSystemForB2xfrm(void)
+TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverSystemForB2xfrm()
 {
   /*
    *  IMPORTANT:  In the new design, conversion is accomplished by enclosing
@@ -317,7 +317,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::EstablishCrossOverS
 
 template <typename TCoordinateType, unsigned int NDimensions, typename TInputImage>
 void
-TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ConvertInputAffineToITKAffine(void)
+TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ConvertInputAffineToITKAffine()
 {
 #ifndef NDEBUG
   std::cout << "Inhaling Shift: " << GetInputAffineTransform()->GetOffset() << std::endl;
@@ -337,7 +337,7 @@ TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ConvertInputAffineT
 
 template <typename TCoordinateType, unsigned int NDimensions, typename TInputImage>
 void
-TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ConvertITKAffineToOutputAffine(void)
+TransformAdaptor<TCoordinateType, NDimensions, TInputImage>::ConvertITKAffineToOutputAffine()
 {
   GetOutputAffineTransform()->SetIdentity();
   const bool ApplyUpstream = false;

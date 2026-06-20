@@ -285,7 +285,7 @@ ComparisonImageFilter<TInputImage, TOutputImage>::SetInput(unsigned int index, c
  */
 template <typename TInputImage, typename TOutputImage>
 const TInputImage *
-ComparisonImageFilter<TInputImage, TOutputImage>::GetInput(void) const
+ComparisonImageFilter<TInputImage, TOutputImage>::GetInput() const
 {
   if (this->GetNumberOfInputs() < 1)
   {

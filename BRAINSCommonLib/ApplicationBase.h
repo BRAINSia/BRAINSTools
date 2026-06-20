@@ -64,7 +64,7 @@ public:
   itkGetConstMacro(OutDebug, bool);
 
   RegistratorType *
-  GetRegistratorType(void)
+  GetRegistratorType()
   {
     return m_Registrator;
   }

@@ -180,7 +180,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>::SetInput(const TInputIma
  */
 template <typename TInputImage, typename TOutputImage>
 const TInputImage *
-StretchIntensityImageFilter<TInputImage, TOutputImage>::GetInput(void) const
+StretchIntensityImageFilter<TInputImage, TOutputImage>::GetInput() const
 {
   if (this->GetNumberOfInputs() < 1)
   {

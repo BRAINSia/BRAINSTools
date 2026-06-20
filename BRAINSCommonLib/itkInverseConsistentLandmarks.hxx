@@ -43,7 +43,7 @@
 namespace itk
 {
 template <typename PointStorageType, typename PointSetType>
-InverseConsistentLandmarks<PointStorageType, PointSetType>::InverseConsistentLandmarks(void)
+InverseConsistentLandmarks<PointStorageType, PointSetType>::InverseConsistentLandmarks()
 {
   ImageDims[0] = 12345;
   ImageDims[1] = 12345;
@@ -220,7 +220,7 @@ InverseConsistentLandmarks<PointStorageType, PointSetType>::WritePointTypes(cons
 
 template <typename PointStorageType, typename PointSetType>
 bool
-InverseConsistentLandmarks<PointStorageType, PointSetType>::PrintPointTypes(void) const
+InverseConsistentLandmarks<PointStorageType, PointSetType>::PrintPointTypes() const
 {
   itk::NumberToString<double> doubleConvert;
 

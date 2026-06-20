@@ -65,7 +65,7 @@ public: /* define methods available to everyone */
   SetMaskImage(const InputImageType * reference);
 
   const InputImageType *
-  GetMaskImage(void);
+  GetMaskImage();
 
 protected: /* define methods available only to related classes */
   ApplyMaskImageFilter();

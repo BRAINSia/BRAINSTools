@@ -101,7 +101,7 @@ public:
   SetInput(unsigned int, const TInputImage * image);
 
   const TInputImage *
-  GetInput(void) const;
+  GetInput() const;
 
   const TInputImage *
   GetInput(unsigned int idx) const;

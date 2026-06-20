@@ -53,10 +53,10 @@ private:
   SetupSocketConnections();
 
   using ImageDisplayListType = std::vector<QImageDisplay *>;
-  ImageDisplayListType m_ImageDisplayList;
-  int                  m_ViewCount;
-  QTcpServer *         m_Server;
-  QTcpSocket *         m_Socket;
+  ImageDisplayListType m_ImageDisplayList{};
+  int                  m_ViewCount{};
+  QTcpServer *         m_Server{};
+  QTcpSocket *         m_Socket{};
 };
 
 #endif // QDebugImageViewerWindow_h

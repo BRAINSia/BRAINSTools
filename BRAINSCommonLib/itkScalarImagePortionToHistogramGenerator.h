@@ -135,10 +135,10 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  ListSampleGeneratorPointer m_ImageToListSampleGenerator;
+  ListSampleGeneratorPointer m_ImageToListSampleGenerator{};
 
-  HistogramPointer m_Histogram;
-  GeneratorPointer m_HistogramGenerator;
+  HistogramPointer m_Histogram{};
+  GeneratorPointer m_HistogramGenerator{};
 };
 } // end of namespace Statistics
 } // end of namespace itk

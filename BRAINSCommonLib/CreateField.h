@@ -110,29 +110,29 @@ protected:
   virtual ~CreateField();
 
 private:
-  typename ImageType::Pointer m_ImageOne;
-  typename ImageType::Pointer m_ImageTwo;
-  std::string                 m_Image1Filename;
-  std::string                 m_Image2Filename;
-  std::string                 m_ParameterFilename;
+  typename ImageType::Pointer m_ImageOne{};
+  typename ImageType::Pointer m_ImageTwo{};
+  std::string                 m_Image1Filename{};
+  std::string                 m_Image2Filename{};
+  std::string                 m_ParameterFilename{};
 
-  unsigned long     m_NumberOfHistogramLevels;
-  unsigned long     m_NumberOfMatchPoints;
-  unsigned short    m_NumberOfLevels;
-  ShrinkFactorsType m_Image1ShrinkFactors;
-  ShrinkFactorsType m_Image2ShrinkFactors;
-  UnsignedIntArray  m_NumberOfIterations;
+  unsigned long     m_NumberOfHistogramLevels{};
+  unsigned long     m_NumberOfMatchPoints{};
+  unsigned short    m_NumberOfLevels{};
+  ShrinkFactorsType m_Image1ShrinkFactors{};
+  ShrinkFactorsType m_Image2ShrinkFactors{};
+  UnsignedIntArray  m_NumberOfIterations{};
 
-  InputPixelType m_FixedImageMinimum;
-  InputPixelType m_MovingImageMinimum;
+  InputPixelType m_FixedImageMinimum{};
+  InputPixelType m_MovingImageMinimum{};
 
-  typename OutputImageType::Pointer        m_FixedImage;
-  typename OutputImageType::Pointer        m_MovingImage;
-  typename FixedImagePyramidType::Pointer  m_FixedImagePyramid;
-  typename MovingImagePyramidType::Pointer m_MovingImagePyramid;
-  typename TDisplacementField::Pointer     m_DisplacementField;
-  unsigned long                            m_Tag;
-  typename RegistrationType::Pointer       m_Registration;
+  typename OutputImageType::Pointer        m_FixedImage{};
+  typename OutputImageType::Pointer        m_MovingImage{};
+  typename FixedImagePyramidType::Pointer  m_FixedImagePyramid{};
+  typename MovingImagePyramidType::Pointer m_MovingImagePyramid{};
+  typename TDisplacementField::Pointer     m_DisplacementField{};
+  unsigned long                            m_Tag{};
+  typename RegistrationType::Pointer       m_Registration{};
 
   using OutputImagePointer = typename OutputImageType::Pointer;
   void

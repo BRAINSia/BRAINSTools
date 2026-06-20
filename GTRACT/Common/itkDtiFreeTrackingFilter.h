@@ -92,7 +92,7 @@ protected:
   ~DtiFreeTrackingFilter() override = default;
 
 private:
-  double m_CurvatureThreshold;
+  double m_CurvatureThreshold{};
 }; // end of class
 } // end namespace itk
 

@@ -42,9 +42,9 @@ namespace Functor
       inline TOutput operator()(const TInput1 & A, const TInput2 & B) const
       { return static_cast<TOutput>( m_Ascaler*A + m_Bscaler*B ); }
       private:
-         double m_Ascaler;
-         double m_Bscaler;
-         double m_OveralScaler;
+         double m_Ascaler{};
+         double m_Bscaler{};
+         double m_OveralScaler{};
     };
 }
 

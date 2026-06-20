@@ -149,8 +149,8 @@ protected:
   unsigned int m_NumDataSets{ 0 };
   unsigned int m_SearchboxDims{ 0 };
   float        m_ResolutionUnits{ 1.0 };
-  ValMapType   m_Height;
-  ValMapType   m_Radius;
+  ValMapType   m_Height{};
+  ValMapType   m_Radius{};
   float        m_InitialRotationAngle{ 0.0 };
   float        m_InitialRotationStep{ 0.0 };
   unsigned int m_NumRotationSteps{ 0 };

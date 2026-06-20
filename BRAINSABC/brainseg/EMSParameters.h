@@ -121,36 +121,36 @@ public:
 protected:
   EMSParameters();
 
-  std::string m_Suffix;
+  std::string m_Suffix{};
 
-  std::string m_AtlasDirectory;
-  std::string m_AtlasOrientation;
+  std::string m_AtlasDirectory{};
+  std::string m_AtlasOrientation{};
 
-  bool m_DoAtlasWarp;
+  bool m_DoAtlasWarp{};
 
-  unsigned int m_AtlasWarpGridX;
-  unsigned int m_AtlasWarpGridY;
-  unsigned int m_AtlasWarpGridZ;
+  unsigned int m_AtlasWarpGridX{};
+  unsigned int m_AtlasWarpGridY{};
+  unsigned int m_AtlasWarpGridZ{};
 
-  std::string m_OutputDirectory;
-  std::string m_OutputFormat;
+  std::string m_OutputDirectory{};
+  std::string m_OutputFormat{};
 
-  std::vector<std::string> m_Images;
-  std::vector<std::string> m_ImageOrientations;
+  std::vector<std::string> m_Images{};
+  std::vector<std::string> m_ImageOrientations{};
 
-  std::string  m_FilterMethod;
-  unsigned int m_FilterIterations;
-  float        m_FilterTimeStep;
+  std::string  m_FilterMethod{};
+  unsigned int m_FilterIterations{};
+  float        m_FilterTimeStep{};
 
-  unsigned int m_MaxBiasDegree;
+  unsigned int m_MaxBiasDegree{};
 
-  float m_Prior1;
-  float m_Prior2;
-  float m_Prior3;
-  float m_Prior4;
+  float m_Prior1{};
+  float m_Prior2{};
+  float m_Prior3{};
+  float m_Prior4{};
 
-  std::string m_AtlasLinearMapType;
-  std::string m_ImageLinearMapType;
+  std::string m_AtlasLinearMapType{};
+  std::string m_ImageLinearMapType{};
 };
 
 #endif

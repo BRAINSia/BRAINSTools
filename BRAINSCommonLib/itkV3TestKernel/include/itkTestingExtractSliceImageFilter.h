@@ -268,12 +268,12 @@ protected:
   void
   ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
-  InputImageRegionType m_ExtractionRegion;
+  InputImageRegionType m_ExtractionRegion{};
 
-  OutputImageRegionType m_OutputImageRegion;
+  OutputImageRegionType m_OutputImageRegion{};
 
 private:
-  DIRECTIONCOLLAPSESTRATEGY m_DirectionCollaspeStrategy;
+  DIRECTIONCOLLAPSESTRATEGY m_DirectionCollaspeStrategy{};
 };
 } // end namespace Testing
 } // end namespace itk

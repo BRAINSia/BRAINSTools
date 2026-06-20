@@ -213,9 +213,9 @@ private:
   Send(const typename ImageType::Pointer & image, unsigned int viewIndex, unsigned int vectorIndex);
 
 private:
-  vtkClientSocket * m_Sock;
-  bool              m_Enabled;
-  bool              m_PromptUser;
+  vtkClientSocket * m_Sock{};
+  bool              m_Enabled{};
+  bool              m_PromptUser{};
 };
 
 template <typename ImageType>

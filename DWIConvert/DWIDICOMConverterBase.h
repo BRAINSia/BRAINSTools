@@ -87,19 +87,19 @@ protected:
   /** force use of the BMatrix to compute gradients in Siemens data instead of
    *  the reported gradients. which are in many cases bogus.
    */
-  const bool m_UseBMatrixGradientDirections;
+  const bool m_UseBMatrixGradientDirections{};
   /** one file reader per DICOM file in dataset */
-  const DCMTKFileVector m_Headers;
+  const DCMTKFileVector m_Headers{};
 
   /** matrix with just spacing information, used a couple places */
   /** the current dataset is represented in a single file */
-  bool m_MultiSliceVolume;
+  bool m_MultiSliceVolume{};
   /** slice order is inferior/superior? */
-  bool m_SliceOrderIS;
+  bool m_SliceOrderIS{};
 
 
   /** track if images is interleaved */
-  bool m_IsInterleaved;
+  bool m_IsInterleaved{};
 
   /**
    * @brief Try to extract DWI gradient data using the DICOM Supplement 49

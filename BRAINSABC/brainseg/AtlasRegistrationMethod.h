@@ -324,26 +324,26 @@ protected:
   CopyProbabilityImage(InternalImagePointer img);
 
 private:
-  std::string m_Suffix;
-  std::string m_OutputDebugDir;
+  std::string m_Suffix{};
+  std::string m_OutputDebugDir{};
 
   //  ByteImagePointer                  m_AtlasOriginalMask;
-  MapOfFloatImageVectors m_AtlasOriginalImageList;
-  MapOfFloatImageVectors m_IntraSubjectOriginalImageList;
-  MapOfFloatImageVectors m_RegisteredIntraSubjectImagesList;
-  FloatImageVector       m_ModalityAveragedOfIntraSubjectImages;
+  MapOfFloatImageVectors m_AtlasOriginalImageList{};
+  MapOfFloatImageVectors m_IntraSubjectOriginalImageList{};
+  MapOfFloatImageVectors m_RegisteredIntraSubjectImagesList{};
+  FloatImageVector       m_ModalityAveragedOfIntraSubjectImages{};
 
-  ByteImagePointer m_InputImageTissueRegion;
-  ImageMaskPointer m_InputSpatialObjectTissueRegion;
+  ByteImagePointer m_InputImageTissueRegion{};
+  ImageMaskPointer m_InputSpatialObjectTissueRegion{};
 
-  std::vector<unsigned int> m_WarpGrid;
-  MapOfStringVectors        m_IntraSubjectTransformFileNames;
-  std::string               m_AtlasToSubjectTransformFileName;
+  std::vector<unsigned int> m_WarpGrid{};
+  MapOfStringVectors        m_IntraSubjectTransformFileNames{};
+  std::string               m_AtlasToSubjectTransformFileName{};
 
-  GenericTransformType::Pointer m_AtlasToSubjectTransform;
-  GenericTransformType::Pointer m_AtlasToSubjectInitialTransform;
-  MapOfTransformLists           m_IntraSubjectTransforms;
-  InternalImagePointer          m_KeySubjectImage; // The image to be used for intra-subject registration
+  GenericTransformType::Pointer m_AtlasToSubjectTransform{};
+  GenericTransformType::Pointer m_AtlasToSubjectInitialTransform{};
+  MapOfTransformLists           m_IntraSubjectTransforms{};
+  InternalImagePointer          m_KeySubjectImage{}; // The image to be used for intra-subject registration
 
   bool m_UseNonLinearInterpolation{ true };
   bool m_DoneRegistration{ false };
@@ -355,11 +355,11 @@ private:
      // itk::Object->Modified times are updated correctly, then we can just use that
   //            modify status to determine when re-running is necessary.
 
-  std::string m_AtlasLinearTransformChoice;
-  std::string m_ImageLinearTransformChoice;
+  std::string m_AtlasLinearTransformChoice{};
+  std::string m_ImageLinearTransformChoice{};
 
-  std::string               m_SaveState;
-  CompositeTransformPointer m_RestoreState;
+  std::string               m_SaveState{};
+  CompositeTransformPointer m_RestoreState{};
 
   unsigned int m_DebugLevel{ 0 };
 };

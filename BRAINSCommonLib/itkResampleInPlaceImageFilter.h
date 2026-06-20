@@ -157,8 +157,8 @@ protected:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
 private:
-  OutputImagePointer         m_OutputImage;
-  RigidTransformConstPointer m_RigidTransform;
+  OutputImagePointer         m_OutputImage{};
+  RigidTransformConstPointer m_RigidTransform{};
 };
 } // end namespace itk
 

@@ -146,17 +146,17 @@ private:
   GradientDescent(ContinuousIndexType & index);
 
   // Input and Output Image
-  CostImagePointer    m_CostImage;
-  CostFunctionPointer m_CostFN;
-  StartPointsListType m_StartPoints;
+  CostImagePointer    m_CostImage{};
+  CostFunctionPointer m_CostFN{};
+  StartPointsListType m_StartPoints{};
 
-  typename CostIPType::Pointer m_CostIP;
-  OptimizerType::Pointer       m_GradientOP;
+  typename CostIPType::Pointer m_CostIP{};
+  OptimizerType::Pointer       m_GradientOP{};
 
-  double        m_MaxStepSize;
-  double        m_MinStepSize;
-  float         m_CostFunctionStepSize;
-  unsigned long m_NumberOfIterations;
+  double        m_MaxStepSize{};
+  double        m_MinStepSize{};
+  float         m_CostFunctionStepSize{};
+  unsigned long m_NumberOfIterations{};
 }; // end class
 } // namespace itk
 

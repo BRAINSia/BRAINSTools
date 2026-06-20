@@ -71,10 +71,10 @@ protected:
   ~ApplyField() override;
 
 private:
-  typename InputImageType::Pointer     m_InputImage;
-  typename OutputImageType::Pointer    m_OutputImage;
-  typename TDisplacementField::Pointer m_DisplacementField;
-  PixelType                            m_DefaultPixelValue;
+  typename InputImageType::Pointer     m_InputImage{};
+  typename OutputImageType::Pointer    m_OutputImage{};
+  typename TDisplacementField::Pointer m_DisplacementField{};
+  PixelType                            m_DefaultPixelValue{};
 };
 } // namespace itk
 #ifndef ITK_MANUAL_INSTANTIATION

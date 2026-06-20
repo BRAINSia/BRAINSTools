@@ -120,10 +120,10 @@ protected:
 
 private:
   // Input and Output Image
-  InputImagePointer  m_Input;
-  OutputImagePointer m_Output;
+  InputImagePointer  m_Input{};
+  OutputImagePointer m_Output{};
 
-  TensorShapeType m_TensorShapeType;
+  TensorShapeType m_TensorShapeType{};
 }; // end of class
 } // end namespace itk
 

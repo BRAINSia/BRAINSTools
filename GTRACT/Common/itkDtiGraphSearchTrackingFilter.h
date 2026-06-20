@@ -104,14 +104,14 @@ protected:
   ~DtiGraphSearchTrackingFilter() override = default;
 
 private:
-  RandomGeneratorPointer m_RandomGenerator;
+  RandomGeneratorPointer m_RandomGenerator{};
 
-  float        m_AnisotropyBranchingValue;
-  double       m_CurvatureBranchAngle;
-  unsigned int m_MaximumBranches;
-  bool         m_UseRandomWalk;
-  double       m_RandomWalkAngle;
-  int          m_RandomSeed;
+  float        m_AnisotropyBranchingValue{};
+  double       m_CurvatureBranchAngle{};
+  unsigned int m_MaximumBranches{};
+  bool         m_UseRandomWalk{};
+  double       m_RandomWalkAngle{};
+  int          m_RandomSeed{};
 }; // end of class
 } // end namespace itk
 

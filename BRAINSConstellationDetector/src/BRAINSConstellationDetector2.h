@@ -297,8 +297,8 @@ protected:
   /** Essential Parameters */
   // Inputs
 
-  std::string      m_Transform;
-  std::string      m_InputTemplateModel;
+  std::string      m_Transform{};
+  std::string      m_InputTemplateModel{};
   unsigned int     m_MspQualityLevel;               // default = 2
   double           m_OtsuPercentileThreshold;       // default = 0.01
   double           m_AcLowerBound;                  // default = 1000.0
@@ -311,31 +311,31 @@ protected:
 
   // a local editable copy of original input before Hough eye detector
   // Note: this->GetInput() will return a const input after Hough eye.
-  SImageType::Pointer m_OriginalInputImage;
+  SImageType::Pointer m_OriginalInputImage{};
 
-  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm; // help to get the points
-                                                             // location in the original
-                                                             // space
+  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm{}; // help to get the points
+                                                               // location in the original
+                                                               // space
 
-  LandmarksMapType m_forced_orig_lmks;
+  LandmarksMapType m_forced_orig_lmks{};
 
-  bool m_HoughEyeFailure;
+  bool m_HoughEyeFailure{};
 
-  std::map<std::string, MatrixType>          m_LlsMatrices;
-  std::map<std::string, std::vector<double>> m_LlsMeans;
-  SImagePointType                            m_ACMean;
-  std::map<std::string, double>              m_SearchRadii;
+  std::map<std::string, MatrixType>          m_LlsMatrices{};
+  std::map<std::string, std::vector<double>> m_LlsMeans{};
+  SImagePointType                            m_ACMean{};
+  std::map<std::string, double>              m_SearchRadii{};
 
   // Outputs
-  VersorRigidTransformType::Pointer m_OrigToACPCVersorTransform;
-  VersorRigidTransformType::Pointer m_ACPCToOrigVersorTransform;
-  LandmarksMapType                  m_AlignedPoints;
-  SImageType::Pointer               m_OutputImage; // Output image w/o
-                                                   // interpolation
-  SImageType::Pointer m_OutputResampledImage;      // Output image w/
-                                                   // interpolation
-  SImageType::Pointer m_OutputUntransformedClippedVolume;
-  SImageType::Pointer m_CleanedIntensityOriginalInputImage;
+  VersorRigidTransformType::Pointer m_OrigToACPCVersorTransform{};
+  VersorRigidTransformType::Pointer m_ACPCToOrigVersorTransform{};
+  LandmarksMapType                  m_AlignedPoints{};
+  SImageType::Pointer               m_OutputImage{}; // Output image w/o
+                                                     // interpolation
+  SImageType::Pointer m_OutputResampledImage{};      // Output image w/
+                                                     // interpolation
+  SImageType::Pointer m_OutputUntransformedClippedVolume{};
+  SImageType::Pointer m_CleanedIntensityOriginalInputImage{};
 
   /** Advanced parameters */
   /** Manual Override */
@@ -357,12 +357,12 @@ protected:
   bool         m_Debug;                     // default = false
   bool         m_Verbose;                   // default = false
   unsigned int m_WritedebuggingImagesLevel; // default = 0
-  std::string  m_WriteBranded2DImage;
+  std::string  m_WriteBranded2DImage{};
   std::string  m_ResultsDir; // default = "./"
 
-  std::string m_atlasVolume;          // The reference atlas image
-  std::string m_atlasLandmarks;       // The reference atlas landmarks
-  std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
+  std::string m_atlasVolume{};          // The reference atlas image
+  std::string m_atlasLandmarks{};       // The reference atlas landmarks
+  std::string m_atlasLandmarkWeights{}; // The reference atlas landmark weights
 };
 
 } // end namespace itk

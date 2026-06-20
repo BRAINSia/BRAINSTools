@@ -52,9 +52,9 @@ private:
   void
   SetSliceScaleRange();
 
-  QImageViewerWidget * m_ImageViewer;
-  vtkKWImage *         m_Image;
-  QSlider *            m_Slider;
+  QImageViewerWidget * m_ImageViewer{};
+  vtkKWImage *         m_Image{};
+  QSlider *            m_Slider{};
 };
 
 #endif // QImageDisplay_h

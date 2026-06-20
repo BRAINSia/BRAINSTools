@@ -133,9 +133,9 @@ protected:
 
   // void SetMetaDataHeader();
 
-  CostImagePointer    m_CostImage;
-  CostImageRegionType m_BufferedRegion;
-  CostIPTypePointer   m_CostIP;
+  CostImagePointer    m_CostImage{};
+  CostImageRegionType m_BufferedRegion{};
+  CostIPTypePointer   m_CostIP{};
 
 private:
 }; // end of class

@@ -181,31 +181,31 @@ protected:
 
 private:
   /*** Input and Output Objects ***/
-  RegisterImagePointer m_FixedImage;
-  RegisterImagePointer m_MovingImage;
-  BulkTransformPointer m_BulkTransform;
-  TransformTypePointer m_Output;
+  RegisterImagePointer m_FixedImage{};
+  RegisterImagePointer m_MovingImage{};
+  BulkTransformPointer m_BulkTransform{};
+  TransformTypePointer m_Output{};
 
   // Parameters for the image registration
-  int               m_SpatialSampleScale;
-  int               m_MaximumNumberOfIterations;
-  int               m_MaximumNumberOfEvaluations;
-  int               m_MaximumNumberOfCorrections;
-  int               m_BSplineHistogramBins;
-  TransformSizeType m_GridSize;
-  int               m_GridBorderSize;
-  float             m_CostFunctionConvergenceFactor;
-  float             m_ProjectedGradientTolerance;
+  int               m_SpatialSampleScale{};
+  int               m_MaximumNumberOfIterations{};
+  int               m_MaximumNumberOfEvaluations{};
+  int               m_MaximumNumberOfCorrections{};
+  int               m_BSplineHistogramBins{};
+  TransformSizeType m_GridSize{};
+  int               m_GridBorderSize{};
+  float             m_CostFunctionConvergenceFactor{};
+  float             m_ProjectedGradientTolerance{};
 
-  int   m_BoundTypeX;
-  int   m_BoundTypeY;
-  int   m_BoundTypeZ;
-  float m_LowerBoundX;
-  float m_LowerBoundY;
-  float m_LowerBoundZ;
-  float m_UpperBoundX;
-  float m_UpperBoundY;
-  float m_UpperBoundZ;
+  int   m_BoundTypeX{};
+  int   m_BoundTypeY{};
+  int   m_BoundTypeZ{};
+  float m_LowerBoundX{};
+  float m_LowerBoundY{};
+  float m_LowerBoundZ{};
+  float m_UpperBoundX{};
+  float m_UpperBoundY{};
+  float m_UpperBoundZ{};
 }; // end of class
 } // end namespace itk
 

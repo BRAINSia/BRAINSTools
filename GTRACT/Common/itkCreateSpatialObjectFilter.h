@@ -125,12 +125,12 @@ private:
   ExtractROI();
 
   // Input and Output Image
-  InputImagePointer        m_Input;
-  TransformPointer         m_Transform;
-  InputImageSizeType       m_Size;
-  InputImageSpacingType    m_Spacing;
-  InputImagePointType      m_Origin;
-  SpatialObjectTypePointer m_Output;
+  InputImagePointer        m_Input{};
+  TransformPointer         m_Transform{};
+  InputImageSizeType       m_Size{};
+  InputImageSpacingType    m_Spacing{};
+  InputImagePointType      m_Origin{};
+  SpatialObjectTypePointer m_Output{};
 }; // end of class
 } // end namespace itk
 

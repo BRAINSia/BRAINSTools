@@ -175,8 +175,8 @@ public:
   }
 
 private:
-  std::string m_ImageFilename;
-  std::string m_LandmarkFilename;
+  std::string m_ImageFilename{};
+  std::string m_LandmarkFilename{};
 };
 
 inline std::ostream &

@@ -119,7 +119,7 @@ private:
   /* This needs to be mutable. The function signature needs to be
    * const, but this internal list needs to be mutable for the case
    * of new elements being added*/
-  mutable std::list<std::string> m_firstInOrdering;
+  mutable std::list<std::string> m_firstInOrdering{};
 };
 
 template <typename Key, typename T>
@@ -174,8 +174,8 @@ public:
     this->m_Means.clear();
   }
 
-  MeanMapType m_Means;                  // One measure per image channel type;
-  MatrixType  m_Covariance;             // Matrix of covariances of class by image
+  MeanMapType m_Means{};                // One measure per image channel type;
+  MatrixType  m_Covariance{};           // Matrix of covariances of class by image
                                         // channel
   FloatingPrecision m_Weighting{ 0.0 }; // The strength of this class.
 };

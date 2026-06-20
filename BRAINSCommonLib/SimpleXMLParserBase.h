@@ -148,7 +148,7 @@ public:
   }
 
 protected:
-  ParserType * m_Parser;
+  ParserType * m_Parser{};
 };
 
 #endif // SimpleXMLParserBase_h

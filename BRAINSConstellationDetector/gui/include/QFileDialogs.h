@@ -61,7 +61,7 @@ public slots:
   saveLandmarksFileSlot();
 
 protected:
-  QString m_landmarks;
+  QString m_landmarks{};
 };
 
 #endif

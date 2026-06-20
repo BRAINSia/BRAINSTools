@@ -174,11 +174,11 @@ protected:
   SetCovariance(const CovarianceMatrixType & cov);
 
 private:
-  MeasurementVectorSizeType m_MeasurementVectorSize;
-  float                     m_Threshold;              // threshold value
-  MeanVectorType            m_Mean;                   // mean
-  CovarianceMatrixType      m_Covariance;             // covariance matrix
-  DistanceVectorType        m_WeightedDistanceVector; // output weighted distance vector
+  MeasurementVectorSizeType m_MeasurementVectorSize{};
+  float                     m_Threshold{};              // threshold value
+  MeanVectorType            m_Mean{};                   // mean
+  CovarianceMatrixType      m_Covariance{};             // covariance matrix
+  DistanceVectorType        m_WeightedDistanceVector{}; // output weighted distance vector
 };
 } // end of namespace Statistics
 } // end namespace itk

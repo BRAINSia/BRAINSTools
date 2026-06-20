@@ -143,17 +143,17 @@ protected:
   GenerateOutputInformation();
 
 private:
-  SizeType    m_Size;    // size of the output image
-  SpacingType m_Spacing; // spacing
-  PointType   m_Origin;  // origin
+  SizeType    m_Size{};    // size of the output image
+  SpacingType m_Spacing{}; // spacing
+  PointType   m_Origin{};  // origin
 
-  typename TOutputImage::PixelType m_Min; // minimum possible value
-  typename TOutputImage::PixelType m_Max; // maximum possible value
+  typename TOutputImage::PixelType m_Min{}; // minimum possible value
+  typename TOutputImage::PixelType m_Max{}; // maximum possible value
 
   // The following variables are deprecated, and provided here just for
   // backward compatibility. It use is discouraged.
-  mutable PointValueArrayType   m_OriginArray;
-  mutable SpacingValueArrayType m_SpacingArray;
+  mutable PointValueArrayType   m_OriginArray{};
+  mutable SpacingValueArrayType m_SpacingArray{};
 };
 } // end namespace itk
 

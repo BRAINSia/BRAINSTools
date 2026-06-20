@@ -269,19 +269,19 @@ private:
   void
   RunRegistration();
 
-  FixedImagePointer  m_FixedVolume;
-  FixedImagePointer  m_FixedVolume2; // For multi-modal SyN
-  MovingImagePointer m_MovingVolume;
-  MovingImagePointer m_MovingVolume2; // For multi-modal SyN
-  MovingImagePointer m_PreprocessedMovingVolume;
-  MovingImagePointer m_PreprocessedMovingVolume2; // For multi-modal SyN
+  FixedImagePointer  m_FixedVolume{};
+  FixedImagePointer  m_FixedVolume2{}; // For multi-modal SyN
+  MovingImagePointer m_MovingVolume{};
+  MovingImagePointer m_MovingVolume2{}; // For multi-modal SyN
+  MovingImagePointer m_PreprocessedMovingVolume{};
+  MovingImagePointer m_PreprocessedMovingVolume2{}; // For multi-modal SyN
 
-  FixedBinaryVolumePointer  m_FixedBinaryVolume;
-  FixedBinaryVolumePointer  m_FixedBinaryVolume2; // For multi-modal SyN
-  MovingBinaryVolumePointer m_MovingBinaryVolume;
-  MovingBinaryVolumePointer m_MovingBinaryVolume2; // For multi-modal SyN
-  std::string               m_OutputFixedVolumeROI;
-  std::string               m_OutputMovingVolumeROI;
+  FixedBinaryVolumePointer  m_FixedBinaryVolume{};
+  FixedBinaryVolumePointer  m_FixedBinaryVolume2{}; // For multi-modal SyN
+  MovingBinaryVolumePointer m_MovingBinaryVolume{};
+  MovingBinaryVolumePointer m_MovingBinaryVolume2{}; // For multi-modal SyN
+  std::string               m_OutputFixedVolumeROI{};
+  std::string               m_OutputMovingVolumeROI{};
 
   RealType     m_SamplingPercentage{ 1.0 };
   unsigned int m_NumberOfHistogramBins{ 50 };
@@ -289,35 +289,35 @@ private:
   float        m_RemoveIntensityOutliers{ 0.00 };
   unsigned int m_NumberOfMatchPoints{ 10 };
   // INFO:  Would be better to have unsigned int
-  std::vector<int>                m_NumberOfIterations;
+  std::vector<int>                m_NumberOfIterations{};
   double                          m_MaximumStepLength{ 0.2 };
-  std::vector<double>             m_MinimumStepLength;
+  std::vector<double>             m_MinimumStepLength{};
   double                          m_RelaxationFactor{ 0.5 };
   double                          m_TranslationScale{ 1000.0 };
   double                          m_ReproportionScale{ 1.0 };
   double                          m_SkewScale{ 1.0 };
   double                          m_BackgroundFillValue{ 0.0 };
-  std::vector<std::string>        m_TransformType;
-  std::string                     m_InitializeTransformMode;
+  std::vector<std::string>        m_TransformType{};
+  std::string                     m_InitializeTransformMode{};
   double                          m_MaskInferiorCutOffFromCenter{ 1000 };
-  std::vector<int>                m_SplineGridSize;
+  std::vector<int>                m_SplineGridSize{};
   double                          m_CostFunctionConvergenceFactor{ 1e+9 };
   double                          m_ProjectedGradientTolerance{ 1e-5 };
   double                          m_MaxBSplineDisplacement{ 0.0 };
   unsigned int                    m_ActualNumberOfIterations{ 0 };
   unsigned int                    m_PermittedNumberOfIterations{ 0 };
   unsigned int                    m_DebugLevel{ 0 };
-  CompositeTransformType::Pointer m_CurrentGenericTransform;
-  CompositeTransformType::Pointer m_RestoreState;
+  CompositeTransformType::Pointer m_CurrentGenericTransform{};
+  CompositeTransformType::Pointer m_RestoreState{};
   bool                            m_DisplayDeformedImage{ false };
   bool                            m_PromptUserAfterDisplay{ false };
   double                          m_FinalMetricValue{ 0.0 };
   bool                            m_ObserveIterations{ true };
-  std::string                     m_CostMetricName;
-  std::string                     m_SaveState;
+  std::string                     m_CostMetricName{};
+  std::string                     m_SaveState{};
   bool                            m_UseROIBSpline{ false };
-  itk::Object::Pointer            m_Helper;
-  SamplingStrategyType            m_SamplingStrategy;
+  itk::Object::Pointer            m_Helper{};
+  SamplingStrategyType            m_SamplingStrategy{};
   bool                            m_NormalizeInputImages{ false };
   bool                            m_InitializeRegistrationByCurrentGenericTransform{ true };
   int                             m_MaximumNumberOfEvaluations{ 900 };

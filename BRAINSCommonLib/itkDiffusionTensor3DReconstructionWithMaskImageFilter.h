@@ -294,10 +294,10 @@ private:
   /* Tensor basis coeffs */
   TensorBasisMatrixType m_TensorBasis{};
 
-  CoefficientMatrixType m_BMatrix;
+  CoefficientMatrixType m_BMatrix{};
 
   /** container to hold gradient directions */
-  GradientDirectionContainerType::Pointer m_GradientDirectionContainer;
+  GradientDirectionContainerType::Pointer m_GradientDirectionContainer{};
 
   /** Number of gradient measurements */
   unsigned int m_NumberOfGradientDirections{ 0 };
@@ -306,16 +306,16 @@ private:
   unsigned int m_NumberOfBaselineImages{ 1 };
 
   /** Threshold on the reference image data */
-  ReferencePixelType m_Threshold;
+  ReferencePixelType m_Threshold{};
 
   /** LeBihan's b-value for normalizing tensors */
-  TTensorPixelType m_BValue;
+  TTensorPixelType m_BValue{};
 
   /** Gradient image was specified in a single image or in multiple images */
-  GradientImageTypeEnumeration m_GradientImageTypeEnumeration;
+  GradientImageTypeEnumeration m_GradientImageTypeEnumeration{};
 
   /** Mask Image */
-  MaskImageType::ConstPointer m_MaskImage;
+  MaskImageType::ConstPointer m_MaskImage{};
 };
 } // namespace itk
 

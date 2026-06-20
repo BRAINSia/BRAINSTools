@@ -154,9 +154,9 @@ protected:
   GenerateData() override;
 
 private:
-  PixelType       m_BackgroundValue;
-  PixelType       m_ForegroundValue;
-  GridSpacingType m_GridPixelSpacing;
+  PixelType       m_BackgroundValue{};
+  PixelType       m_ForegroundValue{};
+  GridSpacingType m_GridPixelSpacing{};
 };
 } // end namespace itk
 

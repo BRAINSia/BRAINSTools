@@ -132,23 +132,23 @@ private:
   unsigned int m_ClosingSize{ 7 };
   double       m_HeadSizeLimit{ 1000 };
   double       m_HeadSizeEstimate{ 0 };
-  PixelType    m_BackgroundValue;
-  PointType    m_CenterOfBrain;
+  PixelType    m_BackgroundValue{};
+  PointType    m_CenterOfBrain{};
   //
   // DEBUGGING
   bool m_GenerateDebugImages{ false };
   /** The foreground mask, computed automatically if not specified
    * on the command line. **/
-  typename TMaskImage::ConstPointer m_ImageMask;
+  typename TMaskImage::ConstPointer m_ImageMask{};
   /** The foreground mask, computed automatically if
    * not specified on the command line. **/
-  typename TMaskImage::Pointer  m_ClippedImageMask;
-  typename TInputImage::Pointer m_TrimmedImage;
-  DistanceImagePointer          m_DebugDistanceImage;
-  InputImagePointer             m_DebugGridImage;
-  MaskImagePointer              m_DebugAfterGridComputationsForegroundImage;
-  MaskImagePointer              m_DebugClippedImageMask;
-  InputImagePointer             m_DebugTrimmedImage;
+  typename TMaskImage::Pointer  m_ClippedImageMask{};
+  typename TInputImage::Pointer m_TrimmedImage{};
+  DistanceImagePointer          m_DebugDistanceImage{};
+  InputImagePointer             m_DebugGridImage{};
+  MaskImagePointer              m_DebugAfterGridComputationsForegroundImage{};
+  MaskImagePointer              m_DebugClippedImageMask{};
+  InputImagePointer             m_DebugTrimmedImage{};
 };
 } // namespace itk
 

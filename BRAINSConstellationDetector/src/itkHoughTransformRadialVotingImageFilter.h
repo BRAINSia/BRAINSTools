@@ -255,25 +255,25 @@ protected:
   HoughTransformRadialVotingImageFilter();
   ~HoughTransformRadialVotingImageFilter() override;
 
-  InputCoordType       m_MinimumRadius;
-  InputCoordType       m_MaximumRadius;
+  InputCoordType       m_MinimumRadius{};
+  InputCoordType       m_MaximumRadius{};
   double               m_Threshold{ 0 };
-  InputCoordType       m_GradientThreshold;
-  InternalPixelType    m_OutputThreshold;
+  InputCoordType       m_GradientThreshold{};
+  InternalPixelType    m_OutputThreshold{};
   double               m_SigmaGradient{ 1 };
   double               m_Variance{ 1 };
-  InputCoordType       m_VotingRadiusRatio;
-  InputCoordType       m_SphereRadiusRatio;
+  InputCoordType       m_VotingRadiusRatio{};
+  InputCoordType       m_SphereRadiusRatio{};
   double               m_SamplingRatio{ 1.0 };
-  InternalImagePointer m_RadiusImage;
-  InternalImagePointer m_AccumulatorImage;
-  SpheresListType      m_SpheresList;
+  InternalImagePointer m_RadiusImage{};
+  InternalImagePointer m_AccumulatorImage{};
+  SpheresListType      m_SpheresList{};
   unsigned int         m_NumberOfSpheres{ 1 };
   unsigned int         m_NbOfThreads{ 1 };
   bool                 m_AllSeedsProcessed{ false };
 
   // Debug settings
-  std::string  m_ResultsDir;
+  std::string  m_ResultsDir{};
   unsigned int m_WritedebuggingAccumulatorImageLevel{ 0 };
 
   // -- Add by Wei Lu

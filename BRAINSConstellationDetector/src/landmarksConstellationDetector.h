@@ -267,40 +267,40 @@ private:
                       double &                                                       cc_Max,
                       const std::string &                                            mapID);
 
-  SImageType::Pointer           m_eyeFixed_img;
-  SImageType::Pointer           m_msp_img;
-  landmarksConstellationModelIO m_InputTemplateModel;
-  ValMapType                    m_TemplateRadius;
-  int                           m_mspQualityLevel;
-  std::string                   m_ResultsDir;
+  SImageType::Pointer           m_eyeFixed_img{};
+  SImageType::Pointer           m_msp_img{};
+  landmarksConstellationModelIO m_InputTemplateModel{};
+  ValMapType                    m_TemplateRadius{};
+  int                           m_mspQualityLevel{};
+  std::string                   m_ResultsDir{};
 
 
-  LandmarksMapType       m_orig_lmks_updated;
-  const LandmarksMapType m_orig_lmks_forced; // named points in the original space
+  LandmarksMapType       m_orig_lmks_updated{};
+  const LandmarksMapType m_orig_lmks_forced{}; // named points in the original space
 
   // name list of the landmarks that should be treated as midline landmarks
-  std::vector<std::string> m_MidlinePointsList;
+  std::vector<std::string> m_MidlinePointsList{};
 
-  VersorRigidTransformType::Pointer m_eyeFixed2msp_img_tfm;
-  VersorRigidTransformType::Pointer m_orig2msp_img_tfm;
+  VersorRigidTransformType::Pointer m_eyeFixed2msp_img_tfm{};
+  VersorRigidTransformType::Pointer m_orig2msp_img_tfm{};
 
-  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm;
-  bool                              m_HoughEyeFailure;
+  VersorRigidTransformType::Pointer m_orig2eyeFixed_img_tfm{};
+  bool                              m_HoughEyeFailure{};
 
   // Store linear model parameters
   // Note each matrix of m_LlsMatrices is actually cascaded by two mapping:
   // input space -> principal components space, and the coefs minimize their
   // least squares
-  std::map<std::string, MatrixType> m_LlsMatrices;       // parameter
-                                                         // matricess
-  std::map<std::string, std::vector<double>> m_LlsMeans; // means to be
-                                                         // subtracted by
-                                                         // PCA
-  std::map<std::string, double> m_SearchRadii;
+  std::map<std::string, MatrixType> m_LlsMatrices{};       // parameter
+                                                           // matricess
+  std::map<std::string, std::vector<double>> m_LlsMeans{}; // means to be
+                                                           // subtracted by
+                                                           // PCA
+  std::map<std::string, double> m_SearchRadii{};
 
-  std::string m_atlasVolume;          // The reference atlas image
-  std::string m_atlasLandmarks;       // The reference atlas landmarks
-  std::string m_atlasLandmarkWeights; // The reference atlas landmark weights
+  std::string m_atlasVolume{};          // The reference atlas image
+  std::string m_atlasLandmarks{};       // The reference atlas landmarks
+  std::string m_atlasLandmarkWeights{}; // The reference atlas landmark weights
 };
 
 void

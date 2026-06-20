@@ -149,10 +149,10 @@ private:
   computNeighborhoodVoxelAnisotropy();
 
   // Input and Output Image
-  InputImagePointer  m_Input;
-  OutputImagePointer m_Output;
+  InputImagePointer  m_Input{};
+  OutputImagePointer m_Output{};
 
-  AnisotropyType m_AnisotropyType;
+  AnisotropyType m_AnisotropyType{};
 }; // end of class
 } // end namespace itk
 

@@ -175,16 +175,16 @@ signals:
 
 protected:
   // color seed
-  int m_color;
+  int m_color{};
 
   // label postion signal received
-  QString m_label;
+  QString m_label{};
 
-  LandmarksMapType m_landmarks;
+  LandmarksMapType m_landmarks{};
 
-  QString m_inputVolume;
-  QString m_inputLandmarks;
-  QString m_outputLandmarks;
+  QString m_inputVolume{};
+  QString m_inputLandmarks{};
+  QString m_outputLandmarks{};
 };
 
 #endif

@@ -47,16 +47,16 @@ using TVector = vnl_vector<float>;
 class BranchPointType
 {
 public:
-  TVector m_Direction;
-  int     m_DivergePoint;
+  TVector m_Direction{};
+  int     m_DivergePoint{};
 };
 
 class FiberPointType
 {
 public:
-  itk::ContinuousIndex<float, 3> m_Point;
-  float                          m_AI;
-  float                          m_AISum;
+  itk::ContinuousIndex<float, 3> m_Point{};
+  float                          m_AI{};
+  float                          m_AISum{};
 };
 
 #endif

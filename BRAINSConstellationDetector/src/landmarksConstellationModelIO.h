@@ -723,10 +723,10 @@ public:
   }
 
   // HACK:  Kent please wrap these in member variables
-  std::map<std::string, landmarksConstellationModelIO::IndexLocationVectorType> m_VectorIndexLocations;
+  std::map<std::string, landmarksConstellationModelIO::IndexLocationVectorType> m_VectorIndexLocations{};
 
 private:
-  bool m_Swapped;
+  bool m_Swapped{};
 
   template <typename T>
   void
@@ -810,16 +810,16 @@ private:
 #endif
   // The templates are arrays of data sets, arrayed by number of angles, and a
   // vector of model intensity values.
-  std::map<std::string, Float3DVectorType>                 m_Templates;
-  std::map<std::string, Float2DVectorType>                 m_TemplateMeans;
-  std::map<std::string, bool>                              m_TemplateMeansComputed;
-  std::map<std::string, SImageType::PointType::VectorType> m_RPtoXMean;
+  std::map<std::string, Float3DVectorType>                 m_Templates{};
+  std::map<std::string, Float2DVectorType>                 m_TemplateMeans{};
+  std::map<std::string, bool>                              m_TemplateMeansComputed{};
+  std::map<std::string, SImageType::PointType::VectorType> m_RPtoXMean{};
 
-  SImageType::PointType::VectorType m_RPtoCECMean; // CEC is a little
-                                                   // different
-  SImageType::PointType::VectorType m_CMtoRPMean;
-  float                             m_RPPC_to_RPAC_angleMean;
-  float                             m_RPAC_over_RPPCMean;
+  SImageType::PointType::VectorType m_RPtoCECMean{}; // CEC is a little
+                                                     // different
+  SImageType::PointType::VectorType m_CMtoRPMean{};
+  float                             m_RPPC_to_RPAC_angleMean{};
+  float                             m_RPAC_over_RPPCMean{};
 };
 
 #endif // landmarksConstellationModelIO_h

@@ -142,12 +142,12 @@ private:
 
   // No longer used  double m_OtsuPercentileThreshold;
   double           m_OtsuPercentileLowerThreshold{ 0.01 };
-  double           m_OtsuPercentileUpperThreshold;
+  double           m_OtsuPercentileUpperThreshold{};
   double           m_ThresholdCorrectionFactor{ 1.0 };
   double           m_ClosingSize{ 9.0 };
   double           m_DilateSize{ 0.0 };
-  IntegerPixelType m_InsideValue;
-  IntegerPixelType m_OutsideValue;
+  IntegerPixelType m_InsideValue{};
+  IntegerPixelType m_OutsideValue{};
 };
 } // end namespace itk
 

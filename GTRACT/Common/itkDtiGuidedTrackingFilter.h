@@ -106,10 +106,10 @@ private:
   bool
   GuideDirection(typename Self::ContinuousIndexType, GuideFiberType, const float, TVector &);
 
-  GuideFiberType m_GuideFiber;
-  double         m_CurvatureThreshold;
-  double         m_GuidedCurvatureThreshold;
-  double         m_MaximumGuideDistance;
+  GuideFiberType m_GuideFiber{};
+  double         m_CurvatureThreshold{};
+  double         m_GuidedCurvatureThreshold{};
+  double         m_MaximumGuideDistance{};
 }; // end of class
 } // end namespace itk
 

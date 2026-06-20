@@ -20,7 +20,7 @@
 #include "itkImageFileReader.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageFileWriter.h"
-#include "itkImageRegionIteratorWithIndex.h"
+#include "itkImageRegionIterator.h"
 #include "itkImage.h"
 #include "itkPoint.h"
 #include "vtkStructuredGrid.h"
@@ -734,7 +734,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
 
     // std::cout << "Region Size: " << gridSize << std::endl;
     // std::cout << "============================================" << std::endl;
-    using IteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
+    using IteratorType = itk::ImageRegionIterator<ImageType>;
     IteratorType itr(this->MaskImage, testRegion);
     for (itr.GoToBegin(); !itr.IsAtEnd(); ++itr)
     {

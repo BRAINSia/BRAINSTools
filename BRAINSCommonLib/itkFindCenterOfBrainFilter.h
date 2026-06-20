@@ -19,8 +19,8 @@
 #ifndef __itkFindeCenterOfBrainFilter_h
 #define __itkFindeCenterOfBrainFilter_h
 #include <itkImageToImageFilter.h>
-#include <itkImageRegionConstIteratorWithIndex.h>
-#include <itkImageRegionIteratorWithIndex.h>
+#include <itkImageRegionConstIterator.h>
+#include <itkImageRegionIterator.h>
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 
 namespace itk
@@ -48,8 +48,8 @@ public:
   using SizeType = typename ImageType::SizeType;
   using SpacingType = typename ImageType::SpacingType;
   using IndexType = typename ImageType::IndexType;
-  using ImageIteratorType = typename itk::ImageRegionIteratorWithIndex<ImageType>;
-  using ImageConstIteratorType = typename itk::ImageRegionConstIteratorWithIndex<ImageType>;
+  using ImageIteratorType = typename itk::ImageRegionIterator<ImageType>;
+  using ImageConstIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
   using LFFMaskFilterType = LargestForegroundFilledMaskImageFilter<ImageType, MaskImageType>;
   using DistanceImageType = typename itk::Image<float, 3>;
   using DistanceImagePointer = typename DistanceImageType::Pointer;

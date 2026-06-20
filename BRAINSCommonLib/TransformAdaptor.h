@@ -105,16 +105,16 @@ public:
 
   /** Methods to define and perform Air16 AffineTransform conversion. */
   void
-  EstablishCrossOverSystemForAir16(void);
+  EstablishCrossOverSystemForAir16();
 
   void
-  EstablishCrossOverSystemForB2xfrm(void);
+  EstablishCrossOverSystemForB2xfrm();
 
   void
-  ConvertInputAffineToITKAffine(void);
+  ConvertInputAffineToITKAffine();
 
   void
-  ConvertITKAffineToOutputAffine(void);
+  ConvertITKAffineToOutputAffine();
 
   iplSetMacro(CenterMovingAffineTransform, AffineTransformPointer);
   iplGetMacro(CenterMovingAffineTransform, AffineTransformPointer);

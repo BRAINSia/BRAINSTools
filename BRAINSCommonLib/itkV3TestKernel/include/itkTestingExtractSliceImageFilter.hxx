@@ -314,7 +314,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::SetInput(const TInputImage *
  */
 template <typename TInputImage, typename TOutputImage>
 const TInputImage *
-ExtractSliceImageFilter<TInputImage, TOutputImage>::GetInput(void) const
+ExtractSliceImageFilter<TInputImage, TOutputImage>::GetInput() const
 {
   if (this->GetNumberOfInputs() < 1)
   {

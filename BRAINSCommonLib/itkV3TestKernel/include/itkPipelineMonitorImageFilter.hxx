@@ -23,7 +23,7 @@
 namespace itk
 {
 template <typename TImageType>
-PipelineMonitorImageFilter<TImageType>::PipelineMonitorImageFilter(void)
+PipelineMonitorImageFilter<TImageType>::PipelineMonitorImageFilter()
 {
   m_NumberOfClearPipeline = 0;
   m_ClearPipelineOnGenerateOutputInformation = true;
@@ -32,7 +32,7 @@ PipelineMonitorImageFilter<TImageType>::PipelineMonitorImageFilter(void)
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyDownStreamFilterExecutedPropagation(void)
+PipelineMonitorImageFilter<TImageType>::VerifyDownStreamFilterExecutedPropagation()
 {
   bool ret = true;
 
@@ -70,7 +70,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterExecutedStreaming(int e
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedUpdateOutputInformation(void)
+PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedUpdateOutputInformation()
 {
   InputImageConstPointer input = this->GetInput();
 
@@ -105,7 +105,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedUpdateOutputInfo
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyInputFilterBufferedRequestedRegions(void)
+PipelineMonitorImageFilter<TImageType>::VerifyInputFilterBufferedRequestedRegions()
 {
   // we expect that the input filter's output image's buffered
   // region is going to match it's requested region
@@ -125,7 +125,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterBufferedRequestedRegion
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedRequestedRegions(void)
+PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedRequestedRegions()
 {
   // we expect that the input filter's output image's buffered
   // region is going to match it's requested region, which is going
@@ -149,7 +149,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyInputFilterMatchedRequestedRegions
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyInputFilterRequestedLargestRegion(void)
+PipelineMonitorImageFilter<TImageType>::VerifyInputFilterRequestedLargestRegion()
 {
   if (m_InputRequestedRegions.back() != m_UpdatedOutputLargestPossibleRegion)
   {
@@ -170,7 +170,7 @@ PipelineMonitorImageFilter<TImageType>::VerifyAllInputCanStream(int expectedNumb
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyAllInputCanNotStream(void)
+PipelineMonitorImageFilter<TImageType>::VerifyAllInputCanNotStream()
 {
   return VerifyDownStreamFilterExecutedPropagation() && VerifyInputFilterRequestedLargestRegion() &&
          VerifyInputFilterBufferedRequestedRegions() && VerifyInputFilterMatchedUpdateOutputInformation();
@@ -178,14 +178,14 @@ PipelineMonitorImageFilter<TImageType>::VerifyAllInputCanNotStream(void)
 
 template <typename TImageType>
 bool
-PipelineMonitorImageFilter<TImageType>::VerifyAllNoUpdate(void)
+PipelineMonitorImageFilter<TImageType>::VerifyAllNoUpdate()
 {
   return VerifyDownStreamFilterExecutedPropagation() && m_NumberOfUpdates == 0;
 }
 
 template <typename TImageType>
 void
-PipelineMonitorImageFilter<TImageType>::ClearPipelineSavedInformation(void)
+PipelineMonitorImageFilter<TImageType>::ClearPipelineSavedInformation()
 {
   m_NumberOfUpdates = 0;
   m_OutputRequestedRegions.clear();
@@ -202,7 +202,7 @@ PipelineMonitorImageFilter<TImageType>::ClearPipelineSavedInformation(void)
 
 template <typename TImageType>
 void
-PipelineMonitorImageFilter<TImageType>::GenerateOutputInformation(void)
+PipelineMonitorImageFilter<TImageType>::GenerateOutputInformation()
 {
   if (m_ClearPipelineOnGenerateOutputInformation)
   {
@@ -244,7 +244,7 @@ PipelineMonitorImageFilter<TImageType>::EnlargeOutputRequestedRegion(DataObject 
 
 template <typename TImageType>
 void
-PipelineMonitorImageFilter<TImageType>::GenerateInputRequestedRegion(void)
+PipelineMonitorImageFilter<TImageType>::GenerateInputRequestedRegion()
 {
   // call the superclass' implementation of this method
   Superclass::GenerateInputRequestedRegion();
@@ -256,7 +256,7 @@ PipelineMonitorImageFilter<TImageType>::GenerateInputRequestedRegion(void)
 
 template <typename TImageType>
 void
-PipelineMonitorImageFilter<TImageType>::GenerateData(void)
+PipelineMonitorImageFilter<TImageType>::GenerateData()
 {
   // Get pointers to the input and output
   InputImagePointer output = this->GetOutput();

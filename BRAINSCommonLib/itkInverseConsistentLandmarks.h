@@ -46,7 +46,7 @@ public:
   using Self = InverseConsistentLandmarkPoint;
   using Superclass = itk::Point<PointStorageType, VDimension>;
 
-  InverseConsistentLandmarkPoint(void)
+  InverseConsistentLandmarkPoint()
   {
     m_FWeighting = 0.0;
     (*this)[0] = (*this)[1] = (*this)[2] = 0.0;
@@ -83,7 +83,7 @@ public:
   }
 
   PointStorageType
-  GetWeighting(void) const
+  GetWeighting() const
   {
     return m_FWeighting;
   }
@@ -94,7 +94,7 @@ public:
     m_FWeighting = val;
   }
 
-  virtual ~InverseConsistentLandmarkPoint(void) {}
+  virtual ~InverseConsistentLandmarkPoint() {}
 
 private:
   PointStorageType m_T;
@@ -124,9 +124,9 @@ public:
     IPL_CEREBELLAR_BOUNDS_LANDMARKS,
     UNKNOWN_LANDMARKS
   } Landmark_File_Format;
-  InverseConsistentLandmarks(void);
+  InverseConsistentLandmarks();
   InverseConsistentLandmarks(const int XDim, const int YDim, const int ZDim, const int TDim = 0);
-  virtual ~InverseConsistentLandmarks(void) {}
+  virtual ~InverseConsistentLandmarks() {}
 
   InverseConsistentLandmarks &
   operator=(const InverseConsistentLandmarks & rhs);
@@ -170,7 +170,7 @@ public:
   WritePointTypes(const std::string lmrkfilename, const Landmark_File_Format lmkff = GEC_LANDMARKS);
 
   bool
-  PrintPointTypes(void) const;
+  PrintPointTypes() const;
 
   Landmark_File_Format
   QueryLandmarkFile(const std::string lmrkfilename);
@@ -368,25 +368,25 @@ public:
    * \return MaxXDim()
    */
   inline unsigned short
-  getXDim(void) const
+  getXDim() const
   {
     return ImageDims[0];
   }
 
   inline unsigned short
-  getYDim(void) const
+  getYDim() const
   {
     return ImageDims[1];
   }
 
   inline unsigned short
-  getZDim(void) const
+  getZDim() const
   {
     return ImageDims[2];
   }
 
   inline unsigned short
-  getTDim(void) const
+  getTDim() const
   {
     return ImageDims[3];
   }

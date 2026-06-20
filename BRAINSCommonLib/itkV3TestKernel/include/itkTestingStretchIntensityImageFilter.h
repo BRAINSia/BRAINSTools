@@ -79,7 +79,7 @@ public:
   SetInput(const TInputImage * image);
 
   const TInputImage *
-  GetInput(void) const;
+  GetInput() const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */
@@ -95,7 +95,7 @@ protected:
 
   /** Process to execute before entering the multithreaded section */
   void
-  BeforeThreadedGenerateData(void);
+  BeforeThreadedGenerateData();
 
   /** Print internal ivars */
   void

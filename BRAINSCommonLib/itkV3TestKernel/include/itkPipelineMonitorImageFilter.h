@@ -110,16 +110,16 @@ public:
    * the largest possible region along with other correct behaviors.
    */
   bool
-  VerifyAllInputCanNotStream(void);
+  VerifyAllInputCanNotStream();
 
   /** This method verifies that propagation was executed yet no
    * updating was needed.
    */
   bool
-  VerifyAllNoUpdate(void);
+  VerifyAllNoUpdate();
 
   bool
-  VerifyDownStreamFilterExecutedPropagation(void);
+  VerifyDownStreamFilterExecutedPropagation();
 
   /** Verifies the the GenerateData executed the expected number of
    * times.
@@ -138,44 +138,44 @@ public:
    * pipeline.
    */
   bool
-  VerifyInputFilterMatchedUpdateOutputInformation(void);
+  VerifyInputFilterMatchedUpdateOutputInformation();
 
   /** Verifies that the input filter buffered the requested region */
   bool
-  VerifyInputFilterBufferedRequestedRegions(void);
+  VerifyInputFilterBufferedRequestedRegions();
 
   bool
-  VerifyInputFilterMatchedRequestedRegions(void);
+  VerifyInputFilterMatchedRequestedRegions();
 
   bool
-  VerifyInputFilterRequestedLargestRegion(void);
+  VerifyInputFilterRequestedLargestRegion();
 
   unsigned int
-  GetNumberOfUpdates(void) const
+  GetNumberOfUpdates() const
   {
     return m_NumberOfUpdates;
   }
 
   RegionVectorType
-  GetOutputRequestedRegions(void) const
+  GetOutputRequestedRegions() const
   {
     return m_OutputRequestedRegions;
   }
 
   RegionVectorType
-  GetInputRequestedRegions(void) const
+  GetInputRequestedRegions() const
   {
     return m_InputRequestedRegions;
   }
 
   RegionVectorType
-  GetUpdatedBufferedRegions(void) const
+  GetUpdatedBufferedRegions() const
   {
     return m_UpdatedBufferedRegions;
   }
 
   RegionVectorType
-  GetUpdatedRequestedRegions(void) const
+  GetUpdatedRequestedRegions() const
   {
     return m_UpdatedRequestedRegions;
   }
@@ -183,13 +183,13 @@ public:
   /** Clears all saved pipeline information, but increments
    * NumberOfClearPipeline. */
   void
-  ClearPipelineSavedInformation(void);
+  ClearPipelineSavedInformation();
 
   /** Standard pipeline methods are overloaded to call superclass's
    * implementation and record information.
    */
   virtual void
-  GenerateOutputInformation(void);
+  GenerateOutputInformation();
 
   virtual void
   PropagateRequestedRegion(DataObject * output);
@@ -198,13 +198,13 @@ public:
   EnlargeOutputRequestedRegion(DataObject * output);
 
   virtual void
-  GenerateInputRequestedRegion(void);
+  GenerateInputRequestedRegion();
 
   virtual void
-  GenerateData(void);
+  GenerateData();
 
 protected:
-  PipelineMonitorImageFilter(void);
+  PipelineMonitorImageFilter();
 
   // ~PipelineMonitorImageFilter() { } default implementation OK
 

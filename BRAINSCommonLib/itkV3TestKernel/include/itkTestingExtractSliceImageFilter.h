@@ -220,7 +220,7 @@ public:
   SetInput(const TInputImage * image);
 
   const TInputImage *
-  GetInput(void) const;
+  GetInput() const;
 
 #ifdef ITK_USE_CONCEPT_CHECKING
   /** Begin concept checking */

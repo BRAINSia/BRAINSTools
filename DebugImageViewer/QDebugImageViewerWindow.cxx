@@ -32,7 +32,7 @@ QDebugImageViewerWindow::QDebugImageViewerWindow(QWidget * parent, Qt::WindowFla
 {
   this->m_ViewCount = 1;
   std::string cmdLineImageName;
-  for (int i = 0; i < qApp->arguments().size(); i++)
+  for (int i = 0; i < qApp->arguments().size(); ++i)
   {
     QString current(qApp->arguments().at(i));
     if (current == "--numviews")
@@ -62,7 +62,7 @@ QDebugImageViewerWindow::QDebugImageViewerWindow(QWidget * parent, Qt::WindowFla
 
   QHBoxLayout * mainLayout = new QHBoxLayout(main);
   main->setLayout(mainLayout);
-  for (int i = 0; i < this->m_ViewCount; i++)
+  for (int i = 0; i < this->m_ViewCount; ++i)
   {
     QImageDisplay * current = new QImageDisplay(this);
     mainLayout->addWidget(current);
@@ -171,7 +171,7 @@ QDebugImageViewerWindow::readImage()
 {
   QImageDisplay::ImageType::SizeType imageSize;
 
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
     if (this->SocketRead(&imageSize[i], sizeof(imageSize[0]), 1) != 1)
     {
@@ -183,7 +183,7 @@ QDebugImageViewerWindow::readImage()
 
   QImageDisplay::ImageType::SpacingType imageSpacing;
   QImageDisplay::ImageType::IndexType   imageIndex;
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
     imageIndex[i] = 0; // sneak initializing index into this loop
     if (this->SocketRead(&imageSpacing[i], sizeof(imageSpacing[0]), 1) != 1)
@@ -211,7 +211,7 @@ QDebugImageViewerWindow::readImage()
   xferImage->SetDirection(itk::AnatomicalOrientation(orientation).GetAsDirection());
 
   QImageDisplay::ImageType::PointType origin;
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
     double oVal;
     if (this->SocketRead(&oVal, sizeof(double), 1) != 1)

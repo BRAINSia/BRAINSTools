@@ -93,7 +93,7 @@ PrintInfo(ReaderType reader, WriterType writer)
   std::cout << "\tnumber of components:\t" << nocIn << std::endl;
   std::cout << "\tcomponent type:\t\t" << componentTypeIn << std::endl;
   std::cout << "\tsize:\t\t\t";
-  for (unsigned int i = 0; i < dimensionIn; i++)
+  for (unsigned int i = 0; i < dimensionIn; ++i)
   {
     std::cout << sizeIn[i] << " ";
   }
@@ -107,7 +107,7 @@ PrintInfo(ReaderType reader, WriterType writer)
   std::cout << "\tnumber of components:\t" << nocOut << std::endl;
   std::cout << "\tcomponent type:\t\t" << componentTypeOut << std::endl;
   std::cout << "\tsize:\t\t\t";
-  for (unsigned int i = 0; i < dimensionOut; i++)
+  for (unsigned int i = 0; i < dimensionOut; ++i)
   {
     std::cout << sizeOut[i] << " ";
   }

@@ -117,7 +117,7 @@ public:
     OutputType output;
     PixelType  input = this->GetInputImage()->GetPixel(index);
 
-    for (unsigned int k = 0; k < 6; k++)
+    for (unsigned int k = 0; k < 6; ++k)
     {
       output[k] = static_cast<double>(input[k]);
     }

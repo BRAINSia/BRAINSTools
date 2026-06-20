@@ -79,7 +79,7 @@ public:
     SortVectorType      valVect;
     SortVectorType      sortedValVect;
     SortVectorIndexType indVect;
-    for (unsigned int vIx = 0; vIx < (direction == ByRow ? values.rows() : values.cols()); vIx++)
+    for (unsigned int vIx = 0; vIx < (direction == ByRow ? values.rows() : values.cols()); ++vIx)
     {
       getVector(values, direction, vIx, valVect);
       vector_sort(valVect, sortedValVect, indVect);
@@ -111,7 +111,7 @@ private:
     c.data = v.data_block();
     s.set_size(v.size());
 
-    for (TIndex ix = 0; ix < (TIndex)v.size(); ix++)
+    for (TIndex ix = 0; ix < (TIndex)v.size(); ++ix)
     {
       s[ix] = ix;
     }
@@ -124,7 +124,7 @@ private:
   reindexValues(const SortVectorType & values, const SortVectorIndexType & indices, SortVectorType & sorted_values)
   {
     sorted_values.set_size(values.size());
-    for (TIndex ix = 0; ix < (TIndex)values.size(); ix++)
+    for (TIndex ix = 0; ix < (TIndex)values.size(); ++ix)
     {
       sorted_values[ix] = values[indices[ix]];
     }

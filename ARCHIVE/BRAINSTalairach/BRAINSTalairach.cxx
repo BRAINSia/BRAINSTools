@@ -137,7 +137,7 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
       ACpoint[i] = AC[i];
       PCpoint[i] = PC[i];

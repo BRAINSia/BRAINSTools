@@ -434,7 +434,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   // Define binary erosion and dilation structuring element
   StructuringElementType           ball;
   StructuringElementType::SizeType ballSize;
-  for (int d = 0; d < 3; d++)
+  for (int d = 0; d < 3; ++d)
   {
     ballSize[d] = static_cast<int>((0.5 * ClosingSize) / spacing[d]);
   }

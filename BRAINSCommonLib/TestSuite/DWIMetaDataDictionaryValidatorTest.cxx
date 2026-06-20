@@ -233,9 +233,9 @@ main(int argc, char * argv[])
     // Measurement Frame
     {
       DWIMetaDataDictionaryValidator::RotationMatrixType msrFrame;
-      for (unsigned int saxi = 0; saxi < 3; saxi++)
+      for (unsigned int saxi = 0; saxi < 3; ++saxi)
       {
-        for (unsigned int saxj = 0; saxj < 3; saxj++)
+        for (unsigned int saxj = 0; saxj < 3; ++saxj)
         {
           msrFrame(saxi, saxj) = 0.0;
         }

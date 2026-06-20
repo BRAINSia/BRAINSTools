@@ -263,7 +263,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
 
           vtkPoints * newfiber = vtkPoints::New();
           newfiber->SetNumberOfPoints(currentPointId);
-          for (int i = 0; i < currentPointId; i++)
+          for (int i = 0; i < currentPointId; ++i)
           {
             newfiber->SetPoint(i, fiber->GetPoint(i));
           }
@@ -479,7 +479,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
 
           vtkPoints * newfiber = vtkPoints::New();
           newfiber->SetNumberOfPoints(currentPointId);
-          for (int i = 0; i < currentPointId; i++)
+          for (int i = 0; i < currentPointId; ++i)
           {
             newfiber->SetPoint(i, fiber->GetPoint(i));
           }

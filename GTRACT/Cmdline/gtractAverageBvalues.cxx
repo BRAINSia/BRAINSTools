@@ -157,7 +157,7 @@ main(int argc, char * argv[])
     std::cout << "Avg #Directions: " << numUniqueDirections << std::endl;
   }
 
-  // for (int i=0;i<vectorLength;i++)
+  // for (int i=0;i<vectorLength;++i)
   //  std::cout << i << " " << lut[i] << " " << count[i] << std::endl;
 
   NrrdAvgImageType::Pointer avgImage = NrrdAvgImageType::New();
@@ -183,7 +183,7 @@ main(int argc, char * argv[])
   using ConstIndexImageIteratorType = itk::ImageRegionConstIterator<IndexImageType>;
   using VectorImageIteratorType = itk::ImageRegionIterator<NrrdAvgImageType>;
   using VectorOutputImageIteratorType = itk::ImageRegionIterator<NrrdImageType>;
-  for (int i = 0; i < vectorLength; i++)
+  for (int i = 0; i < vectorLength; ++i)
   {
     int currentIndex = lut[i];
 
@@ -207,7 +207,7 @@ main(int argc, char * argv[])
   {
     NrrdAvgImageType::PixelType vectorImagePixel = ot.Get();
     NrrdImageType::PixelType    outputImagePixel = tmpt.Get();
-    for (int i = 0; i < numUniqueDirections; i++)
+    for (int i = 0; i < numUniqueDirections; ++i)
     {
       outputImagePixel[i] = static_cast<PixelType>(vectorImagePixel[i] / static_cast<AvgPixelType>(count[i]));
     }
@@ -225,7 +225,7 @@ main(int argc, char * argv[])
   // Update the validator using a new gradient table
   DWIMetaDataDictionaryValidator::GradientTableType newGradTable(numUniqueDirections);
   int                                               currentIndex = 0;
-  for (int i = 0; i < vectorLength; i++)
+  for (int i = 0; i < vectorLength; ++i)
   {
     if (lut[i] == currentIndex)
     {
@@ -266,7 +266,7 @@ buildDirectionLut(itk::Array<int> &               lut,
 {
   int numElements = 0;
 
-  for (int i = 0; i < numImages; i++)
+  for (int i = 0; i < numImages; ++i)
   {
     std::string direction1;
     std::string direction2;
@@ -275,7 +275,7 @@ buildDirectionLut(itk::Array<int> &               lut,
 
     itk::ExposeMetaData<std::string>(meta, tmpStr, direction1);
     int j;
-    for (j = 0; j < i; j++)
+    for (j = 0; j < i; ++j)
     {
       sprintf(tmpStr, "DWMRI_gradient_%04d", j);
       itk::ExposeMetaData<std::string>(meta, tmpStr, direction2);
@@ -296,12 +296,12 @@ buildDirectionLut(itk::Array<int> &               lut,
       ++numElements;
     }
   }
-  // for (int i=0;i<numImages;i++) std::cout << i << " " << lut[i] << " " <<
+  // for (int i=0;i<numImages;++i) std::cout << i << " " << lut[i] << " " <<
   // count[i] << std::endl;
 
   /* Shuffle the count Elements down to the start of the Array */
   int index = 0;
-  for (int i = 0; i < numImages; i++)
+  for (int i = 0; i < numImages; ++i)
   {
     if (count[i] > 0)
     {
@@ -309,12 +309,12 @@ buildDirectionLut(itk::Array<int> &               lut,
       ++index;
     }
   }
-  for (int i = numElements; i < numImages; i++)
+  for (int i = numElements; i < numImages; ++i)
   {
     count[i] = 0;
   }
 
-  // for (int i=0;i<numImages;i++) std::cout << i << " " << lut[i] << " " <<
+  // for (int i=0;i<numImages;++i) std::cout << i << " " << lut[i] << " " <<
   // count[i] << std::endl;
 
   return numElements;

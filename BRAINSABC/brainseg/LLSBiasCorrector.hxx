@@ -95,7 +95,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CheckInputs()
   }
 
   const InputImageSizeType size = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
-  for (unsigned int i = 1; i < m_InputImages.size(); i++)
+  for (unsigned int i = 1; i < m_InputImages.size(); ++i)
   {
     const InputImageSizeType size_i = this->GetFirstInputImage()->GetLargestPossibleRegion().GetSize();
     if (size != size_i)
@@ -103,7 +103,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CheckInputs()
       itkExceptionMacro(<< "Image sizes do not match" << std::endl);
     }
   }
-  for (unsigned int i = 0; i < m_BiasPosteriors.size(); i++)
+  for (unsigned int i = 0; i < m_BiasPosteriors.size(); ++i)
   {
     if (m_BiasPosteriors[i]->GetImageDimension() != 3)
     {
@@ -339,11 +339,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
                         {
                           const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[r];
                           unsigned int                      c = 0;
-                          for (unsigned int order = 0; order <= m_MaxDegree; order++)
+                          for (unsigned int order = 0; order <= m_MaxDegree; ++order)
                           {
-                            for (unsigned int xorder = 0; xorder <= order; xorder++)
+                            for (unsigned int xorder = 0; xorder <= order; ++xorder)
                             {
-                              for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++)
+                              for (unsigned int yorder = 0; yorder <= (order - xorder); ++yorder)
                               {
                                 const int zorder = order - xorder - yorder;
 
@@ -377,14 +377,14 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::SetProbabilities(
   {
     itkExceptionMacro(<< "Probabilities and CandidateRegions size must be the same." << std::endl);
   }
-  for (unsigned int i = 0; i < probs.size(); i++)
+  for (unsigned int i = 0; i < probs.size(); ++i)
   {
     if (probs[i].IsNull())
     {
       itkExceptionMacro(<< "One of input probabilities not initialized" << std::endl);
     }
   }
-  for (unsigned int i = 0; i < candidateRegions.size(); i++)
+  for (unsigned int i = 0; i < candidateRegions.size(); ++i)
   {
     if (candidateRegions[i].IsNull())
     {
@@ -421,7 +421,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
   /* compute inverse matrix for each tissue type */
   muLogMacro(<< "Computing inverse covars...\n" << std::endl);
   std::vector<MatrixType> invCovars;
-  for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+  for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
     std::cout << this->m_ListOfClassStatistics[iclass].m_Covariance << std::endl;
     MatrixInverseType inverse_temp(this->m_ListOfClassStatistics[iclass].m_Covariance);
@@ -454,9 +454,9 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
 
     {
       MatrixType Rfull = qr.R(); /* right triangular matrix */
-      for (unsigned int r = 0; r < numCoefficients; r++)
+      for (unsigned int r = 0; r < numCoefficients; ++r)
       {
-        for (unsigned int c = r; c < numCoefficients; c++)
+        for (unsigned int c = r; c < numCoefficients; ++c)
         {
           R(r, c) = Rfull(r, c);
         }
@@ -505,13 +505,13 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
           inputImageInterp->SetInputImage(mapIt2->second[imIndex].GetPointer());
           tbb::parallel_for(tbb::blocked_range<unsigned int>(0, numEquations, 1),
                             [=, &R_i](const tbb::blocked_range<unsigned int> & r) {
-                              for (unsigned int eq = r.begin(); eq < r.end(); eq++)
+                              for (unsigned int eq = r.begin(); eq < r.end(); ++eq)
                               {
                                 const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
                                 // Compute reconstructed intensity, weighted by prob * invCov
                                 double sumW = DBL_EPSILON;
                                 double recon = 0;
-                                for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+                                for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
                                 {
                                   const MatrixType & invCov = invCovars[iclass];
 
@@ -544,12 +544,12 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
 
 #if LLSBIAS_USE_NORMAL_EQUATION
       R_i = basisT * R_i;
-      for (unsigned int row = 0; row < numCoefficients; row++)
+      for (unsigned int row = 0; row < numCoefficients; ++row)
       {
         rhs(modality1 * numCoefficients + row, 0) = R_i(row, 0);
       }
 #else
-      for (unsigned int row = 0; row < numEquations; row++)
+      for (unsigned int row = 0; row < numEquations; ++row)
       {
         rhs(modality1 * numEquations + row, 0) = R_i(row, 0);
       }
@@ -563,23 +563,23 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
   // probability and inverse covariance
   tbb::parallel_for(tbb::blocked_range2d<LOOPITERTYPE>(0, numModalities, 0, numModalities),
                     [=, &lhs](const tbb::blocked_range2d<LOOPITERTYPE> & r) {
-                      for (LOOPITERTYPE ichan = r.rows().begin(); ichan < r.rows().end(); ichan++)
+                      for (LOOPITERTYPE ichan = r.rows().begin(); ichan < r.rows().end(); ++ichan)
                       {
-                        for (LOOPITERTYPE jchan = r.cols().begin(); jchan < r.cols().end(); jchan++)
+                        for (LOOPITERTYPE jchan = r.cols().begin(); jchan < r.cols().end(); ++jchan)
                         {
                           MatrixType Wij_A(numEquations, numCoefficients, 0.0);
                           {
-                            for (LOOPITERTYPE eq = 0; eq < numEquations; eq++)
+                            for (LOOPITERTYPE eq = 0; eq < numEquations; ++eq)
                             {
                               const ProbabilityImageIndexType & currProbIndex = m_ValidIndicies[eq];
                               double                            sumW = DBL_EPSILON;
-                              for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+                              for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
                               {
                                 const MatrixType & invCov = invCovars[iclass];
                                 double w = m_BiasPosteriors[iclass]->GetPixel(currProbIndex) * invCov(ichan, jchan);
                                 sumW += w;
                               }
-                              for (unsigned int col = 0; col < numCoefficients; col++)
+                              for (unsigned int col = 0; col < numCoefficients; ++col)
                               {
                                 Wij_A(eq, col) = sumW * m_Basis(eq, col);
                               }
@@ -587,17 +587,17 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                           }
 #if LLSBIAS_USE_NORMAL_EQUATION
                           MatrixType lhs_ij = basisT * Wij_A;
-                          for (unsigned int row = 0; row < numCoefficients; row++)
+                          for (unsigned int row = 0; row < numCoefficients; ++row)
                           {
-                            for (unsigned int col = 0; col < numCoefficients; col++)
+                            for (unsigned int col = 0; col < numCoefficients; ++col)
                             {
                               lhs(row + ichan * numCoefficients, col + jchan * numCoefficients) = lhs_ij(row, col);
                             }
                           }
 #else
-                            for( unsigned int row = 0; row < numEquations; row++ )
+                            for( unsigned int row = 0; row < numEquations; ++row )
                               {
-                              for( unsigned int col = 0; col < numCoefficients; col++ )
+                              for( unsigned int col = 0; col < numCoefficients; ++col )
                                 {
                                 lhs(row + ichan * numEquations, col + jchan * numCoefficients)
                                   = Wij_A(row, col);
@@ -703,11 +703,11 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
 
                   double       logFitValue = 0.0;
                   unsigned int c = ichan * numCoefficients;
-                  for (unsigned int order = 0; order <= m_MaxDegree; order++)
+                  for (unsigned int order = 0; order <= m_MaxDegree; ++order)
                   {
-                    for (unsigned int xorder = 0; xorder <= order; xorder++)
+                    for (unsigned int xorder = 0; xorder <= order; ++xorder)
                     {
-                      for (unsigned int yorder = 0; yorder <= (order - xorder); yorder++)
+                      for (unsigned int yorder = 0; yorder <= (order - xorder); ++yorder)
                       {
                         const int zorder = order - xorder - yorder;
 

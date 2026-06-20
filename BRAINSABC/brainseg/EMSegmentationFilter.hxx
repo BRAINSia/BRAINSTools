@@ -558,7 +558,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
   ProbabilityImageVectorType Posteriors;
   Posteriors.resize(numClasses);
 
-  for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+  for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
     Posteriors[iclass] = this->assignVectorToImage(Priors[iclass], liklihoodMatrix.get_column(iclass));
     /*
@@ -744,7 +744,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CheckInput()
       }
     }
   }
-  for (unsigned i = 0; i < m_WarpedPriors.size(); i++)
+  for (unsigned i = 0; i < m_WarpedPriors.size(); ++i)
   {
     if (m_WarpedPriors[i]->GetImageDimension() != 3)
     {
@@ -864,7 +864,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugPosteriors(
                                                                     // only;
     std::stringstream write_posteriors_level_stream;
     write_posteriors_level_stream << write_posteriors_level;
-    for (unsigned int iprob = 0; iprob < numPosteriors; iprob++)
+    for (unsigned int iprob = 0; iprob < numPosteriors; ++iprob)
     {
       using ProbabilityImageWriterType = itk::ImageFileWriter<TProbabilityImage>;
       typename ProbabilityImageWriterType::Pointer writer = ProbabilityImageWriterType::New();
@@ -908,7 +908,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorWeights(VectorType
   {
     itkExceptionMacro(<< "Number of prior weights invalid" << w.size() << " != " << m_OriginalSpacePriors.size());
   }
-  for (unsigned i = 0; i < w.size(); i++)
+  for (unsigned i = 0; i < w.size(); ++i)
   {
     if (w[i] == 0.0)
     {
@@ -932,7 +932,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorLabelCodeVector(In
     itkExceptionMacro(<< "Number of clusters info invalid" << std::endl);
   }
   const unsigned int numPriors = m_WarpedPriors.size();
-  for (unsigned int i = 0; i < numPriors; i++)
+  for (unsigned int i = 0; i < numPriors; ++i)
   {
     if (ng[i] == 0)
     {
@@ -955,7 +955,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorUseForBiasVector(c
     itkExceptionMacro(<< "Vector size for PriorUseForBiasVector info invalid" << std::endl);
   }
   const unsigned int numPriors = m_WarpedPriors.size();
-  for (unsigned int i = 0; i < numPriors; i++)
+  for (unsigned int i = 0; i < numPriors; ++i)
   {
     if (ng[i] != 0 && ng[i] != 1)
     {
@@ -978,7 +978,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::SetPriorIsForegroundPriorV
     itkExceptionMacro(<< "Vector size for PriorIsForegroundPriorVector info invalid" << std::endl);
   }
   const unsigned int numPriors = m_WarpedPriors.size();
-  for (unsigned int i = 0; i < numPriors; i++)
+  for (unsigned int i = 0; i < numPriors; ++i)
   {
     if (ng[i] != 0 && ng[i] != 1)
     {
@@ -1087,7 +1087,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeDistributions(
   }
 
   const unsigned int numClasses = SubjectCandidateRegions.size();
-  for (size_t iclass = 0; iclass < numClasses; iclass++)
+  for (size_t iclass = 0; iclass < numClasses; ++iclass)
   {
     if (this->m_UsePurePlugs && resampledPurePlugsMask.IsNotNull())
     {
@@ -1233,7 +1233,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeOnePosterior(
 
             const MatrixType  Y = invcov * X;
             FloatingPrecision mahalo = 0.0;
-            for (unsigned int ichan = 0; ichan < numModalities; ichan++)
+            for (unsigned int ichan = 0; ichan < numModalities; ++ichan)
             {
               const FloatingPrecision & currVal = X(ichan, 0) * Y(ichan, 0);
               CHECK_NAN(currVal,
@@ -1283,7 +1283,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeEMPosteriors(
 
   ProbabilityImageVectorType Posteriors;
   Posteriors.resize(numClasses);
-  for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+  for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
     const FloatingPrecision priorScale = PriorWeights[iclass];
     CHECK_NAN(priorScale, __FILE__, __LINE__, "\n  iclass: " << iclass);
@@ -1494,7 +1494,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeLogLikelihood() con
             const ProbabilityImageIndexType currIndex = { { ii, jj, kk } };
             CompensatedSummationType        tmp;
             tmp += 1e-20;
-            for (unsigned int iclass = 0; iclass < computeInitialNumClasses; iclass++)
+            for (unsigned int iclass = 0; iclass < computeInitialNumClasses; ++iclass)
             {
               if (this->m_PriorIsForegroundPriorVector[iclass]) // We should
                                                                 // probably only
@@ -1569,7 +1569,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WarpImageList(ProbabilityI
   std::vector<typename TInputImage::Pointer> warpedList(originalList.size());
 
   using ResamplerType = itk::ResampleImageFilter<TInputImage, TInputImage>;
-  for (unsigned int vIndex = 0; vIndex < originalList.size(); vIndex++)
+  for (unsigned int vIndex = 0; vIndex < originalList.size(); ++vIndex)
   {
     typename ResamplerType::Pointer warper = ResamplerType::New();
     warper->SetInput(originalList[vIndex]);
@@ -1826,7 +1826,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
         const typename ByteImageType::IndexType myIndex = firstCandidateIter.GetIndex();
         bool                                    AllPixelsAreZero = true;
 
-        for (unsigned int k = 0; (k < candiateVectorSize) && AllPixelsAreZero; k++)
+        for (unsigned int k = 0; (k < candiateVectorSize) && AllPixelsAreZero; ++k)
         {
           const typename ByteImageType::PixelType value = subjectCandidateRegions[k]->GetPixel(myIndex);
           if (value > 0)
@@ -1839,7 +1839,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
                               // to most likely background value.
         {
           ++AllZeroCounts;
-          for (unsigned int k = 0; k < candiateVectorSize; k++)
+          for (unsigned int k = 0; k < candiateVectorSize; ++k)
           {
             if (this->m_PriorIsForegroundPriorVector[k] == false)
             {
@@ -1874,7 +1874,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
     {
       std::stringstream CurrentEMIteration_stream("");
       CurrentEMIteration_stream << CurrentEMIteration;
-      for (unsigned int i = 0; i < subjectCandidateRegions.size(); i++)
+      for (unsigned int i = 0; i < subjectCandidateRegions.size(); ++i)
       {
         // Write the subject candidate regions
 
@@ -1939,7 +1939,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::BlendPosteriorsAndPriors(
   const ProbabilityImageVectorType & ProbList2,
   ProbabilityImageVectorType &       ReturnBlendedProbList)
 {
-  for (unsigned int k = 0; k < ProbList2.size(); k++)
+  for (unsigned int k = 0; k < ProbList2.size(); ++k)
   {
     std::cout << "Start Blending Prior:" << k << std::endl;
     typename TProbabilityImage::Pointer multInputImage = ProbList2[k];
@@ -2008,7 +2008,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugWarpedAtlasPrior
     CurrentEMIteration_stream << CurrentEMIteration;
     if (this->m_DebugLevel > 9)
     {
-      for (unsigned int vIndex = 0; vIndex < this->m_WarpedPriors.size(); vIndex++)
+      for (unsigned int vIndex = 0; vIndex < this->m_WarpedPriors.size(); ++vIndex)
       {
         using WriterType = itk::ImageFileWriter<InputImageType>;
         typename WriterType::Pointer writer = WriterType::New();
@@ -2037,7 +2037,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WriteDebugBlendClippedPrio
   CurrentEMIteration_stream << CurrentEMIteration;
   if (this->m_DebugLevel > 9)
   { // DEBUG:  This code is for debugging purposes only;
-    for (unsigned int k = 0; k < m_WarpedPriors.size(); k++)
+    for (unsigned int k = 0; k < m_WarpedPriors.size(); ++k)
     {
       using WriterType = itk::ImageFileWriter<InputImageType>;
       typename WriterType::Pointer writer = WriterType::New();
@@ -2244,7 +2244,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::WritePartitionTable(const 
       ++ichan;
     }
   }
-  for (unsigned int iclass = 0; iclass < numPriors; iclass++)
+  for (unsigned int iclass = 0; iclass < numPriors; ++iclass)
   {
     unsigned int ichan = 0;
     EMIterationTable.add(iclass + 1, 0, std::string("Class ") + this->m_PriorNames[iclass] + " mean ");
@@ -2434,7 +2434,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
     // definite, and this
     // occurs when two or more of the images are linearly dependant (i.e. nearly
     // the same image).
-    for (unsigned int q = 0; q < this->m_ListOfClassStatistics.size(); q++)
+    for (unsigned int q = 0; q < this->m_ListOfClassStatistics.size(); ++q)
     {
       try
       {
@@ -2679,7 +2679,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::CorrectBias(const unsigned
                                                         CandidateRegions[0].GetPointer());
   }
 
-  for (unsigned int iclass = 0; iclass < numClasses; iclass++)
+  for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
     const unsigned iprior = iclass;
     if (probUseForBias[iprior] == 1)

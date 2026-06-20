@@ -36,7 +36,7 @@ ZeroNegativeValuesInPlace(std::vector<typename TProbabilityImage::Pointer> & pri
   {
     tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0, numPriors, 1), [=](tbb::blocked_range<LOOPITERTYPE> & r) {
       // First copy value, and set negative values to zero.
-      for (LOOPITERTYPE iprior = r.begin(); iprior < r.end(); iprior++)
+      for (LOOPITERTYPE iprior = r.begin(); iprior < r.end(); ++iprior)
       {
         for (itk::ImageRegionIterator<TProbabilityImage> priorIter(priors[iprior],
                                                                    priors[iprior]->GetLargestPossibleRegion());
@@ -73,7 +73,7 @@ NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> & Prob
             {
               const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
               FloatingPrecision                           sumPrior = 0.0;
-              for (unsigned int iprior = 0; iprior < numProbs; iprior++)
+              for (unsigned int iprior = 0; iprior < numProbs; ++iprior)
               {
                 const FloatingPrecision & ProbListValue = ProbList[iprior]->GetPixel(currIndex);
                 CHECK_NAN(ProbListValue,
@@ -86,7 +86,7 @@ NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> & Prob
               if (sumPrior < 1e-20)
               {
                 const FloatingPrecision averageValue = 1.0 / static_cast<FloatingPrecision>(numProbs);
-                for (unsigned int iprior = 0; iprior < numProbs; iprior++)
+                for (unsigned int iprior = 0; iprior < numProbs; ++iprior)
                 {
                   ProbList[iprior]->SetPixel(currIndex, averageValue);
                 }
@@ -94,7 +94,7 @@ NormalizeProbListInPlace(std::vector<typename TProbabilityImage::Pointer> & Prob
               else
               {
                 const FloatingPrecision invSumPrior = 1.0 / sumPrior;
-                for (unsigned int iprior = 0; iprior < numProbs; iprior++)
+                for (unsigned int iprior = 0; iprior < numProbs; ++iprior)
                 {
                   const FloatingPrecision normValue = ProbList[iprior]->GetPixel(currIndex) * invSumPrior;
 
@@ -122,7 +122,7 @@ DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
   {
     tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0, inputList.size(), 1),
                       [=, &outputList](const tbb::blocked_range<LOOPITERTYPE> & r) {
-                        for (auto i = r.begin(); i < r.end(); i++)
+                        for (auto i = r.begin(); i < r.end(); ++i)
                         {
                           typename itk::ImageDuplicator<TInputImage>::Pointer myDuplicator =
                             itk::ImageDuplicator<TInputImage>::New();
@@ -162,7 +162,7 @@ ComputeForegroundProbMask(const std::vector<typename TProbabilityImage::Pointer>
                             {
                               const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
                               FloatingPrecision                           tmp = 0.0;
-                              for (unsigned int iprior = 0; iprior < numPriors; iprior++)
+                              for (unsigned int iprior = 0; iprior < numPriors; ++iprior)
                               {
                                 const bool fgflag = IsForegroundPriorVector[iprior];
                                 if (fgflag == true)

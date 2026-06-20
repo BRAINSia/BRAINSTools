@@ -296,7 +296,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
     preprocessedFixedImagesList.push_back(m_FixedImage2);
     preprocessedMovingImagesList.push_back(m_MovingImage2);
   }
-  for (unsigned int n = 0; n < preprocessedFixedImagesList.size(); n++)
+  for (unsigned int n = 0; n < preprocessedFixedImagesList.size(); ++n)
   {
     m_Registration->SetFixedImage(n, preprocessedFixedImagesList[n]);
     m_Registration->SetMovingImage(n, preprocessedMovingImagesList[n]);
@@ -315,7 +315,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   factors[0] = 1;
   using ShrinkFactorsPerDimensionContainerType = typename RegistrationType::ShrinkFactorsPerDimensionContainerType;
   std::vector<ShrinkFactorsPerDimensionContainerType> shrinkFactorsPerDimensionForAllLevels;
-  for (unsigned int n = 0; n < numberOfLevels; n++)
+  for (unsigned int n = 0; n < numberOfLevels; ++n)
   {
     ShrinkFactorsPerDimensionContainerType shrinkFactorsPerDimension(3);
     shrinkFactorsPerDimension.Fill(0);
@@ -334,7 +334,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   sigmas[0] = 0;
   typename RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
   smoothingSigmasPerLevel.SetSize(sigmas.size());
-  for (unsigned int n = 0; n < smoothingSigmasPerLevel.Size(); n++)
+  for (unsigned int n = 0; n < smoothingSigmasPerLevel.Size(); ++n)
   {
     smoothingSigmasPerLevel[n] = sigmas[n];
   }

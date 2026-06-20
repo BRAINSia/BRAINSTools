@@ -202,7 +202,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs,
   if (internal_bvec_organization_check)
   {
     std::vector<std::vector<double>> bVecst(3);
-    for (unsigned i = 0; i < 3; i++)
+    for (unsigned i = 0; i < 3; ++i)
     {
       std::string bvect;
       std::getline(bVecFile, bvect);
@@ -231,7 +231,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs,
         break;
       }
     }
-    for (unsigned int i = 1; i < 3; i++)
+    for (unsigned int i = 1; i < 3; ++i)
     {
       if (bVecst[i].size() != bVecst[0].size())
       {
@@ -240,7 +240,7 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs,
     }
     bVecCount = bVecst[0].size();
     // Needed to convert to/from FSL to Dicom internal conventions
-    for (unsigned int i = 0; i < bVecCount; i++)
+    for (unsigned int i = 0; i < bVecCount; ++i)
     {
       double                                                list[] = { bVecst[0][i], bVecst[1][i], bVecst[2][i] };
       DWIMetaDataDictionaryValidator::GradientDirectionType x;

@@ -70,7 +70,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   minimumSpacing.Fill(std::numeric_limits<double>::max());
 
   size_t index = 0;
-  for (size_t i = 0; i < numberOfImageModalities; i++)
+  for (size_t i = 0; i < numberOfImageModalities; ++i)
   {
     // Generation of the pure plug mask needs the input images being normalized between 0 and 1.
     if (!areInputsNormalized)
@@ -88,7 +88,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
 
     // Pure plug mask should have the highest spacing (lowest resolution) at each direction
     typename InputImageType::SpacingType currImageSpacing = normalizedInputModalImagesList[i]->GetSpacing();
-    for (size_t s = 0; s < 3; s++)
+    for (size_t s = 0; s < 3; ++s)
     {
       if (currImageSpacing[s] > maskSpacing[s])
       {
@@ -105,7 +105,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   // if invalid values are passed as numberOfContinuousIndexSubSamples,
   // we recompute that as the ratio between lowest resolution to highest resolution
   bool recomputeNumberOfSubSamples = false;
-  for (size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; ++i)
   {
     if (numberOfContinuousIndexSubSamples[i] <= 0)
     {
@@ -247,7 +247,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
 
           MeasurementVectorType mv(numberOfImageModalities);
 
-          for (unsigned int i = 0; i < numberOfImageModalities; i++)
+          for (unsigned int i = 0; i < numberOfImageModalities; ++i)
           {
             if (inputImageNNInterpolatorsVector[i]->IsInsideBuffer(currPoint) &&
                 edgeMaskInterp->IsInsideBuffer(currPoint))

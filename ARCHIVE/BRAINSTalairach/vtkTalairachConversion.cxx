@@ -216,7 +216,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
     std::vector<std::string> tokens;
 
     tokens.clear();
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 6; ++i)
     {
       std::string       buf;
       std::stringstream ss(*it);
@@ -673,7 +673,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
 
     /* Make sure that the boxes are within the image space */
     ImageType::RegionType::SizeType imageSize = this->MaskImage->GetLargestPossibleRegion().GetSize();
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
       if (gridStart[i] < 0)
       {
@@ -709,7 +709,7 @@ vtkTalairachConversion::ProcessBOX(bool _left)
       }
     }
     /* SOME POST PROCESSING TO ENSURE THAT THE BOXES ARE NOT EMPTY */
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
       if (gridStart[i] > gridEnd[i])
       {

@@ -97,7 +97,7 @@ main(int argc, char * argv[])
 
   // Verify that the spline grid sizes are greater than 3
   {
-    for (unsigned int sgs = 0; sgs < splineGridSize.size(); sgs++)
+    for (unsigned int sgs = 0; sgs < splineGridSize.size(); ++sgs)
     {
       if (splineGridSize[sgs] < 3)
       {

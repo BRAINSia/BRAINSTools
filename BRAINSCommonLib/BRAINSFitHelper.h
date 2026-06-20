@@ -387,7 +387,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
       if (this->m_FixedBinaryVolume->IsInsideInWorldSpace(testPoint))
       {
         // randomly perturb the point within a voxel (approximately)
-        for (unsigned int d = 0; d < FixedImageDimension; d++)
+        for (unsigned int d = 0; d < FixedImageDimension; ++d)
         {
           testPoint[d] += randomizer->GetNormalVariate() * oneThirdVirtualSpacing[d];
         }
@@ -414,7 +414,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     std::cout << "In BRAINSFit the same metric is used for both modalities: " << this->m_CostMetricName << std::endl;
   }
   typename MultiMetricType::Pointer multiMetric = MultiMetricType::New();
-  for (unsigned int i = 0; i < numberOfinputImageSets; i++)
+  for (unsigned int i = 0; i < numberOfinputImageSets; ++i)
   {
     multiMetric->AddMetric(localCostMetric); // In the case of multi-modality,
                                              // The same metric is used for both modalities.

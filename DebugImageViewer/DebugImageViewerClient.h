@@ -257,17 +257,17 @@ DebugImageViewerClient::Send(const typename ImageType::Pointer & image, unsigned
   itk::AnatomicalOrientation orientation = itk::AnatomicalOrientation(xferImage->GetDirection());
   // get origin
   PointType origin = xferImage->GetOrigin();
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     this->m_Sock->Send(&size[i], sizeof(SizeType::SizeValueType));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     this->m_Sock->Send(&spacing[i], sizeof(SpacingType::ValueType));
   }
   this->m_Sock->Send(&orientation, sizeof(orientation));
   // send origin
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     double x = origin[i];
     this->m_Sock->Send(&x, sizeof(double));

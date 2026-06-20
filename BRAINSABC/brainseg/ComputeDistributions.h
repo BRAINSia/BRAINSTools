@@ -68,7 +68,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
   // not sure this is needed -- this sets the size of the
   // covariance matrix, but that is overwritten by assignment below
   // once the covariance has been computed.
-  for (LOOPITERTYPE iclass = 0; iclass < numClasses; iclass++)
+  for (LOOPITERTYPE iclass = 0; iclass < numClasses; ++iclass)
   {
     ListOfClassStatistics[iclass].resize(numModalities);
   }
@@ -204,7 +204,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
   {
     oldCovariances.clear();
     oldCovariances.resize(numClasses);
-    for (LOOPITERTYPE iclass = 0; iclass < numClasses; iclass++)
+    for (LOOPITERTYPE iclass = 0; iclass < numClasses; ++iclass)
     {
       MatrixType C(numModalities, numModalities);
       C.set_identity();
@@ -214,7 +214,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
   }
   else // Copy from previous version.
   {
-    for (LOOPITERTYPE iclass = 0; iclass < numClasses; iclass++)
+    for (LOOPITERTYPE iclass = 0; iclass < numClasses; ++iclass)
     {
       oldCovariances[iclass] = ListOfClassStatistics[iclass].m_Covariance;
     }
@@ -368,7 +368,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
   if (DebugLevel > 9)
   {
     std::cout << "=MANUAL COVARIANCE COMPUTATIONS================================================" << std::endl;
-    for (LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; iclass++)
+    for (LOOPITERTYPE iclass = 0; iclass < (LOOPITERTYPE)numClasses; ++iclass)
     {
       unsigned ichan = 0;
       for (auto mapIt = InputImageMap.begin(); mapIt != InputImageMap.end(); ++mapIt)

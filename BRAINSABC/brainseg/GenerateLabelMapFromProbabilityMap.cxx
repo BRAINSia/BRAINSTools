@@ -58,7 +58,7 @@ main(int argc, char * argv[])
   // read in images
 
   std::vector<ProbabilityMapImageType::Pointer> probabilityImages(numberOfProbabilityMaps);
-  for (unsigned int indexInputImages = 0; indexInputImages < numberOfProbabilityMaps; indexInputImages++)
+  for (unsigned int indexInputImages = 0; indexInputImages < numberOfProbabilityMaps; ++indexInputImages)
   {
     std::cout << "- Read image::" << inputVolumes[indexInputImages] << std::endl;
     using ProbabilityImageReaderType = itk::ImageFileReader<ProbabilityMapImageType>;
@@ -102,7 +102,7 @@ main(int argc, char * argv[])
   {
     ProbabilityMapPixelType max = probabilityIterator.Get();
     LabelMapPixelType       label = 0;
-    for (unsigned int indexInputImages = 1; indexInputImages < numberOfProbabilityMaps; indexInputImages++)
+    for (unsigned int indexInputImages = 1; indexInputImages < numberOfProbabilityMaps; ++indexInputImages)
     {
       const ProbabilityMapPixelType pixelValue =
         probabilityImages[indexInputImages]->GetPixel(probabilityIterator.GetIndex());

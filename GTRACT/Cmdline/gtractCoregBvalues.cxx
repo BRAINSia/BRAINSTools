@@ -192,7 +192,7 @@ main(int argc, char * argv[])
 
   IteratorType               ot(RegisteredImage, RegisteredImage->GetRequestedRegion());
   OutputImageType::PixelType vectorImagePixel;
-  for (unsigned int i = 0; i < movingImageReader->GetOutput()->GetVectorLength(); i++)
+  for (unsigned int i = 0; i < movingImageReader->GetOutput()->GetVectorLength(); ++i)
   {
     // Get Current Gradient Direction
     vnl_vector<double> curGradientDirection(3);

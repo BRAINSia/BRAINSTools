@@ -104,14 +104,14 @@ main(int argc, char * argv[])
   vtkPolyData * resampledFibers = spline->GetOutput();
   /* Average */
   vtkPoints * guidePoints = vtkPoints::New();
-  for (int i = 0; i < numberOfPoints; i++)
+  for (int i = 0; i < numberOfPoints; ++i)
   {
     double avgPoint[3];
     avgPoint[0] = 0;
     avgPoint[1] = 0;
     avgPoint[2] = 0;
     int N = 0;
-    for (int j = 0; j < resampledFibers->GetNumberOfCells(); j++)
+    for (int j = 0; j < resampledFibers->GetNumberOfCells(); ++j)
     {
       if (resampledFibers->GetCellType(j) == VTK_POLY_LINE)
       {
@@ -132,7 +132,7 @@ main(int argc, char * argv[])
   }
   vtkCellArray * line = vtkCellArray::New();
   line->InsertNextCell(guidePoints->GetNumberOfPoints());
-  for (int i = 0; i < guidePoints->GetNumberOfPoints(); i++)
+  for (int i = 0; i < guidePoints->GetNumberOfPoints(); ++i)
   {
     line->InsertCellPoint(i);
   }

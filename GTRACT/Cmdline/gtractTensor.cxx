@@ -181,9 +181,9 @@ main(int argc, char * argv[])
   itk::ExposeMetaData<std::vector<std::vector<double>>>(
     vectorImageReader->GetOutput()->GetMetaDataDictionary(), "NRRD_measurement frame", msrFrame);
   TMatrix measurementFrame(3, 3);
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; ++j)
     {
       measurementFrame[i][j] = msrFrame[i][j];
     }
@@ -198,7 +198,7 @@ main(int argc, char * argv[])
   using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
   VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
   int                            vectorIndex = 0;
-  for (unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); i++)
+  for (unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); ++i)
   {
     using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, IndexImageType>;
     using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;
@@ -334,7 +334,7 @@ main(int argc, char * argv[])
 
   NrrdValue = "DWMRI";
   itk::EncapsulateMetaData<std::string>(newMeta, "modality", NrrdValue);
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 4; ++i)
   {
     char tmpStr[64];
     sprintf(tmpStr, "NRRD_centerings[%d]", i);

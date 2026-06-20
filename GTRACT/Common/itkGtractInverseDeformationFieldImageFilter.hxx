@@ -36,7 +36,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GtractInve
 {
   m_OutputSpacing.Fill(1.0);
   m_OutputOrigin.Fill(0.0);
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     m_Size[i] = 0;
   }
@@ -133,7 +133,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrepareKer
   region = inputImage->GetLargestPossibleRegion();
 
   InputSizeType size = region.GetSize();
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     size[i] = static_cast<typename InputSizeType::SizeValueType>(size[i] / m_SubsamplingFactor);
     spacing[i] *= m_SubsamplingFactor;
@@ -174,7 +174,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrepareKer
     const auto sourcePoint = sampledInput->template TransformIndexToPhysicalPoint<double>(ot.GetIndex());
 
     source->InsertElement(landmarkId, sourcePoint);
-    for (unsigned int i = 0; i < ImageDimension; i++)
+    for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       targetPoint[i] = -value[i];
     }
@@ -245,7 +245,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
     OutputPointType interpolation = m_KernelTransform->TransformPoint(outputPoint);
 
     OutputPixelType inverseDisplacement;
-    for (unsigned int i = 0; i < ImageDimension; i++)
+    for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       inverseDisplacement[i] = interpolation[i];
     }

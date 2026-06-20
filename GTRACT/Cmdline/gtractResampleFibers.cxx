@@ -216,7 +216,7 @@ main(int argc, char * argv[])
   // /vtkDataArray *fiberTensors = inputFiber->GetPointData()->GetTensors( );
 
   vnlMatrixType J;
-  for (int i = 0; i < inputFiber->GetNumberOfPoints(); i++)
+  for (int i = 0; i < inputFiber->GetNumberOfPoints(); ++i)
   {
     double fiberPoint[3];
     fiberPoints->GetPoint(i, fiberPoint);

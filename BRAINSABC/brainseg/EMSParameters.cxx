@@ -74,7 +74,7 @@ EMSParameters ::PrintSelf(std::ostream & os, itk::Indent) const
   os << "Output directory = " << m_OutputDirectory << std::endl;
   os << "Output format = " << m_OutputFormat << std::endl;
   os << "Images:" << std::endl;
-  for (unsigned int k = 0; k < m_Images.size(); k++)
+  for (unsigned int k = 0; k < m_Images.size(); ++k)
   {
     os << "  " << m_Images[k] << " --- " << m_ImageOrientations[k] << std::endl;
   }

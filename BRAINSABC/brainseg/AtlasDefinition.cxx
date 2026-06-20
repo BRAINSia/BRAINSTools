@@ -63,7 +63,7 @@ extern "C"
   XMLcharhandler(void * data, const char * txt, int txtlen)
   {
     // std::cerr << "Char data = (";
-    // for(unsigned i = 0; i < txtlen; i++)
+    // for(unsigned i = 0; i < txtlen; ++i)
     //   {
     //   std::cerr << txt[i];
     //   }
@@ -71,7 +71,7 @@ extern "C"
     auto buf = new char[txtlen + 1];
     int  i = 0;
 
-    for (i = 0; i < txtlen; i++)
+    for (i = 0; i < txtlen; ++i)
     {
       buf[i] = txt[i];
     }

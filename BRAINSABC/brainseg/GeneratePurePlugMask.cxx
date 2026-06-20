@@ -51,7 +51,7 @@ main(int argc, char * argv[])
   using LocalReaderPointer = LocalReaderType::Pointer;
 
   InputImageList inputImageModalitiesList;
-  for (unsigned int i = 0; i < numberOfImageModalities; i++)
+  for (unsigned int i = 0; i < numberOfImageModalities; ++i)
   {
     std::cout << "Reading image: " << inputFileNames[i] << std::endl;
 

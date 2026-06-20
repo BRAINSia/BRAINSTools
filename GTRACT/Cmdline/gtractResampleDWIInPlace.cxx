@@ -229,7 +229,7 @@ main(int argc, char * argv[])
   DWIMetaDataDictionaryValidator::GradientTableType newGradTable(gradTable.size());
 
   // Rotate gradient vectors by rigid transform and inverse measurement frame
-  for (unsigned int i = 0; i < gradTable.size(); i++)
+  for (unsigned int i = 0; i < gradTable.size(); ++i)
   {
     // Get Current Gradient Direction
     DWIMetaDataDictionaryValidator::GradientTableType::value_type curGradientDirection(3);
@@ -268,9 +268,9 @@ main(int argc, char * argv[])
     const DWIMetaDataDictionaryValidator::RotationMatrixType newMeasurementFrame =
       DWIInverseMeasurementFrame * DWIMeasurementFrame;
     outputMFMetaDataStream << "measurement frame";
-    for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int i = 0; i < 3; ++i)
     {
-      for (unsigned int j = 0; j < 3; j++)
+      for (unsigned int j = 0; j < 3; ++j)
       {
         outputMFMetaDataStream << "," << newMeasurementFrame[i][j];
       }
@@ -322,9 +322,9 @@ main(int argc, char * argv[])
 
   vnl_matrix_fixed<double, 3, 3> inputDirectionMatrix;
   vnl_matrix_fixed<double, 3, 3> inputSpacingMatrix;
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
-    for (unsigned int j = 0; j < 3; j++)
+    for (unsigned int j = 0; j < 3; ++j)
     {
       inputDirectionMatrix[i][j] = inputDirection[i][j];
       if (i == j)
@@ -340,9 +340,9 @@ main(int argc, char * argv[])
 
   vnl_matrix_fixed<double, 3, 3> spaceDirections = inputDirectionMatrix * inputSpacingMatrix;
   vnl_matrix_fixed<double, 3, 4> newMatrix;
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
-    for (unsigned int j = 0; j < 4; j++)
+    for (unsigned int j = 0; j < 4; ++j)
     {
       if (j == 3)
       {
@@ -364,7 +364,7 @@ main(int argc, char * argv[])
   vnl_matrix_fixed<double, 3, 1> newOriginMatrix = newMatrix * voxelShift;
 
   NrrdImageType::PointType newOrigin;
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     newOrigin[i] = newOriginMatrix[i][0];
   }

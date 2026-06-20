@@ -82,7 +82,7 @@ QImageDisplay::SetBlankImage()
   ImageType::RegionType  imageRegion;
   ImageType::SpacingType imageSpacing;
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     imageSize[i] = 10;
     imageIndex[i] = 0;
@@ -123,7 +123,7 @@ QImageDisplay::QImageDisplay(QWidget * parent)
   QComboBox * combo = new QComboBox(this);
 
   const char * viewNames[3] = { "XY", "XZ", "YZ" };
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
     combo->insertItem(i, tr(viewNames[i]));
   }

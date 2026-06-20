@@ -215,7 +215,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
       double                          MaxVolumeBasedOnArea = 0.0;
       typename TInputImage::PointType rectPhysPoint;
       typename TInputImage::PointType currRotatedSampleGridLocation;
-      for (int dIndex = numberOfSamplelingLines - 1; dIndex >= 0; dIndex--)
+      for (int dIndex = numberOfSamplelingLines - 1; dIndex >= 0; --dIndex)
       {
         // Equally space the SI sampling around the COM for each index
         const double percentage = (static_cast<double>(dIndex + 1) / static_cast<double>(numberOfSamplelingLines));

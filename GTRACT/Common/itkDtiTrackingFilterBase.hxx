@@ -121,7 +121,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::S
   const auto oldpt = this->m_AnisotropyImage->template TransformContinuousIndexToPhysicalPoint<double>(oldIndex);
   // std::cerr << "Converted " << oldIndex << " to " << oldpt << std::endl;
   // Calculate the new point
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     newpt[i] = oldpt[i] + vec[i] * this->m_StepSize;
   }
@@ -139,7 +139,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::S
 {
   typename Self::AnisotropyImageType::SpacingType spacing = this->m_AnisotropyImage->GetSpacing();
   // Calculate the new index
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     newIndex[i] = oldIndex[i] + vec[i] * this->m_StepSize / spacing[i];
   }
@@ -182,7 +182,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::I
   const int    numPts = fiber->GetNumberOfPoints();
 
   fiber->GetPoint(numPts - 1, p1);
-  for (int i = numPts - 2; i >= 0; i--)
+  for (int i = numPts - 2; i >= 0; --i)
   {
     fiber->GetPoint(i, p2);
     const double distance =
@@ -256,7 +256,7 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::A
   vtkCellArray * line = vtkCellArray::New();
 
   line->InsertNextCell(currentFiber->GetNumberOfPoints());
-  for (int i = 0; i < currentFiber->GetNumberOfPoints(); i++)
+  for (int i = 0; i < currentFiber->GetNumberOfPoints(); ++i)
   {
     line->InsertCellPoint(i);
   }

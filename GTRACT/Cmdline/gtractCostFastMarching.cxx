@@ -205,7 +205,7 @@ main(int argc, char * argv[])
   // setup seed points
   NodeContainer::Pointer seedPoints = NodeContainer::New();
   NodeType               node;
-  for (unsigned int j = 0; j < numSeeds; j++)
+  for (unsigned int j = 0; j < numSeeds; ++j)
   {
     seedIndexType seedIndex;
     seedIndex = seedList.back();

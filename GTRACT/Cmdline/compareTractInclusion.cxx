@@ -66,7 +66,7 @@ PairOffFibers(vtkPolyData * resampledTestFibers, vtkPolyData * resampledStandard
 {
   double maxDistances = 0.0;
 
-  for (int j = 0; j < resampledTestFibers->GetNumberOfCells(); j++)
+  for (int j = 0; j < resampledTestFibers->GetNumberOfCells(); ++j)
   {
     if (resampledTestFibers->GetCellType(j) == VTK_POLY_LINE)
     {
@@ -74,14 +74,14 @@ PairOffFibers(vtkPolyData * resampledTestFibers, vtkPolyData * resampledStandard
       resampledTestFibers->GetCellPoints(j, testPointList);
       double minDist = 1E200;
       int    closestK = -1;
-      for (int k = 0; k < resampledStandardFibers->GetNumberOfCells(); k++)
+      for (int k = 0; k < resampledStandardFibers->GetNumberOfCells(); ++k)
       {
         if (resampledStandardFibers->GetCellType(k) == VTK_POLY_LINE)
         {
           vtkIdList * standardPointList = vtkIdList::New();
           resampledStandardFibers->GetCellPoints(k, standardPointList);
           double sumDist = 0.0;
-          for (int i = 0; i < numberOfPoints; i++)
+          for (int i = 0; i < numberOfPoints; ++i)
           {
             double testPoint[3];
             resampledTestFibers->GetPoint(testPointList->GetId(i), testPoint);
@@ -90,7 +90,7 @@ PairOffFibers(vtkPolyData * resampledTestFibers, vtkPolyData * resampledStandard
             resampledStandardFibers->GetPoint(standardPointList->GetId(i), standardPoint);
 
             double sumSquares = 0.0;
-            for (int p = 0; p < 3; p++)
+            for (int p = 0; p < 3; ++p)
             {
               double edge = testPoint[p] - standardPoint[p];
               sumSquares += edge * edge;

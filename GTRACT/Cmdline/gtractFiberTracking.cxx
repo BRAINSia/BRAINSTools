@@ -86,12 +86,12 @@ CreateIjkToRasMatrix(typename TImageType::Pointer image)
   vtkMatrix4x4 * RasToIjkMatrix = vtkMatrix4x4::New();
 
   IjkToLpsMatrix->Identity();
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     spacing[i] = image->GetSpacing()[i];
     origin[i] = image->GetOrigin()[i];
     // Get IJK to LPS direction vector
-    for (unsigned int j = 0; j < image->GetImageDimension(); j++)
+    for (unsigned int j = 0; j < image->GetImageDimension(); ++j)
     {
       IjkToLpsMatrix->SetElement(j, i, spacing[i] * image->GetDirection()[j][i]);
     }
@@ -106,7 +106,7 @@ CreateIjkToRasMatrix(typename TImageType::Pointer image)
 
   origin[0] *= -1; // L -> R
   origin[1] *= -1; // P -> A
-  for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int j = 0; j < 3; ++j)
   {
     RasToIjkMatrix->SetElement(j, 3, origin[j]);
   }

@@ -297,7 +297,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
     typename TransformType::InputPointType   rotationCenter;
     typename TransformType::OutputVectorType translationVector;
     itk::Vector<double, 3>                   scaleValue;
-    for (unsigned int i = 0; i < Dimension; i++)
+    for (unsigned int i = 0; i < Dimension; ++i)
     {
       rotationCenter[i] = fixedCenter[i];
       translationVector[i] = movingCenter[i] - fixedCenter[i];
@@ -705,7 +705,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
     localNumberOfIterations = m_NumberOfIterations;
   }
   std::string localInitializeTransformMode(this->m_InitializeTransformMode);
-  for (unsigned int currentTransformIndex = 0; currentTransformIndex < m_TransformType.size(); currentTransformIndex++)
+  for (unsigned int currentTransformIndex = 0; currentTransformIndex < m_TransformType.size(); ++currentTransformIndex)
   {
     const std::string currentTransformType(m_TransformType[currentTransformIndex]);
     std::cout << "TransformTypes: " << currentTransformType << "(" << currentTransformIndex + 1 << " of "
@@ -757,7 +757,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
     }
   }
 
-  for (unsigned int currentTransformIndex = 0; currentTransformIndex < m_TransformType.size(); currentTransformIndex++)
+  for (unsigned int currentTransformIndex = 0; currentTransformIndex < m_TransformType.size(); ++currentTransformIndex)
   {
     const std::string currentTransformType(m_TransformType[currentTransformIndex]);
     std::cout << "\n\n\n=============================== "
@@ -1259,7 +1259,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       // Using BSplineTransformInitializer
       //
       BSplineTransformType::MeshSizeType meshSize;
-      for (unsigned int i = 0; i < SpaceDimension; i++)
+      for (unsigned int i = 0; i < SpaceDimension; ++i)
       {
         meshSize[i] = m_SplineGridSize[i];
       }
@@ -1359,7 +1359,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         LBFGSBoptimizer->AddObserver(itk::IterationEvent(), observer);
       }
 
-      for (unsigned int n = 0; n < preprocessedFixedImagesList.size(); n++)
+      for (unsigned int n = 0; n < preprocessedFixedImagesList.size(); ++n)
       {
         bsplineRegistration->SetFixedImage(n, preprocessedFixedImagesList[n]);
       }
@@ -1391,7 +1391,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
                                                      false);
             preprocessedMovingImagesList.push_back(warpedMoving2);
           }
-          for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); n++)
+          for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); ++n)
           {
             bsplineRegistration->SetMovingImage(n, preprocessedMovingImagesList[n]);
           }
@@ -1438,7 +1438,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         }
         else
         {
-          for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); n++)
+          for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); ++n)
           {
             bsplineRegistration->SetMovingImage(n, preprocessedMovingImagesList[n]);
           }
@@ -1452,7 +1452,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       }
       else
       {
-        for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); n++)
+        for (unsigned int n = 0; n < preprocessedMovingImagesList.size(); ++n)
         {
           bsplineRegistration->SetMovingImage(n, preprocessedMovingImagesList[n]);
         }

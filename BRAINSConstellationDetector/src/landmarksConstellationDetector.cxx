@@ -549,7 +549,7 @@ landmarksConstellationDetector::FindCandidatePoints(
       LandmarksMapType msp_lmks_algo_found; // named points in EMSP space
       {
         SImageType::PointType centerOfSearchAreaPoint;
-        for (unsigned int i = 0; i < centerOfSearchAreaPoint.size(); i++)
+        for (unsigned int i = 0; i < centerOfSearchAreaPoint.size(); ++i)
         {
           centerOfSearchAreaPoint[i] = CenterOfSearchArea[i];
         }

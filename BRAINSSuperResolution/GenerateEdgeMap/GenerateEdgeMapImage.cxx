@@ -69,7 +69,7 @@ main(int argc, char * argv[])
   using LocalReaderPointer = ImageReaderType::Pointer;
 
   InputImageList inputMRImageModalitiesList;
-  for (unsigned int i = 0; i < numberOfMRImages; i++)
+  for (unsigned int i = 0; i < numberOfMRImages; ++i)
   {
     std::cout << "Reading image: " << inputMRFileNames[i] << std::endl;
     LocalReaderPointer imgreader = ImageReaderType::New();

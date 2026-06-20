@@ -156,7 +156,7 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
 
   const RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
-  for (unsigned int which = 0; which < 4; which++)
+  for (unsigned int which = 0; which < 4; ++which)
   {
     SImageType::PointType pt = RP;
     SImageType::PointType pt2 = RP2;
@@ -306,7 +306,7 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
 
   const RGBImageType::Pointer orientedImage = ReturnOrientedRGBImage(inputImage);
 
-  for (unsigned int which = 0; which < 5; which++)
+  for (unsigned int which = 0; which < 5; ++which)
   {
     SImageType::PointType pt;
     double                radius = 0.0;

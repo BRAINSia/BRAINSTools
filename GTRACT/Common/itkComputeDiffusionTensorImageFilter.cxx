@@ -95,7 +95,7 @@ ComputeDiffusionTensorImageFilter ::Update()
   InputImageIndexType   ADCIndex = ADCRegion.GetIndex();
   InputImageSpacingType ADCSpacing = m_InternalImage->GetSpacing();
   InputImagePointType   ADCOrigin = m_InternalImage->GetOrigin();
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     TensorSize[i] = ADCSize[i];
     TensorIndex[i] = ADCIndex[i];
@@ -125,7 +125,7 @@ ComputeDiffusionTensorImageFilter ::Update()
     ADC_It.GoToBeginOfLine();
     auto ADC0 = static_cast<float>(ADC_It.Get());
     ADCIndex = ADC_It.GetIndex();
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
       TensorIndex[i] = ADCIndex[i];
     }
@@ -136,7 +136,7 @@ ComputeDiffusionTensorImageFilter ::Update()
     {
       ++ADC_It;
       TVector temp(m_NumberOfBSteps * m_NumberOfDirections);
-      for (int i = 0; i < m_NumberOfBSteps * m_NumberOfDirections; i++)
+      for (int i = 0; i < m_NumberOfBSteps * m_NumberOfDirections; ++i)
       {
         temp(i) = static_cast<float>(ADC_It.Get());
         ++ADC_It;
@@ -147,9 +147,9 @@ ComputeDiffusionTensorImageFilter ::Update()
       TVector Ln_ADCs(m_NumberOfBSteps + 1);
       Ln_ADCs(0) = 0;
       bool ErrFlg = false;
-      for (int direction = 0; direction < m_NumberOfDirections; direction++)
+      for (int direction = 0; direction < m_NumberOfDirections; ++direction)
       {
-        for (int step = 0; step < m_NumberOfBSteps; step++)
+        for (int step = 0; step < m_NumberOfBSteps; ++step)
         {
           float tempflt;
           tempflt = temp(direction * m_NumberOfBSteps + step);

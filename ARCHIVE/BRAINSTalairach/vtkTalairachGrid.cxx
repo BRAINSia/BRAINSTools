@@ -414,7 +414,7 @@ vtkTalairachGrid::EstablishTalairachGrid()
   double z12 = (SLAPoint[2]);
 
   // double z0 = floor((z8 + (zIrp - z8) / 4.0 * 6.0));
-  for (k = 0; k < 15; k++)
+  for (k = 0; k < 15; ++k)
   {
     switch (k)
     {
@@ -536,7 +536,7 @@ vtkTalairachGrid::EstablishTalairachGrid()
     }
 
     jVal = 0.0;
-    for (j = 0; j < 12; j++)
+    for (j = 0; j < 12; ++j)
     {
       switch (j)
       {
@@ -608,7 +608,7 @@ vtkTalairachGrid::EstablishTalairachGrid()
       }
 
       iVal = 0.0;
-      for (i = 0; i < 9; i++)
+      for (i = 0; i < 9; ++i)
       {
         switch (i)
         {

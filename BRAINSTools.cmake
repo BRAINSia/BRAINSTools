@@ -73,6 +73,8 @@ if(USE_BRAINSABC)
   else()
     set( TBB_MIN_VERSION "2017.0")
   endif()
+  # TBBConfig's imported targets link Threads::Threads without finding it.
+  find_package(Threads REQUIRED)
   find_package(TBB ${TBB_MIN_VERSION} REQUIRED
 #               COMPONENTS tbb tbbmalloc
                NO_MODULE PATHS ${TBB_DIR} )

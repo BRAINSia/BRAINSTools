@@ -203,7 +203,7 @@ TensorToAnisotropyImageFilter ::computNeighborhoodVoxelAnisotropy()
         float   sum = 0;
         float   coef = 0;
         TVector neighbor;
-        for (int i = 0; i <= 8; i++)
+        for (int i = 0; i <= 8; ++i)
         {
           if (i == 4)
           {

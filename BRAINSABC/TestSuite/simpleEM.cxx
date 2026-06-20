@@ -205,7 +205,7 @@ simpleRunEMS(std::string                t1Volume,
   }
   else
   {
-    for (unsigned int i = 0; i < PriorsList.size(); i++)
+    for (unsigned int i = 0; i < PriorsList.size(); ++i)
     {
       typename PriorImageReaderType::Pointer priorReader = PriorImageReaderType::New();
       std::string                            name = PriorsList.at(i);
@@ -219,7 +219,7 @@ simpleRunEMS(std::string                t1Volume,
 
   using SegFilterType = EMSegmentationFilter<InputImageType, PriorImageType>;
   typename SegFilterType::VectorType priorweights(PriorWeights.size());
-  for (unsigned int i = 0; i < PriorWeights.size(); i++)
+  for (unsigned int i = 0; i < PriorWeights.size(); ++i)
   {
     priorweights[i] = PriorWeights.at(i);
   }
@@ -273,7 +273,7 @@ simpleRunEMS(std::string                t1Volume,
   {
     std::cerr << "Writing filtered and bias corrected images...\n";
     std::vector<InputImagePointer> imgset = segfilter->GetCorrected();
-    for (unsigned i = 0; i < imgset.size(); i++)
+    for (unsigned i = 0; i < imgset.size(); ++i)
     {
       using CasterType = itk::CastImageFilter<InputImageType, ShortImageType>;
       typename CasterType::Pointer                                               caster = CasterType::New();
@@ -298,7 +298,7 @@ simpleRunEMS(std::string                t1Volume,
     // Short posteriors
     std::cerr << "Writing posterior images...\n";
     std::vector<ShortImagePointer> probset = segfilter->GetShortPosteriors();
-    for (unsigned int i = 0; i < (probset.size() - 3); i++)
+    for (unsigned int i = 0; i < (probset.size() - 3); ++i)
     {
       using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
       ShortWriterType::Pointer writer = ShortWriterType::New();

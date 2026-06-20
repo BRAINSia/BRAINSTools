@@ -75,7 +75,7 @@ main(int argc, char * argv[])
   {
     RegionMaskVolume = itkUtil::ReadImage<MaskImageType>(inputMaskVolume);
   }
-  for (unsigned int modeIndex = 0; modeIndex < numberOfModes; modeIndex++)
+  for (unsigned int modeIndex = 0; modeIndex < numberOfModes; ++modeIndex)
   {
     {
       ImageType::Pointer ImageInput = itkUtil::ReadImage<ImageType>(inputVolumes[modeIndex]);

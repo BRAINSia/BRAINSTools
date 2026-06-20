@@ -41,13 +41,13 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::PrintSelf(std::ostr
   os << indent << "m_UsePrincipleComponents = " << m_UseImageSpacing << std::endl;
   os << indent << "m_RequestedNumberOfThreads = " << m_RequestedNumberOfThreads << std::endl;
   os << indent << "m_DerivativeWeights = ";
-  for (i = 0; i < ImageDimension; i++)
+  for (i = 0; i < ImageDimension; ++i)
   {
     os << m_DerivativeWeights[i] << " ";
   }
   os << std::endl;
   os << indent << "m_ComponentWeights = ";
-  for (i = 0; i < VectorDimension; i++)
+  for (i = 0; i < VectorDimension; ++i)
   {
     os << m_ComponentWeights[i] << " ";
   }
@@ -61,11 +61,11 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::DivergenceImageFilt
   m_UseImageSpacing = true;
   m_UsePrincipleComponents = true;
   m_RequestedNumberOfThreads = this->GetNumberOfThreads();
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     m_DerivativeWeights[i] = static_cast<TRealType>(1.0);
   }
-  for (unsigned int i = 0; i < VectorDimension; i++)
+  for (unsigned int i = 0; i < VectorDimension; ++i)
   {
     m_ComponentWeights[i] = static_cast<TRealType>(1.0);
     m_SqrtComponentWeights[i] = static_cast<TRealType>(1.0);
@@ -160,7 +160,7 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::BeforeThreadedGener
   // in case our input image has changed.
   if (m_UseImageSpacing == true)
   {
-    for (unsigned i = 0; i < ImageDimension; i++)
+    for (unsigned i = 0; i < ImageDimension; ++i)
     {
       if (static_cast<TRealType>(this->GetInput()->GetSpacing()[i]) == 0.0)
       {

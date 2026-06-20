@@ -46,7 +46,7 @@ Resample(const std::string & inputVolume, const std::string & outputVolume, cons
   using InterpolatorType = typename itk::LinearInterpolateImageFunction<ImageType, double>;
   const typename InterpolatorType::Pointer interpolator(InterpolatorType::New());
   filter->SetInterpolator(interpolator);
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
     spacing[i] *= scaleFactor;
     size[i] = static_cast<typename ImageType::SizeType::SizeValueType>(static_cast<double>(size[i]) / scaleFactor);

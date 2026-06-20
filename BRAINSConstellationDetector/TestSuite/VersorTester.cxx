@@ -102,7 +102,7 @@ RotationMatrixToVersorTest()
 
   constexpr double steps = 5;
   const double     small_degree_steps = onedegree / 1000.0; // 1/1000 of a degree
-  for (int j = 0; j < 6; j++)
+  for (int j = 0; j < 6; ++j)
   {
     for (double alpha = centers[j] - steps * small_degree_steps; alpha <= centers[j] + steps * small_degree_steps;
          alpha += small_degree_steps)

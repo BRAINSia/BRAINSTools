@@ -187,11 +187,11 @@ heapFirstK(std::vector<T> & array, unsigned int n, unsigned int k)
 
   Heap<T> heap;
   heap.Allocate(n);
-  for (unsigned int i = 0; i < n; i++)
+  for (unsigned int i = 0; i < n; ++i)
   {
     heap.Insert(array[i]);
   }
-  for (unsigned int i = 0; i < k; i++)
+  for (unsigned int i = 0; i < k; ++i)
   {
     firstk[i] = heap.ExtractMinimum();
   }
@@ -210,12 +210,12 @@ heapKthElement(std::vector<T> & array, unsigned int n, unsigned int k)
 
   Heap<T> heap;
   heap.Allocate(n);
-  for (unsigned int i = 0; i < n; i++)
+  for (unsigned int i = 0; i < n; ++i)
   {
     heap.Insert(array[i]);
   }
   // Throw away first k-1 values
-  for (unsigned int i = 0; i < k; i++)
+  for (unsigned int i = 0; i < k; ++i)
   {
     heap.ExtractMinimum();
   }

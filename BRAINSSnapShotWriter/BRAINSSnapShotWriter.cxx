@@ -71,11 +71,11 @@ GetSliceIndexToExtract(const typename TImageType::Pointer & referenceImage,
   }
   else if (!inputSliceToExtractInPhysicalPoint.empty())
   {
-    for (unsigned int i = 0; i < inputSliceToExtractInPhysicalPoint.size(); i++)
+    for (unsigned int i = 0; i < inputSliceToExtractInPhysicalPoint.size(); ++i)
     {
       typename TImageType::PointType physicalPoints;
       typename TImageType::IndexType dummyIndex;
-      for (unsigned int p = 0; p < physicalPoints.Size(); p++)
+      for (unsigned int p = 0; p < physicalPoints.Size(); ++p)
       {
         // fill the same value
         physicalPoints[p] = inputSliceToExtractInPhysicalPoint[i];
@@ -88,7 +88,7 @@ GetSliceIndexToExtract(const typename TImageType::Pointer & referenceImage,
   }
   else if (!inputSliceToExtractInPercent.empty())
   {
-    for (unsigned int i = 0; i < inputSliceToExtractInPercent.size(); i++)
+    for (unsigned int i = 0; i < inputSliceToExtractInPercent.size(); ++i)
     {
       if (inputSliceToExtractInPercent[i] < 0.0F || inputSliceToExtractInPercent[i] > 100.0F)
       {
@@ -156,7 +156,7 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
   const typename TransformType::Pointer myIdentityTransform = TransformType::New();
 
   TImageVectorType imageVector;
-  for (unsigned int i = 0; i < filenameVector.size(); i++)
+  for (unsigned int i = 0; i < filenameVector.size(); ++i)
   {
     std::cout << "Reading image " << i + 1 << ": " << filenameVector[i] << "...\n";
 
@@ -382,7 +382,7 @@ main(int argc, char ** argv)
       }
       else
       {
-        for (unsigned int i = 0; i < image3DBinaries.size(); i++)
+        for (unsigned int i = 0; i < image3DBinaries.size(); ++i)
         {
           const Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
           if (image3DBinaries[i]->GetPixel(index) > 0)
@@ -403,9 +403,9 @@ main(int argc, char ** argv)
   using OutputRGBImageVectorType = std::vector<OutputRGBImageType::Pointer>;
 
   OutputRGBImageVectorType rgbSlices;
-  for (unsigned int plane = 0; plane < inputPlaneDirection.size(); plane++)
+  for (unsigned int plane = 0; plane < inputPlaneDirection.size(); ++plane)
   {
-    for (unsigned int i = 0; i < numberOfImgs; i++)
+    for (unsigned int i = 0; i < numberOfImgs; ++i)
     {
       /** get slicer */
       const Image3DVolumeType::Pointer & current3DImage = image3DVolumes[i];
@@ -476,9 +476,9 @@ main(int argc, char ** argv)
   tileFilter->SetLayout(layout);
   const itk::RGBPixel<unsigned char> defaultPixelValue{ 128 };
   tileFilter->SetDefaultPixelValue(defaultPixelValue);
-  for (unsigned int plane = 0; plane < extractingSlices.size(); plane++)
+  for (unsigned int plane = 0; plane < extractingSlices.size(); ++plane)
   {
-    for (unsigned int i = 0; i < numberOfImgs; i++)
+    for (unsigned int i = 0; i < numberOfImgs; ++i)
     {
       tileFilter->SetInput(i + plane * numberOfImgs, rgbSlices[i + plane * numberOfImgs]);
     }

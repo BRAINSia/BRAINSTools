@@ -87,7 +87,7 @@ main(int argc, char * argv[])
   // For each input landmark file this LandmarksMapType is computed and is set in a vector: "LandmarksMapTypeVec"
 
   LandmarksMapType temp;
-  for (unsigned int i = 0; i < k; i++)
+  for (unsigned int i = 0; i < k; ++i)
   {
     temp = ReadSlicer3toITKLmk(inputFileNames[i]);
     LandmarksMapVector.push_back(temp);
@@ -104,13 +104,13 @@ main(int argc, char * argv[])
     }
   }
   // Computing the average coordinate for each landmark
-  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     double              x_ave = 0.0;
     double              y_ave = 0.0;
     double              z_ave = 0.0;
     const std::string & name = LandmarksNames[j];
-    for (unsigned int i = 0; i < k; i++)
+    for (unsigned int i = 0; i < k; ++i)
     {
       x_ave += LandmarksMapVector[i][name][0];
       y_ave += LandmarksMapVector[i][name][1];

@@ -145,7 +145,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
     internalMask = mask;
   }
 
-  for (size_t i = 0; i < numberOfImageModalities; i++)
+  for (size_t i = 0; i < numberOfImageModalities; ++i)
   {
     typename GradientFilterType::Pointer gradientFilter = GradientFilterType::New();
     gradientFilter->SetInput(inputImages[i]);

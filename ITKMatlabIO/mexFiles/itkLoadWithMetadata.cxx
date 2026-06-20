@@ -312,7 +312,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
   /** data **/
   {
     unsigned int axIdx;
-    for (axIdx = 0; axIdx < mxNrrdDim; axIdx++)
+    for (axIdx = 0; axIdx < mxNrrdDim; ++axIdx)
     {
       sizeI[axIdx] = size[axIdx];
       numPixels *= size[axIdx];
@@ -356,7 +356,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
   mwSize    centerings_size = numMxDimensions;
   mxArray * centerings = mxCreateNumericArray(1, &centerings_size, mxINT32_CLASS, mxREAL);
   int *     centerings_temp = (int *)mxGetData(centerings);
-  for (unsigned int axIdx = 0; axIdx < numMxDimensions; axIdx++)
+  for (unsigned int axIdx = 0; axIdx < numMxDimensions; ++axIdx)
   {
     std::string       val;
     std::stringstream ss;
@@ -381,7 +381,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
   // TODO if it's a nrrd file loaded this is in the metadata
   mxArray * kinds = mxCreateNumericArray(1, &numMxDimensions, mxINT32_CLASS, mxREAL);
   int *     kinds_temp = (int *)mxGetData(kinds);
-  for (unsigned int axIdx = 0; axIdx < numMxDimensions; axIdx++)
+  for (unsigned int axIdx = 0; axIdx < numMxDimensions; ++axIdx)
   {
     std::string       val;
     std::stringstream ss;
@@ -444,7 +444,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
   else
   { // DEFAULT case
     mxArray * spaceunits = mxCreateCellArray(1, &mxNrrdDim);
-    for (unsigned sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++)
+    for (unsigned sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
     {
       mxArray * spaceunits_temp = mxCreateString("mm");
       mxSetCell(spaceunits, sdIdx, spaceunits_temp);
@@ -471,7 +471,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im)
   mxArray *                     spaceorigin = mxCreateNumericArray(1, &mxNrrdDim, mxDOUBLE_CLASS, mxREAL);
   double *                      spaceorigin_temp = (double *)mxGetData(spaceorigin);
   typename ImageType::PointType origin = im->GetOrigin(); // from ITK::Image
-  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++)
+  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
   {
     spaceorigin_temp[sdIdx] = origin[sdIdx];
   } // end for

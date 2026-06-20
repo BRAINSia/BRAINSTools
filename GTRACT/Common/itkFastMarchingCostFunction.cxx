@@ -105,7 +105,7 @@ FastMarchingCostFunction ::GetValue(const ParametersType & parameters) const
 
   m_CostIP->SetInputImage(m_CostImage);
   double value = 0.0;
-  for (unsigned int i = 0; i < CostImageDimension; i++)
+  for (unsigned int i = 0; i < CostImageDimension; ++i)
   {
     inputIndex[i] = parameters[i];
   }
@@ -129,7 +129,7 @@ void FastMarchingCostFunction // < TCostImage>
 
   m_CostIP->SetInputImage(m_CostImage);
   CostImageRegionType costRegion = m_CostImage->GetLargestPossibleRegion();
-  for (unsigned int i = 0; i < CostImageDimension; i++)
+  for (unsigned int i = 0; i < CostImageDimension; ++i)
   {
     inputIndex[i] = parameters[i];
   }
@@ -162,11 +162,11 @@ void FastMarchingCostFunction // < TCostImage>
 
   float neighCost = 0.0;
   float lowNeighCost = initialCost;
-  for (int i = -1; i < 2; i++)
+  for (int i = -1; i < 2; ++i)
   {
-    for (int j = -1; j < 2; j++)
+    for (int j = -1; j < 2; ++j)
     {
-      for (int k = -1; k < 2; k++) // Fix later to account for dimension
+      for (int k = -1; k < 2; ++k) // Fix later to account for dimension
       {
         neighIndex[0] = inputIndex[0] + static_cast<float>(i) / 1; //
                                                                    // +i,+i/1.5,
@@ -187,7 +187,7 @@ void FastMarchingCostFunction // < TCostImage>
         offset[1] = static_cast<float>(j) / 1;
         offset[2] = static_cast<float>(k) / 1;
         /* Compute distance from initial point to its neighbor */
-        for (unsigned int n = 0; n < CostImageDimension; n++)
+        for (unsigned int n = 0; n < CostImageDimension; ++n)
         {
           neighOffset[n] = offset[n] * itk::Math::abs(spacing[n]);
         }
@@ -209,7 +209,7 @@ void FastMarchingCostFunction // < TCostImage>
   } // end of neighbor iteration
 
   bool pass = false;
-  for (unsigned int i = 0; i < CostImageDimension; i++)
+  for (unsigned int i = 0; i < CostImageDimension; ++i)
   {
     if ((sum[i] > 0.0) || (sum[i] < 0.0))
     {
@@ -232,7 +232,7 @@ void FastMarchingCostFunction // < TCostImage>
       where "n(r)" is the direction of the initial point towards the lowest std::cost neighbor */
 
   derivative = DerivativeType(CostImageDimension);
-  for (unsigned int i = 0; i < CostImageDimension; i++)
+  for (unsigned int i = 0; i < CostImageDimension; ++i)
   {
     derivative[i] = static_cast<double>(normal[i] * value);
   }

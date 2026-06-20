@@ -29,7 +29,7 @@ main(int, char **)
 
   std::cout << "Create input image using RandomImageSource" << std::endl;
   ImageType::Pointer images[2];
-  for (unsigned i = 0; i < 2; i++)
+  for (unsigned i = 0; i < 2; ++i)
   {
     using SourceType = itk::RandomImageSource<ImageType>;
     SourceType::Pointer      source = SourceType::New();

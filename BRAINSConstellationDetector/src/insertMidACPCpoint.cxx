@@ -51,7 +51,7 @@ main(int argc, char * argv[])
   LandmarkPointType midACPCpoint;
   {
     auto temp = (PCpoint - ACpoint) * 0.5;
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; ++i)
     {
       midACPCpoint[i] = temp[i];
     }

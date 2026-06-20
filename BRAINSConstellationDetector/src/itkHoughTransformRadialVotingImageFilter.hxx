@@ -212,7 +212,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
           if (norm2 != 0)
           {
             const typename DoGVectorType::ValueType inv_norm = 1.0 / std::sqrt(norm2);
-            for (unsigned int i = 0; i < ImageDimension; i++)
+            for (unsigned int i = 0; i < ImageDimension; ++i)
             {
               grad[i] *= inv_norm;
             }
@@ -221,7 +221,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
           {
             InternalIndexType start;
             InternalSizeType  size;
-            for (unsigned int i = 0; i < ImageDimension; i++)
+            for (unsigned int i = 0; i < ImageDimension; ++i)
             {
               // for T1, T2 images
               if (m_HoughEyeDetectorMode == 1)
@@ -255,7 +255,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
               const Index<ImageDimension> indexAtVote = It1.GetIndex();
               InputCoordType              distance = 0;
               double                      d = 0;
-              for (unsigned int i = 0; i < ImageDimension; i++)
+              for (unsigned int i = 0; i < ImageDimension; ++i)
               {
                 d += itk::Math::sqr(static_cast<double>(indexAtVote[i] - center[i]) * spacing[i]);
                 distance += itk::Math::sqr(static_cast<InputCoordType>(indexAtVote[i] - index[i]) * spacing[i]);
@@ -344,7 +344,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     const InternalIndexType idx = minMaxCalculator->GetIndexOfMaximum();
 
     SphereVectorType center;
-    for (unsigned int i = 0; i < ImageDimension; i++)
+    for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       center[i] = idx[i];
     }
@@ -361,7 +361,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
     InternalSizeType  sizeOfROI;
     InternalIndexType start;
     InternalIndexType end;
-    for (unsigned int i = 0; i < ImageDimension; i++)
+    for (unsigned int i = 0; i < ImageDimension; ++i)
     {
       if (this->m_WritedebuggingAccumulatorImageLevel > 1)
       {

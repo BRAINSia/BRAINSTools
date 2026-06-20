@@ -108,7 +108,7 @@ main(int argc, char * argv[])
   landmarksConstellationTrainingDefinitionIO mDef(inputTrainingList);
   LandmarksMapVector.clear();
   // For each training case, it loads the landmarks file into the LandmarksMapVector
-  for (unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); currentDataset++)
+  for (unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); ++currentDataset)
   {
     std::cout << "PROCESSING:" << mDef[currentDataset].GetImageFilename() << std::endl;
 
@@ -126,7 +126,7 @@ main(int argc, char * argv[])
   BRAINSConstellationDetectorPrimary BCD;
   BCD.SetInputTemplateModel(inputTemplateModel);
   BCD.SetLLSModel(llsModel);
-  for (unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); currentDataset++)
+  for (unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); ++currentDataset)
   {
     std::cout << "\n====================================================================================" << std::endl;
     std::cout << "RUNNING BRAINSConstellationDetector ON: " << mDef[currentDataset].GetImageFilename() << std::endl;
@@ -154,7 +154,7 @@ main(int argc, char * argv[])
   std::cout << "Number of landmarks = " << numNamedLandmarks << std::endl;
   /*
   // TEST PRINT FOR TRACKING
-  for (unsigned int i=0; i<(2*k); i++)
+  for (unsigned int i=0; i<(2*k); ++i)
   {
       std::cout << "\n\nValues of landmarks(" << i << "): " << std::endl;
       for( LandmarksMapType::const_iterator it = LandmarksMapVector[i].begin(); it != LandmarksMapVector[i].end(); ++it
@@ -167,10 +167,10 @@ main(int argc, char * argv[])
   }
   */
   // Computing the average coordinate for each landmark
-  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     const std::string & name = LandmarksNames[j];
-    for (unsigned int i = 0; i < k; i++)
+    for (unsigned int i = 0; i < k; ++i)
     {
       d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
       d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
@@ -182,22 +182,22 @@ main(int argc, char * argv[])
     }
   }
   // Computing the Average of the distances for each landmark
-  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     const std::string & name = LandmarksNames[j];
     double              sum = 0;
-    for (unsigned int i = 0; i < k; i++)
+    for (unsigned int i = 0; i < k; ++i)
     {
       sum += LandmarksDistanceMap[name][i];
     }
     LandmarksAverageMap[name] = sum / k;
   }
   // Computing the Variance and the Standard Deviation of the distances for each landmark
-  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     const std::string & name = LandmarksNames[j];
     double              sum = 0;
-    for (unsigned int i = 0; i < k; i++)
+    for (unsigned int i = 0; i < k; ++i)
     {
       sum += pow(LandmarksDistanceMap[name][i] - LandmarksAverageMap[name], 2);
     }
@@ -207,7 +207,7 @@ main(int argc, char * argv[])
   /*
   // TEST PRINT FOR TRACKING
   std::cout << "\n=============Standard Deviation of Error for Each Landmarks====================" << std::endl;
-for (unsigned int j=0; j<numNamedLandmarks; j++)
+for (unsigned int j=0; j<numNamedLandmarks; ++j)
 {
   std::string name = LandmarksNames[j];
   std::cout << "-" << name << ": " << LandmarksSTDMap[name] << std::endl;
@@ -227,7 +227,7 @@ std::cout << "==============================================================\n" 
   std::cout << "minValue = " << minValue << std::endl;
   std::cout << "maxValue = " << maxValue << std::endl;
   */
-  for (unsigned int j = 0; j < numNamedLandmarks; j++)
+  for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     const std::string & name = LandmarksNames[j];
     LandmarksWeightMap[name] = (UpperBound - LandmarksSTDMap[name]) / (Margin + maxValue);

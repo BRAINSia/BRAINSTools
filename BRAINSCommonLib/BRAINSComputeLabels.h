@@ -81,11 +81,11 @@ ComputeLabels(std::vector<typename TProbabilityImage::Pointer> & Posteriors,
     using LocalLOOPITERTYPE = unsigned int;
     const typename TByteImage::SizeType size = DirtyLabels->GetLargestPossibleRegion().GetSize();
     {
-      for (LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; kk++)
+      for (LocalLOOPITERTYPE kk = 0; kk < (LocalLOOPITERTYPE)size[2]; ++kk)
       {
-        for (LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; jj++)
+        for (LocalLOOPITERTYPE jj = 0; jj < (LocalLOOPITERTYPE)size[1]; ++jj)
         {
-          for (LocalLOOPITERTYPE ii = 0; ii < (LocalLOOPITERTYPE)size[0]; ii++)
+          for (LocalLOOPITERTYPE ii = 0; ii < (LocalLOOPITERTYPE)size[0]; ++ii)
           {
             const typename TProbabilityImage::IndexType currIndex = { { ii, jj, kk } };
             if (NonAirRegion->GetPixel(currIndex) == 0) // If outside the tissue
@@ -101,7 +101,7 @@ ComputeLabels(std::vector<typename TProbabilityImage::Pointer> & Posteriors,
 
             TFloatingPrecision maxPosteriorClassValue = Posteriors[0]->GetPixel(currIndex);
             unsigned int       indexMaxPosteriorClassValue = 0;
-            for (unsigned int iclass = 1; iclass < numClasses; iclass++)
+            for (unsigned int iclass = 1; iclass < numClasses; ++iclass)
             {
               const TFloatingPrecision currentPosteriorClassValue = Posteriors[iclass]->GetPixel(currIndex);
               if (currentPosteriorClassValue > maxPosteriorClassValue)

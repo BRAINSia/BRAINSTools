@@ -225,7 +225,7 @@ main(int argc, char ** argv)
 
   BSplineDeformableTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
   BSplineDeformableTransformType::MeshSizeType           meshSize;
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     fixedPhysicalDimensions[i] = spacing[i] * static_cast<double>(region.GetSize()[i] - 1);
   }

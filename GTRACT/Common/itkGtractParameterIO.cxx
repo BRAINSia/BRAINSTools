@@ -67,7 +67,7 @@ GtractParameterIO::Update()
       temp.fill(0.0);
       m_Directions = temp;
     }
-    for (int i = 0; i < m_NumberOfDirections; i++)
+    for (int i = 0; i < m_NumberOfDirections; ++i)
     {
       fin >> m_Directions[i][0] >> m_Directions[i][1] >> m_Directions[i][2];
     }

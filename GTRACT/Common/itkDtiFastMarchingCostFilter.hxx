@@ -235,7 +235,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     VectorTensorPixelType tensor;
 
     TensorImagePixelType tensorPixel = tensorImage->GetPixel(tensorIndex);
-    for (unsigned int i = 0; i < tensElements; i++)
+    for (unsigned int i = 0; i < tensElements; ++i)
     {
       tensor[i] = tensorPixel[i];
     }
@@ -245,7 +245,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       typename TensorImagePixelType::EigenValuesArrayType   eigenValues;
       typename TensorImagePixelType::EigenVectorsMatrixType eigenVectors;
       tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
-      for (unsigned int i = 0; i < dimension; i++)
+      for (unsigned int i = 0; i < dimension; ++i)
       {
         principalEigenvector[i] = eigenVectors[(dimension - 1)][i];
       }
@@ -253,7 +253,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
     else
     {
-      for (unsigned int i = 0; i < dimension; i++)
+      for (unsigned int i = 0; i < dimension; ++i)
       {
         principalEigenvector[i] = 0.0;
       }
@@ -313,7 +313,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
       float checkEigValue = 0.0;
       bool  pass = false;
-      for (unsigned int i = 0; i < dimension; i++)
+      for (unsigned int i = 0; i < dimension; ++i)
       {
         checkEigValue = eigPixel[i];
         if ((checkEigValue > 0.0) || (checkEigValue < 0.0))
@@ -494,7 +494,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::InitializeTrialPoints(
 
   EigenvectorImageType::IndexType           eigIndex = eigNeighborIt.GetIndex();
   ConstNeighborhoodIteratorType::OffsetType eigoffset{};
-  for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
+  for (unsigned i = 0; i < eigNeighborIt.Size(); ++i)
   {
     eigIndex = eigNeighborIt.GetIndex(i); // eigIndex is new trial point
 
@@ -509,7 +509,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::InitializeTrialPoints(
     // const EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel(eigIndex);
 
     /*
-    for(unsigned int j=0; j<dimension; j++)
+    for(unsigned int j=0; j<dimension; ++j)
     {
       checkEigValue=eigPixel[j];
       if ( ( checkEigValue > 0.0) || (checkEigValue < 0.0 ) )
@@ -526,7 +526,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::InitializeTrialPoints(
     {
       // calculate distance
       eigoffset = eigNeighborIt.GetOffset(i);
-      for (unsigned int k = 0; k < dimension; k++)
+      for (unsigned int k = 0; k < dimension; ++k)
       {
         distance[k] = eigoffset[k] * itk::Math::abs(spacing[k]);
       }
@@ -613,7 +613,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::UpdateNeighbors(
   eigNeighborIt.SetLocation(neighIndex); // set center at alive point index
 
   EigenvectorImageType::IndexType eigIndex = eigNeighborIt.GetIndex();
-  for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
+  for (unsigned i = 0; i < eigNeighborIt.Size(); ++i)
   {
     eigIndex = eigNeighborIt.GetIndex(i); // eigIndex is new trial point
 
@@ -625,7 +625,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::UpdateNeighbors(
     bool                 pass = false;
     float                checkEigValue = 0.0;
     EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel(eigIndex);
-    for (unsigned int j = 0; j < dimension; j++)
+    for (unsigned int j = 0; j < dimension; ++j)
     {
       checkEigValue = eigPixel[j];
       if ((checkEigValue > 0.0) || (checkEigValue < 0.0))
@@ -691,7 +691,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   eigNeighborIt.SetLocation(neighIndex); // set center at trial point index
   ConstNIterType::OffsetType eigoffset{};
   offsetList.clear();
-  for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
+  for (unsigned i = 0; i < eigNeighborIt.Size(); ++i)
   {
     EigenvectorImageType::IndexType eigIndex = eigNeighborIt.GetIndex(i);
 
@@ -703,7 +703,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
     if (m_LabelImage->GetPixel(eigIndex) == AlivePoint)
     {
       eigoffset = eigNeighborIt.GetOffset(i);
-      for (unsigned int k = 0; k < dimension; k++)
+      for (unsigned int k = 0; k < dimension; ++k)
       {
         neighOffset[k] = eigoffset[k] * itk::Math::abs(spacing[k]);
       }
@@ -745,7 +745,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   neighOffset = rOffset;
   // convert neighbor Offsets to neighbor Index (previously index of trial
   // point)
-  for (int i = 0; i < dimension; i++)
+  for (int i = 0; i < dimension; ++i)
   {
     auto val = static_cast<long int>(neighOffset[i] / itk::Math::abs(spacing[i]));
     neighIndex[i] += val;
@@ -843,7 +843,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   eigNeighborIt.SetLocation(neighIndex); // set center at trial point index
   ConstNIterType::OffsetType eigoffset{};
   eigIndex = eigNeighborIt.GetIndex();
-  for (unsigned i = 0; i < eigNeighborIt.Size(); i++)
+  for (unsigned i = 0; i < eigNeighborIt.Size(); ++i)
   {
     eigIndex = eigNeighborIt.GetIndex(i);
 
@@ -862,7 +862,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       normal.fill(0);
       // New Normal calculation n=r-r', where r' is AlivePoint in neighborhood
       // of r, TrialPoint
-      for (unsigned int k = 0; k < dimension; k++) // convert offset to vector
+      for (unsigned int k = 0; k < dimension; ++k) // convert offset to vector
       {
         neighOffset[k] = eigoffset[k] * itk::Math::abs(spacing[k]);
       }
@@ -887,7 +887,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
   // {trialSpeedPixel /= m_NormalizationFactor;}
   /*Convert alive point Offsets to neighbor Index
   (before was Trial Point index, now it is Alive Point index)*/
-  for (int i = 0; i < dimension; i++)
+  for (int i = 0; i < dimension; ++i)
   {
     auto val = static_cast<long int>(aliveOffset[i] / itk::Math::abs(spacing[i]));
     neighIndex[i] += val;

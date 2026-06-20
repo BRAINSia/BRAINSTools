@@ -380,13 +380,13 @@ main(int argc, char ** argv)
   AtlasDefTable.add(1, PriorNames.size() + 2 + 1, "]");
 
   unsigned int currentRow = 0;
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     AtlasDefTable.add(currentRow, 2 + pwi, PriorNames[pwi]);
   }
 
   ++currentRow;
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     priorsWeightList[pwi] = atlasDefinitionParser.GetWeight(PriorNames[pwi]);
     AtlasDefTable.add(currentRow, 2 + pwi, priorsWeightList[pwi]);
@@ -398,7 +398,7 @@ main(int argc, char ** argv)
   AtlasDefTable.add(currentRow, 0, "Prior Label Codes");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     priorLabelCodeVector[pwi] = atlasDefinitionParser.GetLabelCode(PriorNames[pwi]);
     AtlasDefTable.add(currentRow, 2 + pwi, priorLabelCodeVector[pwi], "%d");
@@ -410,7 +410,7 @@ main(int argc, char ** argv)
   AtlasDefTable.add(currentRow, 0, "Prior IsForeground");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     priorIsForegroundPriorVector[pwi] = atlasDefinitionParser.GetIsForegroundPrior(PriorNames[pwi]);
     AtlasDefTable.add(currentRow, 2 + pwi, static_cast<int>(priorIsForegroundPriorVector[pwi]), "%d");
@@ -422,7 +422,7 @@ main(int argc, char ** argv)
   AtlasDefTable.add(currentRow, 0, "Prior Clusters");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     priorGaussianClusterCountVector[pwi] = atlasDefinitionParser.GetGaussianClusterCount(PriorNames[pwi]);
     AtlasDefTable.add(currentRow, 2 + pwi, priorGaussianClusterCountVector[pwi], "%d");
@@ -434,7 +434,7 @@ main(int argc, char ** argv)
   AtlasDefTable.add(currentRow, 0, "Prior For Bias");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
-  for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+  for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
   {
     priorUseForBiasVector[pwi] = (atlasDefinitionParser.GetUseForBias(PriorNames[pwi]) != 0);
     AtlasDefTable.add(currentRow, 2 + pwi, static_cast<int>(priorUseForBiasVector[pwi]), "%d");
@@ -442,10 +442,10 @@ main(int argc, char ** argv)
 
   { // Print out the ranges.
     ++currentRow;
-    for (unsigned int pwi = 0; pwi < PriorNames.size(); pwi++)
+    for (unsigned int pwi = 0; pwi < PriorNames.size(); ++pwi)
     {
       orderedmap<std::string, AtlasDefinition::BoundsType> temp_range_List;
-      for (unsigned int tt = 0; tt < input_VolumeTypes.size(); tt++)
+      for (unsigned int tt = 0; tt < input_VolumeTypes.size(); ++tt)
       {
         AtlasDefTable.add(currentRow + tt * 2 + 0, 0, std::string(input_VolumeTypes[tt]) + std::string(" Lower"));
         AtlasDefTable.add(currentRow + tt * 2 + 0, 1, ": [");
@@ -1057,7 +1057,7 @@ main(int argc, char ** argv)
     usePurePlugs = true;
   }
 
-  for (unsigned int segmentationLevel = 0; segmentationLevel < 1; segmentationLevel++)
+  for (unsigned int segmentationLevel = 0; segmentationLevel < 1; ++segmentationLevel)
   {
     const SegFilterType::Pointer segfilter = SegFilterType::New();
     segfilter->SetUseKNN(useKNN);
@@ -1069,7 +1069,7 @@ main(int argc, char ** argv)
 
     std::vector<FloatImagePointer> atlasOriginalPriors(PriorNames.size());
     unsigned int                   AirIndex = 10000;
-    for (unsigned int i = 0; i < PriorNames.size(); i++)
+    for (unsigned int i = 0; i < PriorNames.size(); ++i)
     {
       using LocalReaderType = itk::ImageFileReader<FloatImageType>;
       using LocalReaderPointer = LocalReaderType::Pointer;
@@ -1164,7 +1164,7 @@ main(int argc, char ** argv)
       {
         for (auto & mapIt : imgset)
         {
-          for (unsigned i = 0; i < mapIt.second.size(); i++)
+          for (unsigned i = 0; i < mapIt.second.size(); ++i)
           {
             char buf[8192];
             sprintf(buf, output_Volumes[0].c_str(), mapIt.first.c_str(), i);
@@ -1184,7 +1184,7 @@ main(int argc, char ** argv)
       }
       for (auto & mapIt : imgset)
       {
-        for (unsigned i = 0; i < mapIt.second.size(); i++)
+        for (unsigned i = 0; i < mapIt.second.size(); ++i)
         {
           // using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType,
           // ShortImageType>;
@@ -1249,7 +1249,7 @@ main(int argc, char ** argv)
       SegFilterType::MapOfInputImageVectors WarpedAtlasList = segfilter->GenerateWarpedAtlasImages();
       for (auto & elem : WarpedAtlasList)
       {
-        for (unsigned int index = 0; index < elem.second.size(); index++)
+        for (unsigned int index = 0; index < elem.second.size(); ++index)
         {
           using ByteRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ByteImageType>;
 
@@ -1374,7 +1374,7 @@ main(int argc, char ** argv)
     // Write final Posteriors
     // NOTE :  Priors and Posteriors should correspond, so use the PriorNames
     // to get the names.
-    for (unsigned int probabilityIndex = 0; probabilityIndex < PriorNames.size(); probabilityIndex++)
+    for (unsigned int probabilityIndex = 0; probabilityIndex < PriorNames.size(); ++probabilityIndex)
     {
       std::string fn;
       if (posteriorTemplate.empty())

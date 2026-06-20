@@ -60,7 +60,7 @@ main()
   std::cout << "Heap size = " << heap.GetNumberOfElements() << std::endl;
 
   unsigned int origSize = heap.GetNumberOfElements();
-  for (unsigned int i = 0; i < origSize; i++)
+  for (unsigned int i = 0; i < origSize; ++i)
   {
     WrapInt mm = heap.ExtractMinimum();
     std::cout << mm.v << " :: ";
@@ -78,7 +78,7 @@ main()
   heapf.Insert(6.0);
 
   origSize = heapf.GetNumberOfElements();
-  for (unsigned int i = 0; i < origSize; i++)
+  for (unsigned int i = 0; i < origSize; ++i)
   {
     std::cout << heapf.ExtractMinimum() << " :: ";
   }
@@ -87,7 +87,7 @@ main()
   double x[] = { 7.1, 2.4, -1.2, 12.1, 50.1, 1.9 };
 
   std::cout << "x = ";
-  for (unsigned int i = 0; i < 6; i++)
+  for (unsigned int i = 0; i < 6; ++i)
   {
     std::cout << x[i] << ", ";
   }
@@ -98,7 +98,7 @@ main()
 
   double * x3 = heapFirstK(x, 6, 3);
   std::cout << "x3 = ";
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     std::cout << x3[i] << ", ";
   }

@@ -318,7 +318,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
   size_t numPixels(1);
   /**DATA**/
   unsigned int axIdx;
-  for (axIdx = 0; axIdx < mxNrrdDim; axIdx++)
+  for (axIdx = 0; axIdx < mxNrrdDim; ++axIdx)
   {
     sizeI[axIdx] = size[axIdx];
     numPixels *= size[axIdx];
@@ -398,7 +398,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
   int *     kinds_temp = (int *)mxGetData(kinds);
   if (DEFAULT) // NOT A NRRD
   {
-    for (unsigned int axIdx = 0; axIdx < numMxDimensions; axIdx++)
+    for (unsigned int axIdx = 0; axIdx < numMxDimensions; ++axIdx)
     {
       std::string       val;
       std::stringstream ss;
@@ -416,7 +416,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
   }
   else
   { // IF IT IS A NRRD!!!
-    for (unsigned int axIdx = 0; axIdx < nrrd->dim; axIdx++)
+    for (unsigned int axIdx = 0; axIdx < nrrd->dim; ++axIdx)
     {
       // kinds_temp[axIdx] = im->axis[axIdx].kind;// THIS MAY NOT WORK
       kinds_temp[axIdx] = mxGetData(axis)[axIdx].kind;
@@ -454,7 +454,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
   // TODO -- could read from metaDataDictionary, just default for now
   // GETTING spaceunits from mxGetData
   mxArray * spaceunits = mxCreateCellArray(1, &mxNrrdDim);
-  for (unsigned sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++)
+  for (unsigned sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
   {
     mxArray * spaceunits_temp = mxCreateString(mxGetData(spaceunits)[sdIdx]); // originally simply "mm"
     // mxArray *spaceunits_temp = mxCreateString( im->spaceunits[sdIdx] );
@@ -479,7 +479,7 @@ BuildMatlabStruct(mxArray *& structMx, typename TImage::Pointer im, const std::s
   mxArray *                     spaceorigin = mxCreateNumericArray(1, &mxNrrdDim, mxDOUBLE_CLASS, mxREAL);
   double *                      spaceorigin_temp = (double *)mxGetData(spaceorigin);
   typename ImageType::PointType origin = im->GetOrigin();
-  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++)
+  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
   {
     spaceorigin_temp[sdIdx] = origin[sdIdx];
   }

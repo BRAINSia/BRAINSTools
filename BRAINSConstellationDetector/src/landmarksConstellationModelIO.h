@@ -537,7 +537,7 @@ public:
 
     auto meanIt = DID.mean.begin();
 
-    for (int j = 0; meanIt != DID.mean.end(); ++meanIt, j++)
+    for (int j = 0; meanIt != DID.mean.end(); ++meanIt, ++j)
     {
       using FloatImageType = itk::Image<float, 3>;
       using FloatImageRegion = FloatImageType::RegionType;
@@ -568,7 +568,7 @@ public:
       for (auto floatIt = meanIt->begin(); locIt != locItEnd; ++floatIt, ++locIt)
       {
         FloatImageType::IndexType ind;
-        for (unsigned k = 0; k < 3; k++)
+        for (unsigned k = 0; k < 3; ++k)
         {
           ind[k] = static_cast<FloatImageType::IndexValueType>(center[k] + (*locIt)[k]);
         }
@@ -670,9 +670,9 @@ public:
   {
     itk::NumberToString<double> doubleToString;
 
-    for (unsigned i = 0; i < a.size(); i++)
+    for (unsigned i = 0; i < a.size(); ++i)
     {
-      for (unsigned j = 0; j < a[i].size(); j++)
+      for (unsigned j = 0; j < a[i].size(); ++j)
       {
         if (NE(a[i][j], b[i][j]))
         {

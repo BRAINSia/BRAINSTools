@@ -40,7 +40,7 @@ template <typename TInputImage, typename TProbabilityImage>
 bool
 AtlasCropImageSource<TInputImage, TProbabilityImage>::CheckBounds()
 {
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     if (m_LowerBound[i] > m_UpperBound[i])
     {
@@ -49,11 +49,11 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::CheckBounds()
   }
 
   InputImageSizeType croppedSize;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     croppedSize[i] = m_UpperBound[i] - m_LowerBound[i] + 1;
   }
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     if (croppedSize[i] > m_OriginalSize[i])
     {
@@ -77,7 +77,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
 
   ProbabilityImageSpacingType spacing = probs[0]->GetSpacing();
   // Make sure all class probabilities have the same space
-  for (unsigned int i = 1; i < probs.size(); i++)
+  for (unsigned int i = 1; i < probs.size(); ++i)
   {
     ProbabilityImageSizeType othersize = probs[i]->GetLargestPossibleRegion().size();
     if (size != othersize)
@@ -88,12 +88,12 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
 
   // Transform padding to voxel counts
   InputImageOffsetType padding;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     padding[i] = static_cast<unsigned int>(std::floor(m_Padding) / spacing[i] + 0.5);
   }
   // Make sure padding is sensible
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     if (static_cast<long>(size[i]) <= padding[i])
     {
@@ -104,7 +104,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
   // Save size info
   m_OriginalSize = size;
   // Initial bounds: whole image
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     m_LowerBound[i] = size[i] - 1;
     m_UpperBound[i] = 0;
@@ -121,14 +121,14 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
     ProbabilityImageIndexType ind = it.GetIndex();
 
     double sumProb = 0;
-    for (unsigned int i = 0; i < probs.size(); i++)
+    for (unsigned int i = 0; i < probs.size(); ++i)
     {
       sumProb += probs[i]->GetPixel(ind);
     }
 
     if (sumProb > 0)
     {
-      for (unsigned int i = 0; i < ImageDimension; i++)
+      for (unsigned int i = 0; i < ImageDimension; ++i)
       {
         if (ind[i] < m_LowerBound[i])
         {
@@ -153,7 +153,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::UseProbabilities(Probabili
     m_UpperBound[ImageDimension - 1] -= offt;
   }
   // Enlarge/pad bounding box
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     if (m_LowerBound[i] > padding[i])
     {
@@ -194,7 +194,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::Restore(InputImagePointer 
   InputImageSizeType size = img->GetLargestPossibleRegion().size();
 
   InputImageSizeType croppedSize;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     croppedSize[i] = m_UpperBound[i] - m_LowerBound[i] + 1;
   }
@@ -216,7 +216,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::Restore(InputImagePointer 
   output->FillBuffer(0);
 
   InputImageOffsetType offt;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     offt[i] = m_LowerBound[i];
   }
@@ -255,7 +255,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::Crop(InputImagePointer img
   }
 
   InputImageSizeType croppedSize;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     croppedSize[i] = m_UpperBound[i] - m_LowerBound[i] + 1;
   }
@@ -271,7 +271,7 @@ AtlasCropImageSource<TInputImage, TProbabilityImage>::Crop(InputImagePointer img
   output->Allocate();
 
   InputImageOffsetType offt;
-  for (unsigned int i = 0; i < ImageDimension; i++)
+  for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     offt[i] = m_LowerBound[i];
   }

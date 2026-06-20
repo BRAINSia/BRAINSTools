@@ -161,7 +161,7 @@ testIndexConversion()
           {
             const HalfHermetianImageType::IndexType out = oIndex;
             std::cout << in << "\t\t" << out << "\t\t" << count << std::endl;
-            count++;
+            ++count;
           }
         }
   }
@@ -184,7 +184,7 @@ testIndexConversion()
           {
             const HalfHermetianImageType::IndexType out = oIndex;
             std::cout << in << "\t\t" << out << "\t\t" << count << std::endl;
-            count++;
+            ++count;
           }
         }
   }

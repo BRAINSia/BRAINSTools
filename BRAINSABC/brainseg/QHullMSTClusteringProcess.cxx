@@ -105,13 +105,13 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
   // malloc((dim+1)*m_NumberOfVertices*sizeof(coordT));
   coordT * const points = new coordT[(dim + 1) * m_NumberOfVertices];
   // Store each coordinate in an array element
-  for (unsigned int k = 0; k < m_NumberOfVertices; k++)
+  for (unsigned int k = 0; k < m_NumberOfVertices; ++k)
   {
     const VertexType v = vlist[k];
     const long       pos = k * (dim + 1);
 #if 1
     double sumS = 0;
-    for (unsigned int j = 0; j < dim; j++)
+    for (unsigned int j = 0; j < dim; ++j)
     {
       points[pos + j] = v[j];
       sumS += v[j] * v[j];
@@ -160,9 +160,9 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
         std::vector<unsigned int> ids;
         ids.resize(dim + 1);
         FOREACHvertex_(facet->vertices) { ids.push_back(qh_pointid(vertex->point)); }
-        for (unsigned int s = 0; s < ids.size(); s++)
+        for (unsigned int s = 0; s < ids.size(); ++s)
         {
-          for (unsigned int t = s + 1; t < ids.size(); t++)
+          for (unsigned int t = s + 1; t < ids.size(); ++t)
           {
             MSTEdge e;
             e.i = ids[s];
@@ -191,7 +191,7 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
 
   // Map vertex to set (tree) it belongs to, for cycle test
   unsigned int * const treeMap = new unsigned int[m_NumberOfVertices];
-  for (unsigned int i = 0; i < m_NumberOfVertices; i++)
+  for (unsigned int i = 0; i < m_NumberOfVertices; ++i)
   {
     treeMap[i] = i;
   }
@@ -218,7 +218,7 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
       continue;
     }
     // Merge trees
-    for (unsigned int k = 0; k < m_NumberOfVertices; k++)
+    for (unsigned int k = 0; k < m_NumberOfVertices; ++k)
     {
       if (treeMap[k] == map2)
       {
@@ -244,13 +244,13 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
 
   m_NodeAverages = new float[m_NumberOfVertices];
   // Compute node averages
-  for (unsigned int k = 0; k < m_NumberOfVertices; k++)
+  for (unsigned int k = 0; k < m_NumberOfVertices; ++k)
   {
     m_NodeAverages[k] = 0.0;
   }
 
   unsigned int * const countArray = new unsigned int[m_NumberOfVertices];
-  for (unsigned int k = 0; k < m_NumberOfVertices; k++)
+  for (unsigned int k = 0; k < m_NumberOfVertices; ++k)
   {
     countArray[k] = 0;
   }
@@ -258,12 +258,12 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
   {
     std::vector<std::vector<double>> nodeDistances;
     nodeDistances.resize(m_NumberOfVertices + 1);
-    for (unsigned int i = 0; i <= m_NumberOfVertices + 1; i++)
+    for (unsigned int i = 0; i <= m_NumberOfVertices + 1; ++i)
     {
       std::vector<double> dlist;
       nodeDistances.push_back(dlist);
     }
-    for (unsigned int k = 0; k < (m_NumberOfVertices - 1); k++)
+    for (unsigned int k = 0; k < (m_NumberOfVertices - 1); ++k)
     {
       const unsigned int a = m_MSTEdges[k].i;
       const unsigned int b = m_MSTEdges[k].j;
@@ -277,7 +277,7 @@ QHullMSTClusteringProcess ::SetInputVertices(const VertexList & vlist)
       nodeDistances[a].push_back(m_MSTEdges[k].dist);
       nodeDistances[b].push_back(m_MSTEdges[k].dist);
     }
-    for (unsigned int k = 0; k < m_NumberOfVertices; k++)
+    for (unsigned int k = 0; k < m_NumberOfVertices; ++k)
     {
       // Use mean OR...
       // if (countArray[k] != 0)
@@ -302,18 +302,18 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
   // Allocate edge break flag array
   unsigned char * const breakArray = new unsigned char[e];
 
-  for (unsigned int k = 0; k < e; k++)
+  for (unsigned int k = 0; k < e; ++k)
   {
     breakArray[k] = 0;
   }
 
   // Break edges
   unsigned int numBroken = 0;
-  for (unsigned int i = 0; i < v; i++)
+  for (unsigned int i = 0; i < v; ++i)
   {
     const float thres = T * m_NodeAverages[i];
     // Break the coinciding long edges
-    for (unsigned int k = 0; k < e; k++)
+    for (unsigned int k = 0; k < e; ++k)
     {
       if (breakArray[k] != 0)
       {
@@ -342,15 +342,15 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
     return 0;
   }
   // Figure out distinct trees, merge connected vertices
-  for (unsigned int k = 0; k < v; k++)
+  for (unsigned int k = 0; k < v; ++k)
   {
     treeMap[k] = k;
   }
-  for (unsigned int i = 0; i < v; i++)
+  for (unsigned int i = 0; i < v; ++i)
   {
     unsigned int map1 = treeMap[i];
     // Check incident edges
-    for (unsigned int j = 0; j < e; j++)
+    for (unsigned int j = 0; j < e; ++j)
     {
       if (breakArray[j] != 0)
       {
@@ -376,7 +376,7 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
       {
         continue;
       }
-      for (unsigned int k = 0; k < v; k++)
+      for (unsigned int k = 0; k < v; ++k)
       {
         if (treeMap[k] == map2)
         {
@@ -399,11 +399,11 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
   // Obtain cluster info
   MSTCluster * const clusters = new MSTCluster[v];
   unsigned int       numNonZero = 0;
-  for (unsigned int i = 0; i < v; i++)
+  for (unsigned int i = 0; i < v; ++i)
   {
     clusters[i].map = i;
     unsigned int s = 0;
-    for (unsigned int j = 0; j < v; j++)
+    for (unsigned int j = 0; j < v; ++j)
     {
       if (treeMap[j] == i)
       {
@@ -419,7 +419,7 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
 
   Heap<MSTCluster> heap;
   heap.Allocate(numNonZero);
-  for (unsigned int i = 0; i < v; i++)
+  for (unsigned int i = 0; i < v; ++i)
   {
     if (clusters[i].size != 0)
     {
@@ -430,11 +430,11 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
   delete[] clusters;
 
   unsigned int * const sortedMap = new unsigned int[v];
-  for (unsigned int i = 0; i < numNonZero; i++)
+  for (unsigned int i = 0; i < numNonZero; ++i)
   {
     const MSTCluster   c = heap.ExtractMinimum();
     const unsigned int m = c.map;
-    for (unsigned int j = 0; j < v; j++)
+    for (unsigned int j = 0; j < v; ++j)
     {
       if (treeMap[j] == m)
       {
@@ -442,7 +442,7 @@ QHullMSTClusteringProcess ::GetClusters(unsigned int * treeMap, float T)
       }
     }
   }
-  for (unsigned int i = 0; i < v; i++)
+  for (unsigned int i = 0; i < v; ++i)
   {
     treeMap[i] = sortedMap[i];
   }

@@ -123,7 +123,7 @@ public:
         this->Read<std::string>(input, name);
       }
       // Read in landmarks
-      for (unsigned int i = 0; i < this->m_NumDataSets; i++)
+      for (unsigned int i = 0; i < this->m_NumDataSets; ++i)
       {
         std::string TrainingImageFilename;
         this->Read<std::string>(input, TrainingImageFilename);
@@ -169,7 +169,7 @@ operator<<(std::ostream & os, const landmarksConstellationTrainingDefinitionIO &
   os << doubleToString(def.GetInitialRotationAngle()) << " " << def.GetInitialRotationStep() << " "
      << def.GetNumRotationSteps() << std::endl
      << std::endl;
-  for (unsigned int i = 0; i < def.GetNumDataSets(); i++)
+  for (unsigned int i = 0; i < def.GetNumDataSets(); ++i)
   {
     os << def[i] << std::endl;
   }

@@ -322,7 +322,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (this->m_force_orig_lmk_ACPointLPS.size() == 3)
     {
       SImageType::PointType manualACPoint;
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; ++i)
       {
         manualACPoint[i] = this->m_force_orig_lmk_ACPointLPS[i];
       }
@@ -331,7 +331,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (this->m_force_orig_lmk_PCPointLPS.size() == 3)
     {
       SImageType::PointType manualPCPoint;
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; ++i)
       {
         manualPCPoint[i] = this->m_force_orig_lmk_PCPointLPS[i];
       }
@@ -340,7 +340,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (this->m_force_orig_lmk_VN4PointLPS.size() == 3)
     {
       SImageType::PointType manualVN4Point;
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; ++i)
       {
         manualVN4Point[i] = this->m_force_orig_lmk_VN4PointLPS[i];
       }
@@ -349,7 +349,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (this->m_force_orig_lmk_RPPointLPS.size() == 3)
     {
       SImageType::PointType manualRPPoint;
-      for (int i = 0; i < 3; i++)
+      for (int i = 0; i < 3; ++i)
       {
         manualRPPoint[i] = this->m_force_orig_lmk_RPPointLPS[i];
       }

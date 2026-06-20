@@ -56,9 +56,9 @@ main(int, char * argv[])
   ImageType::PointType origin;
   origin[0] = origin[1] = origin[2] = 0.0;
   ImageType::DirectionType direction;
-  for (unsigned i = 0; i < 3; i++)
+  for (unsigned i = 0; i < 3; ++i)
   {
-    for (unsigned j = 0; j < 3; j++)
+    for (unsigned j = 0; j < 3; ++j)
     {
       direction[i][j] = i == j ? 1.0 : 0.0;
     }
@@ -87,15 +87,15 @@ main(int, char * argv[])
   sphereFunc->SetRadius(static_cast<double>(imageDim) / 4.0);
   pt[0] = pt[1] = pt[2] = static_cast<double>(imageDim) / 2.0;
   sphereFunc->SetCenter(pt);
-  for (unsigned i = 0; i < imageDim; i++)
+  for (unsigned i = 0; i < imageDim; ++i)
   {
     index[0] = i;
     pt[0] = static_cast<double>(i);
-    for (unsigned j = 0; j < imageDim; j++)
+    for (unsigned j = 0; j < imageDim; ++j)
     {
       index[1] = j;
       pt[1] = static_cast<double>(j);
-      for (unsigned k = 0; k < imageDim; k++)
+      for (unsigned k = 0; k < imageDim; ++k)
       {
         pt[2] = static_cast<double>(k);
         index[2] = k;

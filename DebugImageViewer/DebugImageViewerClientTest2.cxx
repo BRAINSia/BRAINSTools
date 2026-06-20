@@ -42,10 +42,10 @@ main(int, char **)
   ImageType::Pointer   img = itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);
   ImageType::IndexType index;
   index[2] = 0;
-  for (unsigned i = 0; i < 16; i++)
+  for (unsigned i = 0; i < 16; ++i)
   {
     index[1] = i;
-    for (unsigned j = 0; j < 16; j++)
+    for (unsigned j = 0; j < 16; ++j)
     {
       index[0] = j;
       if (j == 0 || j == 15)

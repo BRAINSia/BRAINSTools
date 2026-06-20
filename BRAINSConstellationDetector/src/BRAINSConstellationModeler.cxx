@@ -385,7 +385,7 @@ main(int argc, char * argv[])
           std::cout << "original point: " << it->second << std::endl;
           std::cout << "transformed point: " << transformedPoint << std::endl;
       /////////////////////////////////////////////////////////////*/
-      for (unsigned int currentAngle = 0; currentAngle < myModel.GetNumRotationSteps(); currentAngle++)
+      for (unsigned int currentAngle = 0; currentAngle < myModel.GetNumRotationSteps(); ++currentAngle)
       {
         // //////  create a rotation about the center with respect to the
         // current test rotation angle
@@ -435,7 +435,7 @@ main(int argc, char * argv[])
 
   /* PRINT FOR TEST ////////////////////////////////////////////
   std::cout << "\nPROCESSING AC transformed values in MSP aligned space by 'Reflective Correlation' method:" <<
-  std::endl; for( unsigned int currentDataset = 0; currentDataset < mDefNumDataSets; currentDataset++ )
+  std::endl; for( unsigned int currentDataset = 0; currentDataset < mDefNumDataSets; ++currentDataset )
     {
         std::cout << "====================================================================================" <<
   std::endl; std::cout << currentDataset+1 << "#: " << ac_InMSPAlignedSpace[currentDataset] << std::endl;
@@ -450,7 +450,7 @@ main(int argc, char * argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> xComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> yComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents(myModel.GetNumDataSets());
-    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
+    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); ++currentDataset)
     {
       xComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
       yComponents[currentDataset] = pc_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
@@ -471,7 +471,7 @@ main(int argc, char * argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> xComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> yComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents(myModel.GetNumDataSets());
-    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
+    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); ++currentDataset)
     {
       xComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
       yComponents[currentDataset] = vn4_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
@@ -492,7 +492,7 @@ main(int argc, char * argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> xComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> yComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents(myModel.GetNumDataSets());
-    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
+    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); ++currentDataset)
     {
       xComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
       yComponents[currentDataset] = cec_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
@@ -513,7 +513,7 @@ main(int argc, char * argv[])
     std::vector<SImageType::PointType::VectorType::ComponentType> xComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> yComponents(myModel.GetNumDataSets());
     std::vector<SImageType::PointType::VectorType::ComponentType> zComponents(myModel.GetNumDataSets());
-    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
+    for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); ++currentDataset)
     {
       xComponents[currentDataset] = ac_InMSPAlignedSpace[currentDataset][0] - rp_InMSPAlignedSpace[currentDataset][0];
       yComponents[currentDataset] = ac_InMSPAlignedSpace[currentDataset][1] - rp_InMSPAlignedSpace[currentDataset][1];
@@ -535,7 +535,7 @@ main(int argc, char * argv[])
   // Initializing CMtoRPMean
   SImageType::PointType::VectorType CMtoRPMean{};
   // This for loop does two jobs
-  for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); currentDataset++)
+  for (unsigned int currentDataset = 0; currentDataset < myModel.GetNumDataSets(); ++currentDataset)
   {
     // JOB1: RPPC_to_RPAC_angle and RPAC_over_RPPC
     double curr_RPPC_to_RPAC_angle = NAN;

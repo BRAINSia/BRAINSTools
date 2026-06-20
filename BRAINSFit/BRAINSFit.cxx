@@ -274,7 +274,7 @@ main(int argc, char * argv[])
       // replicate throughout
       numberOfIterations.resize(localTransformType.size());
       const int numberOf = numberOfIterations[0];
-      for (unsigned int i = 1; i < localTransformType.size(); i++)
+      for (unsigned int i = 1; i < localTransformType.size(); ++i)
       {
         numberOfIterations[i] = numberOf;
       }

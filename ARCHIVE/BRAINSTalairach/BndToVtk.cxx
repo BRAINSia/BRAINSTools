@@ -51,7 +51,7 @@ BndToVtk::ProcessBND(std::string bndFile)
    * vector will store all 12 */
   std::vector<std::string> tokens;
   /* Add values to token list */
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < 4; ++i)
   {
     std::string       buf;
     std::stringstream ss(line);
@@ -63,25 +63,25 @@ BndToVtk::ProcessBND(std::string bndFile)
     getline(fin, line);
   }
   /* fill in AC point values */
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     const std::string fillVals = tokens[i];
     AC[i] = strtod(fillVals.c_str(), nullptr);
   }
   /* fill in PC point values */
-  for (int i = 3; i < 6; i++)
+  for (int i = 3; i < 6; ++i)
   {
     const std::string fillVals = tokens[i];
     PC[i - 3] = strtod(fillVals.c_str(), nullptr);
   }
   /* fill in SLA point values */
-  for (int i = 6; i < 9; i++)
+  for (int i = 6; i < 9; ++i)
   {
     const std::string fillVals = tokens[i];
     SLA[i - 6] = strtod(fillVals.c_str(), nullptr);
   }
   /* fill in IRP point values */
-  for (int i = 9; i < 12; i++)
+  for (int i = 9; i < 12; ++i)
   {
     const std::string fillVals = tokens[i];
     IRP[i - 9] = strtod(fillVals.c_str(), nullptr);

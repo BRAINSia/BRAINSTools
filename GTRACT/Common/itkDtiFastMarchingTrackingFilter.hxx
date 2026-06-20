@@ -206,7 +206,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   ScalesType parametersScale(spaceDimension);
 
   DerivativeType gradient(spaceDimension);
-  for (unsigned int i = 0; i < spaceDimension; i++)
+  for (unsigned int i = 0; i < spaceDimension; ++i)
   {
     initialPosition[i] = inputIndex[i];
     parametersScale[i] = 1.0; // 1 by default
@@ -258,11 +258,11 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
 
   unsigned int count = 0;
   /*Resume Optimization */
-  for (unsigned int j = 0; j < (m_NumberOfIterations - 1); j++)
+  for (unsigned int j = 0; j < (m_NumberOfIterations - 1); ++j)
   {
     pass = false;
     currentPosition = m_GradientOP->GetCurrentPosition();
-    for (unsigned int k = 0; k < spaceDimension; k++) //
+    for (unsigned int k = 0; k < spaceDimension; ++k) //
     {
       double diff = itk::Math::abs(currentPosition[k] - tmpIndex[k]);
 
@@ -320,7 +320,7 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   } // end outer for loop
 
   gradient = m_GradientOP->GetGradient();
-  for (unsigned int i = 0; i < spaceDimension; i++)
+  for (unsigned int i = 0; i < spaceDimension; ++i)
   {
     if ((gradient[i] > 0.0) || (gradient[i] < 0.0))
     {

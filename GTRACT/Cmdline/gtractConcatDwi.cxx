@@ -68,7 +68,7 @@ main(int argc, char * argv[])
   if (debug)
   {
     std::cout << "=====================================================" << std::endl;
-    for (int i = 0; i < numberOfImages; i++)
+    for (int i = 0; i < numberOfImages; ++i)
     {
       std::cout << "Input Volume:                      " << inputVolume[i] << std::endl;
     }
@@ -120,7 +120,7 @@ main(int argc, char * argv[])
   double baselineBvalue = 0.0;
 
   NrrdImageType::PointType firstOrigin;
-  for (unsigned i = 0; i < inputVolume.size(); i++)
+  for (unsigned i = 0; i < inputVolume.size(); ++i)
   {
     std::cout << "Reading volume:              " << inputVolume[i] << std::endl;
     FileReaderType::Pointer imageReader = FileReaderType::New();
@@ -162,7 +162,7 @@ main(int argc, char * argv[])
     DWIMetaDataDictionaryValidator::GradientTableType currGradTable = currentMetaDataValidator.GetGradientTable();
     double                                            currentBvalue = currentMetaDataValidator.GetBValue();
     double                                            bValueScale = currentBvalue / baselineBvalue;
-    for (unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); j++)
+    for (unsigned int j = 0; j < imageReader->GetOutput()->GetVectorLength(); ++j)
     {
       using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
       using VectorSelectFilterPointer = VectorSelectFilterType::Pointer;

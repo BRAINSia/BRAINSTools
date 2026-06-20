@@ -63,7 +63,7 @@ My_lsf(TVector x, TVector y)
 
   float d;
   a = b = c = d = 0;
-  for (unsigned int i = 0; i < N; i++)
+  for (unsigned int i = 0; i < N; ++i)
   {
     a += x(i) * y(i);
     b += x(i) * x(i);
@@ -78,7 +78,7 @@ Eigen_Value(const TMatrix & M)
 {
   vnl_symmetric_eigensystem<float> eig(M);
   TVector                          result(3);
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
   {
     result(i) = eig.get_eigenvalue(i);
   }
@@ -145,18 +145,18 @@ DD(TVector ADC1, TVector ADC2)
   vnl_symmetric_eigensystem<float> eig2(Tensor2Matrix(ADC2));
 
   TVector V1(3);
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     V1(i) = eig1.get_eigenvalue(i);
   }
   TVector V2(3);
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
     V2(i) = eig2.get_eigenvalue(i);
   }
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i)
   {
-    for (int j = 0; j < 3; j++)
+    for (int j = 0; j < 3; ++j)
     {
       temp(0) += V1(i) * V2(j) * std::pow(dot_product(eig1.get_eigenvector(i), eig2.get_eigenvector(j)), 2);
     }

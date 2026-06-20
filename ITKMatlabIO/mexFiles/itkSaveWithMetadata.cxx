@@ -112,7 +112,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
   size_t                       numPixels = 1;
   {
     unsigned int axIdx;
-    for (axIdx = 0; axIdx < ImageType::ImageDimension; axIdx++)
+    for (axIdx = 0; axIdx < ImageType::ImageDimension; ++axIdx)
     {
       itkSize[axIdx] = mSize[axIdx];
       numPixels *= itkSize[axIdx];
@@ -131,7 +131,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
   const double * spaceorigin_temp = (double *)mxGetData(msm.GetField("spaceorigin"));
 
   const unsigned int spatialDims = numDims; // instead of 3
-  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; sdIdx++)
+  for (unsigned int sdIdx = 0; sdIdx < ImageType::ImageDimension; ++sdIdx)
   {
     if (sdIdx < spatialDims)
     {
@@ -411,7 +411,7 @@ WriteDWINrrd(const MatlabStructManager & msm, const char * filename, const char 
   size_t numPixels = 1;
   {
     unsigned int axIdx;
-    for (axIdx = 0; axIdx < numDims; axIdx++)
+    for (axIdx = 0; axIdx < numDims; ++axIdx)
     {
       numPixels *= mSize[axIdx];
     }
@@ -423,7 +423,7 @@ WriteDWINrrd(const MatlabStructManager & msm, const char * filename, const char 
   const double * spaceorigin_temp = (double *)mxGetData(msm.GetField("spaceorigin"));
   // WriteDWINrrd only work for 4D image.
   constexpr unsigned int spatialDims = 3; // spatialDims is different with numDims
-  for (unsigned int sdIdx = 0; sdIdx < spatialDims; sdIdx++)
+  for (unsigned int sdIdx = 0; sdIdx < spatialDims; ++sdIdx)
   {
     if (sdIdx < spatialDims)
     {

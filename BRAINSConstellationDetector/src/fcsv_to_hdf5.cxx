@@ -160,7 +160,7 @@ get_subjectid(const std::string & content)
   int start = content.length() - 1;
   int end = start;
 
-  for (; start >= 0; start--)
+  for (; start >= 0; --start)
   {
     if (content[start] == '_')
     {
@@ -184,7 +184,7 @@ get_subjectid(const std::string & content)
 static bool
 is_comment(const std::string & field)
 {
-  for (unsigned int i = 0; i < field.length(); i++)
+  for (unsigned int i = 0; i < field.length(); ++i)
   {
     if ((field[i] != ' ') && (field[i] != '\t'))
     {
@@ -231,7 +231,7 @@ get_subject_filename_tuples(const std::string & file_glob_string)
   char * const * const     w = p.we_wordv;
   std::vector<std::string> files;
   files.reserve(p.we_wordc);
-  for (unsigned int i = 0; i < p.we_wordc; i++)
+  for (unsigned int i = 0; i < p.we_wordc; ++i)
   {
     files.emplace_back(w[i]);
     // std::cout << "Adding file to processing list: " << w[i] << std::endl;
@@ -533,7 +533,7 @@ main(int argc, char * argv[])
 
   vnl_matrix<double>       ratioPC1(numNewLandmarks, 1, 0.0);
   const vnl_matrix<double> ratioPC(numNewLandmarks, 1, 0.0);
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     if (i > 0)
     {
@@ -555,12 +555,12 @@ main(int argc, char * argv[])
                                                 // with the size of Xi rows
                                                 // which is included the means
                                                 // of every rows of Xi
-    for (unsigned int l = 0; l != Xi.rows(); l++)
+    for (unsigned int l = 0; l != Xi.rows(); ++l)
     {
       // mean_stacked[l] = Xi.extract(1,Xi.columns(),l,0).mean();
       mean_stacked[l] = Xi.get_row(l).mean();
     }
-    for (unsigned int d = 0; d < dim; d++)
+    for (unsigned int d = 0; d < dim; ++d)
     {
       double       sum = 0;
       unsigned int me = d;
@@ -580,7 +580,7 @@ main(int argc, char * argv[])
     s.set_column(i, Xi_mean.get_column(0)); // s(:,i)=Xi_mean;
 
     vnl_matrix<double> I_si((Xi_mean.rows()) * (numBaseLandmarks + i - 1), (Xi_mean.cols()) * numDatasets);
-    for (unsigned int co = 0; co < numDatasets; co++)
+    for (unsigned int co = 0; co < numDatasets; ++co)
     {
       unsigned int ro = 0;
       while (ro < I_si.rows())
@@ -613,7 +613,7 @@ main(int argc, char * argv[])
     W.push_back(V.extract(V.rows(), numPCs, 0, V.cols() - numPCs));
 
     /*  //////PRINT FOR TEST/////
-    for (unsigned int wi=0; wi<W.size(); wi++)
+    for (unsigned int wi=0; wi<W.size(); ++wi)
     {
         std::cout << "\n\n====================== W[" << wi << "]==" << W[wi].rows() << "x" << W[wi].cols() <<
     std::endl;//print for test vnl_matlab_print(std::cout,W[wi],"W[i]"); //, vnl_matlab_print_format_short_e );
@@ -654,9 +654,9 @@ main(int argc, char * argv[])
     vnl_matrix<double> xk_t;
     vnl_matrix<double> Xi_demeaned_t;
     vnl_matrix<double> lmk_groundTruth;
-    for (unsigned int j = 0; j < numDatasets; j++)
+    for (unsigned int j = 0; j < numDatasets; ++j)
     {
-      for (unsigned int k = 1; k < (numBaseLandmarks + i); k++)
+      for (unsigned int k = 1; k < (numBaseLandmarks + i); ++k)
       {
         if (k < numBaseLandmarks)
         {
@@ -683,9 +683,9 @@ main(int argc, char * argv[])
   }
 
   vnl_matrix<double> err_dist(numNewLandmarks, numDatasets, 0.0);
-  for (unsigned int j = 0; j < numNewLandmarks; j++)
+  for (unsigned int j = 0; j < numNewLandmarks; ++j)
   {
-    for (unsigned int k = 0; k < numDatasets; k++)
+    for (unsigned int k = 0; k < numDatasets; ++k)
     {
       err_dist(j, k) = err[k].get_column(j).two_norm();
     }
@@ -695,7 +695,7 @@ main(int argc, char * argv[])
                                                    // with the size of err_dist
                                                    // rows which is included the
                                                    // means of every rows of Xi
-  for (unsigned int l = 0; l != err_dist.rows(); l++)
+  for (unsigned int l = 0; l != err_dist.rows(); ++l)
   {
     err_mean(l, 0) = err_dist.get_row(l).mean();
   }
@@ -704,7 +704,7 @@ main(int argc, char * argv[])
   vnl_matrix<double> rep_err_mean(err_mean.rows() * 1,
                                   err_mean.cols() * numDatasets); //
                                                                   // repmat(err_mean,1,numDatasets)
-  for (unsigned int co = 0; co < rep_err_mean.cols(); co++)
+  for (unsigned int co = 0; co < rep_err_mean.cols(); ++co)
   {
     rep_err_mean.update(err_mean, 0, co);
   }
@@ -712,7 +712,7 @@ main(int argc, char * argv[])
   vnl_matrix<double> sum_err_diff(numNewLandmarks, 1); // sum( (err_dist -
                                                        // repmat(err_mean,1,numDatasets)).^2,
                                                        // 2)
-  for (unsigned int l = 0; l != numNewLandmarks; l++)
+  for (unsigned int l = 0; l != numNewLandmarks; ++l)
   {
     sum_err_diff(l, 0) = (err_dist - rep_err_mean).get_row(l).squared_magnitude();
   }
@@ -721,24 +721,24 @@ main(int argc, char * argv[])
 
   vnl_matrix<double> err_max(err_dist.rows(), 1); // err_max =
                                                   // max(err_dist,[],2);
-  for (unsigned int l = 0; l != err_dist.rows(); l++)
+  for (unsigned int l = 0; l != err_dist.rows(); ++l)
   {
     err_max(l, 0) = err_dist.get_row(l).max_value();
   }
 
   vnl_matrix<double> err_min(err_dist.rows(), 1); // err_min =
                                                   // min(err_dist,[],2);
-  for (unsigned int l = 0; l != err_dist.rows(); l++)
+  for (unsigned int l = 0; l != err_dist.rows(); ++l)
   {
     err_min(l, 0) = err_dist.get_row(l).min_value();
   }
   // multiply matrix "err_std" by 3
-  for (unsigned int l = 0; l != err_std.rows(); l++)
+  for (unsigned int l = 0; l != err_std.rows(); ++l)
   {
     err_std.scale_row(l, 3);
   }
   // multiply matrix "err_max" by 1.2
-  for (unsigned int l = 0; l != err_max.rows(); l++)
+  for (unsigned int l = 0; l != err_max.rows(); ++l)
   {
     err_max.scale_row(l, 1.2);
   }
@@ -747,7 +747,7 @@ main(int argc, char * argv[])
   vnl_matrix<double> search_radius_max = err_max;
   vnl_matrix<double> search_radius_min(numNewLandmarks, 1, 1.6);
   // if max<min, take min
-  for (unsigned int l = 0; l < numNewLandmarks; l++)
+  for (unsigned int l = 0; l < numNewLandmarks; ++l)
   {
     if (search_radius(l, 0) > search_radius_max(l, 0))
     {
@@ -792,11 +792,11 @@ main(int argc, char * argv[])
   LLSModel::LLSMeansType       means;
   LLSModel::LLSMatricesType    matrices;
   LLSModel::LLSSearchRadiiType searchRadii;
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     const std::string   lmName(byClassLandmarkMatrix["newLandmarks"][i].first);
     std::vector<double> curVec(dim);
-    for (unsigned int d = 0; d < dim; d++)
+    for (unsigned int d = 0; d < dim; ++d)
     {
       curVec[d] = s(d, i);
     }
@@ -815,10 +815,10 @@ main(int argc, char * argv[])
   std::ofstream fid;
   fid.open("LME_EPCA.txt");
   itk::NumberToString<double> doubleToString;
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     fid << byClassLandmarkMatrix["newLandmarks"][i].first << std::endl;
-    for (unsigned int d = 0; d < dim; d++)
+    for (unsigned int d = 0; d < dim; ++d)
     {
       fid << doubleToString(s(d, i)) << " ";
     }
@@ -829,7 +829,7 @@ main(int argc, char * argv[])
     while (l < dim)
     {
       vnl_vector<double> temp = M[i].get_column(l);
-      for (unsigned int ll = 0; ll < M[i].rows(); ll++)
+      for (unsigned int ll = 0; ll < M[i].rows(); ++ll)
       {
         fid << doubleToString(temp[ll]) << " ";
       }
@@ -843,7 +843,7 @@ main(int argc, char * argv[])
 
   // mat version
   fid.open("processingList.txt");
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     fid << byClassLandmarkMatrix["newLandmarks"][i].first << std::endl;
     fid << doubleToString(search_radius(i, 0)) << std::endl;
@@ -852,7 +852,7 @@ main(int argc, char * argv[])
 
   fid.open("LME_EPCA.m");
   fid << "clear" << std::endl;
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     std::string name = byClassLandmarkMatrix["newLandmarks"][i].first;
 
@@ -865,7 +865,7 @@ main(int argc, char * argv[])
     {
       fid << name << "__s = [";
     }
-    for (unsigned int d = 0; d < dim; d++)
+    for (unsigned int d = 0; d < dim; ++d)
     {
       fid << doubleToString(s(d, i)) << " ";
     }
@@ -884,7 +884,7 @@ main(int argc, char * argv[])
     while (l < dim)
     {
       vnl_vector<double> temp = M[i].get_column(l);
-      for (unsigned int ll = 0; ll < M[i].rows(); ll++)
+      for (unsigned int ll = 0; ll < M[i].rows(); ++ll)
       {
         fid << doubleToString(temp[ll]) << " ";
       }
@@ -897,7 +897,7 @@ main(int argc, char * argv[])
   fid.close();
 
   fid.open("LME_EPCA.mat");
-  for (unsigned int i = 0; i < numNewLandmarks; i++)
+  for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {
     std::string name = byClassLandmarkMatrix["newLandmarks"][i].first;
     std::string string_name_s;
@@ -913,7 +913,7 @@ main(int argc, char * argv[])
       string_name_s = name + "__s";
     }
     vnl_matrix<double> name_s(1, dim, 0.0);
-    for (unsigned int d = 0; d < dim; d++)
+    for (unsigned int d = 0; d < dim; ++d)
     {
       name_s(0, d) = s(d, i);
     }
@@ -933,7 +933,7 @@ main(int argc, char * argv[])
     while (l < dim)
     {
       vnl_vector<double> temp = M[i].get_column(l);
-      for (unsigned int ll = 0; ll < M[i].rows(); ll++)
+      for (unsigned int ll = 0; ll < M[i].rows(); ++ll)
       {
         name_M(l, ll) = temp[ll];
       }

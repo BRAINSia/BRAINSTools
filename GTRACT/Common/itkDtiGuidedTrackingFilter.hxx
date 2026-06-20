@@ -351,7 +351,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
   typename Self::PointType p3;
   // this->m_AnisotropyImage->TransformContinuousIndexToPhysicalPoint(index,p2);
   // std::cout << "Current Point " << index << std::endl;
-  for (int i = 0; i < centerFiber->GetNumberOfPoints(); i++)
+  for (int i = 0; i < centerFiber->GetNumberOfPoints(); ++i)
   {
     double currentPoint[3];
     centerFiber->GetPoint(i, currentPoint);
@@ -374,7 +374,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         p3[1] = currentPoint[1];
         p3[2] = currentPoint[2];
         index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 3; ++j)
         {
           direction[j] = index1[j] - index3[j];
         }
@@ -386,7 +386,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
         p3[1] = currentPoint[1];
         p3[2] = currentPoint[2];
         index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 3; ++j)
         {
           direction[j] = index3[j] - index1[j];
         }

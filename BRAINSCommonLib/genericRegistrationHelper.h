@@ -113,7 +113,7 @@ MakeDebugJointHistogram(const std::string &                  debugOutputDirector
   nonZeroAverage /= static_cast<float>(nonZeroCount);
 
   using PNGImageType = itk::Image<unsigned short, 2>;
-  typename PNGImageType::Pointer myOut = PNGImageType::New();
+  auto myOut = PNGImageType::New();
   myOut->CopyInformation(myHistogram);
   myOut->SetRegions(myHistogram->GetLargestPossibleRegion());
   myOut->Allocate();
@@ -213,9 +213,9 @@ public:
   Transform(typename TTransform::Pointer & xfrm)
   {
     using InterpolatorType = typename itk::LinearInterpolateImageFunction<TImage, double>;
-    typename InterpolatorType::Pointer interp = InterpolatorType::New();
+    auto interp = InterpolatorType::New();
     using ResampleImageFilter = typename itk::ResampleImageFilter<TImage, TImage>;
-    typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
+    auto resample = ResampleImageFilter::New();
     resample->SetInput(m_MovingImage);
     resample->SetTransform(xfrm);
     resample->SetInterpolator(interp);

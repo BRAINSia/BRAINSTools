@@ -36,7 +36,7 @@ filterFloatImages(std::vector<itk::Image<float, 3>::Pointer> & images,
     using AnisoFilterType = itk::GradientAnisotropicDiffusionImageFilter<FloatImageType, FloatImageType>;
     for (unsigned i = 0; i < images.size(); ++i)
     {
-      AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
+      auto anisofilt = AnisoFilterType::New();
 
       // if (debugflag)
       //  anisofilt->DebugOn();
@@ -55,7 +55,7 @@ filterFloatImages(std::vector<itk::Image<float, 3>::Pointer> & images,
     using CurvatureFilterType = itk::CurvatureFlowImageFilter<FloatImageType, FloatImageType>;
     for (unsigned int k = 0; k < images.size(); ++k)
     {
-      CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();
+      auto cfilt = CurvatureFilterType::New();
 
       cfilt->SetNumberOfIterations(iters);
       cfilt->SetTimeStep(dt);

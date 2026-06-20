@@ -40,7 +40,7 @@ template <typename TImage>
 TImage *
 AllocVecImage(const itk::ImageBase<TImage::ImageDimension> * templateImage, unsigned long vecSize)
 {
-  const typename TImage::Pointer p1 = TImage::New();
+  const auto p1 = TImage::New();
   p1->CopyInformation(templateImage);
   p1->SetRegions(templateImage->GetLargestPossibleRegion());
   p1->SetNumberOfComponentsPerPixel(vecSize);
@@ -92,7 +92,7 @@ main(int argc, char * argv[])
     std::cerr << "Missing output NRRD file name" << std::endl;
     return 1;
   }
-  const ReaderType::Pointer imageReader = ReaderType::New();
+  const auto imageReader = ReaderType::New();
   imageReader->SetFileName(inputVolume);
   try
   {
@@ -169,7 +169,7 @@ main(int argc, char * argv[])
   outImage->SetMetaDataDictionary(nrrdMetaDataValidator.GetMetaDataDictionary());
 
   std::cout << "Write Output Image..." << std::endl;
-  const WriterType::Pointer nrrdWriter = WriterType::New();
+  const auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(outImage);

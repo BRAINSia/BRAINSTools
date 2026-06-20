@@ -99,7 +99,7 @@ main(int argc, char * argv[])
   using IndexType = ImageRegionType::IndexType;
 
   using FileReaderType = itk::ImageFileReader<ImageType>;
-  FileReaderType::Pointer imageReader = FileReaderType::New();
+  auto imageReader = FileReaderType::New();
   imageReader->SetFileName(inputVolume);
 
   try
@@ -133,7 +133,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(originalImage);

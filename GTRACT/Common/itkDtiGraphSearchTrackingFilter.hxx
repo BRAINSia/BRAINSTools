@@ -78,7 +78,7 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
   // ///////////////////////////////////////////////////////////////////////
 
   using MomentsCalculatorType = itk::ImageMomentsCalculator<typename Self::MaskImageType>;
-  typename MomentsCalculatorType::Pointer centerOfMassFilter = MomentsCalculatorType::New();
+  auto centerOfMassFilter = MomentsCalculatorType::New();
   centerOfMassFilter->SetImage(this->m_EndingRegion);
   centerOfMassFilter->Compute();
 

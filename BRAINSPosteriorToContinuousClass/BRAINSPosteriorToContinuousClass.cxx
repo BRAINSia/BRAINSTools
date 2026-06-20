@@ -88,23 +88,23 @@ main(int argc, char ** argv)
   using ImageRegionConstIteratorType = itk::ImageRegionConstIterator<ImageType>;
   using ImageRegionIteratorType = itk::ImageRegionIterator<OutputImageType>;
 
-  ReaderType::Pointer wmReader = ReaderType::New();
-  ReaderType::Pointer basalGmReader = ReaderType::New();
-  ReaderType::Pointer surfaceGmReader = ReaderType::New();
-  ReaderType::Pointer csfReader = ReaderType::New();
-  ReaderType::Pointer vbReader = ReaderType::New();
-  ReaderType::Pointer crblGmReader = ReaderType::New();
-  ReaderType::Pointer crblWmReader = ReaderType::New();
-  WriterType::Pointer outputWriter = WriterType::New();
+  auto wmReader = ReaderType::New();
+  auto basalGmReader = ReaderType::New();
+  auto surfaceGmReader = ReaderType::New();
+  auto csfReader = ReaderType::New();
+  auto vbReader = ReaderType::New();
+  auto crblGmReader = ReaderType::New();
+  auto crblWmReader = ReaderType::New();
+  auto outputWriter = WriterType::New();
 
-  ImageType::Pointer       wmVolume;
-  ImageType::Pointer       bgmVolume;
-  ImageType::Pointer       sgmVolume;
-  ImageType::Pointer       crblGmVolume;
-  ImageType::Pointer       crblWmVolume;
-  ImageType::Pointer       csfVolume;
-  ImageType::Pointer       vbVolume;
-  OutputImageType::Pointer classVolume = OutputImageType::New();
+  ImageType::Pointer wmVolume;
+  ImageType::Pointer bgmVolume;
+  ImageType::Pointer sgmVolume;
+  ImageType::Pointer crblGmVolume;
+  ImageType::Pointer crblWmVolume;
+  ImageType::Pointer csfVolume;
+  ImageType::Pointer vbVolume;
+  auto               classVolume = OutputImageType::New();
 
   try
   {

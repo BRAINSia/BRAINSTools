@@ -32,14 +32,14 @@ ReadImageMask(const std::string & filename, typename itk::ImageBase<VDimension> 
 
   // convert mask image to mask
   using ReadImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<SpatialObjectMaskPixelType::ImageDimension>;
-  typename ReadImageMaskSpatialObjectType::Pointer mask = ReadImageMaskSpatialObjectType::New();
+  auto mask = ReadImageMaskSpatialObjectType::New();
   {
     // Allow reading unsigned long images for large label maps that do not fit in unsigned char images.
     // to avoid typecasting errors in the labelmap.
     using ReadMaskImageType = itk::Image<unsigned long, 3>;
     typename ReadMaskImageType::Pointer OrientedMaskImage = itkUtil::ReadImage<ReadMaskImageType>(filename);
     using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ReadMaskImageType, SpatialObjectMaskPixelType>;
-    BinaryThresholdFilterType::Pointer btf = BinaryThresholdFilterType::New();
+    auto btf = BinaryThresholdFilterType::New();
     btf->SetInput(OrientedMaskImage);
     btf->SetLowerThreshold(1);
     btf->SetInsideValue(1);

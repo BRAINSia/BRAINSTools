@@ -70,7 +70,7 @@ main(int argc, char * argv[])
     // computing the forward and inverse transform
     const VersorRigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
 
-    const VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
+    const auto finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ZeroCenteredTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation;
     const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
@@ -79,8 +79,8 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ZeroCenteredTransform->GetTranslation());
     // inverse transform
-    const VersorRigidTransformType::Pointer invFinalTransform = VersorRigidTransformType::New();
-    const SImageType::PointType             centerPoint = finalTransform->GetCenter();
+    const auto                  invFinalTransform = VersorRigidTransformType::New();
+    const SImageType::PointType centerPoint = finalTransform->GetCenter();
     invFinalTransform->SetCenter(centerPoint);
     invFinalTransform->SetIdentity();
     finalTransform->GetInverse(invFinalTransform);
@@ -100,7 +100,7 @@ main(int argc, char * argv[])
       std::cout << "Writing transform file suitable for resampling images: " << outputTransform << std::endl;
       {
         using TransformWriterType = itk::TransformFileWriterTemplate<double>;
-        const TransformWriterType::Pointer writer = TransformWriterType::New();
+        const auto writer = TransformWriterType::New();
         writer->SetInput(finalTransform);
         writer->SetFileName(outputTransform);
         try

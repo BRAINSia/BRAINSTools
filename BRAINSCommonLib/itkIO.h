@@ -53,21 +53,21 @@ template <typename TImage>
 typename TImage::Pointer
 ReadImage(const std::string & fileName)
 {
-  typename TImage::Pointer  image;
-  std::string               extension = itksys::SystemTools::GetFilenameLastExtension(fileName);
-  itk::GDCMImageIO::Pointer dicomIO = itk::GDCMImageIO::New();
+  typename TImage::Pointer image;
+  std::string              extension = itksys::SystemTools::GetFilenameLastExtension(fileName);
+  auto                     dicomIO = itk::GDCMImageIO::New();
   if (dicomIO->CanReadFile(fileName.c_str()) || (itksys::SystemTools::LowerCase(extension) == ".dcm"))
   {
     std::string dicomDir = itksys::SystemTools::GetParentDirectory(fileName.c_str());
 
-    itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
+    auto FileNameGenerator = itk::GDCMSeriesFileNames::New();
     FileNameGenerator->SetUseSeriesDetails(true);
     FileNameGenerator->SetDirectory(dicomDir);
     using ContainerType = const std::vector<std::string>;
     const ContainerType & seriesUIDs = FileNameGenerator->GetSeriesUIDs();
 
     using ReaderType = typename itk::ImageSeriesReader<TImage>;
-    typename ReaderType::Pointer reader = ReaderType::New();
+    auto reader = ReaderType::New();
     reader->SetFileNames(FileNameGenerator->GetFileNames(seriesUIDs[0]));
     reader->SetImageIO(dicomIO);
     try
@@ -92,7 +92,7 @@ ReadImage(const std::string & fileName)
   else
   {
     using ReaderType = itk::ImageFileReader<TImage>;
-    typename ReaderType::Pointer reader = ReaderType::New();
+    auto reader = ReaderType::New();
     reader->SetFileName(fileName.c_str());
     try
     {
@@ -139,8 +139,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::ConstPointer & inputImage, typename itk::AnatomicalOrientation orient)
 {
-  typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-    itk::OrientImageFilter<ImageType, ImageType>::New();
+  auto orienter = itk::OrientImageFilter<ImageType, ImageType>::New();
 
   // AnatomicalOrientation::GetAsDirection() uses "positive axis" convention
   // (column = voxel axis direction in LPS space), while SpatialOrientationAdapter
@@ -222,7 +221,7 @@ void
 WriteConstImage(const typename ImageType::ConstPointer image, const std::string & filename)
 {
   using WriterType = itk::ImageFileWriter<ImageType>;
-  typename WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName(filename.c_str());
   writer->SetInput(image);
@@ -268,7 +267,7 @@ typename OutputImageType::Pointer
 TypeCast(const typename InputImageType::Pointer & input)
 {
   using CastToRealFilterType = itk::CastImageFilter<InputImageType, OutputImageType>;
-  typename CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
+  auto toReal = CastToRealFilterType::New();
   toReal->SetInput(input);
   toReal->Update();
   return toReal->GetOutput();
@@ -294,7 +293,7 @@ ScaleAndCast(const typename InputImageType::Pointer &  image,
              const typename OutputImageType::PixelType OutputMax)
 {
   using R2CRescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType, OutputImageType>;
-  typename R2CRescaleFilterType::Pointer RealToProbMapCast = R2CRescaleFilterType::New();
+  auto RealToProbMapCast = R2CRescaleFilterType::New();
   RealToProbMapCast->SetOutputMinimum(OutputMin);
   RealToProbMapCast->SetOutputMaximum(OutputMax);
   RealToProbMapCast->SetInput(image);
@@ -348,7 +347,7 @@ typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input)
 {
   using ImageDupeType = itk::ImageDuplicator<ImageType>;
-  typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
+  auto MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();
   return MyDuplicator->GetOutput();
@@ -388,7 +387,7 @@ template <typename TemplateImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 AllocateImageFromExample(const typename TemplateImageType::Pointer & TemplateImage)
 {
-  typename OutputImageType::Pointer rval = OutputImageType::New();
+  auto rval = OutputImageType::New();
   rval->CopyInformation(TemplateImage);
   rval->SetRegions(TemplateImage->GetLargestPossibleRegion());
   rval->Allocate();

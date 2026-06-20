@@ -60,9 +60,9 @@ InvertBSplineFilter::Update()
 {
   std::cout << "InvertBSplineFilter()...." << std::endl;
 
-  ImageType::SizeType   imageSize = m_ExampleImage->GetLargestPossibleRegion().GetSize();
-  PointSetType::Pointer sourceLandMarks = PointSetType::New();
-  PointSetType::Pointer targetLandMarks = PointSetType::New();
+  ImageType::SizeType imageSize = m_ExampleImage->GetLargestPossibleRegion().GetSize();
+  auto                sourceLandMarks = PointSetType::New();
+  auto                targetLandMarks = PointSetType::New();
 
   PointSetType::PointsContainer::Pointer sourceLandMarkContainer = sourceLandMarks->GetPoints();
   PointSetType::PointsContainer::Pointer targetLandMarkContainer = targetLandMarks->GetPoints();

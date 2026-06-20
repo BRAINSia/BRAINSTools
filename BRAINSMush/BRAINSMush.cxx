@@ -94,7 +94,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
                  std::string              outputWeightsFile)
 {
   using MixtureStatisticCostFunctionType = itk::MixtureStatisticCostFunction<ImageType, ImageType>;
-  MixtureStatisticCostFunctionType::Pointer twoByTwoCostFunction = MixtureStatisticCostFunctionType::New();
+  auto twoByTwoCostFunction = MixtureStatisticCostFunctionType::New();
   twoByTwoCostFunction->SetFirstImage(firstImage);
   twoByTwoCostFunction->SetSecondImage(secondImage);
   twoByTwoCostFunction->SetImageMask(maskImage);
@@ -104,7 +104,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
   using OptimizerType = itk::AmoebaOptimizer;
-  OptimizerType::Pointer twoByTwoOptimizer = OptimizerType::New();
+  auto twoByTwoOptimizer = OptimizerType::New();
   twoByTwoOptimizer->SetCostFunction(twoByTwoCostFunction.GetPointer());
   OptimizerType::ParametersType initialParameters(1);
   initialParameters[0] = 1.0;
@@ -163,7 +163,7 @@ MixtureOptimizer(ImageType::Pointer &     firstImage,
    * declare and compute mixtureImage.
    */
 
-  ImageType::Pointer mixtureImage = ImageType::New();
+  auto mixtureImage = ImageType::New();
   mixtureImage->SetRegions(firstImage->GetLargestPossibleRegion());
   mixtureImage->SetSpacing(firstImage->GetSpacing());
   mixtureImage->SetOrigin(firstImage->GetOrigin());
@@ -216,7 +216,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
    * Write out MUSH Image
    */
   using ImageWriterType = itk::ImageFileWriter<ImageType>;
-  ImageWriterType::Pointer writer = ImageWriterType::New();
+  auto writer = ImageWriterType::New();
   writer->UseCompressionOn();
   writer->SetInput(mixtureImage);
   writer->SetFileName(outputVolume);
@@ -242,7 +242,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
   // using MaskImageWriterType = itk::ImageFileWriter<MaskImageType>;
-  MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
+  auto maskWriter = MaskImageWriterType::New();
   maskWriter->UseCompressionOn();
 
   double mean;
@@ -308,7 +308,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     std::cout << "Performing Initial Binary Threshold..." << std::endl;
     std::cout << "---------------------------------------------------" << std::endl << std::endl;
     using BinaryThresholdMaskFilterType = itk::BinaryThresholdImageFilter<MaskImageType, MaskImageType>;
-    BinaryThresholdMaskFilterType::Pointer threshToBrainCoreMask = BinaryThresholdMaskFilterType::New();
+    auto threshToBrainCoreMask = BinaryThresholdMaskFilterType::New();
     threshToBrainCoreMask->SetInput(maskImage);
     threshToBrainCoreMask->SetLowerThreshold(1);
     threshToBrainCoreMask->SetUpperThreshold(1);
@@ -334,7 +334,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     std::cout << "Eroding by: " << erosionValue << std::endl;
     std::cout << "---------------------------------------------------" << std::endl << std::endl;
 
-    binaryErodeFilterType::Pointer initialMaskImage = binaryErodeFilterType::New();
+    auto initialMaskImage = binaryErodeFilterType::New();
 
     StructuringElementType structuringElement;
     structuringElement.SetRadius(erosionValue);
@@ -360,7 +360,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
      */
 
     using LabelFilterType = itk::LabelStatisticsImageFilter<ImageType, MaskImageType>;
-    LabelFilterType::Pointer labelFilter = LabelFilterType::New();
+    auto labelFilter = LabelFilterType::New();
     labelFilter->SetInput(mixtureImage);
     labelFilter->SetLabelInput(initialMaskImage->GetOutput());
 
@@ -396,7 +396,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "Performing Initial Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
   using BinaryThresholdFilterType = itk::BinaryThresholdImageFilter<ImageType, MaskImageType>;
-  BinaryThresholdFilterType::Pointer threshToHeadMask = BinaryThresholdFilterType::New();
+  auto threshToHeadMask = BinaryThresholdFilterType::New();
   threshToHeadMask->SetInput(mixtureImage);
   auto smaller = lower < upper ? lower : upper;
   auto larger = lower < upper ? upper : lower;
@@ -447,7 +447,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Eroding largest filled region..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
-  BinaryImageErodeFilterType::Pointer binaryErodeFilter = BinaryImageErodeFilterType::New();
+  auto binaryErodeFilter = BinaryImageErodeFilterType::New();
   binaryErodeFilter->SetErodeValue(1);
   binaryErodeFilter->SetKernel(ball);
 
@@ -475,7 +475,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "Performing Special Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
   using BinaryThresholdMaskFilterType = itk::BinaryThresholdImageFilter<MaskImageType, MaskImageType>;
-  BinaryThresholdMaskFilterType::Pointer threshToBrainCoreMask = BinaryThresholdMaskFilterType::New();
+  auto threshToBrainCoreMask = BinaryThresholdMaskFilterType::New();
   threshToBrainCoreMask->SetInput(binaryErodeFilter->GetOutput());
   threshToBrainCoreMask->SetLowerThreshold(1);
   threshToBrainCoreMask->SetUpperThreshold(1);
@@ -505,10 +505,10 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   using RelabelComponentFilterType = itk::RelabelComponentImageFilter<CCImageType, MaskImageType>;
   using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
 
-  ConnectedComponentFilterType::Pointer filter = ConnectedComponentFilterType::New();
-  RelabelComponentFilterType::Pointer   relabel = RelabelComponentFilterType::New();
+  auto filter = ConnectedComponentFilterType::New();
+  auto relabel = RelabelComponentFilterType::New();
 
-  ThresholdFilterType::Pointer LargestFilter = ThresholdFilterType::New();
+  auto LargestFilter = ThresholdFilterType::New();
   LargestFilter->SetOutsideValue(0);
   LargestFilter->ThresholdAbove(1);
   LargestFilter->ThresholdBelow(1);
@@ -565,7 +565,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Dilating largest filled region..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
-  BinaryDilateFilterType::Pointer binaryDilateFilter = BinaryDilateFilterType::New();
+  auto binaryDilateFilter = BinaryDilateFilterType::New();
   binaryDilateFilter->SetDilateValue(1);
   binaryDilateFilter->SetKernel(ball);
 
@@ -593,7 +593,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   std::cout << "---------------------------------------------------" << std::endl;
   std::cout << "Performing Special Binary Threshold..." << std::endl;
   std::cout << "---------------------------------------------------" << std::endl << std::endl;
-  BinaryThresholdMaskFilterType::Pointer threshToClosureMask = BinaryThresholdMaskFilterType::New();
+  auto threshToClosureMask = BinaryThresholdMaskFilterType::New();
   threshToClosureMask->SetInput(binaryDilateFilter->GetOutput());
   threshToClosureMask->SetLowerThreshold(1);
   threshToClosureMask->SetUpperThreshold(1);
@@ -615,7 +615,7 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
   dilatedOutput->DisconnectPipeline();
 
   using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<MaskImageType>;
-  LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+  auto LFF = LFFMaskFilterType::New();
   LFF->SetInput(dilatedOutput);
   LFF->SetOtsuPercentileThreshold(0);
   LFF->SetClosingSize(5);
@@ -648,7 +648,7 @@ GenerateInitializerRegion(ImageType::Pointer & referenceImage,
                           std::vector<int>     boundingBoxSize,
                           std::vector<int>     boundingBoxStart)
 {
-  MaskImageType::Pointer initializeMask = MaskImageType::New();
+  auto initializeMask = MaskImageType::New();
 
   initializeMask->SetRegions(referenceImage->GetLargestPossibleRegion());
   initializeMask->CopyInformation(referenceImage);
@@ -723,7 +723,7 @@ main(int argc, char ** argv)
    * for GenerateBrainVolume to be run twice.
    * Twice.
    */
-  MaskImageType::Pointer maskImage = MaskImageType::New();
+  auto maskImage = MaskImageType::New();
 
   if (inputMaskVolume == "no_mask_exists") // "no_mask_exists" is the default
                                            // when no mask is specified on
@@ -750,7 +750,7 @@ main(int argc, char ** argv)
 
   // Use the MaskImage from above to define the region on which to optimize
   // mixture image uniformity.
-  MaskImageType::Pointer resultImage = MaskImageType::New();
+  auto resultImage = MaskImageType::New();
   GenerateBrainVolume(firstImage,
                       secondImage,
                       maskImage,
@@ -763,7 +763,7 @@ main(int argc, char ** argv)
                       outputWeightsFile,
                       resultImage);
 
-  MaskImageWriterType::Pointer maskWriter = MaskImageWriterType::New();
+  auto maskWriter = MaskImageWriterType::New();
   maskWriter->SetInput(resultImage);
   maskWriter->SetFileName(outputMask);
   try

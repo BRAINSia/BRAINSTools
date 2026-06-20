@@ -61,7 +61,7 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  const ReaderType::Pointer reader = ReaderType::New();
+  const auto reader = ReaderType::New();
   reader->SetFileName(inputVolume);
   try
   {
@@ -74,7 +74,7 @@ main(int argc, char * argv[])
 
   // Find center of head mass
   std::cout << "Finding center of head mass..." << std::endl;
-  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const auto findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(reader->GetOutput());
   findCenterFilter->SetAxis(2);
   findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -86,7 +86,7 @@ main(int argc, char * argv[])
 
   // Find eye centers with BRAINS Hough Eye Detector
   std::cout << "Finding eye centers..." << std::endl;
-  const HoughEyeDetectorType::Pointer houghEyeDetector = HoughEyeDetectorType::New();
+  const auto houghEyeDetector = HoughEyeDetectorType::New();
   houghEyeDetector->SetInput(reader->GetOutput());
   houghEyeDetector->SetHoughEyeDetectorMode(1); // For T1 images
   houghEyeDetector->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
@@ -100,7 +100,7 @@ main(int argc, char * argv[])
 
   const itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm =
     houghEyeDetector->GetModifiableorig2eyeFixedTransform();
-  const itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
+  const auto orig2eyeFixed_lmk_tfm = itk::VersorRigid3DTransform<double>::New();
   orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
 
   const ImagePointType alignedLE = orig2eyeFixed_lmk_tfm->TransformPoint(leftEye);
@@ -112,7 +112,7 @@ main(int argc, char * argv[])
   std::cout << "Aligned right eye = " << alignedRE << std::endl;
 
   // Write aligned image
-  const WriterType::Pointer writer = WriterType::New();
+  const auto writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName(outputVolume);
   writer->SetInput(houghEyeDetector->GetOutput());

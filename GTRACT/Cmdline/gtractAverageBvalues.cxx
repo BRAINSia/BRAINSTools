@@ -121,7 +121,7 @@ main(int argc, char * argv[])
   using NrrdAvgImageType = itk::VectorImage<AvgPixelType, 3>;
 
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  FileReaderType::Pointer imageReader = FileReaderType::New();
+  auto imageReader = FileReaderType::New();
   imageReader->SetFileName(inputVolume);
 
   try
@@ -160,7 +160,7 @@ main(int argc, char * argv[])
   // for (int i=0;i<vectorLength;++i)
   //  std::cout << i << " " << lut[i] << " " << count[i] << std::endl;
 
-  NrrdAvgImageType::Pointer avgImage = NrrdAvgImageType::New();
+  auto avgImage = NrrdAvgImageType::New();
   avgImage->SetRegions(imageReader->GetOutput()->GetLargestPossibleRegion());
   avgImage->SetSpacing(imageReader->GetOutput()->GetSpacing());
   avgImage->SetOrigin(imageReader->GetOutput()->GetOrigin());
@@ -168,7 +168,7 @@ main(int argc, char * argv[])
   avgImage->SetVectorLength(numUniqueDirections);
   avgImage->Allocate();
 
-  NrrdImageType::Pointer outputImage = NrrdImageType::New();
+  auto outputImage = NrrdImageType::New();
   outputImage->SetRegions(imageReader->GetOutput()->GetLargestPossibleRegion());
   outputImage->SetSpacing(imageReader->GetOutput()->GetSpacing());
   outputImage->SetOrigin(imageReader->GetOutput()->GetOrigin());
@@ -177,7 +177,7 @@ main(int argc, char * argv[])
   outputImage->Allocate();
 
   using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
-  ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+  auto extractImageFilter = ExtractImageFilterType::New();
   extractImageFilter->SetInput(imageReader->GetOutput());
 
   using ConstIndexImageIteratorType = itk::ImageRegionConstIterator<IndexImageType>;
@@ -240,7 +240,7 @@ main(int argc, char * argv[])
   outputImage->SetMetaDataDictionary(metaDataValidator.GetMetaDataDictionary());
 
   using WriterType = itk::ImageFileWriter<NrrdImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(outputImage);

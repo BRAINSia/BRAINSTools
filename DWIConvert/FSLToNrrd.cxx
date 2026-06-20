@@ -168,7 +168,7 @@ FSLToNrrd(const std::string & inputVolume,
   using ExtractFilterType = itk::ExtractImageFilter<Volume4DType, Volume3DType>;
 
   using ComposeImageFilterType = itk::ComposeImageFilter<Volume3DType, VectorVolumeType>;
-  ComposeImageFilterType::Pointer composer = ComposeImageFilterType::New();
+  auto composer = ComposeImageFilterType::New();
 
   for (size_t componentNumber = 0; componentNumber < inputSize[3]; ++componentNumber)
   {
@@ -178,7 +178,7 @@ FSLToNrrd(const std::string & inputVolume,
     extractIndex[3] = componentNumber;
     Volume4DType::RegionType extractRegion(extractIndex, extractSize);
 
-    ExtractFilterType::Pointer extracter = ExtractFilterType::New();
+    auto extracter = ExtractFilterType::New();
     extracter->SetExtractionRegion(extractRegion);
     extracter->SetInput(inputVol);
     extracter->SetDirectionCollapseToIdentity();
@@ -260,7 +260,7 @@ FSLToNrrd(const std::string & inputVolume,
   nrrdVolume->SetMetaDataDictionary(nrrdVolumeValidator.GetMetaDataDictionary());
   // Write Nrrd volume to disk
   using WriterType = itk::ImageFileWriter<VectorVolumeType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(nrrdVolume);

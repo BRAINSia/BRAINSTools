@@ -59,7 +59,7 @@ ComputeLabels(std::vector<typename TProbabilityImage::Pointer> & Posteriors,
   DirtyLabels->CopyInformation(Posteriors[0]);
   DirtyLabels->SetRegions(region);
   DirtyLabels->Allocate();
-  typename TByteImage::Pointer foregroundMask = TByteImage::New();
+  auto foregroundMask = TByteImage::New();
   foregroundMask->CopyInformation(Posteriors[0]);
   foregroundMask->SetRegions(region);
   foregroundMask->Allocate();
@@ -148,7 +148,7 @@ ComputeLabels(std::vector<typename TProbabilityImage::Pointer> & Posteriors,
                   << "\n           " << currentLabelCount << " < " << minLabelSizeAllowed << std::endl;
         // Multiply this prior by 1.1 to increase it's importance.
         using MultiplyFilterType = itk::MultiplyImageFilter<TProbabilityImage, TProbabilityImage>;
-        typename MultiplyFilterType::Pointer filter = MultiplyFilterType::New();
+        auto filter = MultiplyFilterType::New();
         filter->SetInput1(Posteriors[reverseLabelMap[it->first]]);
         filter->SetInput2(1.1); // Multiply by 1.1 to increase it's importance
         filter->Update();

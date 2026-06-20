@@ -133,22 +133,22 @@ ReadDicomSeriesCastWriteImage(const std::string & inputDirectoryName, const std:
   using FileNamesContainerType = std::vector<std::string>;
 
   /** Create the dicom ImageIO. */
-  typename GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
+  auto dicomIO = GDCMImageIOType::New();
 
   /** Get a list of the filenames of the 2D input dicom images. */
-  GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+  auto nameGenerator = GDCMNamesGeneratorType::New();
   nameGenerator->SetInputDirectory(inputDirectoryName.c_str());
   FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
 
   /** Create and setup the seriesReader. */
-  typename SeriesReaderType::Pointer seriesReader = SeriesReaderType::New();
+  auto seriesReader = SeriesReaderType::New();
   seriesReader->SetFileNames(fileNames);
   seriesReader->SetImageIO(dicomIO);
 
   /** Create and setup caster and writer. */
-  // typename RescaleFilterType::Pointer caster = RescaleFilterType::New();
-  typename ShiftScaleFilterType::Pointer caster = ShiftScaleFilterType::New();
-  typename ImageWriterType::Pointer      writer = ImageWriterType::New();
+  // auto caster = RescaleFilterType::New();
+  auto caster = ShiftScaleFilterType::New();
+  auto writer = ImageWriterType::New();
   caster->SetShift(0.0);
   caster->SetScale(1.0);
   writer->SetFileName(outputFileName.c_str());
@@ -163,7 +163,7 @@ ReadDicomSeriesCastWriteImage(const std::string & inputDirectoryName, const std:
   if (outputFileName.rfind(".vti") == (outputFileName.size() - 4))
   {
     using ITKToVTKFilterType = itk::ImageToVTKImageFilter<OutputImageType>;
-    typename ITKToVTKFilterType::Pointer itktovtk = ITKToVTKFilterType::New();
+    auto itktovtk = ITKToVTKFilterType::New();
     caster->Update();
     itktovtk->SetInput(caster->GetOutput());
     itktovtk->Update();
@@ -204,9 +204,9 @@ ReadCastWriteImage(const std::string & inputFileName, const std::string & output
   using VTKToITKFilterType = itk::VTKImageToImageFilter<InputImageType>;
   typename VTKToITKFilterType::Pointer vtktoitk = NULL;
 #endif
-  typename ImageReaderType::Pointer      reader = ImageReaderType::New();
-  typename ShiftScaleFilterType::Pointer caster = ShiftScaleFilterType::New();
-  typename ImageWriterType::Pointer      writer = ImageWriterType::New();
+  auto reader = ImageReaderType::New();
+  auto caster = ShiftScaleFilterType::New();
+  auto writer = ImageWriterType::New();
   caster->SetShift(0.0);
   caster->SetScale(1.0);
 
@@ -231,7 +231,7 @@ ReadCastWriteImage(const std::string & inputFileName, const std::string & output
   {
 #endif
 
-    // typename RescaleFilterType::Pointer caster = RescaleFilterType::New();
+    // auto caster = RescaleFilterType::New();
     caster->SetInput(reader->GetOutput());
 
 #ifdef VTK_FOUND
@@ -241,7 +241,7 @@ ReadCastWriteImage(const std::string & inputFileName, const std::string & output
   {
     // Handle .vti files as well.
     using ITKToVTKFilterType = itk::ImageToVTKImageFilter<OutputImageType>;
-    typename ITKToVTKFilterType::Pointer itktovtk = ITKToVTKFilterType::New();
+    auto itktovtk = ITKToVTKFilterType::New();
     caster->Update();
     itktovtk->SetInput(caster->GetOutput());
     itktovtk->Update();

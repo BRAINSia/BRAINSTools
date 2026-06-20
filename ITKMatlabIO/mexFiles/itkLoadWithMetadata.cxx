@@ -554,7 +554,7 @@ LoadDWIImage(const std::string & filename, mxArray *& structMx)
 {
   using ImageType = TImage;
   using ReaderType = itk::ImageFileReader<ImageType>;
-  typename ReaderType::Pointer reader = ReaderType::New();
+  auto reader = ReaderType::New();
   reader->SetFileName(filename);
   try
   {

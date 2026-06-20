@@ -109,14 +109,14 @@ ComputeMSP(SImageType::Pointer           input_image,
   }
   else
   {
-    const reflectionFunctorType::Pointer reflectionFunctor = reflectionFunctorType::New();
+    const auto reflectionFunctor = reflectionFunctorType::New();
     reflectionFunctor->Setorig_lmk_CenterOfHeadMass(input_image_center_of_mass);
 
     output_transform = DoMultiQualityReflection(input_image, qualityLevel, reflectionFunctor);
     cc = reflectionFunctor->GetCC();
   }
 
-  VersorRigidTransformType::Pointer versor_output_transform = VersorRigidTransformType::New();
+  auto versor_output_transform = VersorRigidTransformType::New();
   versor_output_transform->SetIdentity();
   versor_output_transform->SetTranslation(output_transform->GetTranslation());
   versor_output_transform->SetCenter(output_transform->GetCenter());
@@ -133,7 +133,7 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
 
   setLowHigh<SImageType>(referenceImage, low, high, 0.01F);
 
-  const itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
+  const auto MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
   SImageType::Pointer           MSPImage = MSP->GetOutput();
@@ -166,7 +166,7 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
 
   setLowHigh<SImageType>(referenceImage, low, high, 0.01F);
 
-  const itk::ImageDuplicator<SImageType>::Pointer MSP = itk::ImageDuplicator<SImageType>::New();
+  const auto MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
   SImageType::Pointer           MSPImage = MSP->GetOutput();
@@ -216,7 +216,7 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
     }
   }
 
-  const Euler3DTransformType::Pointer invMSPTransform = Euler3DTransformType::New();
+  const auto invMSPTransform = Euler3DTransformType::New();
   MSPTransform->GetInverse(invMSPTransform);
   const SImageType::Pointer RotatedPlane =
     TransformResample<SImageType, SImageType>(MSPImage.GetPointer(),
@@ -225,7 +225,7 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
                                               GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
                                               invMSPTransform.GetPointer());
 
-  const itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
+  const auto duplicator = itk::ImageDuplicator<SImageType>::New();
   duplicator->SetInputImage(referenceImage);
   duplicator->Update();
   SImageType::Pointer RasterImage = duplicator->GetOutput();
@@ -254,7 +254,7 @@ MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
 {
   PyramidFilterType::ScheduleType pyramidSchedule;
 
-  PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
+  auto MyPyramid = PyramidFilterType::New();
 
   MyPyramid->SetInput(refImage);
   MyPyramid->SetNumberOfLevels(3);
@@ -284,7 +284,7 @@ MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
 //{
 //   PyramidFilterType::ScheduleType pyramidSchedule;
 //
-//   PyramidFilterType::Pointer MyPyramid = PyramidFilterType::New();
+//   auto MyPyramid = PyramidFilterType::New();
 //
 //   MyPyramid->SetInput(refImage);
 //   MyPyramid->SetNumberOfLevels(1);
@@ -380,7 +380,7 @@ DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints)
 {
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
-  SimilarityTransformType::Pointer similarityTransform = SimilarityTransformType::New();
+  auto similarityTransform = SimilarityTransformType::New();
 
   similarityTransform->SetIdentity();
   // workaround a bug in older versions of ITK
@@ -388,7 +388,7 @@ DoIt_Similarity(const PointList & fixedPoints, const PointList & movingPoints)
 
   using InitializerType =
     itk::LandmarkBasedTransformInitializer<SimilarityTransformType, itk::Image<short, 3>, itk::Image<short, 3>>;
-  const InitializerType::Pointer initializer = InitializerType::New();
+  const auto initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
   // it derives from that class
@@ -413,12 +413,12 @@ ComputeRigidTransformFromLandmarkLists(const PointList & fixedPoints, const Poin
 {
   // Our input into landmark based initialize will be of this form
   // The format for saving to slicer is defined later
-  VersorRigidTransformType::Pointer rigidTransform = VersorRigidTransformType::New();
+  auto rigidTransform = VersorRigidTransformType::New();
   rigidTransform->SetIdentity();
 
   using InitializerType =
     itk::LandmarkBasedTransformInitializer<VersorRigidTransformType, itk::Image<short, 3>, itk::Image<short, 3>>;
-  const InitializerType::Pointer initializer = InitializerType::New();
+  const auto initializer = InitializerType::New();
 
   // This expects a VersorRigid3D.  The similarity transform works because
   // it derives from that class
@@ -471,7 +471,7 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
 Euler3DTransformType::Pointer
 VersorToEulerTransform(const VersorRigidTransformType::Pointer & versorBaseTransform)
 {
-  Euler3DTransformType::Pointer result = Euler3DTransformType::New();
+  auto result = Euler3DTransformType::New();
   result->SetIdentity();
   result->SetCenter(versorBaseTransform->GetCenter());
   result->SetMatrix(versorBaseTransform->GetMatrix());
@@ -584,7 +584,7 @@ CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_M
                                 const Euler3DTransformType::Pointer & Point_Rotate)
 {
   // ////// Compose test rotation with the translated ACPC alignment
-  const Euler3DTransformType::Pointer Point_Centered_TestRotated = Euler3DTransformType::New();
+  const auto Point_Centered_TestRotated = Euler3DTransformType::New();
 
   Point_Centered_TestRotated->SetFixedParameters(ACPC_MSP_AlignedTransform->GetFixedParameters());
   Point_Centered_TestRotated->SetParameters(ACPC_MSP_AlignedTransform->GetParameters());
@@ -599,7 +599,7 @@ CreateTestCenteredRotatedImage2(const VersorRigidTransformType::Pointer & ACPC_M
                                               GetInterpolatorFromString<SImageType>("Linear").GetPointer(),
                                               Point_Centered_TestRotated.GetPointer());
 
-  const Euler3DTransformType::Pointer invPoint_Centered_TestRotated = Euler3DTransformType::New();
+  const auto invPoint_Centered_TestRotated = Euler3DTransformType::New();
   Point_Centered_TestRotated->GetInverse(invPoint_Centered_TestRotated);
   return image_Point_TestRotated;
 }
@@ -614,7 +614,7 @@ MakeLabelImage(const SImageType::Pointer &   in,
                const SImageType::PointType & VN4,
                const std::string &           fname)
 {
-  const SImageType::Pointer maskImage = SImageType::New();
+  const auto maskImage = SImageType::New();
 
   maskImage->CopyInformation(in);
   maskImage->SetRegions(in->GetLargestPossibleRegion());
@@ -666,7 +666,7 @@ MakeIsoTropicReferenceImage()
   SImageType::RegionType Region;
   Region.SetSize(Size);
 
-  SImageType::Pointer isotropicReferenceVolume = SImageType::New();
+  auto isotropicReferenceVolume = SImageType::New();
   isotropicReferenceVolume->SetDirection(Ident);
   isotropicReferenceVolume->SetOrigin(Origin);
   isotropicReferenceVolume->SetSpacing(Spacing);

@@ -100,7 +100,7 @@ using ResampleFilterType = itk::ResampleImageFilter<
 InputImageType,
 InputImageType >;
 
-ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+auto resampler = ResampleFilterType::New();
 //TransformPointer inverseTransform = TTransformType::New();
 //inverseTransform->SetCenter(m_Transform->GetCenter());
 //m_Transform->GetInverse( inverseTransform );

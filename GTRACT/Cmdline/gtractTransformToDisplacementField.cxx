@@ -91,7 +91,7 @@ main(int argc, char * argv[])
 
   // Write out Displacement field
 
-  WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetFileName(outputDeformationFieldVolume);
   writer->SetInput(displacementField);

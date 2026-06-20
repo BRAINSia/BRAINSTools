@@ -75,7 +75,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<PixelType, 3>;
   using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
-  AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
+  auto anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName(inputReferenceVolume);
   try
   {
@@ -98,7 +98,7 @@ main(int argc, char * argv[])
 
   using InvertFilterType = itk::InvertBSplineFilter;
   std::cout << "Running Inversion using TPS" << std::endl;
-  InvertFilterType::Pointer invertTransformFilter = InvertFilterType::New();
+  auto invertTransformFilter = InvertFilterType::New();
   {
     InvertFilterType::BsplineTransformTypePointer myBSpline =
       dynamic_cast<InvertFilterType::BsplineTransformType *>(baseTransform.GetPointer());

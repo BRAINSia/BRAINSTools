@@ -49,7 +49,7 @@ ApplyField<TDisplacementField, TInputImage, TOutputImage>::Execute()
   }
 
   using WarperType = WarpImageFilter<InputImageType, OutputImageType, TDisplacementField>;
-  typename WarperType::Pointer warper = WarperType::New();
+  auto warper = WarperType::New();
   warper->SetInput(m_InputImage);
   warper->SetDeformationField(m_DisplacementField);
   warper->SetOutputParametersFromImage(m_DisplacementField);

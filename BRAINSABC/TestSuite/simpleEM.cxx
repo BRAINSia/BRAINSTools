@@ -84,7 +84,7 @@ simpleRunEMS(std::string                t1Volume,
   using InputImagePointer = typename InputImageType::Pointer;
 
   using templateReaderType = itk::ImageFileReader<InputImageType>;
-  typename templateReaderType::Pointer templateReader = templateReaderType::New();
+  auto templateReader = templateReaderType::New();
   templateReader->SetFileName(templateVolume);
   templateReader->Update();
   std::vector<InputImagePointer> images;
@@ -97,11 +97,11 @@ simpleRunEMS(std::string                t1Volume,
   }
   else
   {
-    typename InputImageReaderType::Pointer inputReaderT1 = InputImageReaderType::New();
+    auto inputReaderT1 = InputImageReaderType::New();
     inputReaderT1->SetFileName(T1FileName);
     inputImageFilenames.push_back(T1FileName);
     inputReaderT1->Update();
-    typename RescaleImageFilterType::Pointer rescalerT1 = RescaleImageFilterType::New();
+    auto rescalerT1 = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
     constexpr inputPixelType outMin = 0;
     const inputPixelType     outMax =
@@ -119,11 +119,11 @@ simpleRunEMS(std::string                t1Volume,
   }
   else
   {
-    typename InputImageReaderType::Pointer inputReaderT2 = InputImageReaderType::New();
+    auto inputReaderT2 = InputImageReaderType::New();
     inputReaderT2->SetFileName(T2FileName);
     inputImageFilenames.push_back(T2FileName);
     inputReaderT2->Update();
-    typename RescaleImageFilterType::Pointer rescalerT2 = RescaleImageFilterType::New();
+    auto rescalerT2 = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
     constexpr inputPixelType outMin = 0;
     const inputPixelType     outMax =
@@ -141,11 +141,11 @@ simpleRunEMS(std::string                t1Volume,
   }
   else
   {
-    typename InputImageReaderType::Pointer inputReaderPD = InputImageReaderType::New();
+    auto inputReaderPD = InputImageReaderType::New();
     inputReaderPD->SetFileName(PDFileName);
     inputImageFilenames.push_back(PDFileName);
     inputReaderPD->Update();
-    typename RescaleImageFilterType::Pointer rescalerPD = RescaleImageFilterType::New();
+    auto rescalerPD = RescaleImageFilterType::New();
     // Set the upper limit to 4096 in the case of floating point data.
     constexpr inputPixelType outMin = 0;
     const inputPixelType     outMax =
@@ -169,7 +169,7 @@ simpleRunEMS(std::string                t1Volume,
   // FindLargestForgroundFilledMask<InputImageType>( images[0],
   // otsuPercentileThreshold, closingSize );
   using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<InputImageType>;
-  typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+  auto LFF = LFFMaskFilterType::New();
   LFF->SetInput(images[0]);
   LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
   LFF->SetClosingSize(closingSize);
@@ -207,8 +207,8 @@ simpleRunEMS(std::string                t1Volume,
   {
     for (unsigned int i = 0; i < PriorsList.size(); ++i)
     {
-      typename PriorImageReaderType::Pointer priorReader = PriorImageReaderType::New();
-      std::string                            name = PriorsList.at(i);
+      auto        priorReader = PriorImageReaderType::New();
+      std::string name = PriorsList.at(i);
       priorReader->SetFileName(name);
       priorImageFileNames.push_back(name);
       priorReader->Update();
@@ -226,7 +226,7 @@ simpleRunEMS(std::string                t1Volume,
 
   std::cerr << "Start segmentation...\n";
 
-  typename SegFilterType::Pointer segfilter = SegFilterType::New();
+  auto segfilter = SegFilterType::New();
   segfilter->DebugOn();
 
   // HACK:  Need for loop around this
@@ -259,7 +259,7 @@ simpleRunEMS(std::string                t1Volume,
   std::cerr << "Writing labels...\n";
   {
     using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
-    OutputWriterType::Pointer writer = OutputWriterType::New();
+    auto writer = OutputWriterType::New();
 
     writer->SetInput(segfilter->GetOutput());
     writer->UseCompressionOn();
@@ -276,9 +276,8 @@ simpleRunEMS(std::string                t1Volume,
     for (unsigned i = 0; i < imgset.size(); ++i)
     {
       using CasterType = itk::CastImageFilter<InputImageType, ShortImageType>;
-      typename CasterType::Pointer                                               caster = CasterType::New();
-      typename itk::MultiplyImageFilter<InputImageType, InputImageType>::Pointer multiplyFilter =
-        itk::MultiplyImageFilter<InputImageType, InputImageType>::New();
+      auto caster = CasterType::New();
+      auto multiplyFilter = itk::MultiplyImageFilter<InputImageType, InputImageType>::New();
       multiplyFilter->SetInput1(imgset[i]);
       multiplyFilter->SetInput2(HeadOutlineMaskImage);
 
@@ -287,7 +286,7 @@ simpleRunEMS(std::string                t1Volume,
       std::string fn = std::string(inputImageFilenames[i] + "_corrected.nii.gz");
 
       using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-      ShortWriterType::Pointer writer = ShortWriterType::New();
+      auto writer = ShortWriterType::New();
 
       writer->SetInput(caster->GetOutput());
       writer->SetFileName(fn.c_str());
@@ -301,7 +300,7 @@ simpleRunEMS(std::string                t1Volume,
     for (unsigned int i = 0; i < (probset.size() - 3); ++i)
     {
       using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-      ShortWriterType::Pointer writer = ShortWriterType::New();
+      auto writer = ShortWriterType::New();
       writer->SetInput(probset[i]);
       writer->SetFileName(priorImageFileNames[i] + "_posterior.nii.gz");
       writer->UseCompressionOn();

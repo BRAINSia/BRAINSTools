@@ -41,7 +41,7 @@ main(int, char **)
   using CompositeTransformType = itk::CompositeTransform<double, 3>;
 
   // create two empty images
-  ImageType::Pointer image1 = ImageType::New(), image2 = ImageType::New();
+  auto image1 = ImageType::New(), image2 = ImageType::New();
 
   ImageType::RegionType region;
   auto                  size = itk::MakeFilled<ImageType::SizeType>(100);
@@ -57,8 +57,8 @@ main(int, char **)
   image1->FillBuffer(0);
   image2->FillBuffer(0);
 
-  EllipseSOType::Pointer ellipse = EllipseSOType::New();
-  TransformType::Pointer tfm = TransformType::New();
+  auto ellipse = EllipseSOType::New();
+  auto tfm = TransformType::New();
   tfm->SetIdentity();
 
   auto rotAxis = itk::MakeFilled<TransformType::OutputVectorType>(1.);
@@ -76,8 +76,8 @@ main(int, char **)
   ellipse->SetObjectToWorldTransform(tfm);
 
   // convert ellipses to binary images
-  SOToImageFilter::Pointer e2image = SOToImageFilter::New();
-  SOToImageFilter::Pointer etfm2image = SOToImageFilter::New();
+  auto e2image = SOToImageFilter::New();
+  auto etfm2image = SOToImageFilter::New();
   e2image->SetInput(ellipse);
   e2image->SetSize(size);
   e2image->Update();
@@ -101,14 +101,14 @@ main(int, char **)
   ImageType::Pointer eTfmImage = etfm2image->GetOutput();
 
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-  VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
+  auto tempCopy = VersorRigid3DTransformType::New();
 
   // images and masks passed to helper are identical, but only masks will be used
-  CastType::Pointer fixedImageCast = CastType::New();
-  CastType::Pointer movingImageCast = CastType::New();
+  auto fixedImageCast = CastType::New();
+  auto movingImageCast = CastType::New();
 
-  ImageMaskSOType::Pointer fixedMask = ImageMaskSOType::New();
-  ImageMaskSOType::Pointer movingMask = ImageMaskSOType::New();
+  auto fixedMask = ImageMaskSOType::New();
+  auto movingMask = ImageMaskSOType::New();
 
   fixedImageCast->SetInput(eImage);
   movingImageCast->SetInput(eTfmImage);
@@ -122,7 +122,7 @@ main(int, char **)
   std::vector<std::string> transformTypeVector;
 
   // initialize the helper and run
-  HelperType::Pointer myHelper = HelperType::New();
+  auto myHelper = HelperType::New();
   myHelper->SetFixedVolume(eImage);
   myHelper->SetMovingVolume(eTfmImage);
   myHelper->SetFixedBinaryVolume(fixedMask);

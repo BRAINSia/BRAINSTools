@@ -129,7 +129,7 @@ main(int argc, char ** argv)
   using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
   using TensorImageType = itk::Image<TensorPixelType, 3>;
   using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
+  auto tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName(inputTensorVolume);
 
   try
@@ -148,7 +148,7 @@ main(int argc, char ** argv)
   using AnisotropyPixelType = float;
   using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
   using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
-  AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
+  auto anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
@@ -167,7 +167,7 @@ main(int argc, char ** argv)
   using MaskPixelType = signed short;
   using MaskImageType = itk::Image<MaskPixelType, 3>;
   using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
-  MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
+  auto startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName(inputStartingSeedsLabelMapVolume);
 
   try
@@ -182,7 +182,7 @@ main(int argc, char ** argv)
 
   /* Threshold Starting Label Map */
   using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
-  ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
+  auto startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput(startingSeedImageReader->GetOutput());
   startingThresholdFilter->SetLower(static_cast<MaskPixelType>(startingSeedsLabel));
   startingThresholdFilter->SetUpper(static_cast<MaskPixelType>(startingSeedsLabel));
@@ -195,7 +195,7 @@ main(int argc, char ** argv)
   std::cerr << "Free Tracking" << std::endl;
 
   using TrackingType = itk::DtiFreeTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-  TrackingType::Pointer fiberTrackingFilter = TrackingType::New();
+  auto fiberTrackingFilter = TrackingType::New();
   fiberTrackingFilter->SetAnisotropyImage(anisotropyImage);
   fiberTrackingFilter->SetTensorImage(tensorImage);
   fiberTrackingFilter->SetStartingRegion(startingSeedMask);

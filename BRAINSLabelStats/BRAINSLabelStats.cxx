@@ -51,7 +51,7 @@ GetXmlLabelName(const std::string & fileName, int label)
   std::string labelName = "Error";
 
   // Load the XML File
-  const itk::DOMNodeXMLReader::Pointer xmlReader = itk::DOMNodeXMLReader::New();
+  const auto xmlReader = itk::DOMNodeXMLReader::New();
 
   xmlReader->SetFileName(fileName);
   xmlReader->Update();
@@ -217,7 +217,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<float, 3>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
-  const ImageReaderType::Pointer imageReader = ImageReaderType::New();
+  const auto imageReader = ImageReaderType::New();
   imageReader->SetFileName(imageVolume);
   imageReader->UpdateLargestPossibleRegion();
 
@@ -232,7 +232,7 @@ main(int argc, char * argv[])
 
   using LabelType = itk::Image<short, 3>;
   using LabelReaderType = itk::ImageFileReader<LabelType>;
-  const LabelReaderType::Pointer labelReader = LabelReaderType::New();
+  const auto labelReader = LabelReaderType::New();
   labelReader->SetFileName(labelVolume);
   labelReader->UpdateLargestPossibleRegion();
 
@@ -283,7 +283,7 @@ main(int argc, char * argv[])
   else if (minMaxType == "image")
   {
     using MinMaxFilterType = itk::MinimumMaximumImageFilter<ImageType>;
-    const MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
+    const auto minMaxFilter = MinMaxFilterType::New();
     minMaxFilter->SetInput(imageReader->GetOutput());
     minMaxFilter->UpdateLargestPossibleRegion();
     minValue = minMaxFilter->GetMinimum();
@@ -302,7 +302,7 @@ main(int argc, char * argv[])
   }
 
   using StatsFilterType = itk::LabelStatisticsImageFilter<ImageType, LabelType>;
-  const StatsFilterType::Pointer statsFilter = StatsFilterType::New();
+  const auto statsFilter = StatsFilterType::New();
   statsFilter->SetInput(imageReader->GetOutput());
   statsFilter->SetLabelInput(labelReader->GetOutput());
   if (computeGlobalHistogram)
@@ -339,7 +339,7 @@ main(int argc, char * argv[])
       {
         minValue = statsFilter->GetMinimum(labelValue);
         maxValue = statsFilter->GetMaximum(labelValue);
-        const StatsFilterType::Pointer labelStatsFilter = StatsFilterType::New();
+        const auto labelStatsFilter = StatsFilterType::New();
         labelStatsFilter->SetInput(imageReader->GetOutput());
         labelStatsFilter->SetLabelInput(labelReader->GetOutput());
         labelStatsFilter->UseHistogramsOn();

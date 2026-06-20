@@ -88,7 +88,7 @@ DWIConverter::OrientForFSLConventions(const bool toFSL)
   // This conversion makes FSLView display the images in
   // a way that is most easily interpretable.
   using FlipperType = itk::FlipImageFilter<Volume4DType>;
-  FlipperType::Pointer myFlipper = FlipperType::New();
+  auto myFlipper = FlipperType::New();
   myFlipper->SetInput(image4D);
   FlipperType::FlipAxesArrayType arrayAxisFlip;
   for (size_t i = 0; i < Volume4DType::ImageDimension; ++i)
@@ -483,9 +483,8 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
   {
     // if we're writing out NRRD, and the split header/data NRRD
     // format is used, write out the image as a raw volume.
-    itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::Pointer rawWriter =
-      itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::New();
-    itk::RawImageIO<PixelValueType, 3>::Pointer rawIO = itk::RawImageIO<PixelValueType, 3>::New();
+    auto rawWriter = itk::ImageFileWriter<DWIConverter::Volume3DUnwrappedType>::New();
+    auto rawIO = itk::RawImageIO<PixelValueType, 3>::New();
     rawWriter->SetImageIO(rawIO);
     rawIO->SetByteOrderToLittleEndian();
     rawWriter->SetFileName(outputVolumeDataName.c_str());
@@ -546,7 +545,7 @@ DWIConverter::ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) con
   }
 
 
-  Volume4DType::Pointer img4D = Volume4DType::New();
+  auto img4D = Volume4DType::New();
   img4D->SetRegions(region4D);
   img4D->SetDirection(direction4D);
   img4D->SetSpacing(spacing4D);
@@ -609,7 +608,7 @@ DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
     origin3D[i] = origin4D[i];
   }
 
-  Volume3DUnwrappedType::Pointer img = Volume3DUnwrappedType::New();
+  auto img = Volume3DUnwrappedType::New();
   img->SetRegions(region3D);
   img->SetDirection(direction3D);
   img->SetSpacing(spacing3D);
@@ -650,7 +649,7 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolum
     itk::EncapsulateMetaData<std::string>(thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
     itk::EncapsulateMetaData<std::string>(thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
   }
-  itk::ImageFileWriter<Volume4DType>::Pointer imgWriter = itk::ImageFileWriter<Volume4DType>::New();
+  auto imgWriter = itk::ImageFileWriter<Volume4DType>::New();
   imgWriter->SetInput(img4D);
   imgWriter->SetFileName(outputVolumeHeaderName.c_str());
   try

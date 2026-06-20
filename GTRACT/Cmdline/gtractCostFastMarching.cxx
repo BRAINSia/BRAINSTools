@@ -117,7 +117,7 @@ main(int argc, char * argv[])
 
   // Read Tensor Image to set principal eigenvector image
   using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
+  auto tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName(inputTensorVolume);
 
   try
@@ -134,7 +134,7 @@ main(int argc, char * argv[])
 
   // Read Anisotropy Image
   using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
-  AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
+  auto anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
@@ -152,7 +152,7 @@ main(int argc, char * argv[])
   using MaskPixelType = signed short;
   using MaskImageType = itk::Image<MaskPixelType, 3>;
   using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
-  MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
+  auto startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName(inputStartingSeedsLabelMapVolume);
 
   try
@@ -167,7 +167,7 @@ main(int argc, char * argv[])
 
   /* Threshold Starting Label Map */
   using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
-  ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
+  auto startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput(startingSeedImageReader->GetOutput());
   startingThresholdFilter->SetLower(static_cast<MaskPixelType>(startingSeedsLabel));
   startingThresholdFilter->SetUpper(static_cast<MaskPixelType>(startingSeedsLabel));
@@ -203,8 +203,8 @@ main(int argc, char * argv[])
   }
 
   // setup seed points
-  NodeContainer::Pointer seedPoints = NodeContainer::New();
-  NodeType               node;
+  auto     seedPoints = NodeContainer::New();
+  NodeType node;
   for (unsigned int j = 0; j < numSeeds; ++j)
   {
     seedIndexType seedIndex;
@@ -220,7 +220,7 @@ main(int argc, char * argv[])
   {
     /* Set Parameters for the Fast Marching Calculations */
 
-    FloatFMType::Pointer marcher = FloatFMType::New();
+    auto marcher = FloatFMType::New();
     marcher->SetAlivePoints(seedPoints);
     marcher->SetOverrideOutputInformation(true);
 #if 1
@@ -257,14 +257,14 @@ main(int argc, char * argv[])
 
     /* Save the Cost and Speed Images */
     using WriterType = itk::ImageFileWriter<CostImageType>;
-    WriterType::Pointer writer = WriterType::New();
+    auto writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetInput(marcher->GetOutput());
     writer->SetFileName(outputCostVolume);
     writer->Write();
 
     using SpeedWriterType = itk::ImageFileWriter<SpeedImageType>;
-    SpeedWriterType::Pointer writer2 = SpeedWriterType::New();
+    auto writer2 = SpeedWriterType::New();
     writer2->UseCompressionOn();
     writer2->SetInput(marcher->GetOutputSpeedImage());
     writer2->SetFileName(outputSpeedVolume);

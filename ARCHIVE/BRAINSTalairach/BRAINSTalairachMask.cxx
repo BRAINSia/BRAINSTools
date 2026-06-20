@@ -50,7 +50,7 @@ main(int argc, char * argv[])
   using ImageType = itk::Image<unsigned char, dimension>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
 
-  ImageReaderType::Pointer reader = ImageReaderType::New();
+  auto reader = ImageReaderType::New();
   reader->SetFileName(inputVolume);
   reader->Update();
 
@@ -104,7 +104,7 @@ main(int argc, char * argv[])
   tConv->Update();
 
   using ImageWriterType = itk::ImageFileWriter<ImageType>;
-  ImageWriterType::Pointer writer = ImageWriterType::New();
+  auto writer = ImageWriterType::New();
   writer->SetFileName(outputVolume);
   writer->SetInput(tConv->GetImage());
   writer->Update();

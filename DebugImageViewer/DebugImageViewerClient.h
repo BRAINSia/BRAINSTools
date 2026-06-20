@@ -43,7 +43,7 @@ ScaleAndCast(const typename InputImageType::Pointer &  image,
              const typename OutputImageType::PixelType OutputMax)
 {
   using R2CRescaleFilterType = itk::RescaleIntensityImageFilter<InputImageType, OutputImageType>;
-  typename R2CRescaleFilterType::Pointer RealToProbMapCast = R2CRescaleFilterType::New();
+  auto RealToProbMapCast = R2CRescaleFilterType::New();
   RealToProbMapCast->SetOutputMinimum(OutputMin);
   RealToProbMapCast->SetOutputMaximum(OutputMax);
   RealToProbMapCast->SetInput(image);
@@ -70,7 +70,7 @@ template <typename TemplateImageType, typename OutputImageType>
 typename OutputImageType::Pointer
 AllocateImageFromExample(const typename TemplateImageType::Pointer & TemplateImage)
 {
-  typename OutputImageType::Pointer rval = OutputImageType::New();
+  auto rval = OutputImageType::New();
   rval->CopyInformation(TemplateImage);
   rval->SetRegions(TemplateImage->GetLargestPossibleRegion());
   rval->Allocate();
@@ -81,8 +81,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 OrientImage(typename ImageType::Pointer & inputImage, itk::AnatomicalOrientation orient)
 {
-  typename itk::OrientImageFilter<ImageType, ImageType>::Pointer orienter =
-    itk::OrientImageFilter<ImageType, ImageType>::New();
+  auto orienter = itk::OrientImageFilter<ImageType, ImageType>::New();
 
   // AnatomicalOrientation::GetAsDirection() uses "positive axis" convention;
   // SpatialOrientationAdapter uses "origin corner" (opposite sign). Negate.

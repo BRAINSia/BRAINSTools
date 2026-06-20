@@ -72,7 +72,7 @@ AnatomicalVersorRigidFilter::Update()
   RegistrationTypePointer registration = RegistrationType::New();
   // INFO: Needed for ITKv4 registration registration->InPlaceOn();
 
-  TransformType::Pointer transform = TransformType::New();
+  auto transform = TransformType::New();
 
   /*** Set up the Registration ***/
   metric->SetNumberOfSpatialSamples(m_NumberOfSpatialSamples);

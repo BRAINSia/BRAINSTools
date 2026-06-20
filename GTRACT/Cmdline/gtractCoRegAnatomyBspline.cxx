@@ -120,7 +120,7 @@ main(int argc, char * argv[])
   using VectorImageType = itk::VectorImage<PixelType, 3>;
 
   using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
+  auto vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName(inputVolume);
 
   try
@@ -135,7 +135,7 @@ main(int argc, char * argv[])
 
   using AnatomicalImageType = itk::Image<PixelType, 3>;
   using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
-  AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
+  auto anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
@@ -166,7 +166,7 @@ main(int argc, char * argv[])
   }
 
   using OrientFilterType = itk::OrientImageFilter<AnatomicalImageType, AnatomicalImageType>;
-  OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
+  auto orientImageFilter = OrientFilterType::New();
   //  orientImageFilter->SetInput(brainOnlyFilter->GetOutput() );
   orientImageFilter->SetInput(selectIndexImageFilter->GetOutput());
   orientImageFilter->SetDesiredCoordinateDirection(anatomicalReader->GetOutput()->GetDirection());
@@ -182,7 +182,7 @@ main(int argc, char * argv[])
   }
 
   using RegisterFilterType = itk::BRAINSFitHelper;
-  RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
+  auto registerImageFilter = RegisterFilterType::New();
 
   // std::vector<double> minStepLength;
   // minStepLength.push_back(static_cast<double>(minimumStepSize));

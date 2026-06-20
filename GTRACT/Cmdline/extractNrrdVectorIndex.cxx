@@ -99,7 +99,7 @@ main(int argc, char * argv[])
   using NrrdImageType = itk::VectorImage<PixelType, 3>;
 
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  FileReaderType::Pointer reader = FileReaderType::New();
+  auto reader = FileReaderType::New();
   reader->SetFileName(inputVolume);
   reader->Update();
 
@@ -164,7 +164,7 @@ main(int argc, char * argv[])
   // else, leave it AsAcquired.
 
   using WriterType = itk::ImageFileWriter<IndexImageType>;
-  WriterType::Pointer imageWriter = WriterType::New();
+  auto imageWriter = WriterType::New();
   imageWriter->UseCompressionOn();
   imageWriter->SetInput(indexImage);
   imageWriter->SetFileName(outputVolume);

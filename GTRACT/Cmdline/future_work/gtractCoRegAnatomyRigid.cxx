@@ -95,7 +95,7 @@ main(int argc, char ** argv)
   using VectorImageType = itk::VectorImage<PixelType, 3>;
 
   using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
+  auto vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName(inputVolume);
 
   try
@@ -110,7 +110,7 @@ main(int argc, char ** argv)
 
   using AnatomicalImageType = itk::Image<PixelType, 3>;
   using AnatomicalImageReaderType = itk::ImageFileReader<AnatomicalImageType>;
-  AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
+  auto anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
@@ -146,8 +146,8 @@ main(int argc, char ** argv)
 
   /* The Threshold Image Filter is used to produce the brain clipping mask. */
   using ThresholdFilterType = itk::ThresholdImageFilter<AnatomicalImageType>;
-  constexpr PixelType          imageThresholdBelow = 100;
-  ThresholdFilterType::Pointer brainOnlyFilter = ThresholdFilterType::New();
+  constexpr PixelType imageThresholdBelow = 100;
+  auto                brainOnlyFilter = ThresholdFilterType::New();
   brainOnlyFilter->SetInput(selectIndexImageFilter->GetOutput());
   brainOnlyFilter->ThresholdBelow(imageThresholdBelow);
   try
@@ -161,7 +161,7 @@ main(int argc, char ** argv)
   }
 
   using RegisterFilterType = itk::BRAINSFitHelper;
-  RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
+  auto registerImageFilter = RegisterFilterType::New();
 
   std::vector<double> minStepLength;
   minStepLength.push_back(static_cast<double>(minimumStepSize));

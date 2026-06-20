@@ -47,10 +47,10 @@ main(int, char * argv[])
   region.SetSize(size);
   ImageType::SpacingType spacing;
   spacing[0] = spacing[1] = spacing[2] = 1.0;
-  ImageType::Pointer theImage = ImageType::New();
+  auto theImage = ImageType::New();
   theImage->SetRegions(region);
   theImage->SetSpacing(spacing);
-  ImageType::Pointer theMaskImage = ImageType::New();
+  auto theMaskImage = ImageType::New();
   theMaskImage->SetRegions(region);
   theMaskImage->SetSpacing(spacing);
   ImageType::PointType origin;
@@ -82,8 +82,8 @@ main(int, char * argv[])
 
   using PointType = itk::Point<double, 3>;
   using SphereFunctionType = itk::SphereSpatialFunction<3, PointType>;
-  PointType                   pt;
-  SphereFunctionType::Pointer sphereFunc = SphereFunctionType::New();
+  PointType pt;
+  auto      sphereFunc = SphereFunctionType::New();
   sphereFunc->SetRadius(static_cast<double>(imageDim) / 4.0);
   pt[0] = pt[1] = pt[2] = static_cast<double>(imageDim) / 2.0;
   sphereFunc->SetCenter(pt);

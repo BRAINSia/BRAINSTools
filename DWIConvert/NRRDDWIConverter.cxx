@@ -22,7 +22,7 @@ NRRDDWIConverter::CreateVolume(VectorVolumeType::Pointer & vector3DVolume)
   VectorVolumeType::PointType     inputOrigin = vector3DVolume->GetOrigin();
   VectorVolumeType::DirectionType inputDirection = vector3DVolume->GetDirection();
 
-  Volume4DType::Pointer       fourDVolume = Volume4DType::New();
+  auto                        fourDVolume = Volume4DType::New();
   Volume4DType::SizeType      volSize;
   Volume4DType::SpacingType   volSpacing;
   Volume4DType::PointType     volOrigin;

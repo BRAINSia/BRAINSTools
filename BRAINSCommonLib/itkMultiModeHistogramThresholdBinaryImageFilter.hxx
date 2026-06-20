@@ -65,14 +65,14 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::Generat
 {
   this->AllocateOutputs();
 
-  typename IntegerImageType::Pointer accumulate = IntegerImageType::New();
+  auto accumulate = IntegerImageType::New();
 
   const unsigned int NumInputs = this->GetNumberOfInputs();
   for (unsigned int j = 0; j < NumInputs; ++j)
   {
     // Compute the quantile regions for linearizing the percentages.
     using ImageCalcType = ComputeHistogramQuantileThresholds<TInputImage, TOutputImage>;
-    typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
+    auto ImageCalc = ImageCalcType::New();
     ImageCalc->SetImage(this->GetInput(j));
 
     ImageCalc->SetQuantileLowerThreshold(m_LinearQuantileThreshold);
@@ -104,7 +104,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::Generat
               << ", " << thresholdUpperLinearRegion << " ]" << std::endl;
 
     using ThresholdFilterType = BinaryThresholdImageFilter<InputImageType, IntegerImageType>;
-    typename ThresholdFilterType::Pointer threshold = ThresholdFilterType::New();
+    auto threshold = ThresholdFilterType::New();
     threshold->SetInput(this->GetInput(j));
     threshold->SetInsideValue(this->m_InsideValue);
     threshold->SetOutsideValue(this->m_OutsideValue);
@@ -179,7 +179,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::Generat
         itkExceptionMacro(<< "Image data spacing mismatch " << accumulate->GetOrigin()
                           << " != " << thresholdImage->GetOrigin() << "." << std::endl);
       }
-      typename IntersectMasksFilterType::Pointer intersect = IntersectMasksFilterType::New();
+      auto intersect = IntersectMasksFilterType::New();
       intersect->SetInput1(accumulate);
       intersect->SetInput2(thresholdImage);
       intersect->Update();
@@ -188,7 +188,7 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::Generat
   }
 
   using outputCasterType = CastImageFilter<IntegerImageType, OutputImageType>;
-  typename outputCasterType::Pointer outputCaster = outputCasterType::New();
+  auto outputCaster = outputCasterType::New();
   outputCaster->SetInput(accumulate);
 
   outputCaster->GraftOutput(this->GetOutput());

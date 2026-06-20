@@ -46,7 +46,7 @@ main(int argc, char * argv[])
 
   std::cout << "- Read image: " << input4Dimage << std::endl;
   using Image4DReaderType = itk::ImageFileReader<Volume4DType>;
-  Image4DReaderType::Pointer image4DReader = Image4DReaderType::New();
+  auto image4DReader = Image4DReaderType::New();
   image4DReader->SetFileName(input4Dimage);
   try
   {
@@ -77,7 +77,7 @@ main(int argc, char * argv[])
     extractIndex[3] = componentNumber;
     Volume4DType::RegionType extractRegion(extractIndex, extractSize);
 
-    ExtractFilterType::Pointer extracter = ExtractFilterType::New();
+    auto extracter = ExtractFilterType::New();
     extracter->SetExtractionRegion(extractRegion);
     extracter->SetInput(inputVol);
     extracter->SetDirectionCollapseToIdentity();
@@ -91,7 +91,7 @@ main(int argc, char * argv[])
     std::cout << "- Write image: " << fn << std::endl;
 
     using Image3DWriterType = itk::ImageFileWriter<Volume3DType>;
-    Image3DWriterType::Pointer image3DWriter = Image3DWriterType::New();
+    auto image3DWriter = Image3DWriterType::New();
     image3DWriter->SetFileName(fn);
     image3DWriter->SetInput(extracter->GetOutput());
     try

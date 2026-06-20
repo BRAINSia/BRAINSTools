@@ -59,7 +59,7 @@ void
 ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::ImageMinMax(typename TInputImage::PixelType & ImageMin,
                                                                          typename TInputImage::PixelType & ImageMax)
 {
-  typename MinimumMaximumImageFilter<TInputImage>::Pointer minmaxFilter = MinimumMaximumImageFilter<TInputImage>::New();
+  auto minmaxFilter = MinimumMaximumImageFilter<TInputImage>::New();
   minmaxFilter->SetInput(this->GetImage());
   minmaxFilter->Update();
   ImageMax = minmaxFilter->GetMaximum();
@@ -86,7 +86,7 @@ ComputeHistogramQuantileThresholds<TInputImage, TMaskImage>::Calculate()
   this->ImageMinMax(this->m_ImageMin, this->m_ImageMax);
 
   using HistogramGeneratorType = Statistics::ScalarImagePortionToHistogramGenerator<TInputImage, TMaskImage>;
-  typename HistogramGeneratorType::Pointer histogramGenerator = HistogramGeneratorType::New();
+  auto histogramGenerator = HistogramGeneratorType::New();
   histogramGenerator->SetInput(this->GetImage());
   if (m_BinaryPortionImage.IsNotNull())
   {

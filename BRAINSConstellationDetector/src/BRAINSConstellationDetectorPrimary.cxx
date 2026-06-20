@@ -80,7 +80,7 @@ BRAINSConstellationDetectorPrimary ::localFindCenterHeadFunc(
   // ------------------------------------
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
-  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const auto findCenterFilter = FindCenterFilter::New();
 
   findCenterFilter->SetAxis(2);
   findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -148,7 +148,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
   using AtlasReaderType = itk::ImageFileReader<DImageType3D>;
-  const AtlasReaderType::Pointer reader = AtlasReaderType::New();
+  const auto reader = AtlasReaderType::New();
   reader->SetFileName(this->m_inputVolume);
   try
   {
@@ -164,7 +164,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE);
 
   using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
-  const CasterType::Pointer caster = CasterType::New();
+  const auto caster = CasterType::New();
   caster->SetInput(rescaledInputVolume);
   caster->Update();
 
@@ -230,7 +230,7 @@ BRAINSConstellationDetectorPrimary::Compute()
 
   // ------------------------------------
   // Find eye centers with BRAINS Hough Eye Detector
-  const HoughEyeDetectorType::Pointer          houghEyeDetector = HoughEyeDetectorType::New();
+  const auto                                   houghEyeDetector = HoughEyeDetectorType::New();
   itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_img_tfm = nullptr;
   itk::VersorRigid3DTransform<double>::Pointer orig2eyeFixed_lmk_tfm = nullptr;
 
@@ -313,8 +313,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   // ------------------------------------
   // Find MPJ, AC, PC, and VN4 points with BRAINS Constellation Detector
   std::cout << "\nFinding named points with BRAINS Constellation Detector..." << std::endl;
-  const itk::BRAINSConstellationDetector2<ImageType, ImageType>::Pointer constellation2 =
-    itk::BRAINSConstellationDetector2<ImageType, ImageType>::New();
+  const auto constellation2 = itk::BRAINSConstellationDetector2<ImageType, ImageType>::New();
 
 
   { /** Force setting the landmark points from the command line. */
@@ -393,7 +392,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   //  WriteITKtoSlicer3Lmk(dggpath + "eye_orig_space.fcsv", orig_lmks);
   //  WriteITKtoSlicer3Lmk(dggpath + "eye_fixed_space.fcsv", eyeFixed_lmks);
   //
-  //  WriterType::Pointer dggwriter = WriterType::New();
+  //  auto dggwriter = WriterType::New();
   //  dggwriter->SetFileName( dggpath + "eye_fixed.nii.gz" );
   //  dggwriter->SetInput( eyeFixed_img );
   //  dggwriter->Update();
@@ -447,7 +446,7 @@ BRAINSConstellationDetectorPrimary::Compute()
   std::cout << "\nWriting results to files..." << std::endl;
   if (this->m_outputTransform.compare("") != 0)
   {
-    const TransformWriterType::Pointer writer = TransformWriterType::New();
+    const auto writer = TransformWriterType::New();
     writer->SetInput(constellation2->GetOrigToACPCVersorTransform());
     writer->SetFileName(this->m_outputTransform);
     try
@@ -468,7 +467,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     preferedOutputReferenceImage = this->m_outputVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-    const WriterType::Pointer writer = WriterType::New();
+    const auto writer = WriterType::New();
     writer->SetFileName(this->m_outputVolume);
     writer->SetInput(constellation2->GetOutput());
     writer->SetUseCompression(true);
@@ -489,7 +488,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     preferedOutputReferenceImage = this->m_outputResampledVolume;
     // This will be overwritten if outputResampledVolume is set
     // Write the aligned image to a file
-    const WriterType::Pointer writer = WriterType::New();
+    const auto writer = WriterType::New();
     writer->SetFileName(this->m_outputResampledVolume);
     writer->SetInput(constellation2->GetOutputResampledImage());
     writer->SetUseCompression(true);
@@ -541,7 +540,7 @@ BRAINSConstellationDetectorPrimary::Compute()
 
   if (this->m_outputUntransformedClippedVolume.compare("") != 0)
   {
-    const WriterType::Pointer writer = WriterType::New();
+    const auto writer = WriterType::New();
     writer->SetFileName(this->m_outputUntransformedClippedVolume);
     writer->SetInput(constellation2->GetOutputUntransformedClippedVolume());
     writer->SetUseCompression(true);

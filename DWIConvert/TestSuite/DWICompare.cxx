@@ -116,8 +116,8 @@ DoIt(int argc, char * argv[], PixelType)
   using DiffusionImageType = itk::VectorImage<PixelType, DIMENSION>;
 
   using FileReaderType = itk::ImageFileReader<DiffusionImageType>;
-  typename FileReaderType::Pointer firstReader = FileReaderType::New();
-  typename FileReaderType::Pointer secondReader = FileReaderType::New();
+  auto firstReader = FileReaderType::New();
+  auto secondReader = FileReaderType::New();
   firstReader->SetFileName(inputVolume1);
   firstReader->Update();
   typename DiffusionImageType::ConstPointer firstImage = firstReader->GetOutput();
@@ -203,7 +203,7 @@ GetImageType(const std::string &                 fileName,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
-  itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
+  auto imageReader = itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName);
   imageReader->UpdateOutputInformation();
 

@@ -30,8 +30,8 @@ main(int, char **)
   using ReaderType = itk::ImageFileReader<ImageType>;
   using WriterType = itk::ImageFileWriter<ImageType>;
 
-  std::string         filename("/Users/johnsonhj/Dropbox/DATA/ANTSDENOISE_FAILURE/input.nii.gz");
-  ReaderType::Pointer myReader = ReaderType::New();
+  std::string filename("/Users/johnsonhj/Dropbox/DATA/ANTSDENOISE_FAILURE/input.nii.gz");
+  auto        myReader = ReaderType::New();
   myReader->SetFileName(filename);
   myReader->Update();
   ImageType::Pointer myImage = myReader->GetOutput();
@@ -39,7 +39,7 @@ main(int, char **)
 
 #if 1
   using TextureFilterType = itk::Statistics::ScalarImageToTextureFeaturesFilter<ImageType>;
-  TextureFilterType::Pointer texFilter = TextureFilterType::New();
+  auto texFilter = TextureFilterType::New();
   texFilter->SetInput(myImage);
   texFilter->SetMaskImage(myImage);
   texFilter->SetFastCalculations(false);

@@ -54,10 +54,10 @@ main(int, char **)
 
   auto size = itk::MakeFilled<ImageType::SizeType>(100);
 
-  const TransformType::Pointer tfm = TransformType::New();
+  const auto tfm = TransformType::New();
   tfm->SetIdentity();
 
-  const EllipseSOType::Pointer ellipse = EllipseSOType::New();
+  const auto ellipse = EllipseSOType::New();
   {
     // and two ellipses, one of which is rotated and translated
     EllipseSOType::ArrayType ePar;
@@ -75,7 +75,7 @@ main(int, char **)
     ellipse->SetObjectToWorldTransform(tfm);
     ellipse->Initialize();
     // convert ellipses to binary images
-    const SOToImageFilter::Pointer e2image = SOToImageFilter::New();
+    const auto e2image = SOToImageFilter::New();
     e2image->SetInput(ellipse);
     e2image->SetSize(size);
     e2image->Update();
@@ -96,7 +96,7 @@ main(int, char **)
     ellipse->SetObjectToWorldTransform(tfm);
     ellipse->Initialize();
 
-    const SOToImageFilter::Pointer etfm2image = SOToImageFilter::New();
+    const auto etfm2image = SOToImageFilter::New();
     etfm2image->SetInput(ellipse);
     etfm2image->SetSize(size);
     etfm2image->Update();
@@ -107,12 +107,12 @@ main(int, char **)
   std::cout << eTfmImage->GetSpacing() << std::endl;
 
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-  const VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
+  const auto tempCopy = VersorRigid3DTransformType::New();
 
   // images and masks passed to helper are identical, but only masks will be used
-  const CastType::Pointer fixedImageCast = CastType::New();
+  const auto fixedImageCast = CastType::New();
   fixedImageCast->SetInput(eImage);
-  const CastType::Pointer movingImageCast = CastType::New();
+  const auto movingImageCast = CastType::New();
   movingImageCast->SetInput(eTfmImage);
 
   // std::string prefix=myGetEnv("DEBUG_PREFIX")
@@ -120,11 +120,11 @@ main(int, char **)
   itkUtil::WriteImage<LocalMaskImageType>(movingImageCast->GetOutput(), "/tmp/moving.nii.gz");
 
   // need to create spatial objects back from binary images
-  const ImageMaskSOType::Pointer fixedMask = ImageMaskSOType::New();
+  const auto fixedMask = ImageMaskSOType::New();
   fixedMask->SetImage(fixedImageCast->GetOutput());
   fixedMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
-  const ImageMaskSOType::Pointer movingMask = ImageMaskSOType::New();
+  const auto movingMask = ImageMaskSOType::New();
   movingMask->SetImage(movingImageCast->GetOutput());
   movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
@@ -132,7 +132,7 @@ main(int, char **)
   transformTypeVector.emplace_back("Rigid");
 
   // initialize the helper and run
-  const HelperType::Pointer myHelper = HelperType::New();
+  const auto myHelper = HelperType::New();
   myHelper->SetFixedVolume(eImage);
   myHelper->SetCostMetricName("MSE"); // MSE, images are binary, and MMI does not work on binary images!
   myHelper->SetMovingVolume(eTfmImage);

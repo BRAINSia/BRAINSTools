@@ -111,7 +111,7 @@ main(int argc, char * argv[])
 
   using VectorImageType = itk::VectorImage<PixelType, 3>;
   using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
+  auto vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName(inputVolume);
 
   try
@@ -126,7 +126,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<PixelType, 3>;
   using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
-  AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
+  auto anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
@@ -178,7 +178,7 @@ main(int argc, char * argv[])
 
   using ResampleFilterType = itk::ResampleImageFilter<ImageType, ImageType>;
 
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  auto resample = ResampleFilterType::New();
 
   resample->SetTransform(baseTransform);
 
@@ -200,7 +200,7 @@ main(int argc, char * argv[])
   resampledImage->SetMetaDataDictionary(anatomicalReader->GetOutput()->GetMetaDataDictionary());
 
   using ImageFileWriterType = itk::ImageFileWriter<ImageType>;
-  ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
+  auto ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName(outputVolume);
   ImageWriter->SetInput(resampledImage);

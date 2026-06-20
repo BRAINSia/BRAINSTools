@@ -50,7 +50,7 @@ ResampleImageWithIdentityTransform(const std::string &                          
 
     // Spline interpolation, only available for input images, not
     // atlas
-    typename SplineInterpolatorType::Pointer splineInt = SplineInterpolatorType::New();
+    auto splineInt = SplineInterpolatorType::New();
     splineInt->SetSplineOrder(5);
     resampler->SetInterpolator(splineInt);
   }
@@ -65,19 +65,19 @@ ResampleImageWithIdentityTransform(const std::string &                          
                                                          WindowFunctionType,
                                                          BoundaryConditionType,
                                                          double>;
-    typename WindowedSincInterpolatorType::Pointer windowInt = WindowedSincInterpolatorType::New();
+    auto windowInt = WindowedSincInterpolatorType::New();
     resampler->SetInterpolator(windowInt);
   }
   else if (resamplerInterpolatorType == "NearestNeighbor")
   {
     using NearestNeighborInterpolatorType = typename itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
-    typename NearestNeighborInterpolatorType::Pointer nearestNeighborInt = NearestNeighborInterpolatorType::New();
+    auto nearestNeighborInt = NearestNeighborInterpolatorType::New();
     resampler->SetInterpolator(nearestNeighborInt);
   }
   else // Default to m_UseNonLinearInterpolation == "Linear"
   {
     using LinearInterpolatorType = typename itk::LinearInterpolateImageFunction<ImageType, double>;
-    typename LinearInterpolatorType::Pointer linearInt = LinearInterpolatorType::New();
+    auto linearInt = LinearInterpolatorType::New();
     resampler->SetInterpolator(linearInt);
   }
 
@@ -121,7 +121,7 @@ StandardizeMaskIntensity(typename ImageType::Pointer         image,
   // clipMin <= lowerPeggedValue < upperPeggedValue <= clipMax
 
   using MinimumMaximumImageCalculator = typename itk::MinimumMaximumImageCalculator<ImageType>;
-  typename MinimumMaximumImageCalculator::Pointer wholeStatistics = MinimumMaximumImageCalculator::New();
+  auto wholeStatistics = MinimumMaximumImageCalculator::New();
   wholeStatistics->SetImage(image);
   wholeStatistics->Compute();
   typename ImageType::PixelType imgMin = wholeStatistics->GetMinimum();
@@ -154,8 +154,7 @@ StandardizeMaskIntensity(typename ImageType::Pointer         image,
     typename LabelImageType::Pointer resampledMask =
       ResampleImageWithIdentityTransform<LabelImageType>("NearestNeighbor", 0, mask.GetPointer(), image.GetPointer());
 
-    typename itk::ThresholdImageFilter<LabelImageType>::Pointer thresholdFilter =
-      itk::ThresholdImageFilter<LabelImageType>::New();
+    auto thresholdFilter = itk::ThresholdImageFilter<LabelImageType>::New();
 
     thresholdFilter->SetInput(resampledMask);
     thresholdFilter->ThresholdAbove(1); // Values less than or equal to are set
@@ -166,7 +165,7 @@ StandardizeMaskIntensity(typename ImageType::Pointer         image,
   }
 
   using LabelStatisticsImageFilter = typename itk::LabelStatisticsImageFilter<ImageType, LabelImageType>;
-  typename LabelStatisticsImageFilter::Pointer maskedStatistics = LabelStatisticsImageFilter::New();
+  auto maskedStatistics = LabelStatisticsImageFilter::New();
   maskedStatistics->SetInput(image); // i.clipMin., image.
   maskedStatistics->SetLabelInput(internalMask);
   maskedStatistics->UseHistogramsOn();
@@ -186,7 +185,7 @@ StandardizeMaskIntensity(typename ImageType::Pointer         image,
   // jobs done at once.  Fortunately, we may use itkHistogram's Quantile
   // routine:
   using IntensityWindowingImageFilter = typename itk::IntensityWindowingImageFilter<ImageType>;
-  typename IntensityWindowingImageFilter::Pointer intensityMapper = IntensityWindowingImageFilter::New();
+  auto intensityMapper = IntensityWindowingImageFilter::New();
   intensityMapper->SetInput(image); // i.clipMin.,
                                     // image.
   // NOTE:  The math below is to extend the range to the clipping region.

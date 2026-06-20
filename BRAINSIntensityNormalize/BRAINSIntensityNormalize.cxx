@@ -38,7 +38,7 @@ main(int argc, char * argv[])
 
   const InputImageType::Pointer input_image = [](const std::string & input_volume_fn) -> InputImageType::Pointer {
     using ReaderType = itk::ImageFileReader<InputImageType>;
-    const typename ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(input_volume_fn);
     reader->Update();
     return reader->GetOutput();
@@ -48,7 +48,7 @@ main(int argc, char * argv[])
     input_image, lowerPercentile, upperPercentile, lowerOutputIntensity, upperOutputIntensity, clip, relative);
   // write
   using WriterType = itk::ImageFileWriter<OutputImageType>;
-  const typename WriterType::Pointer writer = WriterType::New();
+  const auto writer = WriterType::New();
   writer->SetFileName(outputVolume);
   writer->SetInput(output_image);
   try

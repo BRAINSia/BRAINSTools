@@ -55,7 +55,7 @@ main(int argc, char * argv[])
   {
     std::cout << "Reading image: " << inputFileNames[i] << std::endl;
 
-    const LocalReaderPointer imgreader = LocalReaderType::New();
+    const auto imgreader = LocalReaderType::New();
     imgreader->SetFileName(inputFileNames[i].c_str());
 
     try
@@ -81,7 +81,7 @@ main(int argc, char * argv[])
     inputImageModalitiesList, threshold, numberOfContinuousIndexSubSamples, false, verbose);
 
   using MaskWriterType = itk::ImageFileWriter<MaskImageType>;
-  const MaskWriterType::Pointer writer = MaskWriterType::New();
+  const auto writer = MaskWriterType::New();
   writer->SetInput(mask);
   writer->SetFileName(outputMaskFile);
   writer->UseCompressionOn();

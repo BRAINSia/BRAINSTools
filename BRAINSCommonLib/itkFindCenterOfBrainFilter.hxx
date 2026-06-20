@@ -85,7 +85,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   if (this->m_ImageMask.IsNull()) // Need to autogenerate this
   {
     // //////////////////////////////////////////////////////////////////////
-    typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+    auto LFF = LFFMaskFilterType::New();
     LFF->SetInput(this->GetInput());
     LFF->SetOtsuPercentileThreshold(this->m_OtsuPercentileThreshold);
     LFF->SetClosingSize(this->m_ClosingSize);
@@ -94,7 +94,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   }
   typename MaskImageType::Pointer LFFimage;
   {
-    typename itk::ImageDuplicator<MaskImageType>::Pointer id = itk::ImageDuplicator<MaskImageType>::New();
+    auto id = itk::ImageDuplicator<MaskImageType>::New();
     id->SetInputImage(this->m_ImageMask);
     id->Update();
     LFFimage = id->GetOutput();
@@ -135,7 +135,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   //  This will produce ForegroundLevel representing where to threshold the head
   // from the neck.
   // double ForegroundLevel = 1;
-  typename DistanceImageType::Pointer distanceMap = DistanceImageType::New();
+  auto distanceMap = DistanceImageType::New();
   distanceMap->CopyInformation(LFFimage);
   distanceMap->SetRegions(LFFimage->GetLargestPossibleRegion());
   distanceMap->Allocate();
@@ -200,7 +200,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
          */
         {
           using momentsCalculatorType = typename itk::ImageMomentsCalculator<MaskImageType>;
-          typename momentsCalculatorType::Pointer moments = momentsCalculatorType::New();
+          auto moments = momentsCalculatorType::New();
           moments->SetImage(LFFimage);
           moments->Compute();
           typename TInputImage::PointType::VectorType tempCenterOfMass = moments->GetCenterOfGravity();
@@ -301,7 +301,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   // otherwise set the result image voxel to the source image pixel value.
   {
     {
-      typename itk::ImageDuplicator<MaskImageType>::Pointer id = itk::ImageDuplicator<MaskImageType>::New();
+      auto id = itk::ImageDuplicator<MaskImageType>::New();
       id->SetInputImage(this->m_ImageMask);
       id->Update();
       this->m_ClippedImageMask = id->GetOutput();
@@ -311,7 +311,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
                                            this->m_ClippedImageMask->GetLargestPossibleRegion());
 
     {
-      typename itk::ImageDuplicator<TInputImage>::Pointer id = itk::ImageDuplicator<TInputImage>::New();
+      auto id = itk::ImageDuplicator<TInputImage>::New();
       id->SetInputImage(this->GetInput());
       id->Update();
       this->m_TrimmedImage = id->GetOutput();
@@ -352,12 +352,12 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   //  This will use the clipped LFFimage image to get the head center of mass.
   {
     using momentsCalculatorType = typename itk::ImageMomentsCalculator<TInputImage>;
-    typename momentsCalculatorType::Pointer moments = momentsCalculatorType::New();
+    auto moments = momentsCalculatorType::New();
     moments->SetImage(this->m_TrimmedImage);
     {
       // convert mask image to mask
       using LFFImageMaskSpatialObjectType = typename itk::ImageMaskSpatialObject<TInputImage::ImageDimension>;
-      typename LFFImageMaskSpatialObjectType::Pointer mask = LFFImageMaskSpatialObjectType::New();
+      auto mask = LFFImageMaskSpatialObjectType::New();
       mask->SetImage(this->m_ClippedImageMask);
       mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
       typename itk::SpatialObject<TInputImage::ImageDimension>::Pointer test =

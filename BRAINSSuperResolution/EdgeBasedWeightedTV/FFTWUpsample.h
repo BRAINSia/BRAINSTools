@@ -50,7 +50,7 @@ typename ImageType::Pointer
 DeepImageCopy(typename ImageType::Pointer in)
 {
   using ImDupType = itk::ImageDuplicator<ImageType>;
-  typename ImDupType::Pointer imDup = ImDupType::New();
+  auto imDup = ImDupType::New();
   imDup->SetInputImage(in);
   imDup->Update();
   return imDup->GetOutput();
@@ -63,7 +63,7 @@ void
 WriteFile(ImageType * img, const std::string outfilename)
 {
   using WriterType = typename itk::ImageFileWriter<ImageType>;
-  typename WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->SetFileName(outfilename);
   writer->SetInput(img);
   writer->Update();

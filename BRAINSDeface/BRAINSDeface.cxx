@@ -125,7 +125,7 @@ main(int argc, char * argv[])
     for (auto & curr_img : img_list)
     {
       //    MaskImageType::Pointer roi = [](InternalImageType::Pointer current_image) -> MaskImageType::Pointer {
-      //      ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      //      auto ROIFilter = ROIAutoType::New();
       //      ROIFilter->SetClosingSize(20);                                  // close 10mm holes
       //      ROIFilter->SetDilateSize(static_cast<int>(max_smoothing_size)); // 55 mm ~ IPD ~ tip of the nose
       //
@@ -207,8 +207,7 @@ main(int argc, char * argv[])
 
   // lambdas for the other two regions based on the mask values
   using MaskLabelToDistanceMapSeedFilter = typename itk::UnaryGeneratorImageFilter<MaskImageType, MaskImageType>;
-  const MaskLabelToDistanceMapSeedFilter::Pointer maskLabelToDistanceMapSeedFilter =
-    MaskLabelToDistanceMapSeedFilter::New();
+  const auto maskLabelToDistanceMapSeedFilter = MaskLabelToDistanceMapSeedFilter::New();
   maskLabelToDistanceMapSeedFilter->SetFunctor([&](const typename MaskImageType::PixelType input_mask_value) ->
                                                typename MaskImageType ::PixelType {
                                                  if (input_mask_value == valid_inside_pixel)
@@ -223,7 +222,7 @@ main(int argc, char * argv[])
   const MaskImageType::Pointer binaryDistanceMapSeed = maskLabelToDistanceMapSeedFilter->GetOutput();
 
   using MaskLabelToNotFaceRegionFilter = typename itk::UnaryGeneratorImageFilter<MaskImageType, FadeMapType>;
-  const MaskLabelToNotFaceRegionFilter::Pointer maskLabelToNotFaceRegionFilter = MaskLabelToNotFaceRegionFilter::New();
+  const auto maskLabelToNotFaceRegionFilter = MaskLabelToNotFaceRegionFilter::New();
   maskLabelToNotFaceRegionFilter->SetFunctor([&](const typename MaskImageType::PixelType input_mask_value) ->
                                              typename FadeMapType::PixelType {
                                                if (input_mask_value == valid_inside_pixel)
@@ -246,16 +245,14 @@ main(int argc, char * argv[])
   // STEP 2: Deface the image values
   if (!noMaskApplication)
   {
-    const itk::NearestNeighborInterpolateImageFunction<MaskImageType>::Pointer maskInterpolator =
-      itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
+    const auto maskInterpolator = itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
     maskInterpolator->SetInputImage(mask_labels);
 
     // pad the distance map
     auto lowerPadBound = itk::MakeFilled<MaskImageType::SizeType>(80);
     auto upperPadBound = itk::MakeFilled<MaskImageType::SizeType>(80);
 
-    const itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::Pointer padImageFilter =
-      itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::New();
+    const auto padImageFilter = itk::ConstantPadImageFilter<MaskImageType, MaskImageType>::New();
     padImageFilter->SetInput(binaryDistanceMapSeed);
     padImageFilter->SetPadLowerBound(lowerPadBound);
     padImageFilter->SetPadUpperBound(upperPadBound);
@@ -266,14 +263,13 @@ main(int argc, char * argv[])
       itkUtil::WriteImage<MaskImageType>(padImageFilter->GetOutput(), outputDirectory + "/padded.nii.gz");
     }
     // compute the distance map
-    const itk::SignedMaurerDistanceMapImageFilter<MaskImageType, InternalImageType>::Pointer signedDistanceMap =
-      itk::SignedMaurerDistanceMapImageFilter<MaskImageType, InternalImageType>::New();
+    const auto signedDistanceMap = itk::SignedMaurerDistanceMapImageFilter<MaskImageType, InternalImageType>::New();
     signedDistanceMap->SetInput(padImageFilter->GetOutput());
     signedDistanceMap->SetInsideIsPositive(true);
     signedDistanceMap->Update();
 
     using DistBlurFilter = itk::SmoothingRecursiveGaussianImageFilter<InternalImageType, InternalImageType>;
-    const DistBlurFilter::Pointer blur_filter = DistBlurFilter::New();
+    const auto blur_filter = DistBlurFilter::New();
     blur_filter->SetInput(signedDistanceMap->GetOutput());
     blur_filter->SetSigma(2.25);
     blur_filter->Update();
@@ -302,8 +298,7 @@ main(int argc, char * argv[])
     {
       itkUtil::WriteImage<InternalImageType>(distanceMap, outputDirectory + "/dist_img.nii.gz");
     }
-    const itk::LinearInterpolateImageFunction<InternalImageType>::Pointer distanceMapInterpolator =
-      itk::LinearInterpolateImageFunction<InternalImageType>::New();
+    const auto distanceMapInterpolator = itk::LinearInterpolateImageFunction<InternalImageType>::New();
     distanceMapInterpolator->SetInputImage(distanceMap);
 
     // blur configuration
@@ -329,7 +324,7 @@ main(int argc, char * argv[])
       using BlurFilter = itk::SmoothingRecursiveGaussianImageFilter<FadeMapType, FadeMapType>;
       for (size_t i = 0; i < numSigmas; ++i)
       {
-        const BlurFilter::Pointer l_blur = BlurFilter::New();
+        const auto l_blur = BlurFilter::New();
         l_blur->SetInput(curr_img);
         l_blur->SetSigma(sigmas[i]);
         l_blur->Update();

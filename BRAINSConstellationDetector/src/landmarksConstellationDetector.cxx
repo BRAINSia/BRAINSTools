@@ -48,8 +48,8 @@ VersorRigidTransformType::Pointer
 landmarksConstellationDetector::GetLandmarkTransformFromImageTransform(
   const VersorRigidTransformType::ConstPointer & orig2msp_img_tfm)
 {
-  VersorRigidTransformType::Pointer orig2msp_lmk_tfm = VersorRigidTransformType::New();
-  const SImageType::PointType       centerPoint = orig2msp_img_tfm->GetCenter();
+  auto                        orig2msp_lmk_tfm = VersorRigidTransformType::New();
+  const SImageType::PointType centerPoint = orig2msp_img_tfm->GetCenter();
   orig2msp_lmk_tfm->SetCenter(centerPoint);
   orig2msp_lmk_tfm->SetIdentity();
   orig2msp_img_tfm->GetInverse(orig2msp_lmk_tfm);
@@ -65,7 +65,7 @@ landmarksConstellationDetector::Compute_orig2msp_img_tfm(const SImagePointType &
 
   const Euler3DTransformType::Pointer orig2msp_lmk_tfm_estimate = computeTmspFromPoints(RP, AC, PC, ZeroCenter);
 
-  VersorRigidTransformType::Pointer orig2msp_lmk_tfm_cleaned = VersorRigidTransformType::New();
+  auto orig2msp_lmk_tfm_cleaned = VersorRigidTransformType::New();
   orig2msp_lmk_tfm_cleaned->SetFixedParameters(orig2msp_lmk_tfm_estimate->GetFixedParameters());
 
   itk::Versor<double>               versorRotation;
@@ -88,7 +88,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
   if (!this->m_atlasVolume.empty())
   {
     using AtlasReaderType = itk::ImageFileReader<SImageType>;
-    const AtlasReaderType::Pointer atlasReader = AtlasReaderType::New();
+    const auto atlasReader = AtlasReaderType::New();
     atlasReader->SetFileName(this->m_atlasVolume);
     std::cout << "read atlas: " << this->m_atlasVolume << std::endl;
     try
@@ -151,7 +151,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
       }
     }
 
-    const LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+    const auto landmarkBasedInitializer = LandmarkBasedInitializerType::New();
 
     if (!this->m_atlasLandmarkWeights.empty())
     {
@@ -160,12 +160,12 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     landmarkBasedInitializer->SetFixedLandmarks(atlasLmks);
     landmarkBasedInitializer->SetMovingLandmarks(movingLmks);
 
-    const LmkInitTransformType::Pointer initToAtlasAffineTransform = LmkInitTransformType::New();
+    const auto initToAtlasAffineTransform = LmkInitTransformType::New();
     landmarkBasedInitializer->SetTransform(initToAtlasAffineTransform);
     landmarkBasedInitializer->InitializeTransform();
 
     using HelperType = itk::BRAINSFitHelper;
-    const HelperType::Pointer brainsFitHelper = HelperType::New();
+    const auto brainsFitHelper = HelperType::New();
 
     // Now Run BRAINSFitHelper class initialized with initToAtlasAffineTransform, original image, and atlas image
     // adapted from BRAINSABC/brainseg/AtlasRegistrationMethod.hxx - do I need to change any of these parameters?
@@ -181,12 +181,12 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
     using CastFilterType = itk::CastImageFilter<SImageType, FloatImageType>;
 
     {
-      const CastFilterType::Pointer fixedCastFilter = CastFilterType::New();
+      const auto fixedCastFilter = CastFilterType::New();
       fixedCastFilter->SetInput(atlasReader->GetOutput());
       fixedCastFilter->Update();
       brainsFitHelper->SetFixedVolume(fixedCastFilter->GetOutput());
 
-      const CastFilterType::Pointer movingCastFilter = CastFilterType::New();
+      const auto movingCastFilter = CastFilterType::New();
       movingCastFilter->SetInput(original_space_image);
       movingCastFilter->Update();
       brainsFitHelper->SetMovingVolume(movingCastFilter->GetOutput());
@@ -215,7 +215,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
       static constexpr unsigned int ROIAutoDilateSize = 6;
       {
         using ROIAutoType = itk::BRAINSROIAutoImageFilter<SImageType, itk::Image<unsigned char, 3>>;
-        const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+        const auto ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(atlasReader->GetOutput());
         ROIFilter->SetClosingSize(ROIAutoClosingSize);
         ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -225,7 +225,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
       }
       {
         using ROIAutoType = itk::BRAINSROIAutoImageFilter<SImageType, itk::Image<unsigned char, 3>>;
-        const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+        const auto ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(original_space_image);
         ROIFilter->SetClosingSize(ROIAutoClosingSize);
         ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -291,9 +291,9 @@ landmarksConstellationDetector::FindCandidatePoints(
 {
   cc_Max = -123456789.0;
 
-  const LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
+  const auto imInterp = LinearInterpolatorType::New();
   imInterp->SetInputImage(volumeMSP);
-  const LinearInterpolatorType::Pointer maskInterp = LinearInterpolatorType::New();
+  const auto maskInterp = LinearInterpolatorType::New();
   maskInterp->SetInputImage(mask_LR);
 
   // Final location is initialized with the center of search area
@@ -355,7 +355,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   // Now bounding area will be converted to an image
   //
-  const SImageType::Pointer roiImage = SImageType::New();
+  const auto roiImage = SImageType::New();
   {
     // origin
     SImageType::PointType roiOrigin;
@@ -388,7 +388,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   // Since the actual bounding box is a rounded area, a Roi mask is also needed.
   //
-  const SImageType::Pointer roiMask = SImageType::New();
+  const auto roiMask = SImageType::New();
   roiMask->CopyInformation(roiImage);
   roiMask->SetRegions(roiImage->GetLargestPossibleRegion());
   roiMask->Allocate(true); // true implies roiMask->FillBuffer(0);
@@ -429,18 +429,18 @@ landmarksConstellationDetector::FindCandidatePoints(
   // Now we need to normalize only bounding region inside the roiImage
   ///////
   using BinaryImageToLabelMapFilterType = itk::BinaryImageToLabelMapFilter<SImageType>;
-  const BinaryImageToLabelMapFilterType::Pointer binaryImageToLabelMapFilter = BinaryImageToLabelMapFilterType::New();
+  const auto binaryImageToLabelMapFilter = BinaryImageToLabelMapFilterType::New();
   binaryImageToLabelMapFilter->SetInput(roiMask);
   binaryImageToLabelMapFilter->Update();
 
   using LabelMapToLabelImageFilterType =
     itk::LabelMapToLabelImageFilter<BinaryImageToLabelMapFilterType::OutputImageType, SImageType>;
-  const LabelMapToLabelImageFilterType::Pointer labelMapToLabelImageFilter = LabelMapToLabelImageFilterType::New();
+  const auto labelMapToLabelImageFilter = LabelMapToLabelImageFilterType::New();
   labelMapToLabelImageFilter->SetInput(binaryImageToLabelMapFilter->GetOutput());
   labelMapToLabelImageFilter->Update();
 
   using LabelStatisticsImageFilterType = itk::LabelStatisticsImageFilter<SImageType, SImageType>;
-  const LabelStatisticsImageFilterType::Pointer labelStatisticsImageFilter = LabelStatisticsImageFilterType::New();
+  const auto labelStatisticsImageFilter = LabelStatisticsImageFilterType::New();
   labelStatisticsImageFilter->SetLabelInput(labelMapToLabelImageFilter->GetOutput());
   labelStatisticsImageFilter->SetInput(roiImage);
   labelStatisticsImageFilter->Update();
@@ -458,7 +458,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   // The area inside the bounding box is normalized using the mean and variance statistics
   using SubtractImageFilterType = itk::SubtractImageFilter<SImageType, SImageType, FImageType3D>;
-  const SubtractImageFilterType::Pointer subtractConstantFromImageFilter = SubtractImageFilterType::New();
+  const auto subtractConstantFromImageFilter = SubtractImageFilterType::New();
   subtractConstantFromImageFilter->SetInput(roiImage);
   subtractConstantFromImageFilter->SetConstant2(ROImean);
   subtractConstantFromImageFilter->Update();
@@ -481,7 +481,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   const double normInv = 1 / (std::sqrt(ROIcount * ROIvar));
 
   using MultiplyImageFilterType = itk::MultiplyImageFilter<FImageType3D, FImageType3D, FImageType3D>;
-  const MultiplyImageFilterType::Pointer multiplyImageFilter = MultiplyImageFilterType::New();
+  const auto multiplyImageFilter = MultiplyImageFilterType::New();
   multiplyImageFilter->SetInput(subtractConstantFromImageFilter->GetOutput());
   multiplyImageFilter->SetConstant(normInv);
 
@@ -489,7 +489,7 @@ landmarksConstellationDetector::FindCandidatePoints(
   /////////////// End of normalization of roiImage //////////////
   // Now each landmark template should be converted to a moving template image
   //
-  const FImageType3D::Pointer lmkTemplateImage = FImageType3D::New();
+  const auto lmkTemplateImage = FImageType3D::New();
   lmkTemplateImage->SetOrigin(roiImage->GetOrigin());
   lmkTemplateImage->SetSpacing(roiImage->GetSpacing());
   lmkTemplateImage->SetDirection(roiImage->GetDirection());
@@ -504,7 +504,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
   // Since each landmark template is a cylinder, a template mask is needed.
   //
-  const SImageType::Pointer templateMask = SImageType::New();
+  const auto templateMask = SImageType::New();
   templateMask->CopyInformation(lmkTemplateImage);
   templateMask->SetRegions(lmkTemplateImage->GetLargestPossibleRegion());
   templateMask->Allocate();
@@ -536,7 +536,7 @@ landmarksConstellationDetector::FindCandidatePoints(
     //
     using CorrelationFilterType =
       itk::MaskedFFTNormalizedCorrelationImageFilter<FImageType3D, FImageType3D, SImageType>;
-    const CorrelationFilterType::Pointer correlationFilter = CorrelationFilterType::New();
+    const auto correlationFilter = CorrelationFilterType::New();
     correlationFilter->SetFixedImage(normalizedRoiImage);
     correlationFilter->SetFixedImageMask(roiMask);
     correlationFilter->SetMovingImage(lmkTemplateImage);
@@ -601,8 +601,7 @@ landmarksConstellationDetector::FindCandidatePoints(
 
     // Maximum NCC for current rotation angle
     using MinimumMaximumImageCalculatorType = itk::MinimumMaximumImageCalculator<FImageType3D>;
-    const MinimumMaximumImageCalculatorType::Pointer minimumMaximumImageCalculatorFilter =
-      MinimumMaximumImageCalculatorType::New();
+    const auto minimumMaximumImageCalculatorFilter = MinimumMaximumImageCalculatorType::New();
     minimumMaximumImageCalculatorFilter->SetImage(correlationFilter->GetOutput());
     minimumMaximumImageCalculatorFilter->Compute();
     const double cc = minimumMaximumImageCalculatorFilter->GetMaximum();
@@ -653,12 +652,11 @@ landmarksConstellationDetector::DoResampleInPlace(const SImageType::ConstPointer
                                                   const Euler3DTransformType::ConstPointer & rigidTx,
                                                   SImageType::Pointer &                      inPlaceResampledImg)
 {
-  VersorRigidTransformType::Pointer versorRigidTx = VersorRigidTransformType::New();
+  auto versorRigidTx = VersorRigidTransformType::New();
   EulerToVersorRigid(versorRigidTx, rigidTx.GetPointer());
 
   using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<SImageType, SImageType>;
-  using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
-  const ResampleIPFilterPointer InPlaceResampler = ResampleIPFilterType::New();
+  const auto InPlaceResampler = ResampleIPFilterType::New();
   InPlaceResampler->SetInputImage(inputImg);
   InPlaceResampler->SetRigidTransform(versorRigidTx.GetPointer());
   InPlaceResampler->Update();

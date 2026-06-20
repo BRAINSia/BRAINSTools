@@ -62,11 +62,11 @@ Resample(ImageType::Pointer & inputImage, AffineTransformType::Pointer & transfo
   ImageType::PointType origin;
   ImageType::SizeType  size = inputImage->GetLargestPossibleRegion().GetSize();
 
-  InterpolatorType::Pointer interp = InterpolatorType::New();
+  auto interp = InterpolatorType::New();
 
   interp->SetInputImage(inputImage);
 
-  ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
+  auto resample = ResampleImageFilter::New();
   resample->SetInput(inputImage);
   resample->SetSize(size);
   resample->SetTransform(transform);
@@ -95,7 +95,7 @@ main(int argc, char ** argv)
     return EXIT_FAILURE;
   }
 
-  AffineTransformType::Pointer transform = AffineTransformType::New();
+  auto transform = AffineTransformType::New();
 
   ImageType::SpacingType spacing = startImage->GetSpacing();
   ImageType::PointType   origin = startImage->GetOrigin();

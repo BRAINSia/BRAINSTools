@@ -101,7 +101,7 @@ FloatImageType::Pointer
 ComputeSqrtMu(FloatImageType::Pointer mu)
 {
   using SqrtType = itk::SqrtImageFilter<FloatImageType, FloatImageType>;
-  SqrtType::Pointer sqrtFilter = SqrtType::New();
+  auto sqrtFilter = SqrtType::New();
   sqrtFilter->SetInput(mu);
   sqrtFilter->Update();
   return sqrtFilter->GetOutput();
@@ -242,8 +242,7 @@ OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edge
   std::vector<PrecisionType> cost(Niter, 0);
 
 #ifdef USE_WRITE_DEGUBBING
-  itk::ComplexToModulusImageFilter<HalfHermetianImageType, FloatImageType>::Pointer cpx2abs =
-    itk::ComplexToModulusImageFilter<HalfHermetianImageType, FloatImageType>::New();
+  auto cpx2abs = itk::ComplexToModulusImageFilter<HalfHermetianImageType, FloatImageType>::New();
 #endif
 
   CVImageType::Pointer            gradIm = GetGradient(p_image);
@@ -270,7 +269,7 @@ OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edge
 #ifdef USE_BLAS_WRAPPERS
 #else
   using CVImageAdder = itk::AddImageFilter<CVImageType, CVImageType>;
-  CVImageAdder::Pointer dxPlusL = CVImageAdder::New();
+  auto dxPlusL = CVImageAdder::New();
 #endif
 
   itk::TimeProbe tp;

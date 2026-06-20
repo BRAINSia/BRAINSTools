@@ -169,11 +169,11 @@ InitializeTransform(const LandmarkPointContainer & fixedLmks,
   /** Landmark Initializaer */
 
   using LocalTransformType = TTransformType;
-  typename LocalTransformType::Pointer transform = LocalTransformType::New();
+  auto transform = LocalTransformType::New();
 
   using LandmarkBasedInitializerType = itk::LandmarkBasedTransformInitializer<LocalTransformType, ImageType, ImageType>;
 
-  const typename LandmarkBasedInitializerType::Pointer landmarkBasedInitializer = LandmarkBasedInitializerType::New();
+  const auto landmarkBasedInitializer = LandmarkBasedInitializerType::New();
 
 
   /** set weights */
@@ -223,7 +223,7 @@ main(int argc, char * argv[])
   if (!inputReferenceImageFilename.empty())
   {
     using ReaderType = itk::ImageFileReader<ImageType>;
-    const ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(inputReferenceImageFilename);
     try
     {
@@ -276,7 +276,7 @@ main(int argc, char * argv[])
     if (outputTransformType == "Similarity3DTransform")
     { // Now Add isotropic scaling
       using Similarity3DTransformType = itk::Similarity3DTransform<ParameterValueType>;
-      const Similarity3DTransformType::Pointer simTransform = Similarity3DTransformType::New();
+      const auto simTransform = Similarity3DTransformType::New();
 
       simTransform->SetMatrix(transform->GetMatrix());
       const double isotropic_scale_factor = ComputeIsotropicScaleFactor(fixedLmks, movingLmks, landmarkWgts);

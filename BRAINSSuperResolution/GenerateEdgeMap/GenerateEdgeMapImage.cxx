@@ -89,7 +89,7 @@ main(int argc, char * argv[])
   CharImageType::Pointer mask;
   if (inputMask.compare("") != 0)
   {
-    MaskReaderType::Pointer maskreader = MaskReaderType::New();
+    auto maskreader = MaskReaderType::New();
     maskreader->SetFileName(inputMask);
     try
     {
@@ -115,7 +115,7 @@ main(int argc, char * argv[])
   if (outputMaximumGradientImage.compare("") != 0)
   {
     using WriterType = itk::ImageFileWriter<CharImageType>;
-    WriterType::Pointer writer = WriterType::New();
+    auto writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetFileName(outputMaximumGradientImage);
     writer->SetInput(MGI);
@@ -134,7 +134,7 @@ main(int argc, char * argv[])
   // EdgeMap is created as the inverse of Maximum Gradient Image
   using DivideImageFilterType = itk::DivideImageFilter<FloatImageType, CharImageType, FloatImageType>;
 
-  DivideImageFilterType::Pointer divideImageFilter = DivideImageFilterType::New();
+  auto divideImageFilter = DivideImageFilterType::New();
   divideImageFilter->SetInput1(1.0);
   divideImageFilter->SetInput2(MGI);
   divideImageFilter->Update();
@@ -143,7 +143,7 @@ main(int argc, char * argv[])
   if (outputEdgeMap.compare("") != 0)
   {
     using WriterType = itk::ImageFileWriter<FloatImageType>;
-    WriterType::Pointer writer = WriterType::New();
+    auto writer = WriterType::New();
     writer->UseCompressionOn();
     writer->SetFileName(outputEdgeMap);
     writer->SetInput(edgeMap);

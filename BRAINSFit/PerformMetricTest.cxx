@@ -66,22 +66,22 @@ main(int argc, char * argv[])
   using MetricSamplePointSetType = GenericMetricType::FixedSampledPointSetType;
 
   // Read input images
-  const FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
+  const auto fixedReader = FixedImageReaderType::New();
   fixedReader->SetFileName(inputFixedImage);
   const FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
-  const MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
+  const auto movingReader = MovingImageReaderType::New();
   movingReader->SetFileName(inputMovingImage);
   const MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
   // Set input transform
-  TransformType::Pointer transform = TransformType::New();
+  auto transform = TransformType::New();
   if (!inputBSplineTransform.empty())
   {
     std::cout << "Read transform file from the disk ..." << std::endl;
-    const itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
+    const auto transReader = itk::TransformFileReader::New();
     transReader->SetFileName(inputBSplineTransform);
     try
     {
@@ -110,7 +110,7 @@ main(int argc, char * argv[])
   GenericMetricType::Pointer metric;
   if (metricType == "MMI")
   {
-    const MIMetricType::Pointer mattesMetric = MIMetricType::New();
+    const auto mattesMetric = MIMetricType::New();
     mattesMetric->SetNumberOfHistogramBins(numberOfHistogramBins);
     mattesMetric->SetUseFixedImageGradientFilter(false);
     mattesMetric->SetUseMovingImageGradientFilter(false);
@@ -118,7 +118,7 @@ main(int argc, char * argv[])
   }
   else if (metricType == "MSE")
   {
-    const MSEMetricType::Pointer msqMetric = MSEMetricType::New();
+    const auto msqMetric = MSEMetricType::New();
     metric = msqMetric;
   }
   else
@@ -147,7 +147,7 @@ main(int argc, char * argv[])
   std::cout << "Number of All Samples: " << numberOfAllSamples << std::endl;
   std::cout << "Sampling Percentage: " << samplingPercentage << std::endl;
 
-  const MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+  const auto samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
   unsigned long index = 0;
 

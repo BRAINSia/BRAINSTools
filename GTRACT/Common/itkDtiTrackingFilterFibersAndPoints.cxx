@@ -49,7 +49,7 @@ void
 MinimumDistanceBetweenFiberGroups(VTKFiberListType fiberList1, VTKFiberListType fiberList2, TVector & dis)
 {
   using TransformType = itk::IdentityTransform<double>;
-  TransformType::Pointer transform = TransformType::New();
+  auto transform = TransformType::New();
   using DistanceType = itk::EuclideanDistancePointMetric<PointSetType, PointSetType>;
   DistanceType::TransformParametersType parameter(transform->GetNumberOfParameters());
   parameter.fill(0);
@@ -66,7 +66,7 @@ MinimumDistanceBetweenFiberGroups(VTKFiberListType fiberList1, VTKFiberListType 
       vtkPolyData *         fiber2 = *fiberIt2;
       PointSetType::Pointer pSet1 = PolyDataToPointSet(fiber1);
       PointSetType::Pointer pSet2 = PolyDataToPointSet(fiber2);
-      DistanceType::Pointer distance = DistanceType::New();
+      auto                  distance = DistanceType::New();
       distance->SetMovingPointSet(pSet1);
       distance->SetFixedPointSet(pSet2);
       distance->SetTransform(transform);
@@ -96,7 +96,7 @@ PointSetType::Pointer
 PolyDataToPointSet(vtkPolyData * fiber)
 {
   const int               npts = fiber->GetNumberOfPoints();
-  PointSetType::Pointer   pSet = PointSetType::New();
+  auto                    pSet = PointSetType::New();
   double                  p[3];
   PointSetType::PointType point;
 

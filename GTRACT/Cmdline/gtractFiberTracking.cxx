@@ -164,7 +164,7 @@ main(int argc, char * argv[])
     std::cerr << "Missing Filename for input Tensor Volume (--inputTensorVolume)" << std::endl;
     return EXIT_FAILURE;
   }
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
+  auto tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName(inputTensorVolume);
 
   try
@@ -190,7 +190,7 @@ main(int argc, char * argv[])
   using AnisotropyPixelType = float;
   using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
   using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
-  AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
+  auto anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
@@ -216,7 +216,7 @@ main(int argc, char * argv[])
   using MaskPixelType = unsigned char;
   using MaskImageType = itk::Image<MaskPixelType, 3>;
   using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
-  MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
+  auto startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName(inputStartingSeedsLabelMapVolume);
 
   try
@@ -231,7 +231,7 @@ main(int argc, char * argv[])
 
   /* Threshold Starting Label Map */
   using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
-  ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
+  auto startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput(startingSeedImageReader->GetOutput());
   startingThresholdFilter->SetLower(static_cast<MaskPixelType>(startingSeedsLabel));
   startingThresholdFilter->SetUpper(static_cast<MaskPixelType>(startingSeedsLabel));
@@ -250,7 +250,7 @@ main(int argc, char * argv[])
       std::cerr << "Missing filename for input Ending Seeds Label Map (--inputEndingSeedsLabelMapVolume)" << std::endl;
       return EXIT_FAILURE;
     }
-    MaskImageReaderType::Pointer endingSeedImageReader = MaskImageReaderType::New();
+    auto endingSeedImageReader = MaskImageReaderType::New();
     endingSeedImageReader->SetFileName(inputEndingSeedsLabelMapVolume);
 
     try
@@ -264,7 +264,7 @@ main(int argc, char * argv[])
     }
 
     /* Threshold Ending Label Map */
-    ThresholdFilterType::Pointer endingThresholdFilter = ThresholdFilterType::New();
+    auto endingThresholdFilter = ThresholdFilterType::New();
     endingThresholdFilter->SetInput(endingSeedImageReader->GetOutput());
     endingThresholdFilter->SetLower(static_cast<MaskPixelType>(endingSeedsLabel));
     endingThresholdFilter->SetUpper(static_cast<MaskPixelType>(endingSeedsLabel));
@@ -317,7 +317,7 @@ main(int argc, char * argv[])
     transformGuideFiber->Update();
 
     using GuideTrackingFilterType = itk::DtiGuidedTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-    GuideTrackingFilterType::Pointer acturalTrackingFilter = GuideTrackingFilterType::New();
+    auto acturalTrackingFilter = GuideTrackingFilterType::New();
     acturalTrackingFilter->SetEndingRegion(endingSeedMask);
     acturalTrackingFilter->SetGuideFiber(transformGuideFiber->GetOutput());
     acturalTrackingFilter->SetCurvatureThreshold(curvatureThreshold);
@@ -343,7 +343,7 @@ main(int argc, char * argv[])
   {
     using StreamTrackingFilterType =
       itk::DtiStreamlineTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-    StreamTrackingFilterType::Pointer acturalTrackingFilter = StreamTrackingFilterType::New();
+    auto acturalTrackingFilter = StreamTrackingFilterType::New();
     acturalTrackingFilter->SetEndingRegion(endingSeedMask);
     acturalTrackingFilter->SetCurvatureThreshold(curvatureThreshold);
     acturalTrackingFilter->SetAnisotropyImage(anisotropyImage);
@@ -364,7 +364,7 @@ main(int argc, char * argv[])
   else if (trackingMethod == "Free")
   {
     using TrackingType = itk::DtiFreeTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-    TrackingType::Pointer acturalTrackingFilter = TrackingType::New();
+    auto acturalTrackingFilter = TrackingType::New();
     acturalTrackingFilter->SetCurvatureThreshold(curvatureThreshold); /*
                                                                         Convert
                                                                         to cos
@@ -392,7 +392,7 @@ main(int argc, char * argv[])
   {
     using GraphTrackingFilterType =
       itk::DtiGraphSearchTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-    GraphTrackingFilterType::Pointer acturalTrackingFilter = GraphTrackingFilterType::New();
+    auto acturalTrackingFilter = GraphTrackingFilterType::New();
     acturalTrackingFilter->SetEndingRegion(endingSeedMask);
     acturalTrackingFilter->SetAnisotropyBranchingValue(branchingThreshold);
     acturalTrackingFilter->SetCurvatureBranchAngle(curvatureThreshold);

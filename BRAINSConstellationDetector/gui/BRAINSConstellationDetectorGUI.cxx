@@ -217,7 +217,7 @@ main(int argc, char * argv[])
 
   // ------------------------------------
   // Read input image from ITK
-  ReaderType::Pointer reader = ReaderType::New();
+  auto reader = ReaderType::New();
   reader->SetFileName(inputVolume);
   try
   {
@@ -343,7 +343,7 @@ main(int argc, char * argv[])
   // ------------------------------------
   // ITK to VTK
 
-  ConnectorType::Pointer connector = ConnectorType::New();
+  auto connector = ConnectorType::New();
   connector->SetInput(image);
 
   // ------------------------------------
@@ -426,7 +426,7 @@ main(int argc, char * argv[])
   // Render the image with VTK
 
   // create a colormap lookup table
-  StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+  auto statisticsFilter = StatisticsFilterType::New();
   statisticsFilter->SetInput(reader->GetOutput());
   statisticsFilter->Update();
   LocalPixelType minPixelValue = statisticsFilter->GetMinimum();

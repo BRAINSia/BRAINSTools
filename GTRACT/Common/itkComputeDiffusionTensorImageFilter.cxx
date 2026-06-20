@@ -70,7 +70,7 @@ ComputeDiffusionTensorImageFilter ::Update()
   if (m_UseMedianFilter == true)
   {
     using MedianFilterType = itk::MedianImageFilter<InputImageType, InputImageType>;
-    MedianFilterType::Pointer filter = MedianFilterType::New();
+    auto filter = MedianFilterType::New();
     filter->SetInput(m_Input);
     filter->SetRadius(m_MedianFilterSize);
     filter->Update();

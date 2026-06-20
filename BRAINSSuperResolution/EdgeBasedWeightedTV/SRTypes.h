@@ -74,7 +74,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 CreateEmptyImage(typename itk::ImageBase<ImageType::ImageDimension> * in)
 {
-  typename ImageType::Pointer out = ImageType::New();
+  auto out = ImageType::New();
   out->CopyInformation(in);
   out->SetRegions(in->GetLargestPossibleRegion());
   out->Allocate();

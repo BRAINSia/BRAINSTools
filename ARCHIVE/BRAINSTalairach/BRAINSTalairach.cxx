@@ -76,7 +76,7 @@ main(int argc, char * argv[])
   using ContinuousIndexType = itk::ContinuousIndex<double, 3>;
   using ImageType = itk::Image<unsigned char, dimension>;
   using ImageReaderType = itk::ImageFileReader<ImageType>;
-  ImageReaderType::Pointer reader = ImageReaderType::New();
+  auto reader = ImageReaderType::New();
   reader->SetFileName(inputVolume);
   reader->Update();
 

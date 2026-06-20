@@ -49,7 +49,7 @@ itk::Transform<double, 3, 3>::Pointer
 MakeRigidIdentity()
 {
   // Also append identity matrix for each image
-  itk::VersorRigid3DTransform<double>::Pointer rigidIdentity = itk::VersorRigid3DTransform<double>::New();
+  auto rigidIdentity = itk::VersorRigid3DTransform<double>::New();
 
   rigidIdentity->SetIdentity();
   GenericTransformType::Pointer genericTransform = rigidIdentity.GetPointer();
@@ -183,7 +183,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
       else // when m_ImageLinearTransformChoice == "Rigid"
       {
         using HelperType = itk::BRAINSFitHelper;
-        HelperType::Pointer intraSubjectRegistrationHelper = HelperType::New();
+        auto intraSubjectRegistrationHelper = HelperType::New();
         intraSubjectRegistrationHelper->SetSamplingPercentage(0.05); // Sample 5% of image
         intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
         std::vector<int> numberOfIterations(1);
@@ -204,7 +204,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         intraSubjectRegistrationHelper->SetMovingVolume(intraImIt->GetPointer());
         muLogMacro(<< "Generating MovingImage Mask (Intrasubject  " << i << ")" << std::endl);
         using ROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3>>;
-        typename ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+        auto ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput((*intraImIt));
         ROIFilter->SetClosingSize(closingSize);
         ROIFilter->SetDilateSize(dilateSize); // Only use a very small non-tissue
@@ -216,7 +216,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         if (this->m_DebugLevel > 7)
         {
           using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-          ByteWriterType::Pointer writer = ByteWriterType::New();
+          auto writer = ByteWriterType::New();
           writer->UseCompressionOn();
 
           std::ostringstream oss;
@@ -246,7 +246,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
           if (this->m_DebugLevel > 7)
           {
             using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-            ByteWriterType::Pointer writer = ByteWriterType::New();
+            auto writer = ByteWriterType::New();
             writer->UseCompressionOn();
 
             std::ostringstream oss;
@@ -428,7 +428,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
   else /***** We actaully need to run a registration ******/
   {
     using HelperType = itk::BRAINSFitHelper;
-    HelperType::Pointer atlasToSubjectRegistrationHelper = HelperType::New();
+    auto atlasToSubjectRegistrationHelper = HelperType::New();
     {                                                                // Set common parameters
       atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); // Sample 5% of image
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
@@ -521,7 +521,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
     constexpr int dilateSize = 10;
     constexpr int closingSize = 15;
     using LocalROIAutoType = itk::BRAINSROIAutoImageFilter<InternalImageType, itk::Image<unsigned char, 3>>;
-    typename LocalROIAutoType::Pointer ROIFilter = LocalROIAutoType::New();
+    auto ROIFilter = LocalROIAutoType::New();
     ROIFilter->SetInput(this->GetFirstAtlasOriginalImage());
     ROIFilter->SetClosingSize(closingSize);
     ROIFilter->SetDilateSize(dilateSize);
@@ -531,7 +531,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
     {
       ByteImageType::Pointer movingMaskImage = ROIFilter->GetOutput();
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      ByteWriterType::Pointer writer = ByteWriterType::New();
+      auto writer = ByteWriterType::New();
       writer->UseCompressionOn();
 
       std::ostringstream oss;
@@ -556,7 +556,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
     {
       ByteImageType::Pointer fixedMaskImage = ROIFilter->GetOutput();
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      ByteWriterType::Pointer writer = ByteWriterType::New();
+      auto writer = ByteWriterType::New();
       writer->UseCompressionOn();
 
       std::ostringstream oss;

@@ -149,7 +149,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::AfterThreadedG
   ComputeSpheres();
 
   using CasterType = itk::CastImageFilter<InternalImageType, TOutputImage>;
-  typename CasterType::Pointer cif = CasterType::New();
+  auto cif = CasterType::New();
   cif->SetInput(this->m_AccumulatorImage);
   cif->Update();
   typename TOutputImage::Pointer output_image_copy = cif->GetOutput();
@@ -368,7 +368,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
         using WriterType = itk::ImageFileWriter<InternalImageType>;
         {
           // Write debug accumulator image
-          typename WriterType::Pointer writer = WriterType::New();
+          auto writer = WriterType::New();
           writer->SetFileName(this->m_ResultsDir + std::string("/HoughEyeAccumulator_circle_number_") +
                               std::to_string(circles) + std::string("_Eye.nii.gz"));
           writer->SetInput(accumulatorSearchSpace);

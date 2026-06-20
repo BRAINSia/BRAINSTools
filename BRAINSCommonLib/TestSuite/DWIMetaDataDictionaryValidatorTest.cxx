@@ -96,7 +96,7 @@ CreateVolume(const size_t numOfComponents)
 
   VectorImageType::RegionType region(start, size);
 
-  VectorImageType::Pointer nrrdVolume = VectorImageType::New();
+  auto nrrdVolume = VectorImageType::New();
   nrrdVolume->SetRegions(region);
   nrrdVolume->SetVectorLength(numOfComponents);
   nrrdVolume->Allocate();
@@ -353,7 +353,7 @@ main(int argc, char * argv[])
 
       // Write Nrrd volume to disk
       using WriterType = itk::ImageFileWriter<VectorImageType>;
-      WriterType::Pointer nrrdWriter = WriterType::New();
+      auto nrrdWriter = WriterType::New();
       nrrdWriter->UseCompressionOn();
       nrrdWriter->UseInputMetaDataDictionaryOn();
       nrrdWriter->SetInput(nrrdVolume);
@@ -378,7 +378,7 @@ main(int argc, char * argv[])
     //  --Compare the replicated image with input reference volume
     {
       using ReaderType = itk::ImageFileReader<VectorImageType>;
-      ReaderType::Pointer nrrdReader = ReaderType::New();
+      auto nrrdReader = ReaderType::New();
       nrrdReader->SetFileName(argv[2]);
       nrrdReader->Update();
 
@@ -429,7 +429,7 @@ main(int argc, char * argv[])
 
       // Write Nrrd volume to disk
       using WriterType = itk::ImageFileWriter<VectorImageType>;
-      WriterType::Pointer nrrdWriter = WriterType::New();
+      auto nrrdWriter = WriterType::New();
       nrrdWriter->UseCompressionOn();
       nrrdWriter->UseInputMetaDataDictionaryOn();
       nrrdWriter->SetInput(refVolume);

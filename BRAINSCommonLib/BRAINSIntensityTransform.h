@@ -52,7 +52,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   // find min/max pixels for image
   using StatisticsFilterType = itk::StatisticsImageFilter<InputImageType>;
 
-  typename StatisticsFilterType::Pointer statsFilter = StatisticsFilterType::New();
+  auto statsFilter = StatisticsFilterType::New();
   statsFilter->SetInput(input_image);
   try
   {
@@ -86,7 +86,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   typename ImageToHistogramFilterType::HistogramType::SizeType size(MeasurementVectorSize);
   size.Fill(binsPerDimension);
 
-  typename ImageToHistogramFilterType::Pointer imageToHistogramFilter = ImageToHistogramFilterType::New();
+  auto imageToHistogramFilter = ImageToHistogramFilterType::New();
   imageToHistogramFilter->SetInput(input_image);
   imageToHistogramFilter->SetHistogramBinMinimum(lowerBound);
   imageToHistogramFilter->SetHistogramBinMaximum(upperBound);
@@ -128,7 +128,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
 
   typename OutputImageType::Pointer output_image;
   using IntensityScalingFilter = typename itk::UnaryGeneratorImageFilter<InputImageType, OutputImageType>;
-  typename IntensityScalingFilter::Pointer filter = IntensityScalingFilter::New();
+  auto filter = IntensityScalingFilter::New();
 
   if (clip)
   {
@@ -159,7 +159,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   if (print_diagnostics)
   {
     using OutStatisticsFilterType = itk::StatisticsImageFilter<OutputImageType>;
-    typename OutStatisticsFilterType::Pointer outStatsFilter = OutStatisticsFilterType::New();
+    auto outStatsFilter = OutStatisticsFilterType::New();
     outStatsFilter->SetInput(output_image);
     try
     {

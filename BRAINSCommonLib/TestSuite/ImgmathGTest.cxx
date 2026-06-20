@@ -187,7 +187,7 @@ TEST_F(ImgmathTest, Iavg)
 TEST_F(ImgmathTest, IMaskAllPass)
 {
   // Create a guaranteed all-positive mask
-  ImageType::Pointer posMask = ImageType::New();
+  auto posMask = ImageType::New();
   posMask->SetRegions(imageA->GetLargestPossibleRegion());
   posMask->CopyInformation(imageA);
   posMask->Allocate();
@@ -203,7 +203,7 @@ TEST_F(ImgmathTest, IMaskAllPass)
 TEST_F(ImgmathTest, IMaskWithZeros)
 {
   // Create a mask with some zeros
-  ImageType::Pointer mask = ImageType::New();
+  auto mask = ImageType::New();
   mask->SetRegions(imageA->GetLargestPossibleRegion());
   mask->Allocate();
 

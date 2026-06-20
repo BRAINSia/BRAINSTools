@@ -152,7 +152,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
 
   SImageType::Pointer copyOfOriginalInputImage;
   {
-    LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
+    auto duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(this->m_OriginalInputImage);
     duplicator->Update();
     copyOfOriginalInputImage = duplicator->GetOutput();
@@ -164,7 +164,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
 
   if (this->m_RescaleIntensities == true)
   {
-    itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+    auto stats = itk::StatisticsImageFilter<SImageType>::New();
     stats->SetInput(copyOfOriginalInputImage);
     stats->Update();
     SImageType::PixelType minPixel(stats->GetMinimum());
@@ -204,8 +204,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
       }
     }
 
-    itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
-      itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
+    auto remapIntensityFilter = itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
     remapIntensityFilter->SetInput(copyOfOriginalInputImage);
     remapIntensityFilter->SetOutputMaximum(this->m_RescaleIntensitiesOutputRange[1]);
     remapIntensityFilter->SetOutputMinimum(this->m_RescaleIntensitiesOutputRange[0]);
@@ -224,7 +223,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
   landmarksConstellationDetector myDetector(m_forced_orig_lmks);
   {
     // a little abuse of the eyeFixed_img_duplicator here
-    LandmarkIO::DuplicatorType::Pointer eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();
+    auto eyeFixed_img_duplicator = LandmarkIO::DuplicatorType::New();
     // Use HoughEyeAlignedImage + HoughTransform as starting point.
     eyeFixed_img_duplicator->SetInputImage(this->GeteyeFixed_img().GetPointer());
     eyeFixed_img_duplicator->Update();

@@ -57,7 +57,7 @@ main(int argc, char * argv[])
   // Read the image defining the space for the inverse field
   using ScalarReaderType = itk::ImageFileReader<ScalarImageType>;
 
-  ScalarReaderType::Pointer scalarReader = ScalarReaderType::New();
+  auto scalarReader = ScalarReaderType::New();
   scalarReader->SetFileName(baseImage);
   try
   {
@@ -78,7 +78,7 @@ main(int argc, char * argv[])
 
   using VectorReaderType = itk::ImageFileReader<DisplacementFieldType>;
 
-  VectorReaderType::Pointer vectorReader = VectorReaderType::New();
+  auto vectorReader = VectorReaderType::New();
   vectorReader->SetFileName(deformationImage);
   try
   {
@@ -94,7 +94,7 @@ main(int argc, char * argv[])
   // Invert the deformationfield field
   using FilterType = itk::GtractInverseDisplacementFieldImageFilter<DisplacementFieldType, DisplacementFieldType>;
 
-  FilterType::Pointer inverseFilter = FilterType::New();
+  auto inverseFilter = FilterType::New();
   inverseFilter->SetOutputSpacing(scalarReader->GetOutput()->GetSpacing());
   inverseFilter->SetOutputOrigin(scalarReader->GetOutput()->GetOrigin());
   ScalarImageType::RegionType region = scalarReader->GetOutput()->GetLargestPossibleRegion();
@@ -116,7 +116,7 @@ main(int argc, char * argv[])
   // Write an image for regression testing
   using WriterType = itk::ImageFileWriter<DisplacementFieldType>;
 
-  WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->UseCompressionOn();
   writer->SetInput(inverseFilter->GetOutput());
   writer->SetFileName(outputVolume);

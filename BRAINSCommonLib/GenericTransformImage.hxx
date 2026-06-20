@@ -38,7 +38,7 @@ TransformResample(
     transform)
 {
   using ResampleImageFilter = typename itk::ResampleImageFilter<InputImageType, OutputImageType>;
-  typename ResampleImageFilter::Pointer resample = ResampleImageFilter::New();
+  auto resample = ResampleImageFilter::New();
   resample->SetInput(inputImage);
   resample->SetTransform(transform.GetPointer());
   resample->SetInterpolator(interp.GetPointer());
@@ -172,7 +172,7 @@ DoResampleInPlace(
     genericTransform)
 {
   using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-  VersorRigid3DTransformType::Pointer tempInitializerITKTransform = VersorRigid3DTransformType::New();
+  auto tempInitializerITKTransform = VersorRigid3DTransformType::New();
   {
     std::string genericTempTransformFileType;
     if (genericTransform.IsNotNull())
@@ -221,7 +221,7 @@ local_ConvertToDistanceMap(const InputImageType * const         OperandImage,
    */
 
   using FloatThresholdFilterType = itk::BinaryThresholdImageFilter<InputImageType, InputImageType>;
-  typename FloatThresholdFilterType::Pointer initialFilter = FloatThresholdFilterType::New();
+  auto initialFilter = FloatThresholdFilterType::New();
   initialFilter->SetInput(OperandImage);
   {
     constexpr typename FloatThresholdFilterType::OutputPixelType outsideValue = 1.0;
@@ -237,7 +237,7 @@ local_ConvertToDistanceMap(const InputImageType * const         OperandImage,
   typename DistanceMapImageType::ConstPointer PrincipalOperandImage;
   {
     using DistanceFilterType = itk::SignedMaurerDistanceMapImageFilter<InputImageType, DistanceMapImageType>;
-    typename DistanceFilterType::Pointer DistanceFilter = DistanceFilterType::New();
+    auto DistanceFilter = DistanceFilterType::New();
     DistanceFilter->SetInput(initialFilter->GetOutput());
     // DistanceFilter->SetNarrowBandwidth( m_BandWidth );
     DistanceFilter->SetInsideIsPositive(true);
@@ -288,7 +288,7 @@ local_FromDistanceMap(typename DistanceMapImageType::Pointer                    
   // Now Threshold and write out image
   using BinaryThresholdFilterType =
     typename itk::BinaryThresholdImageFilter<DistanceMapImageType, BinFlagOnMaskImageType>;
-  typename BinaryThresholdFilterType::Pointer finalFilter = BinaryThresholdFilterType::New();
+  auto finalFilter = BinaryThresholdFilterType::New();
   finalFilter->SetInput(TransformedImage);
 
   constexpr typename BinaryThresholdFilterType::OutputPixelType outsideValue = 0;
@@ -320,7 +320,7 @@ local_FromDistanceMap(typename DistanceMapImageType::Pointer                    
   finalFilter->Update();
 
   using CastImageFilter = typename itk::CastImageFilter<BinFlagOnMaskImageType, OutputImageType>;
-  typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
+  auto castFilter = CastImageFilter::New();
   castFilter->SetInput(finalFilter->GetOutput());
   castFilter->Update();
 

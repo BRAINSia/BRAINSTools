@@ -269,7 +269,7 @@ main(int argc, char * argv[])
 
   using ImageReaderType = itk::ImageFileReader<ImageType>;
 
-  const ImageReaderType::Pointer imageReader = ImageReaderType::New();
+  const auto imageReader = ImageReaderType::New();
   imageReader->SetFileName(inputBinaryVolume);
   imageReader->Update();
 
@@ -281,7 +281,7 @@ main(int argc, char * argv[])
 
   // duplicate image
   using ImageDuplicatorType = itk::ImageDuplicator<ImageType>;
-  const ImageDuplicatorType::Pointer duplicator = ImageDuplicatorType::New();
+  const auto duplicator = ImageDuplicatorType::New();
   duplicator->SetInputImage(inputVolume);
   duplicator->Update();
 
@@ -376,7 +376,7 @@ main(int argc, char * argv[])
   // write output volume
 
   using OutputImageWriterType = itk::ImageFileWriter<ImageType>;
-  const OutputImageWriterType::Pointer writer = OutputImageWriterType::New();
+  const auto writer = OutputImageWriterType::New();
 
   writer->SetInput(outputVolume);
   writer->SetFileName(outputBinaryVolume);

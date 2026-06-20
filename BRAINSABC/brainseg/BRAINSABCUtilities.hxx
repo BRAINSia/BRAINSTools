@@ -124,8 +124,7 @@ DuplicateImageList(const std::vector<typename TInputImage::Pointer> & inputList)
                       [=, &outputList](const tbb::blocked_range<LOOPITERTYPE> & r) {
                         for (auto i = r.begin(); i < r.end(); ++i)
                         {
-                          typename itk::ImageDuplicator<TInputImage>::Pointer myDuplicator =
-                            itk::ImageDuplicator<TInputImage>::New();
+                          auto myDuplicator = itk::ImageDuplicator<TInputImage>::New();
                           myDuplicator->SetInputImage(inputList[i]);
                           myDuplicator->Update();
                           outputList[i] = myDuplicator->GetOutput();
@@ -143,8 +142,8 @@ ComputeForegroundProbMask(const std::vector<typename TProbabilityImage::Pointer>
                           const std::vector<bool> &                                IsForegroundPriorVector)
 {
   muLogMacro(<< "ComputeForegroundProbMask" << std::endl);
-  const unsigned int              numPriors = probList.size();
-  typename ByteImageType::Pointer currForegroundMask = ByteImageType::New();
+  const unsigned int numPriors = probList.size();
+  auto               currForegroundMask = ByteImageType::New();
   currForegroundMask->CopyInformation(probList[0]);
   currForegroundMask->SetRegions(probList[0]->GetLargestPossibleRegion());
   currForegroundMask->Allocate();

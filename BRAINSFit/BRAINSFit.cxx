@@ -45,7 +45,7 @@ typename ImageType::Pointer
 ExtractImage(typename InputImageType::Pointer & inputImage, unsigned int InputImageTimeIndex)
 {
   using ExtractImageFilterType = typename itk::ExtractImageFilter<InputImageType, ImageType>;
-  const typename ExtractImageFilterType::Pointer extractImageFilter = ExtractImageFilterType::New();
+  const auto extractImageFilter = ExtractImageFilterType::New();
   extractImageFilter->SetDirectionCollapseToSubmatrix();
 
   // fixedVolumeReader->GetOutput();
@@ -84,7 +84,7 @@ typename ImageType::Pointer
 DoMedian(typename ImageType::Pointer & input, typename ImageType::SizeType indexRadius)
 {
   using MedianFilterType = typename itk::MedianImageFilter<ImageType, ImageType>;
-  const typename MedianFilterType::Pointer medianFilter = MedianFilterType::New();
+  const auto medianFilter = MedianFilterType::New();
 
   medianFilter->SetRadius(indexRadius);
   medianFilter->SetInput(input);
@@ -386,7 +386,7 @@ main(int argc, char * argv[])
     }
     {
       using ROIAutoType = itk::BRAINSROIAutoImageFilter<FixedVolumeType, itk::Image<unsigned char, 3>>;
-      const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      const auto ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractFixedVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
       ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -395,7 +395,7 @@ main(int argc, char * argv[])
     }
     {
       using ROIAutoType = itk::BRAINSROIAutoImageFilter<MovingVolumeType, itk::Image<unsigned char, 3>>;
-      const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+      const auto ROIFilter = ROIAutoType::New();
       ROIFilter->SetInput(extractMovingVolume);
       ROIFilter->SetClosingSize(ROIAutoClosingSize);
       ROIFilter->SetDilateSize(ROIAutoDilateSize);
@@ -447,7 +447,7 @@ main(int argc, char * argv[])
 
   {
     using HelperType = itk::BRAINSFitHelper;
-    const HelperType::Pointer myHelper = HelperType::New();
+    const auto myHelper = HelperType::New();
     myHelper->SetTransformType(localTransformType);
     myHelper->SetFixedVolume(extractFixedVolume);
     myHelper->SetMovingVolume(extractMovingVolume);

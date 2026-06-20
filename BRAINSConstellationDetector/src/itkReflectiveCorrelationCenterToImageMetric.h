@@ -322,7 +322,7 @@ public:
     SImageType::PointType physCenter = GetImageCenterPhysicalPoint(image);
 
     // Move the physical origin to the center of the image
-    Euler3DTransformType::Pointer tempEulerAngles3DT = Euler3DTransformType::New();
+    auto tempEulerAngles3DT = Euler3DTransformType::New();
     tempEulerAngles3DT->Compose(this->GetTransformFromParams(this->m_params));
     Euler3DTransformType::TranslationType tnsl = tempEulerAngles3DT->GetTranslation();
 
@@ -355,7 +355,7 @@ public:
 
 #ifdef USE_DEBUGGIN_IMAGES
     {
-      itk::ImageFileWriter<SImageType>::Pointer dbgWriter = itk::ImageFileWriter<SImageType>::New();
+      auto dbgWriter = itk::ImageFileWriter<SImageType>::New();
       dbgWriter->UseCompressionOn();
       dbgWriter->SetFileName("itkReflectiveCorrelationCenterToImageMetric149.nii.gz");
       dbgWriter->SetInput(RefImage);
@@ -386,7 +386,7 @@ public:
   Euler3DTransformType::Pointer
   GetTransformFromParams(const ParametersType & params) const
   {
-    Euler3DTransformType::Pointer tempEulerAngles3DT = Euler3DTransformType::New();
+    auto tempEulerAngles3DT = Euler3DTransformType::New();
 
     tempEulerAngles3DT->SetCenter(this->GetCenterOfHeadMass());
     tempEulerAngles3DT->SetRotation(0, params[1], params[0]);
@@ -460,7 +460,7 @@ public:
     /*
      * Resample the image
      */
-    ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
+    auto resampleFilter = ResampleFilterType::New();
     resampleFilter->SetInterpolator(this->m_imInterp);
     resampleFilter->SetDefaultPixelValue(0);
     resampleFilter->UseReferenceImageOn();

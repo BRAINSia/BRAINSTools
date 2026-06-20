@@ -40,7 +40,7 @@ main(int argc, char * argv[])
 
   // Reader type
   using ReaderType = itk::ImageFileReader<InputImageType>;
-  ReaderType::Pointer reader = ReaderType::New();
+  auto reader = ReaderType::New();
   reader->SetFileName(argv[1]);
   // reader->Update();
 
@@ -79,7 +79,7 @@ main(int argc, char * argv[])
   this->m_AccumulatorImage = houghFilter->GetOutput();
 
   // Write debug accumulator image
-  typename WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->SetFileName( this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz" );
   writer->SetInput( this->m_AccumulatorImage );
   writer->SetUseCompression( true );
@@ -88,7 +88,7 @@ main(int argc, char * argv[])
 
   // writer type
   using WriterType = itk::ImageFileWriter<OutputImageType>;
-  WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->SetFileName(argv[2]);
   writer->SetInput(houghFilter->GetOutput());
   try

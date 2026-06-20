@@ -76,7 +76,7 @@ BRAINSROIAUTOWriteOutputVolume(const VolumeImageType::Pointer & image,
   typename WriteOutImageType::Pointer finalOutput;
   {
     using CasterType = itk::CastImageFilter<VolumeImageType, WriteOutImageType>;
-    const typename CasterType::Pointer myCaster = CasterType::New();
+    const auto myCaster = CasterType::New();
     myCaster->SetInput(image);
     myCaster->Update();
     finalOutput = myCaster->GetOutput();
@@ -85,7 +85,7 @@ BRAINSROIAUTOWriteOutputVolume(const VolumeImageType::Pointer & image,
   {
     using MultiplierType = typename itk::MultiplyImageFilter<VolumeMaskType, WriteOutImageType, WriteOutImageType>;
 
-    const typename MultiplierType::Pointer clipper = MultiplierType::New();
+    const auto clipper = MultiplierType::New();
     clipper->SetInput1(mask);
     clipper->SetInput2(finalOutput);
     clipper->Update();
@@ -128,7 +128,7 @@ BRAINSROIAUTOWriteOutputVolume(const VolumeImageType::Pointer & image,
     const VolumeMaskType::RegionType desiredRegion(minIndex, desiredSize);
 
     using ExtractorType = itk::ExtractImageFilter<WriteOutImageType, WriteOutImageType>;
-    const typename ExtractorType::Pointer myExtractor = ExtractorType::New();
+    const auto myExtractor = ExtractorType::New();
     myExtractor->SetExtractionRegion(desiredRegion);
     myExtractor->SetInput(finalOutput);
     myExtractor->SetDirectionCollapseToIdentity(); // This is required.
@@ -152,7 +152,7 @@ main(int argc, char * argv[])
   const VolumeImageType::Pointer ImageInput = itkUtil::ReadImage<VolumeImageType>(inputVolume);
 
   using ROIAutoType = itk::BRAINSROIAutoImageFilter<VolumeImageType, VolumeMaskType>;
-  const ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+  const auto ROIFilter = ROIAutoType::New();
   ROIFilter->SetInput(ImageInput);
   ROIFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);
   ROIFilter->SetClosingSize(closingSize);

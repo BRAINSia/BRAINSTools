@@ -196,7 +196,7 @@ QDebugImageViewerWindow::readImage()
   imageRegion.SetSize(imageSize);
   imageRegion.SetIndex(imageIndex);
 
-  QImageDisplay::ImageType::Pointer xferImage = QImageDisplay::ImageType::New();
+  auto xferImage = QImageDisplay::ImageType::New();
   xferImage->SetSpacing(imageSpacing);
   xferImage->SetRegions(imageRegion);
   xferImage->Allocate();

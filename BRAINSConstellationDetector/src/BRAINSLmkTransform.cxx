@@ -115,8 +115,8 @@ main(int argc, char * argv[])
   using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
 
   // Read in landmarks
-  const PointSetType::Pointer sourceLandmarks = PointSetType::New();
-  const PointSetType::Pointer targetLandmarks = PointSetType::New();
+  const auto sourceLandmarks = PointSetType::New();
+  const auto targetLandmarks = PointSetType::New();
   {
     const PointSetType::PointsContainer::Pointer sourceLandmarkContainer = sourceLandmarks->GetPoints();
     const PointSetType::PointsContainer::Pointer targetLandmarkContainer = targetLandmarks->GetPoints();
@@ -140,9 +140,9 @@ main(int argc, char * argv[])
   }
 
   // Estimate affine transform
-  const AffineTransformType::Pointer affine = AffineTransformType::New();
+  const auto affine = AffineTransformType::New();
   {
-    const TPSTransformType::Pointer tps = TPSTransformType::New();
+    const auto tps = TPSTransformType::New();
     tps->SetSourceLandmarks(sourceLandmarks);
     tps->SetTargetLandmarks(targetLandmarks);
     tps->ComputeWMatrix();
@@ -158,7 +158,7 @@ main(int argc, char * argv[])
   // Write output aligning transform
   if (outputAffineTransform.compare("") != 0)
   {
-    const TransformWriterType::Pointer writer = TransformWriterType::New();
+    const auto writer = TransformWriterType::New();
     writer->SetInput(affine);
     writer->SetFileName(outputAffineTransform);
     writer->SetUseCompression(true);
@@ -176,7 +176,7 @@ main(int argc, char * argv[])
   // Read in images
   ImageType::Pointer movingImage;
   {
-    const ImageReaderType::Pointer reader = ImageReaderType::New();
+    const auto reader = ImageReaderType::New();
     reader->SetFileName(inputMovingVolume);
     try
     {
@@ -193,7 +193,7 @@ main(int argc, char * argv[])
 
   ImageType::Pointer referenceImage;
   {
-    const ImageReaderType::Pointer reader = ImageReaderType::New();
+    const auto reader = ImageReaderType::New();
     reader->SetFileName(inputReferenceVolume);
     try
     {
@@ -209,9 +209,9 @@ main(int argc, char * argv[])
   }
 
   // Resample moving image
-  const ResamplerType::Pointer resampler = ResamplerType::New();
+  const auto resampler = ResamplerType::New();
   {
-    const InterpolatorType::Pointer interpolator = InterpolatorType::New();
+    const auto interpolator = InterpolatorType::New();
     resampler->SetUseReferenceImage(true);
     resampler->SetInput(movingImage);
     resampler->SetReferenceImage(referenceImage);
@@ -222,7 +222,7 @@ main(int argc, char * argv[])
   // Write aligned image
   if (outputResampledVolume.compare("") != 0)
   {
-    const ImageWriterType::Pointer writer = ImageWriterType::New();
+    const auto writer = ImageWriterType::New();
     writer->SetInput(resampler->GetOutput());
     writer->SetFileName(outputResampledVolume);
     writer->SetUseCompression(true);

@@ -81,8 +81,7 @@ DoIt(const std::string & inputVolume,
   }
 
   const LOCALImageType::Pointer internal_image = [=]() -> LOCALImageType::Pointer {
-    const typename itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::Pointer
-      remapIntensityFilter = itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::New();
+    const auto remapIntensityFilter = itk::RescaleIntensityImageFilter<TInputImagePixelType, LOCALImageType>::New();
     remapIntensityFilter->SetInput(volOrig);
     remapIntensityFilter->SetOutputMaximum(std::numeric_limits<LOCALImageType::PixelType>::max());
     remapIntensityFilter->SetOutputMinimum(std::numeric_limits<LOCALImageType::PixelType>::min());
@@ -107,7 +106,7 @@ DoIt(const std::string & inputVolume,
     // Estimate the center of head mass
     std::cout << "\nFinding center of head mass..." << std::endl;
     using FindCenterFilter = itk::FindCenterOfBrainFilter<LOCALImageType>;
-    const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+    const auto findCenterFilter = FindCenterFilter::New();
     findCenterFilter->SetInput(internal_image);
     findCenterFilter->SetAxis(2);
     findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -122,7 +121,7 @@ DoIt(const std::string & inputVolume,
 
   if (!resampleMSPLandmarkPoints.empty() && !LandmarkPoints.empty())
   {
-    const Euler3DTransformType::Pointer orig2msp_lmk_tfm = Euler3DTransformType::New();
+    const auto orig2msp_lmk_tfm = Euler3DTransformType::New();
     orig2msp_img_tfm->GetInverse(orig2msp_lmk_tfm);
     if (orig2msp_lmk_tfm.IsNull())
     {
@@ -154,8 +153,7 @@ DoIt(const std::string & inputVolume,
     typename TInputImagePixelType::Pointer image;
     if (rescaleIntensities)
     {
-      const typename itk::StatisticsImageFilter<TInputImagePixelType>::Pointer stats =
-        itk::StatisticsImageFilter<TInputImagePixelType>::New();
+      const auto stats = itk::StatisticsImageFilter<TInputImagePixelType>::New();
       stats->SetInput(volOrig);
       stats->Update();
       const typename TInputImagePixelType::PixelType minPixel(stats->GetMinimum());
@@ -192,8 +190,8 @@ DoIt(const std::string & inputVolume,
         }
       }
 
-      const typename itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer
-        remapIntensityFilter = itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
+      const auto remapIntensityFilter =
+        itk::IntensityWindowingImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
       remapIntensityFilter->SetOutputMinimum(rescaleIntensitiesOutputRange[0]);
@@ -205,8 +203,7 @@ DoIt(const std::string & inputVolume,
     }
     else
     {
-      const typename itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::Pointer caster =
-        itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
+      const auto caster = itk::CastImageFilter<TInputImagePixelType, TInputImagePixelType>::New();
       caster->SetInput(volOrig);
       caster->Update();
       image = caster->GetOutput();
@@ -215,17 +212,16 @@ DoIt(const std::string & inputVolume,
     if (interpolationMode == "ResampleInPlace")
     {
       using ResampleIPFilterType = typename itk::ResampleInPlaceImageFilter<TInputImagePixelType, TInputImagePixelType>;
-      using ResampleIPFilterPointer = typename ResampleIPFilterType::Pointer;
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
 
-      const VersorRigid3DTransformType::Pointer result = VersorRigid3DTransformType::New();
+      const auto result = VersorRigid3DTransformType::New();
       result->SetIdentity();
       //      result->SetCenter(orig2msp_img_tfm->GetCenter());
       //      result->SetMatrix(orig2msp_img_tfm->GetMatrix());
       //      result->SetTranslation(orig2msp_img_tfm->GetTranslation());
       result->Compose(orig2msp_img_tfm);
-      const ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+      const auto resampleIPFilter = ResampleIPFilterType::New();
       resampleIPFilter->SetInputImage(volOrig);
       resampleIPFilter->SetRigidTransform(result);
       resampleIPFilter->Update();

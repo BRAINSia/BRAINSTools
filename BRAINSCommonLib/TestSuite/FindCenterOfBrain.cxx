@@ -54,7 +54,7 @@ main(int argc, char ** argv)
     return 2;
   }
 
-  const FindCenterFilterType::Pointer filter = FindCenterFilterType::New();
+  const auto filter = FindCenterFilterType::New();
   filter->SetInput(inputImage);
 
   MaskImageType::Pointer imageMask;

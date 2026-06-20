@@ -62,7 +62,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
 {
   std::cout << "\nEstimating MSP..." << std::endl;
 
-  const VersorRigidTransformType::Pointer orig2eyeFixed_lmk_tfm = VersorRigidTransformType::New();
+  const auto orig2eyeFixed_lmk_tfm = VersorRigidTransformType::New();
   this->m_orig2eyeFixed_img_tfm->GetInverse(orig2eyeFixed_lmk_tfm);
   const SImagePointType eyeFixed_lmk_CenterOfHeadMass =
     orig2eyeFixed_lmk_tfm->TransformPoint(m_orig_lmks_forced.at("CM"));
@@ -84,7 +84,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
   {
     const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
-      const StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      const auto statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);
       statisticsFilter->Update();
       return statisticsFilter->GetMinimum();
@@ -154,7 +154,7 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
   }
 
   // INFO: Compute Center of Head Mass differently
-  const VersorRigidTransformType::Pointer local_eyeFixed2msp_lmk_tfm = VersorRigidTransformType::New();
+  const auto local_eyeFixed2msp_lmk_tfm = VersorRigidTransformType::New();
   this->m_eyeFixed2msp_img_tfm->GetInverse(local_eyeFixed2msp_lmk_tfm);
 
   SImageType::PointType msp_center_of_head_mass =

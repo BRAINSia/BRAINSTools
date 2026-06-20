@@ -233,10 +233,10 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
   HistogramSizeType histogramSize(1);
   histogramSize[0] = 256;
 
-  typename InputBooleanObjectType::Pointer autoMinMaxInputObject = InputBooleanObjectType::New();
+  auto autoMinMaxInputObject = InputBooleanObjectType::New();
   autoMinMaxInputObject->Set(true);
 
-  typename HistogramFilterType::Pointer histogramFilter = HistogramFilterType::New();
+  auto histogramFilter = HistogramFilterType::New();
   histogramFilter->SetInput(inputImage);
   histogramFilter->SetAutoMinimumMaximumInput(autoMinMaxInputObject);
   histogramFilter->SetHistogramSize(histogramSize);
@@ -247,7 +247,7 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
   float upperValue = histogramFilter->GetOutput()->Quantile(0, 1);
 
   using IntensityWindowingImageFilterType = typename itk::IntensityWindowingImageFilter<ImageType, ImageType>;
-  typename IntensityWindowingImageFilterType::Pointer windowingFilter = IntensityWindowingImageFilterType::New();
+  auto windowingFilter = IntensityWindowingImageFilterType::New();
   windowingFilter->SetInput(inputImage);
   windowingFilter->SetWindowMinimum(lowerValue);
   windowingFilter->SetWindowMaximum(upperValue);
@@ -337,7 +337,7 @@ typename ImageType::Pointer
 CopyImage(const typename ImageType::Pointer & input)
 {
   using ImageDupeType = itk::ImageDuplicator<ImageType>;
-  typename ImageDupeType::Pointer MyDuplicator = ImageDupeType::New();
+  auto MyDuplicator = ImageDupeType::New();
   MyDuplicator->SetInputImage(input);
   MyDuplicator->Update();
   return MyDuplicator->GetOutput();

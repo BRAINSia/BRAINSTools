@@ -45,7 +45,7 @@ main(int argc, char * argv[])
   for (auto & i : inputProbabilityVolume)
   {
     using ImageReaderType = itk::ImageFileReader<ProbabilityImageType>;
-    ImageReaderType::Pointer reader = ImageReaderType::New();
+    auto reader = ImageReaderType::New();
     reader->SetFileName(i);
     ProbabilityImageType::Pointer current;
     try
@@ -98,7 +98,7 @@ main(int argc, char * argv[])
   else
   {
     using ImageReaderType = itk::ImageFileReader<ByteImageType>;
-    ImageReaderType::Pointer reader = ImageReaderType::New();
+    auto reader = ImageReaderType::New();
     reader->SetFileName(nonAirRegionMask);
     try
     {

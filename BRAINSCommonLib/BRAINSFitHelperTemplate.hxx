@@ -157,7 +157,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
   using MaskImageType = itk::Image<unsigned char, 3>;
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
 
-  typename TransformType::Pointer initialITKTransform = TransformType::New();
+  auto initialITKTransform = TransformType::New();
   initialITKTransform->SetIdentity();
 
   if (initializeTransformMode == "useGeometryAlign")
@@ -165,7 +165,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
     // useGeometryAlign assumes objects are center in field of view, with
     // different
     using OrdinaryInitializerType = itk::CenteredTransformInitializer<TransformType, FixedImageType, MovingImageType>;
-    typename OrdinaryInitializerType::Pointer CenteredInitializer = OrdinaryInitializerType::New();
+    auto CenteredInitializer = OrdinaryInitializerType::New();
 
     CenteredInitializer->SetFixedImage(orientedFixedVolume);
     CenteredInitializer->SetMovingImage(orientedMovingVolume);
@@ -202,13 +202,13 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       typename CROIMaskImageType::Pointer tempOutputFixedVolumeROI =
         const_cast<CROIMaskImageType *>(fixedImageMask->GetImage());
 
-      LabelStatisticsFilterType::Pointer movingImageToLabel = LabelStatisticsFilterType::New();
+      auto movingImageToLabel = LabelStatisticsFilterType::New();
       movingImageToLabel->SetInput(movingImageMask->GetImage());
       movingImageToLabel->SetFeatureImage(movingImageMask->GetImage());
       movingImageToLabel->SetComputePerimeter(false);
       movingImageToLabel->Update();
 
-      LabelStatisticsFilterType::Pointer fixedImageToLabel = LabelStatisticsFilterType::New();
+      auto fixedImageToLabel = LabelStatisticsFilterType::New();
       fixedImageToLabel->SetInput(fixedImageMask->GetImage());
       fixedImageToLabel->SetFeatureImage(fixedImageMask->GetImage());
       fixedImageToLabel->SetComputePerimeter(false);
@@ -233,7 +233,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       using CHMMaskImageType = itk::Image<unsigned char, 3>;
 
       using MovingFindCenterFilter = typename itk::FindCenterOfBrainFilter<MovingImageType>;
-      typename MovingFindCenterFilter::Pointer movingFindCenter = MovingFindCenterFilter::New();
+      auto movingFindCenter = MovingFindCenterFilter::New();
       movingFindCenter->SetInput(orientedMovingVolume);
       if (movingMask.IsNotNull())
       {
@@ -247,7 +247,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       movingCenter = movingFindCenter->GetCenterOfBrain();
       {
         // convert mask image to mask
-        typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
+        auto mask = ImageMaskSpatialObjectType::New();
         mask->SetImage(movingFindCenter->GetClippedImageMask());
 
         mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
@@ -260,7 +260,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       }
 
       using FixedFindCenterFilter = typename itk::FindCenterOfBrainFilter<FixedImageType>;
-      typename FixedFindCenterFilter::Pointer fixedFindCenter = FixedFindCenterFilter::New();
+      auto fixedFindCenter = FixedFindCenterFilter::New();
       fixedFindCenter->SetInput(orientedFixedVolume);
       if (fixedMask.IsNotNull())
       {
@@ -275,7 +275,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
 
       {
         // convert mask image to mask
-        typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
+        auto mask = ImageMaskSpatialObjectType::New();
         mask->SetImage(fixedFindCenter->GetClippedImageMask());
 
         mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
@@ -305,11 +305,11 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
     }
 
     using EulerAngle3DTransformType = itk::Euler3DTransform<double>;
-    typename EulerAngle3DTransformType::Pointer bestEulerAngles3D = EulerAngle3DTransformType::New();
+    auto bestEulerAngles3D = EulerAngle3DTransformType::New();
     bestEulerAngles3D->SetCenter(rotationCenter);
     bestEulerAngles3D->SetTranslation(translationVector);
 
-    typename EulerAngle3DTransformType::Pointer currentEulerAngles3D = EulerAngle3DTransformType::New();
+    auto currentEulerAngles3D = EulerAngle3DTransformType::New();
 
     currentEulerAngles3D->SetCenter(rotationCenter);
     currentEulerAngles3D->SetTranslation(translationVector);
@@ -354,7 +354,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
             if (0)
             {
               using ResampleFilterType = itk::ResampleImageFilter<FixedImageType, MovingImageType, double>;
-              typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+              auto resampler = ResampleFilterType::New();
 
               resampler->SetTransform(currentEulerAngles3D);
               resampler->SetInput(orientedMovingVolume);
@@ -365,8 +365,8 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
               typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
 
               using Checkerfilter = itk::CheckerBoardImageFilter<FixedImageType>;
-              typename Checkerfilter::Pointer checker = Checkerfilter::New();
-              unsigned int                    array[3] = { 36, 36, 36 };
+              auto         checker = Checkerfilter::New();
+              unsigned int array[3] = { 36, 36, 36 };
 
               checker->SetInput1(orientedFixedVolume);
               checker->SetInput2(ResampledImage);
@@ -390,7 +390,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
 
               {
                 using WriterType = typename itk::ImageFileWriter<FixedImageType>;
-                typename WriterType::Pointer writer = WriterType::New();
+                auto writer = WriterType::New();
                 writer->UseCompressionOn();
                 writer->SetFileName(filename);
                 writer->SetInput(checker->GetOutput());
@@ -421,7 +421,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
 #endif
     }
     using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
-    typename VersorRigid3DTransformType::Pointer quickSetVersor = VersorRigid3DTransformType::New();
+    auto quickSetVersor = VersorRigid3DTransformType::New();
     quickSetVersor->SetCenter(bestEulerAngles3D->GetCenter());
     quickSetVersor->SetTranslation(bestEulerAngles3D->GetTranslation());
     {
@@ -432,7 +432,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
 #ifdef DEBUGGING_PRINT_IMAGES
     {
       using ResampleFilterType = itk::ResampleImageFilter<FixedImageType, MovingImageType, double>;
-      typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+      auto resampler = ResampleFilterType::New();
 
       resampler->SetTransform(quickSetVersor);
       resampler->SetInput(orientedMovingVolume);
@@ -442,8 +442,8 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       typename FixedImageType::Pointer ResampledImage = resampler->GetOutput();
 
       using Checkerfilter = itk::CheckerBoardImageFilter<FixedImageType>;
-      typename Checkerfilter::Pointer checker = Checkerfilter::New();
-      unsigned int                    array[3] = { 18, 18, 18 };
+      auto         checker = Checkerfilter::New();
+      unsigned int array[3] = { 18, 18, 18 };
 
       checker->SetInput1(orientedFixedVolume);
       checker->SetInput2(ResampledImage);
@@ -467,7 +467,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
 
       {
         using WriterType = typename itk::ImageFileWriter<FixedImageType>;
-        typename WriterType::Pointer writer = WriterType::New();
+        auto writer = WriterType::New();
         wirter->UseCompressionOn();
         writer->SetFileName(filename);
         writer->SetInput(ResampledImage);
@@ -490,7 +490,7 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
   {
     // useMomentsAlign assumes that the structures being registered have same
     // amount of mass approximately uniformly distributed.
-    typename SpecificInitializerType::Pointer CenteredInitializer = SpecificInitializerType::New();
+    auto CenteredInitializer = SpecificInitializerType::New();
 
     CenteredInitializer->SetFixedImage(orientedFixedVolume);
     CenteredInitializer->SetMovingImage(orientedMovingVolume);
@@ -553,8 +553,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
                                                        MovingImageType,
                                                        FitCommonCodeMetricType>;
 
-  typename MultiModal3DMutualRegistrationHelperType::Pointer appMutualRegistration =
-    MultiModal3DMutualRegistrationHelperType::New();
+  auto appMutualRegistration = MultiModal3DMutualRegistrationHelperType::New();
 
   appMutualRegistration->SetNumberOfHistogramBins(m_NumberOfHistogramBins);
   appMutualRegistration->SetNumberOfIterations(numberOfIterations);
@@ -776,7 +775,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       // Process the initialITKTransform as VersorRigid3DTransform:
       //
       using TransformType = VersorRigid3DTransformType;
-      TransformType::Pointer initialITKTransform = TransformType::New();
+      auto initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
 
       if (m_CurrentGenericTransform
@@ -857,7 +856,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       //
       // Process the initialITKTransform as ScaleVersor3DTransform:
       //
-      TransformType::Pointer initialITKTransform = TransformType::New();
+      auto initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
       if (m_CurrentGenericTransform.IsNotNull())
       {
@@ -943,7 +942,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       //
       // Process the initialITKTransform as ScaleSkewVersor3D:
       //
-      TransformType::Pointer initialITKTransform = TransformType::New();
+      auto initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
       if (m_CurrentGenericTransform.IsNotNull())
       {
@@ -1034,7 +1033,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       //
       // Process the initialITKTransform
       //
-      TransformType::Pointer initialITKTransform = TransformType::New();
+      auto initialITKTransform = TransformType::New();
       initialITKTransform->SetIdentity();
       if (m_CurrentGenericTransform.IsNotNull())
       {
@@ -1122,20 +1121,20 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       using BSplineTransformType = itk::BSplineTransform<double, SpaceDimension, SplineOrder>;
 
       using BSplineRegistrationType = itk::ImageRegistrationMethodv4<FixedImageType, MovingImageType>;
-      typename BSplineRegistrationType::Pointer bsplineRegistration = BSplineRegistrationType::New();
+      auto bsplineRegistration = BSplineRegistrationType::New();
 
 
-      typename FixedImageType::Pointer initializationImage = FixedImageType::New();
+      auto initializationImage = FixedImageType::New();
       if (m_UseROIBSpline)
       {
-        ImageMaskSpatialObjectType::Pointer roiMask = ImageMaskSpatialObjectType::New();
+        auto roiMask = ImageMaskSpatialObjectType::New();
         if (m_MovingBinaryVolume.GetPointer() != nullptr)
         {
           ImageMaskSpatialObjectType::Pointer movingImageMask =
             dynamic_cast<ImageMaskSpatialObjectType *>(m_MovingBinaryVolume.GetPointer());
 
           using ResampleFilterType = itk::ResampleImageFilter<MaskImageType, MaskImageType, double>;
-          ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+          auto resampler = ResampleFilterType::New();
 
           // Resample the moving mask into fixed image space.
           // When a prior transform exists (e.g. from Rigid/Affine stages),
@@ -1148,7 +1147,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           else
           {
             using LocalIdentityTransformType = itk::IdentityTransform<double, FixedImageType::ImageDimension>;
-            typename LocalIdentityTransformType::Pointer identity = LocalIdentityTransformType::New();
+            auto identity = LocalIdentityTransformType::New();
             resampler->SetTransform(identity);
           }
           resampler->SetInput(movingImageMask->GetImage());
@@ -1159,7 +1158,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             using AddFilterType = itk::AddImageFilter<MaskImageType, MaskImageType>;
             ImageMaskSpatialObjectType::Pointer fixedImageMask =
               dynamic_cast<ImageMaskSpatialObjectType *>(m_FixedBinaryVolume.GetPointer());
-            AddFilterType::Pointer adder = AddFilterType::New();
+            auto adder = AddFilterType::New();
             adder->SetInput1(fixedImageMask->GetImage());
             adder->SetInput2(resampler->GetOutput());
             adder->Update();
@@ -1185,7 +1184,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         roiMask->Update();
 
         typename FixedImageType::IndexType roiOriginIdx;
-        typename FixedImageType::Pointer   roiImage = FixedImageType::New();
+        auto                               roiImage = FixedImageType::New();
 #undef USE_OLD_SPATIAL_OBJECTS_PRE20190321
 #if defined(USE_OLD_SPATIAL_OBJECTS_PRE20190321)
         typename FixedImageType::RegionType roiRegion = roiMask->GetAxisAlignedBoundingBoxRegion();
@@ -1199,8 +1198,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             using PointsContainer = typename BoundingBoxType::PointsContainer;
             typename BoundingBoxType::Pointer myBB =  roiMask->GetMyBoundingBoxInObjectSpace()->DeepCopy();
             const PointsContainer *corners = myBB->GetCorners();
-            typename PointsContainer::Pointer transformedCorners =
-                PointsContainer::New();
+            auto transformedCorners = PointsContainer::New();
             transformedCorners->Reserve(
                 static_cast<typename PointsContainer::ElementIdentifier>(
                     corners->size() ) );
@@ -1219,8 +1217,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
               ++it;
               ++itTrans;
             }
-            typename BoundingBoxType::Pointer indexBoundingBox =
-                BoundingBoxType::New();
+            auto indexBoundingBox = BoundingBoxType::New();
             indexBoundingBox->SetPoints(transformedCorners);
             indexBoundingBox->ComputeBoundingBox();
             typename FixedImageType::RegionType::IndexType indx;
@@ -1254,7 +1251,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         initializationImage = this->m_FixedVolume;
       }
 
-      typename BSplineTransformType::Pointer bsplineTx = BSplineTransformType::New();
+      auto bsplineTx = BSplineTransformType::New();
       // Initialize the BSpline transform
       // Using BSplineTransformInitializer
       //
@@ -1265,7 +1262,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       }
 
       using InitializerType = itk::BSplineTransformInitializer<BSplineTransformType, FixedImageType>;
-      typename InitializerType::Pointer transformInitializer = InitializerType::New();
+      auto transformInitializer = InitializerType::New();
 
       transformInitializer->SetTransform(bsplineTx);
       transformInitializer->SetImage(initializationImage);
@@ -1349,7 +1346,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       {
         using CommandIterationUpdateType =
           BRAINSFit::CommandIterationUpdate<LBFGSBOptimizerType, BSplineTransformType, RegisterImageType>;
-        typename CommandIterationUpdateType::Pointer observer = CommandIterationUpdateType::New();
+        auto observer = CommandIterationUpdateType::New();
         observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
         observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
         observer->SetPrintParameters(m_ObserveIterations);
@@ -1475,7 +1472,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
           {
             std::cout << "write the initial transform to the disk right before registration starts." << std::endl;
             this->m_CurrentGenericTransform->Print(std::cout);
-            itk::TransformFileWriter::Pointer dwriter1 = itk::TransformFileWriter::New();
+            auto dwriter1 = itk::TransformFileWriter::New();
             dwriter1->SetInput(this->m_CurrentGenericTransform->GetNthTransform(0));
             dwriter1->SetFileName("DEBUG_initial_transform_for_bspline.mat");
             dwriter1->SetUseCompression(true);
@@ -1554,7 +1551,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       }
       // Either current m_CurrentGenericTransform or m_RestoreState
       // are used to initialize the SyN registration.
-      typename CompositeTransformType::Pointer internalSyNSavedState = CompositeTransformType::New();
+      auto internalSyNSavedState = CompositeTransformType::New();
 
       typename CompositeTransformType::Pointer outputSyNTransform =
         simpleSynReg<FixedImageType, MovingImageType>(m_FixedVolume,
@@ -1618,7 +1615,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
             }
             std::cout << "Writing the registration state: " << this->m_SaveState << std::endl;
             using TransformWriterType = itk::TransformFileWriterTemplate<double>;
-            typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+            auto transformWriter = TransformWriterType::New();
             transformWriter->SetFileName(this->m_SaveState);
             transformWriter->AddTransform(internalSyNSavedState.GetPointer());
             transformWriter->SetUseCompression(true);

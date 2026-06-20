@@ -163,13 +163,12 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
       dynamic_cast<ImageMetricType *>(multiMetric->GetMetricQueue()[0].GetPointer());
 
     using ScalesEstimatorType = itk::RegistrationParameterScalesFromPhysicalShift<ImageMetricType>;
-    typename ScalesEstimatorType::Pointer scalesEstimator = ScalesEstimatorType::New();
+    auto scalesEstimator = ScalesEstimatorType::New();
     scalesEstimator->SetMetric(firstMetricComponent);
     scalesEstimator->SetTransformForward(true);
 
     using ConjugateGradientDescentOptimizerType = itk::ConjugateGradientLineSearchOptimizerv4Template<double>;
-    typename ConjugateGradientDescentOptimizerType::Pointer affineOptimizer =
-      ConjugateGradientDescentOptimizerType::New();
+    auto affineOptimizer = ConjugateGradientDescentOptimizerType::New();
     // Set the parameters of ConjugateGradient optimizer
     affineOptimizer->SetLowerLimit(0);
     affineOptimizer->SetUpperLimit(2);
@@ -197,7 +196,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
     std::cout << "Versor transform fixed parameters are set from fixed image's center of mass ... " << std::endl;
 #endif
     using FixedImageCalculatorType = typename itk::ImageMomentsCalculator<FixedImageType>;
-    typename FixedImageCalculatorType::Pointer fixedCalculator = FixedImageCalculatorType::New();
+    auto fixedCalculator = FixedImageCalculatorType::New();
     fixedCalculator->SetImage(m_FixedImage);
     fixedCalculator->Compute();
     typename FixedImageCalculatorType::VectorType fixedCenter = fixedCalculator->GetCenterOfGravity();
@@ -274,7 +273,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
 #endif
 
     using VersorOptimizerType = itk::RegularStepGradientDescentOptimizerv4<double>;
-    typename VersorOptimizerType::Pointer versorOptimizer = VersorOptimizerType::New();
+    auto versorOptimizer = VersorOptimizerType::New();
 
     versorOptimizer->SetScales(optimizerScales);
     versorOptimizer->SetNumberOfIterations(m_NumberOfIterations);
@@ -359,7 +358,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   if (this->m_ObserveIterations == true)
   {
     using CommandIterationUpdateType = BRAINSFit::CommandIterationUpdate<TOptimizer, TTransformType, TMovingImage>;
-    typename CommandIterationUpdateType::Pointer observer = CommandIterationUpdateType::New();
+    auto observer = CommandIterationUpdateType::New();
     observer->SetDisplayDeformedImage(m_DisplayDeformedImage);
     observer->SetPromptUserAfterDisplay(m_PromptUserAfterDisplay);
     observer->SetPrintParameters(true);
@@ -440,7 +439,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   if ( true ) // add DebugLevel here.
     {
     std::cout << "Write the output transform of the registration filter ..." << std::endl;
-    itk::TransformFileWriter::Pointer dwriter2 = itk::TransformFileWriter::New();
+    auto dwriter2 = itk::TransformFileWriter::New();
     dwriter2->SetInput( this->m_Transform );
     dwriter2->SetFileName("DEBUGTransform_RegFilterOutput.mat");
     dwriter2->SetUseCompression(true);

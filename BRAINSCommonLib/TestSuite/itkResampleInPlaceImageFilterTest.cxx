@@ -70,7 +70,7 @@ main(int argc, char * argv[])
   // Read in input test image
   ImagePointer inputImage;
   {
-    const ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(argv[1]);
     try
     {
@@ -89,13 +89,13 @@ main(int argc, char * argv[])
   const double rotationAngle = .5; // in rad
   auto         translation = itk::MakeFilled<itk::Vector<double, 3>>(0.);
   translation[1] = 300.; // in mm along P-axis
-  const TransformType::Pointer transform = TransformType::New();
+  const auto transform = TransformType::New();
   transform->SetIdentity();
   transform->SetRotation(rotationAxis, rotationAngle);
   transform->Translate(translation, true);
 
   // Set up the resample filter
-  const FilterType::Pointer filter = FilterType::New();
+  const auto filter = FilterType::New();
   filter->SetInputImage(inputImage);
   filter->SetRigidTransform(transform);
   filter->Update();
@@ -109,7 +109,7 @@ main(int argc, char * argv[])
   // Read in baseline image
   ImagePointer baselineImage = nullptr;
   {
-    const ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(argv[2]);
     try
     {
@@ -148,7 +148,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<ImageType>;
-  const WriterType::Pointer writer = WriterType::New();
+  const auto writer = WriterType::New();
   writer->SetFileName(argv[3]);
   writer->SetInput(outputImage);
   writer->Update();

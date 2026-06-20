@@ -28,7 +28,7 @@ main(int argc, char * argv[])
 
   using ReaderType = itk::ImageFileReader<ImageType>;
 
-  ReaderType::Pointer imageReader = ReaderType::New();
+  auto imageReader = ReaderType::New();
   imageReader->SetFileName(argv[1]);
   imageReader->Update();
   ImageType::Pointer image = imageReader->GetOutput();
@@ -38,7 +38,7 @@ main(int argc, char * argv[])
   if (argc == 4)
   {
     using MaskReaderType = itk::ImageFileReader<MaskImageType>;
-    MaskReaderType::Pointer maskReader = MaskReaderType::New();
+    auto maskReader = MaskReaderType::New();
     maskReader->SetFileName(argv[3]);
     maskReader->Update();
     mask = maskReader->GetOutput();
@@ -60,7 +60,7 @@ main(int argc, char * argv[])
   }
 
   using FloatWriterType = itk::ImageFileWriter<ImageType>;
-  FloatWriterType::Pointer writer = FloatWriterType::New();
+  auto writer = FloatWriterType::New();
 
   writer->SetInput(result);
   writer->SetFileName(argv[2]);

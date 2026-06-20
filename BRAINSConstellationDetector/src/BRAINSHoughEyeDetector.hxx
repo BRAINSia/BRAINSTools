@@ -37,7 +37,7 @@ RigidResampleInPlayByVersor3D(const typename TInputImage::ConstPointer &      im
    makes the image in the physical space aligned */
   using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<TInputImage, TOutputImage>;
 
-  typename ResampleIPFilterType::Pointer resampleIPFilter = ResampleIPFilterType::New();
+  auto resampleIPFilter = ResampleIPFilterType::New();
   resampleIPFilter->SetInputImage(image);
   resampleIPFilter->SetRigidTransform(versorRigid3DTfm.GetPointer());
   resampleIPFilter->Update();
@@ -155,7 +155,7 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
 
 
   // Set rigid tranformation
-  VersorRigid3DTransform<double>::Pointer versorRigid3DTfm = VersorRigid3DTransform<double>::New();
+  auto versorRigid3DTfm = VersorRigid3DTransform<double>::New();
   versorRigid3DTfm->Translate(translation2);
   versorRigid3DTfm->SetRotation(rotation1, -RotAngle[2]);
   versorRigid3DTfm->SetRotation(rotation2, -RotAngle[1]);
@@ -347,7 +347,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
   {
     {
       // Write debug ROI image
-      typename WriterType::Pointer writer = WriterType::New();
+      auto writer = WriterType::New();
       writer->SetFileName(this->m_ResultsDir + "/HoughEyeROI.nii.gz");
       writer->SetInput(this->m_RoIImage);
       writer->SetUseCompression(true);
@@ -364,7 +364,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::GenerateData()
 
     {
       // Write debug accumulator image
-      typename WriterType::Pointer writer = WriterType::New();
+      auto writer = WriterType::New();
       writer->SetFileName(this->m_ResultsDir + "/HoughEyeAccumulator.nii.gz");
       writer->SetInput(this->m_AccumulatorImage);
       writer->SetUseCompression(true);

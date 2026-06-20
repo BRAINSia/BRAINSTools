@@ -69,7 +69,7 @@ main(int argc, char * argv[])
   using GenericTransformType = itk::Transform<double, 3, 3>;
 
   GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk(inputTransform);
-  RigidTransformType::Pointer   reverseTransform = RigidTransformType::New();
+  auto                          reverseTransform = RigidTransformType::New();
   forwardTransform->GetInverse(reverseTransform);
   itk::WriteTransformToDisk<double>(reverseTransform, outputTransform);
   return EXIT_SUCCESS;

@@ -134,7 +134,7 @@ main(int argc, char ** argv)
   using TensorPixelType = itk::DiffusionTensor3D<TensorElementType>;
   using TensorImageType = itk::Image<TensorPixelType, 3>;
   using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
+  auto tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName(inputTensorVolume);
 
   try
@@ -153,7 +153,7 @@ main(int argc, char ** argv)
   using AnisotropyPixelType = float;
   using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
   using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
-  AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
+  auto anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
@@ -172,7 +172,7 @@ main(int argc, char ** argv)
   using MaskPixelType = unsigned char;
   using MaskImageType = itk::Image<MaskPixelType, 3>;
   using MaskImageReaderType = itk::ImageFileReader<MaskImageType>;
-  MaskImageReaderType::Pointer startingSeedImageReader = MaskImageReaderType::New();
+  auto startingSeedImageReader = MaskImageReaderType::New();
   startingSeedImageReader->SetFileName(inputStartingSeedsLabelMapVolume);
 
   try
@@ -187,7 +187,7 @@ main(int argc, char ** argv)
 
   /* Threshold Starting Label Map */
   using ThresholdFilterType = itk::ThresholdImageFilter<MaskImageType>;
-  ThresholdFilterType::Pointer startingThresholdFilter = ThresholdFilterType::New();
+  auto startingThresholdFilter = ThresholdFilterType::New();
   startingThresholdFilter->SetInput(startingSeedImageReader->GetOutput());
   startingThresholdFilter->SetLower(static_cast<MaskPixelType>(startingSeedsLabel));
   startingThresholdFilter->SetUpper(static_cast<MaskPixelType>(startingSeedsLabel));
@@ -196,7 +196,7 @@ main(int argc, char ** argv)
   MaskImageType::Pointer startingSeedMask = startingThresholdFilter->GetOutput();
   AdaptOriginAndDirection<MaskImageType>(startingSeedMask);
 
-  MaskImageReaderType::Pointer endingSeedImageReader = MaskImageReaderType::New();
+  auto endingSeedImageReader = MaskImageReaderType::New();
   endingSeedImageReader->SetFileName(inputEndingSeedsLabelMapVolume);
 
   try
@@ -210,7 +210,7 @@ main(int argc, char ** argv)
   }
 
   /* Threshold Ending Label Map */
-  ThresholdFilterType::Pointer endingThresholdFilter = ThresholdFilterType::New();
+  auto endingThresholdFilter = ThresholdFilterType::New();
   endingThresholdFilter->SetInput(endingSeedImageReader->GetOutput());
   endingThresholdFilter->SetLower(static_cast<MaskPixelType>(endingSeedsLabel));
   endingThresholdFilter->SetUpper(static_cast<MaskPixelType>(endingSeedsLabel));
@@ -223,7 +223,7 @@ main(int argc, char ** argv)
 
   using GraphTrackingFilterType =
     itk::DtiGraphSearchTrackingFilter<TensorImageType, AnisotropyImageType, MaskImageType>;
-  GraphTrackingFilterType::Pointer graphTrackingFilter = GraphTrackingFilterType::New();
+  auto graphTrackingFilter = GraphTrackingFilterType::New();
   graphTrackingFilter->SetAnisotropyImage(anisotropyImage);
   graphTrackingFilter->SetTensorImage(tensorImage);
   graphTrackingFilter->SetStartingRegion(startingSeedMask);

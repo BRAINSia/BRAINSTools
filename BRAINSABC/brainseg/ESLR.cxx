@@ -36,7 +36,7 @@ main(int argc, char * argv[])
   using ByteImageType = itk::Image<unsigned char, 3>;
   using ReaderType = itk::ImageFileReader<ByteImageType>;
 
-  const ReaderType::Pointer myReader = ReaderType::New();
+  const auto myReader = ReaderType::New();
   myReader->SetFileName(inputVolume);
   myReader->Update();
   const ByteImageType::Pointer myDirtyRegion = myReader->GetOutput();
@@ -66,7 +66,7 @@ main(int argc, char * argv[])
   }
 
   using OutputWriterType = itk::ImageFileWriter<ByteImageType>;
-  const OutputWriterType::Pointer writer = OutputWriterType::New();
+  const auto writer = OutputWriterType::New();
 
   writer->SetInput(myCleanRegion);
   writer->UseCompressionOn();

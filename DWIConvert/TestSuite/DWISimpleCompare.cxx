@@ -90,8 +90,8 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   using ImageType = itk::VectorImage<PixelType, DIMENSION>;
   using FileReaderType = itk::ImageFileReader<ImageType>;
 
-  typename FileReaderType::Pointer firstReader = FileReaderType::New();
-  typename FileReaderType::Pointer secondReader = FileReaderType::New();
+  auto firstReader = FileReaderType::New();
+  auto secondReader = FileReaderType::New();
 
   firstReader->SetFileName(inputVolume1.c_str());
   secondReader->SetFileName(inputVolume2.c_str());
@@ -149,7 +149,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   }
 #else
   using SubtractFilterType = itk::SubtractImageFilter<ImageType>;
-  typename SubtractFilterType::Pointer subtractFilter = SubtractFilterType::New();
+  auto subtractFilter = SubtractFilterType::New();
   subtractFilter->SetInput1(firstReader->GetOutput());
   subtractFilter->SetInput2(secondReader->GetOutput());
   subtractFilter->Update();
@@ -157,7 +157,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
   typename ImageType::Pointer subtractImage = subtractFilter->GetOutput();
 
   using StatisticsFilterType = itk::StatisticsImageFilter<ImageType>;
-  typename StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+  auto statisticsFilter = StatisticsFilterType::New();
   statisticsFilter->SetInput(subtractImage);
   try
   {
@@ -174,7 +174,7 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
     std::cerr << "Image Data Differs -- min diff " << statisticsFilter->GetMinimum() << " max diff "
               << statisticsFilter->GetMaximum() << std::endl;
     using ImageWriter = typename itk::ImageFileWriter<ImageType>;
-    typename ImageWriter::Pointer writer = ImageWriter::New();
+    auto writer = ImageWriter::New();
     writer->SetInput(subtractImage);
     std::string filename = itksys::SystemTools::GetFilenameWithoutExtension(inputVolume1);
     filename = itksys::SystemTools::GetFilenameName(filename);
@@ -238,7 +238,7 @@ GetImageType(const std::string &                 fileName,
              itk::ImageIOBase::IOComponentEnum & componentType)
 {
   using ImageType = itk::Image<short, 3>;
-  itk::ImageFileReader<ImageType>::Pointer imageReader = itk::ImageFileReader<ImageType>::New();
+  auto imageReader = itk::ImageFileReader<ImageType>::New();
   imageReader->SetFileName(fileName.c_str());
   imageReader->UpdateOutputInformation();
 

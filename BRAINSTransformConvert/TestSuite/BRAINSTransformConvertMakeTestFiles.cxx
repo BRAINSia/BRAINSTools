@@ -44,7 +44,7 @@ template <typename TTransform>
 typename TTransform::Pointer
 CreateTransform()
 {
-  typename TTransform::Pointer rval = TTransform::New();
+  auto rval = TTransform::New();
   rval->SetIdentity();
   return rval;
 }

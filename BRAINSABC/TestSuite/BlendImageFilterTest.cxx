@@ -32,7 +32,7 @@ main(int, char **)
   for (unsigned i = 0; i < 2; ++i)
   {
     using SourceType = itk::RandomImageSource<ImageType>;
-    SourceType::Pointer      source = SourceType::New();
+    auto                     source = SourceType::New();
     ImageType::SizeValueType size[2] = { 64, 64 };
     source->SetSize(size);
     source->SetMin(0.0);
@@ -41,7 +41,7 @@ main(int, char **)
     images[i] = source->GetOutput();
   }
   using BlendImageFilterType = itk::BlendImageFilter<ImageType, ImageType>;
-  BlendImageFilterType::Pointer filter = BlendImageFilterType::New();
+  auto filter = BlendImageFilterType::New();
   filter->SetInput1(images[0]);
   filter->SetInput2(images[1]);
   filter->SetBlend1(0.2);

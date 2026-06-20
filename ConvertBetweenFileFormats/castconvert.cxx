@@ -199,7 +199,7 @@ main(int argc, char * argv[])
     using FileNamesContainerType = std::vector<std::string>;
 
     /** Create a testReader. */
-    const ReaderType::Pointer testReader = ReaderType::New();
+    const auto testReader = ReaderType::New();
 
     /** Setup the testReader. */
     if (!isDICOM && !isVTI)
@@ -210,13 +210,13 @@ main(int argc, char * argv[])
     else if (!isVTI)
     {
       /** Get a name of a 2D image. */
-      const GDCMNamesGeneratorType::Pointer nameGenerator = GDCMNamesGeneratorType::New();
+      const auto nameGenerator = GDCMNamesGeneratorType::New();
       nameGenerator->SetInputDirectory(inputDirectoryName.c_str());
       FileNamesContainerType fileNames = nameGenerator->GetInputFileNames();
       const std::string &    fileName = fileNames[0];
 
       /** Create a dicom ImageIO and set it in the testReader. */
-      const GDCMImageIOType::Pointer dicomIO = GDCMImageIOType::New();
+      const auto dicomIO = GDCMImageIOType::New();
       testReader->SetImageIO(dicomIO);
 
       /** Set the name of the 2D dicom image in the testReader. */

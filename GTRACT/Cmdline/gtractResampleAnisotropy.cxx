@@ -96,7 +96,7 @@ main(int argc, char * argv[])
 
   using AnisotropyImageType = itk::Image<AnisotropyPixelType, 3>;
   using AnisotropyImageReaderType = itk::ImageFileReader<AnisotropyImageType>;
-  AnisotropyImageReaderType::Pointer anisotropyImageReader = AnisotropyImageReaderType::New();
+  auto anisotropyImageReader = AnisotropyImageReaderType::New();
   anisotropyImageReader->SetFileName(inputAnisotropyVolume);
 
   try
@@ -113,7 +113,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<PixelType, 3>;
   using AnatomicalImageReaderType = itk::ImageFileReader<ImageType>;
-  AnatomicalImageReaderType::Pointer anatomicalReader = AnatomicalImageReaderType::New();
+  auto anatomicalReader = AnatomicalImageReaderType::New();
   anatomicalReader->SetFileName(inputAnatomicalVolume);
 
   try
@@ -133,7 +133,7 @@ main(int argc, char * argv[])
   using AnisotropyImageType = itk::Image<float, 3>;
   using ResampleFilterType = itk::ResampleImageFilter<AnisotropyImageType, AnisotropyImageType>;
 
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  auto resample = ResampleFilterType::New();
   {
     resample->SetTransform(baseTransform);
   }
@@ -155,7 +155,7 @@ main(int argc, char * argv[])
   resampledImage->SetMetaDataDictionary(anatomicalReader->GetOutput()->GetMetaDataDictionary());
 
   using ImageFileWriterType = itk::ImageFileWriter<AnisotropyImageType>;
-  ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
+  auto ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName(outputVolume);
   ImageWriter->SetInput(resampledImage);

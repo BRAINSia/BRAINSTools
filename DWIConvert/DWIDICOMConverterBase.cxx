@@ -37,10 +37,10 @@ DWIDICOMConverterBase::LoadDicomDirectory()
   //
   // load the volume, either single or multivolume.
   m_NSlice = this->m_InputFileNames.size();
-  itk::DCMTKImageIO::Pointer dcmtkIO = itk::DCMTKImageIO::New();
+  auto dcmtkIO = itk::DCMTKImageIO::New();
   if (this->m_InputFileNames.size() > 1)
   {
-    ReaderType::Pointer reader = ReaderType::New();
+    auto reader = ReaderType::New();
     reader->SetImageIO(dcmtkIO);
     reader->SetFileNames(this->m_InputFileNames);
     try
@@ -58,7 +58,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
   }
   else
   {
-    itk::ImageFileReader<Volume3DUnwrappedType>::Pointer reader = itk::ImageFileReader<Volume3DUnwrappedType>::New();
+    auto reader = itk::ImageFileReader<Volume3DUnwrappedType>::New();
     reader->SetImageIO(dcmtkIO);
     reader->SetFileName(this->m_InputFileNames[0]);
     m_NSlice = this->m_InputFileNames.size();

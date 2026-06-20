@@ -60,7 +60,7 @@ CreateField<TImage, T2Image>::CreateField()
   m_Registration->SetMovingImagePyramid(m_MovingImagePyramid);
 
   using CommandType = SimpleMemberCommand<Self>;
-  typename CommandType::Pointer command = CommandType::New();
+  auto command = CommandType::New();
   command->SetCallbackFunction(this, &Self::StartNewLevel);
 
   m_Tag = m_Registration->AddObserver(IterationEvent(), command);
@@ -157,7 +157,7 @@ CreateField<TImage, T2Image>::Execute()
     this->NormalizeImage(m_ImageOne, m_MovingImage, m_MovingImageMinimum);
 
     using FilterType = HistogramMatchingImageFilter<OutputImageType, OutputImageType>;
-    typename FilterType::Pointer filter = FilterType::New();
+    auto filter = FilterType::New();
 
     filter->SetInput(m_MovingImage);
     filter->SetReferenceImage(m_FixedImage);
@@ -267,7 +267,7 @@ void
 CreateField<TImage, T2Image>::NormalizeImage(InputImageType * input, OutputImagePointer & output, InputPixelType & min)
 {
   using MinMaxFilterType = MinimumMaximumImageFilter<InputImageType>;
-  typename MinMaxFilterType::Pointer minMaxFilter = MinMaxFilterType::New();
+  auto minMaxFilter = MinMaxFilterType::New();
 
   minMaxFilter->SetInput(input);
   minMaxFilter->Update();
@@ -279,7 +279,7 @@ CreateField<TImage, T2Image>::NormalizeImage(InputImageType * input, OutputImage
   scale = 1.0 / scale;
 
   using FilterType = ShiftScaleImageFilter<InputImageType, OutputImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
 
   filter->SetInput(input);
   filter->SetShift(shift);

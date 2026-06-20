@@ -244,14 +244,14 @@ FFTWInit(const std::string & path_for_wisdom)
 HalfHermetianImageType::Pointer
 GetForwardFFT(FloatImageType::Pointer inputImage, const PrecisionType FFTScaler)
 {
-  FloatFFTWFullFFTType::Pointer fft = FloatFFTWFullFFTType::New();
+  auto fft = FloatFFTWFullFFTType::New();
   fft->SetInput(inputImage);
   fft->Update();
   HalfHermetianImageType::Pointer outputCoeffs = fft->GetOutput();
   if (FFTScaler != 1.0F)
   {
     using MultType = itk::MultiplyImageFilter<HalfHermetianImageType, HalfHermetianImageType>;
-    MultType::Pointer multFilt = MultType::New();
+    auto multFilt = MultType::New();
     multFilt->SetInput(outputCoeffs);
     multFilt->SetInPlace(true);
     multFilt->SetConstant(FFTScaler);
@@ -276,7 +276,7 @@ GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCoeffs,
               const PrecisionType FFTScaler)
 {
 #ifdef USE_HALF_FFTW
-  static FloatFFTWFullIFFTType::Pointer ifft = FloatFFTWFullIFFTType::New();
+  static auto ifft = FloatFFTWFullIFFTType::New();
   ifft->SetInput(inputFFTCoeffs);
 #  ifdef USE_HALF_FFTW
   ifft->SetActualXDimensionIsOdd(referenceImageBase_ActualXDimensionIsOdd);
@@ -286,16 +286,16 @@ GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCoeffs,
 #else
 //#define USE_FULL_COMPLEX_INVERSE // This is mostly working, turning off for testing.
 #  ifdef USE_FULL_COMPLEX_INVERSE
-  ComplexFFTWFullIFFT::Pointer C2CIFFT = ComplexFFTWFullIFFT::New();
+  auto C2CIFFT = ComplexFFTWFullIFFT::New();
   C2CIFFT->SetInput(inputFFTCoeffs);
   C2CIFFT->SetTransformDirection(ComplexFFTWFullIFFT::INVERSE);
   C2CIFFT->Update();
-  C2FType::Pointer c2f = C2FType::New();
+  auto c2f = C2FType::New();
   c2f->SetInput(C2CIFFT->GetOutput());
   c2f->Update();
   FloatImageType::Pointer                           referenceImageBaseOut = c2f->GetOutput();
 #  else
-  FloatFFTWFullIFFTType::Pointer ifft = FloatFFTWFullIFFTType::New();
+  auto ifft = FloatFFTWFullIFFTType::New();
   ifft->SetInput(inputFFTCoeffs);
 #    ifdef USE_HALF_FFTW
   ifft->SetActualXDimensionIsOdd(referenceImageBase_ActualXDimensionIsOdd);
@@ -308,7 +308,7 @@ GetInverseFFT(HalfHermetianImageType::Pointer inputFFTCoeffs,
   if (FFTScaler != 1.0F)
   {
     using MultType = itk::MultiplyImageFilter<FloatImageType, FloatImageType>;
-    MultType::Pointer multFilt = MultType::New();
+    auto multFilt = MultType::New();
     multFilt->SetInput(referenceImageBaseOut);
     // HACK multFilt->SetInPlace(true);
     multFilt->SetConstant(FFTScaler);
@@ -334,7 +334,7 @@ HalfHermetianImageType::Pointer CreateZeroFFTCoefficients(itk::ImageBase<3>::Poi
     newRegion.SetSize(temp_size);
   }
 #endif
-  HalfHermetianImageType::Pointer outputFreqCoeffs = HalfHermetianImageType::New();
+  auto outputFreqCoeffs = HalfHermetianImageType::New();
   outputFreqCoeffs->CopyInformation(referenceImageBase);
   outputFreqCoeffs->SetRegions(newRegion);
   outputFreqCoeffs->Allocate();
@@ -448,7 +448,7 @@ IdentityResampleByFFT(FloatImageType::Pointer inOriginalImage, itk::ImageBase<3>
 HalfHermetianImageType::Pointer
 GetLowPassFilterFFT(FloatImageType::Pointer inputImage, itk::ImageBase<3>::Pointer referenceImageBase)
 {
-  FloatFFTWFullFFTType::Pointer fft = FloatFFTWFullFFTType::New();
+  auto fft = FloatFFTWFullFFTType::New();
   fft->SetInput(inputImage);
   fft->Update();
   HalfHermetianImageType::Pointer inputImage_cmplHH = fft->GetOutput();
@@ -474,7 +474,7 @@ CVImageType::Pointer
 GetGradient(FloatImageType::Pointer inputImage)
 {
 #if 1
-  GradientType::Pointer gradient_of_p = GradientType::New();
+  auto gradient_of_p = GradientType::New();
   using FloatBoundaryType = itk::PeriodicBoundaryCondition<FloatImageType>;
   gradient_of_p->OverrideBoundaryCondition(new FloatBoundaryType);
   gradient_of_p->SetInput(inputImage);
@@ -510,7 +510,7 @@ GetGradient(FloatImageType::Pointer inputImage)
 DivergenceType::OutputImageType::Pointer
 GetDivergence(CVImageType::Pointer inputImage)
 {
-  DivergenceType::Pointer divergence_of_gradient_of_p = DivergenceType::New();
+  auto divergence_of_gradient_of_p = DivergenceType::New();
   using CVBoundaryType = itk::PeriodicBoundaryCondition<CVImageType>;
   divergence_of_gradient_of_p->OverrideBoundaryCondition(new CVBoundaryType);
   divergence_of_gradient_of_p->SetInput(inputImage);
@@ -531,13 +531,13 @@ void
 WriteComplexImages(HalfHermetianImageType::Pointer cmplxIn, const std::string prefix)
 {
   using C2RType = itk::ComplexToRealImageFilter<HalfHermetianImageType, FloatImageType>;
-  C2RType::Pointer c2r = C2RType::New();
+  auto c2r = C2RType::New();
   c2r->SetInput(cmplxIn);
   c2r->Update();
   WriteFile(c2r->GetOutput(), prefix + "_real.nii");
 #if 1
   using C2IType = itk::ComplexToImaginaryImageFilter<HalfHermetianImageType, FloatImageType>;
-  C2IType::Pointer c2i = C2IType::New();
+  auto c2i = C2IType::New();
   c2i->SetInput(cmplxIn);
   c2i->Update();
   c2i->GetOutput();
@@ -549,11 +549,11 @@ HalfHermetianImageType::Pointer
 ReadComplexImages(const std::string prefix)
 {
   using FileReaderType = itk::ImageFileReader<FloatImageType>;
-  FileReaderType::Pointer fr = FileReaderType::New();
+  auto fr = FileReaderType::New();
   fr->SetFileName(prefix + "_real.nii");
   fr->Update();
   FloatImageType::Pointer re = fr->GetOutput();
-  FileReaderType::Pointer fi = FileReaderType::New();
+  auto fi = FileReaderType::New();
   fi->SetFileName(prefix + "_imag.nii");
   fi->Update();
   FloatImageType::Pointer im = fi->GetOutput();
@@ -577,7 +577,7 @@ FloatImageType::Pointer
 NormalizeDataComponent(FloatImageType::Pointer arr)
 {
   using RescalerType = itk::RescaleIntensityImageFilter<FloatImageType, FloatImageType>;
-  RescalerType::Pointer rescaler = RescalerType::New();
+  auto rescaler = RescalerType::New();
   rescaler->SetInput(arr);
   rescaler->SetOutputMaximum(1.0);
   rescaler->SetOutputMinimum(0.0);

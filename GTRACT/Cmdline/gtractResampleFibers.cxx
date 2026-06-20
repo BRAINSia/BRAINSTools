@@ -129,7 +129,7 @@ main(int argc, char * argv[])
   using DisplacementFieldType = itk::Image<VectorPixelType, Dimension>;
   using FieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
 
-  FieldReaderType::Pointer forwardFieldReader = FieldReaderType::New();
+  auto forwardFieldReader = FieldReaderType::New();
   forwardFieldReader->SetFileName(inputForwardDeformationFieldVolume);
 
   try
@@ -145,7 +145,7 @@ main(int argc, char * argv[])
   DisplacementFieldType::Pointer forwardDeformationField = forwardFieldReader->GetOutput();
   // AdaptOriginAndDirection<DisplacementFieldType>( forwardDeformationField );
 
-  FieldReaderType::Pointer reverseFieldReader = FieldReaderType::New();
+  auto reverseFieldReader = FieldReaderType::New();
   reverseFieldReader->SetFileName(inputReverseDeformationFieldVolume);
 
   try
@@ -162,7 +162,7 @@ main(int argc, char * argv[])
   // AdaptOriginAndDirection<DisplacementFieldType>( reverseDeformationField );
 
   using OrientFilterType = itk::OrientImageFilter<DisplacementFieldType, DisplacementFieldType>;
-  OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
+  auto orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput(reverseDeformationField);
   orientImageFilter->SetDesiredCoordinateDirection(forwardDeformationField->GetDirection());
   orientImageFilter->UseImageDirectionOn();
@@ -209,7 +209,7 @@ main(int argc, char * argv[])
 
   using CoordinateType = double;
   using InterpolatorType = itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordinateType>;
-  InterpolatorType::Pointer interpolator = InterpolatorType::New();
+  auto interpolator = InterpolatorType::New();
   interpolator->SetInputImage(orientImageFilter->GetOutput());
 
   vtkPoints * fiberPoints = inputFiber->GetPoints();

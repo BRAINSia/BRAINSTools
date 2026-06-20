@@ -48,7 +48,7 @@ typename TImage::Pointer
 readImage(const char * fn)
 {
   using ReaderType = itk::ImageFileReader<TImage>;
-  typename ReaderType::Pointer reader = ReaderType::New();
+  auto reader = ReaderType::New();
 
   reader->SetFileName(fn);
   reader->Update();
@@ -61,7 +61,7 @@ void
 writeImage(const char * fn, const TImage * ip)
 {
   using WriterType = itk::ImageFileWriter<TImage>;
-  typename WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->UseCompressionOn();
 
   writer->SetFileName(fn);

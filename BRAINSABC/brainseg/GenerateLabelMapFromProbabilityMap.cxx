@@ -63,7 +63,7 @@ main(int argc, char * argv[])
     std::cout << "- Read image::" << inputVolumes[indexInputImages] << std::endl;
     using ProbabilityImageReaderType = itk::ImageFileReader<ProbabilityMapImageType>;
 
-    const ProbabilityImageReaderType::Pointer probabilityReader = ProbabilityImageReaderType::New();
+    const auto probabilityReader = ProbabilityImageReaderType::New();
 
     probabilityReader->SetFileName(inputVolumes[indexInputImages]);
     probabilityReader->Update();
@@ -76,7 +76,7 @@ main(int argc, char * argv[])
   using LabelMapPixelType = unsigned int;
   using LabelMapImageType = itk::Image<LabelMapPixelType, Dimension>;
 
-  const LabelMapImageType::Pointer labelImage = LabelMapImageType::New();
+  const auto labelImage = LabelMapImageType::New();
 
   std::cerr << "here" << __FILE__ << " " << __LINE__ << std::endl;
   std::cerr << " ProbImage:  " << probabilityImages[0] << std::endl;
@@ -119,7 +119,7 @@ main(int argc, char * argv[])
   // Image Writer
   using LabelWriterType = itk::ImageFileWriter<LabelMapImageType>;
 
-  const LabelWriterType::Pointer labelWriter = LabelWriterType::New();
+  const auto labelWriter = LabelWriterType::New();
 
   labelWriter->SetFileName(outputLabelVolume);
   labelWriter->SetInput(labelImage);

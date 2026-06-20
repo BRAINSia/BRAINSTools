@@ -68,7 +68,7 @@ TEST(AverageImageFilter, AverageMatchesManualComputation)
   }
 
   // Manual average — same algorithm as the original test
-  const FloatImage2DType::Pointer testAvg = FloatImage2DType::New();
+  const auto testAvg = FloatImage2DType::New();
   testAvg->CopyInformation(inputImages[0]);
   testAvg->SetRegions(randomSize);
   testAvg->Allocate();

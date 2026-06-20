@@ -15,7 +15,7 @@ DumpImageInfo(const std::string & filename)
   using PixelType = double;
   using ImageType = itk::Image<PixelType, ImageDimension>;
   using ReaderType = typename itk::ImageFileReader<ImageType>;
-  const typename ReaderType::Pointer reader = ReaderType::New();
+  const auto reader = ReaderType::New();
   reader->SetFileName(filename);
   reader->Update();
 

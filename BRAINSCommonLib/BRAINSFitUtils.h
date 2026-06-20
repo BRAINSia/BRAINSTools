@@ -84,7 +84,7 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
     const typename MaskImageType::ConstPointer tempOutputFixedVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(fixedMask.GetPointer());
     using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
-    typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    auto duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputFixedVolumeROI);
     duplicator->Update();
     fixedMaskImage = duplicator->GetOutput();
@@ -94,7 +94,7 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
     const typename MaskImageType::ConstPointer tempOutputMovingVolumeROI =
       ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask.GetPointer());
     using DuplicatorType = itk::ImageDuplicator<MaskImageType>;
-    typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    auto duplicator = DuplicatorType::New();
     duplicator->SetInputImage(tempOutputMovingVolumeROI);
     duplicator->Update();
     movingMaskImage = duplicator->GetOutput();
@@ -139,12 +139,12 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
 
   using ImageMaskSpatialObjectType = itk::ImageMaskSpatialObject<MaskImageType::ImageDimension>;
 
-  typename ImageMaskSpatialObjectType::Pointer fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
+  auto fixedMaskSpatialObject = ImageMaskSpatialObjectType::New();
   fixedMaskSpatialObject->SetImage(fixedMaskImage);
   fixedMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   fixedMask = fixedMaskSpatialObject.GetPointer();
 
-  typename ImageMaskSpatialObjectType::Pointer movingMaskSpatialObject = ImageMaskSpatialObjectType::New();
+  auto movingMaskSpatialObject = ImageMaskSpatialObjectType::New();
   movingMaskSpatialObject->SetImage(movingMaskImage);
   movingMaskSpatialObject->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
   movingMask = movingMaskSpatialObject.GetPointer();
@@ -260,7 +260,7 @@ ClampNoisyTailsOfImage(const float                               m_RemoveIntensi
                        typename TMaskSpatialObject::ConstPointer mask)
 {
   using DuplicatorType = itk::ImageDuplicator<TInputImage>;
-  typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
+  auto duplicator = DuplicatorType::New();
   duplicator->SetInputImage(InputImage);
   duplicator->Update();
   typename TInputImage::Pointer image = duplicator->GetOutput();

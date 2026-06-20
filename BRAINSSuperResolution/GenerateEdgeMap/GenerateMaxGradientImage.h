@@ -75,7 +75,7 @@ MaxOfImageList(
 
   for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
-    typename MaximumFilterType::Pointer myMax = MaximumFilterType::New();
+    auto myMax = MaximumFilterType::New();
     myMax->SetInput1(maxImage);
     myMax->SetInput2(inputImageList[i]);
     try
@@ -147,11 +147,11 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
 
   for (size_t i = 0; i < numberOfImageModalities; ++i)
   {
-    typename GradientFilterType::Pointer gradientFilter = GradientFilterType::New();
+    auto gradientFilter = GradientFilterType::New();
     gradientFilter->SetInput(inputImages[i]);
     gradientFilter->Update();
 
-    typename MinMaxCalculatorType::Pointer myMinMax = MinMaxCalculatorType::New();
+    auto myMinMax = MinMaxCalculatorType::New();
     myMinMax->SetImage(gradientFilter->GetOutput());
     myMinMax->Compute();
     typename InputImageType::PixelType imgMin = myMinMax->GetMinimum();
@@ -163,7 +163,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
       numBins = 256;
     }
 
-    typename LabelStatisticsImageFilter::Pointer maskedStatistics = LabelStatisticsImageFilter::New();
+    auto maskedStatistics = LabelStatisticsImageFilter::New();
     maskedStatistics->SetInput(gradientFilter->GetOutput());
     maskedStatistics->SetLabelInput(internalMask);
     maskedStatistics->UseHistogramsOn();
@@ -185,7 +185,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
       }
     */
 
-    typename WindowRescalerType::Pointer intensityMapper = WindowRescalerType::New();
+    auto intensityMapper = WindowRescalerType::New();
     intensityMapper->SetInput(gradientFilter->GetOutput());
     intensityMapper->SetOutputMinimum(minOutputRange);
     intensityMapper->SetOutputMaximum(maxOutputRange);
@@ -201,7 +201,7 @@ GenerateMaxGradientImage(const std::vector<typename InputImageType::Pointer> & i
     // Another rescaling was needed if we were computing summed gradient image.
     using RescaleFilterType = itk::IntensityWindowingImageFilter<OutputImageType,
                                                OutputImageType>;
-    typename RescaleFilterType::Pointer outputRescaler = RescaleFilterType::New();
+    auto outputRescaler = RescaleFilterType::New();
     outputRescaler->SetOutputMinimum(0);
     outputRescaler->SetOutputMaximum(255);
     outputRescaler->SetInput( maxGradientImage );

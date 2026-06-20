@@ -14,7 +14,7 @@ void itkImage2MxArray(const std::string filename, mxArray* plhs[])
     typedef itk::Image< PixelType, 3>  ImageType;
     typedef itk::ImageFileReader<ImageType>  ReaderType;
 
-    ReaderType::Pointer reader = ReaderType::New();
+    auto reader = ReaderType::New();
     reader->SetFileName(filename);
 
     try

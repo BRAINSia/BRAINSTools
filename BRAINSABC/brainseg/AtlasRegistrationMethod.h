@@ -91,7 +91,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
 
   using BinaryThreshImageFilterType = itk::BinaryThresholdImageFilter<TImage, TImage>;
   using MultiplyFilterType = itk::MultiplyImageFilter<TImage, TImage>;
-  typename BinaryThreshImageFilterType::Pointer firstBinary = BinaryThreshImageFilterType::New();
+  auto firstBinary = BinaryThreshImageFilterType::New();
   firstBinary->SetLowerThreshold(0);
   firstBinary->SetUpperThreshold(0);
   firstBinary->SetInsideValue(0.0);
@@ -101,14 +101,14 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   typename TImage::Pointer averageMask = firstBinary->GetOutput();
   for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
-    typename BinaryThreshImageFilterType::Pointer myThresholder = BinaryThreshImageFilterType::New();
+    auto myThresholder = BinaryThreshImageFilterType::New();
     myThresholder->SetInput(inputImageList[i]);
     myThresholder->SetLowerThreshold(0); // Only valuse exactly equal to zero are to be used.
     myThresholder->SetUpperThreshold(0);
     myThresholder->SetInsideValue(0.0);
     myThresholder->SetOutsideValue(1.0);
     myThresholder->Update();
-    typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
+    auto multIF = MultiplyFilterType::New();
     multIF->SetInput1(averageMask);
     multIF->SetInput2(myThresholder->GetOutput());
     multIF->Update();
@@ -116,8 +116,8 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
   }
 
   using AvgFilterType = itk::AverageImageFilter<TImage, TImage>;
-  typename AvgFilterType::Pointer filter = AvgFilterType::New();
-  typename TImage::Pointer        referenceScaleImg = inputImageList[0];
+  auto                     filter = AvgFilterType::New();
+  typename TImage::Pointer referenceScaleImg = inputImageList[0];
   filter->SetInput(0, referenceScaleImg);
   for (unsigned int i = 1; i < inputImageList.size(); ++i)
   {
@@ -127,7 +127,7 @@ AverageImageList(const std::vector<typename TImage::Pointer> & inputImageList)
     filter->SetInput(i, temp);
   }
   filter->Update();
-  typename MultiplyFilterType::Pointer multIF = MultiplyFilterType::New();
+  auto multIF = MultiplyFilterType::New();
   multIF->SetInput1(averageMask);
   multIF->SetInput2(filter->GetOutput());
   multIF->Update();

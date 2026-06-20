@@ -551,7 +551,7 @@ public:
       FloatImageRegion::IndexType _index;
       _index[0] = _index[1] = _index[2] = 0;
       region.SetIndex(_index);
-      FloatImageType::Pointer debugImage = FloatImageType::New();
+      auto debugImage = FloatImageType::New();
       debugImage->SetSpacing(spacing);
       // Just use defaults debugImage->SetOrigin(in->GetOrigin());
       // Just use defaults debugImage->SetDirection(in->GetDirection());

@@ -78,7 +78,7 @@ main(int, char *[])
   size[0] = 3;
   size[1] = 4;
   size[2] = 4;
-  HalfHermetianImageType::Pointer inEvenSmall = HalfHermetianImageType::New();
+  auto inEvenSmall = HalfHermetianImageType::New();
   region.SetSize(size);
   inEvenSmall->SetRegions(region);
   inEvenSmall->Allocate();
@@ -86,7 +86,7 @@ main(int, char *[])
   FillWithIndexValue(inEvenSmall);
   // DumpImage(inEvenSmall);
 
-  HalfHermetianImageType::Pointer inEvenLarge = HalfHermetianImageType::New();
+  auto inEvenLarge = HalfHermetianImageType::New();
   size[0] = 4;
   size[1] = 6;
   size[2] = 6;
@@ -96,7 +96,7 @@ main(int, char *[])
   inEvenLarge->FillBuffer(Zero);
   FillWithIndexValue(inEvenLarge);
   // DumpImage(inEvenLarge);
-  HalfHermetianImageType::Pointer inEven2Large = HalfHermetianImageType::New();
+  auto inEven2Large = HalfHermetianImageType::New();
   size[0] = 4;
   size[1] = 6;
   size[2] = 6;
@@ -157,7 +157,7 @@ main(int, char *[])
     //=================================================
 #if 0
   using Image2D = itk::Image<float,3>;
-  Image2D::Pointer im2 = Image2D::New();
+  auto im2 = Image2D::New();
   Image2D::RegionType region;
   auto size = itk::MakeFilled<Image2D::RegionType::SizeType>(IM2DSIZE);
   region.SetSize(size);
@@ -170,7 +170,7 @@ main(int, char *[])
   im2->SetPixel(idx,1.0F);
   //using GradientType = itk::GradientImageFilter<Image2D>;
   using GradientType = rtk::ForwardDifferenceGradientImageFilter<Image2D>;
-  GradientType::Pointer grad = GradientType::New();
+  auto grad = GradientType::New();
   grad->SetInput(im2);
   grad ->UseImageSpacingOff();
   using FloatBoundaryType = itk::PeriodicBoundaryCondition<Image2D>;
@@ -179,7 +179,7 @@ main(int, char *[])
   GradientType::OutputImageType::Pointer gradIm = grad->GetOutput();
   //using DivergenceType = itk::DivergenceImageFilter<GradientType::OutputImageType>;
   using DivergenceType = rtk::BackwardDifferenceDivergenceImageFilter<GradientType::OutputImageType>;
-  DivergenceType::Pointer div = DivergenceType::New();
+  auto div = DivergenceType::New();
   div->SetInput(gradIm);
   div->SetUseImageSpacing(false);
   using CVBoundaryType = itk::PeriodicBoundaryCondition<GradientType::OutputImageType>;
@@ -204,7 +204,7 @@ main(int, char *[])
   using WriterType = itk::ImageFileWriter<FloatImageType>;
 
   const std::string hriFileName = "/Users/johnsonhj/src/20160711_SuperResolution_MatlabExample/input_nrrd/dwi_b0_hr.nii";
-  ReaderType::Pointer hriReader = ReaderType::New();
+  auto hriReader = ReaderType::New();
   hriReader->SetFileName(hriFileName);
   hriReader->Update();
   FloatImageType::Pointer hri = hriReader->GetOutput();
@@ -213,13 +213,13 @@ main(int, char *[])
   FloatImageType::Pointer test = GetInverseFFT(GetForwardFFT(hri,1.0),hri_ActualXDimensionIsOdd,1.0);
   WriteFile(test.GetPointer(),"/tmp/SR/toFromFFT.nii");
 
-  itk::ShrinkImageFilter<FloatImageType,FloatImageType>::Pointer intensityReader = itk::ShrinkImageFilter<FloatImageType,FloatImageType>::New();
+  auto intensityReader = itk::ShrinkImageFilter<FloatImageType,FloatImageType>::New();
   intensityReader->SetInput(hri);
   intensityReader->SetShrinkFactors(2);
   intensityReader->Update();
   FloatImageType::Pointer lri = intensityReader->GetOutput();
 
-  WriterType::Pointer hriWriter = WriterType::New();
+  auto hriWriter = WriterType::New();
   hriWriter->SetInput(hri);
   hriWriter->SetFileName("/tmp/SR/original.nii.gz");
   hriWriter->Update();
@@ -234,12 +234,12 @@ main(int, char *[])
 
 #  if 0
   const std::string lriFileName = "/Shared/johnsonhj/HDNI/20160709_SuperResolution_MatlabExample/input_nrrd/dwi_b0_lr.nrrd";//argv[1];
-  ReaderType::Pointer intensityReader = ReaderType::New();
+  auto intensityReader = ReaderType::New();
   intensityReader->SetFileName(lriFileName);
   intensityReader->Update();
   FloatImageType::Pointer lri = intensityReader->GetOutput();
 
-  HalfHermetianImageType::Pointer upsampledFreq = HalfHermetianImageType::New();
+  auto upsampledFreq = HalfHermetianImageType::New();
   {
     FloatImageType::RegionType newRegion = hri->GetLargestPossibleRegion();
     {
@@ -257,13 +257,13 @@ main(int, char *[])
 #    if 1
   std::cout << "===============\n" << upsampledFreq << std::endl;
 
-  TForwardFFT::Pointer TEMP = TForwardFFT::New();
+  auto TEMP = TForwardFFT::New();
   TEMP->SetInput(hri);
   TEMP->Update();
   upsampledFreq= TEMP->GetOutput();
   {
-  itk::ImageFileWriter<FloatImageType>::Pointer cmplxWriter = itk::ImageFileWriter<FloatImageType>::New();
-  itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::Pointer tfmCmplx2Real = itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::New();
+  auto cmplxWriter = itk::ImageFileWriter<FloatImageType>::New();
+  auto tfmCmplx2Real = itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::New();
   tfmCmplx2Real->SetInput(upsampledFreq);
   tfmCmplx2Real->Update();
   cmplxWriter->SetInput(tfmCmplx2Real->GetOutput());
@@ -273,7 +273,7 @@ main(int, char *[])
   upsampledFreq->FillBuffer(std::complex<float>(0,0));
   std::cout << "===============\n" << upsampledFreq << std::endl;
 #    endif
-  TForwardFFT::Pointer fft = TForwardFFT::New();
+  auto fft = TForwardFFT::New();
   fft->SetInput( lri );
   const bool lri_ActualXDimensionIsOdd = ( lri->GetLargestPossibleRegion().GetSize()[0] % 2 ) ? true: false;
   fft->Update();
@@ -299,8 +299,8 @@ main(int, char *[])
     }
   }
   {
-  itk::ImageFileWriter<FloatImageType>::Pointer cmplxWriter = itk::ImageFileWriter<FloatImageType>::New();
-  itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::Pointer tfmCmplx2Real = itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::New();
+  auto cmplxWriter = itk::ImageFileWriter<FloatImageType>::New();
+  auto tfmCmplx2Real = itk::ComplexToModulusImageFilter<HalfHermetianImageType,FloatImageType>::New();
   tfmCmplx2Real->SetInput(upsampledFreq);
   tfmCmplx2Real->Update();
   cmplxWriter->SetInput(tfmCmplx2Real->GetOutput());
@@ -308,7 +308,7 @@ main(int, char *[])
   cmplxWriter->Update();
   }
 
-  TInverseFFT::Pointer ifft = TInverseFFT::New();
+  auto ifft = TInverseFFT::New();
 
   ifft->SetInput( upsampledFreq );
   const bool hri_ActualXDimensionIsOdd = ( hri->GetLargestPossibleRegion().GetSize()[0] % 2 ) ? true: false;
@@ -320,7 +320,7 @@ main(int, char *[])
 
 
   const std::string outFileName = "/tmp/SR/out.nrrd";
-  WriterType::Pointer hriWriter = WriterType::New();
+  auto hriWriter = WriterType::New();
   hriWriter->SetInput(hriOut);
   hriWriter->SetFileName(outFileName);
   hriWriter->Update();

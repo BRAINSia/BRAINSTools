@@ -68,7 +68,7 @@ main(int argc, char * argv[])
   ThresholdRegionFinderType::ThresholdArrayType QuantileLowerThreshold(numberOfModes);
   ThresholdRegionFinderType::ThresholdArrayType QuantileUpperThreshold(numberOfModes);
 
-  ThresholdRegionFinderType::Pointer thresholdRegionFinder = ThresholdRegionFinderType::New();
+  auto thresholdRegionFinder = ThresholdRegionFinderType::New();
 
   MaskImageType::Pointer RegionMaskVolume = nullptr;
   if (!inputMaskVolume.empty())
@@ -84,7 +84,7 @@ main(int argc, char * argv[])
                                      // specified on command line.
       {
         using ROIAutoType = itk::BRAINSROIAutoImageFilter<ImageType, MaskImageType>;
-        ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+        auto ROIFilter = ROIAutoType::New();
         ROIFilter->SetInput(ImageInput);
         ROIFilter->Update();
         RegionMaskVolume = ROIFilter->GetOutput();

@@ -30,7 +30,7 @@ CreateVolume(VectorVolume4DType::Pointer & inputVol)
   VectorVolume4DType::PointType     inputOrigin = inputVol->GetOrigin();
   VectorVolume4DType::DirectionType inputDirection = inputVol->GetDirection();
 
-  Volume4DType::Pointer       niftiVolume = Volume4DType::New();
+  auto                        niftiVolume = Volume4DType::New();
   Volume4DType::SizeType      volSize;
   Volume4DType::SpacingType   volSpacing;
   Volume4DType::PointType     volOrigin;

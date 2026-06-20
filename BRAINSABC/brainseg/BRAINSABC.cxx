@@ -136,7 +136,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
     for (auto imIt = elem.second.begin(); imIt != elem.second.end(); ++imIt)
     {
       using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, FloatImageType>;
-      const RescaleType::Pointer rescaler = RescaleType::New();
+      const auto rescaler = RescaleType::New();
       rescaler->SetOutputMinimum(1);
       rescaler->SetOutputMaximum(MAX_IMAGE_OUTPUT_VALUE);
       // #define INPLACE_RESCALER 0 // HACK Test this out
@@ -149,7 +149,7 @@ RescaleFunctionLocal(AtlasRegType::MapOfFloatImageVectors & localList, const Byt
 
       using MultType = itk::MultiplyImageFilter<FloatImageType, ByteImageType, FloatImageType>;
 
-      const MultType::Pointer mult = MultType::New();
+      const auto mult = MultType::New();
       mult->SetInput1(rescaler->GetOutput());
       mult->SetInput2(FOVMask);
       mult->Update();
@@ -490,7 +490,7 @@ main(int argc, char ** argv)
     }
     muLogMacro(<< "Reading mask : " << templateMask << "...\n");
 
-    const ReaderPointer imgreader = ReaderType::New();
+    const auto imgreader = ReaderType::New();
     imgreader->SetFileName(templateMask.c_str());
 
     try
@@ -539,7 +539,7 @@ main(int argc, char ** argv)
   ByteImagePointerType    ResampledToFirstFOVMask = nullptr;
   const std::vector<bool> candidateDuplicatesList;
   {
-    const AtlasRegType::Pointer atlasreg = AtlasRegType::New();
+    const auto atlasreg = AtlasRegType::New();
 
     if (debuglevel > 0)
     {
@@ -582,7 +582,7 @@ main(int argc, char ** argv)
               muLogMacro(<< "\n***Reading image "
                          << ": " << (*imIt) << "...\n");
 
-              const LocalReaderPointer imgreader = LocalReaderType::New();
+              const auto imgreader = LocalReaderType::New();
               imgreader->SetFileName(imIt->c_str());
 
               try
@@ -638,7 +638,7 @@ main(int argc, char ** argv)
                 {
                   // DEBUG:  This code is for debugging purposes only;
                   using WriterType = itk::ImageFileWriter<FloatImageType>;
-                  const WriterType::Pointer writer = WriterType::New();
+                  const auto writer = WriterType::New();
                   writer->UseCompressionOn();
 
                   std::stringstream template_index_stream("");
@@ -682,7 +682,7 @@ main(int argc, char ** argv)
           {
             const std::string curAtlasName = FindPathFromAtlasXML(*(mapIt->second.begin()), atlasDefinitionPath);
             muLogMacro(<< "\n***Reading atlas image " << mapIt->first << ": " << curAtlasName << "...\n");
-            const LocalReaderPointer imgreader = LocalReaderType::New();
+            const auto imgreader = LocalReaderType::New();
             imgreader->SetFileName(curAtlasName.c_str());
             try
             {
@@ -713,7 +713,7 @@ main(int argc, char ** argv)
             if (debuglevel > 7)
             {
               using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
-              const FloatWriterType::Pointer writer = FloatWriterType::New();
+              const auto writer = FloatWriterType::New();
 
               const std::stringstream write_atlas_index_stream("");
               const std::string       fn = std::string("")
@@ -954,7 +954,7 @@ main(int argc, char ** argv)
 
           using ResampleType = itk::ResampleImageFilter<FloatImageType, FloatImageType>;
           using ResamplePointer = ResampleType::Pointer;
-          const ResamplePointer resampler = ResampleType::New();
+          const auto resampler = ResampleType::New();
 
           resampler->SetInput(GetMapVectorFirstElement(atlasOriginalImageList));
           resampler->SetTransform(atlasToSubjectPreSegmentationTransform);
@@ -964,12 +964,12 @@ main(int argc, char ** argv)
           resampler->SetDefaultPixelValue(0);
           resampler->Update();
           using ShortRescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
-          const ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
+          const auto rescaler = ShortRescaleType::New();
           rescaler->SetInput(resampler->GetOutput());
           rescaler->Update();
 
           using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-          const ShortWriterType::Pointer writer = ShortWriterType::New();
+          const auto writer = ShortWriterType::New();
 
           const std::string fn = outputDir + std::string("AtlasToSubjectInitialization_") + suffstr;
 
@@ -985,7 +985,7 @@ main(int argc, char ** argv)
           {
             using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
 
-            const ShortRescaleType::Pointer rescaler = ShortRescaleType::New();
+            const auto rescaler = ShortRescaleType::New();
             rescaler->SetOutputMinimum(0);
             rescaler->SetOutputMaximum(MAX_IMAGE_OUTPUT_VALUE);
             rescaler->SetInput(elem.second[i]);
@@ -998,7 +998,7 @@ main(int argc, char ** argv)
                                      .append(suffstr);
 
             using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-            const ShortWriterType::Pointer writer = ShortWriterType::New();
+            const auto writer = ShortWriterType::New();
 
             writer->SetInput(rescaler->GetOutput());
             writer->SetFileName(fn.c_str());
@@ -1059,7 +1059,7 @@ main(int argc, char ** argv)
 
   for (unsigned int segmentationLevel = 0; segmentationLevel < 1; ++segmentationLevel)
   {
-    const SegFilterType::Pointer segfilter = SegFilterType::New();
+    const auto segfilter = SegFilterType::New();
     segfilter->SetUseKNN(useKNN);
 
     segfilter->SetUsePurePlugs(usePurePlugs);
@@ -1073,8 +1073,8 @@ main(int argc, char ** argv)
     {
       using LocalReaderType = itk::ImageFileReader<FloatImageType>;
       using LocalReaderPointer = LocalReaderType::Pointer;
-      const LocalReaderPointer priorReader = LocalReaderType::New();
-      const std::string        curPriorAtlasName =
+      const auto        priorReader = LocalReaderType::New();
+      const std::string curPriorAtlasName =
         FindPathFromAtlasXML(atlasDefinitionParser.GetPriorFilename(PriorNames[i]), atlasDefinitionPath);
       priorReader->SetFileName(curPriorAtlasName);
       priorReader->Update();
@@ -1189,7 +1189,7 @@ main(int argc, char ** argv)
           // using ShortRescaleType = itk::RescaleIntensityImageFilter<FloatImageType,
           // ShortImageType>;
           using RescaleType = itk::CastImageFilter<FloatImageType, ShortImageType>;
-          const RescaleType::Pointer caster = RescaleType::New();
+          const auto caster = RescaleType::New();
 
           caster->SetInput(mapIt.second[i]);
           caster->Update();
@@ -1198,7 +1198,7 @@ main(int argc, char ** argv)
           //    + suffstr;
 
           using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-          const ShortWriterType::Pointer writer = ShortWriterType::New();
+          const auto writer = ShortWriterType::New();
 
           writer->SetInput(caster->GetOutput());
           writer->SetFileName(outFileNames[mapIt.first][i]);
@@ -1223,7 +1223,7 @@ main(int argc, char ** argv)
       const FloatImagePointer avgImage = AverageImageList<FloatImageType>(elem.second);
       // Write out average image.
       using RescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ShortImageType>;
-      const RescaleType::Pointer rescaleInstensityFilter = RescaleType::New();
+      const auto rescaleInstensityFilter = RescaleType::New();
       rescaleInstensityFilter->SetOutputMinimum(0);
       rescaleInstensityFilter->SetOutputMaximum(4096);
       rescaleInstensityFilter->SetInput(avgImage);
@@ -1235,7 +1235,7 @@ main(int argc, char ** argv)
       muLogMacro(<< "Writing averaged corrected input images... " << avgFileName << std::endl);
 
       using ShortWriterType = itk::ImageFileWriter<ShortImageType>;
-      const ShortWriterType::Pointer writer = ShortWriterType::New();
+      const auto writer = ShortWriterType::New();
 
       writer->SetInput(rescaleInstensityFilter->GetOutput());
       writer->SetFileName(avgFileName);
@@ -1253,14 +1253,14 @@ main(int argc, char ** argv)
         {
           using ByteRescaleType = itk::RescaleIntensityImageFilter<FloatImageType, ByteImageType>;
 
-          const ByteRescaleType::Pointer rescaler = ByteRescaleType::New();
+          const auto rescaler = ByteRescaleType::New();
           rescaler->SetOutputMinimum(0);
           rescaler->SetOutputMaximum(255);
           rescaler->SetInput(elem.second[index]);
           rescaler->Update();
 
           using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-          const ByteWriterType::Pointer writer = ByteWriterType::New();
+          const auto writer = ByteWriterType::New();
 
           const std::string fn = outputDir + GetStrippedImageFileNameExtension(templateVolumes[elem.first][index]) +
                                  std::string("_to_") +
@@ -1297,7 +1297,7 @@ main(int argc, char ** argv)
     muLogMacro(<< "Writing labels...\n");
     {
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      const ByteWriterType::Pointer writer = ByteWriterType::New();
+      const auto writer = ByteWriterType::New();
 
       writer->SetInput(segfilter->GetOutput());
       std::string fn;
@@ -1318,7 +1318,7 @@ main(int argc, char ** argv)
     }
     {
       using ByteWriterType = itk::ImageFileWriter<ByteImageType>;
-      const ByteWriterType::Pointer writer = ByteWriterType::New();
+      const auto writer = ByteWriterType::New();
 
       std::string fn;
       if (outputLabels.empty())
@@ -1392,7 +1392,7 @@ main(int argc, char ** argv)
         fn = buf;
       }
       using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
-      const FloatWriterType::Pointer writer = FloatWriterType::New();
+      const auto writer = FloatWriterType::New();
 
       const FloatImageType::Pointer currPosterior = segfilter->GetPosteriors()[probabilityIndex];
       writer->SetInput(currPosterior);

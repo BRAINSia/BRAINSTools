@@ -114,7 +114,7 @@ main(int argc, char * argv[])
   DWIMetaDataDictionaryValidator::GradientTableType resultGradTable;
 
   using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
-  VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
+  auto indexImageToVectorImageFilter = VectorImageFilterType::New();
 
   int    vectorIndex = 0;
   double baselineBvalue = 0.0;
@@ -123,7 +123,7 @@ main(int argc, char * argv[])
   for (unsigned i = 0; i < inputVolume.size(); ++i)
   {
     std::cout << "Reading volume:              " << inputVolume[i] << std::endl;
-    FileReaderType::Pointer imageReader = FileReaderType::New();
+    auto imageReader = FileReaderType::New();
     imageReader->SetFileName(inputVolume[i]);
     try
     {
@@ -203,7 +203,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<NrrdImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(indexImageToVectorImageFilter->GetOutput());

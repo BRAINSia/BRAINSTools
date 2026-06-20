@@ -78,7 +78,7 @@ ResampleInPlaceImageFilter<TInputImage, TOutputImage>::GenerateData()
   {
     /** make a cast copied version of the input image **/
     using DuplicatorType = CastImageFilter<InputImageType, OutputImageType>;
-    typename DuplicatorType::Pointer CastFilter = DuplicatorType::New();
+    auto CastFilter = DuplicatorType::New();
     CastFilter->SetInput(this->GetInput());
     CastFilter->Update();
     m_OutputImage = CastFilter->GetOutput();

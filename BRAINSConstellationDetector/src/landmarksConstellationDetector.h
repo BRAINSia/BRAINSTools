@@ -109,7 +109,7 @@ public:
   Euler3DTransformType::Pointer
   Getorig2msp_img_tfm() const
   {
-    Euler3DTransformType::Pointer value = Euler3DTransformType::New();
+    auto value = Euler3DTransformType::New();
 
     value->SetFixedParameters(this->m_eyeFixed2msp_img_tfm->GetFixedParameters());
     value->SetParameters(this->m_eyeFixed2msp_img_tfm->GetParameters());
@@ -159,7 +159,7 @@ public:
   SImageType::Pointer
   GetTaggedImage(const SImageType::Pointer & original_space_image) const
   {
-    itk::ImageDuplicator<SImageType>::Pointer duplicator = itk::ImageDuplicator<SImageType>::New();
+    auto duplicator = itk::ImageDuplicator<SImageType>::New();
 
     duplicator->SetInputImage(original_space_image);
     duplicator->Update();

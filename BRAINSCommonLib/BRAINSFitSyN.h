@@ -44,7 +44,7 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
              const bool                                            synFull = true,
              const typename SyN::CompositeTransformType::Pointer & restoreState = nullptr)
 {
-  typename SyN::RegistrationHelperType::Pointer regHelper = SyN::RegistrationHelperType::New();
+  auto regHelper = SyN::RegistrationHelperType::New();
   {
     /*
     constexpr float lowerQuantile = 0.025;
@@ -173,13 +173,13 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     // Add the first metric with the first mandatory fixed and moving volumes
     //
     using FixedCasterType = itk::CastImageFilter<FixedImageType, SyN::ImageType>;
-    typename FixedCasterType::Pointer fixedCaster = FixedCasterType::New();
+    auto fixedCaster = FixedCasterType::New();
     fixedCaster->SetInput(infixedImage);
     fixedCaster->Update();
     typename SyN::ImageType::Pointer dblFixedImage = fixedCaster->GetOutput();
 
     using MovingCasterType = itk::CastImageFilter<MovingimageType, SyN::ImageType>;
-    typename MovingCasterType::Pointer movingCaster = MovingCasterType::New();
+    auto movingCaster = MovingCasterType::New();
     movingCaster->SetInput(inmovingImage);
     movingCaster->Update();
     typename SyN::ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
@@ -227,12 +227,12 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
       if (infixedImage2.IsNotNull() && inmovingImage2.IsNotNull())
       {
         std::cout << "Do Multimodal Registration..." << std::endl;
-        typename FixedCasterType::Pointer fixedCaster2 = FixedCasterType::New();
+        auto fixedCaster2 = FixedCasterType::New();
         fixedCaster2->SetInput(infixedImage2);
         fixedCaster2->Update();
         typename SyN::ImageType::Pointer dblFixedImage2 = fixedCaster2->GetOutput();
 
-        typename MovingCasterType::Pointer movingCaster2 = MovingCasterType::New();
+        auto movingCaster2 = MovingCasterType::New();
         movingCaster2->SetInput(inmovingImage2);
         movingCaster2->Update();
         typename SyN::ImageType::Pointer dblMovingImage2 = movingCaster2->GetOutput();

@@ -135,8 +135,8 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
           for (auto imIt = mapIt->second.begin(); imIt != mapIt->second.end(); ++imIt, ++meanIndex)
           {
-            typename TInputImage::Pointer                   im1 = *imIt;
-            typename InputImageNNInterpolationType::Pointer im1Interp = InputImageNNInterpolationType::New();
+            typename TInputImage::Pointer im1 = *imIt;
+            auto                          im1Interp = InputImageNNInterpolationType::New();
             im1Interp->SetInputImage(im1);
 
             const CompensatedSummationType muSumFinal = tbb::parallel_reduce(
@@ -248,8 +248,8 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
 
           for (unsigned i = 0; i < mapIt->second.size(); ++i)
           {
-            typename TInputImage::Pointer                   im1 = mapIt->second[i];
-            typename InputImageNNInterpolationType::Pointer im1Interp = InputImageNNInterpolationType::New();
+            typename TInputImage::Pointer im1 = mapIt->second[i];
+            auto                          im1Interp = InputImageNNInterpolationType::New();
             im1Interp->SetInputImage(im1);
 
             bool first_through_inner_loop(true);
@@ -265,8 +265,8 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
               const double mu2 = ListOfClassStatistics[iclass].m_Means[mapIt2->first];
               for (; j < mapIt2->second.size(); ++j)
               {
-                typename TInputImage::Pointer                   im2 = mapIt2->second[j];
-                typename InputImageNNInterpolationType::Pointer im2Interp = InputImageNNInterpolationType::New();
+                typename TInputImage::Pointer im2 = mapIt2->second[j];
+                auto                          im2Interp = InputImageNNInterpolationType::New();
                 im2Interp->SetInputImage(im2);
 
                 CompensatedSummationType reduced_varC = tbb::parallel_reduce(

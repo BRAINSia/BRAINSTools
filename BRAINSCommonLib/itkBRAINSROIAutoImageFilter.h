@@ -120,12 +120,12 @@ public:
                                       // null when GenerateData is called.
     {
       using CastImageFilter = itk::CastImageFilter<OutputImageType, UCHARIMAGE>;
-      typename CastImageFilter::Pointer castFilter = CastImageFilter::New();
+      auto castFilter = CastImageFilter::New();
       castFilter->SetInput(this->GetOutput());
       castFilter->Update();
 
       // convert mask image to mask
-      typename ImageMaskSpatialObjectType::Pointer mask = ImageMaskSpatialObjectType::New();
+      auto mask = ImageMaskSpatialObjectType::New();
       mask->SetImage(castFilter->GetOutput());
       mask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
       m_ResultMaskPointer = dynamic_cast<ImageMaskSpatialObjectType *>(mask.GetPointer());

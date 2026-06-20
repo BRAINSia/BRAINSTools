@@ -50,24 +50,24 @@ main(int argc, char * argv[])
   using MovingImageType = itk::Image<PixelType, Dimension>;
 
   using FixedImageReaderType = itk::ImageFileReader<FixedImageType>;
-  FixedImageReaderType::Pointer fixedReader = FixedImageReaderType::New();
+  auto fixedReader = FixedImageReaderType::New();
   fixedReader->SetFileName(argv[1]);
   FixedImageType::Pointer fixedImage = fixedReader->GetOutput();
   fixedReader->Update();
 
   using MovingImageReaderType = itk::ImageFileReader<MovingImageType>;
-  MovingImageReaderType::Pointer movingReader = MovingImageReaderType::New();
+  auto movingReader = MovingImageReaderType::New();
   movingReader->SetFileName(argv[2]);
   MovingImageType::Pointer movingImage = movingReader->GetOutput();
   movingReader->Update();
 
   using TransformType = itk::BSplineTransform<double, Dimension>;
-  TransformType::Pointer transform = TransformType::New();
+  auto transform = TransformType::New();
 
   if (argc > 3)
   {
     std::cout << "Read transform file from the disk ..." << std::endl;
-    itk::TransformFileReader::Pointer transReader = itk::TransformFileReader::New();
+    auto transReader = itk::TransformFileReader::New();
     transReader->SetFileName(argv[3]);
     try
     {
@@ -88,7 +88,7 @@ main(int argc, char * argv[])
   }
 
   using MIMetricType = itk::MattesMutualInformationImageToImageMetricv4<FixedImageType, MovingImageType>;
-  MIMetricType::Pointer metric = MIMetricType::New();
+  auto metric = MIMetricType::New();
 
   metric->SetVirtualDomainFromImage(fixedImage);
   metric->SetFixedImage(fixedImage);
@@ -120,7 +120,7 @@ main(int argc, char * argv[])
   std::cout << "Sampling percentage: " << samplingPercentage << std::endl;
 
   using MetricSamplePointSetType = MIMetricType::FixedSampledPointSetType;
-  MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+  auto samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
   unsigned long index = 0;
 

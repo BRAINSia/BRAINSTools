@@ -63,7 +63,7 @@ namespace itk
  * \code
  * //To convert from non-const smart pointers ploymorphically to the smart
  *ConstPointer up the class tree, use the GetPointer
- * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
+ * auto myAffine = AffineTransformType::New(); //NOTE:
  * This is not a const smart pointer
  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
  * \endcode
@@ -132,7 +132,7 @@ ReadTransformFromDisk(const std::string & initialTransform);
  * \code
  * //To convert from non-const smart pointers ploymorphically to the smart
  *ConstPointer up the class tree, use the GetPointer
- * AffineTransformType::Pointer myAffine=AffineTransformType::New(); //NOTE:
+ * auto myAffine = AffineTransformType::New(); //NOTE:
  * This is not a const smart pointer
  * WriteTransformToDisk<TScalarType>(myAffine.GetPointer(), "myAffineFile.mat");
  * \endcode

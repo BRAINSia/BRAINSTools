@@ -28,7 +28,7 @@ itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char, 3>::DirectionType & dir)
 {
   using TransformType = itk::VersorTransform<TPrecision>;
-  const typename TransformType::Pointer rval = TransformType::New();
+  const auto rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval << rval->GetMatrix() << std::endl;
   rval.GetPointer()->Register();
@@ -40,7 +40,7 @@ itk::TransformBaseTemplate<TPrecision> *
 NewTransform(const typename itk::Image<char, 2>::DirectionType & dir)
 {
   using TransformType = itk::CenteredRigid2DTransform<TPrecision>;
-  const typename TransformType::Pointer rval = TransformType::New();
+  const auto rval = TransformType::New();
   rval->SetMatrix(dir);
   std::cerr << rval << rval->GetMatrix() << std::endl;
   return rval;
@@ -92,7 +92,7 @@ ReadAndSplitImage(const std::string & inputVolume, const std::string & outputVol
 
   using TransformType = typename TransformFileWriterType::TransformType;
 
-  const typename TransformFileWriterType::Pointer xfrmWriter = TransformFileWriterType::New();
+  const auto xfrmWriter = TransformFileWriterType::New();
 
   // create a rigid transform from the direction matrix.
   const typename TransformType::Pointer xfrm = NewTransform<XFRMPrecisionType>(direction);

@@ -158,7 +158,7 @@ ExtractTransform(typename itk::ScaleVersor3DTransform<TScalarType>::Pointer & re
     return true;
   }
   // otherwise try VersorRigidTransform
-  typename LocalVersorRigid3DTransformType::Pointer vrx = LocalVersorRigid3DTransformType::New();
+  auto vrx = LocalVersorRigid3DTransformType::New();
   if (ExtractTransform<TScalarType>(vrx, source)) // of VersorRigid3D conversion
                                                   // works
   {
@@ -195,7 +195,7 @@ ExtractTransform(typename itk::ScaleSkewVersor3DTransform<TScalarType>::Pointer 
     return true;
   }
   // otherwise try ScaleVersor conversion
-  typename LocalScaleVersor3DTransformType::Pointer svx = LocalScaleVersor3DTransformType::New();
+  auto svx = LocalScaleVersor3DTransformType::New();
   if (ExtractTransform<TScalarType>(svx, source)) // of VersorRigid3D conversion
                                                   // works
   {
@@ -229,7 +229,7 @@ DoConversion(int argc, char * argv[])
 
   // read the input transform
   using TransformFileReaderType = itk::TransformFileReaderTemplate<TScalarType>;
-  const typename TransformFileReaderType::Pointer reader = TransformFileReaderType::New();
+  const auto reader = TransformFileReaderType::New();
   reader->SetFileName(inputTransform.c_str());
   reader->Update();
   typename TransformFileReaderType::TransformListType * transformList = reader->GetModifiableTransformList();
@@ -354,26 +354,23 @@ DoConversion(int argc, char * argv[])
             dynamic_cast<DisplacementFieldTransformType *>(
               compToWrite->GetNthTransform(numOfTransforms - 1).GetPointer());
 
-          const typename DisplacementFieldTransformType::Pointer fixedToMiddleTransform =
-            DisplacementFieldTransformType::New();
+          const auto fixedToMiddleTransform = DisplacementFieldTransformType::New();
           fixedToMiddleTransform->SetDisplacementField(fixedToMiddleForwardTx->GetModifiableDisplacementField());
           fixedToMiddleTransform->SetInverseDisplacementField(fixedToMiddleInverseTx->GetModifiableDisplacementField());
 
-          const typename DisplacementFieldTransformType::Pointer movingToMiddleTransform =
-            DisplacementFieldTransformType::New();
+          const auto movingToMiddleTransform = DisplacementFieldTransformType::New();
           movingToMiddleTransform->SetDisplacementField(movingToMiddleForwardTx->GetModifiableDisplacementField());
           movingToMiddleTransform->SetInverseDisplacementField(
             movingToMiddleInverseTx->GetModifiableDisplacementField());
 
-          const typename DisplacementFieldTransformType::Pointer resultSyNTransform =
-            DisplacementFieldTransformType::New();
+          const auto resultSyNTransform = DisplacementFieldTransformType::New();
 
-          const typename ComposerType::Pointer composer = ComposerType::New();
+          const auto composer = ComposerType::New();
           composer->SetDisplacementField(movingToMiddleTransform->GetInverseDisplacementField());
           composer->SetWarpingField(fixedToMiddleTransform->GetDisplacementField());
           composer->Update();
 
-          const typename ComposerType::Pointer inverseComposer = ComposerType::New();
+          const auto inverseComposer = ComposerType::New();
           inverseComposer->SetDisplacementField(fixedToMiddleTransform->GetInverseDisplacementField());
           inverseComposer->SetWarpingField(movingToMiddleTransform->GetDisplacementField());
           inverseComposer->Update();
@@ -421,7 +418,7 @@ DoConversion(int argc, char * argv[])
 
   if (outputTransformType == "Affine")
   {
-    typename LocalAffineTransformType::Pointer affineXfrm = LocalAffineTransformType::New();
+    auto affineXfrm = LocalAffineTransformType::New();
     if (ExtractTransform<TScalarType>(affineXfrm, inputXfrm.GetPointer()) == false)
     {
       TransformConvertError<TScalarType>(inputXfrm, "Affine Transform");
@@ -431,7 +428,7 @@ DoConversion(int argc, char * argv[])
   }
   else if (outputTransformType == "VersorRigid")
   {
-    typename LocalVersorRigid3DTransformType::Pointer versorRigidXfrm = LocalVersorRigid3DTransformType::New();
+    auto versorRigidXfrm = LocalVersorRigid3DTransformType::New();
     if (ExtractTransform<TScalarType>(versorRigidXfrm, inputXfrm.GetPointer()) == false)
     {
       TransformConvertError<TScalarType>(inputXfrm, "VersorRigid3D Transform");
@@ -441,7 +438,7 @@ DoConversion(int argc, char * argv[])
   }
   else if (outputTransformType == "ScaleVersor")
   {
-    typename LocalScaleVersor3DTransformType::Pointer scaleVersorXfrm = LocalScaleVersor3DTransformType::New();
+    auto scaleVersorXfrm = LocalScaleVersor3DTransformType::New();
     if (ExtractTransform<TScalarType>(scaleVersorXfrm, inputXfrm.GetPointer()) == false)
     {
       TransformConvertError<TScalarType>(inputXfrm, "ScaleVersor Transform");
@@ -451,8 +448,7 @@ DoConversion(int argc, char * argv[])
   }
   else if (outputTransformType == "ScaleSkewVersor")
   {
-    typename LocalScaleSkewVersor3DTransformType::Pointer scaleSkewVersorXfrm =
-      LocalScaleSkewVersor3DTransformType::New();
+    auto scaleSkewVersorXfrm = LocalScaleSkewVersor3DTransformType::New();
     if (ExtractTransform<TScalarType>(scaleSkewVersorXfrm, inputXfrm.GetPointer()) == false)
     {
       TransformConvertError<TScalarType>(inputXfrm, "ScaleSkewVersor Transform");
@@ -470,7 +466,7 @@ DoConversion(int argc, char * argv[])
     if (outputTransformType == "Same")
     {
       using TransformWriterType = typename itk::TransformFileWriterTemplate<TScalarType>;
-      const typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+      const auto transformWriter = TransformWriterType::New();
       transformWriter->SetFileName(outputTransform);
       transformWriter->SetUseCompression(true);
       for (auto it = transformList->begin(); it != transformList->end(); ++it)

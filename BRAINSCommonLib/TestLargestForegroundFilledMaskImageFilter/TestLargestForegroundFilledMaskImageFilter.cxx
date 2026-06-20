@@ -30,10 +30,10 @@ main(int argc, char ** argv)
   }
   using ImageType = itk::Image<float, 3>;
   using FilterType = itk::LargestForegroundFilledMaskImageFilter<ImageType>;
-  std::string         inputname(argv[1]);
-  std::string         outputname(argv[2]);
-  ImageType::Pointer  image = itkUtil::ReadImage<ImageType>(inputname);
-  FilterType::Pointer filter = FilterType::New();
+  std::string        inputname(argv[1]);
+  std::string        outputname(argv[2]);
+  ImageType::Pointer image = itkUtil::ReadImage<ImageType>(inputname);
+  auto               filter = FilterType::New();
   filter->SetInput(image);
   filter->Update();
   ImageType::Pointer outputImage = filter->GetOutput();

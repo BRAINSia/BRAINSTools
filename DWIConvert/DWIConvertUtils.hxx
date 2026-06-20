@@ -18,7 +18,7 @@ template <typename TImage>
 int
 WriteVolume(const TImage * img, const std::string & fname)
 {
-  typename itk::ImageFileWriter<TImage>::Pointer imgWriter = itk::ImageFileWriter<TImage>::New();
+  auto imgWriter = itk::ImageFileWriter<TImage>::New();
 
   imgWriter->SetInput(img);
   imgWriter->SetFileName(fname.c_str());
@@ -39,7 +39,7 @@ template <typename TImage>
 int
 ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion)
 {
-  typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
+  auto imgReader = itk::ImageFileReader<TImage>::New();
 
   imgReader->SetFileName(fname.c_str());
   try
@@ -76,7 +76,7 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
     {
       using DoubleImageType = itk::Image<double, TImage::ImageDimension>;
       using DoubleImageReaderType = itk::ImageFileReader<DoubleImageType>;
-      typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
+      auto doubleReader = DoubleImageReaderType::New();
       doubleReader->SetFileName(fname.c_str());
       try
       {
@@ -91,7 +91,7 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
         return EXIT_FAILURE;
       }
       using RescaleIntensityType = itk::RescaleIntensityImageFilter<DoubleImageType, TImage>;
-      typename RescaleIntensityType::Pointer rescaler = RescaleIntensityType::New();
+      auto rescaler = RescaleIntensityType::New();
       rescaler->SetInput(doubleReader->GetOutput());
       rescaler->SetOutputMinimum(itk::NumericTraits<typename TImage::PixelType>::Zero);
       rescaler->SetOutputMaximum(itk::NumericTraits<typename TImage::PixelType>::max());
@@ -106,7 +106,7 @@ template <typename TImage>
 int
 ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion)
 {
-  typename itk::ImageFileReader<TImage>::Pointer imgReader = itk::ImageFileReader<TImage>::New();
+  auto imgReader = itk::ImageFileReader<TImage>::New();
 
   imgReader->SetFileName(fname.c_str());
   try
@@ -143,7 +143,7 @@ ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool
     {
       using DoubleImageType = itk::VectorImage<double, TImage::ImageDimension>;
       using DoubleImageReaderType = itk::ImageFileReader<DoubleImageType>;
-      typename DoubleImageReaderType::Pointer doubleReader = DoubleImageReaderType::New();
+      auto doubleReader = DoubleImageReaderType::New();
       doubleReader->SetFileName(fname.c_str());
       try
       {

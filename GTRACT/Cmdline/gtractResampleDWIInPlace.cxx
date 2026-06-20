@@ -141,7 +141,7 @@ main(int argc, char * argv[])
   using RigidTransformType = itk::VersorRigid3DTransform<double>;
   using SingleComponentImageType = itk::Image<PixelType, 3>;
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  FileReaderType::Pointer imageReader = FileReaderType::New();
+  auto imageReader = FileReaderType::New();
   imageReader->SetFileName(inputVolume);
   try
   {
@@ -159,7 +159,7 @@ main(int argc, char * argv[])
   GenericTransformType::Pointer baseTransform = nullptr;
   if (inputTransform == "ID" || inputTransform == "Identity" || inputTransform.empty())
   {
-    RigidTransformType::Pointer LocalRigidTransform = RigidTransformType::New();
+    auto LocalRigidTransform = RigidTransformType::New();
     LocalRigidTransform->SetIdentity();
     baseTransform = LocalRigidTransform;
   }
@@ -188,13 +188,13 @@ main(int argc, char * argv[])
       using DisplacementFieldTransformType = itk::DisplacementFieldTransform<VectorComponentType, 3>;
 
       using DefFieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
-      DefFieldReaderType::Pointer fieldImageReader = DefFieldReaderType::New();
+      auto fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName(warpDWITransform);
       fieldImageReader->Update();
 
       DisplacementFieldType::Pointer DisplacementField = fieldImageReader->GetOutput();
 
-      DisplacementFieldTransformType::Pointer dispTransform = DisplacementFieldTransformType::New();
+      auto dispTransform = DisplacementFieldTransformType::New();
       dispTransform->SetDisplacementField(DisplacementField.GetPointer());
       warpDWIXFRM = dispTransform.GetPointer();
     }
@@ -238,7 +238,7 @@ main(int argc, char * argv[])
     curGradientDirection[2] = gradTable[i][2];
 
     // Rotate the diffusion gradient with rigid transform and inverse measurement frame
-    RigidTransformType::Pointer    inverseRigidTransform = RigidTransformType::New();
+    auto                           inverseRigidTransform = RigidTransformType::New();
     const NrrdImageType::PointType centerPoint = rigidTransform->GetCenter();
     inverseRigidTransform->SetCenter(centerPoint);
     inverseRigidTransform->SetIdentity();
@@ -377,7 +377,7 @@ main(int argc, char * argv[])
             << std::endl;
   std::cout << "Output DWI Image Size: " << newSize[0] << " " << newSize[1] << " " << newSize[2] << std::endl;
 
-  NrrdImageType::Pointer paddedImage = NrrdImageType::New();
+  auto paddedImage = NrrdImageType::New();
   paddedImage->CopyInformation(resampleImage);
   paddedImage->SetVectorLength(resampleImage->GetVectorLength());
   paddedImage->SetMetaDataDictionary(resampleImage->GetMetaDataDictionary());
@@ -405,19 +405,18 @@ main(int argc, char * argv[])
   {
     // For each component, extract, resample to list, and finally compose back into a vector image.
     using ReferenceFileReaderType = itk::ImageFileReader<SingleComponentImageType>;
-    ReferenceFileReaderType::Pointer referenceImageReader = ReferenceFileReaderType::New();
+    auto referenceImageReader = ReferenceFileReaderType::New();
     referenceImageReader->SetFileName(referenceVolume);
     referenceImageReader->Update();
 
     const size_t lengthOfPixelVector = paddedImage->GetVectorLength();
 
     using ComposeCovariantVectorImageFilterType = itk::ComposeImageFilter<SingleComponentImageType, NrrdImageType>;
-    ComposeCovariantVectorImageFilterType::Pointer composer = ComposeCovariantVectorImageFilterType::New();
+    auto composer = ComposeCovariantVectorImageFilterType::New();
 
     using VectorIndexSelectionCastImageFilterType =
       itk::VectorIndexSelectionCastImageFilter<NrrdImageType, SingleComponentImageType>;
-    VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector =
-      VectorIndexSelectionCastImageFilterType::New();
+    auto vectorImageToImageSelector = VectorIndexSelectionCastImageFilterType::New();
     vectorImageToImageSelector->SetInput(paddedImage);
     for (size_t componentToExtract = 0; componentToExtract < lengthOfPixelVector; ++componentToExtract)
     {
@@ -426,7 +425,7 @@ main(int argc, char * argv[])
 
       // Resample to a new space with basic linear/identity transform.
       using ComponentResamplerType = itk::ResampleImageFilter<SingleComponentImageType, SingleComponentImageType>;
-      ComponentResamplerType::Pointer componentResampler = ComponentResamplerType::New();
+      auto componentResampler = ComponentResamplerType::New();
       componentResampler->SetOutputParametersFromImage(referenceImageReader->GetOutput());
       componentResampler->SetInput(vectorImageToImageSelector->GetOutput());
       if (warpDWIXFRM.IsNotNull())
@@ -452,7 +451,7 @@ main(int argc, char * argv[])
 
   // Write out resampled in place DWI
   using WriterType = itk::ImageFileWriter<NrrdImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(finalImage);
@@ -471,15 +470,14 @@ main(int argc, char * argv[])
 
     using VectorIndexSelectionCastImageFilterType =
       itk::VectorIndexSelectionCastImageFilter<NrrdImageType, SingleComponentImageType>;
-    VectorIndexSelectionCastImageFilterType::Pointer vectorImageToImageSelector =
-      VectorIndexSelectionCastImageFilterType::New();
+    auto vectorImageToImageSelector = VectorIndexSelectionCastImageFilterType::New();
     vectorImageToImageSelector->SetInput(finalImage);
     vectorImageToImageSelector->SetIndex(B0Index);
     vectorImageToImageSelector->Update();
 
     // Write out resampled in place DWI
     using B0WriterType = itk::ImageFileWriter<SingleComponentImageType>;
-    B0WriterType::Pointer B0Writer = B0WriterType::New();
+    auto B0Writer = B0WriterType::New();
     B0Writer->UseCompressionOn();
     B0Writer->SetInput(vectorImageToImageSelector->GetOutput());
     B0Writer->SetFileName(outputResampledB0);

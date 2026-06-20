@@ -124,7 +124,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
         throw;
       }
 
-      const ResampleIPFilterPointer resampleIPFilter = ResampleIPFilterType::New();
+      const auto resampleIPFilter = ResampleIPFilterType::New();
       resampleIPFilter->SetInputImage((*currModalIter));
       resampleIPFilter->SetRigidTransform(tempRigidTransform);
       resampleIPFilter->Update();
@@ -149,7 +149,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
   // Use the first image of the vector from the ordered modality preference as the key image for all others.
   const FloatImageType::Pointer allModalityKeySubjectImage =
     resampledInPlaceMap.cbegin()->second.cbegin()->GetPointer();
-  ByteImageType::Pointer intraSubjectFOVIntersectionMask = ByteImageType::New();
+  auto intraSubjectFOVIntersectionMask = ByteImageType::New();
   intraSubjectFOVIntersectionMask->CopyInformation(allModalityKeySubjectImage.GetPointer());
   intraSubjectFOVIntersectionMask->SetRegions(allModalityKeySubjectImage.GetPointer()->GetLargestPossibleRegion());
   intraSubjectFOVIntersectionMask->Allocate();
@@ -162,7 +162,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
     while (currModalIter != modalityMapEntry.second.end())
     {
       using MinMaxType = itk::MinimumMaximumImageCalculator<FloatImageType>;
-      const MinMaxType::Pointer minmaxcalc = MinMaxType::New();
+      const auto minmaxcalc = MinMaxType::New();
       minmaxcalc->SetImage(currModalIter->GetPointer());
       minmaxcalc->ComputeMinimum();
       minmaxcalc->Compute();
@@ -178,14 +178,14 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
                                                            allModalityKeySubjectImage.GetPointer());
 
       using OtsuThresholdType = itk::OtsuThresholdImageFilter<FloatImageType, ByteImageType>;
-      const OtsuThresholdType::Pointer otsufilter = OtsuThresholdType::New();
+      const auto otsufilter = OtsuThresholdType::New();
       otsufilter->SetInput(resampledToFirstImage);
       otsufilter->SetInsideValue(0);
       otsufilter->SetOutsideValue(1);
       otsufilter->Update();
 
       using BinaryThresholdType = itk::BinaryThresholdImageFilter<FloatImageType, ByteImageType>;
-      const BinaryThresholdType::Pointer bthresh = BinaryThresholdType::New();
+      const auto bthresh = BinaryThresholdType::New();
       bthresh->SetInput(resampledToFirstImage);
       // Use 1/2 the otsu threshold to get expanded background
       bthresh->SetLowerThreshold(otsufilter->GetThreshold() * 0.5f);
@@ -193,7 +193,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
 
       using MaskType = itk::ImageMaskSpatialObject<FloatImageType::ImageDimension>;
 
-      const MaskType::Pointer spatialObjectMask = MaskType::New();
+      const auto spatialObjectMask = MaskType::New();
       spatialObjectMask->SetImage(bthresh->GetOutput());
       spatialObjectMask->Update();
       const itk::SpatialObject<FloatImageType::ImageDimension>::BoundingBoxType * const bb =
@@ -231,7 +231,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
 
   //  //Fill holes filter
   //  using HoleFillType = itk::BinaryFillholeImageFilter<ByteImageType>;
-  //  HoleFillType::Pointer hole_fill_filter = HoleFillType::New();
+  //  auto hole_fill_filter = HoleFillType::New();
   //  hole_fill_filter->SetInput(intraSubjectFOVIntersectionMask);
   //  hole_fill_filter->FullyConnectedOn();
   //  hole_fill_filter->SetForegroundValue(1);

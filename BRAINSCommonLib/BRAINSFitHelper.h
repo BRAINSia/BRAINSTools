@@ -362,7 +362,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     this->m_SamplingStrategy = AffineRegistrationType::MetricSamplingStrategyEnum::NONE;
 
     // then pick the samples inside the mask and pass them to metric
-    typename MetricSamplePointSetType::Pointer samplePointSet = MetricSamplePointSetType::New();
+    auto samplePointSet = MetricSamplePointSetType::New();
     samplePointSet->Initialize();
 
     const unsigned long numberOfAllSamples = this->m_FixedVolume->GetBufferedRegion().GetNumberOfPixels();
@@ -370,7 +370,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     const auto sampleCount = static_cast<unsigned long>(std::ceil(numberOfAllSamples * this->m_SamplingPercentage));
 
     using RandomizerType = Statistics::MersenneTwisterRandomVariateGenerator;
-    typename RandomizerType::Pointer randomizer = RandomizerType::New();
+    auto randomizer = RandomizerType::New();
     randomizer->SetSeed(1234);
 
     itk::ImageRandomNonRepeatingConstIteratorWithIndex<FixedImageType> NRit(this->m_FixedVolume,
@@ -413,7 +413,7 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     std::cout << "Multi-modal registration is run! Number of image pairs: " << numberOfinputImageSets << std::endl;
     std::cout << "In BRAINSFit the same metric is used for both modalities: " << this->m_CostMetricName << std::endl;
   }
-  typename MultiMetricType::Pointer multiMetric = MultiMetricType::New();
+  auto multiMetric = MultiMetricType::New();
   for (unsigned int i = 0; i < numberOfinputImageSets; ++i)
   {
     multiMetric->AddMetric(localCostMetric); // In the case of multi-modality,

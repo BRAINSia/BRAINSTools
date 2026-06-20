@@ -53,11 +53,11 @@ BRAINSROIAutoImageFilter<TInputImage, TOutputImage>::GenerateData()
   m_ResultMaskPointer = nullptr; // Need to make this null during every re-run of
                                  // the data.
   // Create a process accumulator for tracking the progress of this minipipeline
-  ProgressAccumulator::Pointer progress = ProgressAccumulator::New();
+  auto progress = ProgressAccumulator::New();
   progress->SetMiniPipelineFilter(this);
 
   using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>;
-  typename LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+  auto LFF = LFFMaskFilterType::New();
   // Register the filter with the with progress accumulator using
   // equal weight proportion
   progress->RegisterInternalFilter(LFF, 1.0f);

@@ -118,7 +118,7 @@ main(int argc, char * argv[])
   using RigidTransformType = itk::VersorRigid3DTransform<double>;
 
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  FileReaderType::Pointer movingImageReader = FileReaderType::New();
+  auto movingImageReader = FileReaderType::New();
   movingImageReader->SetFileName(movingVolume);
   movingImageReader->Update();
 
@@ -135,11 +135,11 @@ main(int argc, char * argv[])
   // using InputImageType = itk::VectorIndexSelectionCastImageFilter< NrrdImageType,
   // IndexImageType >;
   using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, InputIndexImageType>;
-  ExtractImageFilterType::Pointer movingImageExtractionFilter = ExtractImageFilterType::New();
+  auto movingImageExtractionFilter = ExtractImageFilterType::New();
   movingImageExtractionFilter->SetInput(movingImageReader->GetOutput());
 
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  FileReaderType::Pointer fixedImageReader = FileReaderType::New();
+  auto fixedImageReader = FileReaderType::New();
   fixedImageReader->SetFileName(fixedVolume);
   fixedImageReader->Update();
 
@@ -154,7 +154,7 @@ main(int argc, char * argv[])
   }
 
   /* Extract Image Index to be used for Coregistration */
-  ExtractImageFilterType::Pointer fixedImageExtractionFilter = ExtractImageFilterType::New();
+  auto fixedImageExtractionFilter = ExtractImageFilterType::New();
   fixedImageExtractionFilter->SetIndex(fixedVolumeIndex);
   fixedImageExtractionFilter->SetInput(fixedImageReader->GetOutput());
   fixedImageExtractionFilter->Update();
@@ -163,7 +163,7 @@ main(int argc, char * argv[])
   OutputImageType::Pointer RegisteredImage;
 
   using RegisterFilterType = itk::BRAINSFitHelper;
-  RegisterFilterType::Pointer registerImageFilter = RegisterFilterType::New();
+  auto registerImageFilter = RegisterFilterType::New();
 
   std::vector<double> minStepLength;
   minStepLength.push_back(static_cast<double>(minimumStepSize));
@@ -259,14 +259,14 @@ main(int argc, char * argv[])
     if (!outputTransform.empty())
     {
       GenericTransformType::Pointer transform = registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0);
-      itk::TransformFileWriter::Pointer xfrmWriter = itk::TransformFileWriter::New();
+      auto                          xfrmWriter = itk::TransformFileWriter::New();
       xfrmWriter->SetFileName(outputTransform);
       xfrmWriter->SetInput(transform);
       xfrmWriter->SetUseCompression(true);
       xfrmWriter->Update();
     }
     using ResampleFilterType = itk::ResampleImageFilter<InputIndexImageType, OutputIndexImageType, double>;
-    ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+    auto resampler = ResampleFilterType::New();
     resampler->SetTransform(registerImageFilter->GetCurrentGenericTransform());
     resampler->SetInput(movingImageExtractionFilter->GetOutput());
     // Remember:  the Data is Moving's, the shape is Fixed's.
@@ -319,7 +319,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<OutputImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->UseInputMetaDataDictionaryOn();
   nrrdWriter->SetInput(RegisteredImage);

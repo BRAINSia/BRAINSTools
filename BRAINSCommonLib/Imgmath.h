@@ -49,7 +49,7 @@ typename ImageType::Pointer
 Iadd(const typename ImageType::Pointer input1, typename ImageType::Pointer input2)
 {
   using FilterType = itk::AddImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -64,7 +64,7 @@ typename ImageType::Pointer
 Isub(const typename ImageType::Pointer input1, const typename ImageType::Pointer input2)
 {
   using FilterType = itk::SubtractImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -79,7 +79,7 @@ typename ImageType::Pointer
 Imul(const typename ImageType::Pointer input1, const typename ImageType::Pointer input2)
 {
   using FilterType = itk::MultiplyImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -94,7 +94,7 @@ typename ImageType::Pointer
 Idiv(const typename ImageType::Pointer input1, const typename ImageType::Pointer input2)
 {
   using FilterType = itk::DivideImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -110,7 +110,7 @@ typename ImageType::Pointer
 Imax(const typename ImageType::Pointer input1, const typename ImageType::Pointer input2)
 {
   using FilterType = itk::MaximumImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -126,7 +126,7 @@ typename ImageType::Pointer
 Imin(const typename ImageType::Pointer input1, const typename ImageType::Pointer input2)
 {
   using FilterType = itk::MinimumImageFilter<ImageType, ImageType, ImageType>;
-  typename FilterType::Pointer filter = FilterType::New();
+  auto filter = FilterType::New();
   filter->SetInput1(input1);
   filter->SetInput2(input2);
   filter->Update();
@@ -141,7 +141,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 Iavg(typename ImageType::Pointer input1, int nimgs)
 {
-  typename ImageType::Pointer image = ImageType::New();
+  auto image = ImageType::New();
   image->SetRegions(input1->GetLargestPossibleRegion());
   image->CopyInformation(input1);
   image->Allocate();
@@ -161,7 +161,7 @@ template <typename ImageType>
 typename ImageType::Pointer
 IMask(typename ImageType::Pointer input1, typename ImageType::Pointer mask)
 {
-  typename ImageType::Pointer image = ImageType::New();
+  auto image = ImageType::New();
   image->SetRegions(input1->GetLargestPossibleRegion());
   image->CopyInformation(input1);
   image->Allocate();
@@ -183,7 +183,7 @@ ImageAddConstant(const typename ImageType::Pointer input, const double shiftvalu
 {
   // INFO:  This should be a UnaryImageFunctor operation to get multi-threading.
   // KENT: Replace the use of this filter with itk::AddImageFilter
-  typename ImageType::Pointer outImage = ImageType::New();
+  auto outImage = ImageType::New();
   outImage->SetRegions(input->GetLargestPossibleRegion());
   outImage->CopyInformation(input);
   outImage->Allocate();
@@ -205,7 +205,7 @@ ImageMultiplyConstant(const typename ImageType::Pointer input, const double scal
 {
   using MultFilterType =
     typename itk::MultiplyImageFilter<ImageType, itk::Image<double, ImageType::ImageDimension>, ImageType>;
-  typename MultFilterType::Pointer filt = MultFilterType::New();
+  auto filt = MultFilterType::New();
   filt->SetInput(input);
   filt->SetConstant(scalevalue);
   filt->Update();
@@ -222,7 +222,7 @@ typename ImageType::Pointer
 ImageComplementConstant(const typename ImageType::Pointer input, const double referencevalue)
 {
   // INFO:  This should be a UnaryImageFunctor operation to get multi-threading.
-  typename ImageType::Pointer outImage = ImageType::New();
+  auto outImage = ImageType::New();
   outImage->SetRegions(input->GetLargestPossibleRegion());
   outImage->CopyInformation(input);
   outImage->Allocate();
@@ -250,7 +250,7 @@ template <typename ImageType>
 void
 ImageSqrtValue(typename ImageType::Pointer Output, const typename ImageType::Pointer Input)
 {
-  typename ImageType::Pointer image = ImageType::New();
+  auto image = ImageType::New();
   image->SetRegions(Input->GetLargestPossibleRegion());
   image->CopyInformation(Input);
   image->Allocate();

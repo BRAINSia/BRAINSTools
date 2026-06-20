@@ -310,8 +310,7 @@ ImageMinMax(typename SImageType::Pointer     image,
             typename SImageType::PixelType * imageMin,
             typename SImageType::PixelType * imageMax)
 {
-  typename itk::MinimumMaximumImageFilter<SImageType>::Pointer minmaxFilter =
-    itk::MinimumMaximumImageFilter<SImageType>::New();
+  auto minmaxFilter = itk::MinimumMaximumImageFilter<SImageType>::New();
   minmaxFilter->SetInput(image);
   minmaxFilter->Update();
   *imageMax = minmaxFilter->GetMaximum();
@@ -348,7 +347,7 @@ setLowHigh(typename SImageType::Pointer &   image,
   ImageMinMax<SImageType>(image, &imageMin, &imageMax);
 
   using HistogramGeneratorType = itk::Statistics::ScalarImageToHistogramGenerator<SImageType>;
-  typename HistogramGeneratorType::Pointer histogramGenerator = HistogramGeneratorType::New();
+  auto histogramGenerator = HistogramGeneratorType::New();
   histogramGenerator->SetInput(image);
   histogramGenerator->SetNumberOfBins(imageMax - imageMin + 1);
   histogramGenerator->SetMarginalScale(1.0);
@@ -359,7 +358,7 @@ setLowHigh(typename SImageType::Pointer &   image,
   const HistogramType * histogram = histogramGenerator->GetOutput();
 
   using OtsuCalcType = itk::OtsuMultipleThresholdsCalculator<HistogramType>;
-  typename OtsuCalcType::Pointer OtsuCalc = OtsuCalcType::New();
+  auto OtsuCalc = OtsuCalcType::New();
   OtsuCalc->SetInputHistogram(histogram);
   OtsuCalc->SetNumberOfThresholds(1);
   OtsuCalc->Compute();

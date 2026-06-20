@@ -68,7 +68,7 @@ main(int argc, char * argv[])
   // then it is rescaled to a specific dynamic range;
   // Finally it is cast to a Short type image.
   using ReaderType = itk::ImageFileReader<DImageType3D>;
-  ReaderType::Pointer reader = ReaderType::New();
+  auto reader = ReaderType::New();
   reader->SetFileName(inputVolume);
   try
   {
@@ -83,7 +83,7 @@ main(int argc, char * argv[])
     reader->GetOutput(), nullptr, 0.0005, 1.0 - 0.0005, 1, 0.95 * MAX_IMAGE_OUTPUT_VALUE, 0, MAX_IMAGE_OUTPUT_VALUE);
 
   using CasterType = itk::CastImageFilter<DImageType3D, SImageType>;
-  CasterType::Pointer caster = CasterType::New();
+  auto caster = CasterType::New();
   caster->SetInput(rescaledInputVolume);
   caster->Update();
   SImageType::Pointer originalImage = caster->GetOutput();
@@ -94,7 +94,7 @@ main(int argc, char * argv[])
   // Find center of head mass
   std::cout << "\nFinding center of head mass..." << std::endl;
   using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
-  FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  auto findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(originalImage);
   findCenterFilter->SetAxis(2);
   findCenterFilter->SetOtsuPercentileThreshold(0.01);
@@ -107,7 +107,7 @@ main(int argc, char * argv[])
   using ReflectionFunctorType = Rigid3DCenterReflectorFunctor<itk::PowellOptimizerv4<double>>;
   using ParametersType = ReflectionFunctorType::ParametersType;
 
-  ReflectionFunctorType::Pointer reflectionFunctor = ReflectionFunctorType::New();
+  auto reflectionFunctor = ReflectionFunctorType::New();
   reflectionFunctor->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
   reflectionFunctor->InitializeImage(originalImage); // initialize image is set to be original
                                                      // high resolution image for consistency
@@ -187,7 +187,7 @@ main(int argc, char * argv[])
   // Now compare find the optimal parameters using Powell Optimizer
   //
   std::cout << "\nFind optimized parameters set by running Powell optimizer..." << std::endl;
-  ReflectionFunctorType::Pointer reflectionFunctor2 = ReflectionFunctorType::New();
+  auto reflectionFunctor2 = ReflectionFunctorType::New();
   reflectionFunctor2->Setorig_lmk_CenterOfHeadMass(orig_lmk_CenterOfHeadMass);
   reflectionFunctor2->InitializeImage(originalImage);
   reflectionFunctor2->SetDownSampledReferenceImage(inputImage);

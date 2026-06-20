@@ -501,7 +501,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
         unsigned int numCurModalityImages = mapIt2->second.size();
         for (unsigned int imIndex = 0; imIndex < numCurModalityImages; ++imIndex)
         {
-          typename InputImageNNInterpolationType::Pointer inputImageInterp = InputImageNNInterpolationType::New();
+          auto inputImageInterp = InputImageNNInterpolationType::New();
           inputImageInterp->SetInputImage(mapIt2->second[imIndex].GetPointer());
           tbb::parallel_for(tbb::blocked_range<unsigned int>(0, numEquations, 1),
                             [=, &R_i](const tbb::blocked_range<unsigned int> & r) {
@@ -657,10 +657,10 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
      voxel space than the brain mask and posteriors.
    */
   {
-    typename MaskNNInterpolationType::Pointer foregroundBrainMaskInterp = MaskNNInterpolationType::New();
+    auto foregroundBrainMaskInterp = MaskNNInterpolationType::New();
     foregroundBrainMaskInterp->SetInputImage(this->m_ForegroundBrainMask.GetPointer());
 
-    typename MaskNNInterpolationType::Pointer allTissueMaskInterp = MaskNNInterpolationType::New();
+    auto allTissueMaskInterp = MaskNNInterpolationType::New();
     allTissueMaskInterp->SetInputImage(this->m_AllTissueMask.GetPointer());
 
     unsigned int ichan = 0;
@@ -827,7 +827,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
         if (this->m_DebugLevel > 7)
         { // DEBUG:  This code is for debugging purposes only;
           using WriterType = itk::ImageFileWriter<InputImageType>;
-          typename WriterType::Pointer writer = WriterType::New();
+          auto writer = WriterType::New();
           writer->UseCompressionOn();
 
           std::stringstream CurrentIterationID_stream("");

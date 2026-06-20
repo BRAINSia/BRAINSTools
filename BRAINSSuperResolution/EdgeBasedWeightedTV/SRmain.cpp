@@ -24,13 +24,13 @@ main(int argc, char * argv[])
   using WriterType = itk::ImageFileWriter<FloatImageType>;
 
   const std::string   edgeFileName = argv[2];
-  ReaderType::Pointer edgeReader = ReaderType::New();
+  auto edgeReader = ReaderType::New();
   edgeReader->SetFileName(edgeFileName);
   edgeReader->Update();
   FloatImageType::Pointer highResEdgeImage = edgeReader->GetOutput();
 
   const std::string   lriFileName = argv[1];
-  ReaderType::Pointer intensityReader = ReaderType::New();
+  auto intensityReader = ReaderType::New();
   intensityReader->SetFileName(lriFileName);
   intensityReader->Update();
   FloatImageType::Pointer lriImage = intensityReader->GetOutput();
@@ -40,7 +40,7 @@ main(int argc, char * argv[])
   FloatImageType::Pointer SRImage = OpWeightedL2(X_lr, highResEdgeImage);
 
   const std::string   hriFileName = argv[3];
-  WriterType::Pointer hriWriter = WriterType::New();
+  auto hriWriter = WriterType::New();
   hriWriter->SetInput(SRImage);
   hriWriter->SetFileName(hriFileName);
   hriWriter->Update();

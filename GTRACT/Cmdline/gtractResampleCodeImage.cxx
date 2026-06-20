@@ -97,7 +97,7 @@ main(int argc, char * argv[])
 
   using CodeImageType = itk::Image<CodePixelType, 3>;
   using CodeImageReaderType = itk::ImageFileReader<CodeImageType>;
-  CodeImageReaderType::Pointer codeImageReader = CodeImageReaderType::New();
+  auto codeImageReader = CodeImageReaderType::New();
   codeImageReader->SetFileName(inputCodeVolume);
 
   try
@@ -114,7 +114,7 @@ main(int argc, char * argv[])
 
   using ImageType = itk::Image<PixelType, 3>;
   using ReferenceImageReaderType = itk::ImageFileReader<ImageType>;
-  ReferenceImageReaderType::Pointer referenceImageReader = ReferenceImageReaderType::New();
+  auto referenceImageReader = ReferenceImageReaderType::New();
   referenceImageReader->SetFileName(inputReferenceVolume);
 
   try
@@ -128,7 +128,7 @@ main(int argc, char * argv[])
   }
 
   using OrientFilterType = itk::OrientImageFilter<CodeImageType, ImageType>;
-  OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
+  auto orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput(referenceImageReader->GetOutput());
   orientImageFilter->SetDesiredCoordinateDirection(codeImageReader->GetOutput()->GetDirection());
   orientImageFilter->UseImageDirectionOn();
@@ -147,10 +147,10 @@ main(int argc, char * argv[])
 
   GenericTransformType::Pointer baseTransform = itk::ReadTransformFromDisk(inputTransform);
   using InterpolatorFunctionType = itk::NearestNeighborInterpolateImageFunction<CodeImageType, double>;
-  InterpolatorFunctionType::Pointer interpolatorFunction = InterpolatorFunctionType::New();
+  auto interpolatorFunction = InterpolatorFunctionType::New();
 
   using ResampleFilterType = itk::ResampleImageFilter<CodeImageType, CodeImageType>;
-  ResampleFilterType::Pointer resample = ResampleFilterType::New();
+  auto resample = ResampleFilterType::New();
 
   {
     resample->SetTransform(baseTransform);
@@ -184,7 +184,7 @@ main(int argc, char * argv[])
   }
 
   using OrientCodeFilterType = itk::OrientImageFilter<CodeImageType, CodeImageType>;
-  OrientCodeFilterType::Pointer orientCodeImageFilter = OrientCodeFilterType::New();
+  auto orientCodeImageFilter = OrientCodeFilterType::New();
   orientCodeImageFilter->SetInput(resample->GetOutput());
   orientCodeImageFilter->SetDesiredCoordinateDirection(codeImageReader->GetOutput()->GetDirection());
   orientCodeImageFilter->UseImageDirectionOn();
@@ -202,7 +202,7 @@ main(int argc, char * argv[])
   resampledImage->SetMetaDataDictionary(codeImageReader->GetOutput()->GetMetaDataDictionary());
 
   using ImageFileWriterType = itk::ImageFileWriter<CodeImageType>;
-  ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
+  auto ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName(outputVolume);
   ImageWriter->SetInput(resampledImage);

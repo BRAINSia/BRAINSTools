@@ -207,7 +207,7 @@ main(int argc, char * argv[])
 
     if (rescaleIntensities == true)
     {
-      const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+      const auto stats = itk::StatisticsImageFilter<SImageType>::New();
       stats->SetInput(volOrig);
       stats->Update();
       const SImageType::PixelType minPixel(stats->GetMinimum());
@@ -245,8 +245,7 @@ main(int argc, char * argv[])
         }
       }
 
-      const itk::IntensityWindowingImageFilter<SImageType, SImageType>::Pointer remapIntensityFilter =
-        itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
+      const auto remapIntensityFilter = itk::IntensityWindowingImageFilter<SImageType, SImageType>::New();
       remapIntensityFilter->SetInput(volOrig);
       remapIntensityFilter->SetOutputMaximum(rescaleIntensitiesOutputRange[1]);
       remapIntensityFilter->SetOutputMinimum(rescaleIntensitiesOutputRange[0]);
@@ -288,7 +287,7 @@ main(int argc, char * argv[])
       ComputeMSP(image, orig_lmk_CenterOfHeadMass, mspQualityLevel, c_c);
     const SImageType::PixelType minPixelValue = [](const SImageType::Pointer & im) -> SImageType::PixelType {
       using StatisticsFilterType = itk::StatisticsImageFilter<SImageType>;
-      const StatisticsFilterType::Pointer statisticsFilter = StatisticsFilterType::New();
+      const auto statisticsFilter = StatisticsFilterType::New();
       statisticsFilter->SetInput(im);
       statisticsFilter->Update();
       const SImageType::PixelType local_minPixelValue = statisticsFilter->GetMinimum();
@@ -311,7 +310,7 @@ main(int argc, char * argv[])
     }
 
     // Compute the transform from original space to the AC-PC aligned space using Reflective Correlation method
-    //    Euler3DTransformType::Pointer invTmsp = Euler3DTransformType::New();
+    //    auto invTmsp = Euler3DTransformType::New();
     //    eyeFixed2msp_lmk_tfm->GetInverse(invTmsp);
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
@@ -321,11 +320,11 @@ main(int argc, char * argv[])
 
     // We cannot easily compute the Inverse transform by the following two lines, we need to use versor for precise
     // transformation
-    //    Euler3DTransformType::Pointer ACPC_AlignedTransform_INV = Euler3DTransformType::New();
+    //    auto ACPC_AlignedTransform_INV = Euler3DTransformType::New();
     //    ACPC_AlignedTransform_INV->GetInverse(ACPC_AlignedTransform);
 
     // AC-PC aligned TRANSFORM
-    const VersorRigidTransformType::Pointer finalTransform = VersorRigidTransformType::New();
+    const auto finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ACPC_AlignedTransform->GetFixedParameters());
     itk::Versor<double>               versorRotation; // was commented before
     const itk::Matrix<double, 3, 3> & NewCleanedOrthogonalized =
@@ -334,8 +333,8 @@ main(int argc, char * argv[])
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ACPC_AlignedTransform->GetTranslation());
     // inverse transform
-    const VersorRigidTransformType::Pointer ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
-    const SImageType::PointType &           centerPoint = finalTransform->GetCenter();
+    const auto                    ACPC_AlignedTransform_INV = VersorRigidTransformType::New();
+    const SImageType::PointType & centerPoint = finalTransform->GetCenter();
     ACPC_AlignedTransform_INV->SetCenter(centerPoint);
     ACPC_AlignedTransform_INV->SetIdentity();
     finalTransform->GetInverse(ACPC_AlignedTransform_INV);
@@ -393,7 +392,7 @@ main(int argc, char * argv[])
           myModel.GetInitialRotationAngle() + myModel.GetInitialRotationStep() * currentAngle;
         const float current_angle = degree_current_angle * itk::Math::pi / 180;
 
-        const Euler3DTransformType::Pointer Point_Rotate = Euler3DTransformType::New();
+        const auto Point_Rotate = Euler3DTransformType::New();
         Point_Rotate->SetCenter(transformedPoint);
         Point_Rotate->SetRotation(current_angle, 0, 0);
 
@@ -413,7 +412,7 @@ main(int argc, char * argv[])
         // and it should be  straight forward to refactor this into a single function
         // extractZeroMeanNormalizedVector that has the same signature as extractArray, but has many fewer
         // loop iterations.
-        const LinearInterpolatorType::Pointer imInterp = LinearInterpolatorType::New();
+        const auto imInterp = LinearInterpolatorType::New();
         imInterp->SetInputImage(image_TestRotated);
         // Resize the model internal vector.
         myModel.AccessTemplate(it->first, currentDataset, currentAngle)

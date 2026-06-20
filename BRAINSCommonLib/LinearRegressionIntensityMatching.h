@@ -55,7 +55,7 @@ LinearRegressionIntensityMatching(const typename TRealImage::ConstPointer   Refe
                                   const typename TBinaryImage::ConstPointer MaskImage,
                                   typename TRealImage::ConstPointer         RescaleToReferenceDynamicRange)
 {
-  typename itk::ImageDuplicator<TRealImage>::Pointer duplicator = itk::ImageDuplicator<TRealImage>::New();
+  auto duplicator = itk::ImageDuplicator<TRealImage>::New();
   duplicator->SetInputImage(RescaleToReferenceDynamicRange);
   duplicator->Update();
   typename TRealImage::Pointer outImage = duplicator->GetOutput();

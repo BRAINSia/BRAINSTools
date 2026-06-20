@@ -82,7 +82,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
       normalizedInputModalImagesList[i] = inputImages[i];
     }
     // create a vector of input image interpolators for evaluation of image values in physical space
-    typename InputImageNNInterpolationType::Pointer inputImageInterp = InputImageNNInterpolationType::New();
+    auto inputImageInterp = InputImageNNInterpolationType::New();
     inputImageInterp->SetInputImage(normalizedInputModalImagesList[i]);
     inputImageNNInterpolatorsVector[i] = inputImageInterp;
 
@@ -133,26 +133,26 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
    * Create an edge mask from the finest resolution image.
    * Edges should be excluded from purePlugsMask.
    */
-  typename CastToRealFilterType::Pointer toReal = CastToRealFilterType::New();
+  auto toReal = CastToRealFilterType::New();
   toReal->SetInput(normalizedInputModalImagesList[0]);
 
-  typename CannyFilterType::Pointer cannyFilter = CannyFilterType::New();
+  auto cannyFilter = CannyFilterType::New();
   cannyFilter->SetInput(toReal->GetOutput());
   cannyFilter->SetVariance(2.0);
   cannyFilter->SetUpperThreshold(0.05);
   cannyFilter->SetLowerThreshold(0.02);
 
-  typename CastToByteFilterType::Pointer toByte = CastToByteFilterType::New();
+  auto toByte = CastToByteFilterType::New();
   toByte->SetInput(cannyFilter->GetOutput());
   toByte->Update();
 
-  typename ByteImageType::Pointer           edgeMask = toByte->GetOutput();
-  typename MaskNNInterpolationType::Pointer edgeMaskInterp = MaskNNInterpolationType::New();
+  typename ByteImageType::Pointer edgeMask = toByte->GetOutput();
+  auto                            edgeMaskInterp = MaskNNInterpolationType::New();
   edgeMaskInterp->SetInputImage(edgeMask);
 
   // Write to disk for debug
   using EdgeMaskWriterType = itk::ImageFileWriter<ByteImageType>;
-  typename EdgeMaskWriterType::Pointer edgewriter = EdgeMaskWriterType::New();
+  auto edgewriter = EdgeMaskWriterType::New();
   edgewriter->SetInput(edgeMask);
   edgewriter->SetFileName("DEBUG_Canny_Edge_Mask.nii.gz");
   edgewriter->Update();
@@ -161,7 +161,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   /*
    * Create an all zero mask image
    */
-  typename ByteImageType::Pointer mask = ByteImageType::New();
+  auto mask = ByteImageType::New();
   // Spacing is set as the largest spacing at each direction
   mask->SetSpacing(maskSpacing);
   // Origin and direction are set from the first modality image
@@ -185,7 +185,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   mask->FillBuffer(0);
   ///////////////////////
 
-  IntegrityMetricType::Pointer integrityMetric = IntegrityMetricType::New();
+  auto integrityMetric = IntegrityMetricType::New();
   integrityMetric->SetThreshold(threshold);
 
   // define step size based on the number of sub-samples at each direction
@@ -197,7 +197,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   // Pre-allocate the sample list once outside the loop.  Re-using a single
   // object avoids calling itk::ObjectFactoryBase::CreateInstance() (which
   // performs O(N_factories) string comparisons) for every voxel.
-  SampleType::Pointer sample = SampleType::New();
+  auto sample = SampleType::New();
   sample->SetMeasurementVectorSize(numberOfImageModalities);
 
   // Now iterate through the mask image

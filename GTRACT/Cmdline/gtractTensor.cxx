@@ -115,7 +115,7 @@ main(int argc, char * argv[])
   }
 
   using VectorImageReaderType = itk::ImageFileReader<VectorImageType, itk::DefaultConvertPixelTraits<PixelType>>;
-  VectorImageReaderType::Pointer vectorImageReader = VectorImageReaderType::New();
+  auto vectorImageReader = VectorImageReaderType::New();
   vectorImageReader->SetFileName(inputVolume);
 
   try
@@ -134,7 +134,7 @@ main(int argc, char * argv[])
   {
     using LocalIndexImageType = itk::Image<PixelType, 3>;
     using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, LocalIndexImageType>;
-    VectorSelectFilterType::Pointer SelectIndexImageFilter = VectorSelectFilterType::New();
+    auto SelectIndexImageFilter = VectorSelectFilterType::New();
     SelectIndexImageFilter->SetIndex(b0Index);
     SelectIndexImageFilter->SetInput(vectorImageReader->GetOutput());
     try
@@ -148,7 +148,7 @@ main(int argc, char * argv[])
     };
     LocalIndexImageType::Pointer b0Image(SelectIndexImageFilter->GetOutput());
     using ROIAutoType = itk::BRAINSROIAutoImageFilter<LocalIndexImageType, MaskImageType>;
-    ROIAutoType::Pointer ROIFilter = ROIAutoType::New();
+    auto ROIFilter = ROIAutoType::New();
     ROIFilter->SetInput(b0Image);
     ROIFilter->SetClosingSize(9.0); // default TODO Make parameter
     ROIFilter->SetDilateSize(0.0);
@@ -193,11 +193,11 @@ main(int argc, char * argv[])
   using TensorFilterType =
     itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType, TensorPixelType>;
   using DirectionContainerType = TensorFilterType::GradientDirectionContainerType;
-  DirectionContainerType::Pointer gradientDirectionContainer = DirectionContainerType::New();
+  auto gradientDirectionContainer = DirectionContainerType::New();
 
   using VectorImageFilterType = itk::ComposeImageFilter<IndexImageType>;
-  VectorImageFilterType::Pointer indexImageToVectorImageFilter = VectorImageFilterType::New();
-  int                            vectorIndex = 0;
+  auto indexImageToVectorImageFilter = VectorImageFilterType::New();
+  int  vectorIndex = 0;
   for (unsigned int i = 0; i < vectorImageReader->GetOutput()->GetVectorLength(); ++i)
   {
     using VectorSelectFilterType = itk::VectorIndexSelectionCastImageFilter<VectorImageType, IndexImageType>;
@@ -220,7 +220,7 @@ main(int argc, char * argv[])
     if (MedianFilterSize[0] > 0 || MedianFilterSize[1] > 0 || MedianFilterSize[2] > 0)
     {
       using MedianFilterType = itk::MedianImageFilter<IndexImageType, IndexImageType>;
-      MedianFilterType::Pointer filter = MedianFilterType::New();
+      auto filter = MedianFilterType::New();
       filter->SetInput(selectIndexImageFilter->GetOutput());
       filter->SetRadius(MedianFilterSize);
       filter->Update();
@@ -236,11 +236,11 @@ main(int argc, char * argv[])
     if (resampleIsotropic)
     {
       using ResampleFilterType = itk::ResampleImageFilter<IndexImageType, IndexImageType>;
-      ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+      auto resampler = ResampleFilterType::New();
       resampler->SetInput(baseImage);
 
       using InterpolatorType = itk::LinearInterpolateImageFunction<IndexImageType, double>;
-      InterpolatorType::Pointer interpolator = InterpolatorType::New();
+      auto interpolator = InterpolatorType::New();
       resampler->SetInterpolator(interpolator);
       resampler->SetDefaultPixelValue(0);
 
@@ -261,7 +261,7 @@ main(int argc, char * argv[])
       resampler->SetSize(size);
 
       using TransformType = itk::IdentityTransform<double, 3>;
-      TransformType::Pointer transform = TransformType::New();
+      auto transform = TransformType::New();
       transform->SetIdentity();
       resampler->SetTransform(transform);
       resampler->Update();
@@ -313,7 +313,7 @@ main(int argc, char * argv[])
   }
   indexImageToVectorImageFilter->Update();
 
-  TensorFilterType::Pointer tensorFilter = TensorFilterType::New();
+  auto tensorFilter = TensorFilterType::New();
   tensorFilter->SetGradientImage(gradientDirectionContainer, indexImageToVectorImageFilter->GetOutput());
   tensorFilter->SetThreshold(backgroundSuppressingThreshold);
   tensorFilter->SetBValue(BValue);       /* Required */
@@ -354,7 +354,7 @@ main(int argc, char * argv[])
   TensorImageType::Pointer tensorImage = tensorFilter->GetOutput();
 
   using WriterType = itk::ImageFileWriter<TensorImageType>;
-  WriterType::Pointer nrrdWriter = WriterType::New();
+  auto nrrdWriter = WriterType::New();
   nrrdWriter->UseCompressionOn();
   nrrdWriter->SetInput(tensorImage);
   nrrdWriter->SetFileName(outputVolume);

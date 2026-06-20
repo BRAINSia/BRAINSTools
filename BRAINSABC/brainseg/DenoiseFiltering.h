@@ -55,7 +55,7 @@ DenoiseFiltering(typename TInputImageType::Pointer img,
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       using AnisoFilterType = itk::GradientAnisotropicDiffusionImageFilter<TInputImageType, TInputImageType>;
-      typename AnisoFilterType::Pointer anisofilt = AnisoFilterType::New();
+      auto anisofilt = AnisoFilterType::New();
 
       anisofilt->SetInput(img);
       anisofilt->SetConductanceParameter(1);
@@ -76,7 +76,7 @@ DenoiseFiltering(typename TInputImageType::Pointer img,
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
       using CurvatureFilterType = itk::CurvatureFlowImageFilter<TInputImageType, TInputImageType>;
-      typename CurvatureFilterType::Pointer cfilt = CurvatureFilterType::New();
+      auto cfilt = CurvatureFilterType::New();
       cfilt->SetInput(img);
       cfilt->SetNumberOfIterations(PrefilteringIterations);
       cfilt->SetTimeStep(PrefilteringTimeStep);

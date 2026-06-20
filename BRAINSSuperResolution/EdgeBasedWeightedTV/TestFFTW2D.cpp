@@ -56,7 +56,7 @@ main(int argc, char * argv[])
   using FFFTR2C = itk::FFTWForwardFFTImageFilter<SImageType>;
   using IFFTC2R = itk::FFTWInverseFFTImageFilter<CImageType>;
 
-  CImageType::Pointer CR = CImageType::New();
+  auto CR = CImageType::New();
   {
     CImageType::RegionType region;
     auto size = itk::MakeFilled<CImageType::SizeType>(9);
@@ -80,21 +80,21 @@ main(int argc, char * argv[])
   }
   DumpImage2D(CR, "CR");
 
-  FFTC2C::Pointer forw_c2c = FFTC2C::New();
+  auto forw_c2c = FFTC2C::New();
   forw_c2c->SetInput(CR);
   forw_c2c->SetTransformDirection(FFTC2C::FORWARD);
   forw_c2c->Update();
   CImageType::Pointer forw_c2c_image = forw_c2c->GetOutput();
   DumpImage2D(forw_c2c_image, "forw_c2c_image");
 
-  FFTC2C::Pointer inv_c2c = FFTC2C::New();
+  auto inv_c2c = FFTC2C::New();
   inv_c2c->SetInput(forw_c2c_image);
   inv_c2c->SetTransformDirection(FFTC2C::INVERSE);
   inv_c2c->Update();
   CImageType::Pointer inv_c2c_image = inv_c2c->GetOutput();
   DumpImage2D(inv_c2c_image, "inv_c2c_image");
 
-  IFFTC2R::Pointer ifft_c2r = IFFTC2R::New();
+  auto ifft_c2r = IFFTC2R::New();
   ifft_c2r->SetInput(forw_c2c_image);
   ifft_c2r->Update();
   SImageType::Pointer ifft_c2r_image = ifft_c2r->GetOutput();

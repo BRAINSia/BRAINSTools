@@ -129,7 +129,7 @@ main(int argc, char * argv[])
       {
         itk::TransformFileReader::TransformPointer curTransform;
 
-        itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();
+        auto reader = itk::TransformFileReader::New();
         std::cout << "Reading " << it << std::endl;
         reader->SetFileName(it);
         try
@@ -151,7 +151,7 @@ main(int argc, char * argv[])
       // fake it with identity transforms
       using IDTransformType = itk::IdentityTransform<double, 3>;
 
-      IDTransformType::Pointer                   idXfrm = IDTransformType::New();
+      auto                                       idXfrm = IDTransformType::New();
       itk::TransformFileReader::TransformPointer baseXfrm = idXfrm.GetPointer();
       for (std::vector<std::string>::const_iterator it = inputLabelVolume.begin(); it != inputLabelVolume.end(); ++it)
       {
@@ -164,9 +164,9 @@ main(int argc, char * argv[])
     // sigma can also be specified on the command line.
     using ucharLess = std::less<itk::NumericTraits<unsigned char>::RealType>;
     using InterpolationFunctionType = itk::LabelImageGaussianInterpolateImageFunction<USImageType, double, ucharLess>;
-    InterpolationFunctionType::Pointer interpolateFunc = InterpolationFunctionType::New();
-    double                             sigma[3];
-    USImageType::SpacingType           spacing = compositeVolume->GetSpacing();
+    auto                     interpolateFunc = InterpolationFunctionType::New();
+    double                   sigma[3];
+    USImageType::SpacingType spacing = compositeVolume->GetSpacing();
     for (unsigned i = 0; i < 3; ++i)
     {
       sigma[i] = spacing[i];
@@ -193,7 +193,7 @@ main(int argc, char * argv[])
         std::cerr << "Invalid transform " << curTransformBase << std::endl;
         exit(1);
       }
-      ResampleFilterType::Pointer resampler = ResampleFilterType::New();
+      auto resampler = ResampleFilterType::New();
       try
       {
         resampler->SetInput(current);
@@ -232,7 +232,7 @@ main(int argc, char * argv[])
   }
 
   using STAPLEFilterType = itk::MultiLabelSTAPLEImageFilter<USImageType, USImageType>;
-  STAPLEFilterType::Pointer STAPLEFilter = STAPLEFilterType::New();
+  auto STAPLEFilter = STAPLEFilterType::New();
   STAPLEFilter->SetNumberOfWorkUnits(1);
 
   if (labelForUndecidedPixels != -1)

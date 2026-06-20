@@ -41,23 +41,23 @@
     iterator copy                      \
   }
 
-#define muReadMacro(type, filename, image)                   \
-  {                                                          \
-    using ReaderType = itk::ImageFileReader<type>;           \
-    typename ReaderType::Pointer reader = ReaderType::New(); \
-    reader->SetFileName(filename);                           \
-    reader->Update();                                        \
-    (image) = reader->GetOutput();                           \
+#define muReadMacro(type, filename, image)         \
+  {                                                \
+    using ReaderType = itk::ImageFileReader<type>; \
+    auto reader = ReaderType::New();               \
+    reader->SetFileName(filename);                 \
+    reader->Update();                              \
+    (image) = reader->GetOutput();                 \
   }
 
-#define muWriteMacro(type, filename, image)                  \
-  {                                                          \
-    using WriterType = itk::ImageFileWriter<type>;           \
-    typename WriterType::Pointer writer = WriterType::New(); \
-    writer->UseCompressionOn();                              \
-    writer->SetFileName(filename);                           \
-    writer->SetInput(image);                                 \
-    writer->Update();                                        \
+#define muWriteMacro(type, filename, image)        \
+  {                                                \
+    using WriterType = itk::ImageFileWriter<type>; \
+    auto writer = WriterType::New();               \
+    writer->UseCompressionOn();                    \
+    writer->SetFileName(filename);                 \
+    writer->SetInput(image);                       \
+    writer->Update();                              \
   }
 
 #endif

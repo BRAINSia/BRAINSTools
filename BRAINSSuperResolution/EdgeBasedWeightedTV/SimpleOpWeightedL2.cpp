@@ -136,7 +136,7 @@ sitk::Image
 GetGradient(sitk::Image inputImage)
 {
 #if 1
-  GradientVarVecType::Pointer gradient_of_p = GradientVarVecType::New();
+  auto gradient_of_p = GradientVarVecType::New();
   using FloatBoundaryType = itk::PeriodicBoundaryCondition<FloatImageType>;
   gradient_of_p->OverrideBoundaryCondition(new FloatBoundaryType);
   FloatImageType::Pointer itkinputImage = dynamic_cast<FloatImageType *>(inputImage.GetITKBase());
@@ -178,7 +178,7 @@ GetDivergence(sitk::Image inputImage)
 {
   VarVecImageType::Pointer itkinputImage = dynamic_cast<VarVecImageType *>(inputImage.GetITKBase());
 
-  DivergenceVarVecType::Pointer divergence_of_gradient_of_p = DivergenceVarVecType::New();
+  auto divergence_of_gradient_of_p = DivergenceVarVecType::New();
   using CVBoundaryType = itk::PeriodicBoundaryCondition<VarVecImageType>;
   divergence_of_gradient_of_p->OverrideBoundaryCondition(new CVBoundaryType);
   divergence_of_gradient_of_p->SetInput(itkinputImage);

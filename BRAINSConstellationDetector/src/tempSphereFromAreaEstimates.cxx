@@ -85,7 +85,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
   //  foreground = FindLargestForgroundFilledMask<SImageType>(volOrig,
   // otsuPercentileThreshold, closingSize);
   using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
-  LFFMaskFilterType::Pointer LFF = LFFMaskFilterType::New();
+  auto LFF = LFFMaskFilterType::New();
   LFF->SetInput(volOrig);
   LFF->SetOtsuPercentileThreshold(otsuPercentileThreshold);
   LFF->SetClosingSize(closingSize);
@@ -203,7 +203,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
     minValVector[0] = minval;
     maxValVector[0] = maxval;
 
-    HistogramType::Pointer histogram = HistogramType::New();
+    auto histogram = HistogramType::New();
     histogram->Initialize(size, minValVector, maxValVector);
 
     // put each image pixel into the histogram

@@ -90,7 +90,7 @@ main(int argc, char * argv[])
   }
 
   using TensorImageReaderType = itk::ImageFileReader<TensorImageType>;
-  TensorImageReaderType::Pointer tensorImageReader = TensorImageReaderType::New();
+  auto tensorImageReader = TensorImageReaderType::New();
   tensorImageReader->SetFileName(inputTensorVolume);
 
   try
@@ -105,7 +105,7 @@ main(int argc, char * argv[])
 
   TensorImageType::Pointer tensorImage = tensorImageReader->GetOutput();
 
-  AnisotropyImageType::Pointer anisotropyImage = AnisotropyImageType::New();
+  auto anisotropyImage = AnisotropyImageType::New();
   anisotropyImage->SetRegions(tensorImage->GetLargestPossibleRegion());
   anisotropyImage->SetSpacing(tensorImage->GetSpacing());
   anisotropyImage->SetOrigin(tensorImage->GetOrigin());
@@ -154,7 +154,7 @@ main(int argc, char * argv[])
   }
 
   using WriterType = itk::ImageFileWriter<AnisotropyImageType>;
-  WriterType::Pointer anisotropyWriter = WriterType::New();
+  auto anisotropyWriter = WriterType::New();
   anisotropyWriter->UseCompressionOn();
   anisotropyWriter->SetInput(anisotropyImage);
   anisotropyWriter->SetFileName(outputVolume);

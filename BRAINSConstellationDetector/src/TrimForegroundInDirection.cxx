@@ -66,7 +66,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & volOrig,
                                   double                headSizeLowerLimit,
                                   SImageType::PixelType BackgroundFillValue)
 {
-  SImageType::Pointer foreground = SImageType::New();
+  auto foreground = SImageType::New();
 
   return TrimForegroundInDirection(
     foreground, volOrig, axis, otsuPercentileThreshold, closingSize, headSizeLowerLimit, BackgroundFillValue);
@@ -84,7 +84,7 @@ TrimForegroundInDirection(SImageType::Pointer & foreground,
                           SImageType::PixelType BackgroundFillValue)
 {
   using FindCenterFilter = itk::FindCenterOfBrainFilter<SImageType>;
-  const FindCenterFilter::Pointer findCenterFilter = FindCenterFilter::New();
+  const auto findCenterFilter = FindCenterFilter::New();
   findCenterFilter->SetInput(volOrig);
   findCenterFilter->SetAxis(axis);
   findCenterFilter->SetOtsuPercentileThreshold(otsuPercentileThreshold);

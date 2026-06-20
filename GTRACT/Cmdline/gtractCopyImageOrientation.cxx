@@ -99,7 +99,7 @@ main(int argc, char * argv[])
 
   using SpecimenImageType = itk::Image<PixelType, 3>;
   using SpecimenImageReaderType = itk::ImageFileReader<SpecimenImageType>;
-  SpecimenImageReaderType::Pointer specimenImageReader = SpecimenImageReaderType::New();
+  auto specimenImageReader = SpecimenImageReaderType::New();
   specimenImageReader->SetFileName(inputVolume);
 
   try
@@ -114,7 +114,7 @@ main(int argc, char * argv[])
 
   using ReferenceImageType = itk::Image<PixelType, 3>;
   using ReferenceImageReaderType = itk::ImageFileReader<ReferenceImageType>;
-  ReferenceImageReaderType::Pointer referenceImageReader = ReferenceImageReaderType::New();
+  auto referenceImageReader = ReferenceImageReaderType::New();
   referenceImageReader->SetFileName(inputReferenceVolume);
 
   try
@@ -128,7 +128,7 @@ main(int argc, char * argv[])
   }
 
   using OrientFilterType = itk::OrientImageFilter<SpecimenImageType, ReferenceImageType>;
-  OrientFilterType::Pointer orientImageFilter = OrientFilterType::New();
+  auto orientImageFilter = OrientFilterType::New();
   orientImageFilter->SetInput(specimenImageReader->GetOutput());
   orientImageFilter->SetDesiredCoordinateDirection(referenceImageReader->GetOutput()->GetDirection());
   orientImageFilter->UseImageDirectionOn();
@@ -147,7 +147,7 @@ main(int argc, char * argv[])
   reorientedImage->SetMetaDataDictionary(specimenImageReader->GetOutput()->GetMetaDataDictionary());
 
   using ImageFileWriterType = itk::ImageFileWriter<ReferenceImageType>;
-  ImageFileWriterType::Pointer ImageWriter = ImageFileWriterType::New();
+  auto ImageWriter = ImageFileWriterType::New();
   ImageWriter->UseCompressionOn();
   ImageWriter->SetFileName(outputVolume);
   ImageWriter->SetInput(reorientedImage);

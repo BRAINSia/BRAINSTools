@@ -59,7 +59,7 @@ ComputeRigidTransformFromGeneric(const itk::Transform<double, 3, 3>::ConstPointe
   using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
   using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
 
-  VersorRigid3DTransformType::Pointer versorRigid = VersorRigid3DTransformType::New();
+  auto versorRigid = VersorRigid3DTransformType::New();
   versorRigid->SetIdentity();
   // //////////////////////////////////////////////////////////////////////////
   // ConvertTransforms
@@ -268,7 +268,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
   using BRAINSCompositeTransformType = typename itk::CompositeTransform<TScalarType, 3>;
   using TransformFileReaderType = typename itk::TransformFileReaderTemplate<TScalarType>;
 
-  const typename TransformFileReaderType::Pointer transformListReader = TransformFileReaderType::New();
+  const auto transformListReader = TransformFileReaderType::New();
 
   using TransformListType = typename TransformFileReaderType::TransformListType;
 
@@ -320,7 +320,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename VersorRigid3DTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const VersorRigid3DTransformType *>((*(currentTransformList.begin())).GetPointer());
-      typename VersorRigid3DTransformType::Pointer tempCopy = VersorRigid3DTransformType::New();
+      auto tempCopy = VersorRigid3DTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }
@@ -328,7 +328,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename ScaleVersor3DTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const ScaleVersor3DTransformType *>((*(currentTransformList.begin())).GetPointer());
-      typename ScaleVersor3DTransformType::Pointer tempCopy = ScaleVersor3DTransformType::New();
+      auto tempCopy = ScaleVersor3DTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }
@@ -336,7 +336,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename ScaleSkewVersor3DTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const ScaleSkewVersor3DTransformType *>((*(currentTransformList.begin())).GetPointer());
-      typename ScaleSkewVersor3DTransformType::Pointer tempCopy = ScaleSkewVersor3DTransformType::New();
+      auto tempCopy = ScaleSkewVersor3DTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }
@@ -344,7 +344,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename AffineTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const AffineTransformType *>((*(currentTransformList.begin())).GetPointer());
-      typename AffineTransformType::Pointer tempCopy = AffineTransformType::New();
+      auto tempCopy = AffineTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }
@@ -352,7 +352,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename Similarity3DTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const Similarity3DTransformType *>((*(currentTransformList.begin())).GetPointer());
-      typename Similarity3DTransformType::Pointer tempCopy = Similarity3DTransformType::New();
+      auto tempCopy = Similarity3DTransformType::New();
       AssignRigid::AssignConvertedTransform(tempCopy, tempInitializerITKTransform);
       genericTransform = tempCopy.GetPointer();
     }
@@ -360,7 +360,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename ThinPlateSpline3DTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const ThinPlateSpline3DTransformType *>((*(currentTransformList.begin())).GetPointer());
-      const typename ThinPlateSpline3DTransformType::Pointer tempCopy = ThinPlateSpline3DTransformType::New();
+      const auto tempCopy = ThinPlateSpline3DTransformType::New();
       tempCopy->SetFixedParameters(tempInitializerITKTransform->GetFixedParameters());
       tempCopy->SetParametersByValue(tempInitializerITKTransform->GetParameters());
       tempCopy->ComputeWMatrix();
@@ -370,7 +370,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     {
       const typename BSplineTransformType::ConstPointer tempInitializerITKTransform =
         static_cast<const BSplineTransformType *>((*(currentTransformList.begin())).GetPointer());
-      const typename BSplineTransformType::Pointer tempCopy = BSplineTransformType::New();
+      const auto tempCopy = BSplineTransformType::New();
       tempCopy->SetFixedParameters(tempInitializerITKTransform->GetFixedParameters());
       tempCopy->SetParametersByValue(tempInitializerITKTransform->GetParameters());
       genericTransform = tempCopy.GetPointer();
@@ -381,7 +381,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
       {
         const typename BRAINSCompositeTransformType::ConstPointer tempInitializerITKTransform =
           static_cast<const BRAINSCompositeTransformType *>((*(currentTransformList.begin())).GetPointer());
-        const typename BRAINSCompositeTransformType::Pointer tempCopy = BRAINSCompositeTransformType::New();
+        const auto tempCopy = BRAINSCompositeTransformType::New();
         const typename BRAINSCompositeTransformType::TransformQueueType & transformQueue =
           tempInitializerITKTransform->GetTransformQueue();
         for (unsigned int i = 0; i < transformQueue.size(); ++i)
@@ -408,7 +408,7 @@ ReadTransformFromDisk(const std::string & initialTransform)
     std::cout << "Adding all transforms in the list to a composite transform file..." << std::endl;
     try
     {
-      const typename BRAINSCompositeTransformType::Pointer tempCopy = BRAINSCompositeTransformType::New();
+      const auto tempCopy = BRAINSCompositeTransformType::New();
 
       for (auto it = currentTransformList.begin(); it != currentTransformList.end(); ++it)
       {
@@ -469,7 +469,7 @@ WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTran
     // Define a float type displacement field
     using VectorType = itk::Vector<TWriteScalarType, 3>;
     using OutputDisplacementFieldType = itk::Image<VectorType, 3>;
-    const typename OutputDisplacementFieldType::Pointer outputDispField = OutputDisplacementFieldType::New();
+    const auto outputDispField = OutputDisplacementFieldType::New();
     outputDispField->CopyInformation(inputDispField);
     outputDispField->SetRegions(inputDispField->GetLargestPossibleRegion());
     outputDispField->Allocate();
@@ -488,7 +488,7 @@ WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTran
     }
 
     using DisplacementFieldWriter = itk::ImageFileWriter<OutputDisplacementFieldType>;
-    const typename DisplacementFieldWriter::Pointer dispWriter = DisplacementFieldWriter::New();
+    const auto dispWriter = DisplacementFieldWriter::New();
     dispWriter->SetInput(outputDispField);
     dispWriter->SetFileName(TransformFilename.c_str());
     try
@@ -505,7 +505,7 @@ WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTran
   else // other transforms (not displacementField transforms)
   {
     using TransformWriterType = itk::TransformFileWriterTemplate<TWriteScalarType>;
-    const typename TransformWriterType::Pointer transformWriter = TransformWriterType::New();
+    const auto transformWriter = TransformWriterType::New();
     transformWriter->SetFileName(TransformFilename.c_str());
     transformWriter->SetUseCompression(true);
 
@@ -513,7 +513,7 @@ WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTran
     std::string       inverseTransformFileName(TransformFilename);
     inverseTransformFileName.replace(
       inverseTransformFileName.end() - extension.size(), inverseTransformFileName.end(), "_Inverse.h5");
-    const typename TransformWriterType::Pointer inverseTransformWriter = TransformWriterType::New();
+    const auto inverseTransformWriter = TransformWriterType::New();
     inverseTransformWriter->SetFileName(inverseTransformFileName.c_str());
     inverseTransformWriter->SetUseCompression(true);
     bool inverseTransformExists = true;
@@ -550,7 +550,7 @@ WriteTransformToDisk(const itk::Transform<TInputScalarType, 3, 3> * const MyTran
           const typename GenericTransformType::Pointer genericTransform =
             static_cast<GenericTransformType *>(MyTransform->GetInverseTransform().GetPointer());
           using InverseTransformType = itk::AffineTransform<TInputScalarType, 3>;
-          const typename InverseTransformType::Pointer tempInverseTransform = InverseTransformType::New();
+          const auto tempInverseTransform = InverseTransformType::New();
           tempInverseTransform->SetMatrix(genericTransform->GetMatrix());
           tempInverseTransform->SetOffset(genericTransform->GetOffset());
 

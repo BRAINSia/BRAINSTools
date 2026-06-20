@@ -73,7 +73,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::ImageMinMax(
   typename TInputImage::PixelType & imageMin,
   typename TInputImage::PixelType & imageMax) const
 {
-  typename MinimumMaximumImageFilter<TInputImage>::Pointer minmaxFilter = MinimumMaximumImageFilter<TInputImage>::New();
+  auto minmaxFilter = MinimumMaximumImageFilter<TInputImage>::New();
   minmaxFilter->SetInput(this->GetInput());
   minmaxFilter->Update();
   imageMax = minmaxFilter->GetMaximum();
@@ -111,7 +111,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
 
   // This is to help with noisy data that has a few spurious very high/ very low values.
   using ImageCalcType = ComputeHistogramQuantileThresholds<TInputImage, TOutputImage>;
-  typename ImageCalcType::Pointer ImageCalc = ImageCalcType::New();
+  auto ImageCalc = ImageCalcType::New();
   ImageCalc->SetImage(this->GetInput());
 
   ImageCalc->SetQuantileLowerThreshold(m_OtsuPercentileLowerThreshold);
@@ -134,7 +134,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
     using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter<TInputImage>;
     using HistogramType = typename HistogramGeneratorType::HistogramType;
 
-    typename HistogramGeneratorType::Pointer histGenerator = HistogramGeneratorType::New();
+    auto histGenerator = HistogramGeneratorType::New();
     histGenerator->SetInput(this->GetInput());
     typename HistogramGeneratorType::HistogramSizeType hsize(1);
     hsize[0] = 128; // V3 itkOtsuThresholdImageCalculator.hxx m_NumberOfHistogramBins = 128
@@ -142,7 +142,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
     histGenerator->SetAutoMinimumMaximum(true);
 
     using OtsuImageCalcType = itk::OtsuThresholdCalculator<HistogramType>;
-    typename OtsuImageCalcType::Pointer OtsuImageCalc = OtsuImageCalcType::New();
+    auto OtsuImageCalc = OtsuImageCalcType::New();
     OtsuImageCalc->SetInput(histGenerator->GetOutput());
     OtsuImageCalc->Update();
     typename TInputImage::PixelType otsuThreshold = OtsuImageCalc->GetThreshold();
@@ -155,7 +155,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   }
 
   using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage, IntegerImageType>;
-  typename InputThresholdFilterType::Pointer threshold = InputThresholdFilterType::New();
+  auto threshold = InputThresholdFilterType::New();
   threshold->SetInput(this->GetInput());
   threshold->SetInsideValue(this->m_InsideValue);
   threshold->SetOutsideValue(this->m_OutsideValue);
@@ -167,14 +167,14 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
             << std::endl;
 
   using FilterType = ConnectedComponentImageFilter<IntegerImageType, IntegerImageType>;
-  typename FilterType::Pointer labelConnectedComponentsFilter = FilterType::New();
+  auto labelConnectedComponentsFilter = FilterType::New();
   //  SimpleFilterWatcher watcher(labelConnectedComponentsFilter);
   //  watcher.QuietOn();
   labelConnectedComponentsFilter->SetInput(threshold->GetOutput());
   // labelConnectedComponentsFilter->Update();
 
   using RelabelType = RelabelComponentImageFilter<IntegerImageType, IntegerImageType>;
-  typename RelabelType::Pointer relabel = RelabelType::New();
+  auto relabel = RelabelType::New();
   relabel->SetInput(labelConnectedComponentsFilter->GetOutput());
 
   try
@@ -191,7 +191,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   // unsigned short numObjects = relabel->GetNumberOfObjects();
   // std::cout << "Removed " << numObjects - 1 << " smaller objects." <<
   // std::endl;
-  typename ThresholdFilterType::Pointer LargestFilter = ThresholdFilterType::New();
+  auto LargestFilter = ThresholdFilterType::New();
   LargestFilter->SetInput(relabel->GetOutput());
   LargestFilter->SetInsideValue(this->m_InsideValue);
   LargestFilter->SetOutsideValue(this->m_OutsideValue);
@@ -203,7 +203,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
     BinaryBallStructuringElement<typename IntegerImageType::PixelType, IntegerImageType::ImageDimension>;
 
   using ErodeFilterType = BinaryErodeImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
-  typename ErodeFilterType::Pointer ErodeFilter = ErodeFilterType::New();
+  auto ErodeFilter = ErodeFilterType::New();
   {
     myKernelType                    dilateBall;
     myKernelType                    erodeBall;
@@ -228,7 +228,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
     erodeBall.CreateStructuringElement();
 
     using DilateFilterType = BinaryDilateImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
-    typename DilateFilterType::Pointer DilateFilter = DilateFilterType::New();
+    auto DilateFilter = DilateFilterType::New();
 
     // DilateFilter->SetForegroundValue(1);
     DilateFilter->SetDilateValue(1);
@@ -257,8 +257,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   // seed.
   // For now just choose all the corners as seed points
   using seededConnectedThresholdFilterType = ConnectedThresholdImageFilter<IntegerImageType, IntegerImageType>;
-  typename seededConnectedThresholdFilterType::Pointer seededConnectedThresholdFilter =
-    seededConnectedThresholdFilterType::New();
+  auto seededConnectedThresholdFilter = seededConnectedThresholdFilterType::New();
 
   {
     const typename IntegerImageType::IndexType SeedLocation = { { 0, 0, 0 } };
@@ -303,7 +302,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
 
   typename IntegerImageType::Pointer dilateMask = nullptr;
   {
-    typename ThresholdFilterType::Pointer FinalThreshold = ThresholdFilterType::New();
+    auto FinalThreshold = ThresholdFilterType::New();
     FinalThreshold->SetInput(seededConnectedThresholdFilter->GetOutput());
     FinalThreshold->SetInsideValue(this->m_OutsideValue);
     FinalThreshold->SetOutsideValue(this->m_InsideValue);
@@ -327,7 +326,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
       dilateBall.SetRadius(dilateBallSize);
       dilateBall.CreateStructuringElement();
 
-      typename DilateType::Pointer dil = DilateType::New();
+      auto dil = DilateType::New();
       dil->SetDilateValue(this->m_InsideValue);
       dil->SetKernel(dilateBall);
       dil->SetInput(FinalThreshold->GetOutput());
@@ -341,7 +340,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   }
 
   using outputCasterType = CastImageFilter<IntegerImageType, OutputImageType>;
-  typename outputCasterType::Pointer outputCaster = outputCasterType::New();
+  auto outputCaster = outputCasterType::New();
   outputCaster->SetInput(dilateMask);
 
   outputCaster->GraftOutput(this->GetOutput());

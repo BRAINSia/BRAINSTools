@@ -39,13 +39,13 @@ ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
   // of the input image through that
   SImageType::Pointer inputStatsImage;
   {
-    const LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
+    const auto duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+  const auto stats = itk::StatisticsImageFilter<SImageType>::New();
 
   stats->SetInput(inputStatsImage);
   stats->Update();
@@ -59,7 +59,7 @@ ReturnOrientedRGBImage(const SImageType::Pointer & inputImage)
 
   //  itkUtil::WriteImage<SImageType>(inputImage, "inputImage.nii.gz");
 
-  const RGBImageType::Pointer rgbImage = RGBImageType::New();
+  const auto rgbImage = RGBImageType::New();
   rgbImage->CopyInformation(inputImage);
   rgbImage->SetRegions(inputImage->GetLargestPossibleRegion());
   rgbImage->Allocate();
@@ -83,7 +83,7 @@ RGB2DImageType::Pointer
 GenerateRGB2DImage(const RGBImageType::Pointer & orientedImage)
 {
   // Alocate 2DImage
-  RGB2DImageType::Pointer   TwoDImage = RGB2DImageType::New();
+  auto                      TwoDImage = RGB2DImageType::New();
   RGB2DImageType::IndexType TwoDIndex{};
 
   TwoDIndex[1] = 0;
@@ -262,13 +262,13 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
     itkUtil::OrientImage<SImageType>(in, itk::AnatomicalOrientation::PositiveEnum::RAI);
   SImageType::Pointer inputStatsImage;
   {
-    const LandmarkIO::DuplicatorType::Pointer duplicator = LandmarkIO::DuplicatorType::New();
+    const auto duplicator = LandmarkIO::DuplicatorType::New();
     duplicator->SetInputImage(inputImage);
     duplicator->Update();
     inputStatsImage = duplicator->GetOutput();
   }
 
-  const itk::StatisticsImageFilter<SImageType>::Pointer stats = itk::StatisticsImageFilter<SImageType>::New();
+  const auto stats = itk::StatisticsImageFilter<SImageType>::New();
 
   stats->SetInput(inputStatsImage);
   stats->Update();
@@ -621,7 +621,7 @@ WriteMRMLFile(const std::string &                                        outputM
   // For output volume
   if (outputVolume.compare("") != 0)
   {
-    const ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(outputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();
@@ -662,7 +662,7 @@ WriteMRMLFile(const std::string &                                        outputM
   // For input volume
   if (inputVolume.compare("") != 0)
   {
-    const ReaderType::Pointer reader = ReaderType::New();
+    const auto reader = ReaderType::New();
     reader->SetFileName(inputVolumeFullFilename);
     reader->Update();
     ImageType::DirectionType direction = reader->GetOutput()->GetDirection();

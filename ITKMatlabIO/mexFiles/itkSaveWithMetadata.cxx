@@ -206,7 +206,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
     }
   }
 
-  typename ImageType::Pointer im = ImageType::New();
+  auto im = ImageType::New();
   im->SetDirection(itkDirection);
   im->SetOrigin(itkOrigin);
   im->SetSpacing(itkSpacing);
@@ -362,7 +362,7 @@ WriteITKImageFromMatlabStructure(const MatlabStructManager & msm, const char * f
     }
   }
 
-  typename WriterType::Pointer writer = WriterType::New();
+  auto writer = WriterType::New();
   writer->SetFileName(filename);
   writer->SetInput(im);
   try

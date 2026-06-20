@@ -79,7 +79,7 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
     //  HACK -- chopping based on AcLowerBound
     //  This is ugly code that could be re-written much simpler.
     //
-    using IteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
+    using IteratorType = itk::ImageRegionIterator<SImageType>;
     constexpr double thousand = 1000.0; // we need a DOUBLE constant, not a
     // FLOAT constant, for exact switch
     // comparisons.

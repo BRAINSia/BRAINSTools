@@ -71,7 +71,7 @@ public:
   using OutputPointType = typename TOutputImage::PointType;
 
   using OutputImageIterator = ImageRegionIterator<TOutputImage>;
-  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<TOutputImage>;
+  using OutputImageIteratorWithIndex = ImageRegionIterator<TOutputImage>;
 
   /* Transform and filter type alias */
   using VersorRigidTransformType = VersorRigid3DTransform<double>;

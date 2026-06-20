@@ -81,7 +81,7 @@ StretchIntensityImageFilter<TInputImage, TOutputImage>::BeforeThreadedGenerateDa
 
   const TInputImage * inputImage = this->GetInput();
 
-  ImageRegionConstIteratorWithIndex<TInputImage> it(inputImage, inputImage->GetBufferedRegion());
+  ImageRegionConstIterator<TInputImage> it(inputImage, inputImage->GetBufferedRegion());
 
   m_InputMaximum = NumericTraits<InputPixelType>::NonpositiveMin();
   m_InputMinimum = NumericTraits<InputPixelType>::max();

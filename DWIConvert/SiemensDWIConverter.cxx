@@ -487,7 +487,7 @@ SiemensDWIConverter::DeMosaic()
     unsigned int new_k = k /* - bad_slice_counter */;
 
     dmRegion.SetIndex(2, new_k);
-    itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> dmIt(this->m_Volume, dmRegion);
+    itk::ImageRegionIterator<Volume3DUnwrappedType> dmIt(this->m_Volume, dmRegion);
 
     // figure out the mosaic region for this slice
     int sliceIndex = k;
@@ -501,7 +501,7 @@ SiemensDWIConverter::DeMosaic()
     region.SetIndex(1, colMosaic * dmSize[1]);
     region.SetIndex(2, slcMosaic);
 
-    itk::ImageRegionConstIteratorWithIndex<Volume3DUnwrappedType> imIt(previousImage, region);
+    itk::ImageRegionConstIterator<Volume3DUnwrappedType> imIt(previousImage, region);
     for (dmIt.GoToBegin(), imIt.GoToBegin(); !dmIt.IsAtEnd(); ++dmIt, ++imIt)
     {
       dmIt.Set(imIt.Get());

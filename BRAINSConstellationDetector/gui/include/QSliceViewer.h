@@ -112,24 +112,24 @@ public slots:
   // visibility
 signals:
 protected:
-  vtkActor2DCollection * m_actors;
+  vtkActor2DCollection * m_actors{};
 
-  vtkActor2D * m_actor;
+  vtkActor2D * m_actor{};
 
   // slice viewer type: axial, sagittal, or coronal
-  int m_type;
+  int m_type{};
 
   // Pointer to the physical bound ( = ordered extent )
-  double * m_bound;
+  double * m_bound{};
 
   // last camera postion, helping to account wheeling effect
-  double m_cPos;
+  double m_cPos{};
 
   // color seed
-  int m_color;
+  int m_color{};
 
   // internal ratio for screen size change
-  double m_r;
+  double m_r{};
 
 private:
   void

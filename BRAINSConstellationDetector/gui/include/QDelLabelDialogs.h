@@ -56,11 +56,11 @@ signals:
   accepted(QListWidgetItem *);
 
 protected:
-  QGridLayout *     m_layout;
-  QLabel            m_label;
-  QPushButton       m_accept;
-  QPushButton       m_cancel;
-  QListWidgetItem * m_listItem;
+  QGridLayout *     m_layout{};
+  QLabel            m_label{};
+  QPushButton       m_accept{};
+  QPushButton       m_cancel{};
+  QListWidgetItem * m_listItem{};
 };
 
 #endif

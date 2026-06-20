@@ -446,77 +446,77 @@ private:
     return count;
   }
 
-  ProbabilityImageVectorType m_WarpedPriors;
-  ProbabilityImageVectorType m_OriginalSpacePriors;
-  ProbabilityImageVectorType m_Posteriors;
+  ProbabilityImageVectorType m_WarpedPriors{};
+  ProbabilityImageVectorType m_OriginalSpacePriors{};
+  ProbabilityImageVectorType m_Posteriors{};
 
-  std::string m_AtlasTransformType;
+  std::string m_AtlasTransformType{};
 
   // Variable set if the inputs are modified
-  MapOfInputImageVectors m_InputImages;
-  MapOfInputImageVectors m_RawInputImages;
-  MapOfInputImageVectors m_CorrectedImages;
-  MapOfInputImageVectors m_RawCorrectedImages;
-  MapOfInputImageVectors m_OriginalAtlasImages;
-  MapOfInputImageVectors m_WarpedAtlasImages;
+  MapOfInputImageVectors m_InputImages{};
+  MapOfInputImageVectors m_RawInputImages{};
+  MapOfInputImageVectors m_CorrectedImages{};
+  MapOfInputImageVectors m_RawCorrectedImages{};
+  MapOfInputImageVectors m_OriginalAtlasImages{};
+  MapOfInputImageVectors m_WarpedAtlasImages{};
 
-  ByteImagePointer m_TemplateBrainMask;
+  ByteImagePointer m_TemplateBrainMask{};
 
   // final output
-  ByteImagePointer m_DirtyLabels;
-  ByteImagePointer m_CleanedLabels;
-  ByteImagePointer m_ThresholdedLabels;
-  ByteImagePointer m_DirtyThresholdedLabels;
+  ByteImagePointer m_DirtyLabels{};
+  ByteImagePointer m_CleanedLabels{};
+  ByteImagePointer m_ThresholdedLabels{};
+  ByteImagePointer m_DirtyThresholdedLabels{};
 
   // exclude region from outside image space created by warping an all ones
   // image with zero default value, anded across images
-  ByteImagePointer m_NonAirRegion;
+  ByteImagePointer m_NonAirRegion{};
 
-  FloatingPrecision m_SampleSpacing;
+  FloatingPrecision m_SampleSpacing{};
 
-  unsigned int      m_MaxBiasDegree;
-  FloatingPrecision m_BiasLikelihoodTolerance;
-  FloatingPrecision m_LikelihoodTolerance;
-  unsigned int      m_MaximumIterations;
+  unsigned int      m_MaxBiasDegree{};
+  FloatingPrecision m_BiasLikelihoodTolerance{};
+  FloatingPrecision m_LikelihoodTolerance{};
+  unsigned int      m_MaximumIterations{};
 
-  VectorType m_PriorWeights;
-  bool       m_PriorWeightsSet;
+  VectorType m_PriorWeights{};
+  bool       m_PriorWeightsSet{};
 
-  IntVectorType m_PriorLabelCodeVector;
-  bool          m_PriorLabelCodeVectorSet;
+  IntVectorType m_PriorLabelCodeVector{};
+  bool          m_PriorLabelCodeVectorSet{};
 
-  BoolVectorType m_PriorUseForBiasVector;
-  bool           m_PriorUseForBiasVectorSet;
+  BoolVectorType m_PriorUseForBiasVector{};
+  bool           m_PriorUseForBiasVectorSet{};
 
-  BoolVectorType m_PriorIsForegroundPriorVector;
-  bool           m_PriorIsForegroundPriorVectorSet;
+  BoolVectorType m_PriorIsForegroundPriorVector{};
+  bool           m_PriorIsForegroundPriorVectorSet{};
 
-  BackgroundValueVector m_PriorsBackgroundValues;
+  BackgroundValueVector m_PriorsBackgroundValues{};
 
-  std::string m_OutputDebugDir;
+  std::string m_OutputDebugDir{};
 
-  std::vector<RegionStats> m_ListOfClassStatistics;
+  std::vector<RegionStats> m_ListOfClassStatistics{};
 
-  bool m_UseKNN;
+  bool m_UseKNN{};
 
-  bool             m_UsePurePlugs;
-  float            m_PurePlugsThreshold;
+  bool             m_UsePurePlugs{};
+  float            m_PurePlugsThreshold{};
   unsigned int     m_NumberOfSubSamplesInEachPlugArea[3];
-  ByteImagePointer m_PurePlugsMask;
+  ByteImagePointer m_PurePlugsMask{};
 
-  bool         m_UpdateTransformation;
-  unsigned int m_DebugLevel;
+  bool         m_UpdateTransformation{};
+  unsigned int m_DebugLevel{};
 
-  GenericTransformType::Pointer m_TemplateGenericTransform;
+  GenericTransformType::Pointer m_TemplateGenericTransform{};
   unsigned int                  m_WarpGrid[3];
 
-  FloatingPrecision m_WarpLikelihoodTolerance;
-  bool              m_UpdateRequired;
+  FloatingPrecision m_WarpLikelihoodTolerance{};
+  bool              m_UpdateRequired{};
 
-  std::vector<std::string> m_PriorNames;
-  std::vector<size_t>      m_ClassToPriorMapping;
-  RangeDBType              m_TissueTypeThresholdMapsRange;
-  LOOPITERTYPE             m_AirIndex;
+  std::vector<std::string> m_PriorNames{};
+  std::vector<size_t>      m_ClassToPriorMapping{};
+  RangeDBType              m_TissueTypeThresholdMapsRange{};
+  LOOPITERTYPE             m_AirIndex{};
 };
 
 #ifndef MU_MANUAL_INSTANTIATION

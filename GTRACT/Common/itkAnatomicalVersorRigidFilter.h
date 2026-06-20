@@ -143,19 +143,19 @@ protected:
 
 private:
   // Input and Output Image
-  RegisterImagePointer m_FixedImage;
-  RegisterImagePointer m_MovingImage;
-  TransformTypePointer m_Output;
+  RegisterImagePointer m_FixedImage{};
+  RegisterImagePointer m_MovingImage{};
+  TransformTypePointer m_Output{};
 
   // Registration Parameters
-  float  m_TranslationScale;
-  float  m_MaximumStepLength;
-  float  m_MinimumStepLength;
-  float  m_RelaxationFactor;
-  int    m_NumberOfSpatialSamples;
-  int    m_NumberOfIterations;
-  int    m_InitialRotationAxis;
-  double m_InitialRotationAngle;
+  float  m_TranslationScale{};
+  float  m_MaximumStepLength{};
+  float  m_MinimumStepLength{};
+  float  m_RelaxationFactor{};
+  int    m_NumberOfSpatialSamples{};
+  int    m_NumberOfIterations{};
+  int    m_InitialRotationAxis{};
+  double m_InitialRotationAngle{};
 }; // end of class
 } // end namespace itk
 

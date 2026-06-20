@@ -488,21 +488,21 @@ protected:
   }
 
   /** The weights used to scale derivatives during processing */
-  WeightsType m_DerivativeWeights;
+  WeightsType m_DerivativeWeights{};
 
   /** These weights are used to scale
       vector component values when they are combined to produce  a scalar.  The
       square root */
-  WeightsType m_ComponentWeights;
-  WeightsType m_SqrtComponentWeights;
+  WeightsType m_ComponentWeights{};
+  WeightsType m_SqrtComponentWeights{};
 
 private:
-  bool m_UseImageSpacing;
-  bool m_UsePrincipleComponents;
+  bool m_UseImageSpacing{};
+  bool m_UsePrincipleComponents{};
 
-  ThreadIdType m_RequestedNumberOfThreads;
+  ThreadIdType m_RequestedNumberOfThreads{};
 
-  typename ImageBaseType::ConstPointer m_RealValuedInputImage;
+  typename ImageBaseType::ConstPointer m_RealValuedInputImage{};
 };
 } // end namespace itk
 

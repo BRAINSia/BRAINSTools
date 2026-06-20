@@ -89,10 +89,10 @@ protected:
   ~GtractParameterIO() override = default;
 
 private:
-  TMatrix     m_Directions;
+  TMatrix     m_Directions{};
   float       m_Bvalue{ 0.0 };
   int         m_NumberOfDirections{ 0 };
-  std::string m_FileName;
+  std::string m_FileName{};
 };
 } // namespace itk
 #endif

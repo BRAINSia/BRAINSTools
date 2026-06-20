@@ -41,7 +41,7 @@ private:
   using rowType = std::vector<std::string>;
   using tableType = std::vector<rowType>;
 
-  tableType    m_Table;
+  tableType    m_Table{};
   unsigned int m_Pad{ 1 };
   bool         m_rightJustify{ false };
 

@@ -232,32 +232,32 @@ protected:
   void
   AddFiberToOutput(vtkPoints * currentFiber, vtkFloatArray * fiberTensors);
 
-  DirectionListType m_TrackingDirections;
+  DirectionListType m_TrackingDirections{};
 
   // Input and Output Image
-  TensorImagePointer     m_TensorImage;
-  AnisotropyImagePointer m_AnisotropyImage;
-  DtiFiberType           m_Output;
-  SeedListType           m_Seeds;
-  MaskImagePointer       m_StartingRegion;
-  MaskImagePointer       m_EndingRegion;
+  TensorImagePointer     m_TensorImage{};
+  AnisotropyImagePointer m_AnisotropyImage{};
+  DtiFiberType           m_Output{};
+  SeedListType           m_Seeds{};
+  MaskImagePointer       m_StartingRegion{};
+  MaskImagePointer       m_EndingRegion{};
 
   // Interpolation data:  The Vector is the Tensor image, the Scalar is the
   // Anisotropy image.
-  typename ScalarIPType::Pointer m_ScalarIP;
-  typename VectorIPType::Pointer m_VectorIP;
-  typename MaskIPType::Pointer   m_StartIP;
-  typename MaskIPType::Pointer   m_EndIP;
+  typename ScalarIPType::Pointer m_ScalarIP{};
+  typename VectorIPType::Pointer m_VectorIP{};
+  typename MaskIPType::Pointer   m_StartIP{};
+  typename MaskIPType::Pointer   m_EndIP{};
 
-  float m_SeedThreshold;
-  float m_AnisotropyThreshold;
-  float m_MaximumLength;
-  float m_MinimumLength;
-  float m_StepSize;
-  bool  m_UseLoopDetection;
-  bool  m_UseTend;
-  float m_TendG;
-  float m_TendF;
+  float m_SeedThreshold{};
+  float m_AnisotropyThreshold{};
+  float m_MaximumLength{};
+  float m_MinimumLength{};
+  float m_StepSize{};
+  bool  m_UseLoopDetection{};
+  bool  m_UseTend{};
+  float m_TendG{};
+  float m_TendF{};
 
   float pi;
 }; // end of class

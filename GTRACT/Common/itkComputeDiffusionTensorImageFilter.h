@@ -158,19 +158,19 @@ private:
   computNeighborhoodVoxelAnisotropy();
 
   // Input and Output Image
-  InputImagePointer  m_Input;
-  OutputImagePointer m_Output;
+  InputImagePointer  m_Input{};
+  OutputImagePointer m_Output{};
 
-  InputImagePointer m_InternalImage;
+  InputImagePointer m_InternalImage{};
 
-  bool               m_UseMedianFilter;
-  InputImageSizeType m_MedianFilterSize;
-  int                m_BackgroundThreshold;
-  int                m_NumberOfDirections;
-  int                m_NumberOfBSteps;
+  bool               m_UseMedianFilter{};
+  InputImageSizeType m_MedianFilterSize{};
+  int                m_BackgroundThreshold{};
+  int                m_NumberOfDirections{};
+  int                m_NumberOfBSteps{};
 
-  TMatrix m_DiffusionDirections;
-  TVector m_BValues;
+  TMatrix m_DiffusionDirections{};
+  TVector m_BValues{};
 }; // end of class
 } // end namespace itk
 

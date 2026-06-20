@@ -97,8 +97,8 @@ public:
   virtual ~InverseConsistentLandmarkPoint() {}
 
 private:
-  PointStorageType m_T;
-  PointStorageType m_FWeighting;
+  PointStorageType m_T{};
+  PointStorageType m_FWeighting{};
 };
 
 template <typename PointStorageType, typename PointSetType>

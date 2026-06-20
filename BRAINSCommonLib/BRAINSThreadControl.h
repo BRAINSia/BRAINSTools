@@ -54,7 +54,7 @@ protected:
   operator=(StackPushITKDefaultNumberOfThreads &); // Purposefully not implemented
 
 private:
-  int m_originalThreadValue;
+  int m_originalThreadValue{};
 };
 } // namespace BRAINSUtils
 

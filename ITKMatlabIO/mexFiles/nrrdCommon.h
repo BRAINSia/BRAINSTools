@@ -248,9 +248,9 @@ private:
     return ntype;
   }
 
-  FieldMapType          m_StructMap;
+  FieldMapType          m_StructMap{};
   mutable char          m_errBuff[NRRD_MAX_ERROR_MSG_SIZE];
-  const mxArray * const m_structMx;
+  const mxArray * const m_structMx{};
 };
 
 static const char GRADIENT_PREFIX[] = "DWMRI_gradient_";

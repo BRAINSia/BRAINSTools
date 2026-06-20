@@ -67,7 +67,7 @@
 class DWIMetaDataDictionaryValidator
 {
 private:
-  itk::MetaDataDictionary m_dict;
+  itk::MetaDataDictionary m_dict{};
   void
   SetStringDictObject(const std::string &, const std::string &);
 

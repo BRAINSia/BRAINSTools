@@ -352,43 +352,43 @@ private:
   static ImagePointType
   localFindCenterHeadFunc(const ImageType::ConstPointer & img);
 
-  int          m_houghEyeDetectorMode;      // 1
-  unsigned int m_mspQualityLevel;           // 2
-  unsigned int m_writedebuggingImagesLevel; // 0
-  unsigned int m_numberOfThreads;           // 1
-  double       m_otsuPercentileThreshold;   // 0.01
-  double       m_acLowerBound;              // 1000.0
-  double       m_trimRescaledIntensities;   // 4.4172
+  int          m_houghEyeDetectorMode{};      // 1
+  unsigned int m_mspQualityLevel{};           // 2
+  unsigned int m_writedebuggingImagesLevel{}; // 0
+  unsigned int m_numberOfThreads{};           // 1
+  double       m_otsuPercentileThreshold{};   // 0.01
+  double       m_acLowerBound{};              // 1000.0
+  double       m_trimRescaledIntensities{};   // 4.4172
 
-  double m_radiusMPJ; // -1
-  double m_radiusAC;  // -1
-  double m_radiusPC;  // -1
-  double m_radiusVN4; // -1
+  double m_radiusMPJ{}; // -1
+  double m_radiusAC{};  // -1
+  double m_radiusPC{};  // -1
+  double m_radiusVN4{}; // -1
 
-  bool m_cutOutHeadInOutputVolume;           // false
-  bool m_rescaleIntensities;                 // false
-  bool m_forceHoughEyeDetectorReportFailure; // false
-  bool m_debug;                              // false
-  bool m_verbose;                            // false
+  bool m_cutOutHeadInOutputVolume{};           // false
+  bool m_rescaleIntensities{};                 // false
+  bool m_forceHoughEyeDetectorReportFailure{}; // false
+  bool m_debug{};                              // false
+  bool m_verbose{};                            // false
 
-  std::string m_inputTemplateModel;
-  std::string m_llsModel;
-  std::string m_inputVolume;
-  std::string m_outputVolume;
-  std::string m_outputResampledVolume;
-  std::string m_outputTransform;
-  std::string m_outputLandmarksInInputSpace;
-  std::string m_outputLandmarksInACPCAlignedSpace;
-  std::string m_outputMRML;
-  std::string m_outputVerificationScript;
-  std::string m_outputUntransformedClippedVolume;
+  std::string m_inputTemplateModel{};
+  std::string m_llsModel{};
+  std::string m_inputVolume{};
+  std::string m_outputVolume{};
+  std::string m_outputResampledVolume{};
+  std::string m_outputTransform{};
+  std::string m_outputLandmarksInInputSpace{};
+  std::string m_outputLandmarksInACPCAlignedSpace{};
+  std::string m_outputMRML{};
+  std::string m_outputVerificationScript{};
+  std::string m_outputUntransformedClippedVolume{};
   std::string orig_lmks_filename;
-  std::string m_writeBranded2DImage;
-  std::string m_backgroundFillValueString;
-  std::string m_interpolationMode;
-  std::string m_atlasVolume;
-  std::string m_atlasLandmarks;
-  std::string m_atlasLandmarkWeights;
+  std::string m_writeBranded2DImage{};
+  std::string m_backgroundFillValueString{};
+  std::string m_interpolationMode{};
+  std::string m_atlasVolume{};
+  std::string m_atlasLandmarks{};
+  std::string m_atlasLandmarkWeights{};
 
   std::vector<int> m_rescaleIntensitiesOutputRange; // default = [40,4000]
 
@@ -399,8 +399,8 @@ private:
 
   std::string m_resultsDir; // default = "./"
 
-  LandmarksMapType m_outputLandmarksInInputSpaceMap;
-  LandmarksMapType m_outputLandmarksInACPCAlignedSpaceMap;
+  LandmarksMapType m_outputLandmarksInInputSpaceMap{};
+  LandmarksMapType m_outputLandmarksInACPCAlignedSpaceMap{};
 };
 
 #endif

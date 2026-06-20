@@ -94,10 +94,10 @@ private:
   ReadMatrix(const std::string & DataSetName);
 
 private:
-  std::string               m_FileName;
-  LLSMeansType              m_LLSMeans;
-  LLSMatricesType           m_LLSMatrices;
-  LLSSearchRadiiType        m_LLSSearchRadii;
+  std::string               m_FileName{};
+  LLSMeansType              m_LLSMeans{};
+  LLSMatricesType           m_LLSMatrices{};
+  LLSSearchRadiiType        m_LLSSearchRadii{};
   H5::H5File *              m_H5File{ nullptr };
   static const char * const m_LLSVersionGroupName;
   static const char * const m_LLSMeansGroupName;

@@ -92,14 +92,14 @@ protected:
   GenerateData() override;
 
 private:
-  ThresholdArrayType m_QuantileLowerThreshold;
-  ThresholdArrayType m_QuantileUpperThreshold;
+  ThresholdArrayType m_QuantileLowerThreshold{};
+  ThresholdArrayType m_QuantileUpperThreshold{};
   double             m_LinearQuantileThreshold{ 0.01 };
 
-  typename IntegerImageType::Pointer m_BinaryPortionImage;
+  typename IntegerImageType::Pointer m_BinaryPortionImage{};
 
-  IntegerPixelType m_InsideValue;
-  IntegerPixelType m_OutsideValue;
+  IntegerPixelType m_InsideValue{};
+  IntegerPixelType m_OutsideValue{};
 };
 } // end namespace itk
 

@@ -81,7 +81,7 @@ public:
   GetSliceMax();
 
 private:
-  vtkImageViewer2 * m_ImageViewer;
+  vtkImageViewer2 * m_ImageViewer{};
 };
 
 #endif // QImageViewerWidget_h

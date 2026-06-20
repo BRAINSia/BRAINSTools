@@ -55,8 +55,8 @@ public:
 
 
 private:
-  std::string m_inputBValues;
-  std::string m_inputBVectors;
+  std::string m_inputBValues{};
+  std::string m_inputBVectors{};
 };
 
 #endif // __FSLDWIConverter_h

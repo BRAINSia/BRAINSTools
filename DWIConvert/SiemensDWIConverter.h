@@ -181,11 +181,11 @@ protected:
   AddFlagsToDictionary() override;
 
 private:
-  double       m_SmallGradientThreshold;
-  unsigned int m_MMosaic;
-  unsigned int m_NMosaic;
-  unsigned int m_Stride;
-  bool         m_HasCSAHeader;
+  double       m_SmallGradientThreshold{};
+  unsigned int m_MMosaic{};
+  unsigned int m_NMosaic{};
+  unsigned int m_Stride{};
+  bool         m_HasCSAHeader{};
 };
 #include "SiemensDWIConverter.hxx"
 

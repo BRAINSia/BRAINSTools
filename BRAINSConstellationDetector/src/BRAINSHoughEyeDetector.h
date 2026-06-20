@@ -193,35 +193,35 @@ protected:
 
   /** Input Parameters */
   // Pass parameters from Hough Transform Radial Voting Filter
-  unsigned int   m_NumberOfSpheres;
-  double         m_MinimumRadius;
-  double         m_MaximumRadius;
-  double         m_SigmaGradient;
-  double         m_Variance;
-  double         m_SphereRadiusRatio;
-  double         m_VotingRadiusRatio;
-  double         m_Threshold;
-  double         m_OutputThreshold;
-  double         m_GradientThreshold;
-  unsigned int   m_NbOfThreads;
-  double         m_SamplingRatio;
-  int            m_HoughEyeDetectorMode;
-  InputPointType m_orig_lmk_CenterOfHeadMass;
+  unsigned int   m_NumberOfSpheres{};
+  double         m_MinimumRadius{};
+  double         m_MaximumRadius{};
+  double         m_SigmaGradient{};
+  double         m_Variance{};
+  double         m_SphereRadiusRatio{};
+  double         m_VotingRadiusRatio{};
+  double         m_Threshold{};
+  double         m_OutputThreshold{};
+  double         m_GradientThreshold{};
+  unsigned int   m_NbOfThreads{};
+  double         m_SamplingRatio{};
+  int            m_HoughEyeDetectorMode{};
+  InputPointType m_orig_lmk_CenterOfHeadMass{};
 
   // Debug settings
-  std::string  m_ResultsDir;
-  unsigned int m_WritedebuggingImagesLevel;
+  std::string  m_ResultsDir{};
+  unsigned int m_WritedebuggingImagesLevel{};
 
   /** Output parameters */
-  OutputImagePointer m_AccumulatorImage;
-  OutputImagePointer m_RoIImage;
-  OutputPointType    m_orig_lmk_LE;
-  OutputPointType    m_orig_lmk_RE;
-  bool               m_Failure; // indicating whether the detector realizes the failure
-  OutputPixelType    m_MaxInputPixelValue;
-  OutputPixelType    m_MinInputPixelValue;
+  OutputImagePointer m_AccumulatorImage{};
+  OutputImagePointer m_RoIImage{};
+  OutputPointType    m_orig_lmk_LE{};
+  OutputPointType    m_orig_lmk_RE{};
+  bool               m_Failure{}; // indicating whether the detector realizes the failure
+  OutputPixelType    m_MaxInputPixelValue{};
+  OutputPixelType    m_MinInputPixelValue{};
 
-  VersorRigidTransformType::Pointer m_orig2eyeFixedTransform;
+  VersorRigidTransformType::Pointer m_orig2eyeFixedTransform{};
 
   // Eye Radius rages from 11-13 mm
   static constexpr double default_minimum_radius = 11.0; // mm

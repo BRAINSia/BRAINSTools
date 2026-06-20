@@ -216,21 +216,21 @@ private:
   void
   operator=(const PipelineMonitorImageFilter &); // not implemented
 
-  bool m_ClearPipelineOnGenerateOutputInformation;
+  bool m_ClearPipelineOnGenerateOutputInformation{};
 
-  unsigned int m_NumberOfUpdates;
+  unsigned int m_NumberOfUpdates{};
 
-  unsigned int m_NumberOfClearPipeline;
+  unsigned int m_NumberOfClearPipeline{};
 
-  RegionVectorType m_OutputRequestedRegions;
-  RegionVectorType m_InputRequestedRegions;
-  RegionVectorType m_UpdatedBufferedRegions;
-  RegionVectorType m_UpdatedRequestedRegions;
+  RegionVectorType m_OutputRequestedRegions{};
+  RegionVectorType m_InputRequestedRegions{};
+  RegionVectorType m_UpdatedBufferedRegions{};
+  RegionVectorType m_UpdatedRequestedRegions{};
 
-  PointType       m_UpdatedOutputOrigin;
-  DirectionType   m_UpdatedOutputDirection;
-  SpacingType     m_UpdatedOutputSpacing;
-  ImageRegionType m_UpdatedOutputLargestPossibleRegion;
+  PointType       m_UpdatedOutputOrigin{};
+  DirectionType   m_UpdatedOutputDirection{};
+  SpacingType     m_UpdatedOutputSpacing{};
+  ImageRegionType m_UpdatedOutputLargestPossibleRegion{};
 };
 } // end namespace itk
 

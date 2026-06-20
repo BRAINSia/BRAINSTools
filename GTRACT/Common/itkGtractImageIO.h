@@ -148,16 +148,16 @@ protected:
   ~GtractImageIO() override = default;
 
 private:
-  Short3dImageType::Pointer m_Short3dImage;
-  Short4dImageType::Pointer m_Short4dImage;
-  Float3dImageType::Pointer m_Float3dImage;
-  Rgb3dImageType::Pointer   m_Rgb3dImage;
-  TensorImageType::Pointer  m_TensorImage;
+  Short3dImageType::Pointer m_Short3dImage{};
+  Short4dImageType::Pointer m_Short4dImage{};
+  Float3dImageType::Pointer m_Float3dImage{};
+  Rgb3dImageType::Pointer   m_Rgb3dImage{};
+  TensorImageType::Pointer  m_TensorImage{};
 
   /*** File / Directory / Dicom UID Strinmgs ***/
-  std::string m_FileName;
-  std::string m_DicomSeriesUID;
-  std::string m_DicomDirectory;
+  std::string m_FileName{};
+  std::string m_DicomSeriesUID{};
+  std::string m_DicomDirectory{};
 }; // end of class
 } // end namespace itk
 #endif

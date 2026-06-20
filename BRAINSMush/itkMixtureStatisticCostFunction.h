@@ -105,14 +105,14 @@ protected:
   void
   PrintSelf(std::ostream & os, Indent indent) const override;
 
-  FirstImageConstPointer  m_FirstImage;
-  SecondImageConstPointer m_SecondImage;
+  FirstImageConstPointer  m_FirstImage{};
+  SecondImageConstPointer m_SecondImage{};
 
-  mutable ImageMaskPointer m_ImageMask;
+  mutable ImageMaskPointer m_ImageMask{};
 
 private:
   /** Measurement value. */
-  mutable MeasureType m_Measure;
+  mutable MeasureType m_Measure{};
 };
 } // end namespace itk
 

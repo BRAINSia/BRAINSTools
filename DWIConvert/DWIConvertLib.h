@@ -144,14 +144,14 @@ private:
                        const double        smallGradientThreshold,
                        const bool          allowLossyConversion);
 
-  std::string m_inputFileType;
-  std::string m_outputFileType;
+  std::string m_inputFileType{};
+  std::string m_outputFileType{};
 
-  std::string m_inputVolume;
-  std::string m_inputDicomDirectory;
-  std::string m_inputBValues;                  // default: ""  for FSL file
-  std::string m_inputBVectors;                 // default: ""  for FSL file
-  std::string m_gradientVectorFile;            // deprecated
+  std::string m_inputVolume{};
+  std::string m_inputDicomDirectory{};
+  std::string m_inputBValues{};                // default: ""  for FSL file
+  std::string m_inputBVectors{};               // default: ""  for FSL file
+  std::string m_gradientVectorFile{};          // deprecated
   double      m_smallGradientThreshold{ 0.2 }; // default = 0.2
 
   bool m_fMRIOutput{ false };                   // default: false
@@ -159,10 +159,10 @@ private:
   bool m_useIdentityMeasurementFrame{ false };  // default: false
   bool m_useBMatrixGradientDirections{ false }; // default: false
 
-  std::string m_outputVolume;
-  std::string m_outputDirectory; // default: "."
-  std::string m_outputBValues;   // default: ""  for FSL file
-  std::string m_outputBVectors;  // default: ""  for FSL file
+  std::string m_outputVolume{};
+  std::string m_outputDirectory{}; // default: "."
+  std::string m_outputBValues{};   // default: ""  for FSL file
+  std::string m_outputBVectors{};  // default: ""  for FSL file
 
   DWIConverter * m_converter{ nullptr };
 };

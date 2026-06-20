@@ -177,23 +177,23 @@ private:
   {
     return GetMapVectorFirstElement(this->m_InputImages);
   }
-  MapOfInputImageVectors                 m_InputImages;
-  std::vector<ProbabilityImageIndexType> m_ValidIndicies;
-  ByteImagePointer                       m_ForegroundBrainMask;
-  ByteImagePointer                       m_AllTissueMask;
+  MapOfInputImageVectors                 m_InputImages{};
+  std::vector<ProbabilityImageIndexType> m_ValidIndicies{};
+  ByteImagePointer                       m_ForegroundBrainMask{};
+  ByteImagePointer                       m_AllTissueMask{};
 
-  std::vector<ProbabilityImagePointer>         m_BiasPosteriors;
-  std::vector<typename ByteImageType::Pointer> m_CandidateRegions;
+  std::vector<ProbabilityImagePointer>         m_BiasPosteriors{};
+  std::vector<typename ByteImageType::Pointer> m_CandidateRegions{};
 
-  unsigned int m_DebugLevel;
-  std::string  m_OutputDebugDir;
+  unsigned int m_DebugLevel{};
+  std::string  m_OutputDebugDir{};
 
-  unsigned int m_MaxDegree;
+  unsigned int m_MaxDegree{};
 
-  double m_SampleSpacing;
+  double m_SampleSpacing{};
 
-  std::vector<RegionStats> m_ListOfClassStatistics;
-  MatrixType               m_Basis;
+  std::vector<RegionStats> m_ListOfClassStatistics{};
+  MatrixType               m_Basis{};
 
   // Coordinate scaling and offset, computed from input probabilities
   // for preconditioning the polynomial basis equations

@@ -116,14 +116,14 @@ protected:
   ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread, ThreadIdType threadId);
 
 private:
-  RealType m_Scale;
-  RealType m_Shift;
+  RealType m_Scale{};
+  RealType m_Shift{};
 
-  InputPixelType m_InputMinimum;
-  InputPixelType m_InputMaximum;
+  InputPixelType m_InputMinimum{};
+  InputPixelType m_InputMaximum{};
 
-  OutputPixelType m_OutputMinimum;
-  OutputPixelType m_OutputMaximum;
+  OutputPixelType m_OutputMinimum{};
+  OutputPixelType m_OutputMaximum{};
 };
 } // end namespace Testing
 } // end namespace itk

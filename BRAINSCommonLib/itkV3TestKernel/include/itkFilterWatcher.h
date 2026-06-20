@@ -156,15 +156,15 @@ public:
   }
 
 protected:
-  clock_t m_Start;
-  clock_t m_End;
-  int     m_Steps;
-  int     m_Iterations;
-  bool    m_Quiet;
-  bool    m_TestAbort;
+  clock_t m_Start{};
+  clock_t m_End{};
+  int     m_Steps{};
+  int     m_Iterations{};
+  bool    m_Quiet{};
+  bool    m_TestAbort{};
 
-  std::string                 m_Comment;
-  itk::ProcessObject::Pointer m_Process;
+  std::string                 m_Comment{};
+  itk::ProcessObject::Pointer m_Process{};
 
 private:
   FilterWatcher(); // Purposely not implemented

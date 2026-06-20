@@ -81,13 +81,13 @@ public:
   }
 
 private:
-  unsigned int m_NumberOfVertices;
+  unsigned int m_NumberOfVertices{};
 
-  MSTEdge * m_MSTEdges;
+  MSTEdge * m_MSTEdges{};
 
-  float * m_NodeAverages;
+  float * m_NodeAverages{};
 
-  bool m_SortFlag;
+  bool m_SortFlag{};
 };
 
 #endif

@@ -81,11 +81,11 @@ private:
   ~Log();
   Log(const Log & l);
 
-  bool m_EchoFlag;
+  bool m_EchoFlag{};
 
-  std::ofstream m_Output;
+  std::ofstream m_Output{};
 
-  std::string m_OutputFileName;
+  std::string m_OutputFileName{};
 };
 } // namespace mu
 

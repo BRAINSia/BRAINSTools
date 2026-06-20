@@ -90,18 +90,18 @@ private:
   void
   ImageMinMax(InputPixelType & ImageMin, InputPixelType & ImageMax);
 
-  InputImagePointer            m_Image;
-  typename TMaskImage::Pointer m_BinaryPortionImage;
+  InputImagePointer            m_Image{};
+  typename TMaskImage::Pointer m_BinaryPortionImage{};
 
   double       m_QuantileLowerThreshold{ 0.0 };
   double       m_QuantileUpperThreshold{ 1.0 };
   unsigned int m_NumberOfValidHistogramsEntries{ 0 };
 
-  typename TInputImage::PixelType m_ImageMin;
-  typename TInputImage::PixelType m_ImageMax;
+  typename TInputImage::PixelType m_ImageMin{};
+  typename TInputImage::PixelType m_ImageMax{};
 
-  typename InputImageType::PixelType m_LowerIntensityThresholdValue;
-  typename InputImageType::PixelType m_UpperIntensityThresholdValue;
+  typename InputImageType::PixelType m_LowerIntensityThresholdValue{};
+  typename InputImageType::PixelType m_UpperIntensityThresholdValue{};
 };
 } // end namespace itk
 

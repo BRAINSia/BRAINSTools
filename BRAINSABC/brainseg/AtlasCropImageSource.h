@@ -120,19 +120,19 @@ protected:
   AtlasCropImageSource();
   ~AtlasCropImageSource() {}
 
-  double m_Padding;
+  double m_Padding{};
 
-  InputImageIndexType m_LowerBound;
-  InputImageIndexType m_UpperBound;
+  InputImageIndexType m_LowerBound{};
+  InputImageIndexType m_UpperBound{};
 
-  InputImagePointType m_InputOrigin;
-  InputImagePointType m_CropOrigin;
+  InputImagePointType m_InputOrigin{};
+  InputImagePointType m_CropOrigin{};
 
-  InputImageSizeType m_OriginalSize;
+  InputImageSizeType m_OriginalSize{};
 
-  CropInfoType m_CropInfo;
+  CropInfoType m_CropInfo{};
 
-  bool m_SlabMode;
+  bool m_SlabMode{};
 };
 
 #ifndef MU_MANUAL_INSTANTIATION

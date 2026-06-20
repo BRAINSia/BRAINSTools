@@ -135,11 +135,11 @@ private:
   PrintSelf(std::ostream & os, Indent indent) const override;
 
   // std::vector<IndexType> m_Seeds;
-  IndexType       m_Seed;
-  InputPixelType  m_Lower;
-  InputPixelType  m_Upper;
-  OutputPixelType m_ReplaceValue;
-  InputSizeType   m_Radius;
+  IndexType       m_Seed{};
+  InputPixelType  m_Lower{};
+  InputPixelType  m_Upper{};
+  OutputPixelType m_ReplaceValue{};
+  InputSizeType   m_Radius{};
 };
 } // end namespace itk
 

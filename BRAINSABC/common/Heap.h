@@ -81,7 +81,7 @@ public:
   UpdateElementAt(unsigned int i);
 
 private:
-  std::vector<T> m_Elements;
+  std::vector<T> m_Elements{};
 
   void
   PreserveHeapOrder();

@@ -245,41 +245,41 @@ protected:
   /** the names of all the filenames, needed to use
    *  itk::ImageSeriesReader
    */
-  const FileNamesContainer m_InputFileNames;
-  bool                     m_allowLossyConversion; // Allow type-cast conversion from float to short storage format
+  const FileNamesContainer m_InputFileNames{};
+  bool                     m_allowLossyConversion{}; // Allow type-cast conversion from float to short storage format
 
 
   /** double conversion instance, for optimal printing of numbers as  text */
-  itk::NumberToString<double> m_DoubleConvert;
+  itk::NumberToString<double> m_DoubleConvert{};
 
-  unsigned int m_SlicesPerVolume;
+  unsigned int m_SlicesPerVolume{};
   /** number of total slices */
-  unsigned int m_NSlice;
+  unsigned int m_NSlice{};
   /** number of gradient volumes */
-  unsigned int m_NVolume;
-  double       m_thickness;
+  unsigned int m_NVolume{};
+  double       m_thickness{};
   /* The following variables make up the primary data model for diffusion weighted images
    * in the most generic sense.  These variables all need to be manipulated together in
    * order to maintain a consistent data model.
    */
   /** the image read from the DICOM dataset */
-  Volume3DUnwrappedType::Pointer m_Volume;
+  Volume3DUnwrappedType::Pointer m_Volume{};
 
 
   // this is always "left-posterior-superior" in all cases that we currently support
-  const std::string m_NRRDSpaceDefinition;
+  const std::string m_NRRDSpaceDefinition{};
 
 
   /** measurement from for gradients if different than patient
    *  reference frame.
    */
-  RotationMatrixType m_MeasurementFrame;
+  RotationMatrixType m_MeasurementFrame{};
   /** list of B Values for each volume */
-  std::vector<double> m_BValues;
+  std::vector<double> m_BValues{};
   /** list of gradient vectors */
-  DWIMetaDataDictionaryValidator::GradientTableType m_DiffusionVectors;
+  DWIMetaDataDictionaryValidator::GradientTableType m_DiffusionVectors{};
   // A map of common dicom fields to be propagated to image
-  std::map<std::string, std::string> m_CommonDicomFieldsMap;
+  std::map<std::string, std::string> m_CommonDicomFieldsMap{};
 };
 
 #endif // __DWIConverter_h

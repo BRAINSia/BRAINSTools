@@ -129,10 +129,10 @@ protected:
   CrossOverAffineSystem();
   ~CrossOverAffineSystem() override;
 
-  mutable AffineTransformPointer m_InhaleEncodeConversion;
-  mutable AffineTransformPointer m_InhaleDecodeConversion;
-  mutable AffineTransformPointer m_ExhaleEncodeConversion;
-  mutable AffineTransformPointer m_ExhaleDecodeConversion;
+  mutable AffineTransformPointer m_InhaleEncodeConversion{};
+  mutable AffineTransformPointer m_InhaleDecodeConversion{};
+  mutable AffineTransformPointer m_ExhaleEncodeConversion{};
+  mutable AffineTransformPointer m_ExhaleDecodeConversion{};
 };
 
 #ifndef ITK_MANUAL_INSTANTIATION

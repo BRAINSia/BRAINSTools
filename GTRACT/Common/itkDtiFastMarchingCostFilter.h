@@ -370,10 +370,10 @@ protected:
       max() of the pixel type used to represent the time-crossing map. */
   itkGetConstReferenceMacro(LargeValue, PixelType);
 
-  OutputRegionType m_BufferedRegion;
+  OutputRegionType m_BufferedRegion{};
   using LevelSetIndexType = typename LevelSetImageType::IndexType;
-  LevelSetIndexType m_StartIndex;
-  LevelSetIndexType m_LastIndex;
+  LevelSetIndexType m_StartIndex{};
+  LevelSetIndexType m_LastIndex{};
 
   itkGetConstReferenceMacro(StartIndex, LevelSetIndexType);
   itkGetConstReferenceMacro(LastIndex, LevelSetIndexType);
@@ -381,30 +381,30 @@ protected:
 private:
   ITK_DISALLOW_COPY_AND_MOVE(DtiFastMarchingCostFilter);
 
-  NodeContainerPointer m_AlivePoints;
-  NodeContainerPointer m_TrialPoints;
+  NodeContainerPointer m_AlivePoints{};
+  NodeContainerPointer m_TrialPoints{};
 
-  LevelSetPointer        m_OutputImage;
-  TensorImagePointer     m_TensorImage;
-  AnisotropyImagePointer m_AnisotropyImage;
+  LevelSetPointer        m_OutputImage{};
+  TensorImagePointer     m_TensorImage{};
+  AnisotropyImagePointer m_AnisotropyImage{};
 
-  LabelImagePointer       m_LabelImage;
-  OutputSpeedImagePointer m_OutputSpeedImage;
-  EigenvectorImagePointer m_EigenvectorImage;
+  LabelImagePointer       m_LabelImage{};
+  OutputSpeedImagePointer m_OutputSpeedImage{};
+  EigenvectorImagePointer m_EigenvectorImage{};
 
-  double m_StoppingValue;
-  float  m_AnisotropyWeight;
+  double m_StoppingValue{};
+  float  m_AnisotropyWeight{};
 
-  bool                 m_CollectPoints;
-  NodeContainerPointer m_ProcessedPoints;
+  bool                 m_CollectPoints{};
+  NodeContainerPointer m_ProcessedPoints{};
 
-  OutputRegionType    m_OutputRegion;
-  OutputDirectionType m_OutputDirection;
-  OutputSpacingType   m_OutputSpacing;
-  OutputPointType     m_OutputOrigin;
-  bool                m_OverrideOutputInformation;
+  OutputRegionType    m_OutputRegion{};
+  OutputDirectionType m_OutputDirection{};
+  OutputSpacingType   m_OutputSpacing{};
+  OutputPointType     m_OutputOrigin{};
+  bool                m_OverrideOutputInformation{};
 
-  typename LevelSetImageType::PixelType m_LargeValue;
+  typename LevelSetImageType::PixelType m_LargeValue{};
   AxisNodeType                          m_NodesUsed[dimension];
 
   /** Trial points are stored in a min-heap. This allow efficient access
@@ -414,9 +414,9 @@ private:
   using NodeComparer = std::greater<AxisNodeType>;
   using HeapType = std::priority_queue<AxisNodeType, HeapContainer, NodeComparer>;
 
-  HeapType m_TrialHeap;
+  HeapType m_TrialHeap{};
 
-  double m_NormalizationFactor;
+  double m_NormalizationFactor{};
 }; // end class
 } // namespace itk
 

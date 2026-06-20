@@ -216,36 +216,36 @@ protected:
 private:
   unsigned long m_NumberOfHistogramLevels{ 256 };
   unsigned long m_NumberOfMatchPoints{ 1 };
-  bool          m_ThresholdAtMeanIntensity;
+  bool          m_ThresholdAtMeanIntensity{};
 
-  InputPixelType  m_SourceIntensityThreshold;
-  InputPixelType  m_ReferenceIntensityThreshold;
-  OutputPixelType m_OutputIntensityThreshold;
+  InputPixelType  m_SourceIntensityThreshold{};
+  InputPixelType  m_ReferenceIntensityThreshold{};
+  OutputPixelType m_OutputIntensityThreshold{};
 
-  THistogramMeasurement m_SourceMinValue;
-  THistogramMeasurement m_SourceMaxValue;
-  THistogramMeasurement m_SourceMeanValue;
-  THistogramMeasurement m_ReferenceMinValue;
-  THistogramMeasurement m_ReferenceMaxValue;
-  THistogramMeasurement m_ReferenceMeanValue;
-  THistogramMeasurement m_OutputMinValue;
-  THistogramMeasurement m_OutputMaxValue;
-  THistogramMeasurement m_OutputMeanValue;
+  THistogramMeasurement m_SourceMinValue{};
+  THistogramMeasurement m_SourceMaxValue{};
+  THistogramMeasurement m_SourceMeanValue{};
+  THistogramMeasurement m_ReferenceMinValue{};
+  THistogramMeasurement m_ReferenceMaxValue{};
+  THistogramMeasurement m_ReferenceMeanValue{};
+  THistogramMeasurement m_OutputMinValue{};
+  THistogramMeasurement m_OutputMaxValue{};
+  THistogramMeasurement m_OutputMeanValue{};
 
-  HistogramPointer m_SourceHistogram;
-  HistogramPointer m_ReferenceHistogram;
-  HistogramPointer m_OutputHistogram;
+  HistogramPointer m_SourceHistogram{};
+  HistogramPointer m_ReferenceHistogram{};
+  HistogramPointer m_OutputHistogram{};
 
   using TableType = vnl_matrix<double>;
-  TableType m_QuantileTable;
+  TableType m_QuantileTable{};
 
   using GradientArrayType = vnl_vector<double>;
-  GradientArrayType m_Gradients;
+  GradientArrayType m_Gradients{};
   double            m_LowerGradient{ 0.0 };
   double            m_UpperGradient{ 0.0 };
 
-  typename SpatialObjectType::Pointer m_SourceMask;
-  typename SpatialObjectType::Pointer m_ReferenceMask;
+  typename SpatialObjectType::Pointer m_SourceMask{};
+  typename SpatialObjectType::Pointer m_ReferenceMask{};
 };
 } // end namespace itk
 

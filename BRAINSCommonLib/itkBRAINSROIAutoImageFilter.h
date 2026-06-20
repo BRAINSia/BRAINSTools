@@ -179,7 +179,7 @@ private:
   double           m_ThresholdCorrectionFactor{ 1.0 };
   double           m_ClosingSize{ 9.0 };
   double           m_DilateSize{ 0.0 };
-  ImageMaskPointer m_ResultMaskPointer;
+  ImageMaskPointer m_ResultMaskPointer{};
 };
 } // end namespace itk
 

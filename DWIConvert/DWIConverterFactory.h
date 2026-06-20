@@ -51,13 +51,13 @@ public:
   GetVendor();
 
 private:
-  std::string m_DicomDirectory;
-  std::string m_Vendor;
-  bool        m_UseBMatrixGradientDirections;
-  double      m_SmallGradientThreshold;
+  std::string m_DicomDirectory{};
+  std::string m_Vendor{};
+  bool        m_UseBMatrixGradientDirections{};
+  double      m_SmallGradientThreshold{};
 
-  DWIDICOMConverterBase::DCMTKFileVector m_Headers;
-  DWIConverter::FileNamesContainer       m_InputFileNames;
+  DWIDICOMConverterBase::DCMTKFileVector m_Headers{};
+  DWIConverter::FileNamesContainer       m_InputFileNames{};
 };
 
 #endif // __DWIConverterFactory_h

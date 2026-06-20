@@ -145,23 +145,23 @@ protected:
   ~TransformAdaptor() {}
 
 private:
-  InputImagePointer m_FixedImage;
-  InputImagePointer m_MovingImage;
+  InputImagePointer m_FixedImage{};
+  InputImagePointer m_MovingImage{};
 
-  AffineTransformPointer m_CenterFixedAffineTransform;
-  AffineTransformPointer m_CenterMovingAffineTransform;
+  AffineTransformPointer m_CenterFixedAffineTransform{};
+  AffineTransformPointer m_CenterMovingAffineTransform{};
 
-  AffineTransformPointer m_DeCenterFixedAffineTransform;
-  AffineTransformPointer m_DeCenterMovingAffineTransform;
+  AffineTransformPointer m_DeCenterFixedAffineTransform{};
+  AffineTransformPointer m_DeCenterMovingAffineTransform{};
 
-  std::string m_InputAffineTransformFilename;
-  std::string m_OutputAffineTransformFilename;
+  std::string m_InputAffineTransformFilename{};
+  std::string m_OutputAffineTransformFilename{};
 
-  AffineTransformPointer m_ITKAffineTransform;
-  AffineTransformPointer m_InputAffineTransform;
-  AffineTransformPointer m_OutputAffineTransform;
+  AffineTransformPointer m_ITKAffineTransform{};
+  AffineTransformPointer m_InputAffineTransform{};
+  AffineTransformPointer m_OutputAffineTransform{};
 
-  CrossOverAffineSystemPointer m_CrossOverAffineSystem;
+  CrossOverAffineSystemPointer m_CrossOverAffineSystem{};
 };
 } // namespace itk
 

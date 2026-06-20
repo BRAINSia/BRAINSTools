@@ -262,10 +262,10 @@ private:
   long
   StrToL(const char * str, const char * message) const;
 
-  TemplateMap      m_TemplateVolumes;
-  std::string      m_TemplateBrainMask;
-  std::string      m_TemplateHeadRegion;
-  TissueTypeVector m_TissueTypes;
+  TemplateMap      m_TemplateVolumes{};
+  std::string      m_TemplateBrainMask{};
+  std::string      m_TemplateHeadRegion{};
+  TissueTypeVector m_TissueTypes{};
   class Prior
   {
   public:
@@ -386,23 +386,23 @@ private:
     }
 
   private:
-    std::string   m_Filename;
+    std::string   m_Filename{};
     double        m_Weight{ 0.0 };
     int           m_GaussianClusterCount{ 0 };
     int           m_LabelCode{ 0 };
     bool          m_UseForBias{ false };
     bool          m_IsForegroundPrior{ false };
-    BoundsMapType m_BoundsMap;
+    BoundsMapType m_BoundsMap{};
   };
   using PriorMapType = std::map<std::string, Prior>;
-  PriorMapType m_PriorMap;
+  PriorMapType m_PriorMap{};
   //
   // XML Parsing variables
-  std::string            m_LastXMLString;
-  std::string            m_LastPriorType;
-  std::string            m_LastFilename;
-  std::string            m_LastType;
-  std::list<std::string> m_XMLElementStack;
+  std::string            m_LastXMLString{};
+  std::string            m_LastPriorType{};
+  std::string            m_LastFilename{};
+  std::string            m_LastType{};
+  std::list<std::string> m_XMLElementStack{};
 
   double m_LastWeight{ 0.0 };
   double m_LastLower{ 0.0 };
@@ -412,7 +412,7 @@ private:
   int           m_LastLabelCode{ 0 };
   bool          m_LastUseForBias{ false };
   bool          m_LastIsForegroundPrior{ false };
-  BoundsMapType m_LastPriorBounds;
+  BoundsMapType m_LastPriorBounds{};
 };
 
 #endif // AtlasDefinition_h

@@ -131,21 +131,21 @@ protected:
   virtual void
   AfterThreadedGenerateData();
 
-  OutputPixelType m_DifferenceThreshold;
+  OutputPixelType m_DifferenceThreshold{};
 
-  RealType m_MeanDifference;
+  RealType m_MeanDifference{};
 
-  AccumulateType m_TotalDifference;
+  AccumulateType m_TotalDifference{};
 
-  SizeValueType m_NumberOfPixelsWithDifferences;
+  SizeValueType m_NumberOfPixelsWithDifferences{};
 
-  int m_ToleranceRadius;
+  int m_ToleranceRadius{};
 
-  Array<AccumulateType> m_ThreadDifferenceSum;
-  Array<SizeValueType>  m_ThreadNumberOfPixels;
+  Array<AccumulateType> m_ThreadDifferenceSum{};
+  Array<SizeValueType>  m_ThreadNumberOfPixels{};
 
 private:
-  bool m_IgnoreBoundaryPixels;
+  bool m_IgnoreBoundaryPixels{};
 };
 } // end namespace Testing
 } // end namespace itk

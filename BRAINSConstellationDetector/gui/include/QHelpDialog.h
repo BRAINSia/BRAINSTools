@@ -39,8 +39,8 @@ public:
   QHelpDialog(QWidget * myParent = nullptr);
 
 protected:
-  QGridLayout * m_layout;
-  QLabel        m_label;
+  QGridLayout * m_layout{};
+  QLabel        m_label{};
 };
 
 #endif

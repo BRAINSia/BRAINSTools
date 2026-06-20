@@ -92,10 +92,10 @@ protected:
   InitializeRegistrator()
   {}
 
-  ParserPointer       m_Parser;
-  PreprocessorPointer m_Preprocessor;
-  RegistratorPointer  m_Registrator;
-  bool                m_OutDebug;
+  ParserPointer       m_Parser{};
+  PreprocessorPointer m_Preprocessor{};
+  RegistratorPointer  m_Registrator{};
+  bool                m_OutDebug{};
 };
 } // namespace itk
 

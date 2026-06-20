@@ -273,67 +273,67 @@ protected:
   // Actions:
   // Idle = 0;
   // Get location = 1;
-  int m_action;
+  int m_action{};
 
   // Pointer to vtkImageReslice
-  vtkImageReslice * m_imageReslice;
+  vtkImageReslice * m_imageReslice{};
 
   // Pointer to the interactor
-  vtkRenderWindowInteractor * m_interactor;
+  vtkRenderWindowInteractor * m_interactor{};
 
   // Pointer to the direction
-  double * m_direction;
+  double * m_direction{};
 
   // Pointer to the origin
-  double * m_origin;
+  double * m_origin{};
 
   // Pointer to the spacing
-  double * m_spacing;
+  double * m_spacing{};
 
   // Pointer to the physical extent of input image with identity direction
-  double * m_physicalExtentIdentity;
+  double * m_physicalExtentIdentity{};
 
   // Pointer to the physical extent
-  double * m_physicalExtent;
+  double * m_physicalExtent{};
 
   // Pointer to the physical bound ( = ordered extent )
-  double * m_bound;
+  double * m_bound{};
 
   // Pointer to the index extent
-  int * m_indexExtent;
+  int * m_indexExtent{};
 
   // Callback type: axial, sagittal, or coronal
-  int m_type;
+  int m_type{};
 
   // Storing physical postion
-  QString m_text_physicalLocation;
+  QString m_text_physicalLocation{};
 
   // Storing z-axis postion for x channel communication
-  double m_valueSendX;
+  double m_valueSendX{};
 
-  double m_valueReceiveX;
+  double m_valueReceiveX{};
 
   // Storing z-axis postion for y channel communication
-  double m_valueSendY;
+  double m_valueSendY{};
 
-  double m_valueReceiveY;
+  double m_valueReceiveY{};
 
   // Storing z-axis postion for slice viewer / slider bar communication
-  double m_valueSendZ;
+  double m_valueSendZ{};
 
-  double m_valueReceiveZ;
+  double m_valueReceiveZ{};
 
   // Sharing last mouse position of slice viewer for slider bar control
   double m_lastPos[2];
 
   // initial camera postion, helping to account wheeling effect
-  double m_cPos;
+  double m_cPos{};
 
   // internal ratio for screen size change
-  double m_r;
+  double m_r{};
 
   // slice number precision due to int ui of QSlider
-  double m_precision;
+  double m_precision{};
 };
 
 #endif // _QVTKInteractionCallback_H

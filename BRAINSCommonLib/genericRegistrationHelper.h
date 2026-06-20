@@ -351,14 +351,14 @@ private:
   bool m_PromptUserAfterDisplay{ false };
   bool m_PrintParameters{ false };
 
-  typename TImage::Pointer     m_MovingImage;
-  typename TImage::Pointer     m_FixedImage;
-  typename TTransform::Pointer m_Transform;
+  typename TImage::Pointer     m_MovingImage{};
+  typename TImage::Pointer     m_FixedImage{};
+  typename TTransform::Pointer m_Transform{};
 
-  typename MattesMutualInformationMetricType::Pointer m_ObserverCostMetricObject;
+  typename MattesMutualInformationMetricType::Pointer m_ObserverCostMetricObject{};
 
 #ifdef USE_DebugImageViewer
-  DebugImageViewerClient m_DebugImageDisplaySender;
+  DebugImageViewerClient m_DebugImageDisplaySender{};
 #endif
 };
 } // end namespace BRAINSFit
@@ -525,19 +525,19 @@ protected:
   GenerateData() override;
 
 private:
-  FixedImagePointer  m_FixedImage;
-  MovingImagePointer m_MovingImage;
-  FixedImagePointer  m_FixedImage2;
-  MovingImagePointer m_MovingImage2;
+  FixedImagePointer  m_FixedImage{};
+  MovingImagePointer m_MovingImage{};
+  FixedImagePointer  m_FixedImage2{};
+  MovingImagePointer m_MovingImage2{};
 
-  typename CompositeTransformType::Pointer m_CompositeTransform;
-  TransformPointer                         m_Transform;
+  typename CompositeTransformType::Pointer m_CompositeTransform{};
+  TransformPointer                         m_Transform{};
   //
   // make sure parameters persist until after they're used by the transform
 
-  RegistrationPointer m_Registration;
+  RegistrationPointer m_Registration{};
 
-  typename MetricType::Pointer m_CostMetricObject;
+  typename MetricType::Pointer m_CostMetricObject{};
 
   double       m_SamplingPercentage{ 1 };
   unsigned int m_NumberOfHistogramBins{ 200 };
@@ -555,7 +555,7 @@ private:
   double       m_FinalMetricValue{ 0 };
   bool         m_ObserveIterations{ true };
 
-  SamplingStrategyType m_SamplingStrategy;
+  SamplingStrategyType m_SamplingStrategy{};
 
   ModifiedTimeType m_InternalTransformTime{ 0 };
 };

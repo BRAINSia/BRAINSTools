@@ -40,7 +40,7 @@ protected:
   void
   AddFlagsToDictionary() override;
   /** # of trailing images to ignore */
-  unsigned int m_NTrailingImagesToIgnore;
+  unsigned int m_NTrailingImagesToIgnore{};
 };
 
 #endif // __PhilipsDWIConverter_h

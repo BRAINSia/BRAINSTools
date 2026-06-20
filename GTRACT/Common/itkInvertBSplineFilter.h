@@ -130,13 +130,13 @@ protected:
 
 private:
   /*** Input and Output Objects ***/
-  BsplineTransformTypePointer m_Input;
-  TransformTypePointer        m_Output;
-  ImageTypePointer            m_ExampleImage;
+  BsplineTransformTypePointer m_Input{};
+  TransformTypePointer        m_Output{};
+  ImageTypePointer            m_ExampleImage{};
 
-  int m_XgridSize;
-  int m_YgridSize;
-  int m_ZgridSize;
+  int m_XgridSize{};
+  int m_YgridSize{};
+  int m_ZgridSize{};
 }; // end of class
 } // end namespace itk
 

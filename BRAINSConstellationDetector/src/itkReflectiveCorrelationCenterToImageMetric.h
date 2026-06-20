@@ -601,15 +601,15 @@ private:
 
   using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
 
-  ParametersType                  m_params;
-  SImageType::Pointer             m_OriginalImage;
-  SImageType::Pointer             m_ResamplerReferenceImage;
-  SImageType::PointType           m_CenterOfHeadMass;
+  ParametersType                  m_params{};
+  SImageType::Pointer             m_OriginalImage{};
+  SImageType::Pointer             m_ResamplerReferenceImage{};
+  SImageType::PointType           m_CenterOfHeadMass{};
   bool                            m_CenterOfHeadMassIsSet{ false };
   SImageType::PixelType           m_BackgroundValue{ 0 };
-  OptimizerPointer                m_Optimizer;
+  OptimizerPointer                m_Optimizer{};
   bool                            m_DoPowell{ true };
-  LinearInterpolatorType::Pointer m_imInterp;
+  LinearInterpolatorType::Pointer m_imInterp{};
   double                          m_cc{ 0.0 };
   bool                            m_HasLocalSupport{ false };
 };

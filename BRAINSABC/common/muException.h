@@ -58,7 +58,7 @@ public:
   }
 
 protected:
-  std::string m_Message;
+  std::string m_Message{};
 };
 } // namespace mu
 

@@ -49,7 +49,7 @@
 #include <itkExtractImageFilter.h>
 #include <itkImageMaskSpatialObject.h>
 
-#include <itkDiffusionTensor3DReconstructionWithMaskImageFilter.h>
+#include <itkDiffusionTensor3DReconstructionImageFilter.h>
 #include "itkGtractImageIO.h"
 #include "itkGtractParameterIO.h"
 #include "itkComputeDiffusionTensorImageFilter.h"
@@ -190,8 +190,7 @@ main(int argc, char * argv[])
   }
 
   /* Process Invidual B-value Images and Reassemble the Vector Image */
-  using TensorFilterType =
-    itk::DiffusionTensor3DReconstructionWithMaskImageFilter<PixelType, PixelType, TensorPixelType>;
+  using TensorFilterType = itk::DiffusionTensor3DReconstructionImageFilter<PixelType, PixelType, TensorPixelType>;
   using DirectionContainerType = TensorFilterType::GradientDirectionContainerType;
   auto gradientDirectionContainer = DirectionContainerType::New();
 
@@ -320,7 +319,7 @@ main(int argc, char * argv[])
   tensorFilter->SetNumberOfWorkUnits(1); /* Required */
   if (maskImage.IsNotNull())
   {
-    tensorFilter->SetMaskImage(maskImage);
+    tensorFilter->SetMaskImage(const_cast<MaskImageType *>(maskImage.GetPointer()));
   }
   tensorFilter->Update();
 

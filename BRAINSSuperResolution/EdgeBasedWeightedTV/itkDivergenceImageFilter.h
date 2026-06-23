@@ -24,7 +24,7 @@
 #include "itkVector.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector_fixed.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
+#include "itkSymmetricEigenAnalysis.h"
 #include "itkMath.h"
 
 namespace itk
@@ -479,12 +479,18 @@ protected:
       }
     }
 
-    // Find the eigenvalues of g
-    vnl_symmetric_eigensystem<TRealType> E(g);
+    // Find the eigenvalues of g with the Eigen-backed itk::SymmetricEigenAnalysis
+    // (header-only, no LAPACK/BLAS); eigenvalues are returned in ascending order.
+    SymmetricEigenAnalysisFixedDimension<ImageDimension,
+                                         vnl_matrix<TRealType>,
+                                         vnl_vector_fixed<TRealType, ImageDimension>>
+                                                eigenSystem;
+    vnl_vector_fixed<TRealType, ImageDimension> eigenValues;
+    eigenSystem.ComputeEigenValues(g, eigenValues);
 
     // Return the difference in length between the first two principle axes.
     // Note that other edge strength metrics may be appropriate here instead..
-    return (E.get_eigenvalue(ImageDimension - 1) - E.get_eigenvalue(ImageDimension - 2));
+    return (eigenValues[ImageDimension - 1] - eigenValues[ImageDimension - 2]);
   }
 
   /** The weights used to scale derivatives during processing */

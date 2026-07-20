@@ -78,6 +78,8 @@ SuperBuild, giving you access to the full ANTs toolkit (SyN registration,
 cortical thickness via `antsCorticalThickness.sh`, N4 bias correction, etc.)
 alongside the BRAINS tools.
 
+For the complete list of all command-line tools, grouped by category and generated directly from the module descriptors, see the [full tool catalog](tools.html).
+
 ---
 
 ## Quick Start

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Testing</category>
+  <category>Utilities.BRAINS</category>
   <title>Average Fiducials</title>
   <description>
     This program gets several fcsv file each one contains several landmarks with the same name but slightly different coordinates. For EACH landmark we compute the average coordination.

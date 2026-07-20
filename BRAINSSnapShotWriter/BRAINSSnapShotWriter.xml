@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities.BRAINS</category>
-  <title>BRAINSSnapShotWriter</title>
+  <title>Snapshot Writer (BRAINS)</title>
   <description>Create 2D snapshot of input images. Mask images are color-coded</description>
   <version>5.8.0</version>
   <documentation-url></documentation-url>

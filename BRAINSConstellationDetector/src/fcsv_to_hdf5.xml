@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities.BRAINS</category>
-  <title>fcsv_to_hdf5 (BRAINS)</title>
+  <title>Landmark FCSV to HDF5 Converter (BRAINS)</title>
   <description>Convert a collection of fcsv files to a HDF5 format file</description>
   <parameters>
     <string>

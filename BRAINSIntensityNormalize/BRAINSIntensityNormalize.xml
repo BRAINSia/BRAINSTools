@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-    <category>IntensityTransform</category>
+    <category>Filtering</category>
     <title>Percentile Rescaling</title>
     <description>
         Computes the percentile rescaling of an image

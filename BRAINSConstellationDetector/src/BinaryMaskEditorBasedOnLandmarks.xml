@@ -2,8 +2,7 @@
 <executable>
   <category>Segmentation.Specialized</category>
   <title>BRAINS Binary Mask Editor Based On Landmarks(BRAINS)</title>
-  <description>
-  </description>
+  <description>Edit a binary mask by cutting it with planes defined by three landmarks or by a landmark and an axis direction, clearing voxels on the specified side of each plane.</description>
 
     <version>5.8.0</version>
     <documentation-url>http://www.nitrc.org/projects/brainscdetector/</documentation-url>

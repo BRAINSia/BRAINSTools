@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
   <category>Utilities.BRAINS</category>
-  <title>MidACPC Landmark Insertion</title>
+  <title>ACPC-Aligned Landmark Conversion</title>
   <description>
   This program converts the original landmark files to the acpc-aligned landmark files
   </description>

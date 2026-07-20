@@ -2,12 +2,12 @@
 <executable>
   <category>Registration</category>
   <title>General Registration (BRAINS)</title>
-  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Method described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. http://hdl.handle.net/1926/1291</description>
+  <description>Register a three-dimensional volume to a reference volume (Mattes Mutual Information by default). Method described in BRAINSFit: Mutual Information Registrations of Whole-Brain 3D Images, Using the Insight Toolkit, Johnson H.J., Harris G., Williams K., The Insight Journal, 2007. https://hdl.handle.net/1926/1291</description>
+  <version>5.8.0</version>
   <documentation-url>https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsfit.html</documentation-url>
   <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
-  <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu, http://www.psychiatry.uiowa.edu), Ali Ghayoor</contributor>
+  <contributor>Hans J. Johnson (hans-johnson -at- uiowa.edu, https://www.psychiatry.uiowa.edu), Ali Ghayoor</contributor>
   <acknowledgements><![CDATA[Hans Johnson(1,3,4); Kent Williams(1); Gregory Harris(1), Vincent Magnotta(1,2,3);  Andriy Fedorov(5); Ali Ghayoor(4) 1=University of Iowa Department of Psychiatry, 2=University of Iowa Department of Radiology, 3=University of Iowa Department of Biomedical Engineering, 4=University of Iowa Department of Electrical and Computer Engineering, 5=Surgical Planning Lab, Harvard]]>  </acknowledgements>
-  <version>5.8.0</version>
 
   <parameters advanced="false">
     <label>Input Images</label>
@@ -451,7 +451,7 @@
       <name>initializeRegistrationByCurrentGenericTransform</name>
       <longflag>initializeRegistrationByCurrentGenericTransform</longflag>
       <label>Pass warped moving image to BSpline registration filter</label>
-      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behaviour, the moving image is first warped based on the existant transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
+      <description>If this flag is ON, the current generic composite transform, resulted from the linear registration stages, is set to initialize the follow nonlinear registration process. However, by the default behavior, the moving image is first warped based on the existent transform before it is passed to the BSpline registration filter. It is done to speed up the BSpline registration by reducing the computations of composite transform Jacobian.</description>
       <default>0</default>
     </boolean>
     <boolean>
@@ -523,7 +523,7 @@
       <name>UseDebugImageViewer</name>
       <flag>G</flag>
       <longflag>gui</longflag>
-      <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build sytem, and probably does nothing on your installation.</description>
+      <description>Display intermediate image volumes for debugging.  NOTE:  This is not part of the standard build system, and probably does nothing on your installation.</description>
       <default>false</default>
     </boolean>
     <boolean>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
-  <category>Classification</category>
+  <category>Segmentation.Specialized</category>
   <title>Pure Plugs Mask</title>
   <description>
     This program gets several modality image files and returns a binary mask that defines the pure plugs.

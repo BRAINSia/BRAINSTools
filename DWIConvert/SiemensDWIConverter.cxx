@@ -276,7 +276,7 @@ SiemensDWIConverter::ExtractBMatrix(CSAHeader *                      csaHeader,
   }
   else
   {
-    valueArray.reserve(6); // reserve contiguous block.
+    valueArray.resize(6);
     if (this->m_Headers[strideVolume]->GetElementFD(0x0019, 0x1027, 6, &valueArray[0], true) != EXIT_SUCCESS)
     {
       itkGenericExceptionMacro("Missing B matrix tag 0019|1027 for volume " << strideVolume);

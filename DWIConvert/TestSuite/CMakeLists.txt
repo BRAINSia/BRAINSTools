@@ -520,6 +520,18 @@ set_target_properties(DWIConverterErrorsGTest PROPERTIES
 include(GoogleTest)
 gtest_discover_tests(DWIConverterErrorsGTest DISCOVERY_TIMEOUT 120)
 
+# SiemensDWIConverter.cxx is compiled into this test with hardened standard-library
+# checks so that out-of-bounds std::vector access aborts instead of reading reserved memory.
+add_executable(SiemensBMatrixGTest SiemensBMatrixGTest.cxx ../SiemensDWIConverter.cxx)
+target_compile_definitions(SiemensBMatrixGTest PRIVATE
+  _GLIBCXX_ASSERTIONS
+  _LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_DEBUG)
+target_link_libraries(SiemensBMatrixGTest PRIVATE DWIConvertSupportLib GTest::gtest_main)
+set_target_properties(SiemensBMatrixGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(SiemensBMatrixGTest DISCOVERY_TIMEOUT 120)
+
 # Declare per-test CPU consumption so CTest manages parallelism natively.
 get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
 set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

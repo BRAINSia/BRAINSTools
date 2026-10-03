@@ -78,9 +78,8 @@ AssignConvertedTransform(AffineTransformPointer & result, const AffineTransformT
   }
   else
   {
-    std::cout << "Error missing Pointer data, while assigning "
-              << "AffineTransformPointer := AffineTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert AffineTransform to AffineTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -109,9 +108,7 @@ AssignConvertedTransform(AffineTransformPointer & result, const VnlTransformMatr
   }
   else
   {
-    std::cout << "Error missing Pointer data, while assigning "
-              << "AffineTransformPointer := VnlTransformMatrixType44." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VnlTransformMatrix44 to AffineTransform: output pointer is null");
   }
 }
 
@@ -138,9 +135,7 @@ AssignConvertedTransform(VnlTransformMatrixType44 & result, const AffineTransfor
   }
   else
   {
-    std::cout << "Error missing Pointer data, while assigning"
-              << " VnlTransformMatrixType44 := AffineTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert AffineTransform to VnlTransformMatrix44: input pointer is null");
   }
 }
 
@@ -159,9 +154,8 @@ AssignConvertedTransform(AffineTransformPointer & result, const ScaleSkewVersor3
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
-              << " := ScaleSkewVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleSkewVersor3DTransform to AffineTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -179,9 +173,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &                  re
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning AffineTransformPointer "
-              << ":= ScaleSkewVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleSkewVersor3DTransform to ScaleSkewVersor3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -203,9 +196,8 @@ AssignConvertedTransform(AffineTransformPointer & result, const ScaleVersor3DTra
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
-              << " := ScaleVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleVersor3DTransform to AffineTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -223,9 +215,8 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer & result, const ScaleVers
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning ScaleVersor3DTransform"
-              << " := ScaleVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleVersor3DTransform to ScaleVersor3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -249,9 +240,8 @@ AssignConvertedTransform(AffineTransformPointer &                         result
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning AffineTransformPointer"
-              << " := VersorRigid3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VersorRigid3DTransform to AffineTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -270,9 +260,8 @@ AssignConvertedTransform(VersorRigid3DTransformPointer &                  result
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VersorRigid3DTransform to VersorRigid3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -293,9 +282,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &              result
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " ScaleSkewVersor3DTransformPointer := ScaleVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleVersor3DTransform to ScaleSkewVersor3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -315,9 +303,8 @@ AssignConvertedTransform(ScaleSkewVersor3DTransformPointer &              result
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " ScaleSkewVersor3DTransformPointer := VersorRigid3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VersorRigid3DTransform to ScaleSkewVersor3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -336,9 +323,8 @@ AssignConvertedTransform(Similarity3DTransformPointer &                  result,
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " VersorRigid3DTransformPointer := VersorRigid3DTTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert Similarity3DTransform to Similarity3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -358,9 +344,8 @@ AssignConvertedTransform(ScaleVersor3DTransformPointer &                  result
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " ScaleVersor3DTransformPointer := VersorRigid3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VersorRigid3DTransform to ScaleVersor3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -377,9 +362,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                  r
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleVersor3DTransform to VersorRigid3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -396,9 +380,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                   
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " VersorRigid3DTransformPointer := ScaleSkewVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert ScaleSkewVersor3DTransform to VersorRigid3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -413,9 +396,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer &                  r
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning"
-              << " VersorRigid3DTransformPointer := ScaleVersor3DTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert VersorRigid3DTransform to VersorRigid3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 
@@ -477,9 +459,8 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const Affi
   }
   else
   {
-    std::cout << "Error missing Pointer data, assigning "
-              << "VersorRigid3DTransformPointer := AffineTransformPointer." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot convert AffineTransform to VersorRigid3DTransform: "
+                             << (result.IsNull() ? "output" : "input") << " pointer is null");
   }
 }
 } // namespace AssignRigid

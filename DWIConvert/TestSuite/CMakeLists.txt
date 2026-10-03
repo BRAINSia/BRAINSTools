@@ -499,6 +499,27 @@ ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME  
         )
 AddDataDependency(DWIConvertMultiShellFSITestSmallSize)
 
+# A gradient below --smallGradientThreshold is reported as a catchable error, not a crash.
+add_test(NAME DWIConvertSiemensSmallGradientRejectedTest
+  COMMAND $<TARGET_FILE:DWIConvert>
+    --inputDicomDirectory ${DWIConvert_BINARY_DIR}/SiemensTrioTim1
+    --outputVolume ${TstOutput}/SiemensSmallGradientRejected.nrrd
+    --smallGradientThreshold 1e9
+  )
+set_tests_properties(DWIConvertSiemensSmallGradientRejectedTest PROPERTIES
+  PASS_REGULAR_EXPRESSION "ITK ERROR: Gradient #[0-9]+ has magnitude .* below the small-gradient threshold")
+AddDataDependency(DWIConvertSiemensSmallGradientRejectedTest)
+
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(DWIConverterErrorsGTest DWIConverterErrorsGTest.cxx)
+target_link_libraries(DWIConverterErrorsGTest PRIVATE DWIConvertSupportLib GTest::gtest_main)
+set_target_properties(DWIConverterErrorsGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+include(GoogleTest)
+gtest_discover_tests(DWIConverterErrorsGTest DISCOVERY_TIMEOUT 120)
+
 # Declare per-test CPU consumption so CTest manages parallelism natively.
 get_property(_all_tests DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY TESTS)
 set_tests_properties(${_all_tests} PROPERTIES PROCESSORS 3)

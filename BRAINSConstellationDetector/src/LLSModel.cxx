@@ -191,9 +191,8 @@ LLSModel ::ReadVector(const std::string & DataSetName)
 
   if (Space.getSimpleExtentNdims() != 1)
   {
-    std::cerr << "Wrong #of dims for vector "
-              << "in HDF5 File" << std::endl;
-    throw;
+    itkGenericExceptionMacro("HDF5 dataset " << DataSetName << " in " << this->m_FileName << " has "
+                                             << Space.getSimpleExtentNdims() << " dimensions; a vector must have 1");
   }
   Space.getSimpleExtentDims(&dim, nullptr);
   vec.resize(dim);
@@ -218,9 +217,9 @@ LLSModel ::ReadMatrix(const std::string & DataSetName)
 
   if (matrixSpace.getSimpleExtentNdims() != 2)
   {
-    std::cerr << "Wrong #of dims for matrix "
-              << "in HDF5 File" << std::endl;
-    throw;
+    itkGenericExceptionMacro("HDF5 dataset " << DataSetName << " in " << this->m_FileName << " has "
+                                             << matrixSpace.getSimpleExtentNdims()
+                                             << " dimensions; a matrix must have 2");
   }
   matrixSpace.getSimpleExtentDims(dims, nullptr);
   MatrixType mat(dims[0], dims[1]);

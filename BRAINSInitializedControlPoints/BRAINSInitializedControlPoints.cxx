@@ -87,7 +87,7 @@ main(int argc, char * argv[])
   }
   if (violated)
   {
-    throw;
+    return EXIT_FAILURE;
   }
 
   using PixelType = float;

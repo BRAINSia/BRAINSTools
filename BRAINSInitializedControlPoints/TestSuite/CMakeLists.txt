@@ -1,0 +1,7 @@
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(BRAINSInitializedControlPointsGTest BRAINSInitializedControlPointsGTest.cxx)
+target_link_libraries(BRAINSInitializedControlPointsGTest PRIVATE BRAINSInitializedControlPointsLib GTest::gtest_main)
+set_target_properties(BRAINSInitializedControlPointsGTest PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin)
+include(GoogleTest)
+gtest_discover_tests(BRAINSInitializedControlPointsGTest DISCOVERY_TIMEOUT 120)

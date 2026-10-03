@@ -301,3 +301,13 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
     --csvInputFile ${CMAKE_CURRENT_BINARY_DIR}/${PARENT_TEST}_metaData.test.csv
 )
 set_property(TEST ${GTRACTTestName} APPEND PROPERTY DEPENDS ${PARENT_TEST})
+
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+include(GoogleTest)
+add_executable(GTRACTAlgoGTest GTRACTAlgoGTest.cxx)
+target_link_libraries(GTRACTAlgoGTest PRIVATE GTRACTCommon GTest::gtest_main)
+set_target_properties(GTRACTAlgoGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(GTRACTAlgoGTest DISCOVERY_TIMEOUT 120)

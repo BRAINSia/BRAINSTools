@@ -27,17 +27,16 @@
 #include <metaCommand.h>
 #include <iostream>
 
+std::string
+ValidDataTypeStrings()
+{
+  return "UCHAR, SHORT, USHORT, INT, UINT, FLOAT, DOUBLE";
+}
+
 void
 PrintDataTypeStrings()
 {
-  // Prints the Input and output data type strings.
-  std::cout << "UCHAR" << std::endl;
-  std::cout << "SHORT" << std::endl;
-  std::cout << "USHORT" << std::endl;
-  std::cout << "INT" << std::endl;
-  std::cout << "UINT" << std::endl;
-  std::cout << "FLOAT" << std::endl;
-  std::cout << "DOUBLE" << std::endl;
+  std::cout << ValidDataTypeStrings() << std::endl;
 }
 
 void
@@ -338,10 +337,7 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
   {
     if (!ValidPixelType(PixelType))
     {
-      std::cout << "Error. Invalid data type string specified with -intype!" << std::endl;
-      std::cout << "Use one of the following:" << std::endl;
-      PrintDataTypeStrings();
-      throw;
+      itkGenericExceptionMacro("Invalid -intype " << PixelType << "; valid types are " << ValidDataTypeStrings());
     }
   }
 
@@ -352,10 +348,7 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
     // check to see if valid type
     if (!ValidPixelType(OutPixelType))
     {
-      std::cout << "Error. Invalid data type string specified with -outtype!" << std::endl;
-      std::cout << "Use one of the following:" << std::endl;
-      PrintDataTypeStrings();
-      throw;
+      itkGenericExceptionMacro("Invalid -outtype " << OutPixelType << "; valid types are " << ValidDataTypeStrings());
     }
   }
 

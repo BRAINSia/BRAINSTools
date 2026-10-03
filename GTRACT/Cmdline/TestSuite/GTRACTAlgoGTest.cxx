@@ -16,27 +16,17 @@
  *  limitations under the License.
  *
  *=========================================================================*/
-#if !defined(__ImageCalculator_h__)
-#  define __ImageCalculator_h__
-#  include <iostream>
-#  include <string>
+/// \file GTRACTAlgoGTest.cxx
+/// \brief My_lsf rejects mismatched input sizes with a catchable exception.
 
-// This function prints the valid pixel types.
-extern void
-PrintDataTypeStrings();
+#include <gtest/gtest.h>
 
-extern std::string
-ValidDataTypeStrings();
+#include "itkMacro.h"
+#include "algo.h"
 
-// This function replaces a substring with another substring
-extern void
-ReplaceSubWithSub(std::string & s, const char * o, const char * n);
-
-// This function compares strings.
-extern int
-CompareNoCase(const std::string & s, const std::string & s2);
-
-extern int
-PrimaryImageCalculatorRoutine(int argc, char * argv[]);
-
-#endif // __ImageCalculator_h__
+TEST(GTRACTAlgo, LeastSquaresFitSizeMismatchThrows)
+{
+  TVector x(3, 1.0f);
+  TVector y(4, 1.0f);
+  EXPECT_THROW(My_lsf(x, y), itk::ExceptionObject);
+}

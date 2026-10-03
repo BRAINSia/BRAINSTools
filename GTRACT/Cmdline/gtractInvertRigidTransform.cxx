@@ -69,8 +69,13 @@ main(int argc, char * argv[])
   using GenericTransformType = itk::Transform<double, 3, 3>;
 
   GenericTransformType::Pointer forwardTransform = itk::ReadTransformFromDisk(inputTransform);
-  auto                          reverseTransform = RigidTransformType::New();
-  forwardTransform->GetInverse(reverseTransform);
+  const auto * const rigidTransform = dynamic_cast<const RigidTransformType *>(forwardTransform.GetPointer());
+  auto               reverseTransform = RigidTransformType::New();
+  if (rigidTransform == nullptr || !rigidTransform->GetInverse(reverseTransform))
+  {
+    std::cerr << "ERROR: Not an invertible VersorRigid3DTransform: " << inputTransform << std::endl;
+    return EXIT_FAILURE;
+  }
   itk::WriteTransformToDisk<double>(reverseTransform, outputTransform);
   return EXIT_SUCCESS;
 }

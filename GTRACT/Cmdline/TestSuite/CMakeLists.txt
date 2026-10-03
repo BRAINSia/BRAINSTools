@@ -311,3 +311,10 @@ set_target_properties(GTRACTAlgoGTest PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
   FOLDER ${MODULE_FOLDER})
 gtest_discover_tests(GTRACTAlgoGTest DISCOVERY_TIMEOUT 120)
+
+add_executable(GTRACTInvertRigidGTest GTRACTInvertRigidGTest.cxx)
+target_link_libraries(GTRACTInvertRigidGTest PRIVATE gtractInvertRigidTransformLib BRAINSCommonLib GTest::gtest_main)
+set_target_properties(GTRACTInvertRigidGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(GTRACTInvertRigidGTest DISCOVERY_TIMEOUT 120)

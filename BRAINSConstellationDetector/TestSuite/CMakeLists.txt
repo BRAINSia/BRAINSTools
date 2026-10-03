@@ -743,3 +743,14 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
 
 #
 #endif()
+
+include(BRAINSToolsGTest)
+brainstools_enable_gtest()
+add_executable(LandmarkLookupGTest LandmarkLookupGTest.cxx)
+target_include_directories(LandmarkLookupGTest PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../src)
+target_link_libraries(LandmarkLookupGTest PRIVATE landmarksConstellationCOMMONLIB GTest::gtest_main)
+set_target_properties(LandmarkLookupGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+include(GoogleTest)
+gtest_discover_tests(LandmarkLookupGTest DISCOVERY_TIMEOUT 120)

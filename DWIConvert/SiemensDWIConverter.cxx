@@ -239,11 +239,10 @@ SiemensDWIConverter::ExtractGradientDirection(CSAHeader *                   csaH
   }
   else if (DiffusionVector_magnitude <= this->m_SmallGradientThreshold)
   {
-    std::cout << "ERROR: Gradient vector with unreasonably small magnitude exists." << std::endl;
-    std::cout << "Gradient #" << strideVolume << " with magnitude " << DiffusionVector_magnitude << std::endl;
-    std::cout << "Please set useBMatrixGradientDirections to calculate gradient directions "
-              << "from the scanner B Matrix to alleviate this problem." << std::endl;
-    throw;
+    itkGenericExceptionMacro("Gradient #"
+                             << strideVolume << " has magnitude " << DiffusionVector_magnitude
+                             << ", below the small-gradient threshold " << this->m_SmallGradientThreshold
+                             << "; set useBMatrixGradientDirections to compute directions from the scanner B matrix");
   }
 
   std::cout << "Number of Directions : " << valueArray.size() << std::endl;
@@ -280,8 +279,7 @@ SiemensDWIConverter::ExtractBMatrix(CSAHeader *                      csaHeader,
     valueArray.reserve(6); // reserve contiguous block.
     if (this->m_Headers[strideVolume]->GetElementFD(0x0019, 0x1027, 6, &valueArray[0], true) != EXIT_SUCCESS)
     {
-      std::cout << "Missing BMatrix information in 0019|1027 for slice number " << strideVolume << std::endl;
-      throw;
+      itkGenericExceptionMacro("Missing B matrix tag 0019|1027 for volume " << strideVolume);
     }
   }
 

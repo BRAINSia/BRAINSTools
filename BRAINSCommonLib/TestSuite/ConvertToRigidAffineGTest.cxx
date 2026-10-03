@@ -298,3 +298,43 @@ TEST(ConvertToRigidAffine, ExtractVersorFromNonOrthogonalAffine)
                      m(0, 2) * (m(1, 0) * m(2, 1) - m(1, 1) * m(2, 0));
   EXPECT_NEAR(det, 1.0, 1.0e-6);
 }
+
+// -----------------------------------------------------------------------
+// A null result or input pointer raises a catchable itk::ExceptionObject
+// -----------------------------------------------------------------------
+TEST(ConvertToRigidAffine, NullPointersThrowCatchableException)
+{
+  using namespace AssignRigid;
+  AffineTransformPointer            nullAffine;
+  VersorRigid3DTransformPointer     nullVersor;
+  ScaleVersor3DTransformPointer     nullScaleVersor;
+  ScaleSkewVersor3DTransformPointer nullScaleSkew;
+  Similarity3DTransformPointer      nullSimilarity;
+  VnlTransformMatrixType44          matrix;
+  matrix.set_identity();
+
+  const AffineTransformType::ConstPointer            constAffine(AffineTransformType::New());
+  const VersorRigid3DTransformType::ConstPointer     constVersor(VersorRigid3DTransformType::New());
+  const ScaleVersor3DTransformType::ConstPointer     constScaleVersor(ScaleVersor3DTransformType::New());
+  const ScaleSkewVersor3DTransformType::ConstPointer constScaleSkew(ScaleSkewVersor3DTransformType::New());
+  const Similarity3DTransformType::ConstPointer      constSimilarity(Similarity3DTransformType::New());
+  const AffineTransformType::ConstPointer            nullConstAffine;
+
+  EXPECT_THROW(AssignConvertedTransform(nullAffine, constAffine), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullAffine, matrix), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(matrix, nullConstAffine), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullAffine, constScaleSkew), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullScaleSkew, constScaleSkew), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullAffine, constScaleVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullScaleVersor, constScaleVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullAffine, constVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullVersor, constVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullScaleSkew, constScaleVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullScaleSkew, constVersor), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullSimilarity, constSimilarity), itk::ExceptionObject);
+  EXPECT_THROW(AssignConvertedTransform(nullScaleVersor, constVersor), itk::ExceptionObject);
+  EXPECT_THROW(ExtractVersorRigid3DTransform(nullVersor, constScaleVersor), itk::ExceptionObject);
+  EXPECT_THROW(ExtractVersorRigid3DTransform(nullVersor, constScaleSkew), itk::ExceptionObject);
+  EXPECT_THROW(ExtractVersorRigid3DTransform(nullVersor, constVersor), itk::ExceptionObject);
+  EXPECT_THROW(ExtractVersorRigid3DTransform(nullVersor, constAffine), itk::ExceptionObject);
+}

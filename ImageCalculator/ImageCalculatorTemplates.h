@@ -886,9 +886,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
       }
       else
       {
-        std::cout << "Error. Invalid data type for -outtype!  Use one of these:" << std::endl;
-        PrintDataTypeStrings();
-        throw;
+        itkGenericExceptionMacro("Invalid -outtype " << OutType << "; valid types are " << ValidDataTypeStrings());
       }
     }
     else

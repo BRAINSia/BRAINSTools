@@ -24,6 +24,8 @@
 #include <gtest/gtest.h>
 #include <sstream>
 #include <string>
+#include <vector>
+#include "itkMacro.h"
 #include "ImageCalculatorUtils.h"
 
 // -----------------------------------------------------------------------
@@ -150,4 +152,34 @@ TEST(PrintDataTypeStrings, OutputContainsKnownTypes)
   EXPECT_NE(std::string::npos, output.find("UINT"));
   EXPECT_NE(std::string::npos, output.find("FLOAT"));
   EXPECT_NE(std::string::npos, output.find("DOUBLE"));
+}
+
+// ---------------------------------------------------------------------------
+// Invalid pixel type strings raise a catchable itk::ExceptionObject
+// ---------------------------------------------------------------------------
+namespace
+{
+int
+RunPrimaryRoutine(std::vector<std::string> args)
+{
+  std::vector<char *> argv;
+  for (auto & a : args)
+  {
+    argv.push_back(a.data());
+  }
+  argv.push_back(nullptr);
+  return PrimaryImageCalculatorRoutine(static_cast<int>(args.size()), argv.data());
+}
+} // namespace
+
+TEST(PrimaryImageCalculatorRoutine, InvalidInputPixelTypeThrows)
+{
+  EXPECT_THROW(RunPrimaryRoutine({ "ImageCalculator", "--in", "unused.png", "--intype", "BOGUS" }),
+               itk::ExceptionObject);
+}
+
+TEST(PrimaryImageCalculatorRoutine, InvalidOutputPixelTypeThrows)
+{
+  EXPECT_THROW(RunPrimaryRoutine({ "ImageCalculator", "--in", "unused.png", "--outtype", "BOGUS" }),
+               itk::ExceptionObject);
 }

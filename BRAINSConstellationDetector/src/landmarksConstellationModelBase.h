@@ -62,7 +62,7 @@ public:
 
     if (it == m_Radius.end())
     {
-      throw;
+      itkGenericExceptionMacro("Radius not found for landmark " << PointName);
     }
     return it->second;
   }
@@ -74,7 +74,7 @@ public:
 
     if (it == m_Height.end())
     {
-      throw;
+      itkGenericExceptionMacro("Height not found for landmark " << PointName);
     }
     return it->second;
   }

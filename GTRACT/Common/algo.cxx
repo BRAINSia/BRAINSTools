@@ -82,7 +82,7 @@ My_lsf(TVector x, TVector y)
 
   if (N != y.size())
   {
-    throw;
+    itkGenericExceptionMacro("My_lsf: x and y sizes differ");
   }
   float a;
 

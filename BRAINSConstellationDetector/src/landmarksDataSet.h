@@ -139,7 +139,7 @@ public:
     // throw an exception
     if (it == this->end())
     {
-      throw;
+      itkGenericExceptionMacro("Landmark not found: " << NamedPoint);
     }
     return it->second;
   }

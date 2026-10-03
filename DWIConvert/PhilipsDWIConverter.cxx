@@ -97,8 +97,7 @@ PhilipsDWIConverter::ExtractDWIData()
             unsigned int n = DiffusionSeqEntry.card();
             if (n == 0)
             {
-              std::cout << "ERROR:  Sequence entry 0018|9076 has no items." << std::endl;
-              throw;
+              itkGenericExceptionMacro("Diffusion gradient sequence 0018|9076 has no items");
             }
             DiffusionSeqEntry.GetElementFD(0x0018, 0x9089, 3, doubleArray);
           }
@@ -148,9 +147,7 @@ PhilipsDWIConverter::ExtractDWIData()
       }
       else // Have no idea why we'd be here so error out
       {
-        std::cout << "ERROR: DiffusionDirectionality was " << DiffusionDirectionality
-                  << "  Don't know what to do with that..." << std::endl;
-        throw;
+        itkGenericExceptionMacro("Unsupported DiffusionDirectionality (0018|9075) value: " << DiffusionDirectionality);
       }
 
       std::cout << "B-value: " << b << "; diffusion direction: " << this->m_DoubleConvert(vect3d[0]) << ", "

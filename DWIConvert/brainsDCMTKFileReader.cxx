@@ -337,13 +337,8 @@ DCMTKFileReader::GetFileName() const
 bool
 DCMTKFileReader::CanReadFile(const std::string & filename)
 {
-  auto * MInfo = new DcmMetaInfo();
-  if (!MInfo)
-  {
-    return false;
-  }
-  OFCondition loadCondition = MInfo->loadFile(filename.c_str(), EXS_Unknown, EGL_noChange, 65536);
-  delete MInfo;
+  DcmMetaInfo MInfo;
+  OFCondition loadCondition = MInfo.loadFile(filename.c_str(), EXS_Unknown, EGL_noChange, 65536);
   if (loadCondition == EC_Normal || loadCondition == EC_FileMetaInfoHeaderMissing)
   {
     return true;
@@ -359,14 +354,8 @@ DCMTKFileReader::IsImageFile(const std::string & filename)
     return false;
   }
 
-  bool   rval = false;
-  auto * image = new DicomImage(filename.c_str());
-  if (image && image->getStatus() == EIS_Normal && image->getInterData())
-  {
-    rval = true;
-  }
-  delete image;
-  return rval;
+  DicomImage image(filename.c_str());
+  return image.getStatus() == EIS_Normal && image.getInterData() != nullptr;
 }
 
 void

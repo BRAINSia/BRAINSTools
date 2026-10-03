@@ -125,8 +125,8 @@ void
 DWIMetaDataDictionaryValidator::SetGradient(int index, DWIMetaDataDictionaryValidator::Double3x1ArrayType & gradient)
 {
   const std::string key = DWIMetaDataDictionaryValidator::GetGradientKeyString(index);
-  char              tmp[64];
-  sprintf(tmp, "%lf %lf %lf", gradient[0], gradient[1], gradient[2]);
+  char              tmp[1024];
+  snprintf(tmp, sizeof(tmp), "%lf %lf %lf", gradient[0], gradient[1], gradient[2]);
   const std::string value(tmp);
   DWIMetaDataDictionaryValidator::SetStringDictObject(key, value);
 }

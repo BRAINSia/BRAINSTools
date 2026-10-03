@@ -346,3 +346,22 @@ TEST(DWIMetaDataDictionaryValidator, GradientNegativeValuesPreserveSign)
   EXPECT_NEAR(result[1], -17.3, kTol);
   EXPECT_NEAR(result[2], -0.001, kTol);
 }
+
+// ---------------------------------------------------------------------------
+// Very large gradient components must round-trip without truncation
+// ---------------------------------------------------------------------------
+TEST(DWIMetaDataDictionaryValidator, LargeGradientComponentsRoundtrip)
+{
+  DWIMetaDataDictionaryValidator                     validator;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType gradient;
+  gradient[0] = 1.0e200;
+  gradient[1] = -1.0e200;
+  gradient[2] = 1.0e200;
+  validator.SetGradient(0, gradient);
+
+  const auto readBack = validator.GetGradient(0);
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+    EXPECT_NEAR(readBack[i], gradient[i], std::abs(gradient[i]) * 1e-12) << "component " << i;
+  }
+}

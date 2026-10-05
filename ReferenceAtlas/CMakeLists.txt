@@ -36,7 +36,6 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
     string(REPLACE  ".sha512" "" CurrentOutFile_tmp ${CurrentALGOReference})
     string(REPLACE  ".sha512" "" CurrentOutFile ${CurrentOutFile_tmp})
     ExternalData_expand_arguments(${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} ${ThisImageVarName}_VAR DATA{${CurrentOutFile}})
-    get_filename_component(${ThisImageVarName}_VAR_REALPATH ${${ThisImageVarName}_VAR} REALPATH)
     get_filename_component(${ThisImageVarName}_VAR_BASENAME ${${ThisImageVarName}_VAR} NAME)
 
     #message(STATUS "ThisImageVarName_VAR ${ThisImageVarName}_VAR ${${ThisImageVarName}_VAR} ${${ThisImageVarName}_VAR_REALPATH}")
@@ -45,7 +44,7 @@ macro(DownloadAndInstallRules UNIQUE_TARGET_NAME GLOBPAT INSTDEST)
     add_custom_command(
         OUTPUT ${INSTDEST}/${${ThisImageVarName}_VAR_BASENAME}
         COMMAND ${CMAKE_COMMAND} ARGS -E copy ${${ThisImageVarName}_VAR} ${INSTDEST}/${${ThisImageVarName}_VAR_BASENAME}
-        DEPENDS ${${ThisImageVarName}_VAR_REALPATH}
+        DEPENDS ${${ThisImageVarName}_VAR}
         )
     list(APPEND AtlasImageFiles ${INSTDEST}/${${ThisImageVarName}_VAR_BASENAME})
 

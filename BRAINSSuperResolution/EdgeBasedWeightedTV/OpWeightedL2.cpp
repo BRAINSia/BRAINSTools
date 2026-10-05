@@ -1,7 +1,7 @@
 #include "SRTypes.h"
 #include "FFTWUpsample.h"
 
-#include <cblas.h>
+#include "SRElementwiseOps.h"
 
 #include <itkTimeProbe.h>
 
@@ -13,87 +13,6 @@
 #include <itkVectorIndexSelectionCastImageFilter.h>
 #include <itkGradientMagnitudeImageFilter.h>
 #include <itkBinaryFunctorImageFilter.h>
-
-// Special override for CVImageType
-PrecisionType *
-GetFirstPointer(CVImageType::Pointer in)
-{
-  CVType * firstCovariantVectorX = in->GetBufferPointer();
-  return firstCovariantVectorX->GetDataPointer();
-}
-
-PrecisionType *
-GetFirstPointer(HalfHermetianImageType::Pointer in)
-{
-  return reinterpret_cast<PrecisionType *>(in->GetBufferPointer());
-}
-
-
-template <typename ImagePointerType>
-PrecisionType *
-GetFirstPointer(ImagePointerType in)
-{
-  return in->GetBufferPointer();
-}
-
-
-// Implement out = c*(a*x + y), y is output, and is corrupted
-template <typename ImagePointerType>
-void
-AddAllElements(ImagePointerType &  OutImg,
-               const PrecisionType aScaler,
-               ImagePointerType &  xImg,
-               ImagePointerType &  yImg,
-               const PrecisionType cScaler = 1.0F)
-{
-  const size_t    N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
-  PrecisionType * x = GetFirstPointer(xImg);
-  PrecisionType * y = GetFirstPointer(yImg);
-  cblas_saxpy(N, aScaler, x, 1, y, 1);
-
-  // PrecisionType * Out=  GetFirstPointer(OutImg);
-  if (cScaler != 1.0F)
-  {
-    cblas_sscal(N, cScaler, y, 1);
-  }
-  if (OutImg.GetPointer() != yImg.GetPointer())
-  {
-    ImagePointerType temp = OutImg;
-    OutImg = yImg;
-    yImg = temp; // Sanity Check to induce failures if variable is needed in future.
-    // yImg has been corrupted by processing here.
-  }
-}
-
-// Implement out = x*y, y, and y is corrupted
-template <typename ImagePointerType>
-void
-MultiplyVectors(ImagePointerType & OutImg, ImagePointerType & xImg, ImagePointerType & yImg)
-{
-  const size_t    N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
-  PrecisionType * x_Start = GetFirstPointer(xImg);
-  const PrecisionType * x_End = x_Start + N;
-  const PrecisionType * y = GetFirstPointer(yImg);
-  PrecisionType *       o = GetFirstPointer(OutImg);
-  for (PrecisionType * x = x_Start; x < x_End; ++x)
-  {
-    (*o) = (*y) * (*x);
-    ++o;
-    ++y;
-  }
-}
-
-template <typename ImageTypePointer>
-void
-Duplicate(ImageTypePointer & Y, ImageTypePointer & YminusL)
-{
-  const size_t          N = Y->GetLargestPossibleRegion().GetNumberOfPixels() * Y->GetNumberOfComponentsPerPixel();
-  const PrecisionType * firstInput = GetFirstPointer(Y);
-  const PrecisionType * lastInput = firstInput + N;
-  PrecisionType *       firstOutput = GetFirstPointer(YminusL);
-  std::copy(firstInput, lastInput, firstOutput);
-}
-
 
 #include <itkVectorMagnitudeImageFilter.h>
 

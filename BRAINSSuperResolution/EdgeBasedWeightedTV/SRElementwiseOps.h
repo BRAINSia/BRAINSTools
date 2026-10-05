@@ -22,7 +22,8 @@
 #include "SRTypes.h"
 
 #include <algorithm>
-#include <cblas.h>
+#include "itk_eigen.h"
+#include ITK_EIGEN(Core)
 
 // Special override for CVImageType
 inline PrecisionType *
@@ -56,13 +57,18 @@ AddAllElements(ImagePointerType &  OutImg,
                ImagePointerType &  yImg,
                const PrecisionType cScaler = 1.0F)
 {
-  const size_t    N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
-  PrecisionType * x = GetFirstPointer(xImg);
-  PrecisionType * y = GetFirstPointer(yImg);
-  cblas_saxpy(N, aScaler, x, 1, y, 1);
+  const size_t N = xImg->GetLargestPossibleRegion().GetNumberOfPixels() * xImg->GetNumberOfComponentsPerPixel();
+  using VectorMap = Eigen::Map<Eigen::Matrix<PrecisionType, Eigen::Dynamic, 1>>;
+  using ConstVectorMap = Eigen::Map<const Eigen::Matrix<PrecisionType, Eigen::Dynamic, 1>>;
+  const ConstVectorMap x(GetFirstPointer(xImg), static_cast<Eigen::Index>(N));
+  VectorMap            y(GetFirstPointer(yImg), static_cast<Eigen::Index>(N));
   if (cScaler != 1.0F)
   {
-    cblas_sscal(N, cScaler, y, 1);
+    y = cScaler * (aScaler * x + y);
+  }
+  else
+  {
+    y += aScaler * x;
   }
   if (OutImg.GetPointer() != yImg.GetPointer())
   {

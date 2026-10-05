@@ -64,6 +64,7 @@ set(MODULE_FOLDER "Module-EdgeBaseWeightedTV")
 
 add_library(SR_support FFTWUpsample.cpp OpWeightedL2.cpp)
 # -- RTK now part of ITK remote modules target_link_libraries(SR_support ${BRAINSSuperResolution_ITK_LIBRARIES} ${RTK_LIBRARIES} ${LINALG_LIBRARIES} ${VTK_LIBRARIES})
+target_include_directories(SR_support PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(SR_support PUBLIC ${BRAINSSuperResolution_ITK_LIBRARIES} ${VTK_LIBRARIES})
 set_target_properties(SR_support PROPERTIES FOLDER ${MODULE_FOLDER})
 

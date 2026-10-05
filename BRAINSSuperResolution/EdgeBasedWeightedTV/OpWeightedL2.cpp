@@ -184,12 +184,6 @@ OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edge
   CVImageType::Pointer InvTwoMuPlusGamma = ComputeInvTwoMuPlusGamma(edgemask, gam);
   // FloatImageType::Pointer SqrtMu = ComputeSqrtMu(edgemask);
 
-#define USE_BLAS_WRAPPERS
-#ifdef USE_BLAS_WRAPPERS
-#else
-  using CVImageAdder = itk::AddImageFilter<CVImageType, CVImageType>;
-  auto dxPlusL = CVImageAdder::New();
-#endif
 
   itk::TimeProbe tp;
   tp.Start();
@@ -200,46 +194,22 @@ OpWeightedL2(FloatImageType::Pointer norm01_lowres, FloatImageType::Pointer edge
   {
     std::cout << "Iteration : " << i << std::endl;
 
-#ifdef USE_BLAS_WRAPPERS
     // Z = 1.0*L+DX
     AddAllElements(DX, 1.0F, L, DX, gam); // DX destroyed
     CVImageType::Pointer & Z = DX;
-#else
-    // Z = opII(Z,DX,'+',L);
-    dxPlusL->SetInput1(DX);
-    dxPlusL->SetInput2(L);
-    dxPlusL->SetInPlace(true);
-    dxPlusL->Update();
-    CVImageType::Pointer Z = dxPlusL->GetOutput();
-    MultiplyCVByScalar(Z, gam);
-#endif
-#ifdef USE_BLAS_WRAPPERS
     // Y=InvTwoMuPlusGamm.*Z
     MultiplyVectors(Y, InvTwoMuPlusGamma, Z);
-#else
-    Y = opII(Y, Z, '*', InvTwoMuPlusGamma);
-#endif
 
     // X Subprob
     // Numerator = 2*Atb+lambda*gam*SRdiv(Y-L))
-#ifdef USE_BLAS_WRAPPERS
     // YminusL = 1.0F* SRdiv( -1.0F*L + Y)
     Duplicate(Y, YminusL);
     AddAllElements(YminusL, -1.0F, L, YminusL, 1.0F);
-#else
-    YminusL = opII(YminusL, Y, '-', L);
-#endif
     FloatImageType::Pointer tempNumerator = GetDivergence(YminusL);
-#ifdef USE_BLAS_WRAPPERS
     // lambd*gam*tempNumerator+TwoAtb
     Duplicate(TwoAtb, tempValue);
     AddAllElements(tempValue, lambda * gam, tempNumerator, tempValue, 1.0F);
     HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT(tempValue);
-#else
-    tempNumerator = opIC(tempNumerator, lambda * gam, '*', tempNumerator);
-    tempNumerator = opII(tempNumerator, TwoAtb, '+', tempNumerator);
-    HalfHermetianImageType::Pointer tempNumeratorFC = GetForwardFFT(tempNumerator);
-#endif
 
     // KEEP
     tempRatioFC = opII_scalar(tempRatioFC, tempNumeratorFC, '/', TwoTimesAtAhatPlusLamGamDtDhat);

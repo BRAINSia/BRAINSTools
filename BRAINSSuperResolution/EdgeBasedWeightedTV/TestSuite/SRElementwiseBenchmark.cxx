@@ -17,7 +17,7 @@
  *
  *=========================================================================*/
 /// \file SRElementwiseBenchmark.cxx
-/// \brief Times the BLAS and Eigen formulations of out = c*(a*x + y) and a full OpWeightedL2 run.
+/// \brief Times a plain loop and the Eigen formulation of out = c*(a*x + y) and a full OpWeightedL2 run.
 
 #include <algorithm>
 #include <chrono>
@@ -27,7 +27,6 @@
 #include <random>
 #include <vector>
 
-#include <cblas.h>
 #include "itk_eigen.h"
 #include ITK_EIGEN(Core)
 
@@ -51,7 +50,7 @@ BenchmarkAxpyScale(const size_t N, const int reps)
 {
   std::mt19937                          gen(42);
   std::uniform_real_distribution<float> dist(-1.0F, 1.0F);
-  std::vector<float>                    x(N), y0(N), yBlas(N), yEigen(N);
+  std::vector<float>                    x(N), y0(N), yLoop(N), yEigen(N);
   for (size_t i = 0; i < N; ++i)
   {
     x[i] = dist(gen);
@@ -59,14 +58,16 @@ BenchmarkAxpyScale(const size_t N, const int reps)
   }
   const float         a = 0.7F;
   const float         c = 1.3F;
-  std::vector<double> tBlas, tEigen;
+  std::vector<double> tLoop, tEigen;
   for (int r = 0; r < reps; ++r)
   {
-    yBlas = y0;
+    yLoop = y0;
     const auto t0 = std::chrono::steady_clock::now();
-    cblas_saxpy(static_cast<int>(N), a, x.data(), 1, yBlas.data(), 1);
-    cblas_sscal(static_cast<int>(N), c, yBlas.data(), 1);
-    tBlas.push_back(std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
+    for (size_t i = 0; i < N; ++i)
+    {
+      yLoop[i] = c * (a * x[i] + yLoop[i]);
+    }
+    tLoop.push_back(std::chrono::duration<double>(std::chrono::steady_clock::now() - t0).count());
 
     yEigen = y0;
     const auto                        t1 = std::chrono::steady_clock::now();
@@ -78,14 +79,14 @@ BenchmarkAxpyScale(const size_t N, const int reps)
   float maxDiff = 0.0F;
   for (size_t i = 0; i < N; ++i)
   {
-    maxDiff = std::max(maxDiff, std::abs(yBlas[i] - yEigen[i]));
+    maxDiff = std::max(maxDiff, std::abs(yLoop[i] - yEigen[i]));
   }
-  const double mb = MedianSeconds(tBlas);
+  const double mb = MedianSeconds(tLoop);
   const double me = MedianSeconds(tEigen);
   std::printf("N=%10zu floats (%6.1f MB)  %s %.4f ms  eigen %.4f ms  ratio %.2f  max|diff| %.3g\n",
               N,
               N * 4.0 / 1e6,
-              "blas ",
+              "loop ",
               mb * 1e3,
               me * 1e3,
               me / mb,

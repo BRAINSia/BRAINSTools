@@ -27,25 +27,7 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_LIST_DIR}/cmake)
 #--    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -ffast-math -O3") # -Wall -Wextra")
 #--endif()
 
-#--HJ find_package(Matlab REQUIRED)
-#--HJ include_directories(${Matlab_INCLUDE_DIRS})
-#--HJ message(STATUS "XX: ${Matlab_INCLUDE_DIRS}")
 
-##--HJ find_package(Armadillo REQUIRED)
-##--HJ # check whether ILP64 MKL should is used
-##--HJ add_definitions(-DUSE_ARMADILLO)
-##--HJ set(ARMADILLO_BLAS_LONG_LONG FALSE)
-##--HJ if(EXISTS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp")
-##--HJ   # Read and parse armadillo config.hpp to find out whether BLAS uses long long
-##--HJ   file(STRINGS "${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp" _armadillo_blas_long_long REGEX "// #define ARMA_BLAS_LONG_LONG")
-##--HJ   if ( NOT _armadillo_blas_long_long )
-##--HJ     set(ARMADILLO_BLAS_LONG_LONG TRUE)
-##--HJ     message("Armadillo is found to use long long for BLAS calls")
-##--HJ   else ()
-##--HJ     message("Armadillo found. Note that ARMADILLO_BLAS_LONG_LONG _must_ be defined in ${ARMADILLO_INCLUDE_DIR}/armadillo_bits/config.hpp to link against the MKL ILP64 interface.")
-##--HJ   endif ()
-##--HJ   unset(_armadillo_blas_long_long)
-##--HJ endif()
 
 #-- set(USE_FFTWF TRUE)
 #-- set(USE_FFTWD TRUE)

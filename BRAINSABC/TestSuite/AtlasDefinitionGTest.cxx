@@ -152,3 +152,49 @@ TEST(AtlasDefinition, UnknownElementThrows)
   EXPECT_THROW(atlas.InitFromXML(path), itk::ExceptionObject);
   std::remove(path.c_str());
 }
+
+namespace
+{
+std::string
+InitFailureMessage(const std::string & path)
+{
+  AtlasDefinition atlas;
+  try
+  {
+    atlas.InitFromXML(path);
+  }
+  catch (const itk::ExceptionObject & error)
+  {
+    return error.GetDescription();
+  }
+  return {};
+}
+} // namespace
+
+TEST(AtlasDefinition, MalformedXMLReportsParserErrorAndLine)
+{
+  const std::string path = WriteAtlasFile("atlas_malformed_detail.xml", "<Atlas>\n <Prior>\n</Atlas>\n");
+  const std::string message = InitFailureMessage(path);
+  EXPECT_NE(message.find("mismatched tag"), std::string::npos) << message;
+  EXPECT_NE(message.find("line 3"), std::string::npos) << message;
+  std::remove(path.c_str());
+}
+
+TEST(AtlasDefinition, HandlerExceptionMessageIsPreserved)
+{
+  const std::string path = WriteAtlasFile("atlas_bad_weight_detail.xml", Replace(kValidAtlas, "1.5", "heavy"));
+  const std::string message = InitFailureMessage(path);
+  EXPECT_NE(message.find("Bad Weight given"), std::string::npos) << message;
+  EXPECT_NE(message.find("heavy"), std::string::npos) << message;
+  EXPECT_NE(message.find(path), std::string::npos) << message;
+  std::remove(path.c_str());
+}
+
+TEST(AtlasDefinition, UnknownElementMessageNamesTheElement)
+{
+  const std::string path =
+    WriteAtlasFile("atlas_unknown_element_detail.xml", Replace(kValidAtlas, "</Atlas>", "<Bogus></Bogus></Atlas>"));
+  const std::string message = InitFailureMessage(path);
+  EXPECT_NE(message.find("Bogus"), std::string::npos) << message;
+  std::remove(path.c_str());
+}

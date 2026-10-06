@@ -231,6 +231,8 @@ jobs:
             -DCMAKE_CXX_STANDARD:STRING=17 \
             -DCMAKE_C_FLAGS="${{ matrix.config.arch_flags }}" \
             -DCMAKE_CXX_FLAGS="${{ matrix.config.arch_flags }}" \
+            -DBRAINSToools_C_OPTIMIZATION_FLAGS:STRING="${{ matrix.config.arch_flags }}" \
+            -DBRAINSToools_CXX_OPTIMIZATION_FLAGS:STRING="${{ matrix.config.arch_flags }}" \
             ${{ matrix.config.os == 'ubuntu-latest' && '-DOpenGL_GL_PREFERENCE:STRING=GLVND' || '' }} \
             -DCMAKE_BUILD_TYPE=Release \
             -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=Release \
@@ -273,6 +275,19 @@ jobs:
           # Builds ITKv5, ANTs, SlicerExecutionModel, TBB, zlib, then inner BRAINSTools.
           # ccache handles incremental compilation across CI runs.
           cmake --build build --config Release --parallel ${{ matrix.config.parallel }}
+
+      # The SuperBuild forwards BRAINSToools_*_OPTIMIZATION_FLAGS to ITK, whose flags come after
+      # CMAKE_CXX_FLAGS and win.  Their default of -march=native bakes the runner's CPU into ITK
+      # objects, which crash with SIGILL when ccache hands them to an older runner.
+      - name: "Verify ITK was built with the portable arch flags"
+        shell: bash
+        run: |
+          flags=$(grep -E '^ITK_(C|CXX)_OPTIMIZATION_FLAGS:' build/ITKv5-Release-build/CMakeCache.txt)
+          echo "${flags}"
+          if echo "${flags}" | grep -qE -- '-m(arch|tune|cpu)=native'; then
+            echo "::error::ITK was configured with host-specific flags; ccache entries would not be portable across runners"
+            exit 1
+          fi
 
       # ── Compiler & test-data cache save ───────────────────────────────────────
       - name: Save compiler cache

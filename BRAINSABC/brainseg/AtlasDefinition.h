@@ -106,107 +106,43 @@ public:
   std::string
   GetPriorFilename(const std::string & tissueType) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetPriorFilename");
-    }
-    return mit->second.GetFilename();
+    return this->FindPrior(tissueType).GetFilename();
   }
 
   double
   GetWeight(const std::string & tissueType) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetWeight");
-    }
-    return mit->second.GetWeight();
+    return this->FindPrior(tissueType).GetWeight();
   }
 
   int
   GetGaussianClusterCount(const std::string & tissueType) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetGaussianClusterCount");
-    }
-    return mit->second.GetGaussianClusterCount();
+    return this->FindPrior(tissueType).GetGaussianClusterCount();
   }
 
   int
   GetLabelCode(const std::string & tissueType) const
   {
-    // HACK:  All the get functions need review to remove duplicate code.
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetLabelCode");
-    }
-    return mit->second.GetLabelCode();
+    return this->FindPrior(tissueType).GetLabelCode();
   }
 
   int
   GetUseForBias(const std::string & tissueType) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetUseForBias");
-    }
-    return mit->second.GetUseForBias();
+    return this->FindPrior(tissueType).GetUseForBias();
   }
 
   bool
   GetIsForegroundPrior(const std::string & tissueType) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetIsForegroundPrior");
-    }
-    return mit->second.GetIsForegroundPrior();
+    return this->FindPrior(tissueType).GetIsForegroundPrior();
   }
 
   const BoundsType &
   GetBounds(const std::string & tissueType, const std::string & Modality) const
   {
-    if (m_PriorMap.find(tissueType) == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
-    }
-    auto mit = m_PriorMap.find(tissueType);
-    if (mit == m_PriorMap.end())
-    {
-      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetBounds");
-    }
-    return mit->second.GetBounds(Modality);
+    return this->FindPrior(tissueType).GetBounds(Modality);
   }
 
   double
@@ -375,6 +311,18 @@ private:
   };
   using PriorMapType = std::map<std::string, Prior>;
   PriorMapType m_PriorMap{};
+
+  const Prior &
+  FindPrior(const std::string & tissueType) const
+  {
+    const auto mit = m_PriorMap.find(tissueType);
+    if (mit == m_PriorMap.end())
+    {
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
+    }
+    return mit->second;
+  }
+
   //
   // XML Parsing variables
   std::string            m_LastXMLString{};

@@ -121,3 +121,11 @@ set_target_properties(BlendImageFilterGTest PROPERTIES
   FOLDER ${MODULE_FOLDER})
 include(GoogleTest)
 gtest_discover_tests(BlendImageFilterGTest DISCOVERY_TIMEOUT 120)
+
+add_executable(PosteriorFilenameTemplateGTest PosteriorFilenameTemplateGTest.cxx)
+target_include_directories(PosteriorFilenameTemplateGTest PRIVATE ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg)
+target_link_libraries(PosteriorFilenameTemplateGTest PRIVATE ${BRAINSABC_ITK_LIBRARIES} GTest::gtest_main)
+set_target_properties(PosteriorFilenameTemplateGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(PosteriorFilenameTemplateGTest DISCOVERY_TIMEOUT 120)

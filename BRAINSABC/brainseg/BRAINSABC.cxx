@@ -529,8 +529,7 @@ main(int argc, char ** argv)
     }
     else
     {
-      std::cerr << "ERROR:  Atlas image of type: " << elem.first << " not found in xml file." << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas image of type " << elem.first << " not found in the atlas XML file");
     }
     for (auto imIt = elem.second.begin(); imIt != elem.second.end(); ++imIt)
     {

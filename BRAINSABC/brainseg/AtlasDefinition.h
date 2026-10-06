@@ -24,6 +24,7 @@
 #include <list>
 #include <map>
 #include <iostream>
+#include "itkMacro.h"
 #include "itkNumberToString.h"
 /** \class AtlasDefiniton */
 class AtlasDefinition
@@ -107,15 +108,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetPriorFilename");
     }
     return mit->second.GetFilename();
   }
@@ -125,15 +123,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetWeight");
     }
     return mit->second.GetWeight();
   }
@@ -143,15 +138,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetGaussianClusterCount");
     }
     return mit->second.GetGaussianClusterCount();
   }
@@ -162,15 +154,12 @@ public:
     // HACK:  All the get functions need review to remove duplicate code.
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING LABEL CODE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetLabelCode");
     }
     return mit->second.GetLabelCode();
   }
@@ -180,15 +169,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetUseForBias");
     }
     return mit->second.GetUseForBias();
   }
@@ -198,15 +184,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING IsForegroungPrior IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetIsForegroundPrior");
     }
     return mit->second.GetIsForegroundPrior();
   }
@@ -216,15 +199,12 @@ public:
   {
     if (m_PriorMap.find(tissueType) == m_PriorMap.end())
     {
-      std::cout << "MISSING TISSUE TYPE IN ATLAS:  " << tissueType << std::endl;
-      throw;
+      itkGenericExceptionMacro("Atlas defines no prior for tissue type " << tissueType);
     }
     auto mit = m_PriorMap.find(tissueType);
     if (mit == m_PriorMap.end())
     {
-      // HACK:  Should throw and exception here with line number and file
-      std::cout << "ERROR:  Invalid tissueType requested in GetPriorFilename" << std::endl;
-      throw;
+      itkGenericExceptionMacro("Invalid tissueType " << tissueType << " requested in GetBounds");
     }
     return mit->second.GetBounds(Modality);
   }
@@ -350,8 +330,7 @@ private:
 
       if (bit == m_BoundsMap.end())
       {
-        std::cout << "MISSING MODALIITY TYPE IN ATLAS:  " << Modality << std::endl;
-        throw;
+        itkGenericExceptionMacro("Atlas prior has no bounds for modality " << Modality);
       }
 
       return bit->second;

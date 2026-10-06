@@ -119,8 +119,7 @@ AtlasDefinition ::StrToD(const char * str, const char * message) const
 
   if (str == last)
   {
-    std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
-    throw;
+    itkGenericExceptionMacro(<< message << ' ' << this->m_LastXMLString);
   }
   return rval;
 }
@@ -133,8 +132,7 @@ AtlasDefinition ::StrToL(const char * str, const char * message) const
 
   if (str == last)
   {
-    std::cerr << message << ' ' << this->m_LastXMLString << std::endl;
-    throw;
+    itkGenericExceptionMacro(<< message << ' ' << this->m_LastXMLString);
   }
   return rval;
 }
@@ -228,8 +226,7 @@ AtlasDefinition::XMLEnd(const char * el)
   }
   else
   {
-    std::cerr << "Unhandled XML Element type " << El << std::endl;
-    throw;
+    itkGenericExceptionMacro("Unhandled XML element type " << El);
   }
 }
 
@@ -246,8 +243,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 
   if (!xmlFile.good())
   {
-    std::cout << "ERROR:  XML file " << XMLFilename << " can not be read properly " << std::flush << std::endl;
-    throw;
+    itkGenericExceptionMacro("XML file " << XMLFilename << " cannot be read");
   }
   const std::streamsize fSize = itksys::SystemTools::FileLength(XMLFilename.c_str());
 
@@ -259,16 +255,15 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   auto filebuf = new char[fSize];
   if (filebuf == nullptr)
   {
-    std::cout << "ERROR:  memory char[" << fSize << "] can not be allocated properly " << std::flush << std::endl;
-    throw;
+    itkGenericExceptionMacro("Cannot allocate " << fSize << " bytes to read XML file " << XMLFilename);
   }
 
   xmlFile.read(filebuf, fSize);
   if (static_cast<std::streamsize>(xmlFile.gcount()) != fSize)
   {
-    std::cout << "ERROR:  file not read proplerly " << XMLFilename << std::flush << std::endl;
     delete[] filebuf;
-    throw;
+    itkGenericExceptionMacro("Read only " << xmlFile.gcount() << " of " << fSize << " bytes from XML file "
+                                          << XMLFilename);
   }
   xmlFile.close();
 
@@ -284,8 +279,7 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   if (parserReturn == 0)
   {
     delete[] filebuf;
-    std::cerr << "XML File parsing error" << std::endl;
-    throw;
+    itkGenericExceptionMacro("XML parsing error in " << XMLFilename);
   }
   delete[] filebuf;
 }

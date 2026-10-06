@@ -272,14 +272,21 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   {
     parserReturn = XML_Parse(parser, filebuf, fSize, 1);
   }
+  catch (const itk::ExceptionObject & error)
+  {
+    delete[] filebuf;
+    itkGenericExceptionMacro("Error in atlas XML file " << XMLFilename << ": " << error.GetDescription());
+  }
   catch (...)
   {
-    parserReturn = 0;
+    delete[] filebuf;
+    itkGenericExceptionMacro("Unexpected exception while parsing atlas XML file " << XMLFilename);
   }
   if (parserReturn == 0)
   {
     delete[] filebuf;
-    itkGenericExceptionMacro("XML parsing error in " << XMLFilename);
+    itkGenericExceptionMacro("XML parse error in " << XMLFilename << " at line " << XML_GetCurrentLineNumber(parser)
+                                                   << ": " << XML_ErrorString(XML_GetErrorCode(parser)));
   }
   delete[] filebuf;
 }

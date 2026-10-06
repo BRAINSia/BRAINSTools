@@ -119,9 +119,8 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
         dynamic_cast<const VersorRigid3DTransformType *>(xfrmIt->GetPointer());
       if (tempRigidTransform.IsNull())
       {
-        std::cerr << "Error in type conversion. " << __FILE__ << __LINE__ << std::endl;
-        std::cerr << "ResampleInPlace is only allowed with rigid transform type." << std::endl;
-        throw;
+        itkGenericExceptionMacro("ResampleInPlace requires a VersorRigid3DTransform for " << inputImageMapIter->first
+                                                                                          << " image #" << i);
       }
 
       const auto resampleIPFilter = ResampleIPFilterType::New();

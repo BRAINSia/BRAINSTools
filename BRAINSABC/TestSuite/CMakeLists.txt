@@ -129,3 +129,11 @@ set_target_properties(PosteriorFilenameTemplateGTest PROPERTIES
   RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
   FOLDER ${MODULE_FOLDER})
 gtest_discover_tests(PosteriorFilenameTemplateGTest DISCOVERY_TIMEOUT 120)
+
+add_executable(AtlasDefinitionGTest AtlasDefinitionGTest.cxx)
+target_include_directories(AtlasDefinitionGTest PRIVATE ${BRAINSTools_SOURCE_DIR}/BRAINSABC/brainseg)
+target_link_libraries(AtlasDefinitionGTest PRIVATE BRAINSABCCOMMONLIB GTest::gtest_main)
+set_target_properties(AtlasDefinitionGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(AtlasDefinitionGTest DISCOVERY_TIMEOUT 120)

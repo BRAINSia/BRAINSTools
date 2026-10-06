@@ -16,6 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+#include "PosteriorFilenameTemplate.h"
 #include "itkOutputWindow.h"
 #include "itkTextOutput.h"
 #include "itkTimeProbe.h"
@@ -1387,9 +1388,7 @@ main(int argc, char ** argv)
       }
       else
       {
-        char buf[8192];
-        sprintf(buf, posteriorTemplate.c_str(), PriorNames[probabilityIndex].c_str());
-        fn = buf;
+        fn = ExpandPosteriorTemplate(posteriorTemplate, PriorNames[probabilityIndex]);
       }
       using FloatWriterType = itk::ImageFileWriter<FloatImageType>;
       const auto writer = FloatWriterType::New();

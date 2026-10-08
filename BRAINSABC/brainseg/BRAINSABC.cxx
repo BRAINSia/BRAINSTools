@@ -16,6 +16,7 @@
  *  limitations under the License.
  *
  *=========================================================================*/
+#include "OutputVolumeTemplate.h"
 #include "PosteriorFilenameTemplate.h"
 #include "itkOutputWindow.h"
 #include "itkTextOutput.h"
@@ -1166,9 +1167,7 @@ main(int argc, char ** argv)
         {
           for (unsigned i = 0; i < mapIt.second.size(); ++i)
           {
-            char buf[8192];
-            sprintf(buf, output_Volumes[0].c_str(), mapIt.first.c_str(), i);
-            outFileNames[mapIt.first].emplace_back(buf);
+            outFileNames[mapIt.first].emplace_back(ExpandOutputVolumeTemplate(output_Volumes[0], mapIt.first, i));
           }
         }
       }

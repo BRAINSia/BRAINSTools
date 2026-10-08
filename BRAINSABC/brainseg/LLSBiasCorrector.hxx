@@ -753,7 +753,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
                   ByteImagePixelType maskValue = 0;
                   if (foregroundBrainMaskInterp->IsInsideBuffer(currOutPoint))
                   {
-                    maskValue = foregroundBrainMaskInterp->Evaluate(currOutPoint);
+                    maskValue = static_cast<ByteImagePixelType>(foregroundBrainMaskInterp->Evaluate(currOutPoint));
                   }
                   /* NOTE:  For regions listed as background, clamp the outputs[ichan
                    */

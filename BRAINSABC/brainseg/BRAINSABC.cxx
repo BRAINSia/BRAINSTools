@@ -1019,10 +1019,6 @@ main(int argc, char ** argv)
     intraSubjectRegisteredRawImageMap =
       RescaleFunctionLocal(intraSubjectRegisteredRawImageMap, ResampledToFirstFOVMask);
   }
-  if (debuglevel > 4)
-  {
-  }
-
   /*
    ------------------------------------
    *** BRAINSABC Input Images Flow: ***

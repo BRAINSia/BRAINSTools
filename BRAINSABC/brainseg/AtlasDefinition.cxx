@@ -21,6 +21,8 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <memory>
+#include <vector>
 #include <itksys/SystemTools.hxx>
 #include "itkNumberToString.h"
 
@@ -247,21 +249,15 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   }
   const std::streamsize fSize = itksys::SystemTools::FileLength(XMLFilename.c_str());
 
-  const XML_Parser parser = XML_ParserCreate(nullptr);
-  XML_SetUserData(parser, static_cast<void *>(this));
-  XML_SetElementHandler(parser, AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
-  XML_SetCharacterDataHandler(parser, AtlasXMLParser::XMLcharhandler);
+  const std::unique_ptr<XML_ParserStruct, decltype(&XML_ParserFree)> parser(XML_ParserCreate(nullptr), &XML_ParserFree);
+  XML_SetUserData(parser.get(), static_cast<void *>(this));
+  XML_SetElementHandler(parser.get(), AtlasXMLParser::XMLstart, AtlasXMLParser::XMLend);
+  XML_SetCharacterDataHandler(parser.get(), AtlasXMLParser::XMLcharhandler);
 
-  auto filebuf = new char[fSize];
-  if (filebuf == nullptr)
-  {
-    itkGenericExceptionMacro("Cannot allocate " << fSize << " bytes to read XML file " << XMLFilename);
-  }
-
-  xmlFile.read(filebuf, fSize);
+  std::vector<char> filebuf(static_cast<std::size_t>(fSize));
+  xmlFile.read(filebuf.data(), fSize);
   if (static_cast<std::streamsize>(xmlFile.gcount()) != fSize)
   {
-    delete[] filebuf;
     itkGenericExceptionMacro("Read only " << xmlFile.gcount() << " of " << fSize << " bytes from XML file "
                                           << XMLFilename);
   }
@@ -270,25 +266,22 @@ AtlasDefinition::InitFromXML(const std::string & XMLFilename)
   int parserReturn(1);
   try
   {
-    parserReturn = XML_Parse(parser, filebuf, fSize, 1);
+    parserReturn = XML_Parse(parser.get(), filebuf.data(), static_cast<int>(fSize), 1);
   }
   catch (const itk::ExceptionObject & error)
   {
-    delete[] filebuf;
     itkGenericExceptionMacro("Error in atlas XML file " << XMLFilename << ": " << error.GetDescription());
   }
   catch (...)
   {
-    delete[] filebuf;
     itkGenericExceptionMacro("Unexpected exception while parsing atlas XML file " << XMLFilename);
   }
   if (parserReturn == 0)
   {
-    delete[] filebuf;
-    itkGenericExceptionMacro("XML parse error in " << XMLFilename << " at line " << XML_GetCurrentLineNumber(parser)
-                                                   << ": " << XML_ErrorString(XML_GetErrorCode(parser)));
+    itkGenericExceptionMacro("XML parse error in " << XMLFilename << " at line "
+                                                   << XML_GetCurrentLineNumber(parser.get()) << ": "
+                                                   << XML_ErrorString(XML_GetErrorCode(parser.get())));
   }
-  delete[] filebuf;
 }
 
 void

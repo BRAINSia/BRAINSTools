@@ -198,3 +198,11 @@ TEST(AtlasDefinition, UnknownElementMessageNamesTheElement)
   EXPECT_NE(message.find("Bogus"), std::string::npos) << message;
   std::remove(path.c_str());
 }
+
+TEST(AtlasDefinition, EmptyFileThrows)
+{
+  const std::string path = WriteAtlasFile("atlas_empty.xml", "");
+  AtlasDefinition   atlas;
+  EXPECT_THROW(atlas.InitFromXML(path), itk::ExceptionObject);
+  std::remove(path.c_str());
+}

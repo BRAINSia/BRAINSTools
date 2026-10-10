@@ -29,22 +29,23 @@
 inline std::string
 ExpandPosteriorTemplate(const std::string & posteriorTemplate, const std::string & priorName)
 {
-  std::string result;
-  bool        substituted = false;
-  for (std::string::size_type i = 0; i < posteriorTemplate.size(); ++i)
+  std::string            result;
+  bool                   substituted = false;
+  std::string::size_type pos = 0;
+  while (pos < posteriorTemplate.size())
   {
-    const char c = posteriorTemplate[i];
+    const char c = posteriorTemplate[pos++];
     if (c != '%')
     {
       result += c;
       continue;
     }
-    const char next = (i + 1 < posteriorTemplate.size()) ? posteriorTemplate[i + 1] : '\0';
-    if (next == '%')
+    const char conversion = (pos < posteriorTemplate.size()) ? posteriorTemplate[pos++] : '\0';
+    if (conversion == '%')
     {
       result += '%';
     }
-    else if (next == 's' && !substituted)
+    else if (conversion == 's' && !substituted)
     {
       result += priorName;
       substituted = true;
@@ -54,7 +55,6 @@ ExpandPosteriorTemplate(const std::string & posteriorTemplate, const std::string
       itkGenericExceptionMacro("Invalid --posteriorTemplate \"" << posteriorTemplate
                                                                 << "\": only one %s and %% are allowed");
     }
-    ++i;
   }
   return result;
 }

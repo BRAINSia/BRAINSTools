@@ -19,7 +19,6 @@
 #ifndef OutputVolumeTemplate_h
 #define OutputVolumeTemplate_h
 
-#include <cstdio>
 #include <string>
 
 #include "itkMacro.h"
@@ -31,55 +30,63 @@
 inline std::string
 ExpandOutputVolumeTemplate(const std::string & outputTemplate, const std::string & volumeType, unsigned int index)
 {
-  std::string result;
-  bool        typeUsed = false;
-  bool        indexUsed = false;
-  for (std::string::size_type i = 0; i < outputTemplate.size(); ++i)
+  const auto invalid = [&outputTemplate]() {
+    itkGenericExceptionMacro("Invalid --outputVolumes pattern \""
+                             << outputTemplate << "\": only one %s, one %d (or %0Nd), and %% are allowed");
+  };
+  const auto isDigit = [](const char c) { return c >= '0' && c <= '9'; };
+
+  std::string            result;
+  bool                   typeUsed = false;
+  bool                   indexUsed = false;
+  std::string::size_type pos = 0;
+  while (pos < outputTemplate.size())
   {
-    if (outputTemplate[i] != '%')
+    const char c = outputTemplate[pos++];
+    if (c != '%')
     {
-      result += outputTemplate[i];
+      result += c;
       continue;
     }
-    ++i;
-    const char next = (i < outputTemplate.size()) ? outputTemplate[i] : '\0';
-    if (next == '%')
+    const char conversion = (pos < outputTemplate.size()) ? outputTemplate[pos++] : '\0';
+    if (conversion == '%')
     {
       result += '%';
     }
-    else if (next == 's' && !typeUsed)
+    else if (conversion == 's' && !typeUsed)
     {
       result += volumeType;
       typeUsed = true;
     }
-    else if (!indexUsed && (next == 'd' || (next == '0' && i + 2 < outputTemplate.size() &&
-                                            outputTemplate[i + 1] >= '1' && outputTemplate[i + 1] <= '9')))
+    else if (conversion == 'd' && !indexUsed)
     {
-      int width = 0;
-      if (next == '0')
+      result += std::to_string(index);
+      indexUsed = true;
+    }
+    else if (conversion == '0' && !indexUsed)
+    {
+      // "%0Nd": N is one or two digits, the first not zero
+      if (pos >= outputTemplate.size() || outputTemplate[pos] < '1' || outputTemplate[pos] > '9')
       {
-        ++i;
-        width = outputTemplate[i] - '0';
-        if (i + 1 < outputTemplate.size() && outputTemplate[i + 1] >= '0' && outputTemplate[i + 1] <= '9')
-        {
-          ++i;
-          width = width * 10 + (outputTemplate[i] - '0');
-        }
-        if (i + 1 >= outputTemplate.size() || outputTemplate[i + 1] != 'd')
-        {
-          itkGenericExceptionMacro("Invalid --outputVolumes pattern \"" << outputTemplate << "\"");
-        }
-        ++i;
+        invalid();
       }
-      char digits[128];
-      std::snprintf(digits, sizeof(digits), "%0*u", width, index);
+      std::string::size_type width = static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
+      if (pos < outputTemplate.size() && isDigit(outputTemplate[pos]))
+      {
+        width = width * 10 + static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
+      }
+      if (pos >= outputTemplate.size() || outputTemplate[pos++] != 'd')
+      {
+        invalid();
+      }
+      const std::string digits = std::to_string(index);
+      result.append(width > digits.size() ? width - digits.size() : 0, '0');
       result += digits;
       indexUsed = true;
     }
     else
     {
-      itkGenericExceptionMacro("Invalid --outputVolumes pattern \""
-                               << outputTemplate << "\": only one %s, one %d (or %0Nd), and %% are allowed");
+      invalid();
     }
   }
   return result;

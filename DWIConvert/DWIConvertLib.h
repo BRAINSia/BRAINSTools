@@ -8,6 +8,8 @@
 #include "DWIConverter.h"
 #include "DWIConverterFactory.h"
 
+#include <memory>
+
 // public utility interface for file convert
 std::string
 detectOuputVolumeType(const std::string & outputVolume);
@@ -138,7 +140,7 @@ public:
   setOutputBVectors(const std::string & outputBVectors);
 
 private:
-  DWIConverter *
+  std::unique_ptr<DWIConverter>
   CreateDicomConverter(const std::string & inputDicomDirectory,
                        const bool          useBMatrixGradientDirections,
                        const double        smallGradientThreshold,
@@ -164,7 +166,7 @@ private:
   std::string m_outputBValues{};   // default: ""  for FSL file
   std::string m_outputBVectors{};  // default: ""  for FSL file
 
-  DWIConverter * m_converter{ nullptr };
+  std::unique_ptr<DWIConverter> m_converter;
 };
 
 

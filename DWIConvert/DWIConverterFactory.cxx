@@ -14,14 +14,6 @@ DWIConverterFactory::DWIConverterFactory(std::string  DicomDirectory,
   , m_SmallGradientThreshold(smallGradientThreshold)
 {}
 
-DWIConverterFactory::~DWIConverterFactory()
-{
-  for (auto & m_Header : this->m_Headers)
-  {
-    delete m_Header;
-  }
-}
-
 bool
 DWIConverterFactory::isNIIorNrrd(const std::string & filename)
 {
@@ -37,7 +29,7 @@ DWIConverterFactory::isNIIorNrrd(const std::string & filename)
   return false;
 }
 
-DWIConverter *
+std::unique_ptr<DWIConverter>
 DWIConverterFactory::New()
 {
 
@@ -58,7 +50,7 @@ DWIConverterFactory::New()
     m_InputFileNames.push_back(m_DicomDirectory);
   }
 
-  DWIConverter * converter(nullptr);
+  std::unique_ptr<DWIConverter> converter;
   // nothing at all found?
   if (m_InputFileNames.empty())
   {
@@ -70,7 +62,6 @@ DWIConverterFactory::New()
   else if (m_InputFileNames.size() == 1 && isNIIorNrrd(m_InputFileNames[0])) // FSL Reader or NRRD Reader
   {
     itkGenericExceptionMacro(<< "INVALID PATH, create FSLDWIConverter in main program" << std::endl);
-    converter = new FSLDWIConverter(m_InputFileNames, "", "");
   }
   else // Assume multi file dicom file reading
   {
@@ -111,10 +102,11 @@ DWIConverterFactory::New()
 
     // modified by HuiXie
     m_Headers.clear();
+    m_OwnedHeaders.clear();
     int headerCount = 0;
     for (auto & m_InputFileName : m_InputFileNames)
     {
-      auto * curReader = new brains::DCMTKFileReader;
+      auto curReader = std::make_unique<brains::DCMTKFileReader>();
       curReader->SetFileName(m_InputFileName);
       try
       {
@@ -123,21 +115,13 @@ DWIConverterFactory::New()
       catch (...)
       {
         std::cerr << "Error reading slice" << m_InputFileName << std::endl;
-        delete curReader;
-        curReader = nullptr;
+        continue;
       }
-      // check for pixel data.
-      if (curReader)
+      if (curReader->HasPixelData())
       {
-        if (!curReader->HasPixelData())
-        {
-          delete curReader;
-        }
-        else
-        {
-          m_Headers.push_back(curReader);
-          ++headerCount;
-        }
+        m_Headers.push_back(curReader.get());
+        m_OwnedHeaders.push_back(std::move(curReader));
+        ++headerCount;
       }
     }
     // end of modified by HuiXie
@@ -169,26 +153,26 @@ DWIConverterFactory::New()
 
     if (StringContains(this->m_Vendor, "PHILIPS"))
     {
-      converter = new PhilipsDWIConverter(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter = std::make_unique<PhilipsDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else if (StringContains(this->m_Vendor, "SIEMENS"))
     {
-      converter =
-        new SiemensDWIConverter(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections, m_SmallGradientThreshold);
+      converter = std::make_unique<SiemensDWIConverter>(
+        m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections, m_SmallGradientThreshold);
     }
     else if (StringContains(this->m_Vendor, "GE"))
     {
-      converter = new GEDWIConverter(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter = std::make_unique<GEDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else if (StringContains(this->m_Vendor, "HITACHI"))
     {
-      converter = new HitachiDWIConverter(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter = std::make_unique<HitachiDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else
     {
       // generic converter can't do anything except load a DICOM
       // directory
-      converter = new GenericDWIConverter(m_InputFileNames);
+      converter = std::make_unique<GenericDWIConverter>(m_InputFileNames);
       this->m_Vendor = "GENERIC";
     }
   }

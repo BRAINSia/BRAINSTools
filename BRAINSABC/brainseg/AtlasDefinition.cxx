@@ -70,17 +70,9 @@ extern "C"
     //   std::cerr << txt[i];
     //   }
     // std::cerr << ")" << std::endl;
-    auto buf = new char[txtlen + 1];
-    int  i = 0;
-
-    for (i = 0; i < txtlen; ++i)
-    {
-      buf[i] = txt[i];
-    }
-    buf[i] = '\0';
-    auto * _this = reinterpret_cast<AtlasDefinition *>(data);
-    _this->XMLChar(buf);
-    delete[] buf;
+    const std::string buf(txt, txtlen);
+    auto *            _this = reinterpret_cast<AtlasDefinition *>(data);
+    _this->XMLChar(buf.c_str());
   }
   } // namespace AtlasXMLParser
 }

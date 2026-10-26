@@ -47,19 +47,12 @@ void
 LLSModel ::WriteVector(const std::string & path, const std::vector<double> & vec)
 {
   const hsize_t dim(vec.size());
-  auto *        buf(new double[dim]);
-
-  for (unsigned i(0); i < dim; ++i)
-  {
-    buf[i] = vec[i];
-  }
 
   const H5::DataSpace vecSpace(1, &dim);
   const H5::PredType  vecType = H5::PredType::NATIVE_DOUBLE;
   H5::DataSet         vecSet = this->m_H5File->createDataSet(path, vecType, vecSpace);
-  vecSet.write(buf, vecType);
+  vecSet.write(vec.data(), vecType);
   vecSet.close();
-  delete[] buf;
 }
 
 void
@@ -70,14 +63,10 @@ LLSModel ::WriteMatrix(const std::string & path, const MatrixType & matrix)
   dims[0] = matrix.rows();
   dims[1] = matrix.cols();
 
-  auto * buffer = new double[dims[0] * dims[1]];
-  matrix.copy_out(buffer);
-
   const H5::DataSpace matrixSpace(2, dims);
   H5::DataSet         matrixSet = this->m_H5File->createDataSet(path, H5::PredType::NATIVE_DOUBLE, matrixSpace);
-  matrixSet.write(buffer, H5::PredType::NATIVE_DOUBLE, matrixSpace);
+  matrixSet.write(matrix.data_block(), H5::PredType::NATIVE_DOUBLE, matrixSpace);
   matrixSet.close();
-  delete[] buffer;
 }
 
 void
@@ -197,13 +186,7 @@ LLSModel ::ReadVector(const std::string & DataSetName)
   Space.getSimpleExtentDims(&dim, nullptr);
   vec.resize(dim);
 
-  auto * buf = new double[dim];
-  vecSet.read(buf, H5::PredType::NATIVE_DOUBLE);
-  for (unsigned i(0); i < dim; ++i)
-  {
-    vec[i] = buf[i];
-  }
-  delete[] buf;
+  vecSet.read(vec.data(), H5::PredType::NATIVE_DOUBLE);
   vecSet.close();
   return vec;
 }

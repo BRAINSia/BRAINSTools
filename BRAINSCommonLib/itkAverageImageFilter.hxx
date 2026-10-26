@@ -24,6 +24,7 @@
 #include "itkImageRegionConstIterator.h"
 
 #include "itkNumericTraits.h"
+#include <vector>
 
 namespace itk
 {
@@ -49,7 +50,7 @@ AverageImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const Output
   const unsigned int numberOfInputFiles = this->GetNumberOfInputs();
 
   //  create and initialize all input image iterators
-  auto * it = new IteratorType[numberOfInputFiles];
+  std::vector<IteratorType> it(numberOfInputFiles);
   for (unsigned int i = 0; i < numberOfInputFiles; ++i)
   {
     it[i] = IteratorType(this->GetInput(i), outputRegionForThread);
@@ -73,8 +74,6 @@ AverageImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const Output
     // be supported by the NumericTraits so far.
     out.Set((OutputPixelType)sum);
   }
-
-  delete[] it;
 }
 
 } // end namespace itk

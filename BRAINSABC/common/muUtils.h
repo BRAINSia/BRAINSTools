@@ -28,21 +28,6 @@
 
 #include <iostream>
 
-#define muAlloc(n, T) muAlloc_func<T>(n, __FILE__, __LINE__)
-
-template <typename T>
-T *
-muAlloc_func(unsigned int n, const char * s, int line)
-{
-  T * array = new T[n];
-
-  if (array == NULL)
-  {
-    muExceptionMacro(<< "muAlloc: Failed at " << s << ": " << line);
-  }
-  return array;
-}
-
 template <typename TImage>
 typename TImage::Pointer
 readImage(const char * fn)

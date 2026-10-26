@@ -23,14 +23,7 @@
 
 LLSModel ::LLSModel() = default;
 
-LLSModel ::~LLSModel()
-{
-  if (this->m_H5File != nullptr)
-  {
-    this->m_H5File->close();
-    delete this->m_H5File;
-  }
-}
+LLSModel ::~LLSModel() = default;
 
 void
 LLSModel ::SetFileName(const std::string & fileName)
@@ -108,7 +101,7 @@ LLSModel ::Write()
   }
   try
   {
-    this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_TRUNC);
+    this->m_H5File = std::make_unique<H5::H5File>(this->m_FileName.c_str(), H5F_ACC_TRUNC);
 
     this->WriteString(LLSModel::m_LLSVersionGroupName, BCDVersionString);
 
@@ -140,8 +133,7 @@ LLSModel ::Write()
     }
 
     this->m_H5File->close();
-    delete this->m_H5File;
-    this->m_H5File = nullptr;
+    this->m_H5File.reset();
   }
   // catch failure caused by the H5File operations
   catch (const H5::FileIException & error)
@@ -272,7 +264,7 @@ LLSModel ::Read()
   }
   try
   {
-    this->m_H5File = new H5::H5File(this->m_FileName.c_str(), H5F_ACC_RDONLY);
+    this->m_H5File = std::make_unique<H5::H5File>(this->m_FileName.c_str(), H5F_ACC_RDONLY);
 
     // Read version ID
     {
@@ -324,8 +316,7 @@ LLSModel ::Read()
     SearchRadiiGroup.close();
 
     this->m_H5File->close();
-    delete this->m_H5File;
-    this->m_H5File = nullptr;
+    this->m_H5File.reset();
   }
   // catch failure caused by the H5File operations
   catch (const H5::FileIException & error)

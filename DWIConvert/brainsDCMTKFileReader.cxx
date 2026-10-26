@@ -320,7 +320,8 @@ DCMTKSequence::GetElementTM(const unsigned short group,
   return EXIT_SUCCESS;
 }
 
-DCMTKFileReader::~DCMTKFileReader() { delete m_DFile; }
+DCMTKFileReader::DCMTKFileReader() = default;
+DCMTKFileReader::~DCMTKFileReader() = default;
 
 void
 DCMTKFileReader::SetFileName(const std::string & fileName)
@@ -365,8 +366,7 @@ DCMTKFileReader::LoadFile()
   {
     itkGenericExceptionMacro("No filename given");
   }
-  delete this->m_DFile;
-  this->m_DFile = new DcmFileFormat();
+  this->m_DFile = std::make_unique<DcmFileFormat>();
   OFCondition cond = this->m_DFile->loadFile(this->m_FileName.c_str());
   // /* transfer syntax, autodetect */
   // EXS_Unknown,

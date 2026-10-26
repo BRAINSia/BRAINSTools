@@ -1,7 +1,9 @@
 #include <cstdio>
+#include <fstream>
 #include <iostream>
+#include <iterator>
+#include <string>
 #include <vector>
-#include <cstring>
 #include <cstdlib>
 #include "LocaleSafeConversions.h"
 using namespace std;
@@ -13,28 +15,20 @@ static constexpr int FILE_READ_FAILURE_CODE = 2;
 static constexpr int VALUE_TOLERANCE_FAILURE_CODE = 4;
 
 int
-readFileIntoBuffer(const char * filename, char ** buffer)
+readFileIntoBuffer(const char * filename, std::string & buffer)
 {
-  FILE * pFile = fopen(filename, "rb");
-  if (nullptr == pFile)
+  std::ifstream in(filename, std::ios::binary);
+  if (!in)
   {
     std::cerr << "Sorry, can not open file: " << filename << std::endl;
     return FILE_READ_FAILURE_CODE;
   }
-
-  fseek(pFile, 0, SEEK_END);
-  long nFileSize = ftell(pFile);
-  fseek(pFile, 0, SEEK_SET);
-
-  *buffer = new char[nFileSize + 1];
-  long readSize = fread(*buffer, sizeof(char), (std::size_t)nFileSize, pFile);
-  fclose(pFile);
-  *(*buffer + readSize) = '\0';
+  buffer.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   return 0; // success
 }
 
-char *
-nextNoneSpacePointer(char * p)
+const char *
+nextNoneSpacePointer(const char * p)
 {
   while (' ' == *p)
   {
@@ -43,12 +37,11 @@ nextNoneSpacePointer(char * p)
   return p;
 }
 
-// notes: after using buffer, this function deletes buffer.
 DataVector
-convertBufferIntoVector(char * buffer)
+convertBufferIntoVector(const std::string & buffer)
 {
-  DataVector ColumnData;
-  char *     p = nextNoneSpacePointer(buffer);
+  DataVector   ColumnData;
+  const char * p = nextNoneSpacePointer(buffer.c_str());
   while ('\0' != *p)
   {
     std::vector<double> lineData;
@@ -56,17 +49,13 @@ convertBufferIntoVector(char * buffer)
     while ('\n' != *p && '\0' != *p)
     {
       std::size_t dataOffset = 0;
-      char *      dataBeginning = p;
+      const char * dataBeginning = p;
       while (' ' != *p && '\n' != *p && '\0' != *p)
       {
         ++dataOffset;
         ++p;
       }
-      char * dataBuf = new char[dataOffset + 1];
-      memcpy(dataBuf, dataBeginning, dataOffset);
-      dataBuf[dataOffset] = '\0';
-      double dataValue = BRAINSTools::safe_stod(dataBuf);
-      delete[] dataBuf;
+      const double dataValue = BRAINSTools::safe_stod(std::string(dataBeginning, dataOffset));
       lineData.push_back(dataValue);
       p = nextNoneSpacePointer(p);
     }
@@ -75,7 +64,6 @@ convertBufferIntoVector(char * buffer)
     if ('\0' != *p)
       ++p;
   }
-  delete[] buffer;
   return ColumnData;
 }
 
@@ -155,15 +143,14 @@ main(int argc, char * argv[])
   const double tolerance = BRAINSTools::safe_stod(argv[4]);
 
   // Open files to read data into vector
-  char * buffer1 = nullptr;
-  if (0 != readFileIntoBuffer(argv[1], &buffer1))
+  std::string buffer1;
+  if (0 != readFileIntoBuffer(argv[1], buffer1))
   {
     return FILE_READ_FAILURE_CODE;
   }
-  char * buffer2 = nullptr;
-  if (0 != readFileIntoBuffer(argv[2], &buffer2))
+  std::string buffer2;
+  if (0 != readFileIntoBuffer(argv[2], buffer2))
   {
-    delete[] buffer1;
     return FILE_READ_FAILURE_CODE;
   }
 

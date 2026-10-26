@@ -148,6 +148,17 @@ jobs:
           # Pattern adopted from ITK's CI workflow (pixi.yml / arm.yml).
           sudo locale-gen de_DE.UTF-8
 
+      # The 16 GB runner has no swap, and a cold GCC 15 build of VTK exhausts its memory.
+      - name: Add swap and keep compiler temp files off the RAM-backed /tmp (Ubuntu)
+        if: matrix.config.os == 'ubuntu-latest'
+        run: |
+          sudo fallocate -l 16G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+          echo "TMPDIR=${{ runner.temp }}" >> "$GITHUB_ENV"
+
       - name: Install Dependencies (macOS)
         if: matrix.config.os == 'macos-latest'
         run: |
@@ -274,6 +285,12 @@ jobs:
         run: |
           # Builds ITKv5, ANTs, SlicerExecutionModel, TBB, zlib, then inner BRAINSTools.
           # ccache handles incremental compilation across CI runs.
+          # Log memory each minute so an out-of-memory runner loss is visible in the step log.
+          if command -v free > /dev/null; then
+            while sleep 60; do echo "[mem] $(free -m | awk '/^(Mem|Swap):/ {printf "%s %s/%s MiB  ", $1, $3, $2}')"; done &
+            mem_logger=$!
+            trap 'kill "${mem_logger}" 2> /dev/null' EXIT
+          fi
           cmake --build build --config Release --parallel ${{ matrix.config.parallel }}
 
       # The SuperBuild forwards BRAINSToools_*_OPTIMIZATION_FLAGS to ITK, whose flags come after

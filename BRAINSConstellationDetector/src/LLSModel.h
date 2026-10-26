@@ -19,6 +19,7 @@
 #ifndef LLSModel_h
 #define LLSModel_h
 
+#include <memory>
 #include <string>
 #include <map>
 #include <vector>
@@ -94,15 +95,15 @@ private:
   ReadMatrix(const std::string & DataSetName);
 
 private:
-  std::string               m_FileName{};
-  LLSMeansType              m_LLSMeans{};
-  LLSMatricesType           m_LLSMatrices{};
-  LLSSearchRadiiType        m_LLSSearchRadii{};
-  H5::H5File *              m_H5File{ nullptr };
-  static const char * const m_LLSVersionGroupName;
-  static const char * const m_LLSMeansGroupName;
-  static const char * const m_LLSMatricesGroupName;
-  static const char * const m_LLSSearchRadiiGroupName;
+  std::string                 m_FileName{};
+  LLSMeansType                m_LLSMeans{};
+  LLSMatricesType             m_LLSMatrices{};
+  LLSSearchRadiiType          m_LLSSearchRadii{};
+  std::unique_ptr<H5::H5File> m_H5File;
+  static const char * const   m_LLSVersionGroupName;
+  static const char * const   m_LLSMeansGroupName;
+  static const char * const   m_LLSMatricesGroupName;
+  static const char * const   m_LLSSearchRadiiGroupName;
 };
 
 #endif // LLSModel_h

@@ -20,6 +20,7 @@
 
 // Vendored from ITK Modules/IO/DCMTK/src. The brains namespace keeps these
 // definitions distinct from the ones ITK still exports from ITKIODCMTK.
+#include <memory>
 #include <stack>
 #include <vector>
 #include "itkByteSwapper.h"
@@ -258,7 +259,7 @@ class DCMTKFileReader
 public:
   using Self = DCMTKFileReader;
 
-  DCMTKFileReader() = default;
+  DCMTKFileReader();
   ~DCMTKFileReader();
 
   void
@@ -522,12 +523,12 @@ public:
   PopulateMetaDataDictionary(MetaDataDictionary & dict) const;
 
 private:
-  std::string      m_FileName;
-  DcmFileFormat *  m_DFile{ nullptr };
-  DcmDataset *     m_Dataset{ nullptr };
-  E_TransferSyntax m_Xfer{ EXS_Unknown };
-  Sint32           m_FrameCount{ 0 };
-  long             m_FileNumber{ -1L };
+  std::string                    m_FileName;
+  std::unique_ptr<DcmFileFormat> m_DFile;
+  DcmDataset *                   m_Dataset{ nullptr };
+  E_TransferSyntax               m_Xfer{ EXS_Unknown };
+  Sint32                         m_FrameCount{ 0 };
+  long                           m_FileNumber{ -1L };
 };
 
 extern bool

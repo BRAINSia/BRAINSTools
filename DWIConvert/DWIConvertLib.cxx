@@ -38,7 +38,7 @@ DWIConvert::DWIConvert(std::string inputVolume, std::string outputVolume)
   SetOutputFileName(outputVolume);
 }
 
-DWIConvert::~DWIConvert() { delete m_converter; }
+DWIConvert::~DWIConvert() = default;
 
 int
 DWIConvert::read()
@@ -81,7 +81,7 @@ DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    auto * FSLconverter = new FSLDWIConverter(filesList, m_inputBValues, m_inputBVectors);
+    auto FSLconverter = std::make_unique<FSLDWIConverter>(filesList, m_inputBValues, m_inputBVectors);
     try
     {
       FSLconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -92,9 +92,8 @@ DWIConvert::read()
     catch (const itk::ExceptionObject & excp)
     {
       itkGenericExceptionMacro(<< "Exception creating converter " << excp << std::endl);
-      delete FSLconverter;
     }
-    m_converter = FSLconverter;
+    m_converter = std::move(FSLconverter);
   }
   // make FSL file set from a NRRD file.
   else if ("Nrrd" == getInputFileType())
@@ -104,7 +103,7 @@ DWIConvert::read()
     filesList.push_back(m_inputVolume);
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
-    auto * NRRDconverter = new NRRDDWIConverter(filesList);
+    auto NRRDconverter = std::make_unique<NRRDDWIConverter>(filesList);
     try
     {
       NRRDconverter->SetAllowLossyConversion(m_allowLossyConversion);
@@ -114,9 +113,8 @@ DWIConvert::read()
     catch (const itk::ExceptionObject & excp)
     {
       itkGenericExceptionMacro(<< "Exception creating converter " << excp << std::endl);
-      delete NRRDconverter;
     }
-    m_converter = NRRDconverter;
+    m_converter = std::move(NRRDconverter);
   }
   else if ("Dicom" == getInputFileType())
   {
@@ -204,7 +202,7 @@ DWIConvert::write()
   }
 }
 
-DWIConverter *
+std::unique_ptr<DWIConverter>
 DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
                                  const bool          useBMatrixGradientDirections,
                                  const double        smallGradientThreshold,
@@ -219,7 +217,7 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
 
   // use the factor to instantiate a converter object based on the vender.
   DWIConverterFactory converterFactory(inputDicomDirectory, useBMatrixGradientDirections, smallGradientThreshold);
-  DWIConverter *      converter;
+  std::unique_ptr<DWIConverter> converter;
   try
   {
     converter = converterFactory.New();
@@ -244,7 +242,6 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
   catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception creating converter " << excp << std::endl;
-    delete converter;
     return nullptr;
   }
   // extract the DWI data
@@ -255,7 +252,6 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
   catch (const itk::ExceptionObject & excp)
   {
     std::cerr << "Exception extracting gradient vectors " << excp << std::endl;
-    delete converter;
     return nullptr;
   }
   // this is a punt, it will still write out the volume image
@@ -263,7 +259,6 @@ DWIConvert::CreateDicomConverter(const std::string & inputDicomDirectory,
   if (converterFactory.GetVendor() == "GENERIC")
   {
     std::cerr << "Can't extract DWI data from files created by vendor " << converterFactory.GetVendor() << std::endl;
-    delete converter;
     exit(EXIT_FAILURE);
   }
   return converter;
@@ -511,7 +506,7 @@ DWIConvert::setOutputBVectors(const std::string & outputBVectors)
 DWIConverter *
 DWIConvert::getConverter() const
 {
-  return m_converter;
+  return m_converter.get();
 }
 
 

@@ -24,6 +24,7 @@
 
 #include <gtest/gtest.h>
 #include <cstdio>
+#include <memory>
 #include <string>
 
 #include "dcmtk/dcmdata/dcfilefo.h"
@@ -45,16 +46,16 @@ TEST(SiemensDWIConverter, ExtractBMatrixFromPrivateTag)
     dataset->putAndInsertString(DCM_SOPInstanceUID, "1.2.826.0.1.3680043.8.498.1");
     dataset->putAndInsertString(DCM_Manufacturer, "SIEMENS");
     dataset->putAndInsertString(DcmTag(0x0019, 0x0010, EVR_LO), "SIEMENS MR HEADER");
-    auto * bMatrixElement = new DcmFloatingPointDouble(DcmTag(0x0019, 0x1027, EVR_FD));
+    auto bMatrixElement = std::make_unique<DcmFloatingPointDouble>(DcmTag(0x0019, 0x1027, EVR_FD));
     ASSERT_TRUE(bMatrixElement->putFloat64Array(expected, 6).good());
-    ASSERT_TRUE(dataset->insert(bMatrixElement).good());
+    ASSERT_TRUE(dataset->insert(bMatrixElement.release()).good());
     ASSERT_TRUE(fileFormat.saveFile(path.c_str(), EXS_LittleEndianExplicit).good());
   }
 
-  auto * header = new brains::DCMTKFileReader;
+  auto header = std::make_unique<brains::DCMTKFileReader>();
   header->SetFileName(path);
   header->LoadFile();
-  SiemensDWIConverter::DCMTKFileVector headers{ header };
+  SiemensDWIConverter::DCMTKFileVector headers{ header.get() };
   DWIConverter::FileNamesContainer     names{ path };
   SiemensDWIConverter                  converter(headers, names, true, 0.2);
 
@@ -71,6 +72,5 @@ TEST(SiemensDWIConverter, ExtractBMatrixFromPrivateTag)
   EXPECT_DOUBLE_EQ(bMatrix[2][0], bMatrix[0][2]);
   EXPECT_DOUBLE_EQ(bMatrix[2][1], bMatrix[1][2]);
 
-  delete header;
   std::remove(path.c_str());
 }

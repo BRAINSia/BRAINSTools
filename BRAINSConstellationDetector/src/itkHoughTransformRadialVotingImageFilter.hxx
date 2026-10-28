@@ -131,13 +131,13 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::BeforeThreaded
   m_AccumulatorImage->CopyInformation(inputImage);
   m_AccumulatorImage->SetRegions(inputImage->GetLargestPossibleRegion());
 
-  m_AccumulatorImage->Allocate(true);
+  m_AccumulatorImage->AllocateInitialized();
   m_AccumulatorImage->FillBuffer(0);
 
   m_RadiusImage = InternalImageType::New();
   m_RadiusImage->CopyInformation(inputImage);
   m_RadiusImage->SetRegions(inputImage->GetLargestPossibleRegion());
-  m_RadiusImage->Allocate(true);
+  m_RadiusImage->AllocateInitialized();
   m_RadiusImage->FillBuffer(0);
 }
 

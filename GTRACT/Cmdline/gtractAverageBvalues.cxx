@@ -166,7 +166,7 @@ main(int argc, char * argv[])
   avgImage->SetOrigin(imageReader->GetOutput()->GetOrigin());
   avgImage->SetDirection(imageReader->GetOutput()->GetDirection());
   avgImage->SetVectorLength(numUniqueDirections);
-  avgImage->Allocate(true);
+  avgImage->AllocateInitialized();
 
   auto outputImage = NrrdImageType::New();
   outputImage->SetRegions(imageReader->GetOutput()->GetLargestPossibleRegion());
@@ -174,7 +174,7 @@ main(int argc, char * argv[])
   outputImage->SetOrigin(imageReader->GetOutput()->GetOrigin());
   outputImage->SetDirection(imageReader->GetOutput()->GetDirection());
   outputImage->SetVectorLength(numUniqueDirections);
-  outputImage->Allocate(true);
+  outputImage->AllocateInitialized();
 
   using ExtractImageFilterType = itk::VectorIndexSelectionCastImageFilter<NrrdImageType, IndexImageType>;
   auto extractImageFilter = ExtractImageFilterType::New();

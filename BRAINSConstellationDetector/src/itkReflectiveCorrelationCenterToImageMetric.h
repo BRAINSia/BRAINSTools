@@ -64,10 +64,9 @@ public:
     , m_OriginalImage(nullptr)
     , m_ResamplerReferenceImage(nullptr)
     , m_CenterOfHeadMass()
+    , m_Optimizer(OptimizerType::New())
     , m_imInterp(nullptr)
-
   {
-    this->m_Optimizer = OptimizerType::New();
     this->m_Optimizer->SetMetric(&(*this));
     this->m_Optimizer->SetStepLength(0.025);
     this->m_Optimizer->SetStepTolerance(1e-12);

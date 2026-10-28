@@ -61,22 +61,20 @@ namespace itk
 {
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiTrackingFilterBase()
-{
-  m_UseTend = false;
-  m_UseLoopDetection = true;
-  m_TendG = 1.0;
-  m_TendF = 0.0;
-  m_StepSize = 1.0;
-  m_MaximumLength = 100.0;
-  m_MinimumLength = 0.0;
-  m_AnisotropyThreshold = 0.3;
-  m_SeedThreshold = 0.5;
-  m_ScalarIP = ScalarIPType::New();
-  m_VectorIP = VectorIPType::New();
-  m_StartIP = Self::MaskIPType::New();
-  m_EndIP = Self::MaskIPType::New();
-  pi = 3.14159265358979323846;
-}
+  : m_ScalarIP(ScalarIPType::New())
+  , m_VectorIP(VectorIPType::New())
+  , m_StartIP(Self::MaskIPType::New())
+  , m_EndIP(Self::MaskIPType::New())
+  , m_SeedThreshold(0.5)
+  , m_AnisotropyThreshold(0.3)
+  , m_MaximumLength(100.0)
+  , m_MinimumLength(0.0)
+  , m_StepSize(1.0)
+  , m_UseLoopDetection(true)
+  , m_UseTend(false)
+  , m_TendG(1.0)
+  , m_TendF(0.0)
+{}
 
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void

@@ -53,7 +53,9 @@
 
 namespace itk
 {
-EigenVectorToColorImageFilter ::EigenVectorToColorImageFilter() { m_TensorShapeType = PRIMARY_EIGENVECTOR; }
+EigenVectorToColorImageFilter::EigenVectorToColorImageFilter()
+  : m_TensorShapeType(PRIMARY_EIGENVECTOR)
+{}
 
 void
 EigenVectorToColorImageFilter ::Update()

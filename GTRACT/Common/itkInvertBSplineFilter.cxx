@@ -49,11 +49,10 @@
 namespace itk
 {
 InvertBSplineFilter::InvertBSplineFilter()
-{
-  m_XgridSize = 2;
-  m_YgridSize = 2;
-  m_ZgridSize = 2;
-}
+  : m_XgridSize(2)
+  , m_YgridSize(2)
+  , m_ZgridSize(2)
+{}
 
 void
 InvertBSplineFilter::Update()

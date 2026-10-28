@@ -39,9 +39,9 @@ namespace Statistics
 {
 template <typename TImageType, typename TMaskType>
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::ScalarImagePortionToHistogramGenerator()
-  : m_HistogramGenerator(GeneratorType::New())
+  : m_ImageToListSampleGenerator(ListSampleGeneratorType::New())
+  , m_HistogramGenerator(GeneratorType::New())
 {
-  m_ImageToListSampleGenerator = ListSampleGeneratorType::New();
   m_HistogramGenerator->SetInput(m_ImageToListSampleGenerator->GetOutput());
 }
 

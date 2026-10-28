@@ -59,11 +59,10 @@ namespace itk
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiGuidedTrackingFilter()
   : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiTrackingFilterBase()
-{
-  this->m_CurvatureThreshold = 45.0;
-  this->m_GuidedCurvatureThreshold = 30.0;
-  this->m_MaximumGuideDistance = 12.0;
-}
+  , m_CurvatureThreshold(45.0)
+  , m_GuidedCurvatureThreshold(30.0)
+  , m_MaximumGuideDistance(12.0)
+{}
 
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void

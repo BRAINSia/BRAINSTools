@@ -12,10 +12,10 @@ DWIConverter::DWIConverter(FileNamesContainer inputFileNames)
   , m_SlicesPerVolume(0)
   , m_NSlice(0)
   , m_NVolume(0)
+  , m_thickness(0)
   , m_NRRDSpaceDefinition("left-posterior-superior")
 {
   this->m_MeasurementFrame.SetIdentity();
-  m_thickness = 0;
 }
 
 DWIConverter::~DWIConverter() = default;

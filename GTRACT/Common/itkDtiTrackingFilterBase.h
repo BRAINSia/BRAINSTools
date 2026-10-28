@@ -259,7 +259,7 @@ protected:
   float m_TendG{};
   float m_TendF{};
 
-  float pi;
+  float pi{ 3.14159265358979323846 };
 }; // end of class
 } // end namespace itk
 

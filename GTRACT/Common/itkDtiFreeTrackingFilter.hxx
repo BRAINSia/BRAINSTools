@@ -177,14 +177,13 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
         fiberAnisotropy->InsertNextValue(anisotropy);
         fiberAnisotropySum->InsertNextValue(anisotropySum);
 
-        EigenValuesArrayType                eigenValues;
-        EigenVectorsMatrixType              eigenVectors;
         typename Self::TensorImagePixelType tensorPixel = this->m_VectorIP->EvaluateAtContinuousIndex(index);
 
-        TMatrix fullTensorPixel(3, 3);
-        fullTensorPixel = Tensor2Matrix(tensorPixel);
+        TMatrix fullTensorPixel = Tensor2Matrix(tensorPixel);
         fiberTensors->InsertNextTypedTuple(fullTensorPixel.data_block());
 
+        EigenValuesArrayType   eigenValues;
+        EigenVectorsMatrixType eigenVectors;
         tensorPixel.ComputeEigenAnalysis(eigenValues, eigenVectors);
 
         //

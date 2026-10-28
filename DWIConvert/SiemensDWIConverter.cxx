@@ -28,17 +28,8 @@ SiemensDWIConverter::DecodeCSAHeader(CSAHeader & header, const std::string & inf
   const char * info = infoString.c_str();
 
   const bool   isCSA2 = info[0] == 'S' && info[1] == 'V' && info[2] == '1' && info[3] == '0';
-  unsigned int offset;
-
-  if (isCSA2)
-  {
-    offset = 8; // past SV10 + unused 4 bytes
-  }
-  else
-  {
-    offset = 0;
-  }
-  const auto numberOfTags = this->CSAExtractFromString<itk::uint32_t>(info + offset);
+  unsigned int offset = isCSA2 ? 8 : 0; // past SV10 + unused 4 bytes
+  const auto   numberOfTags = this->CSAExtractFromString<itk::uint32_t>(info + offset);
   offset += sizeof(itk::uint32_t); // skip numberOfTags;
   offset += sizeof(itk::uint32_t); // skip unused2
 
@@ -73,8 +64,7 @@ SiemensDWIConverter::DecodeCSAHeader(CSAHeader & header, const std::string & inf
       // 4 items in XX, first being item length
       const auto itemLength = this->CSAExtractFromString<itk::int32_t>(info + offset);
       offset += 16;
-      std::string valueString;
-      valueString = info + offset;
+      std::string valueString = info + offset;
       offset += itemLength;
       while ((offset % 4) != 0)
       {

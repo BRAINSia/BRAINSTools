@@ -91,15 +91,8 @@ main(int argc, char * argv[])
   }
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  SImageType::PixelType BackgroundFillValue = 0;
-  if (backgroundFillValueString == std::string("BIGNEG"))
-  {
-    BackgroundFillValue = -32768;
-  }
-  else
-  {
-    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
-  }
+  SImageType::PixelType BackgroundFillValue =
+    (backgroundFillValueString == std::string("BIGNEG")) ? -32768 : BRAINSTools::safe_stoi(backgroundFillValueString);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   SImageType::Pointer volResult;

@@ -82,15 +82,8 @@ main(int argc, char * argv[])
     return -1;
   }
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue = 0;
-  if (backgroundFillValueString == std::string("BIGNEG"))
-  {
-    BackgroundFillValue = -32768;
-  }
-  else
-  {
-    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
-  }
+  short BackgroundFillValue =
+    (backgroundFillValueString == std::string("BIGNEG")) ? -32768 : BRAINSTools::safe_stoi(backgroundFillValueString);
   // //////////////////////////////////////////////////////////////////////////
   const SImageType::Pointer image = itkUtil::ReadImage<SImageType>(inputVolume);
   if (image.IsNull())

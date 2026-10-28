@@ -335,12 +335,10 @@ get_landmark_types(const std::string & landmark_types_list_file)
     }
   }
 
-  std::pair<std::string, std::vector<std::string>> basePair;
-  basePair = make_pair("baseLandmarks", baseLandmarksNames);
+  std::pair<std::string, std::vector<std::string>> basePair = make_pair("baseLandmarks", baseLandmarksNames);
   landmark_types.push_back(basePair);
 
-  std::pair<std::string, std::vector<std::string>> newPair;
-  newPair = make_pair("newLandmarks", newLandmarksNames);
+  std::pair<std::string, std::vector<std::string>> newPair = make_pair("newLandmarks", newLandmarksNames);
   landmark_types.push_back(newPair);
 
   return landmark_types;
@@ -616,8 +614,7 @@ main(int argc, char * argv[])
       }
     }
 
-    vnl_matrix<double> Xi_demeaned(Xi.rows(), Xi.cols());
-    Xi_demeaned = Xi - I_si;
+    vnl_matrix<double> Xi_demeaned = Xi - I_si;
 
     const vnl_symmetric_eigensystem<double> eig(Xi_demeaned * Xi_demeaned.transpose());
     const vnl_matrix<double>                V{ eig.V };

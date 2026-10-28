@@ -118,9 +118,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrepareKer
   using InputSizeType = typename InputImageType::SizeType;
   using InputIndexType = typename InputImageType::IndexType;
 
-  InputRegionType region;
-
-  region = inputImage->GetLargestPossibleRegion();
+  InputRegionType region = inputImage->GetLargestPossibleRegion();
 
   InputSizeType size = region.GetSize();
   for (unsigned int i = 0; i < ImageDimension; ++i)
@@ -215,7 +213,6 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
 
   // Define a few indices that will be used to translate from an input pixel
   // to an output pixel
-  IndexType outputIndex; // Index to current output pixel
 
   using OutputPointType = typename KernelTransformType::OutputPointType;
 
@@ -228,7 +225,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateDa
   while (!outIt.IsAtEnd())
   {
     // Determine the index of the current output pixel
-    outputIndex = outIt.GetIndex();
+    IndexType  outputIndex = outIt.GetIndex();
     const auto outputPoint = outputPtr->template TransformIndexToPhysicalPoint<double>(outputIndex);
 
     // Compute corresponding inverse displacement vector
@@ -271,8 +268,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateIn
   InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput());
 
   // Request the entire input image
-  InputImageRegionType inputRegion;
-  inputRegion = inputPtr->GetLargestPossibleRegion();
+  InputImageRegionType inputRegion = inputPtr->GetLargestPossibleRegion();
   inputPtr->SetRequestedRegion(inputRegion);
 
   return;

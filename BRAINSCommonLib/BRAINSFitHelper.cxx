@@ -156,8 +156,7 @@ NormalizeImage(const typename ImageType::Pointer & inputImage)
   windowingFilter->SetOutputMaximum(1);
   windowingFilter->Update();
 
-  typename ImageType::Pointer outputImage = nullptr;
-  outputImage = windowingFilter->GetOutput();
+  typename ImageType::Pointer outputImage = windowingFilter->GetOutput();
   outputImage->Update();
   outputImage->DisconnectPipeline();
 
@@ -367,7 +366,6 @@ BRAINSFitHelper::Update()
 
   const bool gradientfilter = false;
 
-  GenericMetricType::Pointer metric;
   if (this->m_CostMetricName == "MMI")
   {
     using MIMetricType =
@@ -381,7 +379,7 @@ BRAINSFitHelper::Update()
     mutualInformationMetric->SetUseMovingImageGradientFilter(gradientfilter);
     mutualInformationMetric->SetUseFixedImageGradientFilter(gradientfilter);
     mutualInformationMetric->SetUseSampledPointSet(false);
-    metric = mutualInformationMetric;
+    GenericMetricType::Pointer metric = mutualInformationMetric;
 
     this->SetupRegistration<MIMetricType>(metric);
     this->RunRegistration<MIMetricType>();
@@ -390,8 +388,8 @@ BRAINSFitHelper::Update()
   {
     using MSEMetricType =
       itk::MeanSquaresImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
-    const auto meanSquareMetric = MSEMetricType::New();
-    metric = meanSquareMetric;
+    const auto                 meanSquareMetric = MSEMetricType::New();
+    GenericMetricType::Pointer metric = meanSquareMetric;
 
     this->SetupRegistration<MSEMetricType>(metric);
     this->RunRegistration<MSEMetricType>();
@@ -400,8 +398,8 @@ BRAINSFitHelper::Update()
   {
     using corrMetricType =
       itk::CorrelationImageToImageMetricv4<FixedImageType, MovingImageType, FixedImageType, RealType>;
-    const auto corrMetric = corrMetricType::New();
-    metric = corrMetric;
+    const auto                 corrMetric = corrMetricType::New();
+    GenericMetricType::Pointer metric = corrMetric;
 
     this->SetupRegistration<corrMetricType>(metric);
     this->RunRegistration<corrMetricType>();
@@ -416,7 +414,7 @@ BRAINSFitHelper::Update()
     mutualInformationMetric->SetUseFixedImageGradientFilter(gradientfilter);
     mutualInformationMetric->SetUseSampledPointSet(false);
     mutualInformationMetric->SetVarianceForJointPDFSmoothing(1.0);
-    metric = mutualInformationMetric;
+    GenericMetricType::Pointer metric = mutualInformationMetric;
 
     this->SetupRegistration<MutualInformationMetricType>(metric);
     this->RunRegistration<MutualInformationMetricType>();

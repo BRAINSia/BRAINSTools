@@ -162,12 +162,11 @@ main(int argc, char * argv[])
   std::cout << "Reference image:  ";
   referenceImageReader->GetOutput()->Print(std::cout);
 
-  CodeImageType::PointType        p2;
   itk::ContinuousIndex<double, 3> imageIndex{};
   imageIndex[1] = 0;
   imageIndex[2] = 0;
   const auto p1 = codeImageReader->GetOutput()->template TransformContinuousIndexToPhysicalPoint<double>(imageIndex);
-  p2 = resample->GetTransform()->TransformPoint(p1);
+  CodeImageType::PointType p2 = resample->GetTransform()->TransformPoint(p1);
   std::cout << "Point " << p1 << " mapped to " << p2 << std::endl;
 
   resample->SetInput(codeImageReader->GetOutput());

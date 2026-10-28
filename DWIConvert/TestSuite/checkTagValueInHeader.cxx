@@ -32,7 +32,6 @@ printUsage(char * argv0)
 int
 main(int argc, char * argv[])
 {
-  int result = 1; // 1 means unmatching;
   // Get input parameters
   std::string inputFilename;
   std::string tagStr;
@@ -84,14 +83,14 @@ main(int argc, char * argv[])
 
   // check whether tag has blank space inside
   int         nSpace = 0;
-  std::size_t pos = 0;
-  pos = tagStr.find(' ', pos);
+  std::size_t pos = tagStr.find(' ', 0);
   while (std::string::npos != pos)
   {
     ++nSpace;
     pos = tagStr.find(' ', pos + 1);
   }
 
+  int result = 1; // 1 means unmatching;
   // read file
   std::ifstream file(inputFilename.c_str());
   std::string   lineText;

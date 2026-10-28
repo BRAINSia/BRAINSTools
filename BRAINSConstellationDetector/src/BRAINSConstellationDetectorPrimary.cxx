@@ -119,10 +119,6 @@ BRAINSConstellationDetectorPrimary::Compute()
   std::cout << "\nReading in external files..." << std::endl;
 
   // read in lls model file
-  std::map<std::string, std::vector<double>>    llsMeans;
-  std::map<std::string, LandmarkIO::MatrixType> llsMatrices;
-  std::map<std::string, double>                 searchRadii;
-
   LLSModel theModel;
 
   theModel.SetFileName(this->m_llsModel);
@@ -131,9 +127,9 @@ BRAINSConstellationDetectorPrimary::Compute()
     std::cerr << "Error reading LLS Model" << std::endl;
     return EXIT_FAILURE;
   }
-  llsMeans = theModel.GetLLSMeans();
-  llsMatrices = theModel.GetLLSMatrices();
-  searchRadii = theModel.GetSearchRadii();
+  std::map<std::string, std::vector<double>>    llsMeans = theModel.GetLLSMeans();
+  std::map<std::string, LandmarkIO::MatrixType> llsMatrices = theModel.GetLLSMatrices();
+  std::map<std::string, double>                 searchRadii = theModel.GetSearchRadii();
 
   // ------------------------------------
   // load image

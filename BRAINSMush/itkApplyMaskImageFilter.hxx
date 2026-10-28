@@ -82,11 +82,8 @@ ApplyMaskImageFilter<TInputImage, TOutputImage>::GenerateData()
   OutputIterator itOut(outputVolume, outputVolume->GetRequestedRegion());
 
   // support progress methods/callbacks
-  unsigned long updateVisits = 0;
-  unsigned long totalPixels = 0;
-
-  totalPixels = inputImage->GetRequestedRegion().GetNumberOfPixels();
-  updateVisits = totalPixels / 10;
+  unsigned long totalPixels = inputImage->GetRequestedRegion().GetNumberOfPixels();
+  unsigned long updateVisits = totalPixels / 10;
   if (updateVisits < 1)
   {
     updateVisits = 1;

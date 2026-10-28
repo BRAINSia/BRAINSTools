@@ -626,7 +626,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   {
     typename CompositeTransformType::ConstPointer compXfrm =
       static_cast<const CompositeTransformType *>(finalTransform.GetPointer());
-    compToAdd = compXfrm->Clone();
+    typename CompositeTransformType::Pointer compToAdd = compXfrm->Clone();
     this->m_CurrentGenericTransform = compToAdd;
   }
   else

@@ -87,9 +87,8 @@ ReadSlicer3toITKLmkWts(const std::string & landmarksWeightFilename)
     {
       const size_t      pos1 = line.find(',', 0);
       const std::string name = line.substr(0, pos1);
-      double            weight = NAN;
       const size_t      pos2 = line.find(' ', pos1 + 1);
-      weight = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
+      double            weight = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
 
       landmarks[name] = weight;
     }

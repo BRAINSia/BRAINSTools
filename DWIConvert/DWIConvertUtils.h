@@ -93,9 +93,7 @@ inline int
 WriteBValues(const std::vector<TScalar> & bValues, const std::string & filename)
 {
   // write out in FSL format
-  std::ofstream bValFile;
-
-  bValFile.open(filename.c_str(), std::ios::out | std::ios::binary);
+  std::ofstream bValFile(filename.c_str(), std::ios::out | std::ios::binary);
   bValFile.precision(17);
   if (!bValFile.is_open() || !bValFile.good())
   {

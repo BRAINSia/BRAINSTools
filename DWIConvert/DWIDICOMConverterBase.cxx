@@ -432,7 +432,7 @@ DWIDICOMConverterBase::readThicknessFromDicom() const
 int
 DWIDICOMConverterBase::getDicomSpacing(double * const spacing) const
 {
-  double _spacing[3];
+  double _spacing[3] = { 0.0, 0.0, 0.0 };
   //
   // There are several tags that can have spacing, and we're going
   // from most to least desirable, starting with PixelSpacing, which
@@ -442,10 +442,7 @@ DWIDICOMConverterBase::getDicomSpacing(double * const spacing) const
 
   // first, shared function groups sequence, then
   // per-frame groups sequence
-  _spacing[0] = _spacing[1] = _spacing[2] = 0.0;
-  int rval(EXIT_SUCCESS);
-
-  rval = m_Headers[0]->GetElementDS<double>(0x0028, 0x0030, 2, _spacing, false);
+  int rval = m_Headers[0]->GetElementDS<double>(0x0028, 0x0030, 2, _spacing, false);
   if (rval != EXIT_SUCCESS)
   {
     // imager pixel spacing

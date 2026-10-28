@@ -253,8 +253,7 @@ NormalizeInputIntensityImage(const typename ImageType::Pointer inputImage)
   windowingFilter->SetOutputMaximum(1);
   windowingFilter->Update();
 
-  typename ImageType::Pointer outputImage = nullptr;
-  outputImage = windowingFilter->GetOutput();
+  typename ImageType::Pointer outputImage = windowingFilter->GetOutput();
   outputImage->Update();
   outputImage->DisconnectPipeline();
 

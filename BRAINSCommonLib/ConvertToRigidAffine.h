@@ -443,8 +443,7 @@ ExtractVersorRigid3DTransform(VersorRigid3DTransformPointer & result, const Affi
   {
     Matrix3D   NonOrthog = affine->GetMatrix();
     Matrix3D   Orthog(orthogonalize(NonOrthog));
-    MatrixType rotator;
-    rotator.operator=(Orthog);
+    MatrixType rotator(Orthog);
 
     VersorType versor;
     versor.Set(rotator); //    --> controversial!  Is rotator

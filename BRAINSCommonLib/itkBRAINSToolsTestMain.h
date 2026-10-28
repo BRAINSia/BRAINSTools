@@ -304,10 +304,8 @@ RegressionTestImage(const char *         testImageFilename,
   }
 
   // The sizes of the baseline and test image must match
-  ImageType::SizeType baselineSize;
-  baselineSize = baselineReader->GetOutput()->GetLargestPossibleRegion().GetSize();
-  ImageType::SizeType testSize;
-  testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
+  ImageType::SizeType baselineSize = baselineReader->GetOutput()->GetLargestPossibleRegion().GetSize();
+  ImageType::SizeType testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
 
   if (baselineSize != testSize)
   {
@@ -335,14 +333,13 @@ RegressionTestImage(const char *         testImageFilename,
     using ExtractType = itk::ExtractImageFilter<OutputType, DiffOutputType>;
     using WriterType = itk::ImageFileWriter<DiffOutputType>;
     using RegionType = itk::ImageRegion<ITK_TEST_DIMENSION_MAX>;
-    OutputType::SizeType size{};
 
     auto rescale = RescaleType::New();
     rescale->SetOutputMinimum(itk::NumericTraits<unsigned char>::NonpositiveMin());
     rescale->SetOutputMaximum(itk::NumericTraits<unsigned char>::max());
     rescale->SetInput(diff->GetOutput());
     rescale->UpdateLargestPossibleRegion();
-    size = rescale->GetOutput()->GetLargestPossibleRegion().GetSize();
+    OutputType::SizeType size = rescale->GetOutput()->GetLargestPossibleRegion().GetSize();
 
     // Get the center slice of the image,  In 3D, the first slice
     // is often a black slice with little debugging information.

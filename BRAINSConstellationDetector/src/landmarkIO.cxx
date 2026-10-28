@@ -840,11 +840,9 @@ writeVerificationScript(const std::string & outputVerificationScriptFilename,
                         const std::string & outputVolume,
                         const std::string & saveOutputLandmarksFilename)
 {
-  std::ofstream ScriptFile;
-
-  ScriptFile.open(outputVerificationScriptFilename.c_str()); // open setup
-                                                             // file for
-                                                             // writing
+  std::ofstream ScriptFile(outputVerificationScriptFilename.c_str()); // open setup
+                                                                      // file for
+                                                                      // writing
   if (!ScriptFile.is_open())
   {
     itkGenericExceptionMacro(<< "Can't write outputVerificationScript " << outputVerificationScriptFilename);

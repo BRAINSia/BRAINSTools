@@ -35,9 +35,7 @@ extern int fileSequenceNumber;
 inline std::string
 twodigits(unsigned int x)
 {
-  std::string rval;
-
-  rval = '0' + static_cast<char>(x / 10);
+  std::string rval(1, '0' + static_cast<char>(x / 10));
   rval += '0' + static_cast<char>(x % 10);
   return rval;
 }

@@ -479,8 +479,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
         csvFileOfSampleLabels << labelClasses(labelVector(i)) << ",";
         csvFileOfSampleLabels << this->m_PriorNames[labelVector(i)] << std::endl;
       }
-      std::ofstream csvFile;
-      csvFile.open("trainingLabels.csv");
+      std::ofstream csvFile("trainingLabels.csv");
       if (!csvFile.is_open())
       {
         itkGenericExceptionMacro(<< "Error: Can't write label csv file!" << std::endl);
@@ -1240,8 +1239,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputeEMPosteriors(
   const unsigned int numClasses = Priors.size();
   muLogMacro(<< "Computing EM posteriors at full resolution" << std::endl);
 
-  ProbabilityImageVectorType Posteriors;
-  Posteriors.resize(numClasses);
+  ProbabilityImageVectorType Posteriors(numClasses);
   for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
     const FloatingPrecision priorScale = PriorWeights[iclass];
@@ -1277,22 +1275,18 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputePosteriors(
   muLogMacro(<< "Computing posteriors..." << std::endl);
   std::cout << "^^^^^^^^^^^^^^^^^^^^^^^^" << std::endl;
 
-  const unsigned int         numClasses = Priors.size();
-  ProbabilityImageVectorType EMPosteriors;
-  EMPosteriors.resize(numClasses);
+  const unsigned int numClasses = Priors.size();
 
   // Compute EM posteriors
-  EMPosteriors = ComputeEMPosteriors(Priors, PriorWeights, IntensityImages, ListOfClassStatistics);
+  ProbabilityImageVectorType EMPosteriors =
+    ComputeEMPosteriors(Priors, PriorWeights, IntensityImages, ListOfClassStatistics);
 
   NormalizeProbListInPlace<TProbabilityImage>(EMPosteriors);
   this->WriteDebugPosteriors(IterationID, "EM", EMPosteriors);
 
   // Run KNN on posteriors
-  ProbabilityImageVectorType KNNPosteriors;
-  KNNPosteriors.resize(numClasses);
   // KNNPosteriors and EMPosteriors will be merged by averaging
-  ProbabilityImageVectorType AveragePosteriors;
-  AveragePosteriors.resize(numClasses);
+  ProbabilityImageVectorType AveragePosteriors(numClasses);
   if (this->m_UseKNN)
   {
     ByteImagePointer thresholdedLabels = nullptr;
@@ -1323,7 +1317,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputePosteriors(
     itk::TimeProbe ComputeKNNPosteriorsTimer;
     ComputeKNNPosteriorsTimer.Start();
 
-    KNNPosteriors = this->ComputekNNPosteriors(
+    ProbabilityImageVectorType KNNPosteriors = this->ComputekNNPosteriors(
       EMPosteriors, IntensityImages, dirtyThresholdedLabels, priorLabelCodeVector, priorIsForegroundPriorVector);
     ComputeKNNPosteriorsTimer.Stop();
     itk::RealTimeClock::TimeStampType knnElapsedTime = ComputeKNNPosteriorsTimer.GetTotal();
@@ -1647,8 +1641,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
       [=, &stdoutMutex, &subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> & r) {
         for (LOOPITERTYPE i = r.begin(); i < r.end(); ++i)
         {
-          std::ostringstream              logMessage("\n*********************************************\n");
-          typename ByteImageType::Pointer probThreshImage = nullptr;
+          std::ostringstream logMessage("\n*********************************************\n");
 
           using ProbThresholdType = itk::BinaryThresholdImageFilter<TProbabilityImage, ByteImageType>;
           auto probThresh = ProbThresholdType::New();
@@ -1662,7 +1655,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
           // No upper limit needed, values
           // should be between 0 and 1
           probThresh->Update();
-          probThreshImage = probThresh->GetOutput();
+          typename ByteImageType::Pointer probThreshImage = probThresh->GetOutput();
           if (this->m_DebugLevel > 9)
           {
             std::stringstream CurrentEMIteration_stream("");
@@ -2417,7 +2410,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
 
   // constexpr FloatingPrecision logLikelihood = std::numeric_limits<FloatingPrecision>::infinity();
   FloatingPrecision logLikelihood = 1.0 / itk::Math::eps;
-  FloatingPrecision deltaLogLikelihood = 1.0;
 
   unsigned int biasdegree = 0;
 
@@ -2498,7 +2490,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
     logLikelihood = this->ComputeLogLikelihood();
     muLogMacro(<< "log(likelihood) = " << logLikelihood << std::endl);
     // INFO: move to before prevL update
-    deltaLogLikelihood = std::fabs((logLikelihood - prevLogLikelihood) / prevLogLikelihood);
+    FloatingPrecision deltaLogLikelihood = std::fabs((logLikelihood - prevLogLikelihood) / prevLogLikelihood);
     // (logLikelihood - prevLogLikelihood) / std::fabs(prevLogLikelihood);
     CHECK_NAN(deltaLogLikelihood,
               __FILE__,

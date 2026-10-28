@@ -56,8 +56,7 @@ WriteITKtoSlicer3LmkWts(const std::string & landmarksWeightFilename, const Landm
   lmksStream << lmkWeightStream.str();
 
   // Now write file to disk
-  std::ofstream myfile;
-  myfile.open(fullPathLandmarksWeightFileName.c_str());
+  std::ofstream myfile(fullPathLandmarksWeightFileName.c_str());
   if (!myfile.is_open())
   {
     std::cerr << "Error: Can't write Slicer3 landmark weight file " << fullPathLandmarksWeightFileName << std::endl;

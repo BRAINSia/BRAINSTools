@@ -838,8 +838,7 @@ main(int argc, char * argv[])
 #else
   // Write model parameters to file
   // txt version
-  std::ofstream fid;
-  fid.open("LME_EPCA.txt");
+  std::ofstream               fid("LME_EPCA.txt");
   itk::NumberToString<double> doubleToString;
   for (unsigned int i = 0; i < numNewLandmarks; ++i)
   {

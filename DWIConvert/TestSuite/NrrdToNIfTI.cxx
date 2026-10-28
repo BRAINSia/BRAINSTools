@@ -38,12 +38,8 @@ ConvertVectorImageTo4DImage(const VectorImageType * img, Image4DType::Pointer & 
   VectorImageType::SpacingType   spacing3D(img->GetSpacing());
   VectorImageType::PointType     origin3D(img->GetOrigin());
 
-  Image4DType::SizeType size4D;
+  Image4DType::SizeType size4D{ size3D[0], size3D[1], size3D[2], 3 }; // img->GetNumberOfComponentsPerPixel();
 
-  size4D[0] = size3D[0];
-  size4D[1] = size3D[1];
-  size4D[2] = size3D[2];
-  size4D[3] = 3; // img->GetNumberOfComponentsPerPixel();
 
   Image4DType::DirectionType direction4D;
   Image4DType::SpacingType   spacing4D;

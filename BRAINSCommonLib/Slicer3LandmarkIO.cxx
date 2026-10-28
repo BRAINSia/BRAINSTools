@@ -158,8 +158,7 @@ WriteITKtoSlicer3LmkOldSlicer3(const std::string & landmarksFilename, const Land
   lmksStream << lmkPointStream.str();
 
   // Now write file to disk
-  std::ofstream myfile;
-  myfile.open(fullPathLandmarksFileName.c_str());
+  std::ofstream myfile(fullPathLandmarksFileName.c_str());
   if (!myfile.is_open())
   {
     std::cerr << "Error: Can't write Slicer3 landmark file " << fullPathLandmarksFileName << std::endl;
@@ -203,8 +202,7 @@ WriteITKtoSlicer3LmkSlicer4(const std::string & landmarksFilename, const Landmar
   lmksStream << lmkPointStream.str();
 
   // Now write file to disk
-  std::ofstream myfile;
-  myfile.open(fullPathLandmarksFileName.c_str());
+  std::ofstream myfile(fullPathLandmarksFileName.c_str());
   if (!myfile.is_open())
   {
     std::cerr << "Error: Can't write Slicer3 landmark file " << fullPathLandmarksFileName << std::endl;

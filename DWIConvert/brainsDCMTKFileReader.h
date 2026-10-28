@@ -523,7 +523,7 @@ public:
   PopulateMetaDataDictionary(MetaDataDictionary & dict) const;
 
 private:
-  std::string                    m_FileName;
+  std::string                    m_FileName{};
   std::unique_ptr<DcmFileFormat> m_DFile;
   DcmDataset *                   m_Dataset{ nullptr };
   E_TransferSyntax               m_Xfer{ EXS_Unknown };

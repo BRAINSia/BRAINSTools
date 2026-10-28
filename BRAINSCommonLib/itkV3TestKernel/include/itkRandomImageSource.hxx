@@ -199,11 +199,10 @@ template <typename TOutputImage>
 void
 RandomImageSource<TOutputImage>::GenerateOutputInformation()
 {
-  TOutputImage * output;
-  IndexType      index{};
+  IndexType index{};
 
 
-  output = this->GetOutput(0);
+  TOutputImage * output = this->GetOutput(0);
 
   typename TOutputImage::RegionType largestPossibleRegion;
   largestPossibleRegion.SetSize(this->m_Size);

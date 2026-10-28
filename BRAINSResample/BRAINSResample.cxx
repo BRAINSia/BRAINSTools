@@ -268,21 +268,17 @@ main(int argc, char * argv[])
   }
   try
   {
-    TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage; // image to be warped
     using ReaderType = itk::ImageFileReader<TBRAINSResampleInternalImageType>;
     const auto imageReader = ReaderType::New();
     imageReader->SetFileName(inputVolume);
     imageReader->Update();
-    PrincipalOperandImage = imageReader->GetOutput();
+    TBRAINSResampleInternalImageType::Pointer PrincipalOperandImage = imageReader->GetOutput(); // image to be warped
 
     // Read ReferenceVolume and DeformationVolume
     using VectorComponentType = double;
     using VectorPixelType = itk::Vector<VectorComponentType, 3>;
     using DisplacementFieldType = itk::Image<VectorPixelType, 3>;
     using DisplacementFieldTransformType = itk::DisplacementFieldTransform<VectorComponentType, 3>;
-    // An empty SmartPointer constructor sets up someImage.IsNull() to represent a not-supplied state:
-    TBRAINSResampleReferenceImageType::Pointer ReferenceImage;
-
     const auto refImageReader = ReaderType::New();
     if (!referenceVolume.empty())
     {
@@ -294,7 +290,7 @@ main(int argc, char * argv[])
       refImageReader->SetFileName(inputVolume);
     }
     refImageReader->Update();
-    ReferenceImage = refImageReader->GetOutput();
+    TBRAINSResampleReferenceImageType::Pointer ReferenceImage = refImageReader->GetOutput();
 
     // An empty SmartPointer constructor sets up someTransform.IsNull() to
     // represent a not-supplied state:
@@ -302,14 +298,12 @@ main(int argc, char * argv[])
 
     if (useDisplacementField) // it's a warp deformation field
     {
-      DisplacementFieldType::Pointer DisplacementField;
-
       using DefFieldReaderType = itk::ImageFileReader<DisplacementFieldType>;
       const auto fieldImageReader = DefFieldReaderType::New();
       fieldImageReader->SetFileName(deformationVolume);
       fieldImageReader->Update();
-      DisplacementField = fieldImageReader->GetOutput();
-      const auto dispTransform = DisplacementFieldTransformType::New();
+      DisplacementFieldType::Pointer DisplacementField = fieldImageReader->GetOutput();
+      const auto                     dispTransform = DisplacementFieldTransformType::New();
       dispTransform->SetDisplacementField(DisplacementField.GetPointer());
       genericTransform = dispTransform.GetPointer();
     }

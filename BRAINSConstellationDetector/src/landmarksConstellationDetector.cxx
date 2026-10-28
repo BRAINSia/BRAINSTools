@@ -680,12 +680,10 @@ landmarksConstellationDetector::LinearEstimation(LandmarksMapType &             
     std::cout << "No EPCA landmarks to be estimated." << std::endl;
     return;
   }
-  const std::string &   newPointName = processingList[processingList.size() - 1];
-  SImageType::PointType newPoint{};
+  const std::string & newPointName = processingList[processingList.size() - 1];
 
   // Construct Xi_t
-  VectorType Xi_t;
-  Xi_t.set_size(dim * (processingList.size() - 2));
+  VectorType Xi_t(dim * (processingList.size() - 2));
   for (unsigned int k = 1; k <= processingList.size() - 2; ++k)
   {
     for (unsigned int d = 0; d < dim; ++d)
@@ -696,7 +694,7 @@ landmarksConstellationDetector::LinearEstimation(LandmarksMapType &             
   }
   SImageType::PointType::VectorType tmp;
   tmp.SetVnlVector(this->m_LlsMatrices[newPointName] * Xi_t);
-  newPoint = msp_lmks_linearly_estimated[processingList[0]] + tmp;
+  SImageType::PointType newPoint = msp_lmks_linearly_estimated[processingList[0]] + tmp;
   msp_lmks_linearly_estimated[newPointName] = newPoint;
 }
 

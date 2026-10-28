@@ -231,8 +231,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
 
   const unsigned int numCoefficients = (m_MaxDegree + 1) * (m_MaxDegree + 2) / 2 * (m_MaxDegree + 3) / 3;
 
-  // Number of pixels with non-zero weights, downsampled
-  unsigned numEquations = 0;
   // Assume that only 0.125 of the image is part of mask
   m_ValidIndicies.reserve(size[2] * size[1] * size[0] / (8 * skips[0] * skips[1] * skips[2]));
 
@@ -255,7 +253,8 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::Initialize()
       }
     }
   }
-  numEquations = m_ValidIndicies.size();
+  // Number of pixels with non-zero weights, downsampled
+  unsigned numEquations = m_ValidIndicies.size();
   muLogMacro(<< "Linear system size = " << numEquations << " x " << numCoefficients << std::endl);
 
   // Make sure that number of equations >= number of unknowns

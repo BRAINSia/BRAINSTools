@@ -620,8 +620,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   {
     itkGenericExceptionMacro("initial transform is null");
   }
-  typename CompositeTransformType::Pointer compToAdd;
-  compToAdd = initialTransform->Clone();
+  typename CompositeTransformType::Pointer compToAdd = initialTransform->Clone();
   this->m_CompositeTransform = compToAdd;
 }
 

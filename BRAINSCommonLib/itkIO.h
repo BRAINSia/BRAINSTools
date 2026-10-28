@@ -361,8 +361,7 @@ typename OutputImageType::Pointer
 AllocateImageFromRegionAndSpacing(const typename TemplateImageType::RegionType &  region,
                                   const typename TemplateImageType::SpacingType & spacing)
 {
-  typename OutputImageType::Pointer rval;
-  rval = OutputImageType::New();
+  typename OutputImageType::Pointer rval = OutputImageType::New();
   rval->SetSpacing(spacing);
   //    rval->SetLargestPossibleRegion(region);
   //    rval->SetBufferedRegion(region);

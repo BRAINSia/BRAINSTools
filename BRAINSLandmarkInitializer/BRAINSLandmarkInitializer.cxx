@@ -82,7 +82,6 @@ ComputeIsotropicScaleFactor(const LandmarkPointContainer & fixedLmks,
                             const LandmarkPointContainer & movingLmks,
                             const LandmarkWeightType &     landmarkWgts)
 {
-  double       isotropic_scale_factor = 1.0;
   const size_t numLmks = fixedLmks.size();
 
   const bool has_lmk_weights = (landmarkWgts.size() == numLmks);
@@ -97,7 +96,7 @@ ComputeIsotropicScaleFactor(const LandmarkPointContainer & fixedLmks,
     fix_dist_sum += weight * fix_ref.EuclideanDistanceTo(fixedLmks[i]);
     mov_dist_sum += weight * mov_ref.EuclideanDistanceTo(movingLmks[i]);
   }
-  isotropic_scale_factor = fix_dist_sum / mov_dist_sum;
+  double isotropic_scale_factor = fix_dist_sum / mov_dist_sum;
   return isotropic_scale_factor;
 }
 

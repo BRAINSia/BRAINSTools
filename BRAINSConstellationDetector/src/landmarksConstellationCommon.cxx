@@ -627,8 +627,7 @@ MakeLabelImage(const SImageType::Pointer &   in,
   maskImage->Allocate();
   maskImage->FillBuffer(0);
   {
-    SImageType::IndexType Index;
-    Index = maskImage->TransformPhysicalPointToIndex(RP);
+    SImageType::IndexType Index = maskImage->TransformPhysicalPointToIndex(RP);
     maskImage->SetPixel(Index, 250);
     Index = maskImage->TransformPhysicalPointToIndex(AC);
     maskImage->SetPixel(Index, 255);

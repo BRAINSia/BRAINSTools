@@ -116,15 +116,9 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
   globalImagedebugLevel = this->m_WritedebuggingImagesLevel;
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue = 0;
-  if (this->m_BackgroundFillValueString == std::string("BIGNEG"))
-  {
-    BackgroundFillValue = -32768;
-  }
-  else
-  {
-    BackgroundFillValue = BRAINSTools::safe_stoi(this->m_BackgroundFillValueString);
-  }
+  short BackgroundFillValue = (this->m_BackgroundFillValueString == std::string("BIGNEG"))
+                                ? -32768
+                                : BRAINSTools::safe_stoi(this->m_BackgroundFillValueString);
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, and initialize some variables
   landmarksConstellationModelIO myModel;

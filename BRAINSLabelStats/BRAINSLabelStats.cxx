@@ -225,14 +225,10 @@ main(int argc, char * argv[])
   imageReader->SetFileName(imageVolume);
   imageReader->UpdateLargestPossibleRegion();
 
-  ImageType::RegionType  imageRegion;
-  ImageType::SizeType    imageSize;
-  ImageType::SpacingType imageSpacing;
-  ImageType::PointType   imageOrigin;
-  imageRegion = imageReader->GetOutput()->GetLargestPossibleRegion();
-  imageSize = imageRegion.GetSize();
-  imageSpacing = imageReader->GetOutput()->GetSpacing();
-  imageOrigin = imageReader->GetOutput()->GetOrigin();
+  ImageType::RegionType  imageRegion = imageReader->GetOutput()->GetLargestPossibleRegion();
+  ImageType::SizeType    imageSize = imageRegion.GetSize();
+  ImageType::SpacingType imageSpacing = imageReader->GetOutput()->GetSpacing();
+  ImageType::PointType   imageOrigin = imageReader->GetOutput()->GetOrigin();
 
   using LabelType = itk::Image<short, 3>;
   using LabelReaderType = itk::ImageFileReader<LabelType>;
@@ -240,14 +236,10 @@ main(int argc, char * argv[])
   labelReader->SetFileName(labelVolume);
   labelReader->UpdateLargestPossibleRegion();
 
-  LabelType::RegionType  labelRegion;
-  LabelType::SizeType    labelSize;
-  LabelType::SpacingType labelSpacing;
-  LabelType::PointType   labelOrigin;
-  labelRegion = labelReader->GetOutput()->GetLargestPossibleRegion();
-  labelSize = labelRegion.GetSize();
-  labelSpacing = labelReader->GetOutput()->GetSpacing();
-  labelOrigin = labelReader->GetOutput()->GetOrigin();
+  LabelType::RegionType  labelRegion = labelReader->GetOutput()->GetLargestPossibleRegion();
+  LabelType::SizeType    labelSize = labelRegion.GetSize();
+  LabelType::SpacingType labelSpacing = labelReader->GetOutput()->GetSpacing();
+  LabelType::PointType   labelOrigin = labelReader->GetOutput()->GetOrigin();
   // Check the Image and Label Map to Make sure they define the same space
   for (size_t i = 0; i < 3; ++i)
   {

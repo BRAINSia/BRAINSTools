@@ -127,8 +127,6 @@ main(int argc, char * argv[])
     {
       for (const auto & it : inputTransform)
       {
-        itk::TransformFileReader::TransformPointer curTransform;
-
         auto reader = itk::TransformFileReader::New();
         std::cout << "Reading " << it << std::endl;
         reader->SetFileName(it);
@@ -141,7 +139,7 @@ main(int argc, char * argv[])
           std::cerr << err << std::endl;
           return 1;
         }
-        curTransform = reader->GetTransformList()->front();
+        itk::TransformFileReader::TransformPointer curTransform = reader->GetTransformList()->front();
         inputTransforms.push_back(curTransform);
       }
     }

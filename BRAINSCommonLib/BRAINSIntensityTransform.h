@@ -126,7 +126,6 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
     (relativeUpperOutputIntensity - relativeLowerOutputIntensity) / (upperPercentileValue - lowerPercentileValue);
   const double intercept = relativeUpperOutputIntensity - slope * upperPercentileValue;
 
-  typename OutputImageType::Pointer output_image;
   using IntensityScalingFilter = typename itk::UnaryGeneratorImageFilter<InputImageType, OutputImageType>;
   auto filter = IntensityScalingFilter::New();
 
@@ -154,7 +153,7 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   }
   filter->SetInput(input_image);
   filter->Update();
-  output_image = filter->GetOutput();
+  typename OutputImageType::Pointer output_image = filter->GetOutput();
 
   if (print_diagnostics)
   {

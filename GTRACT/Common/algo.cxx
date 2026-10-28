@@ -84,14 +84,10 @@ My_lsf(TVector x, TVector y)
   {
     itkGenericExceptionMacro("My_lsf: x and y sizes differ");
   }
-  float a;
-
-  float b;
-
-  float c;
-
-  float d;
-  a = b = c = d = 0;
+  float a = 0;
+  float b = 0;
+  float c = 0;
+  float d = 0;
   for (unsigned int i = 0; i < N; ++i)
   {
     a += x(i) * y(i);

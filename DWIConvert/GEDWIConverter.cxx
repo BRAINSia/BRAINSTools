@@ -23,7 +23,6 @@ GEDWIConverter::LoadDicomDirectory()
 void
 GEDWIConverter::ExtractDWIData()
 {
-  std::string ModelName;
   // OK, so there is an accomdation made on the basis of one site
   // having garbage BVal/GVectors.  It has to do with variations
   // of behavior of the Signa HDxt scanner.
@@ -44,12 +43,9 @@ GEDWIConverter::ExtractDWIData()
   // situation. In an ideal world we'd have accurate knowledge of
   // what each Scanner/Software Version is doing in these tags,
   // and handle them accordingly. But we don't live in that world.
-  bool isSignaHDxt(false);
-  if (this->m_Headers[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
-      (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx" || ModelName == "GENESIS_SIGNA"))
-  {
-    isSignaHDxt = true;
-  }
+  std::string ModelName;
+  bool        isSignaHDxt(this->m_Headers[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
+                   (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx" || ModelName == "GENESIS_SIGNA"));
 
   // assume volume interleaving
   std::cout << "Number of Slices: " << this->m_NSlice << std::endl;

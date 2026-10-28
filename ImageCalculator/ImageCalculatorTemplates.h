@@ -518,9 +518,8 @@ statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
   {
     if (havestatmask)
     {
-      typename ImageType::SizeType size;
-      size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
-      float NumberOfPixels = size[0] * size[1];
+      typename ImageType::SizeType size = reader->GetOutput()->GetLargestPossibleRegion().GetSize();
+      float                        NumberOfPixels = size[0] * size[1];
       if (ImageType::ImageDimension == 3)
       {
         NumberOfPixels = NumberOfPixels * size[2];
@@ -529,9 +528,8 @@ statfilters(const typename ImageType::Pointer AccImage, MetaCommand command)
     }
     else
     {
-      typename ImageType::SizeType size;
-      size = AccImage->GetLargestPossibleRegion().GetSize();
-      float NumberOfPixels = size[0] * size[1];
+      typename ImageType::SizeType size = AccImage->GetLargestPossibleRegion().GetSize();
+      float                        NumberOfPixels = size[0] * size[1];
       if (ImageType::ImageDimension == 3)
       {
         NumberOfPixels = NumberOfPixels * size[2];

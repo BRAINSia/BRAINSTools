@@ -393,11 +393,10 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
   }
 
   itk::NumberToString<double> DoubleConvert;
-  std::ofstream               header;
   // std::string headerFileName = outputDir + "/" + outputFileName;
 
-  const double maxBvalue = this->GetMaxBValue();
-  header.open(outputVolumeHeaderName.c_str(), std::ios_base::out | std::ios_base::binary);
+  const double  maxBvalue = this->GetMaxBValue();
+  std::ofstream header(outputVolumeHeaderName.c_str(), std::ios_base::out | std::ios_base::binary);
   header << "NRRD0005" << std::endl << std::setprecision(17) << std::scientific;
 
   header << commentstring;
@@ -672,28 +671,12 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolum
     throw;
   }
   // FSL output of gradients & BValues
-  std::string outputFSLBValFilename;
   //
   const size_t extensionPos = this->has_valid_nifti_extension(outputVolumeHeaderName);
-  if (outputBValues.empty())
-  {
-    outputFSLBValFilename = outputVolumeHeaderName.substr(0, extensionPos);
-    outputFSLBValFilename += ".bval";
-  }
-  else
-  {
-    outputFSLBValFilename = outputBValues;
-  }
-  std::string outputFSLBVecFilename;
-  if (outputBVectors.empty())
-  {
-    outputFSLBVecFilename = outputVolumeHeaderName.substr(0, extensionPos);
-    outputFSLBVecFilename += ".bvec";
-  }
-  else
-  {
-    outputFSLBVecFilename = outputBVectors;
-  }
+  std::string  outputFSLBValFilename =
+    outputBValues.empty() ? outputVolumeHeaderName.substr(0, extensionPos) + ".bval" : outputBValues;
+  std::string outputFSLBVecFilename =
+    outputBVectors.empty() ? outputVolumeHeaderName.substr(0, extensionPos) + ".bvec" : outputBVectors;
 
   // write out in FSL format
   if (WriteBValues<double>(this->m_BValues, outputFSLBValFilename) != EXIT_SUCCESS)

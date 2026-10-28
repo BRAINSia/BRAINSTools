@@ -298,16 +298,15 @@ main(int argc, char * argv[])
 
   // Extracting a timeIndex cube from the fixed image goes here....
   // Also MedianFilter
-  FixedVolumeType::Pointer  extractFixedVolume;
-  MovingVolumeType::Pointer extractMovingVolume;
-  InputImageType::Pointer   OriginalFixedVolume(itkUtil::ReadImage<InputImageType>(fixedVolume));
+  InputImageType::Pointer OriginalFixedVolume(itkUtil::ReadImage<InputImageType>(fixedVolume));
 
   std::cout << "Original Fixed image origin" << OriginalFixedVolume->GetOrigin() << std::endl;
   // fixedVolumeTimeIndex lets lets us treat 3D as 4D.
   /***********************
    * Acquire Fixed Image Index
    **********************/
-  extractFixedVolume = ExtractImage<FixedVolumeType>(OriginalFixedVolume, fixedVolumeTimeIndex);
+  FixedVolumeType::Pointer extractFixedVolume =
+    ExtractImage<FixedVolumeType>(OriginalFixedVolume, fixedVolumeTimeIndex);
   // Extracting a timeIndex cube from the moving image goes here....
 
   InputImageType::Pointer OriginalMovingVolume(itkUtil::ReadImage<InputImageType>(movingVolume));
@@ -317,7 +316,8 @@ main(int argc, char * argv[])
   /***********************
    * Acquire Moving Image Index
    **********************/
-  extractMovingVolume = ExtractImage<MovingVolumeType>(OriginalMovingVolume, movingVolumeTimeIndex);
+  MovingVolumeType::Pointer extractMovingVolume =
+    ExtractImage<MovingVolumeType>(OriginalMovingVolume, movingVolumeTimeIndex);
   // Multimodal registration input setting
   FixedVolumeType::Pointer  extractFixedVolume2 = nullptr;
   MovingVolumeType::Pointer extractMovingVolume2 = nullptr;

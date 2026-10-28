@@ -1047,11 +1047,7 @@ main(int argc, char ** argv)
   ////////////////////////////////////
   // Start the segmentation process.
   ///////////////////////////////////
-  bool usePurePlugs = false;
-  if (purePlugsThreshold > 0)
-  {
-    usePurePlugs = true;
-  }
+  bool usePurePlugs = purePlugsThreshold > 0;
 
   for (unsigned int segmentationLevel = 0; segmentationLevel < 1; ++segmentationLevel)
   {

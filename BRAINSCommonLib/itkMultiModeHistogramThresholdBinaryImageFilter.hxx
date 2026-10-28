@@ -90,15 +90,8 @@ MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::Generat
     const typename InputImageType::PixelType imageMaxValue = ImageCalc->GetImageMax();
     const unsigned int                       numNonZeroHistogramBins = ImageCalc->GetNumberOfValidHistogramsEntries();
 
-    typename InputImageType::PixelType thresholdLowerLinearRegion_foreground;
-    if (numNonZeroHistogramBins <= 2)
-    {
-      thresholdLowerLinearRegion_foreground = thresholdUpperLinearRegion;
-    }
-    else
-    {
-      thresholdLowerLinearRegion_foreground = thresholdLowerLinearRegion;
-    }
+    typename InputImageType::PixelType thresholdLowerLinearRegion_foreground =
+      (numNonZeroHistogramBins <= 2) ? thresholdUpperLinearRegion : thresholdLowerLinearRegion;
 
     std::cout << "LowHigh Thresholds: [ " << thresholdLowerLinearRegion << ", " << thresholdLowerLinearRegion_foreground
               << ", " << thresholdUpperLinearRegion << " ]" << std::endl;

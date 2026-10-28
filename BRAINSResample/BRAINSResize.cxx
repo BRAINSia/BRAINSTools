@@ -28,8 +28,7 @@ template <typename ImageType>
 int
 Resample(const std::string & inputVolume, const std::string & outputVolume, const double scaleFactor)
 {
-  typename ImageType::Pointer inputImage;
-  inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
+  typename ImageType::Pointer inputImage = itkUtil::ReadImage<ImageType>(inputVolume);
 
   const typename ImageType::RegionType region = inputImage->GetLargestPossibleRegion();
   typename ImageType::SizeType         size(region.GetSize());

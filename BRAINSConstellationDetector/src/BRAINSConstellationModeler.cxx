@@ -120,15 +120,8 @@ main(int argc, char * argv[])
   globalResultsDir = resultsDir;
   globalImagedebugLevel = writedebuggingImagesLevel;
   // /////////////////////////////////////////////////////////////////////////////////////////////
-  short BackgroundFillValue = 0;
-  if (backgroundFillValueString == std::string("BIGNEG"))
-  {
-    BackgroundFillValue = -32768;
-  }
-  else
-  {
-    BackgroundFillValue = BRAINSTools::safe_stoi(backgroundFillValueString);
-  }
+  short BackgroundFillValue =
+    (backgroundFillValueString == std::string("BIGNEG")) ? -32768 : BRAINSTools::safe_stoi(backgroundFillValueString);
 
   // /////////////////////////////////////////////////////////////////////////////////////////////
   // read information from the setup file, allocate some memories, and

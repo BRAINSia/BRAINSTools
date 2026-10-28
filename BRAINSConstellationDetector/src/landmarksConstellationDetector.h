@@ -169,8 +169,7 @@ public:
     SImageType::PixelType high = 0;
     setLowHigh<SImageType>(taggedImage, low, high, 0.01F);
 
-    SImageType::IndexType PTIndex;
-    PTIndex =
+    SImageType::IndexType PTIndex =
       taggedImage->TransformPhysicalPointToIndex(GetNamedPointFromLandmarkList(this->Getorig_lmks_updated(), "AC"));
     taggedImage->SetPixel(PTIndex, high);
     PTIndex =

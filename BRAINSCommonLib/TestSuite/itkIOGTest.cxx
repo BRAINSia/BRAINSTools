@@ -40,9 +40,8 @@ MakeTestImage(std::function<TPixel(unsigned int, unsigned int, unsigned int)> pi
   using ImageType = itk::Image<TPixel, 3>;
   auto image = ImageType::New();
 
-  typename ImageType::IndexType start;
-  start.Fill(0);
-  typename ImageType::SizeType size;
+  const typename ImageType::IndexType start{};
+  typename ImageType::SizeType        size;
   size[0] = 5;
   size[1] = 6;
   size[2] = 7;

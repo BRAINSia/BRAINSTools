@@ -96,18 +96,14 @@ BenchmarkAxpyScale(const size_t N, const int reps)
 FloatImageType::Pointer
 MakeBlob(unsigned int side, double sigma)
 {
-  auto                     source = itk::GaussianImageSource<FloatImageType>::New();
-  FloatImageType::SizeType size;
-  size.Fill(side);
+  const auto source = itk::GaussianImageSource<FloatImageType>::New();
+  const auto size = FloatImageType::SizeType::Filled(side);
   source->SetSize(size);
-  FloatImageType::SpacingType spacing;
-  spacing.Fill(1.0);
+  constexpr auto spacing = itk::MakeFilled<FloatImageType::SpacingType>(1.0);
   source->SetSpacing(spacing);
-  itk::FixedArray<double, 3> sig;
-  sig.Fill(sigma);
+  const auto sig = itk::FixedArray<double, 3>::Filled(sigma);
   source->SetSigma(sig);
-  itk::FixedArray<double, 3> mean;
-  mean.Fill(side / 2.0);
+  const auto mean = itk::FixedArray<double, 3>::Filled(side / 2.0);
   source->SetMean(mean);
   source->SetScale(1.0);
   source->SetNormalized(false);

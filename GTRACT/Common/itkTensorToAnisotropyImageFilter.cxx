@@ -189,8 +189,7 @@ TensorToAnisotropyImageFilter ::computNeighborhoodVoxelAnisotropy()
   // boundary condition
   using FaceCalculatorType = itk::NeighborhoodAlgorithm::ImageBoundaryFacesCalculator<InputImageType>;
   FaceCalculatorType               faceCalculator;
-  FaceCalculatorType::FaceListType faceList;
-  faceList = faceCalculator(m_Input, m_Input->GetLargestPossibleRegion(), radius);
+  FaceCalculatorType::FaceListType faceList = faceCalculator(m_Input, m_Input->GetLargestPossibleRegion(), radius);
   FaceCalculatorType::FaceListType::iterator fit;
   for (fit = faceList.begin(); fit != faceList.end(); ++fit)
   { // This is temporary, further consideration on boundary condition needed

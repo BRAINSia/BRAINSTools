@@ -202,10 +202,7 @@ TEST(DWIMetaDataDictionaryValidator, GradientTableOverwrite)
 {
   DWIMetaDataDictionaryValidator                        validator;
   DWIMetaDataDictionaryValidator::GradientTableType     table8;
-  DWIMetaDataDictionaryValidator::GradientDirectionType g;
-  g[0] = 1.0;
-  g[1] = 0.0;
-  g[2] = 0.0;
+  DWIMetaDataDictionaryValidator::GradientDirectionType g{ 1.0, 0.0, 0.0 };
   for (int i = 0; i < 8; ++i)
   {
     table8.push_back(g);
@@ -256,10 +253,7 @@ TEST(DWIMetaDataDictionaryValidator, DeleteGradientTable)
 TEST(DWIMetaDataDictionaryValidator, SingleGradientSetGet)
 {
   DWIMetaDataDictionaryValidator                     validator;
-  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad;
-  grad[0] = 42.5;
-  grad[1] = -17.3;
-  grad[2] = 0.001;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad{ 42.5, -17.3, 0.001 };
 
   validator.SetGradient(0, grad);
   const auto result = validator.GetGradient(0);
@@ -300,10 +294,7 @@ TEST(DWIMetaDataDictionaryValidator, SetMetaDataDictionaryCopiesAllFields)
   mf.SetIdentity();
   src.SetMeasurementFrame(mf);
 
-  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad;
-  grad[0] = 0.5;
-  grad[1] = 0.5;
-  grad[2] = 0.707;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad{ 0.5, 0.5, 0.707 };
   src.SetGradient(0, grad);
 
   // Copy via SetMetaDataDictionary
@@ -335,10 +326,7 @@ TEST(DWIMetaDataDictionaryValidator, SetMetaDataDictionaryCopiesAllFields)
 TEST(DWIMetaDataDictionaryValidator, GradientNegativeValuesPreserveSign)
 {
   DWIMetaDataDictionaryValidator                     validator;
-  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad;
-  grad[0] = -42.5;
-  grad[1] = -17.3;
-  grad[2] = -0.001;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType grad{ -42.5, -17.3, -0.001 };
 
   validator.SetGradient(0, grad);
   const auto result = validator.GetGradient(0);
@@ -353,10 +341,7 @@ TEST(DWIMetaDataDictionaryValidator, GradientNegativeValuesPreserveSign)
 TEST(DWIMetaDataDictionaryValidator, LargeGradientComponentsRoundtrip)
 {
   DWIMetaDataDictionaryValidator                     validator;
-  DWIMetaDataDictionaryValidator::Double3x1ArrayType gradient;
-  gradient[0] = 1.0e200;
-  gradient[1] = -1.0e200;
-  gradient[2] = 1.0e200;
+  DWIMetaDataDictionaryValidator::Double3x1ArrayType gradient{ 1.0e200, -1.0e200, 1.0e200 };
   validator.SetGradient(0, gradient);
 
   const auto readBack = validator.GetGradient(0);

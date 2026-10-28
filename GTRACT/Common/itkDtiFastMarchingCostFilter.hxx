@@ -154,9 +154,8 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::EnlargeOutputRequestedRegion
 {
   // enlarge the requested region of the output
   // to the whole data set
-  TLevelSet * imgData;
+  TLevelSet * imgData = dynamic_cast<TLevelSet *>(output);
 
-  imgData = dynamic_cast<TLevelSet *>(output);
   if (imgData)
   {
     imgData->SetRequestedRegionToLargestPossibleRegion();
@@ -267,8 +266,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   OutputIterator outIt(output, output->GetBufferedRegion());
 
-  PixelType outputPixel;
-  outputPixel = m_LargeValue;
+  PixelType outputPixel = m_LargeValue;
   for (outIt.GoToBegin(); !outIt.IsAtEnd(); ++outIt)
   {
     outIt.Set(outputPixel);
@@ -279,8 +277,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
 
   OutputSpeedIterator speedIt(m_OutputSpeedImage, m_OutputSpeedImage->GetBufferedRegion());
 
-  PixelType outputSpeedPixel;
-  outputSpeedPixel = 0.0;
+  PixelType outputSpeedPixel = 0.0;
   for (speedIt.GoToBegin(); !speedIt.IsAtEnd(); ++speedIt)
   {
     speedIt.Set(outputSpeedPixel);

@@ -207,8 +207,7 @@ main(int argc, char * argv[])
   NodeType node;
   for (unsigned int j = 0; j < numSeeds; ++j)
   {
-    seedIndexType seedIndex;
-    seedIndex = seedList.back();
+    seedIndexType seedIndex = seedList.back();
     seedList.pop_back();
     node.SetIndex(seedIndex);
     node.SetValue(0.0);
@@ -244,8 +243,7 @@ main(int argc, char * argv[])
     std::cout << std::endl;
 
     ShowProgressObject                                    progressWatch(marcher);
-    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command;
-    command = itk::SimpleMemberCommand<ShowProgressObject>::New();
+    itk::SimpleMemberCommand<ShowProgressObject>::Pointer command = itk::SimpleMemberCommand<ShowProgressObject>::New();
     command->SetCallbackFunction(&progressWatch, &ShowProgressObject::ShowProgress);
     marcher->AddObserver(itk::ProgressEvent(), command);
 

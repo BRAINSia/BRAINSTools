@@ -560,8 +560,7 @@ main(int argc, char * argv[])
       myLogFileReportStream << movingVolume << ",";
       myLogFileReportStream << movingBinaryVolume << std::endl;
 
-      std::ofstream LogScript;
-      LogScript.open(logFileReport.c_str());
+      std::ofstream LogScript(logFileReport.c_str());
       if (!LogScript.is_open())
       {
         std::cerr << "Error: Can't write log file report file " << logFileReport << std::endl;

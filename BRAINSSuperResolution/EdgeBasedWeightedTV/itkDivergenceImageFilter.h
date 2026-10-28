@@ -317,9 +317,8 @@ protected:
 
     TRealType sum;
 
-    TRealType accum;
+    TRealType accum = NumericTraits<TRealType>::ZeroValue();
 
-    accum = NumericTraits<TRealType>::ZeroValue();
     for (i = 0; i < ImageDimension; ++i)
     {
       sum = NumericTraits<TRealType>::ZeroValue();

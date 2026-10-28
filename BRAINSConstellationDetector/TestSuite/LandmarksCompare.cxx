@@ -31,8 +31,7 @@ main(int argc, char * argv[])
 
   // inputLandmarkFile2 can contain several baselines, and this program is modified
   // to work with different baselines
-  std::vector<std::string> inputLandmarkFile2Names;
-  inputLandmarkFile2Names = inputLandmarkFile2;
+  std::vector<std::string> inputLandmarkFile2Names = inputLandmarkFile2;
 
   const unsigned int numBaselines = inputLandmarkFile2Names.size(); // The number of landmark baseline files
   if (numBaselines == 0)

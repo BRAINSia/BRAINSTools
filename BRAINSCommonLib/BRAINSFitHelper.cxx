@@ -759,8 +759,7 @@ BRAINSFitHelper::PrintCommandLine(const bool dumpTempVolumes, const std::string 
   }
   oss << "--useROIBSpline " << this->m_UseROIBSpline << " \\" << std::endl;
   const std::string TesterScript("DEBUGScript" + suffix + ".sh");
-  std::ofstream     myScript;
-  myScript.open(TesterScript.c_str());
+  std::ofstream     myScript(TesterScript.c_str());
   myScript << oss.str() << std::endl;
   myScript.close();
 }

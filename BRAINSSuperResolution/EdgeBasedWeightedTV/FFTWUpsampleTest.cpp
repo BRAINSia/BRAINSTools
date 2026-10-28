@@ -72,13 +72,10 @@ main(int, char *[])
 {
   const std::complex<float>                     Zero(0.8F, 0.8F);
   HalfHermetianImageType::RegionType::IndexType startIndex{};
-  HalfHermetianImageType::RegionType region;
+  HalfHermetianImageType::RegionType            region;
   region.SetIndex(startIndex);
-  HalfHermetianImageType::RegionType::SizeType size;
-  size[0] = 3;
-  size[1] = 4;
-  size[2] = 4;
-  auto inEvenSmall = HalfHermetianImageType::New();
+  HalfHermetianImageType::RegionType::SizeType size{ 3, 4, 4 };
+  auto                                         inEvenSmall = HalfHermetianImageType::New();
   region.SetSize(size);
   inEvenSmall->SetRegions(region);
   inEvenSmall->Allocate();

@@ -122,37 +122,39 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
-    std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
-    std::cout << "Output Tract: " << outputTract << std::endl;
-    std::cout << "Starting Seeds LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
-    std::cout << "Ending Seeds LabelMap Image: " << inputEndingSeedsLabelMapVolume << std::endl;
-    std::cout << "Input Guide Tract: " << inputTract << std::endl;
-    std::cout << "Use XML PolyData Format: " << writeXMLPolyDataFile << std::endl;
-    std::cout << "Seed Threshold: " << seedThreshold << std::endl;
-    std::cout << "Tracking Threshold: " << trackingThreshold << std::endl;
-    std::cout << "Curvature Threshold: " << curvatureThreshold << std::endl;
-    std::cout << "Guided Curvature Threshold: " << guidedCurvatureThreshold << std::endl;
-    std::cout << "Branching Threshold: " << branchingThreshold << std::endl;
-    std::cout << "Minimum Length: " << minimumLength << std::endl;
-    std::cout << "Maximum Length: " << maximumLength << std::endl;
-    std::cout << "Step Size: " << stepSize << std::endl;
-    std::cout << "Use Loop Detection: " << useLoopDetection << std::endl;
-    std::cout << "Use Tensor Deflection: " << useTend << std::endl;
-    std::cout << "Tend F: " << tendF << std::endl;
-    std::cout << "Tend G: " << tendG << std::endl;
-    std::cout << "Starting Label: " << startingSeedsLabel << std::endl;
-    std::cout << "Ending Label: " << endingSeedsLabel << std::endl;
-    std::cout << "Guide Distance: " << maximumGuideDistance << std::endl;
-    std::cout << "Maximum Branch Points: " << maximumBranchPoints << std::endl;
-    std::cout << "Use Random Walk: " << useRandomWalk << std::endl;
-    std::cout << "Random Seed: " << randomSeed << std::endl;
-    std::cout << "Branching Angle: " << branchingAngle << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    const bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
+      std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
+      std::cout << "Output Tract: " << outputTract << std::endl;
+      std::cout << "Starting Seeds LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
+      std::cout << "Ending Seeds LabelMap Image: " << inputEndingSeedsLabelMapVolume << std::endl;
+      std::cout << "Input Guide Tract: " << inputTract << std::endl;
+      std::cout << "Use XML PolyData Format: " << writeXMLPolyDataFile << std::endl;
+      std::cout << "Seed Threshold: " << seedThreshold << std::endl;
+      std::cout << "Tracking Threshold: " << trackingThreshold << std::endl;
+      std::cout << "Curvature Threshold: " << curvatureThreshold << std::endl;
+      std::cout << "Guided Curvature Threshold: " << guidedCurvatureThreshold << std::endl;
+      std::cout << "Branching Threshold: " << branchingThreshold << std::endl;
+      std::cout << "Minimum Length: " << minimumLength << std::endl;
+      std::cout << "Maximum Length: " << maximumLength << std::endl;
+      std::cout << "Step Size: " << stepSize << std::endl;
+      std::cout << "Use Loop Detection: " << useLoopDetection << std::endl;
+      std::cout << "Use Tensor Deflection: " << useTend << std::endl;
+      std::cout << "Tend F: " << tendF << std::endl;
+      std::cout << "Tend G: " << tendG << std::endl;
+      std::cout << "Starting Label: " << startingSeedsLabel << std::endl;
+      std::cout << "Ending Label: " << endingSeedsLabel << std::endl;
+      std::cout << "Guide Distance: " << maximumGuideDistance << std::endl;
+      std::cout << "Maximum Branch Points: " << maximumBranchPoints << std::endl;
+      std::cout << "Use Random Walk: " << useRandomWalk << std::endl;
+      std::cout << "Random Seed: " << randomSeed << std::endl;
+      std::cout << "Branching Angle: " << branchingAngle << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   using TensorElementType = double;

@@ -251,9 +251,9 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
       const VersorRigidTransformType::Pointer orig2msp_lmk_tfm =
         GetLandmarkTransformFromImageTransform(this->m_orig2msp_img_tfm.GetPointer());
-      const VersorRigid3DTransformType::OutputPointType acPointInACPCSpace =
-        orig2msp_lmk_tfm->TransformPoint(GetNamedPointFromLandmarkList(updated_orig_lmks, "AC"));
       {
+        const VersorRigid3DTransformType::OutputPointType acPointInACPCSpace =
+          orig2msp_lmk_tfm->TransformPoint(GetNamedPointFromLandmarkList(updated_orig_lmks, "AC"));
         VersorRigid3DTransformType::OffsetType translation;
         translation[0] =
           +acPointInACPCSpace[0]; // NOTE: Positive translation in ImageTransform is Negative in LandmarkTransform
@@ -412,13 +412,15 @@ landmarksConstellationDetector::FindCandidatePoints(
             // Is current point inside the boundary box
             const SImageType::PointType::VectorType temp =
               currentPointLocation.GetVectorFromOrigin() - CenterOfSearchArea;
-            const double inclusionDistance = temp.GetNorm();
-            if ((inclusionDistance < (SI_restrictions + radii)) && (std::abs(temp[1]) < (PA_restrictions + radii)))
             {
-              SImageType::IndexType index3D;
-              index3D = roiImage->TransformPhysicalPointToIndex(currentPointLocation);
-              roiImage->SetPixel(index3D, imInterp->Evaluate(currentPointLocation));
-              roiMask->SetPixel(index3D, 1);
+              const double inclusionDistance = temp.GetNorm();
+              if ((inclusionDistance < (SI_restrictions + radii)) && (std::abs(temp[1]) < (PA_restrictions + radii)))
+              {
+                SImageType::IndexType index3D;
+                index3D = roiImage->TransformPhysicalPointToIndex(currentPointLocation);
+                roiImage->SetPixel(index3D, imInterp->Evaluate(currentPointLocation));
+                roiMask->SetPixel(index3D, 1);
+              }
             }
           }
         }
@@ -604,15 +606,17 @@ landmarksConstellationDetector::FindCandidatePoints(
     const auto minimumMaximumImageCalculatorFilter = MinimumMaximumImageCalculatorType::New();
     minimumMaximumImageCalculatorFilter->SetImage(correlationFilter->GetOutput());
     minimumMaximumImageCalculatorFilter->Compute();
-    const double cc = minimumMaximumImageCalculatorFilter->GetMaximum();
-    if (cc > cc_rotation_max)
     {
-      cc_rotation_max = cc;
-      // Where maximum happens
-      const FImageType3D::IndexType maximumCorrelationPatchCenter =
-        minimumMaximumImageCalculatorFilter->GetIndexOfMaximum();
-      correlationFilter->GetOutput()->TransformIndexToPhysicalPoint(maximumCorrelationPatchCenter,
-                                                                    TransformedGuessPoint);
+      const double cc = minimumMaximumImageCalculatorFilter->GetMaximum();
+      if (cc > cc_rotation_max)
+      {
+        cc_rotation_max = cc;
+        // Where maximum happens
+        const FImageType3D::IndexType maximumCorrelationPatchCenter =
+          minimumMaximumImageCalculatorFilter->GetIndexOfMaximum();
+        correlationFilter->GetOutput()->TransformIndexToPhysicalPoint(maximumCorrelationPatchCenter,
+                                                                      TransformedGuessPoint);
+      }
     }
   }
   cc_Max = cc_rotation_max;
@@ -713,18 +717,20 @@ landmarksConstellationDetector::FindVectorFromPointAndVectors(SImageType::PointT
   const double a = BA * BA;
   const double b = -2. * BA.GetNorm() * BCMean.GetNorm() * BA[2] * cosTheta;
   const double c = BCMean * BCMean * (BA * BA * cosTheta * cosTheta - BA[1] * BA[1]);
-  const double delta = b * b - 4 * a * c;
-  if (delta < 0)
   {
-    itkGenericExceptionMacro(<< "Failed to solve a 2rd-order equation!");
-  }
-  else if (sign == 1 || sign == -1)
-  {
-    BC[2] = -(b - sign * sqrt(delta)) / 2. / a;
-  }
-  else
-  {
-    itkGenericExceptionMacro(<< "Bad parameter! sign = 1 or sign = -1 please");
+    const double delta = b * b - 4 * a * c;
+    if (delta < 0)
+    {
+      itkGenericExceptionMacro(<< "Failed to solve a 2rd-order equation!");
+    }
+    else if (sign == 1 || sign == -1)
+    {
+      BC[2] = -(b - sign * sqrt(delta)) / 2. / a;
+    }
+    else
+    {
+      itkGenericExceptionMacro(<< "Bad parameter! sign = 1 or sign = -1 please");
+    }
   }
   BC[1] = (BA.GetNorm() * BCMean.GetNorm() * cosTheta - BA[2] * BC[2]) / BA[1];
   return BC;

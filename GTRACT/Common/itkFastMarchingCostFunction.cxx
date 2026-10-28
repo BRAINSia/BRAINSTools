@@ -160,7 +160,6 @@ void FastMarchingCostFunction // < TCostImage>
 
   // Get complete neighborhood of selected point to calculate normal (direction)
 
-  float neighCost = 0.0;
   float lowNeighCost = initialCost;
   for (int i = -1; i < 2; ++i)
   {
@@ -168,6 +167,7 @@ void FastMarchingCostFunction // < TCostImage>
     {
       for (int k = -1; k < 2; ++k) // Fix later to account for dimension
       {
+        float neighCost = 0.0;
         neighIndex[0] = inputIndex[0] + static_cast<float>(i) / 1; //
                                                                    // +i,+i/1.5,
                                                                    // /4

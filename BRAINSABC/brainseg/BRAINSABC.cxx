@@ -118,10 +118,12 @@ GetStrippedImageFileNameExtension(const std::string & ImageFileName)
   std::string returnString = itksys::SystemTools::GetFilenameName(ImageFileName);
   for (auto & elem : ExtensionsToRemove)
   {
-    const size_t rfind_location = returnString.rfind(elem);
-    if ((rfind_location != std::string::npos) && (rfind_location == (returnString.size() - elem.size())))
     {
-      returnString.replace(rfind_location, elem.size(), "");
+      const size_t rfind_location = returnString.rfind(elem);
+      if ((rfind_location != std::string::npos) && (rfind_location == (returnString.size() - elem.size())))
+      {
+        returnString.replace(rfind_location, elem.size(), "");
+      }
     }
   }
   return returnString;
@@ -173,8 +175,7 @@ CreateTypedMap(const AtlasRegType::StringVector & keys, const AtlasRegType::Stri
 {
   AtlasRegType::MapOfStringVectors rval;
   auto                             keyIt(keys.begin());
-  auto                             valueIt(values.begin());
-  for (; keyIt != keys.end() && valueIt != values.end(); ++keyIt, ++valueIt)
+  for (auto valueIt(values.begin()); keyIt != keys.end() && valueIt != values.end(); ++keyIt, ++valueIt)
   {
     rval[(*keyIt)].push_back((*valueIt));
   }
@@ -732,18 +733,20 @@ main(int argc, char ** argv)
           std::string atlasTransformFileName = "";
           if (!atlasToSubjectTransform.empty())
           {
-            // If this final transform filename exists,
-            // it will be just read in and will be used directly
-            // without doing registration.
-            const bool doesExist = itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str());
-            if (doesExist)
             {
-              atlasTransformFileName = atlasToSubjectTransform;
-            }
-            else
-            {
-              atlasTransformFileName =
-                GetStrippedImageFileNameExtension(atlasToSubjectTransform) + std::string("PreSegmentation.h5");
+              // If this final transform filename exists,
+              // it will be just read in and will be used directly
+              // without doing registration.
+              const bool doesExist = itksys::SystemTools::FileExists(atlasToSubjectTransform.c_str());
+              if (doesExist)
+              {
+                atlasTransformFileName = atlasToSubjectTransform;
+              }
+              else
+              {
+                atlasTransformFileName =
+                  GetStrippedImageFileNameExtension(atlasToSubjectTransform) + std::string("PreSegmentation.h5");
+              }
             }
           }
           else

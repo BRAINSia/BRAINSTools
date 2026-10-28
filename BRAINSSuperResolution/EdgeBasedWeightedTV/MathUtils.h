@@ -289,19 +289,21 @@ template <typename TPInputImage1, typename TPOutputImage>
 TPOutputImage
 opIC_scalar(TPOutputImage outImg, const std::string opS, TPInputImage1 inImg1)
 {
-  const char op = opS[0];
-  switch (op)
   {
-    case 's':
-      MAKE_UNARY_MATH_OPERATION_IC(Sqrt);
-      break;
-    case 'e':
-      MAKE_UNARY_MATH_OPERATION_IC(Exp);
-      break;
-    default:
-      std::cout << "ERROR: Invalid operator: " << op << std::endl;
-      assert(0 == 1); // ERROR bad operator
-      break;
+    const char op = opS[0];
+    switch (op)
+    {
+      case 's':
+        MAKE_UNARY_MATH_OPERATION_IC(Sqrt);
+        break;
+      case 'e':
+        MAKE_UNARY_MATH_OPERATION_IC(Exp);
+        break;
+      default:
+        std::cout << "ERROR: Invalid operator: " << op << std::endl;
+        assert(0 == 1); // ERROR bad operator
+        break;
+    }
   }
   return outImg;
 }

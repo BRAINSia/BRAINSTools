@@ -233,21 +233,23 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
             currRotatedSampleGridLocation[0] = CenterOfMass[0] + rectPhysPoint[0];
 
             typename TInputImage::IndexType currIndex;
-            const bool                      isValidRegion =
-              LFFimage->TransformPhysicalPointToIndex(currRotatedSampleGridLocation, currIndex);
-            if (isValidRegion && (LFFimage->GetPixel(currIndex) > 0))
             {
-              // #ifdef USE_DEBUGGIN_IMAGES
-              if (this->m_GenerateDebugImages)
+              const bool isValidRegion =
+                LFFimage->TransformPhysicalPointToIndex(currRotatedSampleGridLocation, currIndex);
+              if (isValidRegion && (LFFimage->GetPixel(currIndex) > 0))
               {
-                this->m_DebugGridImage->SetPixel(currIndex, (numberOfSamplelingLines + dIndex));
+                // #ifdef USE_DEBUGGIN_IMAGES
+                if (this->m_GenerateDebugImages)
+                {
+                  this->m_DebugGridImage->SetPixel(currIndex, (numberOfSamplelingLines + dIndex));
+                }
+                maskCountsInPlane[dIndex]++;
               }
-              maskCountsInPlane[dIndex]++;
-            }
-            // #ifdef USE_DEBUGGING_IMAGES
-            else if (this->m_GenerateDebugImages && isValidRegion)
-            {
-              this->m_DebugGridImage->SetPixel(currIndex, 0);
+              // #ifdef USE_DEBUGGING_IMAGES
+              else if (this->m_GenerateDebugImages && isValidRegion)
+              {
+                this->m_DebugGridImage->SetPixel(currIndex, 0);
+              }
             }
           }
         }

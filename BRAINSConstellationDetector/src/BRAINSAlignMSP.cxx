@@ -91,7 +91,6 @@ DoIt(const std::string & inputVolume,
 
   VersorRigidTransformType::Pointer orig2msp_img_tfm = nullptr;
 
-  SImagePointType orig_lmk_CenterOfHeadMass;
   // load corresponding landmarks from file, and define MSP from those landmarks.
   const LandmarksMapType constant_orig_lmks =
     (!LandmarkPoints.empty()) ? ReadSlicer3toITKLmk(LandmarkPoints) : LandmarksMapType{};
@@ -103,6 +102,7 @@ DoIt(const std::string & inputVolume,
   }
   else
   {
+    SImagePointType orig_lmk_CenterOfHeadMass;
     // Estimate the center of head mass
     std::cout << "\nFinding center of head mass..." << std::endl;
     using FindCenterFilter = itk::FindCenterOfBrainFilter<LOCALImageType>;
@@ -139,17 +139,16 @@ DoIt(const std::string & inputVolume,
     std::cout << "The transformed landmarks file is written." << std::endl;
   }
 
-  // /////////////////////////////////////////////////////////////////////////////////////////////
-  const short BackgroundFillValue = [=]() -> short {
-    if (backgroundFillValueString == std::string("BIGNEG"))
-    {
-      return -32768;
-    }
-    return BRAINSTools::safe_stoi(backgroundFillValueString);
-  }();
-
   // Now write out the resampled image
   {
+    // /////////////////////////////////////////////////////////////////////////////////////////////
+    const short BackgroundFillValue = [=]() -> short {
+      if (backgroundFillValueString == std::string("BIGNEG"))
+      {
+        return -32768;
+      }
+      return BRAINSTools::safe_stoi(backgroundFillValueString);
+    }();
     typename TInputImagePixelType::Pointer image;
     if (rescaleIntensities)
     {
@@ -183,10 +182,12 @@ DoIt(const std::string & inputVolume,
         // Naturally, the constant should default at the command line, ...
 
         const double variationBound((maxPixel - meanOrig) / sigmaOrig);
-        const double trimBound(variationBound - trimRescaledIntensities);
-        if (trimBound > 0.0)
         {
-          maxPixel = static_cast<typename TInputImagePixelType::PixelType>(maxPixel - trimBound * sigmaOrig);
+          const double trimBound(variationBound - trimRescaledIntensities);
+          if (trimBound > 0.0)
+          {
+            maxPixel = static_cast<typename TInputImagePixelType::PixelType>(maxPixel - trimBound * sigmaOrig);
+          }
         }
       }
 
@@ -281,171 +282,173 @@ main(int argc, char * argv[])
   std::cout << "Image Dimension is " << imageDimension << std::endl;
   if (pixelType == itk::IOPixelEnum::SCALAR)
   {
-    constexpr int VDimension = 3;
-    if (imageDimension == VDimension)
     {
-      switch (componentType)
+      constexpr int VDimension = 3;
+      if (imageDimension == VDimension)
       {
-        case itk::IOComponentEnum::UCHAR:
+        switch (componentType)
         {
-          using PixelType = unsigned char;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::CHAR:
-        {
-          using PixelType = char;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::USHORT:
-        {
-          using PixelType = unsigned short;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::SHORT:
-        {
-          using PixelType = short;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::UINT:
-        {
-          using PixelType = unsigned int;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::INT:
-        {
-          using PixelType = int;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::ULONG:
-        {
-          using PixelType = unsigned long;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::LONG:
-        {
-          using PixelType = long;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::FLOAT:
-        {
-          using PixelType = float;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
-        case itk::IOComponentEnum::DOUBLE:
-        {
-          using PixelType = double;
-          using ImageType = itk::Image<PixelType, VDimension>;
-          return DoIt<ImageType>(inputVolume,
-                                 LandmarkPoints,
-                                 resampleMSP,
-                                 resampleMSPLandmarkPoints,
-                                 mspQualityLevel,
-                                 rescaleIntensities,
-                                 trimRescaledIntensities,
-                                 rescaleIntensitiesOutputRange,
-                                 backgroundFillValueString,
-                                 interpolationMode);
-        }
+          case itk::IOComponentEnum::UCHAR:
+          {
+            using PixelType = unsigned char;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::CHAR:
+          {
+            using PixelType = char;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::USHORT:
+          {
+            using PixelType = unsigned short;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::SHORT:
+          {
+            using PixelType = short;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::UINT:
+          {
+            using PixelType = unsigned int;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::INT:
+          {
+            using PixelType = int;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::ULONG:
+          {
+            using PixelType = unsigned long;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::LONG:
+          {
+            using PixelType = long;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::FLOAT:
+          {
+            using PixelType = float;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
+          case itk::IOComponentEnum::DOUBLE:
+          {
+            using PixelType = double;
+            using ImageType = itk::Image<PixelType, VDimension>;
+            return DoIt<ImageType>(inputVolume,
+                                   LandmarkPoints,
+                                   resampleMSP,
+                                   resampleMSPLandmarkPoints,
+                                   mspQualityLevel,
+                                   rescaleIntensities,
+                                   trimRescaledIntensities,
+                                   rescaleIntensitiesOutputRange,
+                                   backgroundFillValueString,
+                                   interpolationMode);
+          }
 
-        default:
-        case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
-          std::cerr << "Unknown and unsupported component type!" << std::endl;
-          return EXIT_FAILURE;
+          default:
+          case itk::IOComponentEnum::UNKNOWNCOMPONENTTYPE:
+            std::cerr << "Unknown and unsupported component type!" << std::endl;
+            return EXIT_FAILURE;
+        }
       }
-    }
-    else
-    {
-      itkGenericExceptionMacro(<< "Error dimension not yet implemented.");
+      else
+      {
+        itkGenericExceptionMacro(<< "Error dimension not yet implemented.");
+      }
     }
   }
   else

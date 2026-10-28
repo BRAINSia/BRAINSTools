@@ -106,9 +106,9 @@ TensorToAnisotropyImageFilter ::computVoxelIsotropy()
   using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
   IteratorType it(m_Output, m_Output->GetLargestPossibleRegion());
 
-  OutputImageIndexType index;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
+    OutputImageIndexType index;
     index = it.GetIndex();
     InputPixelType currentVoxel = m_Input->GetPixel(index);
     float          adc = 0;
@@ -127,9 +127,9 @@ TensorToAnisotropyImageFilter ::computSimpleVoxelAnisotropy()
   using IteratorType = itk::ImageRegionIteratorWithIndex<OutputImageType>;
   IteratorType it(m_Output, m_Output->GetLargestPossibleRegion());
 
-  OutputImageIndexType index;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
+    OutputImageIndexType index;
     index = it.GetIndex();
     InputPixelType currentVoxel = m_Input->GetPixel(index);
     float          fa = 0;

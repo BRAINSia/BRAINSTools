@@ -100,7 +100,6 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
 
   float anisotropy;
 
-  float   anisotropySum;
   TVector vin(3);
 
   TVector vout(3);
@@ -108,7 +107,6 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
   typename Self::ContinuousIndexType index;
 
   typename Self::ContinuousIndexType tmpIndex;
-  bool                               stop;
   typename Self::BranchListType      branchList;
   typename Self::SeedListType        newSeeds;
   typename Self::DirectionListType   newDirections;
@@ -171,6 +169,8 @@ DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageT
   // std::cout << "Ending Center Point: " << endP << std::endl;
   while (!(this->m_Seeds.empty()))
   {
+    float anisotropySum;
+    bool  stop;
     ++originalSeedCount;
     if (oldsizeOfOutput != sizeOfOutput)
     {

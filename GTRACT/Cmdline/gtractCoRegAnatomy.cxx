@@ -61,46 +61,48 @@ main(int argc, char * argv[])
 
   const std::vector<int> GridSize{ gridSize[0], gridSize[1], gridSize[2] };
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Image: " << inputVolume << std::endl;
-    std::cout << "Output  Transform: " << outputTransformName << std::endl;
-    std::cout << "Anatomical Image: " << inputAnatomicalVolume << std::endl;
-    std::cout << "Iterations: " << numberOfIterations << std::endl;
-    if (transformType == "Bspline")
+    bool debug = true;
+    if (debug)
     {
-      std::cout << "Input Rigid Transform: " << inputRigidTransform << std::endl;
-      // std::cout << "Grid Size: " << GridSize <<std::endl;
-      // std::cout << "Border Size: " << borderSize <<std::endl;
-      //    std::cout << "Corrections: " << numberOfCorrections <<std::endl;
-      //    std::cout << "Evaluations: " << numberOfEvaluations <<std::endl;
-      std::cout << "Histogram: " << numberOfHistogramBins << std::endl;
-      std::cout << "Scale: " << spatialScale << std::endl;
-      std::cout << "Convergence: " << convergence << std::endl;
-      std::cout << "Gradient Tolerance: " << gradientTolerance << std::endl;
-      std::cout << "Index: " << vectorIndex << std::endl;
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Input Image: " << inputVolume << std::endl;
+      std::cout << "Output  Transform: " << outputTransformName << std::endl;
+      std::cout << "Anatomical Image: " << inputAnatomicalVolume << std::endl;
+      std::cout << "Iterations: " << numberOfIterations << std::endl;
+      if (transformType == "Bspline")
+      {
+        std::cout << "Input Rigid Transform: " << inputRigidTransform << std::endl;
+        // std::cout << "Grid Size: " << GridSize <<std::endl;
+        // std::cout << "Border Size: " << borderSize <<std::endl;
+        //    std::cout << "Corrections: " << numberOfCorrections <<std::endl;
+        //    std::cout << "Evaluations: " << numberOfEvaluations <<std::endl;
+        std::cout << "Histogram: " << numberOfHistogramBins << std::endl;
+        std::cout << "Scale: " << spatialScale << std::endl;
+        std::cout << "Convergence: " << convergence << std::endl;
+        std::cout << "Gradient Tolerance: " << gradientTolerance << std::endl;
+        std::cout << "Index: " << vectorIndex << std::endl;
+      }
+      else if (transformType == "Rigid")
+      {
+        std::cout << "Translation Scale: " << translationScale << std::endl;
+        std::cout << "Maximum Step Length: " << maximumStepSize << std::endl;
+        std::cout << "Minimum Step Length: " << minimumStepSize << std::endl;
+        std::cout << "Relaxation Factor: " << relaxationFactor << std::endl;
+        std::cout << "Samples: " << numberOfSamples << std::endl;
+        std::cout << "Index: " << vectorIndex << std::endl;
+      }
+      //    std::cout << "Bound X: " << boundX <<std::endl;
+      //    std::cout << "\tLower X Bound: " << xLowerBound <<std::endl;
+      //    std::cout << "\tUpper X Bound: " << xUpperBound <<std::endl;
+      //    std::cout << "Bound Y: " << boundY <<std::endl;
+      //    std::cout << "\tLower Y Bound: " << yLowerBound <<std::endl;
+      //    std::cout << "\tUpper Y Bound: " << yUpperBound <<std::endl;
+      //    std::cout << "Bound Z: " << boundZ <<std::endl;
+      //    std::cout << "\tLower Z Bound: " << zLowerBound <<std::endl;
+      //    std::cout << "\tUpper Z Bound: " << zUpperBound <<std::endl;
+      std::cout << "=====================================================" << std::endl;
     }
-    else if (transformType == "Rigid")
-    {
-      std::cout << "Translation Scale: " << translationScale << std::endl;
-      std::cout << "Maximum Step Length: " << maximumStepSize << std::endl;
-      std::cout << "Minimum Step Length: " << minimumStepSize << std::endl;
-      std::cout << "Relaxation Factor: " << relaxationFactor << std::endl;
-      std::cout << "Samples: " << numberOfSamples << std::endl;
-      std::cout << "Index: " << vectorIndex << std::endl;
-    }
-    //    std::cout << "Bound X: " << boundX <<std::endl;
-    //    std::cout << "\tLower X Bound: " << xLowerBound <<std::endl;
-    //    std::cout << "\tUpper X Bound: " << xUpperBound <<std::endl;
-    //    std::cout << "Bound Y: " << boundY <<std::endl;
-    //    std::cout << "\tLower Y Bound: " << yLowerBound <<std::endl;
-    //    std::cout << "\tUpper Y Bound: " << yUpperBound <<std::endl;
-    //    std::cout << "Bound Z: " << boundZ <<std::endl;
-    //    std::cout << "\tLower Z Bound: " << zLowerBound <<std::endl;
-    //    std::cout << "\tUpper Z Bound: " << zUpperBound <<std::endl;
-    std::cout << "=====================================================" << std::endl;
   }
 
   bool violated = false;

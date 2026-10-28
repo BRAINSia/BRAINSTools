@@ -55,15 +55,17 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Image: " << inputVolume << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Clip First Slice: " << clipFirstSlice << std::endl;
-    std::cout << "Clip Last Slice: " << clipLastSlice << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Input Image: " << inputVolume << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Clip First Slice: " << clipFirstSlice << std::endl;
+      std::cout << "Clip Last Slice: " << clipLastSlice << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   bool violated = false;

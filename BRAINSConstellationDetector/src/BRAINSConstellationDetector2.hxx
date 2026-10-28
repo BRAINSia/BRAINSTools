@@ -197,10 +197,12 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
       // Naturally, the constant should default at the command line, ...
 
       const double variationBound((maxPixel - meanOrig) / sigmaOrig);
-      const double trimBound(variationBound - this->m_TrimRescaledIntensities);
-      if (trimBound > 0.0)
       {
-        maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
+        const double trimBound(variationBound - this->m_TrimRescaledIntensities);
+        if (trimBound > 0.0)
+        {
+          maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
+        }
       }
     }
 

@@ -92,11 +92,13 @@ main(int argc, char * argv[])
   dWIConvert.setOutputBValues(outputBValues);
   dWIConvert.setOutputBVectors(outputBVectors);
 
-  int result = dWIConvert.read();
-  if (EXIT_SUCCESS == result)
   {
-    return dWIConvert.write(outputVolume);
+    int result = dWIConvert.read();
+    if (EXIT_SUCCESS == result)
+    {
+      return dWIConvert.write(outputVolume);
+    }
+    else
+      return result;
   }
-  else
-    return result;
 }

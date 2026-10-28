@@ -60,15 +60,17 @@ main(int argc, char * argv[])
   int ySize = landmarkDensity[1];
   int zSize = landmarkDensity[2];
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "==============================================================" << std::endl;
-    std::cout << "Input Transform: " << inputTransform << std::endl;
-    std::cout << "Output Transform: " << outputTransform << std::endl;
-    std::cout << "Reference Image: " << inputReferenceVolume << std::endl;
-    std::cout << "Density: " << xSize << " " << ySize << " " << zSize << std::endl;
-    std::cout << "==============================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "==============================================================" << std::endl;
+      std::cout << "Input Transform: " << inputTransform << std::endl;
+      std::cout << "Output Transform: " << outputTransform << std::endl;
+      std::cout << "Reference Image: " << inputReferenceVolume << std::endl;
+      std::cout << "Density: " << xSize << " " << ySize << " " << zSize << std::endl;
+      std::cout << "==============================================================" << std::endl;
+    }
   }
 
   using PixelType = signed short;

@@ -75,11 +75,13 @@ GetXmlLabelName(const std::string & fileName, int label)
         // std::cout << (*lt)->GetName() << std::endl;
         // std::cout << (*lt)->GetPath() << std::endl;
         const std::string attributeValue = lt->GetAttribute("index");
-        const int         currentLabel = BRAINSTools::safe_stoi(attributeValue);
-        if (currentLabel == label)
         {
-          const itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
-          labelName = textNode->GetText();
+          const int currentLabel = BRAINSTools::safe_stoi(attributeValue);
+          if (currentLabel == label)
+          {
+            const itk::DOMTextNode::Pointer textNode = lt->GetTextChild(0);
+            labelName = textNode->GetText();
+          }
         }
       }
     }
@@ -119,14 +121,16 @@ GetAntsLabelName(const std::string & fileName, int label)
       labelFile >> x2 >> y2 >> z2;
       std::getline(labelFile, txtLabel);
 
-      const int currentLabel = BRAINSTools::safe_stoi(value);
-      if (currentLabel == label)
       {
-        const unsigned first = txtLabel.find('"');
-        const unsigned last = txtLabel.rfind('"');
-        labelName = txtLabel.substr(first + 1, last - first - 1);
-        labelFile.close();
-        return labelName;
+        const int currentLabel = BRAINSTools::safe_stoi(value);
+        if (currentLabel == label)
+        {
+          const unsigned first = txtLabel.find('"');
+          const unsigned last = txtLabel.rfind('"');
+          labelName = txtLabel.substr(first + 1, last - first - 1);
+          labelFile.close();
+          return labelName;
+        }
       }
     }
 

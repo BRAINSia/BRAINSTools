@@ -57,10 +57,6 @@ main(int argc, char * argv[])
   MaskImageType::PointType RE_pnt = lmks.at("RE");
   MaskImageType::PointType LE_pnt = lmks.at("LE");
 
-  constexpr size_t LR = 0;
-  constexpr size_t PA = 1;
-  constexpr size_t SI = 2;
-
   // First add images used for mask generation
   std::vector<InternalImageType::Pointer> img_list;
   std::vector<std::string>                img_filenames;
@@ -73,9 +69,6 @@ main(int argc, char * argv[])
 
   constexpr int valid_inside_pixel = 0;
   constexpr int face_rm = 1;
-  constexpr int below_ac = 2;
-  constexpr int outside_fov = 3;
-  constexpr int auto_roi_background = 4;
   constexpr int eye_boxes_code = 5;
   // Find all the out of FOV spaces fro the mask image
   using FadeMapType = itk::Image<float, 3>;
@@ -88,7 +81,12 @@ main(int argc, char * argv[])
     mask_labels = itkUtil::ReadImage<MaskImageType>(inputMask);
   }
   else
-  { // Generate a new mask
+  {
+    constexpr size_t LR = 0;
+    constexpr size_t PA = 1;
+    constexpr size_t SI = 2;
+    constexpr int    below_ac = 2;
+    constexpr int    outside_fov = 3; // Generate a new mask
 
     // Make a 1/2 mm masked volume
     mask_labels = MaskImageType::New();
@@ -245,7 +243,8 @@ main(int argc, char * argv[])
   // STEP 2: Deface the image values
   if (!noMaskApplication)
   {
-    const auto maskInterpolator = itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
+    constexpr int auto_roi_background = 4;
+    const auto    maskInterpolator = itk::NearestNeighborInterpolateImageFunction<MaskImageType>::New();
     maskInterpolator->SetInputImage(mask_labels);
 
     // pad the distance map
@@ -279,17 +278,19 @@ main(int argc, char * argv[])
          !diit.IsAtEnd();
          ++diit)
     {
-      const auto &                           refvalue = diit.Value();
-      constexpr InternalImageType::PixelType allowed_blurring_area = 0.0; // Allow blurring if distance from edge
-      if (refvalue < allowed_blurring_area)
+      const auto & refvalue = diit.Value();
       {
-        diit.Set(0.0);
-      }
-      else
-      {
-        const InternalImageType::PixelType absrefvalue = std::abs(refvalue);
-        const InternalImageType::PixelType distout = absrefvalue < 10.0f ? absrefvalue : 10.0f;
-        diit.Set(distout);
+        constexpr InternalImageType::PixelType allowed_blurring_area = 0.0; // Allow blurring if distance from edge
+        if (refvalue < allowed_blurring_area)
+        {
+          diit.Set(0.0);
+        }
+        else
+        {
+          const InternalImageType::PixelType absrefvalue = std::abs(refvalue);
+          const InternalImageType::PixelType distout = absrefvalue < 10.0f ? absrefvalue : 10.0f;
+          diit.Set(distout);
+        }
       }
     }
 
@@ -343,37 +344,43 @@ main(int argc, char * argv[])
       while (!iit.IsAtEnd())
       {
         const auto & curr_index{ iit.GetIndex() };
-        const auto   imgpnt = curr_img->template TransformIndexToPhysicalPoint<double>(curr_index);
-        if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
         {
-          const auto mask_value = static_cast<MaskImageType::PixelType>(maskInterpolator->Evaluate(imgpnt));
-          if (mask_value == valid_inside_pixel)
+          const auto imgpnt = curr_img->template TransformIndexToPhysicalPoint<double>(curr_index);
+          if (maskInterpolator->IsInsideBuffer(imgpnt) && distanceMapInterpolator->IsInsideBuffer(imgpnt))
           {
-            // Pass
-          }
-          else if (mask_value == face_rm || mask_value == auto_roi_background || mask_value == eye_boxes_code)
-          {
-            const auto distanceValue =
-              static_cast<InternalImageType::PixelType>(distanceMapInterpolator->Evaluate(imgpnt));
-            // determine the correct blur value
-            size_t           sigmaIndex = 0;
-            constexpr double sigma_distance_ratio = 1.0; // Factor of sigma smoothing to distance ratio
-            for (size_t i = 0; i < numSigmas; ++i)
+            const auto mask_value = static_cast<MaskImageType::PixelType>(maskInterpolator->Evaluate(imgpnt));
+            if (mask_value == valid_inside_pixel)
             {
-              if (sigmas[i] * sigma_distance_ratio < distanceValue)
-              {
-                sigmaIndex = i;
-              }
+              // Pass
             }
-            if (blurredImageInterpolators[sigmaIndex]->IsInsideBuffer(imgpnt))
+            else if (mask_value == face_rm || mask_value == auto_roi_background || mask_value == eye_boxes_code)
             {
-              const InternalImageType::PixelType blurredValue{
-                use_zeros_face
-                  ? 0.0F
-                  : static_cast<InternalImageType::PixelType>(blurredImageInterpolators[sigmaIndex]->Evaluate(imgpnt))
-              };
-              iit.Set(blurredValue);
-              // iit.Set(sigmas[sigmaIndex]* 100);
+              const auto distanceValue =
+                static_cast<InternalImageType::PixelType>(distanceMapInterpolator->Evaluate(imgpnt));
+              // determine the correct blur value
+              size_t           sigmaIndex = 0;
+              constexpr double sigma_distance_ratio = 1.0; // Factor of sigma smoothing to distance ratio
+              for (size_t i = 0; i < numSigmas; ++i)
+              {
+                if (sigmas[i] * sigma_distance_ratio < distanceValue)
+                {
+                  sigmaIndex = i;
+                }
+              }
+              if (blurredImageInterpolators[sigmaIndex]->IsInsideBuffer(imgpnt))
+              {
+                const InternalImageType::PixelType blurredValue{
+                  use_zeros_face
+                    ? 0.0F
+                    : static_cast<InternalImageType::PixelType>(blurredImageInterpolators[sigmaIndex]->Evaluate(imgpnt))
+                };
+                iit.Set(blurredValue);
+                // iit.Set(sigmas[sigmaIndex]* 100);
+              }
+              else
+              {
+                iit.Set(0);
+              }
             }
             else
             {
@@ -384,10 +391,6 @@ main(int argc, char * argv[])
           {
             iit.Set(0);
           }
-        }
-        else
-        {
-          iit.Set(0);
         }
         ++iit;
       }

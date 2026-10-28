@@ -19,32 +19,34 @@
 static std::string
 ForceConvert(const itk::MetaDataObjectBase * myMetaDataObjectBase)
 {
-  const auto * myMetaDataObject = dynamic_cast<const itk::MetaDataObject<std::string> *>(myMetaDataObjectBase);
-  if (myMetaDataObject)
   {
-    // const std::string temp  =myMetaDataObject->GetMetaDataObjectTypeName();
-    const std::string temp("std::string");
-    return myMetaDataObject->GetMetaDataObjectValue() +
-           "         (type): " + temp; // assuming you define print for matrix
-  }
-  else
-  {
-    // double type for thickness field
-    const auto * doubleMetaDataObject = dynamic_cast<const itk::MetaDataObject<double> *>(myMetaDataObjectBase);
-    if (doubleMetaDataObject)
+    const auto * myMetaDataObject = dynamic_cast<const itk::MetaDataObject<std::string> *>(myMetaDataObjectBase);
+    if (myMetaDataObject)
     {
-      const std::string temp("double");
-      // convert double value to string
-      std::ostringstream strs;
-      strs << doubleMetaDataObject->GetMetaDataObjectValue();
-      std::string str = strs.str();
-
-      return str + "         (type): " + temp;
+      // const std::string temp  =myMetaDataObject->GetMetaDataObjectTypeName();
+      const std::string temp("std::string");
+      return myMetaDataObject->GetMetaDataObjectValue() +
+             "         (type): " + temp; // assuming you define print for matrix
     }
     else
     {
-      const std::string temp = myMetaDataObjectBase->GetMetaDataObjectTypeName();
-      return "???_conversion         (type): " + temp;
+      // double type for thickness field
+      const auto * doubleMetaDataObject = dynamic_cast<const itk::MetaDataObject<double> *>(myMetaDataObjectBase);
+      if (doubleMetaDataObject)
+      {
+        const std::string temp("double");
+        // convert double value to string
+        std::ostringstream strs;
+        strs << doubleMetaDataObject->GetMetaDataObjectValue();
+        std::string str = strs.str();
+
+        return str + "         (type): " + temp;
+      }
+      else
+      {
+        const std::string temp = myMetaDataObjectBase->GetMetaDataObjectTypeName();
+        return "???_conversion         (type): " + temp;
+      }
     }
   }
 }
@@ -277,12 +279,14 @@ main(int argc, char * argv[])
     {
       const double bValue = 10000.0 / 3; // The only valid DWI modality
       bldValidator.SetBValue(bValue);
-      const double outBvalue = bldValidator.GetBValue();
-      if (bValue != outBvalue)
       {
-        std::cout << "ERROR: outBvalue not preserved" << std::endl;
-        std::cout << "Out outBvalue " << outBvalue << std::endl;
-        allTestPass = false;
+        const double outBvalue = bldValidator.GetBValue();
+        if (bValue != outBvalue)
+        {
+          std::cout << "ERROR: outBvalue not preserved" << std::endl;
+          std::cout << "Out outBvalue " << outBvalue << std::endl;
+          allTestPass = false;
+        }
       }
     }
 

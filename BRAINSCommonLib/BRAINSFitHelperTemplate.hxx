@@ -325,9 +325,9 @@ DoCenteredInitialization(typename FixedImageType::Pointer &  orientedFixedVolume
       // rough search in neighborhood.
       const double one_degree = 1.0F * itk::Math::pi / 180.0F;
       const double HAStepSize = 3.0 * one_degree;
-      const double PAStepSize = 3.0 * one_degree;
       // Quick search just needs to get an approximate angle correct.
       {
+        const double     PAStepSize = 3.0 * one_degree;
         constexpr double HARange = 12.0;
         for (double HA = -HARange * one_degree; HA <= HARange * one_degree; HA += HAStepSize)
         {

@@ -383,16 +383,18 @@ BRAINSFitHelper::SetupRegistration(GenericMetricType * costMetric)
     unsigned long samplesInsideMask = 0;
     while (!NRit.IsAtEnd() && (samplesInsideMask < sampleCount))
     {
-      auto testPoint = this->m_FixedVolume->template TransformIndexToPhysicalPoint<double>(NRit.GetIndex());
-      if (this->m_FixedBinaryVolume->IsInsideInWorldSpace(testPoint))
       {
-        // randomly perturb the point within a voxel (approximately)
-        for (unsigned int d = 0; d < FixedImageDimension; ++d)
+        auto testPoint = this->m_FixedVolume->template TransformIndexToPhysicalPoint<double>(NRit.GetIndex());
+        if (this->m_FixedBinaryVolume->IsInsideInWorldSpace(testPoint))
         {
-          testPoint[d] += randomizer->GetNormalVariate() * oneThirdVirtualSpacing[d];
+          // randomly perturb the point within a voxel (approximately)
+          for (unsigned int d = 0; d < FixedImageDimension; ++d)
+          {
+            testPoint[d] += randomizer->GetNormalVariate() * oneThirdVirtualSpacing[d];
+          }
+          samplePointSet->SetPoint(samplesInsideMask, testPoint);
+          ++samplesInsideMask;
         }
-        samplePointSet->SetPoint(samplesInsideMask, testPoint);
-        ++samplesInsideMask;
       }
       ++NRit;
     }

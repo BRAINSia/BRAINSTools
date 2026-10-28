@@ -32,21 +32,23 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  const int requestedDim = BRAINSTools::safe_stoi(argv[1]);
-  switch (requestedDim)
   {
-    case 2:
-      DumpImageInfo<2>(argv[2]);
-      break;
-    case 3:
-      DumpImageInfo<3>(argv[2]);
-      break;
-    case 4:
-      DumpImageInfo<4>(argv[2]);
-      break;
-    default:
-      cout << "ERROR: Invalid dimension choosen" << endl;
-      break;
+    const int requestedDim = BRAINSTools::safe_stoi(argv[1]);
+    switch (requestedDim)
+    {
+      case 2:
+        DumpImageInfo<2>(argv[2]);
+        break;
+      case 3:
+        DumpImageInfo<3>(argv[2]);
+        break;
+      case 4:
+        DumpImageInfo<4>(argv[2]);
+        break;
+      default:
+        cout << "ERROR: Invalid dimension choosen" << endl;
+        break;
+    }
   }
 
 

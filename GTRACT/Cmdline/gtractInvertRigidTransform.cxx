@@ -55,13 +55,15 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "==============================================================" << std::endl;
-    std::cout << "Input Transform: " << inputTransform << std::endl;
-    std::cout << "Output Transform: " << outputTransform << std::endl;
-    std::cout << "==============================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "==============================================================" << std::endl;
+      std::cout << "Input Transform: " << inputTransform << std::endl;
+      std::cout << "Output Transform: " << outputTransform << std::endl;
+      std::cout << "==============================================================" << std::endl;
+    }
   }
 
   using RigidTransformType = itk::VersorRigid3DTransform<double>;

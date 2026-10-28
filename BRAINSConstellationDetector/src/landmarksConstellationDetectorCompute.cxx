@@ -594,11 +594,13 @@ landmarksConstellationDetector::Compute(const SImageType::Pointer & orig_space_i
     } // End of local searching kernel
 
   } // End of local searching
-  const bool forced_landmark_compare_are_same =
-    lmk_check_differences(m_orig_lmks_forced, m_orig_lmks_updated, false, __FILE__, __LINE__);
-  if (!forced_landmark_compare_are_same)
   {
-    std::cerr << "FORCED LANDMARKS NOT PRESERVED" << std::endl;
-    exit(-1);
+    const bool forced_landmark_compare_are_same =
+      lmk_check_differences(m_orig_lmks_forced, m_orig_lmks_updated, false, __FILE__, __LINE__);
+    if (!forced_landmark_compare_are_same)
+    {
+      std::cerr << "FORCED LANDMARKS NOT PRESERVED" << std::endl;
+      exit(-1);
+    }
   }
 }

@@ -117,24 +117,26 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Cost Image: " << inputCostVolume << std::endl;
-    std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
-    std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
-    std::cout << "Output Fiber(s): " << outputTract << std::endl;
-    std::cout << "Use XML Polydata Format: " << writeXMLPolyDataFile << std::endl;
-    std::cout << "Input Seed LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
-    std::cout << "Input Seed Label: " << startingSeedsLabel << std::endl;
-    std::cout << "Number of Iterations: " << numberOfIterations << std::endl;
-    std::cout << "Tracking Threshold: " << trackingThreshold << std::endl;
-    std::cout << "Start Point Anisotropy Threshold: " << seedThreshold << std::endl;
-    std::cout << "Subvoxel Cost Step Size: " << costStepSize << std::endl;
-    std::cout << "Maximum Step Size: " << maximumStepSize << std::endl;
-    std::cout << "Minimum Step Size: " << minimumStepSize << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    const bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Cost Image: " << inputCostVolume << std::endl;
+      std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
+      std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
+      std::cout << "Output Fiber(s): " << outputTract << std::endl;
+      std::cout << "Use XML Polydata Format: " << writeXMLPolyDataFile << std::endl;
+      std::cout << "Input Seed LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
+      std::cout << "Input Seed Label: " << startingSeedsLabel << std::endl;
+      std::cout << "Number of Iterations: " << numberOfIterations << std::endl;
+      std::cout << "Tracking Threshold: " << trackingThreshold << std::endl;
+      std::cout << "Start Point Anisotropy Threshold: " << seedThreshold << std::endl;
+      std::cout << "Subvoxel Cost Step Size: " << costStepSize << std::endl;
+      std::cout << "Maximum Step Size: " << maximumStepSize << std::endl;
+      std::cout << "Minimum Step Size: " << minimumStepSize << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   /* Read Tensor Image */

@@ -104,7 +104,6 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
   typename Self::ContinuousIndexType index;
 
   typename Self::ContinuousIndexType tmpIndex;
-  bool                               stop;
   int                                count = 0;
 
   const double inRadians = this->pi / 180.0;
@@ -117,6 +116,7 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
   // For each seed point, start guided tracking
   while (!this->m_Seeds.empty())
   {
+    bool stop;
     index = this->m_Seeds.back();
     this->m_Seeds.pop_back();
     vin = vout = this->m_TrackingDirections.back();
@@ -359,35 +359,37 @@ DtiGuidedTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>:
     p1[2] = currentPoint[2];
     auto index1 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p1);
 
-    float dist = std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) +
-                           std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
-                           std::pow(static_cast<double>(index1[2] - index[2]), 2.0));
-    if (dist < minDist)
     {
-      minDist = dist;
-      typename Self::ContinuousIndexType index3;
-      if (i == centerFiber->GetNumberOfPoints() - 1)
+      float dist = std::sqrt(std::pow(static_cast<double>(index1[0] - index[0]), 2.0) +
+                             std::pow(static_cast<double>(index1[1] - index[1]), 2.0) +
+                             std::pow(static_cast<double>(index1[2] - index[2]), 2.0));
+      if (dist < minDist)
       {
-        centerFiber->GetPoint(i - 1, currentPoint);
-        p3[0] = currentPoint[0];
-        p3[1] = currentPoint[1];
-        p3[2] = currentPoint[2];
-        index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
-        for (int j = 0; j < 3; ++j)
+        minDist = dist;
+        typename Self::ContinuousIndexType index3;
+        if (i == centerFiber->GetNumberOfPoints() - 1)
         {
-          direction[j] = index1[j] - index3[j];
+          centerFiber->GetPoint(i - 1, currentPoint);
+          p3[0] = currentPoint[0];
+          p3[1] = currentPoint[1];
+          p3[2] = currentPoint[2];
+          index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
+          for (int j = 0; j < 3; ++j)
+          {
+            direction[j] = index1[j] - index3[j];
+          }
         }
-      }
-      else
-      {
-        centerFiber->GetPoint(i + 1, currentPoint);
-        p3[0] = currentPoint[0];
-        p3[1] = currentPoint[1];
-        p3[2] = currentPoint[2];
-        index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
-        for (int j = 0; j < 3; ++j)
+        else
         {
-          direction[j] = index3[j] - index1[j];
+          centerFiber->GetPoint(i + 1, currentPoint);
+          p3[0] = currentPoint[0];
+          p3[1] = currentPoint[1];
+          p3[2] = currentPoint[2];
+          index3 = this->m_AnisotropyImage->template TransformPhysicalPointToContinuousIndex<double>(p3);
+          for (int j = 0; j < 3; ++j)
+          {
+            direction[j] = index3[j] - index1[j];
+          }
         }
       }
     }

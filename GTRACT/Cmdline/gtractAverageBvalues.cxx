@@ -354,10 +354,12 @@ areDirectionsEqual(const std::string & direction1,
   }
   else
   {
-    const double dist = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
-    if (dist > directionsTolerance)
     {
-      return false;
+      const double dist = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
+      if (dist > directionsTolerance)
+      {
+        return false;
+      }
     }
   }
   return true;

@@ -42,51 +42,55 @@ ExpandOutputVolumeTemplate(const std::string & outputTemplate, const std::string
   std::string::size_type pos = 0;
   while (pos < outputTemplate.size())
   {
-    const char c = outputTemplate[pos++];
-    if (c != '%')
     {
-      result += c;
-      continue;
+      const char c = outputTemplate[pos++];
+      if (c != '%')
+      {
+        result += c;
+        continue;
+      }
     }
-    const char conversion = (pos < outputTemplate.size()) ? outputTemplate[pos++] : '\0';
-    if (conversion == '%')
     {
-      result += '%';
-    }
-    else if (conversion == 's' && !typeUsed)
-    {
-      result += volumeType;
-      typeUsed = true;
-    }
-    else if (conversion == 'd' && !indexUsed)
-    {
-      result += std::to_string(index);
-      indexUsed = true;
-    }
-    else if (conversion == '0' && !indexUsed)
-    {
-      // "%0Nd": N is one or two digits, the first not zero
-      if (pos >= outputTemplate.size() || outputTemplate[pos] < '1' || outputTemplate[pos] > '9')
+      const char conversion = (pos < outputTemplate.size()) ? outputTemplate[pos++] : '\0';
+      if (conversion == '%')
+      {
+        result += '%';
+      }
+      else if (conversion == 's' && !typeUsed)
+      {
+        result += volumeType;
+        typeUsed = true;
+      }
+      else if (conversion == 'd' && !indexUsed)
+      {
+        result += std::to_string(index);
+        indexUsed = true;
+      }
+      else if (conversion == '0' && !indexUsed)
+      {
+        // "%0Nd": N is one or two digits, the first not zero
+        if (pos >= outputTemplate.size() || outputTemplate[pos] < '1' || outputTemplate[pos] > '9')
+        {
+          invalid();
+        }
+        std::string::size_type width = static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
+        if (pos < outputTemplate.size() && isDigit(outputTemplate[pos]))
+        {
+          width = width * 10 + static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
+        }
+        if (pos >= outputTemplate.size() || outputTemplate[pos++] != 'd')
+        {
+          invalid();
+        }
+        const std::string digits = std::to_string(index);
+        result.append(width > digits.size() ? width - digits.size() : 0, '0');
+        result += digits;
+        indexUsed = true;
+      }
+      else
       {
         invalid();
       }
-      std::string::size_type width = static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
-      if (pos < outputTemplate.size() && isDigit(outputTemplate[pos]))
-      {
-        width = width * 10 + static_cast<std::string::size_type>(outputTemplate[pos++] - '0');
-      }
-      if (pos >= outputTemplate.size() || outputTemplate[pos++] != 'd')
-      {
-        invalid();
-      }
-      const std::string digits = std::to_string(index);
-      result.append(width > digits.size() ? width - digits.size() : 0, '0');
-      result += digits;
-      indexUsed = true;
-    }
-    else
-    {
-      invalid();
     }
   }
   return result;

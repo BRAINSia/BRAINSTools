@@ -171,85 +171,87 @@ main(int argc, char * argv[])
               << inputVolume << std::endl;
     return 1;
   }
-  const unsigned imageDimension = imageIO->GetNumberOfDimensions();
-  switch (imageDimension)
   {
-    case 2:
-      switch (componentType)
-      {
-        case itk::IOComponentEnum::UCHAR:
-          return ReadAndSplitImage<itk::Image<unsigned char, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::CHAR:
-          return ReadAndSplitImage<itk::Image<char, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::USHORT:
-          return ReadAndSplitImage<itk::Image<unsigned short, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::SHORT:
-          return ReadAndSplitImage<itk::Image<short, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::UINT:
-          return ReadAndSplitImage<itk::Image<unsigned int, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::INT:
-          return ReadAndSplitImage<itk::Image<int, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::ULONG:
-          return ReadAndSplitImage<itk::Image<unsigned long, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::LONG:
-          return ReadAndSplitImage<itk::Image<long, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::FLOAT:
-          return ReadAndSplitImage<itk::Image<float, 2>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::DOUBLE:
-          return ReadAndSplitImage<itk::Image<double, 2>>(inputVolume, outputVolume, transform);
-          break;
-        default:
-          return 1; // shouldn never happen
-      }
-      break;
-    case 3:
-      switch (componentType)
-      {
-        case itk::IOComponentEnum::UCHAR:
-          return ReadAndSplitImage<itk::Image<unsigned char, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::CHAR:
-          return ReadAndSplitImage<itk::Image<char, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::USHORT:
-          return ReadAndSplitImage<itk::Image<unsigned short, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::SHORT:
-          return ReadAndSplitImage<itk::Image<short, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::UINT:
-          return ReadAndSplitImage<itk::Image<unsigned int, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::INT:
-          return ReadAndSplitImage<itk::Image<int, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::ULONG:
-          return ReadAndSplitImage<itk::Image<unsigned long, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::LONG:
-          return ReadAndSplitImage<itk::Image<long, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::FLOAT:
-          return ReadAndSplitImage<itk::Image<float, 3>>(inputVolume, outputVolume, transform);
-          break;
-        case itk::IOComponentEnum::DOUBLE:
-          return ReadAndSplitImage<itk::Image<double, 3>>(inputVolume, outputVolume, transform);
-          break;
-        default:
-          return 1; // shouldn never happen
-      }
-      break;
-    default:
-      break;
+    const unsigned imageDimension = imageIO->GetNumberOfDimensions();
+    switch (imageDimension)
+    {
+      case 2:
+        switch (componentType)
+        {
+          case itk::IOComponentEnum::UCHAR:
+            return ReadAndSplitImage<itk::Image<unsigned char, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::CHAR:
+            return ReadAndSplitImage<itk::Image<char, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::USHORT:
+            return ReadAndSplitImage<itk::Image<unsigned short, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::SHORT:
+            return ReadAndSplitImage<itk::Image<short, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::UINT:
+            return ReadAndSplitImage<itk::Image<unsigned int, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::INT:
+            return ReadAndSplitImage<itk::Image<int, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::ULONG:
+            return ReadAndSplitImage<itk::Image<unsigned long, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::LONG:
+            return ReadAndSplitImage<itk::Image<long, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::FLOAT:
+            return ReadAndSplitImage<itk::Image<float, 2>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::DOUBLE:
+            return ReadAndSplitImage<itk::Image<double, 2>>(inputVolume, outputVolume, transform);
+            break;
+          default:
+            return 1; // shouldn never happen
+        }
+        break;
+      case 3:
+        switch (componentType)
+        {
+          case itk::IOComponentEnum::UCHAR:
+            return ReadAndSplitImage<itk::Image<unsigned char, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::CHAR:
+            return ReadAndSplitImage<itk::Image<char, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::USHORT:
+            return ReadAndSplitImage<itk::Image<unsigned short, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::SHORT:
+            return ReadAndSplitImage<itk::Image<short, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::UINT:
+            return ReadAndSplitImage<itk::Image<unsigned int, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::INT:
+            return ReadAndSplitImage<itk::Image<int, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::ULONG:
+            return ReadAndSplitImage<itk::Image<unsigned long, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::LONG:
+            return ReadAndSplitImage<itk::Image<long, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::FLOAT:
+            return ReadAndSplitImage<itk::Image<float, 3>>(inputVolume, outputVolume, transform);
+            break;
+          case itk::IOComponentEnum::DOUBLE:
+            return ReadAndSplitImage<itk::Image<double, 3>>(inputVolume, outputVolume, transform);
+            break;
+          default:
+            return 1; // shouldn never happen
+        }
+        break;
+      default:
+        break;
+    }
   }
   return 1;
 }

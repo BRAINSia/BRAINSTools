@@ -153,22 +153,13 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
   // Add metric to regHelper
   //
   {
-    // Note that here we run only one stage of registration, so stageID does not change
-    constexpr unsigned int stageID = 0;
     // However, this stage can have one or two metrics (for multi-modality registration).
     // All the parameters of the second metric is the same as the first metric except for fixed and moving volumes.
     // Common parameters are:
     // - Metric type (MMI->mattes, MSE->meansquares, NC->cc, MIH->mi)
     typename SyN::RegistrationHelperType::MetricEnumeration curMetric = regHelper->StringToMetricType(whichMetric);
-    // - Metric weight
-    constexpr SyN::RealType weighting = 1.0;
     // - Sampling strategy (alway random)
     typename SyN::RegistrationHelperType::SamplingStrategy samplingStrategy = SyN::RegistrationHelperType::random;
-    // - Sampling percentage (defined by input)
-    // - Number of bins
-    constexpr int bins = 32;
-    // - radius
-    constexpr unsigned int radius = 4;
     //
     // Add the first metric with the first mandatory fixed and moving volumes
     //
@@ -185,6 +176,15 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     typename SyN::ImageType::Pointer dblMovingImage = movingCaster->GetOutput();
 
     {
+      // Note that here we run only one stage of registration, so stageID does not change
+      constexpr unsigned int stageID = 0;
+      // - Metric weight
+      constexpr SyN::RealType weighting = 1.0;
+      // - Sampling percentage (defined by input)
+      // - Number of bins
+      constexpr int bins = 32;
+      // - radius
+      constexpr unsigned int                               radius = 4;
       SyN::RegistrationHelperType::LabeledPointSetType *   fixedLabeledPointSet = nullptr;
       SyN::RegistrationHelperType::LabeledPointSetType *   movingLabeledPointSet = nullptr;
       SyN::RegistrationHelperType::IntensityPointSetType * fixedIntensityPointSet = nullptr;

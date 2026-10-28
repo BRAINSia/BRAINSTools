@@ -109,11 +109,13 @@ private:
   void
   add_keys_internally(const std::string & testValue) const
   {
-    const bool found =
-      (std::find(m_firstInOrdering.begin(), m_firstInOrdering.end(), testValue) != m_firstInOrdering.end());
-    if (!found)
     {
-      this->m_firstInOrdering.push_back(testValue);
+      const bool found =
+        (std::find(m_firstInOrdering.begin(), m_firstInOrdering.end(), testValue) != m_firstInOrdering.end());
+      if (!found)
+      {
+        this->m_firstInOrdering.push_back(testValue);
+      }
     }
   }
   /* This needs to be mutable. The function signature needs to be

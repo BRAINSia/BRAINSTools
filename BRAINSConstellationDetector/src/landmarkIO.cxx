@@ -204,43 +204,45 @@ MakeBrandeddebugImage(SImageType::ConstPointer              in,
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       const SImageType::IndexType index = rgbIt.GetIndex();
-      const auto                  p = orientedImage->template TransformIndexToPhysicalPoint<double>(index);
 
-      if (IsOnCylinder(p, pt, pt2, radius, height))
       {
-        RGBPixelType pixel = rgbIt.Value();
-
-        switch (which)
+        const auto p = orientedImage->template TransformIndexToPhysicalPoint<double>(index);
+        if (IsOnCylinder(p, pt, pt2, radius, height))
         {
-          case 0:
+          RGBPixelType pixel = rgbIt.Value();
+
+          switch (which)
           {
-            pixel.SetRed(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
+            case 0:
+            {
+              pixel.SetRed(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 1:
+            {
+              pixel.SetGreen(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 2:
+            {
+              pixel.SetBlue(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 3:
+            {
+              pixel.SetRed(255);
+              pixel.SetBlue(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
           }
-          break;
-          case 1:
-          {
-            pixel.SetGreen(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
-          case 2:
-          {
-            pixel.SetBlue(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
-          case 3:
-          {
-            pixel.SetRed(255);
-            pixel.SetBlue(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
         }
       }
     }
@@ -281,10 +283,12 @@ MakePointBranded3DImage(SImageType::ConstPointer      in,
   for (; !sIt.IsAtEnd(); ++sIt)
   {
     const SImageType::IndexType index = sIt.GetIndex();
-    const auto                  p = inputImage->template TransformIndexToPhysicalPoint<double>(index);
-    if (IsOnSphere(p, pt, radius))
     {
-      sIt.Set(maxPixel);
+      const auto p = inputImage->template TransformIndexToPhysicalPoint<double>(index);
+      if (IsOnSphere(p, pt, radius))
+      {
+        sIt.Set(maxPixel);
+      }
     }
   }
 
@@ -352,58 +356,60 @@ MakeBranded2DImage(SImageType::ConstPointer         in,
     for (; !rgbIt.IsAtEnd() && !sIt.IsAtEnd(); ++sIt, ++rgbIt)
     {
       const SImageType::IndexType index = rgbIt.GetIndex();
-      const auto                  p = orientedImage->template TransformIndexToPhysicalPoint<double>(index);
-      if (IsOnCylinder(p, pt, pt, radius, thickness))
       {
-        RGBPixelType pixel = rgbIt.Value();
-
-        switch (which)
+        const auto p = orientedImage->template TransformIndexToPhysicalPoint<double>(index);
+        if (IsOnCylinder(p, pt, pt, radius, thickness))
         {
-          case 0:
+          RGBPixelType pixel = rgbIt.Value();
+
+          switch (which)
           {
-            pixel.SetRed(255);
-            pixel.SetGreen(255);
-            pixel.SetBlue(0);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
+            case 0:
+            {
+              pixel.SetRed(255);
+              pixel.SetGreen(255);
+              pixel.SetBlue(0);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 1:
+            {
+              pixel.SetRed(0);
+              pixel.SetGreen(255);
+              pixel.SetBlue(0);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 2:
+            {
+              pixel.SetRed(0);
+              pixel.SetGreen(0);
+              pixel.SetBlue(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 3:
+            {
+              pixel.SetRed(255);
+              pixel.SetGreen(0);
+              pixel.SetBlue(0);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
+            case 4:
+            {
+              pixel.SetRed(255);
+              pixel.SetGreen(0);
+              pixel.SetBlue(255);
+              rgbIt.Set(pixel);
+              sIt.Set(255);
+            }
+            break;
           }
-          break;
-          case 1:
-          {
-            pixel.SetRed(0);
-            pixel.SetGreen(255);
-            pixel.SetBlue(0);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
-          case 2:
-          {
-            pixel.SetRed(0);
-            pixel.SetGreen(0);
-            pixel.SetBlue(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
-          case 3:
-          {
-            pixel.SetRed(255);
-            pixel.SetGreen(0);
-            pixel.SetBlue(0);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
-          case 4:
-          {
-            pixel.SetRed(255);
-            pixel.SetGreen(0);
-            pixel.SetBlue(255);
-            rgbIt.Set(pixel);
-            sIt.Set(255);
-          }
-          break;
         }
       }
     }

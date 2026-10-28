@@ -150,18 +150,20 @@ main(int argc, char * argv[])
       if (numType)
       {
         double verifyingNum = BRAINSTools::safe_stod(verifyingValue);
-        double tagNum = BRAINSTools::safe_stod(valueStr);
-        if (fabs(verifyingNum - tagNum) <= 1e-3)
         {
-          result = 0;
-          break;
-        }
-        else
-        {
-          std::cout << "input verifying value: " << verifyingValue << std::endl;
-          std::cout << "value read from file: " << valueStr << std::endl;
-          result = 1;
-          break;
+          double tagNum = BRAINSTools::safe_stod(valueStr);
+          if (fabs(verifyingNum - tagNum) <= 1e-3)
+          {
+            result = 0;
+            break;
+          }
+          else
+          {
+            std::cout << "input verifying value: " << verifyingValue << std::endl;
+            std::cout << "value read from file: " << valueStr << std::endl;
+            result = 1;
+            break;
+          }
         }
       }
       else

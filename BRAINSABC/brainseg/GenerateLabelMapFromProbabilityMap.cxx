@@ -104,12 +104,14 @@ main(int argc, char * argv[])
     LabelMapPixelType       label = 0;
     for (unsigned int indexInputImages = 1; indexInputImages < numberOfProbabilityMaps; ++indexInputImages)
     {
-      const ProbabilityMapPixelType pixelValue =
-        probabilityImages[indexInputImages]->GetPixel(probabilityIterator.GetIndex());
-      if (pixelValue > max)
       {
-        max = pixelValue;
-        label = indexInputImages;
+        const ProbabilityMapPixelType pixelValue =
+          probabilityImages[indexInputImages]->GetPixel(probabilityIterator.GetIndex());
+        if (pixelValue > max)
+        {
+          max = pixelValue;
+          label = indexInputImages;
+        }
       }
     }
 

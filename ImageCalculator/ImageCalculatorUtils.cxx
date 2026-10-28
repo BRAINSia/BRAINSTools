@@ -86,15 +86,16 @@ ImageCalculatorProcess3D(const std::string & InType, MetaCommand & command);
 bool
 ValidPixelType(const std::string & PixelType)
 {
-  const char * const s = PixelType.c_str();
-
   // check to see if valid type
-  if ((CompareNoCase(s, std::string("UCHAR"))) && (CompareNoCase(s, std::string("SHORT"))) &&
-      (CompareNoCase(s, std::string("USHORT"))) && (CompareNoCase(s, std::string("INT"))) &&
-      (CompareNoCase(s, std::string("UINT"))) && (CompareNoCase(s, std::string("FLOAT"))) &&
-      (CompareNoCase(s, std::string("DOUBLE"))))
   {
-    return false;
+    const char * const s = PixelType.c_str();
+    if ((CompareNoCase(s, std::string("UCHAR"))) && (CompareNoCase(s, std::string("SHORT"))) &&
+        (CompareNoCase(s, std::string("USHORT"))) && (CompareNoCase(s, std::string("INT"))) &&
+        (CompareNoCase(s, std::string("UINT"))) && (CompareNoCase(s, std::string("FLOAT"))) &&
+        (CompareNoCase(s, std::string("DOUBLE"))))
+    {
+      return false;
+    }
   }
   return true;
 }
@@ -385,22 +386,24 @@ PrimaryImageCalculatorRoutine(int argc, char * argv[])
 
   // Call the ImageCalculatorReadWrite function based on the dimension.
   const std::string InType(command.GetValueAsString("InputPixelType", "PixelType"));
-  const int         dims = command.GetValueAsInt("InputDimensions", "dims");
 
-  switch (dims)
   {
-    case 2:
+    const int dims = command.GetValueAsInt("InputDimensions", "dims");
+    switch (dims)
     {
-      ImageCalculatorProcess2D(InType, command);
+      case 2:
+      {
+        ImageCalculatorProcess2D(InType, command);
+      }
+      break;
+      case 3:
+      {
+        ImageCalculatorProcess3D(InType, command);
+      }
+      break;
+      default:
+        return 1;
     }
-    break;
-    case 3:
-    {
-      ImageCalculatorProcess3D(InType, command);
-    }
-    break;
-    default:
-      return 1;
   }
 
   return 0;

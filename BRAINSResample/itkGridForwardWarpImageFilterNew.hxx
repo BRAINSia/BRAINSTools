@@ -147,48 +147,50 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>::GenerateData()
           // else refPoint[j]=refPoint[j];
         }
       }
-      const bool inside = outputPtr->TransformPhysicalPointToIndex(refPoint, refIndex);
-      if (inside)
       {
-        // We know the current grid refPoint is inside
-        // we will check if the grid points that are above are also inside
-        // In such a case we draw a Bresenham line
-        for (unsigned int dim = 0; dim < ImageDimension; ++dim)
+        const bool inside = outputPtr->TransformPhysicalPointToIndex(refPoint, refIndex);
+        if (inside)
         {
-          if (m_GridPixelSpacing[dim] <= 0) // Don't do invisible direction
+          // We know the current grid refPoint is inside
+          // we will check if the grid points that are above are also inside
+          // In such a case we draw a Bresenham line
+          for (unsigned int dim = 0; dim < ImageDimension; ++dim)
           {
-            // targetIndex[dim]=targetIndex[dim];//Leave as same value
-            continue;
-          }
-          targetIndex = index;
-          targetIndex[dim] += m_GridPixelSpacing[dim]; // For non-collapsed
-                                                       // dimension.
-          // compute the mapped targetPoint
-          auto targetPoint = outputPtr->template TransformIndexToPhysicalPoint<double>(targetIndex);
-          {
-            // get the required targetDisplacement
-            DisplacementType targetDisplacement = fieldPtr->GetPixel(targetIndex);
-            for (unsigned int j = 0; j < ImageDimension; ++j)
+            if (m_GridPixelSpacing[dim] <= 0) // Don't do invisible direction
             {
-              if (m_GridPixelSpacing[j] != 0) // Do not compute offsets for
-                                              // collapsed dimensions
-              {
-                targetPoint[j] += targetDisplacement[j];
-              }
-              // else targetPoint[j]=targetPoint[j];
+              // targetIndex[dim]=targetIndex[dim];//Leave as same value
+              continue;
             }
-          }
-          const bool targetIn = outputPtr->TransformPhysicalPointToIndex(targetPoint, targetIndex);
-          if (targetIn)
-          {
-            for (LineIteratorType lineIter(outputPtr, refIndex, targetIndex); !lineIter.IsAtEnd(); ++lineIter)
+            targetIndex = index;
+            targetIndex[dim] += m_GridPixelSpacing[dim]; // For non-collapsed
+                                                         // dimension.
+            // compute the mapped targetPoint
+            auto targetPoint = outputPtr->template TransformIndexToPhysicalPoint<double>(targetIndex);
             {
+              // get the required targetDisplacement
+              DisplacementType targetDisplacement = fieldPtr->GetPixel(targetIndex);
+              for (unsigned int j = 0; j < ImageDimension; ++j)
               {
-                lineIter.Set(m_ForegroundValue);
+                if (m_GridPixelSpacing[j] != 0) // Do not compute offsets for
+                                                // collapsed dimensions
+                {
+                  targetPoint[j] += targetDisplacement[j];
+                }
+                // else targetPoint[j]=targetPoint[j];
               }
             }
-          }
-        } // end for loop for radiating lines in each direction
+            const bool targetIn = outputPtr->TransformPhysicalPointToIndex(targetPoint, targetIndex);
+            if (targetIn)
+            {
+              for (LineIteratorType lineIter(outputPtr, refIndex, targetIndex); !lineIter.IsAtEnd(); ++lineIter)
+              {
+                {
+                  lineIter.Set(m_ForegroundValue);
+                }
+              }
+            }
+          } // end for loop for radiating lines in each direction
+        }
       }
     }
   }

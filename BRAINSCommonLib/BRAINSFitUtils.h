@@ -117,10 +117,12 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
   fixedIter.GoToBegin();
   while (!fixedIter.IsAtEnd())
   {
-    const auto location = fixedMaskImage->template TransformIndexToPhysicalPoint<double>(fixedIter.GetIndex());
-    if (location[2] < fixedInferior[2])
     {
-      fixedIter.Set(zero);
+      const auto location = fixedMaskImage->template TransformIndexToPhysicalPoint<double>(fixedIter.GetIndex());
+      if (location[2] < fixedInferior[2])
+      {
+        fixedIter.Set(zero);
+      }
     }
     ++fixedIter;
   }
@@ -129,10 +131,12 @@ DoCenteredTransformMaskClipping(ImageMaskPointer &              fixedMask,
   movingIter.GoToBegin();
   while (!movingIter.IsAtEnd())
   {
-    const auto location = movingMaskImage->template TransformIndexToPhysicalPoint<double>(movingIter.GetIndex());
-    if (location[2] < movingInferior[2])
     {
-      movingIter.Set(zero);
+      const auto location = movingMaskImage->template TransformIndexToPhysicalPoint<double>(movingIter.GetIndex());
+      if (location[2] < movingInferior[2])
+      {
+        movingIter.Set(zero);
+      }
     }
     ++movingIter;
   }
@@ -182,8 +186,8 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
   const auto                                   num_pixels = image->GetBufferedRegion().GetNumberOfPixels();
   std::vector<typename TInputImage::PixelType> fixedList;
   fixedList.reserve(num_pixels);
-  const bool maskIsNull = mask.IsNull();
   {
+    const bool                                          maskIsNull = mask.IsNull();
     itk::ImageRegionConstIteratorWithIndex<TInputImage> fi(image, image->GetBufferedRegion());
     while (!fi.IsAtEnd())
     {
@@ -239,11 +243,13 @@ ComputeRobustMinMaxMean(const float Qalpha, // Remove 1% from computations by se
          it != fixedList.end();
          ++it)
     {
-      const auto value = static_cast<float>(*it);
-      if (value <= maxValue && value >= minValue)
       {
-        sum += value;
-        ++counter;
+        const auto value = static_cast<float>(*it);
+        if (value <= maxValue && value >= minValue)
+        {
+          sum += value;
+          ++counter;
+        }
       }
     }
     meanValue = sum / static_cast<float>(counter);

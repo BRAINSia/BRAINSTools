@@ -279,11 +279,13 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     ConstMaskIteratorType labelIt(maskImage, regionOfInterest);
     for (volumeIt.GoToBegin(), labelIt.GoToBegin(); !volumeIt.IsAtEnd() && !labelIt.IsAtEnd(); ++volumeIt, ++labelIt)
     {
-      MaskPixelType labelValue = labelIt.Get();
-      if (labelValue == 1)
       {
-        PixelType signalValue = volumeIt.Get();
-        signalTotal += signalValue;
+        MaskPixelType labelValue = labelIt.Get();
+        if (labelValue == 1)
+        {
+          PixelType signalValue = volumeIt.Get();
+          signalTotal += signalValue;
+        }
       }
       ++voxelCount;
     }
@@ -687,28 +689,30 @@ main(int argc, char ** argv)
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "First Mixture Component Image: " << inputFirstVolume << std::endl;
-    std::cout << "Second Mixture Component Image: " << inputSecondVolume << std::endl;
-    std::cout << "Region Of Interest Image Mask: " << inputMaskVolume << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "First Mixture Component Image: " << inputFirstVolume << std::endl;
+      std::cout << "Second Mixture Component Image: " << inputSecondVolume << std::endl;
+      std::cout << "Region Of Interest Image Mask: " << inputMaskVolume << std::endl;
 
-    std::cout << "Seed Point: {" << seed[0] << ", " << seed[1] << ", " << seed[2] << "}" << std::endl;
+      std::cout << "Seed Point: {" << seed[0] << ", " << seed[1] << ", " << seed[2] << "}" << std::endl;
 
-    std::cout << "Bounding Box Size: {" << boundingBoxSize[0] << ", " << boundingBoxSize[1] << ", "
-              << boundingBoxSize[2] << "}" << std::endl;
+      std::cout << "Bounding Box Size: {" << boundingBoxSize[0] << ", " << boundingBoxSize[1] << ", "
+                << boundingBoxSize[2] << "}" << std::endl;
 
-    std::cout << "Bounding Box Start: {" << boundingBoxStart[0] << ", " << boundingBoxStart[1] << ", "
-              << boundingBoxStart[2] << "}" << std::endl;
+      std::cout << "Bounding Box Start: {" << boundingBoxStart[0] << ", " << boundingBoxStart[1] << ", "
+                << boundingBoxStart[2] << "}" << std::endl;
 
-    std::cout << "Output Image Name: " << outputVolume << std::endl;
-    std::cout << "Output Mask Name: " << outputMask << std::endl;
-    std::cout << "Output Weights File: " << outputWeightsFile << std::endl;
-    std::cout << "Preliminary Lower Threshold Factor: " << lowerThresholdFactorPre << std::endl;
-    std::cout << "Preliminary Upper Threshold Factor: " << upperThresholdFactorPre << std::endl << std::endl;
-    std::cout << "Main Lower Threshold Factor: " << lowerThresholdFactor << std::endl;
-    std::cout << "Main Upper Threshold Factor: " << upperThresholdFactor << std::endl << std::endl;
+      std::cout << "Output Image Name: " << outputVolume << std::endl;
+      std::cout << "Output Mask Name: " << outputMask << std::endl;
+      std::cout << "Output Weights File: " << outputWeightsFile << std::endl;
+      std::cout << "Preliminary Lower Threshold Factor: " << lowerThresholdFactorPre << std::endl;
+      std::cout << "Preliminary Upper Threshold Factor: " << upperThresholdFactorPre << std::endl << std::endl;
+      std::cout << "Main Lower Threshold Factor: " << lowerThresholdFactor << std::endl;
+      std::cout << "Main Upper Threshold Factor: " << upperThresholdFactor << std::endl << std::endl;
+    }
   }
   /* ------------------------------------------------------------------------------------
    * Load Images

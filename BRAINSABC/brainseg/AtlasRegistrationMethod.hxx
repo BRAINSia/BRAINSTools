@@ -100,8 +100,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::SetIntraSubjectOrigina
 {
   muLogMacro(<< "Set Intrasubject original image list" << std::endl);
 
-  const unsigned int numIntraSubjectOriginalImages = NewIntraSubjectOriginalImageList.size();
-  if (numIntraSubjectOriginalImages == 0)
+  if (NewIntraSubjectOriginalImageList.empty())
   {
     itkExceptionMacro(<< "No images specified");
   }

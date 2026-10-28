@@ -79,83 +79,85 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
     //  This is ugly code that could be re-written much simpler.
     //
     using IteratorType = itk::ImageRegionIterator<SImageType>;
-    constexpr double thousand = 1000.0; // we need a DOUBLE constant, not a
     // FLOAT constant, for exact switch
     // comparisons.
-    if (lACLowerBound < thousand)
     {
-      // First Process the OutputResampledImage
-      std::cout << "Chopping image below physical location: " << PhysicalLowerBound << "." << std::endl;
-      ChopImageBelowLowerBound<SImageType>(lOutputResampledImage, BackgroundFillValue, PhysicalLowerBound);
-      ChopImageBelowLowerBound<SImageType>(lOutputImage, BackgroundFillValue, PhysicalLowerBound);
-
-      // Second Create a mask for inverse resampling to original space
-      const auto ZeroOneImage = SImageType::New();
-      ZeroOneImage->CopyInformation(lOutputResampledImage);
-      ZeroOneImage->SetRegions(lOutputResampledImage->GetLargestPossibleRegion());
-      ZeroOneImage->Allocate();
-      ZeroOneImage->FillBuffer(1);
-      ChopImageBelowLowerBound<SImageType>(ZeroOneImage, BackgroundFillValue, PhysicalLowerBound);
-
-      if (lCutOutHeadInOutputVolume) // Restrict mask to head
-      // tissue region if necessary
+      constexpr double thousand = 1000.0; // we need a DOUBLE constant, not a
+      if (lACLowerBound < thousand)
       {
-        //  No double opportunity when generating both kinds of images.
-        constexpr unsigned int closingSize = 7;
-        using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
-        const auto LFF = LFFMaskFilterType::New();
-        LFF->SetInput(lOutputResampledImage);
-        LFF->SetOtsuPercentileThreshold(lOtsuPercentileThreshold);
-        LFF->SetClosingSize(closingSize);
-        LFF->Update();
-        const SImageType::Pointer HeadOutlineMaskImage = LFF->GetOutput();
+        // First Process the OutputResampledImage
+        std::cout << "Chopping image below physical location: " << PhysicalLowerBound << "." << std::endl;
+        ChopImageBelowLowerBound<SImageType>(lOutputResampledImage, BackgroundFillValue, PhysicalLowerBound);
+        ChopImageBelowLowerBound<SImageType>(lOutputImage, BackgroundFillValue, PhysicalLowerBound);
 
-        IteratorType ItZeroOneImage(ZeroOneImage, ZeroOneImage->GetRequestedRegion());
-        ItZeroOneImage.GoToBegin();
-        IteratorType ItOutputResampledImage(lOutputResampledImage, lOutputResampledImage->GetRequestedRegion());
-        ItOutputResampledImage.GoToBegin();
-        IteratorType ItHead(HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion());
-        ItHead.GoToBegin();
-        while (!ItHead.IsAtEnd())
+        // Second Create a mask for inverse resampling to original space
+        const auto ZeroOneImage = SImageType::New();
+        ZeroOneImage->CopyInformation(lOutputResampledImage);
+        ZeroOneImage->SetRegions(lOutputResampledImage->GetLargestPossibleRegion());
+        ZeroOneImage->Allocate();
+        ZeroOneImage->FillBuffer(1);
+        ChopImageBelowLowerBound<SImageType>(ZeroOneImage, BackgroundFillValue, PhysicalLowerBound);
+
+        if (lCutOutHeadInOutputVolume) // Restrict mask to head
+        // tissue region if necessary
         {
-          if (ItHead.Get() == 0)
-          {
-            ItOutputResampledImage.Set(0);
-            ItZeroOneImage.Set(0);
-          }
-          ++ItZeroOneImage;
-          ++ItOutputResampledImage;
-          ++ItHead;
-        }
-      }
-      // Map the ZeroOne image through the inverse zero-centered transform
-      // to make the clipping factor image:
-      using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<SImageType, double>;
-      const auto interpolator = NearestNeighborInterpolatorType::New();
-      using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
-      const auto ResampleFilter = ResampleFilterType::New();
-      ResampleFilter->SetInput(ZeroOneImage);
-      ResampleFilter->SetInterpolator(interpolator);
-      ResampleFilter->SetDefaultPixelValue(0);
-      ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
-      {
-        const auto                  lInvVersorTransform = VersorRigidTransformType::New();
-        const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
-        lInvVersorTransform->SetCenter(centerPoint);
-        lInvVersorTransform->SetIdentity();
-        lVersorTransform->GetInverse(lInvVersorTransform);
-        ResampleFilter->SetTransform(lInvVersorTransform);
-      }
-      ResampleFilter->Update();
-      const SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
+          //  No double opportunity when generating both kinds of images.
+          constexpr unsigned int closingSize = 7;
+          using LFFMaskFilterType = itk::LargestForegroundFilledMaskImageFilter<SImageType>;
+          const auto LFF = LFFMaskFilterType::New();
+          LFF->SetInput(lOutputResampledImage);
+          LFF->SetOtsuPercentileThreshold(lOtsuPercentileThreshold);
+          LFF->SetClosingSize(closingSize);
+          LFF->Update();
+          const SImageType::Pointer HeadOutlineMaskImage = LFF->GetOutput();
 
-      // Multiply the raw input image by the clipping factor image:
-      using MultiplyFilterType = itk::MultiplyImageFilter<SImageType, SImageType>;
-      const auto MultiplyFilter = MultiplyFilterType::New();
-      MultiplyFilter->SetInput1(lImageToBeResampled);
-      MultiplyFilter->SetInput2(lClippingFactorImage);
-      MultiplyFilter->Update();
-      lOutputUntransformedClippedVolume = MultiplyFilter->GetOutput();
+          IteratorType ItZeroOneImage(ZeroOneImage, ZeroOneImage->GetRequestedRegion());
+          ItZeroOneImage.GoToBegin();
+          IteratorType ItOutputResampledImage(lOutputResampledImage, lOutputResampledImage->GetRequestedRegion());
+          ItOutputResampledImage.GoToBegin();
+          IteratorType ItHead(HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion());
+          ItHead.GoToBegin();
+          while (!ItHead.IsAtEnd())
+          {
+            if (ItHead.Get() == 0)
+            {
+              ItOutputResampledImage.Set(0);
+              ItZeroOneImage.Set(0);
+            }
+            ++ItZeroOneImage;
+            ++ItOutputResampledImage;
+            ++ItHead;
+          }
+        }
+        // Map the ZeroOne image through the inverse zero-centered transform
+        // to make the clipping factor image:
+        using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<SImageType, double>;
+        const auto interpolator = NearestNeighborInterpolatorType::New();
+        using ResampleFilterType = itk::ResampleImageFilter<SImageType, SImageType>;
+        const auto ResampleFilter = ResampleFilterType::New();
+        ResampleFilter->SetInput(ZeroOneImage);
+        ResampleFilter->SetInterpolator(interpolator);
+        ResampleFilter->SetDefaultPixelValue(0);
+        ResampleFilter->SetOutputParametersFromImage(lImageToBeResampled);
+        {
+          const auto                  lInvVersorTransform = VersorRigidTransformType::New();
+          const SImageType::PointType centerPoint = lVersorTransform->GetCenter();
+          lInvVersorTransform->SetCenter(centerPoint);
+          lInvVersorTransform->SetIdentity();
+          lVersorTransform->GetInverse(lInvVersorTransform);
+          ResampleFilter->SetTransform(lInvVersorTransform);
+        }
+        ResampleFilter->Update();
+        const SImageType::Pointer lClippingFactorImage = ResampleFilter->GetOutput();
+
+        // Multiply the raw input image by the clipping factor image:
+        using MultiplyFilterType = itk::MultiplyImageFilter<SImageType, SImageType>;
+        const auto MultiplyFilter = MultiplyFilterType::New();
+        MultiplyFilter->SetInput1(lImageToBeResampled);
+        MultiplyFilter->SetInput2(lClippingFactorImage);
+        MultiplyFilter->Update();
+        lOutputUntransformedClippedVolume = MultiplyFilter->GetOutput();
+      }
     }
     // ======================== Stop
     // ======================== Stop

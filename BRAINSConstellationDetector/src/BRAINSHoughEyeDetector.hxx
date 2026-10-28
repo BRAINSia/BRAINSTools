@@ -97,34 +97,38 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
 
   // 1988 Anthropometric Survey MIN: 51mm,  Max 77mm, so add bit of margin on this stddev=3.6
 
-  constexpr double mindistance_IPD = 51.0;
-  constexpr double maxdistance_IPD = 77.0;
   constexpr double two_stddev_distance_IPD = 2.0 * 3.6;
 
   const double IPD = (LE_Point.EuclideanDistanceTo(RE_Point));
-  if (IPD < (mindistance_IPD - two_stddev_distance_IPD))
   {
+    constexpr double mindistance_IPD = 51.0;
+    if (IPD < (mindistance_IPD - two_stddev_distance_IPD))
+    {
 
-    std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
-              << std::endl;
+      std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
+                << std::endl;
 
-    std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
-    std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
+      std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
+      std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
 
 
-    std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-    exit(-1);
+      std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
+      exit(-1);
+    }
   }
 
-  if (IPD > (maxdistance_IPD + two_stddev_distance_IPD))
   {
-    std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
-              << IPD << std::endl;
-    std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
-    std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
+    constexpr double maxdistance_IPD = 77.0;
+    if (IPD > (maxdistance_IPD + two_stddev_distance_IPD))
+    {
+      std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
+                << IPD << std::endl;
+      std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
+      std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
 
-    std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
-    exit(-1);
+      std::cerr << "     :   according to https://en.wikipedia.org/wiki/Pupillary_distance" << std::endl;
+      exit(-1);
+    }
   }
   translation2[1] = IPD_dist;
 
@@ -257,21 +261,23 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
         if (CMtoCurrVec[PA_INDEX] < 0 && CMtoCurrVec[SI_INDEX] > min_si &&
             CMtoCurrVec[SI_INDEX] < max_si) // currPt must be anterior to cm point
         {
-          // norm of CMtoCurrVec
-          const float CMtoCurrHypotenuse = CMtoCurrVec.GetNorm();
-          if ((CMtoCurrHypotenuse > this->m_R1) && (CMtoCurrHypotenuse < this->m_R2))
           {
-            // angle in the SI direction
-            // posterior/anterior component of the vector
-            const float currSITheta = asin(CMtoCurrVec[SI_INDEX] / CMtoCurrHypotenuse);
-            if ((currSITheta > ThetaDown) && (currSITheta < ThetaUp))
+            // norm of CMtoCurrVec
+            const float CMtoCurrHypotenuse = CMtoCurrVec.GetNorm();
+            if ((CMtoCurrHypotenuse > this->m_R1) && (CMtoCurrHypotenuse < this->m_R2))
             {
-              // angle in the LR direction
-
-              const float currLRTheta = asin(CMtoCurrVec[LR_INDEX] / CMtoCurrHypotenuse);
-              if ((std::abs(currLRTheta) > minLRAngle) && (std::abs(currLRTheta) < maxLRAngle))
+              // angle in the SI direction
+              // posterior/anterior component of the vector
+              const float currSITheta = asin(CMtoCurrVec[SI_INDEX] / CMtoCurrHypotenuse);
+              if ((currSITheta > ThetaDown) && (currSITheta < ThetaUp))
               {
-                ROIIter.Set(ImageIter.Get());
+                // angle in the LR direction
+
+                const float currLRTheta = asin(CMtoCurrVec[LR_INDEX] / CMtoCurrHypotenuse);
+                if ((std::abs(currLRTheta) > minLRAngle) && (std::abs(currLRTheta) < maxLRAngle))
+                {
+                  ROIIter.Set(ImageIter.Get());
+                }
               }
             }
           }

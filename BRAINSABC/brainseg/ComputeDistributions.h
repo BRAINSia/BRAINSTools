@@ -162,14 +162,16 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                           // input volumes may have a different voxel lattice than the probability image
                           if (im1Interp->IsInsideBuffer(currPoint))
                           {
-                            const double currentInputValue = im1Interp->Evaluate(currPoint);
-                            if (logConvertValues && currentInputValue > FLT_EPSILON)
                             {
-                              muSum += currentProbValue * LOGP(currentInputValue);
-                            }
-                            else
-                            {
-                              muSum += currentProbValue * (currentInputValue);
+                              const double currentInputValue = im1Interp->Evaluate(currPoint);
+                              if (logConvertValues && currentInputValue > FLT_EPSILON)
+                              {
+                                muSum += currentProbValue * LOGP(currentInputValue);
+                              }
+                              else
+                              {
+                                muSum += currentProbValue * (currentInputValue);
+                              }
                             }
                           }
                         }
@@ -287,33 +289,35 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
                           // Here pure plugs mask comes in, since CandidateRegions are multiplied by purePlugsMask!
                           if (currentCandidateRegion->GetPixel(currIndex))
                           {
-                            const double currentProbValue = currentProbImage->GetPixel(currIndex);
-                            if (currentProbValue >
-                                FLT_EPSILON) // Zero probability items should not contribute to variance.
                             {
-                              // input image values should be evaluated in physical space.
-                              double inputValue1 = 1;
-                              double inputValue2 = 1;
-                              if (im1Interp->IsInsideBuffer(currPoint))
+                              const double currentProbValue = currentProbImage->GetPixel(currIndex);
+                              if (currentProbValue >
+                                  FLT_EPSILON) // Zero probability items should not contribute to variance.
                               {
-                                inputValue1 = im1Interp->Evaluate(currPoint);
-                              }
-                              if (im2Interp->IsInsideBuffer(currPoint))
-                              {
-                                inputValue2 = im2Interp->Evaluate(currPoint);
-                              }
+                                // input image values should be evaluated in physical space.
+                                double inputValue1 = 1;
+                                double inputValue2 = 1;
+                                if (im1Interp->IsInsideBuffer(currPoint))
+                                {
+                                  inputValue1 = im1Interp->Evaluate(currPoint);
+                                }
+                                if (im2Interp->IsInsideBuffer(currPoint))
+                                {
+                                  inputValue2 = im2Interp->Evaluate(currPoint);
+                                }
 
-                              if (logConvertValues)
-                              {
-                                const double diff1 = LOGP(inputValue1) - mu1; // NOTE: mu1 is really 1/N * sum(log(X))
-                                const double diff2 = LOGP(inputValue2) - mu2; // NOTE: mu2 is really 1/N * sum(log(X))
-                                var += currentProbValue * (diff1 * diff2);
-                              }
-                              else
-                              {
-                                const double diff1 = inputValue1 - mu1;
-                                const double diff2 = inputValue2 - mu2;
-                                var += currentProbValue * (diff1 * diff2);
+                                if (logConvertValues)
+                                {
+                                  const double diff1 = LOGP(inputValue1) - mu1; // NOTE: mu1 is really 1/N * sum(log(X))
+                                  const double diff2 = LOGP(inputValue2) - mu2; // NOTE: mu2 is really 1/N * sum(log(X))
+                                  var += currentProbValue * (diff1 * diff2);
+                                }
+                                else
+                                {
+                                  const double diff1 = inputValue1 - mu1;
+                                  const double diff2 = inputValue2 - mu2;
+                                  var += currentProbValue * (diff1 * diff2);
+                                }
                               }
                             }
                           }

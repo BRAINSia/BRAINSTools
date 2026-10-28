@@ -71,9 +71,9 @@ EigenVectorToColorImageFilter ::Update()
 
   IteratorType it(m_Output, ImageRegion);
 
-  OutputImageType::IndexType index;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
+    OutputImageType::IndexType index;
     index = it.GetIndex();
     InputPixelType  tensor = m_Input->GetPixel(index);
     OutputPixelType currentVoxel{};

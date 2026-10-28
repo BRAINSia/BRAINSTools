@@ -6,10 +6,12 @@
 # any BRAINSTools sub-module that needs to build GTest-based unit tests.
 #
 # Strategy (least invasive — no SuperBuild change required):
-#   1. Try find_package(GTest) to pick up a system or Homebrew installation.
-#   2. If not found, fall back to FetchContent to download GTest v1.17.0
-#      from GitHub.  This matches the version bundled in ITK's ThirdParty
-#      module (Modules/ThirdParty/GoogleTest) so behaviour is consistent.
+#   1. By default, FetchContent downloads GTest v1.17.0 from GitHub so the
+#      library is built with this project's compiler flags and deployment
+#      target.  This matches the version bundled in ITK's ThirdParty module
+#      (Modules/ThirdParty/GoogleTest) so behavior is consistent.
+#   2. With BRAINSTools_USE_SYSTEM_GTest=ON, find_package(GTest) is used
+#      instead to pick up a system or package-manager installation.
 #
 # After calling this macro, downstream CMakeLists.txt can:
 #
@@ -27,15 +29,17 @@
 #
 cmake_minimum_required(VERSION 3.20.6)
 
+option(BRAINSTools_USE_SYSTEM_GTest
+       "Use an installed GTest instead of fetching and building it" OFF)
+
 macro(brainstools_enable_gtest)
   # Guard: if the targets already exist (called by another sub-module first,
   # or the user has a find_package(GTest) higher up) do nothing.
   if(NOT TARGET GTest::gtest)
-    # --- pass 1: honour an existing system/Homebrew installation ----------
-    find_package(GTest QUIET)
-
-    if(NOT GTest_FOUND)
-      # --- pass 2: fetch GTest from GitHub --------------------------------
+    if(BRAINSTools_USE_SYSTEM_GTest)
+      find_package(GTest REQUIRED)
+    else()
+      # --- fetch GTest from GitHub ---------------------------------------
       # Version 1.17.0 matches what ITK 5.4 bundles internally.
       # GIT_SHALLOW keeps the download minimal (no history).
       # INSTALL_GTEST=OFF prevents GTest from polluting the install tree.

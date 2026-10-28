@@ -311,7 +311,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       bool pass = false;
       for (unsigned int i = 0; i < dimension; ++i)
       {
-        float checkEigValue = eigPixel[i];
+        const float checkEigValue = eigPixel[i];
         if ((checkEigValue > 0.0) || (checkEigValue < 0.0))
         {
           pass = true;

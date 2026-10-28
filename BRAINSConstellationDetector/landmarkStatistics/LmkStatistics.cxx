@@ -118,15 +118,11 @@ main(int argc, char * argv[])
     const std::string & name = LandmarksNames[j];
     for (unsigned int i = 0; i < k; ++i)
     {
-      double d0 = NAN;
-      double d1 = NAN;
-      double d2 = NAN;
-      double dist = NAN;
-      d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
-      d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
-      d2 = pow(LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);
+      double d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
+      double d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
+      double d2 = pow(LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);
+      double dist = sqrt(d0 + d1 + d2);
 
-      dist = sqrt(d0 + d1 + d2);
       // dist = sqrt(d0); // distance in left/right direction
       // dist = sqrt(d1); // distance in anterior/posterior direction
       // dist = sqrt(d2); // distance in superior/inferior direction

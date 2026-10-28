@@ -130,29 +130,17 @@ TEST(DWIMetaDataDictionaryValidator, GradientTableRoundtrip)
   DWIMetaDataDictionaryValidator::GradientTableType table;
 
   // Zero vector
-  DWIMetaDataDictionaryValidator::GradientDirectionType g0;
-  g0[0] = 0.0;
-  g0[1] = 0.0;
-  g0[2] = 0.0;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g0{};
   table.push_back(g0);
 
   // Unit vectors along axes
-  DWIMetaDataDictionaryValidator::GradientDirectionType g1;
-  g1[0] = 1.0;
-  g1[1] = 0.0;
-  g1[2] = 0.0;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g1{ 1.0, 0.0, 0.0 };
   table.push_back(g1);
 
-  DWIMetaDataDictionaryValidator::GradientDirectionType g2;
-  g2[0] = 0.0;
-  g2[1] = 1.0;
-  g2[2] = 0.0;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g2{ 0.0, 1.0, 0.0 };
   table.push_back(g2);
 
-  DWIMetaDataDictionaryValidator::GradientDirectionType g3;
-  g3[0] = 0.0;
-  g3[1] = 0.0;
-  g3[2] = 1.0;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g3{ 0.0, 0.0, 1.0 };
   table.push_back(g3);
 
   // Non-unit vector
@@ -163,22 +151,13 @@ TEST(DWIMetaDataDictionaryValidator, GradientTableRoundtrip)
   table.push_back(g4);
 
   // Negative components
-  DWIMetaDataDictionaryValidator::GradientDirectionType g5;
-  g5[0] = -0.707;
-  g5[1] = 0.707;
-  g5[2] = 0.0;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g5{ -0.707, 0.707, 0.0 };
   table.push_back(g5);
 
-  DWIMetaDataDictionaryValidator::GradientDirectionType g6;
-  g6[0] = 0.3;
-  g6[1] = -0.8;
-  g6[2] = 0.5;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g6{ 0.3, -0.8, 0.5 };
   table.push_back(g6);
 
-  DWIMetaDataDictionaryValidator::GradientDirectionType g7;
-  g7[0] = -0.123;
-  g7[1] = -0.456;
-  g7[2] = 0.789;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g7{ -0.123, -0.456, 0.789 };
   table.push_back(g7);
 
   validator.SetGradientTable(table);
@@ -231,12 +210,9 @@ TEST(DWIMetaDataDictionaryValidator, GradientTableOverwrite)
 // ---------------------------------------------------------------------------
 TEST(DWIMetaDataDictionaryValidator, DeleteGradientTable)
 {
-  DWIMetaDataDictionaryValidator                        validator;
-  DWIMetaDataDictionaryValidator::GradientTableType     table;
-  DWIMetaDataDictionaryValidator::GradientDirectionType g;
-  g[0] = 1.0;
-  g[1] = 0.0;
-  g[2] = 0.0;
+  DWIMetaDataDictionaryValidator                              validator;
+  DWIMetaDataDictionaryValidator::GradientTableType           table;
+  const DWIMetaDataDictionaryValidator::GradientDirectionType g{ 1.0, 0.0, 0.0 };
   table.push_back(g);
   table.push_back(g);
   table.push_back(g);

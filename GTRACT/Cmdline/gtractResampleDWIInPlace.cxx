@@ -211,8 +211,8 @@ main(int argc, char * argv[])
   // Get measurement frame and its inverse from DWI scan
   DWIMetaDataDictionaryValidator::RotationMatrixType         msrFrame = resampleImageValidator.GetMeasurementFrame();
   const DWIMetaDataDictionaryValidator::RotationMatrixType & DWIMeasurementFrame = msrFrame;
-  DWIMetaDataDictionaryValidator::RotationMatrixType         DWIInverseMeasurementFrame;
-  DWIInverseMeasurementFrame = DWIMeasurementFrame.GetInverse();
+  const DWIMetaDataDictionaryValidator::RotationMatrixType   DWIInverseMeasurementFrame =
+    DWIMeasurementFrame.GetInverse();
 
   // Resample DWI in place
   resampleImage = SetVectorImageRigidTransformInPlace<NrrdImageType>(rigidTransform.GetPointer(), resampleImage);

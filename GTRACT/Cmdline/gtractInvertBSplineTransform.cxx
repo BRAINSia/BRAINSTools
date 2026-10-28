@@ -87,8 +87,7 @@ main(int argc, char * argv[])
     throw;
   }
 
-  ImageType::Pointer ExampleImage;
-  ExampleImage = anatomicalReader->GetOutput();
+  const ImageType::Pointer ExampleImage = anatomicalReader->GetOutput();
 
   std::cout << "Using Image: " << ExampleImage << std::endl;
 

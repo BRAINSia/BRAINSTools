@@ -151,8 +151,7 @@ ComputeDiffusionTensorImageFilter ::Update()
       {
         for (int step = 0; step < m_NumberOfBSteps; ++step)
         {
-          float tempflt;
-          tempflt = temp(direction * m_NumberOfBSteps + step);
+          const float tempflt = temp(direction * m_NumberOfBSteps + step);
 
           if (tempflt == 0)
           {

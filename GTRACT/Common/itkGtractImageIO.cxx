@@ -214,8 +214,7 @@ GtractImageIO::Load3dDICOMSeries()
   auto dicomIO = itk::GDCMImageIO::New();
 
   /* Generate a list of Series UIDs */
-  itk::GDCMSeriesFileNames::Pointer FileNameGenerator;
-  FileNameGenerator = itk::GDCMSeriesFileNames::New();
+  const itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
   FileNameGenerator->SetUseSeriesDetails(false);
   FileNameGenerator->SetDirectory(m_DicomDirectory.c_str());
 
@@ -237,8 +236,7 @@ GtractImageIO::Load4dDICOMSeries()
   auto dicomIO = itk::GDCMImageIO::New();
 
   /* Generate a list of Series UIDs */
-  itk::GDCMSeriesFileNames::Pointer FileNameGenerator;
-  FileNameGenerator = itk::GDCMSeriesFileNames::New();
+  const itk::GDCMSeriesFileNames::Pointer FileNameGenerator = itk::GDCMSeriesFileNames::New();
   FileNameGenerator->SetUseSeriesDetails(true);
   FileNameGenerator->SetDirectory(m_DicomDirectory.c_str());
 

@@ -154,7 +154,7 @@ TEST(itkIO, ShortWriteReadRoundtrip)
   using ImageType = itk::Image<short, 3>;
   const std::string path = UniqueTempPath("short.nrrd");
 
-  auto image = MakeTestImage<short>([](unsigned int x, unsigned int y, unsigned int z) -> short {
+  auto image = MakeTestImage<short>([](unsigned int x, unsigned int, unsigned int) -> short {
     return static_cast<short>(-17 * static_cast<int>(x) + 200);
   });
 

@@ -581,8 +581,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
 
   // create posteriors
   muLogMacro(<< "Create posteriors from likelihood matrix..." << std::endl);
-  ProbabilityImageVectorType Posteriors;
-  Posteriors.resize(numClasses);
+  ProbabilityImageVectorType Posteriors(numClasses);
 
   for (unsigned int iclass = 0; iclass < numClasses; ++iclass)
   {
@@ -1630,8 +1629,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
   // For each intensityList, get it's type, and then create an "anded mask of
   // candidate regions"
   // using the table from BRAINSMultiModeHistogramThresholder.
-  std::vector<typename ByteImageType::Pointer> subjectCandidateRegions;
-  subjectCandidateRegions.resize(WarpedPriorsList.size());
+  std::vector<typename ByteImageType::Pointer> subjectCandidateRegions(WarpedPriorsList.size());
 
   { // StartValid Regions Section
 
@@ -1861,9 +1859,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ForceToOne(ProbabilityImag
   // #################################################################
   // Force all subjectCandidateRegions to be all one masks.
   //
-  ByteImageVectorType subjectCandidateRegions;
-
-  subjectCandidateRegions.resize(WarpedPriorsList.size());
+  ByteImageVectorType subjectCandidateRegions(WarpedPriorsList.size());
   { // StartValid Regions Section
     tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0, WarpedPriorsList.size(), 1),
                       [=, &subjectCandidateRegions](const tbb::blocked_range<LOOPITERTYPE> & r) {
@@ -2035,8 +2031,7 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
       auto atlasToSubjectRegistrationHelper = HelperType::New();
       atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); // Use 5% of samples
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
-      std::vector<int> numberOfIterations(1);
-      numberOfIterations[0] = 1500;
+      std::vector<int> numberOfIterations(1, 1500);
       atlasToSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
       //  atlasToSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
       atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
@@ -2104,13 +2099,11 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
           muLogMacro(<< "Registering (Rigid) " << preprocessMovingString << "atlas(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") to template(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") image." << std::endl);
-          std::vector<double> minimumStepSize(1);
-          minimumStepSize[0] = 0.005; // NOTE: 0.005 for between subject
+          std::vector<double> minimumStepSize(1, 0.005); // NOTE: 0.005 for between subject
           // registration is probably about the
           // limit.
           atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-          std::vector<std::string> transformType(1);
-          transformType[0] = "Rigid";
+          std::vector<std::string> transformType(1, "Rigid");
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
         }
         else if (m_AtlasTransformType == "Affine")
@@ -2118,11 +2111,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
           muLogMacro(<< "Registering (Affine) " << preprocessMovingString << "atlas(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") to template(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") image." << std::endl);
-          std::vector<double> minimumStepSize(1);
-          minimumStepSize[0] = 0.0025;
+          std::vector<double> minimumStepSize(1, 0.0025);
           atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-          std::vector<std::string> transformType(1);
-          transformType[0] = "Affine";
+          std::vector<std::string> transformType(1, "Affine");
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
         }
         else if (m_AtlasTransformType == "BSpline")
@@ -2130,11 +2121,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateTransformation(const
           muLogMacro(<< "Registering (BSpline) " << preprocessMovingString << "atlas(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") to template(" << imMapIt->first
                      << std::distance(imMapIt->second.begin(), imIt) << ") image." << std::endl);
-          std::vector<double> minimumStepSize(1);
-          minimumStepSize[0] = 0.0025;
+          std::vector<double> minimumStepSize(1, 0.0025);
           atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-          std::vector<std::string> transformType(1);
-          transformType[0] = "BSpline";
+          std::vector<std::string> transformType(1, "BSpline");
           atlasToSubjectRegistrationHelper->SetTransformType(transformType);
           std::vector<int> splineGridSize(3);
           splineGridSize[0] = m_WarpGrid[0];

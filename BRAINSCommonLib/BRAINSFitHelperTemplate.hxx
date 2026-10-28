@@ -1303,10 +1303,8 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       {
         boundSelect.Fill(LBFGSBOptimizerType::BOTHBOUNDED);
       }
-      OptimizerBoundValueType upperBound(bsplineTx->GetNumberOfParameters());
-      upperBound.Fill(m_MaxBSplineDisplacement);
-      OptimizerBoundValueType lowerBound(bsplineTx->GetNumberOfParameters());
-      lowerBound.Fill(-m_MaxBSplineDisplacement);
+      OptimizerBoundValueType upperBound(bsplineTx->GetNumberOfParameters(), m_MaxBSplineDisplacement);
+      OptimizerBoundValueType lowerBound(bsplineTx->GetNumberOfParameters(), -m_MaxBSplineDisplacement);
 
       LBFGSBoptimizer->SetBoundSelection(boundSelect);
       // std::cout << "PRE : " << LBFGSBoptimizer->GetUpperBound().size() << " " << upperBound.size() << std::endl;
@@ -1480,13 +1478,9 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
       // we have a 1 level BSpline registration.
       constexpr unsigned int numberOfLevels = 1;
 
-      typename BSplineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel;
-      shrinkFactorsPerLevel.SetSize(1);
-      shrinkFactorsPerLevel[0] = 1;
+      typename BSplineRegistrationType::ShrinkFactorsArrayType shrinkFactorsPerLevel(1, 1);
 
-      typename BSplineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
-      smoothingSigmasPerLevel.SetSize(1);
-      smoothingSigmasPerLevel[0] = 0;
+      typename BSplineRegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel(1, 0);
 
       bsplineRegistration->SetNumberOfLevels(numberOfLevels);
       bsplineRegistration->SetSmoothingSigmasPerLevel(smoothingSigmasPerLevel);

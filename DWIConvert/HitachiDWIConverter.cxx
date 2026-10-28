@@ -39,11 +39,7 @@ HitachiDWIConverter::ExtractDWIData()
     this->m_BValues.push_back(b);
     double doubleArray[3];
     SharedFunctionalGroupsSequence.GetElementFD(0x0018, 0x9089, 3, doubleArray);
-    vnl_vector_fixed<double, 3> vect3d;
-    for (unsigned g = 0; g < 3; ++g)
-    {
-      vect3d[g] = doubleArray[g];
-    }
+    vnl_vector_fixed<double, 3> vect3d(doubleArray);
     this->m_DiffusionVectors.push_back(vect3d);
   }
 }

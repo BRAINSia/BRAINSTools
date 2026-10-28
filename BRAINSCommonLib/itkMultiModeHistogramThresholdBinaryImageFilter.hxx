@@ -29,18 +29,14 @@
 namespace itk
 {
 template <typename TInputImage, typename TOutputImage>
-MultiModeHistogramThresholdBinaryImageFilter<TInputImage,
-                                             TOutputImage>::MultiModeHistogramThresholdBinaryImageFilter()
-  : m_QuantileLowerThreshold(1)
+MultiModeHistogramThresholdBinaryImageFilter<TInputImage, TOutputImage>::MultiModeHistogramThresholdBinaryImageFilter()
+  : m_QuantileLowerThreshold(1, 0.0)
   , // temporarily estimate how many SetInput images
     // there are
-  m_QuantileUpperThreshold(1)
+  m_QuantileUpperThreshold(1, 1.0)
   , m_InsideValue(NumericTraits<typename IntegerImageType::PixelType>::OneValue())
   , m_OutsideValue(NumericTraits<typename IntegerImageType::PixelType>::ZeroValue())
-{
-  m_QuantileLowerThreshold.Fill(0.0);
-  m_QuantileUpperThreshold.Fill(1.0);
-}
+{}
 
 template <typename TInputImage, typename TOutputImage>
 MultiModeHistogramThresholdBinaryImageFilter<TInputImage,

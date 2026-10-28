@@ -108,11 +108,8 @@ main(int argc, char * argv[])
   vtkPoints * guidePoints = vtkPoints::New();
   for (int i = 0; i < numberOfPoints; ++i)
   {
-    double avgPoint[3];
-    avgPoint[0] = 0;
-    avgPoint[1] = 0;
-    avgPoint[2] = 0;
-    int N = 0;
+    double avgPoint[3] = { 0, 0, 0 };
+    int    N = 0;
     for (int j = 0; j < resampledFibers->GetNumberOfCells(); ++j)
     {
       if (resampledFibers->GetCellType(j) == VTK_POLY_LINE)

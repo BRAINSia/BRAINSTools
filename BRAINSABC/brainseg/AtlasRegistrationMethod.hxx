@@ -183,8 +183,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         auto intraSubjectRegistrationHelper = HelperType::New();
         intraSubjectRegistrationHelper->SetSamplingPercentage(0.05); // Sample 5% of image
         intraSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
-        std::vector<int> numberOfIterations(1);
-        numberOfIterations[0] = 1500;
+        std::vector<int> numberOfIterations{ 1500 };
         intraSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
         //
         //
@@ -261,17 +260,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterIntraSubjectIm
         muLogMacro(<< "Registering (Rigid) image " << i << " to first image." << std::endl);
         // For better registration, several linear registration methods are run,
         // but at the end, rigid component is extracted from output linear transform.
-        std::vector<double> minimumStepSize(4);
-        minimumStepSize[0] = 0.00005;
-        minimumStepSize[1] = 0.005;
-        minimumStepSize[2] = 0.005;
-        minimumStepSize[3] = 0.005;
+        std::vector<double> minimumStepSize{ 0.00005, 0.005, 0.005, 0.005 };
         intraSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(4);
-        transformType[0] = "Rigid";
-        transformType[1] = "ScaleVersor3D";
-        transformType[2] = "ScaleSkewVersor3D";
-        transformType[3] = "Affine";
+        std::vector<std::string> transformType{ "Rigid", "ScaleVersor3D", "ScaleSkewVersor3D", "Affine" };
         intraSubjectRegistrationHelper->SetTransformType(transformType);
         //
         // intraSubjectRegistrationHelper->SetBackgroundFillValue(backgroundFillValue);
@@ -429,8 +420,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
     {                                                                // Set common parameters
       atlasToSubjectRegistrationHelper->SetSamplingPercentage(0.05); // Sample 5% of image
       atlasToSubjectRegistrationHelper->SetNumberOfHistogramBins(50);
-      std::vector<int> numberOfIterations(1);
-      numberOfIterations[0] = 1500;
+      std::vector<int> numberOfIterations{ 1500 };
       atlasToSubjectRegistrationHelper->SetNumberOfIterations(numberOfIterations);
       // atlasToSubjectRegistrationHelper->SetMaximumStepLength(maximumStepSize);
       atlasToSubjectRegistrationHelper->SetTranslationScale(1000);
@@ -601,19 +591,9 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::RegisterAtlasToSubject
       else if (m_AtlasLinearTransformChoice == "BSpline")
       {
         muLogMacro(<< "Registering (BSpline) atlas to subject " << std::endl);
-        std::vector<double> minimumStepSize(5);
-        minimumStepSize[0] = 0.00005;
-        minimumStepSize[1] = 0.005;
-        minimumStepSize[2] = 0.005;
-        minimumStepSize[3] = 0.005;
-        minimumStepSize[4] = 0.005;
+        std::vector<double> minimumStepSize{ 0.00005, 0.005, 0.005, 0.005, 0.005 };
         atlasToSubjectRegistrationHelper->SetMinimumStepLength(minimumStepSize);
-        std::vector<std::string> transformType(5);
-        transformType[0] = "Rigid";
-        transformType[1] = "ScaleVersor3D";
-        transformType[2] = "ScaleSkewVersor3D";
-        transformType[3] = "Affine";
-        transformType[4] = "BSpline";
+        std::vector<std::string> transformType{ "Rigid", "ScaleVersor3D", "ScaleSkewVersor3D", "Affine", "BSpline" };
         atlasToSubjectRegistrationHelper->SetTransformType(transformType);
         std::vector<int> splineGridSize(3);
         splineGridSize[0] = this->m_WarpGrid[0];

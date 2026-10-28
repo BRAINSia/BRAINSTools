@@ -457,9 +457,7 @@ main(int argc, char * argv[])
          ++lit)
     {
       vnl_matrix<double> CurrentLandmarkMatrix = lit->second;
-      hsize_t            dims[2];
-      dims[0] = CurrentLandmarkMatrix.rows();
-      dims[1] = CurrentLandmarkMatrix.columns();
+      hsize_t            dims[2] = { CurrentLandmarkMatrix.rows(), CurrentLandmarkMatrix.columns() };
 
       // Print info on the screen
       std::cout << "=========" << landmark_type.first << " " << lit->first << "========== " << dims[0] << "x" << dims[1]

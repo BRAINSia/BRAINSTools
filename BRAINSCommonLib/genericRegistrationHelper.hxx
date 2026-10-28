@@ -331,8 +331,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   // Get smoothing sigmas
   std::vector<float> sigmas(numberOfLevels);
   sigmas[0] = 0;
-  typename RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel;
-  smoothingSigmasPerLevel.SetSize(sigmas.size());
+  typename RegistrationType::SmoothingSigmasArrayType smoothingSigmasPerLevel(sigmas.size());
   for (unsigned int n = 0; n < smoothingSigmasPerLevel.Size(); ++n)
   {
     smoothingSigmasPerLevel[n] = sigmas[n];

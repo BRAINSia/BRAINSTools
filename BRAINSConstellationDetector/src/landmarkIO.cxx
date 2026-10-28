@@ -802,8 +802,7 @@ loadLLSModel(const std::string &                             llsModelFilename,
         numParameters = BRAINSTools::safe_stoi(line);
       }
 
-      LandmarkIO::MatrixType coefficients; // linear model coefficients
-      coefficients.set_size(dimension, numParameters);
+      LandmarkIO::MatrixType coefficients(dimension, numParameters); // linear model coefficients
       for (unsigned int j = 0; j < dimension; ++j)
       {
         if (!getline(myfile, line))

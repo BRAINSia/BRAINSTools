@@ -106,14 +106,7 @@ FindPathFromAtlasXML(const std::string & xmlCodedPath, const std::string & atlas
 static std::string
 GetStrippedImageFileNameExtension(const std::string & ImageFileName)
 {
-  std::vector<std::string> ExtensionsToRemove(6);
-
-  ExtensionsToRemove[0] = ".gz";
-  ExtensionsToRemove[1] = ".nii";
-  ExtensionsToRemove[2] = ".hdr";
-  ExtensionsToRemove[3] = ".img";
-  ExtensionsToRemove[4] = ".gipl";
-  ExtensionsToRemove[5] = ".nrrd";
+  std::vector<std::string> ExtensionsToRemove{ ".gz", ".nii", ".hdr", ".img", ".gipl", ".nrrd" };
 
   std::string returnString = itksys::SystemTools::GetFilenameName(ImageFileName);
   for (auto & elem : ExtensionsToRemove)
@@ -375,8 +368,7 @@ main(int argc, char ** argv)
   AtlasDefTable.add(0, 0, "Prior Names");
   AtlasDefTable.add(0, 1, ": [");
   AtlasDefTable.add(0, PriorNames.size() + 2 + 1, "]");
-  SegFilterType::VectorType priorsWeightList;
-  priorsWeightList.set_size(PriorNames.size());
+  SegFilterType::VectorType priorsWeightList(PriorNames.size());
   AtlasDefTable.add(1, 0, "Prior weight scales");
   AtlasDefTable.add(1, 1, ": [");
   AtlasDefTable.add(1, PriorNames.size() + 2 + 1, "]");
@@ -395,8 +387,7 @@ main(int argc, char ** argv)
   }
 
   ++currentRow;
-  SegFilterType::IntVectorType priorLabelCodeVector;
-  priorLabelCodeVector.set_size(PriorNames.size());
+  SegFilterType::IntVectorType priorLabelCodeVector(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior Label Codes");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
@@ -407,8 +398,7 @@ main(int argc, char ** argv)
   }
 
   ++currentRow;
-  SegFilterType::BoolVectorType priorIsForegroundPriorVector;
-  priorIsForegroundPriorVector.resize(PriorNames.size());
+  SegFilterType::BoolVectorType priorIsForegroundPriorVector(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior IsForeground");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
@@ -419,8 +409,7 @@ main(int argc, char ** argv)
   }
 
   ++currentRow;
-  SegFilterType::IntVectorType priorGaussianClusterCountVector;
-  priorGaussianClusterCountVector.set_size(PriorNames.size());
+  SegFilterType::IntVectorType priorGaussianClusterCountVector(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior Clusters");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");
@@ -431,8 +420,7 @@ main(int argc, char ** argv)
   }
 
   ++currentRow;
-  SegFilterType::BoolVectorType priorUseForBiasVector;
-  priorUseForBiasVector.resize(PriorNames.size());
+  SegFilterType::BoolVectorType priorUseForBiasVector(PriorNames.size());
   AtlasDefTable.add(currentRow, 0, "Prior For Bias");
   AtlasDefTable.add(currentRow, 1, ": [");
   AtlasDefTable.add(currentRow, PriorNames.size() + 2 + 1, "]");

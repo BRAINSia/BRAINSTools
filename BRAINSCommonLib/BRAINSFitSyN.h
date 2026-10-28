@@ -69,17 +69,12 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     std::vector<std::vector<unsigned int>> iterationList;
     if (synFull == true)
     {
-      std::vector<unsigned int> iterations(4);
-      iterations[0] = 1000;
-      iterations[1] = 500;
-      iterations[2] = 250;
-      iterations[3] = 100;
+      std::vector<unsigned int> iterations{ 1000, 500, 250, 100 };
       iterationList.push_back(iterations);
     }
     else
     {
-      std::vector<unsigned int> iterations(1);
-      iterations[0] = 100;
+      std::vector<unsigned int> iterations{ 100 };
       iterationList.push_back(iterations);
     }
     regHelper->SetIterations(iterationList);
@@ -104,18 +99,13 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     if (synFull == true)
     {
       // --shrink-factors 3x2x1
-      std::vector<unsigned int> factors(4);
-      factors[0] = 8;
-      factors[1] = 4;
-      factors[2] = 2;
-      factors[3] = 1;
+      std::vector<unsigned int> factors{ 8, 4, 2, 1 };
       shrinkFactorsList.push_back(factors);
     }
     else
     {
       // --shrink-factors 1
-      std::vector<unsigned int> factors(1);
-      factors[0] = 1;
+      std::vector<unsigned int> factors{ 1 };
       shrinkFactorsList.push_back(factors);
     }
     regHelper->SetShrinkFactors(shrinkFactorsList);
@@ -126,18 +116,13 @@ simpleSynReg(typename FixedImageType::Pointer &                    infixedImage,
     if (synFull == true)
     {
       // --smoothing-sigmas 3x2x0
-      std::vector<float> sigmas(4);
-      sigmas[0] = 3;
-      sigmas[1] = 2;
-      sigmas[2] = 1;
-      sigmas[3] = 0;
+      std::vector<float> sigmas{ 3, 2, 1, 0 };
       smoothingSigmasList.push_back(sigmas);
     }
     else
     {
       // --smoothing-sigmas 0
-      std::vector<float> sigmas(1);
-      sigmas[0] = 0;
+      std::vector<float> sigmas{ 0 };
       smoothingSigmasList.push_back(sigmas);
     }
     regHelper->SetSmoothingSigmas(smoothingSigmasList);

@@ -81,10 +81,7 @@ template <typename TImageType, typename TMaskType>
 void
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::SetNumberOfBins(unsigned int numberOfBins)
 {
-  typename HistogramType::SizeType size;
-
-  size.SetSize(1);
-  size.Fill(numberOfBins);
+  typename HistogramType::SizeType size(1, numberOfBins);
   m_HistogramGenerator->SetHistogramSize(size);
 }
 
@@ -93,9 +90,7 @@ void
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::SetHistogramMin(RealPixelType minimumValue)
 {
   using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
-  MeasurementVectorType minVector(1);
-
-  minVector[0] = minimumValue;
+  MeasurementVectorType minVector(1, minimumValue);
   m_HistogramGenerator->SetHistogramBinMinimum(minVector);
 }
 
@@ -104,9 +99,7 @@ void
 ScalarImagePortionToHistogramGenerator<TImageType, TMaskType>::SetHistogramMax(RealPixelType maximumValue)
 {
   using MeasurementVectorType = typename GeneratorType::HistogramMeasurementVectorType;
-  MeasurementVectorType maxVector(1);
-
-  maxVector[0] = maximumValue;
+  MeasurementVectorType maxVector(1, maximumValue);
   m_HistogramGenerator->SetHistogramBinMaximum(maxVector);
 }
 

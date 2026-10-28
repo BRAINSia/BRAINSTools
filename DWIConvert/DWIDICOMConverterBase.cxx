@@ -79,10 +79,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     // origin
     double origin[3];
     m_Headers[0]->GetOrigin(origin);
-    Volume3DUnwrappedType::PointType imOrigin;
-    imOrigin[0] = origin[0];
-    imOrigin[1] = origin[1];
-    imOrigin[2] = origin[2];
+    Volume3DUnwrappedType::PointType imOrigin(origin);
     this->m_Volume->SetOrigin(imOrigin);
   }
   // spacing
@@ -91,10 +88,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     double spacing[3];
     // m_Headers[0]->GetSpacing(spacing);
     getDicomSpacing(spacing);
-    SpacingType imSpacing;
-    imSpacing[0] = spacing[0];
-    imSpacing[1] = spacing[1];
-    imSpacing[2] = spacing[2];
+    SpacingType imSpacing(spacing);
     m_Volume->SetSpacing(imSpacing);
   }
   m_thickness = readThicknessFromDicom();
@@ -376,10 +370,9 @@ DWIDICOMConverterBase::DeInterleaveVolume()
 void
 DWIDICOMConverterBase::DetermineSliceOrderIS()
 {
-  double image0Origin[3];
-  image0Origin[0] = this->m_Volume->GetOrigin()[0];
-  image0Origin[1] = this->m_Volume->GetOrigin()[1];
-  image0Origin[2] = this->m_Volume->GetOrigin()[2];
+  double image0Origin[3] = { this->m_Volume->GetOrigin()[0],
+                             this->m_Volume->GetOrigin()[1],
+                             this->m_Volume->GetOrigin()[2] };
   std::cout << "Slice 0: " << image0Origin[0] << " " << image0Origin[1] << " " << image0Origin[2] << std::endl;
 
   // assume volume interleaving, i.e. the second dicom file stores
@@ -574,11 +567,7 @@ DWIDICOMConverterBase::TryExtractSupp49DWIData()
     {
       return false;
     }
-    vnl_vector_fixed<double, 3> vect3d;
-    for (unsigned int g = 0; g < 3; ++g)
-    {
-      vect3d[g] = doubleArray[g];
-    }
+    vnl_vector_fixed<double, 3> vect3d(doubleArray);
     diffusionVectors.push_back(vect3d);
   }
 

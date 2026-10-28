@@ -258,13 +258,11 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
 PyramidFilterType::Pointer
 MakeThreeLevelPyramid(const SImageType::Pointer & refImage)
 {
-  PyramidFilterType::ScheduleType pyramidSchedule;
-
   auto MyPyramid = PyramidFilterType::New();
 
   MyPyramid->SetInput(refImage);
   MyPyramid->SetNumberOfLevels(3);
-  pyramidSchedule.SetSize(3, 3);
+  PyramidFilterType::ScheduleType pyramidSchedule(3, 3);
   // Attempt to set a schedule so that the top of the pyramid
   // has images of about 8mm, and the next level has resolutions about 4mm
   // isotropic voxels

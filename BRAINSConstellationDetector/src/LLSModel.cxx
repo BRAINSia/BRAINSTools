@@ -51,10 +51,7 @@ LLSModel ::WriteVector(const std::string & path, const std::vector<double> & vec
 void
 LLSModel ::WriteMatrix(const std::string & path, const MatrixType & matrix)
 {
-  hsize_t dims[2];
-
-  dims[0] = matrix.rows();
-  dims[1] = matrix.cols();
+  hsize_t dims[2] = { matrix.rows(), matrix.cols() };
 
   const H5::DataSpace matrixSpace(2, dims);
   H5::DataSet         matrixSet = this->m_H5File->createDataSet(path, H5::PredType::NATIVE_DOUBLE, matrixSpace);
@@ -165,7 +162,6 @@ LLSModel ::Write()
 std::vector<double>
 LLSModel ::ReadVector(const std::string & DataSetName)
 {
-  std::vector<double> vec;
   hsize_t             dim = 0;
   H5::DataSet         vecSet = this->m_H5File->openDataSet(DataSetName);
   const H5::DataSpace Space = vecSet.getSpace();
@@ -176,7 +172,7 @@ LLSModel ::ReadVector(const std::string & DataSetName)
                                              << Space.getSimpleExtentNdims() << " dimensions; a vector must have 1");
   }
   Space.getSimpleExtentDims(&dim, nullptr);
-  vec.resize(dim);
+  std::vector<double> vec(dim);
 
   vecSet.read(vec.data(), H5::PredType::NATIVE_DOUBLE);
   vecSet.close();

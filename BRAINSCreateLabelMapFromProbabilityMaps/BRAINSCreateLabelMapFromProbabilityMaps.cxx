@@ -66,8 +66,7 @@ main(int argc, char * argv[])
     std::cerr << "Missing prior label codes" << std::endl;
   }
 
-  UnsignedIntVectorType priorLabels;
-  priorLabels.set_size(priorLabelCodes.size());
+  UnsignedIntVectorType priorLabels(priorLabelCodes.size());
   for (unsigned i = 0; i < priorLabelCodes.size(); ++i)
   {
     priorLabels[i] = priorLabelCodes[i];

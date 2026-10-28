@@ -183,9 +183,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   }
 
   // Use 400mm as the (-200mm,200mm) as the distance to look.
-  std::vector<unsigned int> maskCountsInPlane(numberOfSamplelingLines);
-
-  std::fill(maskCountsInPlane.begin(), maskCountsInPlane.end(), 0);
+  std::vector<unsigned int> maskCountsInPlane(numberOfSamplelingLines, 0);
   {
     typename TInputImage::PointType CenterOfMass;
     {

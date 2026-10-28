@@ -58,17 +58,15 @@ MakeRigidIdentity()
 
 template <typename TOutputPixel, typename TProbabilityPixel>
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::AtlasRegistrationMethod()
-  : m_WarpGrid(3, 0)
+  : m_InputImageTissueRegion(nullptr)
+  , m_InputSpatialObjectTissueRegion(nullptr)
+  , m_WarpGrid(3, 0)
+  , m_AtlasToSubjectInitialTransform(nullptr)
   , m_AtlasLinearTransformChoice("Affine")
   , m_ImageLinearTransformChoice("Rigid")
   , m_SaveState("")
   , m_RestoreState(nullptr)
-
-{
-  m_InputImageTissueRegion = nullptr;
-  m_InputSpatialObjectTissueRegion = nullptr;
-  m_AtlasToSubjectInitialTransform = nullptr;
-}
+{}
 
 template <typename TOutputPixel, typename TProbabilityPixel>
 AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::~AtlasRegistrationMethod()

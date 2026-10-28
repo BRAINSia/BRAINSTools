@@ -76,14 +76,14 @@ namespace itk
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TCostImageType, typename TMaskImageType>
 DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImageType, TMaskImageType>::
   DtiFastMarchingTrackingFilter()
+  : m_CostIP(CostIPType::New())
+  , m_MaxStepSize(1.0)
+  , m_MinStepSize(0.01)
+  , m_CostFunctionStepSize(1.0)
+  , m_NumberOfIterations(200)
 {
-  m_CostIP = CostIPType::New();
   m_CostFN = CostFunctionType::New();
   m_GradientOP = OptimizerType::New();
-  m_MaxStepSize = 1.0;
-  m_MinStepSize = 0.01;
-  m_CostFunctionStepSize = 1.0;
-  m_NumberOfIterations = 200;
   m_StartPoints.clear();
 }
 

@@ -59,13 +59,13 @@ namespace itk
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiGraphSearchTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiGraphSearchTrackingFilter()
   : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiTrackingFilterBase()
+  , m_AnisotropyBranchingValue(0.0)
+  , m_CurvatureBranchAngle(60.0)
+  , m_MaximumBranches(5)
+  , m_UseRandomWalk(false)
+  , m_RandomWalkAngle(45.0)
+  , m_RandomSeed(-1)
 {
-  this->m_UseRandomWalk = false;
-  this->m_MaximumBranches = 5;
-  this->m_CurvatureBranchAngle = 60.0;
-  this->m_AnisotropyBranchingValue = 0.0;
-  this->m_RandomWalkAngle = 45.0;
-  this->m_RandomSeed = -1;
   this->m_RandomGenerator = RandomGeneratorType::New();
 }
 

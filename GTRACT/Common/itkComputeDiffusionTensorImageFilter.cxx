@@ -55,12 +55,12 @@
 
 namespace itk
 {
-ComputeDiffusionTensorImageFilter ::ComputeDiffusionTensorImageFilter()
+ComputeDiffusionTensorImageFilter::ComputeDiffusionTensorImageFilter()
+  : m_UseMedianFilter(false)
+  , m_BackgroundThreshold(0)
+  , m_NumberOfDirections(0)
+  , m_NumberOfBSteps(0)
 {
-  m_UseMedianFilter = false;
-  m_BackgroundThreshold = 0;
-  m_NumberOfDirections = 0;
-  m_NumberOfBSteps = 0;
   m_MedianFilterSize.Fill(0);
 }
 

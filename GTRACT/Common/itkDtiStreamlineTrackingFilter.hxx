@@ -59,9 +59,8 @@ namespace itk
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiStreamlineTrackingFilter()
   : DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::DtiTrackingFilterBase()
-{
-  this->m_CurvatureThreshold = 45;
-}
+  , m_CurvatureThreshold(45)
+{}
 
 template <typename TTensorImageType, typename TAnisotropyImageType, typename TMaskImageType>
 void

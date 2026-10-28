@@ -57,10 +57,10 @@ DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::PrintSelf(std::ostr
 
 template <typename TInputImage, typename TRealType, typename TOutputImage>
 DivergenceImageFilter<TInputImage, TRealType, TOutputImage>::DivergenceImageFilter()
+  : m_UseImageSpacing(true)
+  , m_UsePrincipleComponents(true)
+  , m_RequestedNumberOfThreads(this->GetNumberOfThreads())
 {
-  m_UseImageSpacing = true;
-  m_UsePrincipleComponents = true;
-  m_RequestedNumberOfThreads = this->GetNumberOfThreads();
   for (unsigned int i = 0; i < ImageDimension; ++i)
   {
     m_DerivativeWeights[i] = static_cast<TRealType>(1.0);

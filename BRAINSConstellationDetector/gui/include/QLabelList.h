@@ -51,9 +51,8 @@ class QLabelList : public QListWidget
 public:
   QLabelList(QWidget * myParent = nullptr)
     : QListWidget(myParent)
-  {
-    m_color = 0;
-  }
+    , m_color(0)
+  {}
 
   void
   SetInputVolume(std::string filename)

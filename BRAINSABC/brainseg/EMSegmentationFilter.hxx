@@ -616,87 +616,19 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::ComputekNNPosteriors(
 
 template <typename TInputImage, typename TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>::EMSegmentationFilter()
-{
-  m_DirtyLabels = nullptr;
-  m_CleanedLabels = nullptr;
-  m_ThresholdedLabels = nullptr;
-  m_DirtyThresholdedLabels = nullptr;
-
-  m_SampleSpacing = 2.0;
-
-  // Bias
-  m_MaxBiasDegree = 4;
-  m_BiasLikelihoodTolerance = 1e-2;
-  // NOTE: warp tol needs to be <= bias tol
-  m_WarpLikelihoodTolerance = 1e-3;
-
-  // EM convergence parameters
-  m_LikelihoodTolerance = 1e-5;
-  m_MaximumIterations = 40;
-
-  m_PriorWeights = VectorType(0);
-  m_PriorWeightsSet = false;
-
-  // m_PriorGaussianClusterCountVector = IntVectorType(0);
-  // m_PriorGaussianClusterCountVectorSet=false;
-
-  m_PriorLabelCodeVector = IntVectorType(0);
-  m_PriorLabelCodeVectorSet = false;
-
-  m_PriorUseForBiasVector = BoolVectorType(0);
-  m_PriorUseForBiasVectorSet = false;
-
-  m_PriorIsForegroundPriorVector = BoolVectorType(false);
-  m_PriorIsForegroundPriorVectorSet = false;
-
-  m_PriorsBackgroundValues.resize(0);
-
-  m_WarpedPriors.clear();
-  m_OriginalSpacePriors.clear();
-  m_Posteriors.clear();
-
-  m_InputImages.clear();
-  m_RawInputImages.clear();
-  m_CorrectedImages.clear();
-  m_RawCorrectedImages.clear();
-
-  m_TemplateBrainMask = nullptr;
-  m_OriginalAtlasImages.clear();
-  m_WarpedAtlasImages.clear();
-
-  m_OutputDebugDir = "";
-  // m_PriorLookupTable = IntVectorType(0);
-
-  m_NonAirRegion = nullptr;
-
-  m_AtlasTransformType = "SyN"; // "invalid_TransformationTypeNotSet";
-
-  m_UseKNN = false;
-
-  m_UsePurePlugs = false;
-  m_PurePlugsThreshold = 0.2;
-
-  m_NumberOfSubSamplesInEachPlugArea[0] = 0;
-  m_NumberOfSubSamplesInEachPlugArea[1] = 0;
-  m_NumberOfSubSamplesInEachPlugArea[2] = 0;
-
-  m_PurePlugsMask = nullptr;
-
-  m_UpdateTransformation = false;
-
-  m_DebugLevel = 0;
-
-  m_TemplateGenericTransform = nullptr;
-
-  m_WarpGrid[0] = 5;
-  m_WarpGrid[1] = 5;
-  m_WarpGrid[2] = 5;
-
-  m_UpdateRequired = true;
-  m_AirIndex = 1;
-  this->m_PriorNames.clear();
-  // m_ClassToPriorMapping.clear();
-}
+  : m_AtlasTransformType("SyN")
+  , m_SampleSpacing(2.0)
+  , m_MaxBiasDegree(4)
+  , m_BiasLikelihoodTolerance(1e-2)
+  , m_LikelihoodTolerance(1e-5)
+  , m_MaximumIterations(40)
+  , m_PurePlugsThreshold(0.2)
+  , m_NumberOfSubSamplesInEachPlugArea{ 0, 0, 0 }
+  , m_WarpGrid{ 5, 5, 5 }
+  , m_WarpLikelihoodTolerance(1e-3)
+  , m_UpdateRequired(true)
+  , m_AirIndex(1)
+{}
 
 template <typename TInputImage, typename TProbabilityImage>
 EMSegmentationFilter<TInputImage, TProbabilityImage>::~EMSegmentationFilter() = default;

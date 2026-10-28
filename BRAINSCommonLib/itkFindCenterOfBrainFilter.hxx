@@ -41,11 +41,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::FindCenterOfBrainFilter()
   , m_DebugAfterGridComputationsForegroundImage(nullptr)
   , m_DebugClippedImageMask(nullptr)
   , m_DebugTrimmedImage(nullptr)
-{
-  m_CenterOfBrain[0] = 0.0;
-  m_CenterOfBrain[1] = 0.0;
-  m_CenterOfBrain[2] = 0.0;
-}
+{}
 
 template <typename TInputImage, typename TMaskImage>
 FindCenterOfBrainFilter<TInputImage, TMaskImage>::~FindCenterOfBrainFilter() = default;

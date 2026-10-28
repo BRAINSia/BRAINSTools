@@ -170,43 +170,31 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
 
 template <typename TInputImage, typename TOutputImage>
 BRAINSHoughEyeDetector<TInputImage, TOutputImage>::BRAINSHoughEyeDetector()
-{
-  /** Input Parameters */
-  // Note the default parameter set is designed for the IXI database
-  this->m_NumberOfSpheres = 2;
-  this->m_MinimumRadius = default_minimum_radius;
-  this->m_MaximumRadius = default_maximum_radius;
-  this->m_SigmaGradient = 1.;
-  this->m_Variance = 1.;
-  this->m_SphereRadiusRatio = 1.;
-  this->m_VotingRadiusRatio = .5;
-  this->m_Threshold = 10.;
-  this->m_OutputThreshold = .8;
-  this->m_GradientThreshold = 0.;
-  this->m_NbOfThreads = 64;
-  this->m_SamplingRatio = .2;
-  this->m_HoughEyeDetectorMode = 1; // for T1-weighted image
-  this->m_orig_lmk_CenterOfHeadMass.Fill(-9999.87654321);
-
-  this->m_ResultsDir = ".";
-  this->m_WritedebuggingImagesLevel = 0;
-
-  /** Output parameters */
-  this->m_AccumulatorImage = TInputImage::New();
-  this->m_RoIImage = TInputImage::New();
-  this->m_orig_lmk_LE.Fill(123);
-  this->m_orig_lmk_RE.Fill(123);
-  this->m_Failure = false;
-
-  this->m_MaxInputPixelValue = 0;
-  this->m_MinInputPixelValue = 0;
-
-  this->m_MaxInputPixelValue = -1234;
-  this->m_MinInputPixelValue = 1234;
-
-  /** Internal parameters */
-  this->m_orig2eyeFixedTransform = VersorRigidTransformType::New();
-}
+  : m_NumberOfSpheres(2)
+  , m_MinimumRadius(default_minimum_radius)
+  , m_MaximumRadius(default_maximum_radius)
+  , m_SigmaGradient(1.)
+  , m_Variance(1.)
+  , m_SphereRadiusRatio(1.)
+  , m_VotingRadiusRatio(.5)
+  , m_Threshold(10.)
+  , m_OutputThreshold(.8)
+  , m_GradientThreshold(0.)
+  , m_NbOfThreads(64)
+  , m_SamplingRatio(.2)
+  , m_HoughEyeDetectorMode(1)
+  , m_orig_lmk_CenterOfHeadMass(MakeFilled<InputPointType>(-9999.87654321))
+  , m_ResultsDir(".")
+  , m_WritedebuggingImagesLevel(0)
+  , m_AccumulatorImage(TInputImage::New())
+  , m_RoIImage(TInputImage::New())
+  , m_orig_lmk_LE(MakeFilled<OutputPointType>(123))
+  , m_orig_lmk_RE(MakeFilled<OutputPointType>(123))
+  , m_Failure(false)
+  , m_MaxInputPixelValue(-1234)
+  , m_MinInputPixelValue(1234)
+  , m_orig2eyeFixedTransform(VersorRigidTransformType::New())
+{}
 
 template <typename TInputImage, typename TOutputImage>
 typename BRAINSHoughEyeDetector<TInputImage, TOutputImage>::OutputImagePointer

@@ -32,11 +32,10 @@ public:
   float dist;
 
   MSTEdge()
-  {
-    this->i = 0;
-    this->j = 0;
-    this->dist = 0;
-  }
+    : i(0)
+    , j(0)
+    , dist(0)
+  {}
 
   ~MSTEdge() {}
 

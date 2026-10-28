@@ -75,23 +75,13 @@ SymmetricInverse(const vnl_matrix<double> & A)
 
 template <typename TInputImage, typename TProbabilityImage>
 LLSBiasCorrector<TInputImage, TProbabilityImage>::LLSBiasCorrector()
-{
-  m_InputImages.clear();
-
-  m_MaxDegree = 4;
-
-  m_DebugLevel = 0;
-  m_OutputDebugDir = "";
-  m_SampleSpacing = 4.0;
-
-  m_XMu[0] = 0.0;
-  m_XMu[1] = 0.0;
-  m_XMu[2] = 0.0;
-
-  m_XStd[0] = 1.0;
-  m_XStd[1] = 1.0;
-  m_XStd[2] = 1.0;
-}
+  : m_DebugLevel(0)
+  , m_OutputDebugDir("")
+  , m_MaxDegree(4)
+  , m_SampleSpacing(4.0)
+  , m_XMu{ 0.0, 0.0, 0.0 }
+  , m_XStd{ 1.0, 1.0, 1.0 }
+{}
 
 template <typename TInputImage, typename TProbabilityImage>
 LLSBiasCorrector<TInputImage, TProbabilityImage>::~LLSBiasCorrector()

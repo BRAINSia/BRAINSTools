@@ -67,7 +67,9 @@ namespace
 class ShowProgressObject
 {
 public:
-  ShowProgressObject(itk::ProcessObject * o) { m_Process = o; }
+  ShowProgressObject(itk::ProcessObject * o)
+    : m_Process(o)
+  {}
 
   void
   ShowProgress()

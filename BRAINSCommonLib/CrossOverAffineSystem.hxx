@@ -27,16 +27,11 @@
  */
 template <typename TCoordinateType, unsigned int NDimensions>
 CrossOverAffineSystem<TCoordinateType, NDimensions>::CrossOverAffineSystem()
-  : m_InhaleEncodeConversion()
-  , m_InhaleDecodeConversion()
-  , m_ExhaleEncodeConversion()
-  , m_ExhaleDecodeConversion()
+  : m_InhaleEncodeConversion(AffineTransformType::New())
+  , m_InhaleDecodeConversion(AffineTransformType::New())
+  , m_ExhaleEncodeConversion(AffineTransformType::New())
+  , m_ExhaleDecodeConversion(AffineTransformType::New())
 {
-  m_InhaleEncodeConversion = AffineTransformType::New();
-  m_InhaleDecodeConversion = AffineTransformType::New();
-  m_ExhaleEncodeConversion = AffineTransformType::New();
-  m_ExhaleDecodeConversion = AffineTransformType::New();
-
   m_InhaleEncodeConversion->SetIdentity();
   m_InhaleDecodeConversion->SetIdentity();
   m_ExhaleEncodeConversion->SetIdentity();

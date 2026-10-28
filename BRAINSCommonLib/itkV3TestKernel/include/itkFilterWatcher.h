@@ -27,29 +27,27 @@ class FilterWatcher
 {
 public:
   FilterWatcher(itk::ProcessObject * o, const char * comment = "")
+    : m_Start(0)
+    , m_End(0)
+    , m_Steps(0)
+    , m_TestAbort(false)
+    , m_Comment(comment)
+    , m_Process(o)
   {
-    m_Start = 0;
-    m_End = 0;
-    m_Process = o;
-    m_Steps = 0;
-    m_Comment = comment;
-    m_TestAbort = false;
 #if defined(_COMPILER_VERSION) && (_COMPILER_VERSION == 730)
     m_Quiet = true;
 #else
     m_Quiet = false;
 #endif
-    itk::SimpleMemberCommand<FilterWatcher>::Pointer startFilterCommand;
-    itk::SimpleMemberCommand<FilterWatcher>::Pointer endFilterCommand;
-    itk::SimpleMemberCommand<FilterWatcher>::Pointer progressFilterCommand;
-    itk::SimpleMemberCommand<FilterWatcher>::Pointer iterationFilterCommand;
-    itk::SimpleMemberCommand<FilterWatcher>::Pointer abortFilterCommand;
-
-    startFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
-    endFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
-    progressFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
-    iterationFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
-    abortFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
+    itk::SimpleMemberCommand<FilterWatcher>::Pointer startFilterCommand =
+      itk::SimpleMemberCommand<FilterWatcher>::New();
+    itk::SimpleMemberCommand<FilterWatcher>::Pointer endFilterCommand = itk::SimpleMemberCommand<FilterWatcher>::New();
+    itk::SimpleMemberCommand<FilterWatcher>::Pointer progressFilterCommand =
+      itk::SimpleMemberCommand<FilterWatcher>::New();
+    itk::SimpleMemberCommand<FilterWatcher>::Pointer iterationFilterCommand =
+      itk::SimpleMemberCommand<FilterWatcher>::New();
+    itk::SimpleMemberCommand<FilterWatcher>::Pointer abortFilterCommand =
+      itk::SimpleMemberCommand<FilterWatcher>::New();
 
     startFilterCommand->SetCallbackFunction(this, &FilterWatcher::StartFilter);
     endFilterCommand->SetCallbackFunction(this, &FilterWatcher::EndFilter);

@@ -187,15 +187,15 @@ private:
   TransformTypePointer m_Output{};
 
   // Parameters for the image registration
-  int               m_SpatialSampleScale{};
-  int               m_MaximumNumberOfIterations{};
-  int               m_MaximumNumberOfEvaluations{};
-  int               m_MaximumNumberOfCorrections{};
-  int               m_BSplineHistogramBins{};
-  TransformSizeType m_GridSize{};
-  int               m_GridBorderSize{};
-  float             m_CostFunctionConvergenceFactor{};
-  float             m_ProjectedGradientTolerance{};
+  int               m_SpatialSampleScale{ 100 };
+  int               m_MaximumNumberOfIterations{ 500 };
+  int               m_MaximumNumberOfEvaluations{ 500 };
+  int               m_MaximumNumberOfCorrections{ 12 };
+  int               m_BSplineHistogramBins{ 50 };
+  TransformSizeType m_GridSize{ { 12, 4, 12 } };
+  int               m_GridBorderSize{ 3 };
+  float             m_CostFunctionConvergenceFactor{ 1e+7 };
+  float             m_ProjectedGradientTolerance{ 1e-4 };
 
   int   m_BoundTypeX{};
   int   m_BoundTypeY{};

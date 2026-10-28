@@ -32,22 +32,16 @@ namespace Testing
 // ----------------------------------------------------------------------------
 template <typename TInputImage, typename TOutputImage>
 ComparisonImageFilter<TInputImage, TOutputImage>::ComparisonImageFilter()
+  : m_DifferenceThreshold(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_MeanDifference(NumericTraits<RealType>::ZeroValue())
+  , m_TotalDifference(NumericTraits<AccumulateType>::ZeroValue())
+  , m_NumberOfPixelsWithDifferences(0)
+  , m_ToleranceRadius(0)
+  , m_IgnoreBoundaryPixels(false)
 {
   this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
   // We require two inputs to execute.
   this->SetNumberOfRequiredInputs(2);
-
-  // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits<OutputPixelType>::ZeroValue();
-
-  // Set the default ToleranceRadius.
-  m_ToleranceRadius = 0;
-
-  // Initialize statistics about difference image.
-  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
-  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
-  m_NumberOfPixelsWithDifferences = 0;
-  m_IgnoreBoundaryPixels = false;
 }
 
 // ----------------------------------------------------------------------------

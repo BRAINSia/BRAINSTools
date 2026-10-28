@@ -73,14 +73,10 @@ class firstInOrderingOfStrings
 {
 public:
   firstInOrderingOfStrings()
+    : m_firstInOrdering{ "T1", "T2", "PD", "FLAIR", "OTHER" }
   {
     // HACK: This is hard coding that should not be here.
     //      A better insertion ordered map is needed.
-    this->m_firstInOrdering.emplace_back("T1");
-    this->m_firstInOrdering.emplace_back("T2");
-    this->m_firstInOrdering.emplace_back("PD");
-    this->m_firstInOrdering.emplace_back("FLAIR");
-    this->m_firstInOrdering.emplace_back("OTHER");
   }
   bool
   operator()(const std::string & lhs, const std::string & rhs) const

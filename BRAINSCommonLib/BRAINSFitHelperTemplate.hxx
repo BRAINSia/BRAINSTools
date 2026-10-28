@@ -523,7 +523,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   , m_MinimumStepLength(1, 0.005)
   , m_TransformType(1, "Rigid")
   , m_InitializeTransformMode("Off")
-  , m_SplineGridSize(3, 10)
+  , m_SplineGridSize{ 14, 10, 12 }
   , m_CurrentGenericTransform(nullptr)
   , m_RestoreState(nullptr)
   , m_CostMetricObject(nullptr)
@@ -531,11 +531,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::BRAINSFitHelperTemplat
   , m_SyNMetricType("")
   , m_SaveState("")
 
-{
-  m_SplineGridSize[0] = 14;
-  m_SplineGridSize[1] = 10;
-  m_SplineGridSize[2] = 12;
-}
+{}
 
 template <typename FixedImageType, typename MovingImageType>
 template <typename TransformType, typename OptimizerType, typename FitCommonCodeMetricType>

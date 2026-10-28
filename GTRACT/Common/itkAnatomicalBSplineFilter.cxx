@@ -48,32 +48,8 @@
 namespace itk
 {
 AnatomicalBSplineFilter::AnatomicalBSplineFilter()
-{
-  m_SpatialSampleScale = 100;
-  m_MaximumNumberOfIterations = 500;
-  m_MaximumNumberOfEvaluations = 500;
-  m_MaximumNumberOfCorrections = 12;
-  m_BSplineHistogramBins = 50;
-  m_GridSize[0] = 12;
-  m_GridSize[1] = 4;
-  m_GridSize[2] = 12;
-  m_GridBorderSize = 3;
-  m_CostFunctionConvergenceFactor = 1e+7;
-  m_ProjectedGradientTolerance = 1e-4;
-
-  m_BoundTypeX = 0;
-  m_BoundTypeY = 0;
-  m_BoundTypeZ = 0;
-  m_LowerBoundX = 0.0;
-  m_LowerBoundY = 0.0;
-  m_LowerBoundZ = 0.0;
-  m_UpperBoundX = 0.0;
-  m_UpperBoundY = 0.0;
-  m_UpperBoundZ = 0.0;
-
-  m_BulkTransform = nullptr;
-  m_Output = TransformType::New();
-}
+  : m_Output(TransformType::New())
+{}
 
 void
 AnatomicalBSplineFilter::Update()

@@ -65,7 +65,7 @@ public:
     , m_ResamplerReferenceImage(nullptr)
     , m_CenterOfHeadMass()
     , m_Optimizer(OptimizerType::New())
-    , m_imInterp(nullptr)
+    , m_imInterp(LinearInterpolatorType::New())
   {
     this->m_Optimizer->SetMetric(&(*this));
     this->m_Optimizer->SetStepLength(0.025);
@@ -75,8 +75,6 @@ public:
 
     this->m_params.set_size(SpaceDimension);
     this->m_params.fill(0.0);
-
-    this->m_imInterp = LinearInterpolatorType::New();
   }
 
   ////////////////////////

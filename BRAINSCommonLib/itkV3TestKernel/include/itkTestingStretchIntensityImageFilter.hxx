@@ -39,16 +39,14 @@ namespace Testing
  */
 template <typename TInputImage, typename TOutputImage>
 StretchIntensityImageFilter<TInputImage, TOutputImage>::StretchIntensityImageFilter()
+  : m_Scale(1.0)
+  , m_Shift(0.0)
+  , m_InputMinimum(NumericTraits<InputPixelType>::max())
+  , m_InputMaximum(NumericTraits<InputPixelType>::ZeroValue())
+  , m_OutputMinimum(NumericTraits<OutputPixelType>::NonpositiveMin())
+  , m_OutputMaximum(NumericTraits<OutputPixelType>::max())
 {
   this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
-  m_OutputMaximum = NumericTraits<OutputPixelType>::max();
-  m_OutputMinimum = NumericTraits<OutputPixelType>::NonpositiveMin();
-
-  m_InputMaximum = NumericTraits<InputPixelType>::ZeroValue();
-  m_InputMinimum = NumericTraits<InputPixelType>::max();
-
-  m_Scale = 1.0;
-  m_Shift = 0.0;
 }
 
 /**

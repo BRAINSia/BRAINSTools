@@ -39,12 +39,11 @@ namespace itk
 {
 template <typename TParser, typename TPreprocessor, typename TRegistrator>
 ApplicationBase<TParser, TPreprocessor, TRegistrator>::ApplicationBase()
-{
-  m_Parser = ParserType::New();
-  m_Preprocessor = PreprocessorType::New();
-  m_Registrator = RegistratorType::New();
-  m_OutDebug = false;
-}
+  : m_Parser(ParserType::New())
+  , m_Preprocessor(PreprocessorType::New())
+  , m_Registrator(RegistratorType::New())
+  , m_OutDebug(false)
+{}
 
 template <typename TParser, typename TPreprocessor, typename TRegistrator>
 void

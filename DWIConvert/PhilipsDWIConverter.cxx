@@ -40,13 +40,15 @@ PhilipsDWIConverter::ExtractDWIData()
     for (unsigned int k = 0; k < this->m_NVolume; ++k)
     {
       std::string DiffusionDirectionality;
-      double      tmpFD;
       bool        useSupplement49Definitions(false);
-      if ((this->m_Headers[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS ||
-           this->m_Headers[k]->GetElementFD(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS) ||
-          (this->m_Headers[k]->GetElementDSorOB(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS))
       {
-        useSupplement49Definitions = true;
+        double tmpFD;
+        if ((this->m_Headers[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS ||
+             this->m_Headers[k]->GetElementFD(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS) ||
+            (this->m_Headers[k]->GetElementDSorOB(0x0018, 0x9087, tmpFD, false) == EXIT_SUCCESS))
+        {
+          useSupplement49Definitions = true;
+        }
       }
 
       bool             B0FieldFound = false;
@@ -92,12 +94,14 @@ PhilipsDWIConverter::ExtractDWIData()
             // DiffusionSeqEntry=this->m_Headers[k]->GetSeqEntry(0x0018,0x9076);
             brains::DCMTKSequence DiffusionSeqEntry;
             this->m_Headers[k]->GetElementSQ(0x0018, 0x9076, DiffusionSeqEntry);
-            // const unsigned int
-            // n=DiffusionSeqEntry->GetNumberOfSQItems();
-            unsigned int n = DiffusionSeqEntry.card();
-            if (n == 0)
             {
-              itkGenericExceptionMacro("Diffusion gradient sequence 0018|9076 has no items");
+              // const unsigned int
+              // n=DiffusionSeqEntry->GetNumberOfSQItems();
+              unsigned int n = DiffusionSeqEntry.card();
+              if (n == 0)
+              {
+                itkGenericExceptionMacro("Diffusion gradient sequence 0018|9076 has no items");
+              }
             }
             DiffusionSeqEntry.GetElementFD(0x0018, 0x9089, 3, doubleArray);
           }
@@ -109,23 +113,25 @@ PhilipsDWIConverter::ExtractDWIData()
         }
         else
         {
-          float                     tmp[3];
-          brains::DCMTKFileReader * hdr = this->m_Headers[k];
-          if (hdr->GetElementFLorOB(0x2005, 0x10b0, tmp[0], false) == EXIT_FAILURE ||
-              hdr->GetElementFLorOB(0x2005, 0x10b1, tmp[1], false) == EXIT_FAILURE ||
-              hdr->GetElementFLorOB(0x2005, 0x10b2, tmp[2], false) == EXIT_FAILURE)
+          float tmp[3];
           {
-            // try with new philips tags.
-            if (hdr->GetElementFLorOB(0x2005, 0x12b0, tmp[0], false) == EXIT_FAILURE ||
-                hdr->GetElementFLorOB(0x2005, 0x12b1, tmp[1], false) == EXIT_FAILURE ||
-                hdr->GetElementFLorOB(0x2005, 0x12b2, tmp[2], false) == EXIT_FAILURE)
+            brains::DCMTKFileReader * hdr = this->m_Headers[k];
+            if (hdr->GetElementFLorOB(0x2005, 0x10b0, tmp[0], false) == EXIT_FAILURE ||
+                hdr->GetElementFLorOB(0x2005, 0x10b1, tmp[1], false) == EXIT_FAILURE ||
+                hdr->GetElementFLorOB(0x2005, 0x10b2, tmp[2], false) == EXIT_FAILURE)
             {
-              // last chance. GetELementFD throws exception on failure
-              double tmpD[3];
-              hdr->GetElementFD(0x0018, 0x9089, 3, tmpD);
-              tmp[0] = static_cast<float>(tmpD[0]);
-              tmp[1] = static_cast<float>(tmpD[1]);
-              tmp[2] = static_cast<float>(tmpD[2]);
+              // try with new philips tags.
+              if (hdr->GetElementFLorOB(0x2005, 0x12b0, tmp[0], false) == EXIT_FAILURE ||
+                  hdr->GetElementFLorOB(0x2005, 0x12b1, tmp[1], false) == EXIT_FAILURE ||
+                  hdr->GetElementFLorOB(0x2005, 0x12b2, tmp[2], false) == EXIT_FAILURE)
+              {
+                // last chance. GetELementFD throws exception on failure
+                double tmpD[3];
+                hdr->GetElementFD(0x0018, 0x9089, 3, tmpD);
+                tmp[0] = static_cast<float>(tmpD[0]);
+                tmp[1] = static_cast<float>(tmpD[1]);
+                tmp[2] = static_cast<float>(tmpD[2]);
+              }
             }
           }
           vect3d[0] = static_cast<double>(tmp[0]);
@@ -208,14 +214,16 @@ PhilipsDWIConverter::ExtractDWIData()
         v[2] = 0;
         unsigned int nOld = gradientDirectionAndBValue.size();
         gradientDirectionAndBValue[v] = 0;
-        unsigned int nNew = gradientDirectionAndBValue.size();
 
-        if (nOld != nNew)
         {
-          vnl_vector_fixed<double, 3> vect3d;
-          vect3d.fill(0);
-          this->m_DiffusionVectors.push_back(vect3d);
-          this->m_BValues.push_back(0);
+          unsigned int nNew = gradientDirectionAndBValue.size();
+          if (nOld != nNew)
+          {
+            vnl_vector_fixed<double, 3> vect3d;
+            vect3d.fill(0);
+            this->m_DiffusionVectors.push_back(vect3d);
+            this->m_BValues.push_back(0);
+          }
         }
       }
       else
@@ -261,15 +269,17 @@ PhilipsDWIConverter::ExtractDWIData()
         v[2] = dwgVal[2];
         unsigned int nOld = gradientDirectionAndBValue.size();
         gradientDirectionAndBValue[v] = dwbValue;
-        unsigned int nNew = gradientDirectionAndBValue.size();
 
-        if (nOld != nNew)
         {
-          const vnl_vector_fixed<double, 3> vect3d{ v[0], v[1], v[2] };
-          // vect3d.normalize();
-          this->m_DiffusionVectors.push_back(vect3d);
+          unsigned int nNew = gradientDirectionAndBValue.size();
+          if (nOld != nNew)
+          {
+            const vnl_vector_fixed<double, 3> vect3d{ v[0], v[1], v[2] };
+            // vect3d.normalize();
+            this->m_DiffusionVectors.push_back(vect3d);
 
-          this->m_BValues.push_back(dwbValue);
+            this->m_BValues.push_back(dwbValue);
+          }
         }
       }
     }
@@ -301,24 +311,26 @@ PhilipsDWIConverter::ExtractDWIData()
       DeInterleaveVolume();
     }
   }
-  // deal with trailing isotropic images
-  unsigned long trailingVolumes = this->m_NVolume - this->m_DiffusionVectors.size();
-  if (trailingVolumes > 0)
   {
-    std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors " << this->m_DiffusionVectors.size()
-              << " Removing " << trailingVolumes << " Isotropic volumes." << std::endl;
-    using ExtractImageFilterType = itk::ExtractImageFilter<Volume3DUnwrappedType, Volume3DUnwrappedType>;
-    auto extractImageFilter = ExtractImageFilterType::New();
+    // deal with trailing isotropic images
+    unsigned long trailingVolumes = this->m_NVolume - this->m_DiffusionVectors.size();
+    if (trailingVolumes > 0)
+    {
+      std::cout << "# of Volumes " << this->m_NVolume << " # of Diffusion Vectors " << this->m_DiffusionVectors.size()
+                << " Removing " << trailingVolumes << " Isotropic volumes." << std::endl;
+      using ExtractImageFilterType = itk::ExtractImageFilter<Volume3DUnwrappedType, Volume3DUnwrappedType>;
+      auto extractImageFilter = ExtractImageFilterType::New();
 
-    Volume3DUnwrappedType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
-    Volume3DUnwrappedType::SizeType   desiredSize = desiredRegion.GetSize();
-    desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
-    desiredRegion.SetSize(desiredSize);
-    extractImageFilter->SetExtractionRegion(desiredRegion);
-    extractImageFilter->SetInput(this->m_Volume);
-    extractImageFilter->Update();
-    this->m_Volume = extractImageFilter->GetOutput();
-    this->m_NVolume -= trailingVolumes;
+      Volume3DUnwrappedType::RegionType desiredRegion = this->m_Volume->GetLargestPossibleRegion();
+      Volume3DUnwrappedType::SizeType   desiredSize = desiredRegion.GetSize();
+      desiredSize[2] -= (trailingVolumes * this->m_SlicesPerVolume);
+      desiredRegion.SetSize(desiredSize);
+      extractImageFilter->SetExtractionRegion(desiredRegion);
+      extractImageFilter->SetInput(this->m_Volume);
+      extractImageFilter->Update();
+      this->m_Volume = extractImageFilter->GetOutput();
+      this->m_NVolume -= trailingVolumes;
+    }
   }
 }
 

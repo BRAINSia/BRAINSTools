@@ -64,16 +64,18 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   const int                                             numberOfImages = inputVolume.size();
-  bool                                                  debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    for (int i = 0; i < numberOfImages; ++i)
+    bool debug = true;
+    if (debug)
     {
-      std::cout << "Input Volume:                      " << inputVolume[i] << std::endl;
+      std::cout << "=====================================================" << std::endl;
+      for (int i = 0; i < numberOfImages; ++i)
+      {
+        std::cout << "Input Volume:                      " << inputVolume[i] << std::endl;
+      }
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "=====================================================" << std::endl;
     }
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "=====================================================" << std::endl;
   }
 
   bool violated = false;
@@ -147,16 +149,18 @@ main(int argc, char * argv[])
     }
     else
     {
-      double distance = std::sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin));
-      if (!ignoreOrigins && distance > 1.0E-3)
       {
-        std::cerr << "Origins differ " << firstOrigin << " " << currentOrigin << std::endl;
-        return EXIT_FAILURE;
-      }
-      else if (distance > 1.0E-6)
-      {
-        // if there is a small difference make them the same
-        imageReader->GetOutput()->SetOrigin(firstOrigin);
+        double distance = std::sqrt(firstOrigin.SquaredEuclideanDistanceTo(currentOrigin));
+        if (!ignoreOrigins && distance > 1.0E-3)
+        {
+          std::cerr << "Origins differ " << firstOrigin << " " << currentOrigin << std::endl;
+          return EXIT_FAILURE;
+        }
+        else if (distance > 1.0E-6)
+        {
+          // if there is a small difference make them the same
+          imageReader->GetOutput()->SetOrigin(firstOrigin);
+        }
       }
     }
     DWIMetaDataDictionaryValidator::GradientTableType currGradTable = currentMetaDataValidator.GetGradientTable();

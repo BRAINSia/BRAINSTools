@@ -103,19 +103,21 @@ ExtractSingleLargestRegionFromMask(const itk::Image<unsigned char, 3>::Pointer &
   }
 
   ByteImageType::Pointer safetyImage = dilateImage;
-  const int              finalOpeningSize = (closingSize - safetySize) > 0 ? (closingSize - safetySize) : 0;
-  if (finalOpeningSize > 0)
   {
-    // Binary Erode
-    StructElementType remainderStruct;
-    remainderStruct.SetRadius(finalOpeningSize);
-    remainderStruct.CreateStructuringElement();
-    const auto finalErode = ErodeType::New();
-    finalErode->SetErodeValue(1);
-    finalErode->SetKernel(remainderStruct);
-    finalErode->SetInput(dilateImage);
-    finalErode->Update();
-    safetyImage = finalErode->GetOutput();
+    const int finalOpeningSize = (closingSize - safetySize) > 0 ? (closingSize - safetySize) : 0;
+    if (finalOpeningSize > 0)
+    {
+      // Binary Erode
+      StructElementType remainderStruct;
+      remainderStruct.SetRadius(finalOpeningSize);
+      remainderStruct.CreateStructuringElement();
+      const auto finalErode = ErodeType::New();
+      finalErode->SetErodeValue(1);
+      finalErode->SetKernel(remainderStruct);
+      finalErode->SetInput(dilateImage);
+      finalErode->Update();
+      safetyImage = finalErode->GetOutput();
+    }
   }
 
   using multFilter = itk::MultiplyImageFilter<ByteImageType, ByteImageType, ByteImageType>;

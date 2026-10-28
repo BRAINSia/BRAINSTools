@@ -390,10 +390,12 @@ DCMTKFileReader::LoadFile()
   {
     this->m_FrameCount = 1;
   }
-  int fnum(0);
-  if (this->GetElementIS(0x0020, 0x0013, fnum, false) == EXIT_SUCCESS)
   {
-    this->m_FileNumber = fnum;
+    int fnum(0);
+    if (this->GetElementIS(0x0020, 0x0013, fnum, false) == EXIT_SUCCESS)
+    {
+      this->m_FileNumber = fnum;
+    }
   }
 }
 
@@ -1095,16 +1097,18 @@ DCMTKFileReader::GetImageDataType() const
 {
   unsigned short  IsSigned;
   unsigned short  BitsAllocated;
-  unsigned short  BitsStored;
   unsigned short  HighBit;
   IOComponentEnum type = IOComponentEnum::UNKNOWNCOMPONENTTYPE;
 
-  if (this->GetElementUS(0x0028, 0x0100, BitsAllocated, false) != EXIT_SUCCESS ||
-      this->GetElementUS(0x0028, 0x0101, BitsStored, false) != EXIT_SUCCESS ||
-      this->GetElementUS(0x0028, 0x0102, HighBit, false) != EXIT_SUCCESS ||
-      this->GetElementUS(0x0028, 0x0103, IsSigned, false) != EXIT_SUCCESS)
   {
-    return type;
+    unsigned short BitsStored;
+    if (this->GetElementUS(0x0028, 0x0100, BitsAllocated, false) != EXIT_SUCCESS ||
+        this->GetElementUS(0x0028, 0x0101, BitsStored, false) != EXIT_SUCCESS ||
+        this->GetElementUS(0x0028, 0x0102, HighBit, false) != EXIT_SUCCESS ||
+        this->GetElementUS(0x0028, 0x0103, IsSigned, false) != EXIT_SUCCESS)
+    {
+      return type;
+    }
   }
   double slope, intercept;
   this->GetSlopeIntercept(slope, intercept);
@@ -1414,22 +1418,24 @@ DCMTKFileReader::PopulateMetaDataDictionary(MetaDataDictionary & dict) const
     if (vr == EVR_OB || vr == EVR_OW || vr == EVR_OF || vr == EVR_OD || vr == EVR_OL || vr == EVR_OV || vr == EVR_UN ||
         vr == EVR_ox || vr == EVR_px)
     {
-      // Binary VR — base64-encode the raw bytes
-      Uint8 * byteValue = nullptr;
-      if (element->getUint8Array(byteValue) == EC_Normal && byteValue != nullptr)
       {
-        const Uint32 length = element->getLength();
-        if (length > 0)
+        // Binary VR — base64-encode the raw bytes
+        Uint8 * byteValue = nullptr;
+        if (element->getUint8Array(byteValue) == EC_Normal && byteValue != nullptr)
         {
-          int encodedLengthEstimate = 2 * static_cast<int>(length);
-          encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
-          const auto bin = std::make_unique<char[]>(encodedLengthEstimate);
-          const auto encodedLengthActual =
-            static_cast<unsigned int>(itksysBase64_Encode(reinterpret_cast<const unsigned char *>(byteValue),
-                                                          static_cast<SizeValueType>(length),
-                                                          reinterpret_cast<unsigned char *>(bin.get()),
-                                                          0));
-          EncapsulateMetaData<std::string>(dict, key, std::string(bin.get(), encodedLengthActual));
+          const Uint32 length = element->getLength();
+          if (length > 0)
+          {
+            int encodedLengthEstimate = 2 * static_cast<int>(length);
+            encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
+            const auto bin = std::make_unique<char[]>(encodedLengthEstimate);
+            const auto encodedLengthActual =
+              static_cast<unsigned int>(itksysBase64_Encode(reinterpret_cast<const unsigned char *>(byteValue),
+                                                            static_cast<SizeValueType>(length),
+                                                            reinterpret_cast<unsigned char *>(bin.get()),
+                                                            0));
+            EncapsulateMetaData<std::string>(dict, key, std::string(bin.get(), encodedLengthActual));
+          }
         }
       }
     }

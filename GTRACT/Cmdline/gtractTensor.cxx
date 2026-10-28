@@ -82,20 +82,22 @@ main(int argc, char * argv[])
   MedianFilterSize[1] = medianFilterSize[1];
   MedianFilterSize[2] = medianFilterSize[2];
 
-  bool debug = true;
   // applyMeasurementFrame = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Image: " << inputVolume << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Resample Isotropic: " << resampleIsotropic << std::endl;
-    std::cout << "Voxel Size: " << voxelSize << std::endl;
-    std::cout << "Median Filter Size: " << MedianFilterSize << std::endl;
-    std::cout << "Threshold: " << backgroundSuppressingThreshold << std::endl;
-    std::cout << "B0 Index: " << b0Index << std::endl;
-    std::cout << "Apply Measurement Frame: " << applyMeasurementFrame << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Input Image: " << inputVolume << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Resample Isotropic: " << resampleIsotropic << std::endl;
+      std::cout << "Voxel Size: " << voxelSize << std::endl;
+      std::cout << "Median Filter Size: " << MedianFilterSize << std::endl;
+      std::cout << "Threshold: " << backgroundSuppressingThreshold << std::endl;
+      std::cout << "B0 Index: " << b0Index << std::endl;
+      std::cout << "Apply Measurement Frame: " << applyMeasurementFrame << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   bool violated = false;

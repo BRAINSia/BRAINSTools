@@ -323,50 +323,51 @@ SiemensDWIConverter::ExtractDWIData()
 
     if (this->m_UseBMatrixGradientDirections == true)
     {
-      // this->m_UseBMatrixGradientDirections == true
-      /* calculate gradient direction from b-matrix */
-      bool hasBMatrix = ExtractBMatrix(&csaHeader, k, bMatrix);
-
-      if (hasBMatrix && (bValue != 0))
       {
-        std::cout << "=============================================" << std::endl;
-        std::cout << "BMatrix calculations..." << std::endl;
-
-        // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
-        // it's the gradient direction and trace of the matrix is the b-value
-
-        // UNC comments: Computing the decomposition
-        vnl_svd<double> svd(bMatrix.as_matrix());
-
-        // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
-        gradient[0] = svd.U(0, 0);
-        gradient[1] = svd.U(1, 0);
-        gradient[2] = svd.U(2, 0);
-
-        std::cout << "BMatrix: " << std::endl;
-        std::cout << bMatrix[0][0] << std::endl;
-        std::cout << bMatrix[0][1] << "\t" << bMatrix[1][1] << std::endl;
-        std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
-
-        // UNC comments: The b-value si the trace of the bmatrix
-        const double bmatrixCalculatedBValue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
-
-        std::cout << bmatrixCalculatedBValue << std::endl;
-        // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
-        // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
-        if (bmatrixCalculatedBValue < 1e-2)
+        // this->m_UseBMatrixGradientDirections == true
+        /* calculate gradient direction from b-matrix */
+        bool hasBMatrix = ExtractBMatrix(&csaHeader, k, bMatrix);
+        if (hasBMatrix && (bValue != 0))
         {
-          std::cout << "B0 image detected from bmatrix trace: gradient direction forced to 0" << std::endl;
-          std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0]) << " "
-                    << this->m_DoubleConvert(gradient[1]) << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
-          // this->m_BValues.push_back(0);
-          bValue = 0;
-        }
-        else
-        {
-          std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0]) << " "
-                    << this->m_DoubleConvert(gradient[1]) << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
-          bValue = bmatrixCalculatedBValue;
+          std::cout << "=============================================" << std::endl;
+          std::cout << "BMatrix calculations..." << std::endl;
+
+          // UNC comments: The principal eigenvector of the bmatrix is to be extracted as
+          // it's the gradient direction and trace of the matrix is the b-value
+
+          // UNC comments: Computing the decomposition
+          vnl_svd<double> svd(bMatrix.as_matrix());
+
+          // UNC comments: Extracting the principal eigenvector i.e. the gradient direction
+          gradient[0] = svd.U(0, 0);
+          gradient[1] = svd.U(1, 0);
+          gradient[2] = svd.U(2, 0);
+
+          std::cout << "BMatrix: " << std::endl;
+          std::cout << bMatrix[0][0] << std::endl;
+          std::cout << bMatrix[0][1] << "\t" << bMatrix[1][1] << std::endl;
+          std::cout << bMatrix[0][2] << "\t" << bMatrix[1][2] << "\t" << bMatrix[2][2] << std::endl;
+
+          // UNC comments: The b-value si the trace of the bmatrix
+          const double bmatrixCalculatedBValue = bMatrix[0][0] + bMatrix[1][1] + bMatrix[2][2];
+
+          std::cout << bmatrixCalculatedBValue << std::endl;
+          // UNC comments: Even if the bmatrix is null, the svd decomposition set the 1st eigenvector
+          // to (1,0,0). So we force the gradient direction to 0 if the bvalue is null
+          if (bmatrixCalculatedBValue < 1e-2)
+          {
+            std::cout << "B0 image detected from bmatrix trace: gradient direction forced to 0" << std::endl;
+            std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0]) << " "
+                      << this->m_DoubleConvert(gradient[1]) << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+            // this->m_BValues.push_back(0);
+            bValue = 0;
+          }
+          else
+          {
+            std::cout << "Gradient coordinates: " << this->m_DoubleConvert(gradient[0]) << " "
+                      << this->m_DoubleConvert(gradient[1]) << " " << this->m_DoubleConvert(gradient[2]) << std::endl;
+            bValue = bmatrixCalculatedBValue;
+          }
         }
       }
     }
@@ -379,14 +380,15 @@ SiemensDWIConverter::ExtractDWIData()
       }
       else
       {
-        /* determine gradient direction from tag (0029,1010) */
-        bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
-
-        if (!hasGradients)
         {
-          // did not find enough information
-          std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
-                    << std::endl;
+          /* determine gradient direction from tag (0029,1010) */
+          bool hasGradients = ExtractGradientDirection(&csaHeader, k, gradient);
+          if (!hasGradients)
+          {
+            // did not find enough information
+            std::cout << "Warning: Cannot find complete information on DiffusionGradientDirection in 0029|1010"
+                      << std::endl;
+          }
         }
       }
     }
@@ -402,14 +404,16 @@ SiemensDWIConverter::ExtractDWIData()
 
   } // end giant for loop
 
-  // test gradients. It is OK for one or more guide images to have
-  // zero gradients, but all gradients == 0 is an error. It means
-  // that the gradient data is missing.
-  auto nonZ =
-    std::find_if(this->m_DiffusionVectors.begin(), this->m_DiffusionVectors.end(), SiemensDWIConverter::IsZeroMag);
-  if (nonZ == this->m_DiffusionVectors.end())
   {
-    std::cerr << this->m_InputFileNames[0] << " has no non-zero diffusion vectors" << std::endl;
+    // test gradients. It is OK for one or more guide images to have
+    // zero gradients, but all gradients == 0 is an error. It means
+    // that the gradient data is missing.
+    auto nonZ =
+      std::find_if(this->m_DiffusionVectors.begin(), this->m_DiffusionVectors.end(), SiemensDWIConverter::IsZeroMag);
+    if (nonZ == this->m_DiffusionVectors.end())
+    {
+      std::cerr << this->m_InputFileNames[0] << " has no non-zero diffusion vectors" << std::endl;
+    }
   }
 }
 
@@ -606,14 +610,16 @@ SiemensDWIConverter::ExtractSiemensDiffusionInformation(const std::string &   ta
   unsigned int offset = 84;
   for (unsigned int k = 0; k < vm; ++k)
   {
-    const int    itemLength = ConvertFromCharPtr(infoAsCharPtr + offset + 4);
-    const int    strideSize = static_cast<int>(ceil(static_cast<double>(itemLength) / 4) * 4);
-    const size_t infoAsStringLength = infoAsString.length();
+    const int itemLength = ConvertFromCharPtr(infoAsCharPtr + offset + 4);
+    const int strideSize = static_cast<int>(ceil(static_cast<double>(itemLength) / 4) * 4);
 
-    if (infoAsStringLength < (offset + 16 + itemLength))
     {
-      // data not available or incomplete
-      return 0;
+      const size_t infoAsStringLength = infoAsString.length();
+      if (infoAsStringLength < (offset + 16 + itemLength))
+      {
+        // data not available or incomplete
+        return 0;
+      }
     }
     const std::string valueString = infoAsString.substr(offset + 16, itemLength);
     const double      componentValue = BRAINSTools::safe_stod(valueString);
@@ -650,16 +656,18 @@ SiemensDWIConverter::CheckCSAHeaderAvailable()
       }
     }
 
-    int        tempBValue = -123; // Initialize to a negative number as sentinal for failed read of 0019,100c
-    const bool has0019_100c = (this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false) == EXIT_SUCCESS);
-    if (dwiIsConformant && has0019_100c && tempBValue >= 0)
+    int tempBValue = -123; // Initialize to a negative number as sentinal for failed read of 0019,100c
     {
-      // If Siemens has a 0x0019
-      this->m_HasCSAHeader = false;
-    }
-    else
-    {
-      this->m_HasCSAHeader = true;
+      const bool has0019_100c = (this->m_Headers[k]->GetElementIS(0x0019, 0x100c, tempBValue, false) == EXIT_SUCCESS);
+      if (dwiIsConformant && has0019_100c && tempBValue >= 0)
+      {
+        // If Siemens has a 0x0019
+        this->m_HasCSAHeader = false;
+      }
+      else
+      {
+        this->m_HasCSAHeader = true;
+      }
     }
   }
 }

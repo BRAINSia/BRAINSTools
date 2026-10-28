@@ -122,11 +122,13 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
     seed[0] = pos[0];
     seed[1] = pos[1];
     seed[2] = pos[2];
-    const float ai = this->m_ScalarIP->EvaluateAtContinuousIndex(seed);
-    if (maskIt.Get() && ai >= this->m_SeedThreshold)
     {
-      m_StartPoints.push_back(seed);
-      ++count;
+      const float ai = this->m_ScalarIP->EvaluateAtContinuousIndex(seed);
+      if (maskIt.Get() && ai >= this->m_SeedThreshold)
+      {
+        m_StartPoints.push_back(seed);
+        ++count;
+      }
     }
   }
   std::cerr << "Number of Seeds: " << count << std::endl;
@@ -178,7 +180,6 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   float                              anisotropy;
   float                              anisotropySum = 0;
   bool                               completeFiber = true;
-  bool                               pass = false;
   double                             gradientTol = 0.001;
 
   vtkPoints *     fiber = vtkPoints::New();
@@ -260,17 +261,19 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   /*Resume Optimization */
   for (unsigned int j = 0; j < (m_NumberOfIterations - 1); ++j)
   {
+    bool pass = false;
     pass = false;
     currentPosition = m_GradientOP->GetCurrentPosition();
     for (unsigned int k = 0; k < spaceDimension; ++k) //
     {
-      double diff = itk::Math::abs(currentPosition[k] - tmpIndex[k]);
-
       // if last point is repeated, stop Gradient Descent
-      if (diff > gradientTol)
       {
-        pass = true;
-        tmpIndex[k] = currentPosition[k];
+        double diff = itk::Math::abs(currentPosition[k] - tmpIndex[k]);
+        if (diff > gradientTol)
+        {
+          pass = true;
+          tmpIndex[k] = currentPosition[k];
+        }
       }
     }
 

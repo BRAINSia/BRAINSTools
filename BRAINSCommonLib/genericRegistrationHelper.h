@@ -101,11 +101,13 @@ MakeDebugJointHistogram(const std::string &                  debugOutputDirector
 
   while (!origIter.IsAtEnd())
   {
-    const float currValue = origIter.Get();
-    if (currValue > 0)
     {
-      nonZeroAverage += currValue;
-      ++nonZeroCount;
+      const float currValue = origIter.Get();
+      if (currValue > 0)
+      {
+        nonZeroAverage += currValue;
+        ++nonZeroCount;
+      }
     }
     ++origIter;
   }
@@ -125,18 +127,20 @@ MakeDebugJointHistogram(const std::string &                  debugOutputDirector
   {
     const float MAX_VALUE = std::numeric_limits<unsigned short>::max();
     const float scaleFactor = 0.66 * MAX_VALUE / nonZeroAverage;
-    const float currValue = (origIter.Get()) * scaleFactor;
-    if (currValue < 0)
     {
-      pngIter.Set(0);
-    }
-    else if (currValue > MAX_VALUE)
-    {
-      pngIter.Set(MAX_VALUE);
-    }
-    else
-    {
-      pngIter.Set(currValue);
+      const float currValue = (origIter.Get()) * scaleFactor;
+      if (currValue < 0)
+      {
+        pngIter.Set(0);
+      }
+      else if (currValue > MAX_VALUE)
+      {
+        pngIter.Set(MAX_VALUE);
+      }
+      else
+      {
+        pngIter.Set(currValue);
+      }
     }
     ++pngIter;
     ++origIter;

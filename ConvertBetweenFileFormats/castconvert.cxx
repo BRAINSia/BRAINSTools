@@ -300,11 +300,13 @@ main(int argc, char * argv[])
          */
         if (pixelType == "scalar" && numberOfComponents == 1)
         {
-          const int ret_value = FileConverterScalar(
-            inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
-          if (ret_value != 0)
           {
-            return ret_value;
+            const int ret_value = FileConverterScalar(
+              inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
+            if (ret_value != 0)
+            {
+              return ret_value;
+            }
           }
         }
         else
@@ -327,14 +329,19 @@ main(int argc, char * argv[])
 
         if (pixelType == "scalar" && numberOfComponents == 1)
         {
-          const int ret_value =
-            DicomFileConverterScalar(
-              inputPixelComponentType, outputPixelComponentType, inputDirectoryName, outputFileName, inputDimension) ||
-            DicomFileConverterScalarA(
-              inputPixelComponentType, outputPixelComponentType, inputDirectoryName, outputFileName, inputDimension);
-          if (ret_value != 0)
           {
-            return ret_value;
+            const int ret_value =
+              DicomFileConverterScalar(inputPixelComponentType,
+                                       outputPixelComponentType,
+                                       inputDirectoryName,
+                                       outputFileName,
+                                       inputDimension) ||
+              DicomFileConverterScalarA(
+                inputPixelComponentType, outputPixelComponentType, inputDirectoryName, outputFileName, inputDimension);
+            if (ret_value != 0)
+            {
+              return ret_value;
+            }
           }
         }
         else

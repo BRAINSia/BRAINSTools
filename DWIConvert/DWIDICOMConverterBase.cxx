@@ -401,11 +401,13 @@ DWIDICOMConverterBase::DetermineSliceOrderIS()
   image1Origin[1] -= image0Origin[1];
   image1Origin[2] -= image0Origin[2];
   const RotationMatrixType & NRRDSpaceDirection = this->GetNRRDSpaceDirection();
-  double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2]) + image1Origin[1] * (NRRDSpaceDirection[1][2]) +
-              image1Origin[2] * (NRRDSpaceDirection[2][2]);
-  if (x1 < 0)
   {
-    this->m_SliceOrderIS = false;
+    double x1 = image1Origin[0] * (NRRDSpaceDirection[0][2]) + image1Origin[1] * (NRRDSpaceDirection[1][2]) +
+                image1Origin[2] * (NRRDSpaceDirection[2][2]);
+    if (x1 < 0)
+    {
+      this->m_SliceOrderIS = false;
+    }
   }
 }
 

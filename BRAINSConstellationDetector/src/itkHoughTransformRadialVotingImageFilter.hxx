@@ -433,15 +433,17 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
       constexpr float pa_min_max_eye_offset = 12. + max_eye_radius;
       while (!It.IsAtEnd())
       {
-        constexpr double mindistance_IPD = 51.0;
         constexpr double maxdistance_IPD = 77.0;
         const auto currPnt = accumulatorSearchSpace->template TransformIndexToPhysicalPoint<double>(It.GetIndex());
-        if (std::abs(currPnt[2] - firstEyeCenter[2]) > si_min_max_eye_offset ||
-            std::abs(currPnt[1] - firstEyeCenter[1]) > pa_min_max_eye_offset ||
-            std::abs(currPnt[0] - firstEyeCenter[0]) < mindistance_IPD - 2. * max_eye_radius ||
-            std::abs(currPnt[0] - firstEyeCenter[0]) > maxdistance_IPD + 2. * max_eye_radius)
         {
-          It.Set(0);
+          constexpr double mindistance_IPD = 51.0;
+          if (std::abs(currPnt[2] - firstEyeCenter[2]) > si_min_max_eye_offset ||
+              std::abs(currPnt[1] - firstEyeCenter[1]) > pa_min_max_eye_offset ||
+              std::abs(currPnt[0] - firstEyeCenter[0]) < mindistance_IPD - 2. * max_eye_radius ||
+              std::abs(currPnt[0] - firstEyeCenter[0]) > maxdistance_IPD + 2. * max_eye_radius)
+          {
+            It.Set(0);
+          }
         }
         ++It;
       }

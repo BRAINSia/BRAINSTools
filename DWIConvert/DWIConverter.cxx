@@ -40,8 +40,8 @@ DWIConverter::GetDiffusionVectors() const
 void
 DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
 {
-  const double maxBvalue = this->GetMaxBValue();
   {
+    const double                                      maxBvalue = this->GetMaxBValue();
     DWIMetaDataDictionaryValidator::GradientTableType BvalueScaledDiffusionVectors(0);
     BvalueScaledDiffusionVectors.reserve(m_DiffusionVectors.size());
     for (unsigned int k = 0; k < m_DiffusionVectors.size(); ++k)
@@ -64,8 +64,8 @@ DWIConverter::ConvertToSingleBValueScaledDiffusionVectors()
 void
 DWIConverter::ConvertToMutipleBValuesUnitScaledBVectors()
 {
-  const double maxBvalue = this->GetMaxBValue();
   {
+    const double maxBvalue = this->GetMaxBValue();
     for (unsigned int k = 0; k < m_DiffusionVectors.size(); ++k)
     {
       double mag = m_DiffusionVectors[k].magnitude();
@@ -288,11 +288,13 @@ DWIConverter::ReadGradientInformation(const std::string & inputBValues,
                              << ")" << std::endl);
   }
 
-  size_t numGradients = BVals.size();
-  if (numGradients != this->GetNVolume())
   {
-    itkGenericExceptionMacro(<< "number of Gradients doesn't match number of volumes:" << numGradients
-                             << " != " << this->GetNVolume() << std::endl);
+    size_t numGradients = BVals.size();
+    if (numGradients != this->GetNVolume())
+    {
+      itkGenericExceptionMacro(<< "number of Gradients doesn't match number of volumes:" << numGradients
+                               << " != " << this->GetNVolume() << std::endl);
+    }
   }
   // We need to zero out BVecs for Zero BVals
   for (size_t i = 0; i < bValCount; ++i)
@@ -640,11 +642,14 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolum
                                        const std::string &           outputBVectors,
                                        const Volume4DType::Pointer & img4D) const
 {
-  const double trace = this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] * this->m_MeasurementFrame[2][2];
-  if (std::abs(trace - 1.0) > 1e-4)
   {
-    itkGenericExceptionMacro(<< "ERROR:  Only identity measurement frame allow for writing FSL formatted files "
-                             << std::endl);
+    const double trace =
+      this->m_MeasurementFrame[0][0] * this->m_MeasurementFrame[1][1] * this->m_MeasurementFrame[2][2];
+    if (std::abs(trace - 1.0) > 1e-4)
+    {
+      itkGenericExceptionMacro(<< "ERROR:  Only identity measurement frame allow for writing FSL formatted files "
+                               << std::endl);
+    }
   }
 
   {
@@ -728,10 +733,12 @@ DWIConverter::has_valid_nifti_extension(const std::string & outputVolumeHeaderNa
   const char * const extList[NUMEXT] = { ".nii.gz", ".nii" };
   for (auto i : extList)
   {
-    const size_t extensionPos = outputVolumeHeaderName.find(i);
-    if (extensionPos != std::string::npos)
     {
-      return extensionPos;
+      const size_t extensionPos = outputVolumeHeaderName.find(i);
+      if (extensionPos != std::string::npos)
+      {
+        return extensionPos;
+      }
     }
   }
   {

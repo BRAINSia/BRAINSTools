@@ -183,11 +183,13 @@ DtiTrackingFilterBase<TTensorImageType, TAnisotropyImageType, TMaskImageType>::I
   for (int i = numPts - 2; i >= 0; --i)
   {
     fiber->GetPoint(i, p2);
-    const double distance =
-      (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]) + (p1[2] - p2[2]) * (p1[2] - p2[2]);
-    if (distance < tol2)
     {
-      return true;
+      const double distance =
+        (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]) + (p1[2] - p2[2]) * (p1[2] - p2[2]);
+      if (distance < tol2)
+      {
+        return true;
+      }
     }
   }
   return false;

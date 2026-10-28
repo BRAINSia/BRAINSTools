@@ -59,13 +59,15 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "Input Image: " << inputVolume << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Vector Index: " << vectorIndex << std::endl;
-    std::cout << "Set Image Orientation: " << setImageOrientation << std::endl << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "Input Image: " << inputVolume << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Vector Index: " << vectorIndex << std::endl;
+      std::cout << "Set Image Orientation: " << setImageOrientation << std::endl << std::endl;
+    }
   }
 
   bool violated = false;

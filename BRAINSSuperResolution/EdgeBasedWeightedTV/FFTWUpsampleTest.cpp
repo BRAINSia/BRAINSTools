@@ -108,47 +108,49 @@ main(int, char *[])
   const bool evenLarge2FirstIsOdd = true;
   const bool evenSmallFirstIsOdd = true;
 
-  size_t test_num = 1;
-  switch (test_num)
   {
-    case 1:
+    size_t test_num = 1;
+    switch (test_num)
     {
-      DumpImage(inEvenSmall);
-      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
-      std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
+      case 1:
+      {
+        DumpImage(inEvenSmall);
+        MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
+        std::cout << "Modified Large" << std::endl;
+        DumpImage(inEvenLarge);
 
-      MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
-      std::cout << "Modified Small" << std::endl;
-      DumpImage(inEvenSmall);
-    }
-    break;
-    case 2:
-    {
-      DumpImage(inEvenLarge);
-      MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
-      std::cout << "Modified Small" << std::endl;
-      DumpImage(inEvenSmall);
-
-      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
-      std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
-    }
-    break;
-    case 3:
-    {
-      DumpImage(inEvenLarge);
-      MoveFFTCoeffs(inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
-      std::cout << "Modified Small" << std::endl;
-      DumpImage(inEven2Large);
-
-      MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd);
-      std::cout << "Modified Large" << std::endl;
-      DumpImage(inEvenLarge);
-    }
-    break;
-    default:
+        MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
+        std::cout << "Modified Small" << std::endl;
+        DumpImage(inEvenSmall);
+      }
       break;
+      case 2:
+      {
+        DumpImage(inEvenLarge);
+        MoveFFTCoeffs(inEvenSmall, evenSmallFirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
+        std::cout << "Modified Small" << std::endl;
+        DumpImage(inEvenSmall);
+
+        MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEvenSmall, evenSmallFirstIsOdd);
+        std::cout << "Modified Large" << std::endl;
+        DumpImage(inEvenLarge);
+      }
+      break;
+      case 3:
+      {
+        DumpImage(inEvenLarge);
+        MoveFFTCoeffs(inEven2Large, evenLarge2FirstIsOdd, inEvenLarge, evenLargeFirstIsOdd);
+        std::cout << "Modified Small" << std::endl;
+        DumpImage(inEven2Large);
+
+        MoveFFTCoeffs(inEvenLarge, evenLargeFirstIsOdd, inEven2Large, evenLarge2FirstIsOdd);
+        std::cout << "Modified Large" << std::endl;
+        DumpImage(inEvenLarge);
+      }
+      break;
+      default:
+        break;
+    }
   }
 
     //=================================================

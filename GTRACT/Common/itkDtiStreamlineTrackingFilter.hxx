@@ -79,8 +79,6 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
   typename Self::ContinuousIndexType index;
 
   typename Self::ContinuousIndexType tmpIndex;
-  bool                               stop;
-  bool                               addFiber;
 
   const double inRadians = this->pi / 180.0;
   double       curvatureThreshold = std::cos(this->m_CurvatureThreshold * inRadians);
@@ -100,6 +98,8 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
   /*** Add length and Loop Detection ***/
   while (!this->m_Seeds.empty())
   {
+    bool stop;
+    bool addFiber;
     index = this->m_Seeds.back();
     this->m_Seeds.pop_back();
     vin = vout = this->m_TrackingDirections.back();
@@ -197,40 +197,42 @@ DtiStreamlineTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageTy
           e2 *= -1;
         }
 
-        //
-        // ////////////////////////////////////////////////////////////////////////
-        // Choose an outgoing direction
-        double vin_dot_e2 = dot_product(vin, e2);
         // std::cerr << "Compare " << vin_dot_e2 << " > " <<
         // this->m_CurvatureThreshold << std::endl;
         // std::cerr << "Vin " << vin << " E2 " << e2 << std::endl;
-        if (vin_dot_e2 > curvatureThreshold)
         {
-          // Use TEND ???
-          if (this->m_UseTend)
-          {
-            this->ApplyTensorDeflection(vin, fullTensorPixel, e2, vout);
-          }
-          else
-          {
-            vout = e2;
-          }
           //
           // ////////////////////////////////////////////////////////////////////////
-          // Calculate the new index
-          this->StepIndex(tmpIndex, index, vout);
-          pathLength += this->m_StepSize;
+          // Choose an outgoing direction
+          double vin_dot_e2 = dot_product(vin, e2);
+          if (vin_dot_e2 > curvatureThreshold)
+          {
+            // Use TEND ???
+            if (this->m_UseTend)
+            {
+              this->ApplyTensorDeflection(vin, fullTensorPixel, e2, vout);
+            }
+            else
+            {
+              vout = e2;
+            }
+            //
+            // ////////////////////////////////////////////////////////////////////////
+            // Calculate the new index
+            this->StepIndex(tmpIndex, index, vout);
+            pathLength += this->m_StepSize;
 
-          //
-          // ////////////////////////////////////////////////////////////////////////
-          // Update the current index
-          index = tmpIndex;
-          vin = vout;
-        }
-        else // Curvature Threshold
-        {
-          stop = true;
-          // std::cerr << "Stop Curvature" << std::endl;
+            //
+            // ////////////////////////////////////////////////////////////////////////
+            // Update the current index
+            index = tmpIndex;
+            vin = vout;
+          }
+          else // Curvature Threshold
+          {
+            stop = true;
+            // std::cerr << "Stop Curvature" << std::endl;
+          }
         }
       }
       else // Anisotropy Threshold

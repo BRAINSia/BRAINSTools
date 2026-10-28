@@ -89,20 +89,22 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
-    std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
-    std::cout << "Starting Seeds LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
-    std::cout << "Starting Label: " << startingSeedsLabel << std::endl;
-    std::cout << "Output Cost Image: " << outputCostVolume << std::endl;
-    std::cout << "Output Speed Image: " << outputSpeedVolume << std::endl;
-    std::cout << "Seed Threshold: " << seedThreshold << std::endl;
-    std::cout << "Anisotropy Weight: " << anisotropyWeight << std::endl;
-    std::cout << "Stopping Value: " << stoppingValue << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    const bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Tensor Image: " << inputTensorVolume << std::endl;
+      std::cout << "Anisotropy Image: " << inputAnisotropyVolume << std::endl;
+      std::cout << "Starting Seeds LabelMap Image: " << inputStartingSeedsLabelMapVolume << std::endl;
+      std::cout << "Starting Label: " << startingSeedsLabel << std::endl;
+      std::cout << "Output Cost Image: " << outputCostVolume << std::endl;
+      std::cout << "Output Speed Image: " << outputSpeedVolume << std::endl;
+      std::cout << "Seed Threshold: " << seedThreshold << std::endl;
+      std::cout << "Anisotropy Weight: " << anisotropyWeight << std::endl;
+      std::cout << "Stopping Value: " << stoppingValue << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   using PixelType = float;

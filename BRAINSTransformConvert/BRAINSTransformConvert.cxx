@@ -326,71 +326,74 @@ DoConversion(int argc, char * argv[])
       {
         compToWrite = compXfrm->Clone();
 
-        // If the last four transforms are displacementFieldType, we assume that they are
-        // forward and inverse displacement fields of SyN internal transforms (FixedToMiddle and MovingToMiddle
-        // transforms), so we compose them into one SyN displacementFieldTransformType.
-        //
-        const unsigned int numOfTransforms = compToWrite->GetNumberOfTransforms();
-        if ((compToWrite->GetNthTransform(numOfTransforms - 1)->GetTransformCategory() ==
-             GenericTransformType::TransformCategoryEnum::DisplacementField) &&
-            (compToWrite->GetNthTransform(numOfTransforms - 2)->GetTransformCategory() ==
-             GenericTransformType::TransformCategoryEnum::DisplacementField) &&
-            (compToWrite->GetNthTransform(numOfTransforms - 3)->GetTransformCategory() ==
-             GenericTransformType::TransformCategoryEnum::DisplacementField) &&
-            (compToWrite->GetNthTransform(numOfTransforms - 4)->GetTransformCategory() ==
-             GenericTransformType::TransformCategoryEnum::DisplacementField))
         {
-          const typename DisplacementFieldTransformType::Pointer fixedToMiddleForwardTx =
-            dynamic_cast<DisplacementFieldTransformType *>(
-              compToWrite->GetNthTransform(numOfTransforms - 4).GetPointer());
-          const typename DisplacementFieldTransformType::Pointer fixedToMiddleInverseTx =
-            dynamic_cast<DisplacementFieldTransformType *>(
-              compToWrite->GetNthTransform(numOfTransforms - 3).GetPointer());
-          const typename DisplacementFieldTransformType::Pointer movingToMiddleForwardTx =
-            dynamic_cast<DisplacementFieldTransformType *>(
-              compToWrite->GetNthTransform(numOfTransforms - 2).GetPointer());
-          const typename DisplacementFieldTransformType::Pointer movingToMiddleInverseTx =
-            dynamic_cast<DisplacementFieldTransformType *>(
-              compToWrite->GetNthTransform(numOfTransforms - 1).GetPointer());
+          // If the last four transforms are displacementFieldType, we assume that they are
+          // forward and inverse displacement fields of SyN internal transforms (FixedToMiddle and MovingToMiddle
+          // transforms), so we compose them into one SyN displacementFieldTransformType.
+          //
+          const unsigned int numOfTransforms = compToWrite->GetNumberOfTransforms();
+          if ((compToWrite->GetNthTransform(numOfTransforms - 1)->GetTransformCategory() ==
+               GenericTransformType::TransformCategoryEnum::DisplacementField) &&
+              (compToWrite->GetNthTransform(numOfTransforms - 2)->GetTransformCategory() ==
+               GenericTransformType::TransformCategoryEnum::DisplacementField) &&
+              (compToWrite->GetNthTransform(numOfTransforms - 3)->GetTransformCategory() ==
+               GenericTransformType::TransformCategoryEnum::DisplacementField) &&
+              (compToWrite->GetNthTransform(numOfTransforms - 4)->GetTransformCategory() ==
+               GenericTransformType::TransformCategoryEnum::DisplacementField))
+          {
+            const typename DisplacementFieldTransformType::Pointer fixedToMiddleForwardTx =
+              dynamic_cast<DisplacementFieldTransformType *>(
+                compToWrite->GetNthTransform(numOfTransforms - 4).GetPointer());
+            const typename DisplacementFieldTransformType::Pointer fixedToMiddleInverseTx =
+              dynamic_cast<DisplacementFieldTransformType *>(
+                compToWrite->GetNthTransform(numOfTransforms - 3).GetPointer());
+            const typename DisplacementFieldTransformType::Pointer movingToMiddleForwardTx =
+              dynamic_cast<DisplacementFieldTransformType *>(
+                compToWrite->GetNthTransform(numOfTransforms - 2).GetPointer());
+            const typename DisplacementFieldTransformType::Pointer movingToMiddleInverseTx =
+              dynamic_cast<DisplacementFieldTransformType *>(
+                compToWrite->GetNthTransform(numOfTransforms - 1).GetPointer());
 
-          const auto fixedToMiddleTransform = DisplacementFieldTransformType::New();
-          fixedToMiddleTransform->SetDisplacementField(fixedToMiddleForwardTx->GetModifiableDisplacementField());
-          fixedToMiddleTransform->SetInverseDisplacementField(fixedToMiddleInverseTx->GetModifiableDisplacementField());
+            const auto fixedToMiddleTransform = DisplacementFieldTransformType::New();
+            fixedToMiddleTransform->SetDisplacementField(fixedToMiddleForwardTx->GetModifiableDisplacementField());
+            fixedToMiddleTransform->SetInverseDisplacementField(
+              fixedToMiddleInverseTx->GetModifiableDisplacementField());
 
-          const auto movingToMiddleTransform = DisplacementFieldTransformType::New();
-          movingToMiddleTransform->SetDisplacementField(movingToMiddleForwardTx->GetModifiableDisplacementField());
-          movingToMiddleTransform->SetInverseDisplacementField(
-            movingToMiddleInverseTx->GetModifiableDisplacementField());
+            const auto movingToMiddleTransform = DisplacementFieldTransformType::New();
+            movingToMiddleTransform->SetDisplacementField(movingToMiddleForwardTx->GetModifiableDisplacementField());
+            movingToMiddleTransform->SetInverseDisplacementField(
+              movingToMiddleInverseTx->GetModifiableDisplacementField());
 
-          const auto resultSyNTransform = DisplacementFieldTransformType::New();
+            const auto resultSyNTransform = DisplacementFieldTransformType::New();
 
-          const auto composer = ComposerType::New();
-          composer->SetDisplacementField(movingToMiddleTransform->GetInverseDisplacementField());
-          composer->SetWarpingField(fixedToMiddleTransform->GetDisplacementField());
-          composer->Update();
+            const auto composer = ComposerType::New();
+            composer->SetDisplacementField(movingToMiddleTransform->GetInverseDisplacementField());
+            composer->SetWarpingField(fixedToMiddleTransform->GetDisplacementField());
+            composer->Update();
 
-          const auto inverseComposer = ComposerType::New();
-          inverseComposer->SetDisplacementField(fixedToMiddleTransform->GetInverseDisplacementField());
-          inverseComposer->SetWarpingField(movingToMiddleTransform->GetDisplacementField());
-          inverseComposer->Update();
+            const auto inverseComposer = ComposerType::New();
+            inverseComposer->SetDisplacementField(fixedToMiddleTransform->GetInverseDisplacementField());
+            inverseComposer->SetWarpingField(movingToMiddleTransform->GetDisplacementField());
+            inverseComposer->Update();
 
-          resultSyNTransform->SetDisplacementField(composer->GetOutput());
-          resultSyNTransform->SetInverseDisplacementField(inverseComposer->GetOutput());
+            resultSyNTransform->SetDisplacementField(composer->GetOutput());
+            resultSyNTransform->SetInverseDisplacementField(inverseComposer->GetOutput());
 
-          // First remove the last four displacement field transform related to the internal states
-          compToWrite->RemoveTransform();
-          compToWrite->RemoveTransform();
-          compToWrite->RemoveTransform();
-          compToWrite->RemoveTransform();
-          // Then add the restored SyN transform
-          compToWrite->AddTransform(resultSyNTransform);
+            // First remove the last four displacement field transform related to the internal states
+            compToWrite->RemoveTransform();
+            compToWrite->RemoveTransform();
+            compToWrite->RemoveTransform();
+            compToWrite->RemoveTransform();
+            // Then add the restored SyN transform
+            compToWrite->AddTransform(resultSyNTransform);
 
-          const std::string transfromToWriteName = outputTransform + "Composite.h5";
+            const std::string transfromToWriteName = outputTransform + "Composite.h5";
 
-          // This function writes both forward and inverse composite transforms to the disk
-          std::cout << "Converted Transforms are Written to the Disk ==> " << compToWrite->GetTransformTypeAsString()
-                    << std::endl;
-          itk::WriteTransformToDisk<TScalarType>(compToWrite.GetPointer(), transfromToWriteName);
+            // This function writes both forward and inverse composite transforms to the disk
+            std::cout << "Converted Transforms are Written to the Disk ==> " << compToWrite->GetTransformTypeAsString()
+                      << std::endl;
+            itk::WriteTransformToDisk<TScalarType>(compToWrite.GetPointer(), transfromToWriteName);
+          }
         }
       }
       else

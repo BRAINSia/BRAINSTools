@@ -145,10 +145,12 @@ DWIMetaDataDictionaryValidator::GetGradientCount()
     // Check for repeated components
     else if (key.find("DWMRI_NEX") != std::string::npos)
     {
-      int repeats = 0;
-      if (itk::ExposeMetaData<int>(m_dict, "DWMRI_NEX", repeats))
       {
-        count += repeats;
+        int repeats = 0;
+        if (itk::ExposeMetaData<int>(m_dict, "DWMRI_NEX", repeats))
+        {
+          count += repeats;
+        }
       }
     }
   }
@@ -303,14 +305,16 @@ DWIMetaDataDictionaryValidator::GenericGetDoubleVector(const std::string & KeyBa
   for (size_t index = 0; index < values.size(); ++index)
   {
     const std::string currKey = this->GetIndexedKeyString(KeyBaseName, index);
-    double            temp = 0.0;
-    if (itk::ExposeMetaData(this->m_dict, currKey, temp))
     {
-      values[index] = temp;
-    }
-    else
-    {
-      values[index] = defaultValue;
+      double temp = 0.0;
+      if (itk::ExposeMetaData(this->m_dict, currKey, temp))
+      {
+        values[index] = temp;
+      }
+      else
+      {
+        values[index] = defaultValue;
+      }
     }
   }
   return values;

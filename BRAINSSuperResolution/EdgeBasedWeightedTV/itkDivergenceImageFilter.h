@@ -377,69 +377,70 @@ protected:
     CharEqn[0] = g[0][0] * (g[1][2] * g[2][1] - g[1][1] * g[2][2]) + g[1][0] * (g[2][2] * g[0][1] - g[0][2] * g[2][1]) +
                  g[2][0] * (g[1][1] * g[0][2] - g[0][1] * g[1][2]);
 
-    // Find the eigenvalues of g
-    int numberOfDistinctRoots = this->CubicSolver(CharEqn, Lambda);
-
     // Define gradient magnitude as the difference between two largest
     // eigenvalues.  Other definitions may be appropriate here as well.
-    if (numberOfDistinctRoots == 3) // By far the most common case
     {
-      if (Lambda[0] > Lambda[1])
+      // Find the eigenvalues of g
+      int numberOfDistinctRoots = this->CubicSolver(CharEqn, Lambda);
+      if (numberOfDistinctRoots == 3) // By far the most common case
       {
-        if (Lambda[1] > Lambda[2]) // Most common, guaranteed?
+        if (Lambda[0] > Lambda[1])
         {
-          ans = Lambda[0] - Lambda[1];
+          if (Lambda[1] > Lambda[2]) // Most common, guaranteed?
+          {
+            ans = Lambda[0] - Lambda[1];
+          }
+          else
+          {
+            if (Lambda[0] > Lambda[2])
+            {
+              ans = Lambda[0] - Lambda[2];
+            }
+            else
+            {
+              ans = Lambda[2] - Lambda[0];
+            }
+          }
         }
         else
         {
           if (Lambda[0] > Lambda[2])
           {
-            ans = Lambda[0] - Lambda[2];
+            ans = Lambda[1] - Lambda[0];
           }
           else
           {
-            ans = Lambda[2] - Lambda[0];
+            if (Lambda[1] > Lambda[2])
+            {
+              ans = Lambda[1] - Lambda[2];
+            }
+            else
+            {
+              ans = Lambda[2] - Lambda[1];
+            }
           }
         }
       }
-      else
+      else if (numberOfDistinctRoots == 2)
       {
-        if (Lambda[0] > Lambda[2])
+        if (Lambda[0] > Lambda[1])
         {
-          ans = Lambda[1] - Lambda[0];
+          ans = Lambda[0] - Lambda[1];
         }
         else
         {
-          if (Lambda[1] > Lambda[2])
-          {
-            ans = Lambda[1] - Lambda[2];
-          }
-          else
-          {
-            ans = Lambda[2] - Lambda[1];
-          }
+          ans = Lambda[1] - Lambda[0];
         }
       }
-    }
-    else if (numberOfDistinctRoots == 2)
-    {
-      if (Lambda[0] > Lambda[1])
+      else if (numberOfDistinctRoots == 1)
       {
-        ans = Lambda[0] - Lambda[1];
+        ans = 0.0;
       }
       else
       {
-        ans = Lambda[1] - Lambda[0];
+        itkExceptionMacro(<< "Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
+                          << " distinct roots.");
       }
-    }
-    else if (numberOfDistinctRoots == 1)
-    {
-      ans = 0.0;
-    }
-    else
-    {
-      itkExceptionMacro(<< "Undefined condition. Cubic root solver returned " << numberOfDistinctRoots
-                        << " distinct roots.");
     }
 
     return ans;

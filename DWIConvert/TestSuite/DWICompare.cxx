@@ -47,31 +47,37 @@ template <typename ImageType>
 bool
 TestIfInformationIsDifferent(typename ImageType::ConstPointer first, typename ImageType::ConstPointer second)
 {
-  bool        failureStatus = false;
-  const float spacingTolerance = 1e-3;
-  if (!first->GetSpacing().GetVnlVector().is_equal(second->GetSpacing().GetVnlVector(), spacingTolerance))
+  bool failureStatus = false;
   {
-    std::cout << "The first image Spacing does not match second image Information" << std::endl;
-    std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
-    std::cout << "Second Spacing: " << second->GetSpacing() << std::endl;
-    failureStatus = true;
+    const float spacingTolerance = 1e-3;
+    if (!first->GetSpacing().GetVnlVector().is_equal(second->GetSpacing().GetVnlVector(), spacingTolerance))
+    {
+      std::cout << "The first image Spacing does not match second image Information" << std::endl;
+      std::cout << "First Spacing: " << first->GetSpacing() << std::endl;
+      std::cout << "Second Spacing: " << second->GetSpacing() << std::endl;
+      failureStatus = true;
+    }
   }
-  const float originTolerance = 1e-2;
-  if (!first->GetOrigin().GetVnlVector().is_equal(second->GetOrigin().GetVnlVector(), originTolerance))
   {
-    std::cout << "The first image Origin does not match second image Information" << std::endl;
-    std::cout << "First Origin: " << first->GetOrigin() << std::endl;
-    std::cout << "Second Origin: " << second->GetOrigin() << std::endl;
-    failureStatus = true;
+    const float originTolerance = 1e-2;
+    if (!first->GetOrigin().GetVnlVector().is_equal(second->GetOrigin().GetVnlVector(), originTolerance))
+    {
+      std::cout << "The first image Origin does not match second image Information" << std::endl;
+      std::cout << "First Origin: " << first->GetOrigin() << std::endl;
+      std::cout << "Second Origin: " << second->GetOrigin() << std::endl;
+      failureStatus = true;
+    }
   }
-  const float directionTolerance = 1e-3;
-  if (!first->GetDirection().GetVnlMatrix().as_ref().is_equal(second->GetDirection().GetVnlMatrix().as_matrix(),
-                                                              directionTolerance))
   {
-    std::cout << "The first image Direction does not match second image Information" << std::endl;
-    std::cout << "First Direction: " << first->GetDirection() << std::endl;
-    std::cout << "Second Direction: " << second->GetDirection() << std::endl;
-    failureStatus = true;
+    const float directionTolerance = 1e-3;
+    if (!first->GetDirection().GetVnlMatrix().as_ref().is_equal(second->GetDirection().GetVnlMatrix().as_matrix(),
+                                                                directionTolerance))
+    {
+      std::cout << "The first image Direction does not match second image Information" << std::endl;
+      std::cout << "First Direction: " << first->GetDirection() << std::endl;
+      std::cout << "Second Direction: " << second->GetDirection() << std::endl;
+      failureStatus = true;
+    }
   }
   if (first->GetLargestPossibleRegion() != second->GetLargestPossibleRegion())
   {
@@ -127,11 +133,6 @@ DoIt(int argc, char * argv[], PixelType)
 
   bool failure = TestIfInformationIsDifferent<DiffusionImageType>(firstImage, secondImage);
 
-  // If the angle between two gradients differs more than this value they are
-  // considered to be non-colinear
-  // const double gradientToleranceForSameness = 1;
-  constexpr float bValueTolerance = .05;
-
   using DictionaryType = itk::MetaDataDictionary;
   const DictionaryType &         firstDictionary = firstReader->GetMetaDataDictionary();
   DWIMetaDataDictionaryValidator firstValidator;
@@ -141,12 +142,18 @@ DoIt(int argc, char * argv[], PixelType)
   secondValidator.SetMetaDataDictionary(secondDictionary);
 
   {
-    if (std::abs(firstValidator.GetBValue() - secondValidator.GetBValue()) / secondValidator.GetBValue() >
-        bValueTolerance)
     {
-      std::cerr << "firstBValue String != secondBValueString! " << firstValidator.GetBValue()
-                << "!=" << secondValidator.GetBValue() << std::endl;
-      return EXIT_FAILURE;
+      // If the angle between two gradients differs more than this value they are
+      // considered to be non-colinear
+      // const double gradientToleranceForSameness = 1;
+      constexpr float bValueTolerance = .05;
+      if (std::abs(firstValidator.GetBValue() - secondValidator.GetBValue()) / secondValidator.GetBValue() >
+          bValueTolerance)
+      {
+        std::cerr << "firstBValue String != secondBValueString! " << firstValidator.GetBValue()
+                  << "!=" << secondValidator.GetBValue() << std::endl;
+        return EXIT_FAILURE;
+      }
     }
   }
   DWIMetaDataDictionaryValidator::RotationMatrixType fMF = firstValidator.GetMeasurementFrame();
@@ -179,11 +186,13 @@ DoIt(int argc, char * argv[], PixelType)
       fVec = fMF.GetInverse() * ufVec;
       sVec = sMF.GetInverse() * usVec;
     }
-    const double mag = (sVec - fVec).squared_magnitude();
-    if (mag > 1e-5)
     {
-      std::cerr << "Gradient Vector at index " << idx << " mismatch" << fVec << " != " << sVec << std::endl;
-      return EXIT_FAILURE;
+      const double mag = (sVec - fVec).squared_magnitude();
+      if (mag > 1e-5)
+      {
+        std::cerr << "Gradient Vector at index " << idx << " mismatch" << fVec << " != " << sVec << std::endl;
+        return EXIT_FAILURE;
+      }
     }
   }
 

@@ -121,37 +121,39 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
 
   typename TInputImage::PixelType threshold_low_foreground;
   typename TInputImage::PixelType threshold_hi = ImageCalc->GetUpperIntensityThresholdValue();
-  const unsigned int              numNonZeroHistogramBins = ImageCalc->GetNumberOfValidHistogramsEntries();
 
-  if (numNonZeroHistogramBins <= 2)
   {
-    threshold_low_foreground = threshold_hi;
-  }
-  else
-  {
-    // ##The Otsu thresholding stuff below should not be part of the new class,
-    // it shout really be a separate function.
-    using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter<TInputImage>;
-    using HistogramType = typename HistogramGeneratorType::HistogramType;
+    const unsigned int numNonZeroHistogramBins = ImageCalc->GetNumberOfValidHistogramsEntries();
+    if (numNonZeroHistogramBins <= 2)
+    {
+      threshold_low_foreground = threshold_hi;
+    }
+    else
+    {
+      // ##The Otsu thresholding stuff below should not be part of the new class,
+      // it shout really be a separate function.
+      using HistogramGeneratorType = itk::Statistics::ImageToHistogramFilter<TInputImage>;
+      using HistogramType = typename HistogramGeneratorType::HistogramType;
 
-    auto histGenerator = HistogramGeneratorType::New();
-    histGenerator->SetInput(this->GetInput());
-    typename HistogramGeneratorType::HistogramSizeType hsize(1);
-    hsize[0] = 128; // V3 itkOtsuThresholdImageCalculator.hxx m_NumberOfHistogramBins = 128
-    histGenerator->SetHistogramSize(hsize);
-    histGenerator->SetAutoMinimumMaximum(true);
+      auto histGenerator = HistogramGeneratorType::New();
+      histGenerator->SetInput(this->GetInput());
+      typename HistogramGeneratorType::HistogramSizeType hsize(1);
+      hsize[0] = 128; // V3 itkOtsuThresholdImageCalculator.hxx m_NumberOfHistogramBins = 128
+      histGenerator->SetHistogramSize(hsize);
+      histGenerator->SetAutoMinimumMaximum(true);
 
-    using OtsuImageCalcType = itk::OtsuThresholdCalculator<HistogramType>;
-    auto OtsuImageCalc = OtsuImageCalcType::New();
-    OtsuImageCalc->SetInput(histGenerator->GetOutput());
-    OtsuImageCalc->Update();
-    typename TInputImage::PixelType otsuThreshold = OtsuImageCalc->GetThreshold();
-    // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold <<
-    // std::endl;
+      using OtsuImageCalcType = itk::OtsuThresholdCalculator<HistogramType>;
+      auto OtsuImageCalc = OtsuImageCalcType::New();
+      OtsuImageCalc->SetInput(histGenerator->GetOutput());
+      OtsuImageCalc->Update();
+      typename TInputImage::PixelType otsuThreshold = OtsuImageCalc->GetThreshold();
+      // std::cout << "whole-image-based otsuThreshold was: " << otsuThreshold <<
+      // std::endl;
 
-    const typename TInputImage::PixelType & otsuThresholdResult =
-      static_cast<typename TInputImage::PixelType>(m_ThresholdCorrectionFactor * otsuThreshold);
-    threshold_low_foreground = otsuThresholdResult;
+      const typename TInputImage::PixelType & otsuThresholdResult =
+        static_cast<typename TInputImage::PixelType>(m_ThresholdCorrectionFactor * otsuThreshold);
+      threshold_low_foreground = otsuThresholdResult;
+    }
   }
 
   using InputThresholdFilterType = BinaryThresholdImageFilter<TInputImage, IntegerImageType>;

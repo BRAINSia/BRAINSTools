@@ -61,25 +61,27 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
   itk::NumberToString<double>                           doubleConvert;
-  bool                                                  debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Moving Image: " << movingVolume << std::endl;
-    std::cout << "Fixed Image: " << fixedVolume << std::endl;
-    std::cout << "Fixed Image Index: " << fixedVolumeIndex << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Output Transform: " << outputTransform << std::endl;
-    std::cout << "Eddy Current Correction: " << eddyCurrentCorrection << std::endl;
-    std::cout << "Iterations: " << numberOfIterations << std::endl;
-    std::cout << "Translation Scale: " << spatialScale << std::endl;
-    std::cout << "Maximum Step Size: " << maximumStepSize << std::endl;
-    std::cout << "Minimum Step Size: " << minimumStepSize << std::endl;
-    std::cout << "Relaxation Factor: " << relaxationFactor << std::endl;
-    std::cout << "Samples: " << numberOfSpatialSamples << std::endl;
-    std::cout << "Register B0 Only: " << registerB0Only << std::endl;
-    std::cout << "Debug Level: " << debugLevel << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Moving Image: " << movingVolume << std::endl;
+      std::cout << "Fixed Image: " << fixedVolume << std::endl;
+      std::cout << "Fixed Image Index: " << fixedVolumeIndex << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Output Transform: " << outputTransform << std::endl;
+      std::cout << "Eddy Current Correction: " << eddyCurrentCorrection << std::endl;
+      std::cout << "Iterations: " << numberOfIterations << std::endl;
+      std::cout << "Translation Scale: " << spatialScale << std::endl;
+      std::cout << "Maximum Step Size: " << maximumStepSize << std::endl;
+      std::cout << "Minimum Step Size: " << minimumStepSize << std::endl;
+      std::cout << "Relaxation Factor: " << relaxationFactor << std::endl;
+      std::cout << "Samples: " << numberOfSpatialSamples << std::endl;
+      std::cout << "Register B0 Only: " << registerB0Only << std::endl;
+      std::cout << "Debug Level: " << debugLevel << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   bool violated = false;

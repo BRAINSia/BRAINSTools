@@ -99,13 +99,15 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  // we need a DOUBLE constant, not a FLOAT constant, for exact switch
-  // comparisons.
-  constexpr double thousand = 1000.0;
-  if (acLowerBound != thousand)
   {
-    const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;
-    ChopImageBelowLowerBound<SImageType>(image, BackgroundFillValue, PhysicalLowerBound);
+    // we need a DOUBLE constant, not a FLOAT constant, for exact switch
+    // comparisons.
+    constexpr double thousand = 1000.0;
+    if (acLowerBound != thousand)
+    {
+      const double PhysicalLowerBound = /* ACy when zero-centered is ... */ 0.0 - acLowerBound;
+      ChopImageBelowLowerBound<SImageType>(image, BackgroundFillValue, PhysicalLowerBound);
+    }
   }
   itkUtil::WriteImage<SImageType>(image, outputVolume);
   if (verbose)

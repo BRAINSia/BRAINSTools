@@ -205,7 +205,6 @@ main(int argc, char * argv[])
   ConstNeighborhoodIteratorType bit(radius, forwardDeformationField, region);
 
   DisplacementFieldType::PointType physicalPoint;
-  DisplacementFieldType::IndexType indexPoint;
 
   using CoordinateType = double;
   using InterpolatorType = itk::VectorLinearInterpolateImageFunction<DisplacementFieldType, CoordinateType>;
@@ -218,7 +217,8 @@ main(int argc, char * argv[])
   vnlMatrixType J;
   for (int i = 0; i < inputFiber->GetNumberOfPoints(); ++i)
   {
-    double fiberPoint[3];
+    DisplacementFieldType::IndexType indexPoint;
+    double                           fiberPoint[3];
     fiberPoints->GetPoint(i, fiberPoint);
 
     /* Map Point */

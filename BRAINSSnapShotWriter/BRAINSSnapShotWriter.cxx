@@ -383,10 +383,12 @@ main(int argc, char ** argv)
       {
         for (unsigned int i = 0; i < image3DBinaries.size(); ++i)
         {
-          const Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
-          if (image3DBinaries[i]->GetPixel(index) > 0)
           {
-            binaryIterator.Set(i + 1); // label color zero is grey
+            const Image3DBinaryType::IndexType index = binaryIterator.GetIndex();
+            if (image3DBinaries[i]->GetPixel(index) > 0)
+            {
+              binaryIterator.Set(i + 1); // label color zero is grey
+            }
           }
         }
       }

@@ -55,16 +55,18 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
-  bool                                                  debug = true;
-  if (debug)
   {
-    std::cout << "==============================================================" << std::endl;
-    std::cout << "Input Image: " << inputCodeVolume << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Reference File: " << inputReferenceVolume << std::endl;
-    std::cout << "Transform File: " << inputTransform << std::endl;
-    std::cout << "Transform Type: " << transformType << std::endl;
-    std::cout << "==============================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "==============================================================" << std::endl;
+      std::cout << "Input Image: " << inputCodeVolume << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Reference File: " << inputReferenceVolume << std::endl;
+      std::cout << "Transform File: " << inputTransform << std::endl;
+      std::cout << "Transform Type: " << transformType << std::endl;
+      std::cout << "==============================================================" << std::endl;
+    }
   }
 
   bool violated = false;

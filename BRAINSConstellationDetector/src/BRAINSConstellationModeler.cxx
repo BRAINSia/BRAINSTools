@@ -238,10 +238,12 @@ main(int argc, char * argv[])
         // Naturally, the constant should default at the command line, ...
 
         const double variationBound((maxPixel - meanOrig) / sigmaOrig);
-        const double trimBound(variationBound - trimRescaledIntensities);
-        if (trimBound > 0.0)
         {
-          maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
+          const double trimBound(variationBound - trimRescaledIntensities);
+          if (trimBound > 0.0)
+          {
+            maxPixel = static_cast<SImageType::PixelType>(maxPixel - trimBound * sigmaOrig);
+          }
         }
       }
 

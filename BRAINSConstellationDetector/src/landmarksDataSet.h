@@ -97,10 +97,10 @@ public:
       {
         throw landmarksDataSet::shortLine;
       }
-      std::string            PointName(CSVs.substr(0, posA - 0));
-      std::string::size_type posB = 0;
+      std::string PointName(CSVs.substr(0, posA - 0));
       for (unsigned int j = 0; j < 3; ++j) // Image Dimension = 3
       {
+        std::string::size_type posB = 0;
         posB = CSVs.find(',', posA + 1);
         if (posB == std::string::npos)
         {

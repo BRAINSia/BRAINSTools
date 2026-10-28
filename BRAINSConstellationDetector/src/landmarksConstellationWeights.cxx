@@ -81,13 +81,7 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
 
   unsigned int numNamedLandmarks = 0;
-  double       d0 = NAN;
 
-  double d1 = NAN;
-
-  double d2 = NAN;
-
-  double                   dist = NAN;
   LandmarksDistanceMapType LandmarksDistanceMap;
   LandmarksValueMapType    LandmarksAverageMap; // for average
   LandmarksValueMapType    LandmarksSTDMap;     // for standard deviation
@@ -172,6 +166,10 @@ main(int argc, char * argv[])
     const std::string & name = LandmarksNames[j];
     for (unsigned int i = 0; i < k; ++i)
     {
+      double d0 = NAN;
+      double d1 = NAN;
+      double d2 = NAN;
+      double dist = NAN;
       d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
       d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
       d2 = pow(LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);

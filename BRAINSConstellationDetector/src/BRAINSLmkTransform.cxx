@@ -258,7 +258,6 @@ LoadLandmarks(const std::string & filename)
     {
       unsigned int      i = 0;
       int               pos1 = line.find(',', 0);
-      int               pos2 = 0;
       const std::string name = line.substr(0, pos1);
       if (name.compare("CM") == 0) // exclude CM
       {
@@ -267,6 +266,7 @@ LoadLandmarks(const std::string & filename)
       ImageType::PointType labelPos;
       for (i = 0; i < 3; ++i)
       {
+        int pos2 = 0;
         pos2 = line.find(',', pos1 + 1);
         labelPos[i] = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
         if (i < 2)

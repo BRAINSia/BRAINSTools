@@ -70,38 +70,44 @@ FileConverterScalar(const std::string & inputPixelComponentType,
   /** Support for 2D images. */
   if (inputDimension == 2)
   {
-    const int ret_value =
-      FileConverterScalar2D(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
-      FileConverterScalar2DA(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
-    if (ret_value != 0)
     {
-      return ret_value;
+      const int ret_value =
+        FileConverterScalar2D(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
+        FileConverterScalar2DA(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
+      if (ret_value != 0)
+      {
+        return ret_value;
+      }
     }
   }
   else if (inputDimension == 3)
   {
-    const int ret_value =
-      FileConverterScalar3D(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
-      FileConverterScalar3DA(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
-    if (ret_value != 0)
     {
-      return ret_value;
+      const int ret_value =
+        FileConverterScalar3D(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
+        FileConverterScalar3DA(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
+      if (ret_value != 0)
+      {
+        return ret_value;
+      }
     }
   } // end support for 3D images
   else if (inputDimension == 4)
   {
-    const int ret_value =
-      FileConverterScalar4D(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
-      FileConverterScalar4DA(
-        inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
-    if (ret_value != 0)
     {
-      return ret_value;
+      const int ret_value =
+        FileConverterScalar4D(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension) ||
+        FileConverterScalar4DA(
+          inputPixelComponentType, outputPixelComponentType, inputFileName, outputFileName, inputDimension);
+      if (ret_value != 0)
+      {
+        return ret_value;
+      }
     }
   } // end support for 4D images
   else

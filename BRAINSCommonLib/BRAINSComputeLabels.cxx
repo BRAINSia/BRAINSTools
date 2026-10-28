@@ -14,17 +14,19 @@ GetMinLabelCount(ByteImageType::Pointer & labelsImage, const vnl_vector<unsigned
 
   for (const unsigned int iclass : PriorLabelCodeVector)
   {
-    const auto labelValue = static_cast<size_t>(iclass);
-    if (labelStatisticsImageFilter->HasLabel(labelValue))
     {
-      const size_t currentLabelCount = labelStatisticsImageFilter->GetCount(labelValue);
-      // std::cout << "label: " << (size_t)labelValue << " count: " << currentLabelCount << std::endl;
-      labelCountMap[labelValue] = currentLabelCount;
-    }
-    else
-    {
-      // std::cout << "label: " << (size_t)labelValue << " count: 0" << std::endl;
-      labelCountMap[labelValue] = 0;
+      const auto labelValue = static_cast<size_t>(iclass);
+      if (labelStatisticsImageFilter->HasLabel(labelValue))
+      {
+        const size_t currentLabelCount = labelStatisticsImageFilter->GetCount(labelValue);
+        // std::cout << "label: " << (size_t)labelValue << " count: " << currentLabelCount << std::endl;
+        labelCountMap[labelValue] = currentLabelCount;
+      }
+      else
+      {
+        // std::cout << "label: " << (size_t)labelValue << " count: 0" << std::endl;
+        labelCountMap[labelValue] = 0;
+      }
     }
   }
   for (auto & it : labelCountMap)

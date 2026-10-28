@@ -64,15 +64,17 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Fiber Tract: " << inputFiber << std::endl;
-    std::cout << "Output Guide Fiber Tract: " << outputFiber << std::endl;
-    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
-    std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    const bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Input Fiber Tract: " << inputFiber << std::endl;
+      std::cout << "Output Guide Fiber Tract: " << outputFiber << std::endl;
+      std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
+      std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   vtkPolyData * fiberTract;

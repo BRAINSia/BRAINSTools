@@ -653,10 +653,12 @@ public:
 
     double absb(fabs(b));
     double absdiff(fabs(absa - absb));
-    double avg((absa + absb) / 2.0);
-    if (absdiff > (avg / 1000.0))
     {
-      return true;
+      double avg((absa + absb) / 2.0);
+      if (absdiff > (avg / 1000.0))
+      {
+        return true;
+      }
     }
     return false;
   }

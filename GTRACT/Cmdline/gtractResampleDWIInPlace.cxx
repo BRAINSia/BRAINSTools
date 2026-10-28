@@ -90,18 +90,20 @@ main(int argc, char * argv[])
   itk::NumberToString<double>                           doubleConvert;
   using GenericTransformType = itk::Transform<double, 3, 3>;
 
-  bool debug = true;
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "DWI Image: " << inputVolume << std::endl;
-    std::cout << "Input Transform: " << inputTransform << std::endl;
-    std::cout << "warpDWI Transform: " << warpDWITransform << std::endl;
-    std::cout << "Output Image: " << outputVolume << std::endl;
-    std::cout << "Debug Level: " << debugLevel << std::endl;
-    std::cout << "Image Output Size: " << imageOutputSize[0] << "," << imageOutputSize[1] << "," << imageOutputSize[2]
-              << std::endl;
-    std::cout << "=====================================================" << std::endl;
+    bool debug = true;
+    if (debug)
+    {
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "DWI Image: " << inputVolume << std::endl;
+      std::cout << "Input Transform: " << inputTransform << std::endl;
+      std::cout << "warpDWI Transform: " << warpDWITransform << std::endl;
+      std::cout << "Output Image: " << outputVolume << std::endl;
+      std::cout << "Debug Level: " << debugLevel << std::endl;
+      std::cout << "Image Output Size: " << imageOutputSize[0] << "," << imageOutputSize[1] << "," << imageOutputSize[2]
+                << std::endl;
+      std::cout << "=====================================================" << std::endl;
+    }
   }
 
   bool violated = false;

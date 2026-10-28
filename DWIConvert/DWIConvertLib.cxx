@@ -269,21 +269,23 @@ void
 DWIConvert::SetInputFileName(const std::string & inputFilePath)
 {
 
-  const auto isDirectory = itksys::SystemTools::FileIsDirectory(inputFilePath);
-  if (isDirectory)
   {
-    m_inputDicomDirectory = inputFilePath;
-  }
-  else
-  {
-    const auto isRegularFile = itksys::SystemTools::FileExists(inputFilePath, true);
-    if (isRegularFile)
+    const auto isDirectory = itksys::SystemTools::FileIsDirectory(inputFilePath);
+    if (isDirectory)
     {
-      m_inputVolume = inputFilePath;
+      m_inputDicomDirectory = inputFilePath;
     }
     else
     {
-      std::cerr << "Error: the inputVolume is neither file nor directory." << std::endl;
+      const auto isRegularFile = itksys::SystemTools::FileExists(inputFilePath, true);
+      if (isRegularFile)
+      {
+        m_inputVolume = inputFilePath;
+      }
+      else
+      {
+        std::cerr << "Error: the inputVolume is neither file nor directory." << std::endl;
+      }
     }
   }
 
@@ -584,15 +586,17 @@ convertInputVolumeToNrrdOrNifti(const std::string & targetType,
     }
 
     dwiConvert.SetOutputFileName(targetVolume);
-    int result = dwiConvert.read();
-    if (EXIT_SUCCESS == result)
     {
-      dwiConvert.write(targetVolume);
-    }
-    else
-    {
-      std::cout << "Error: read inputVolume failed." << std::endl;
-      return false;
+      int result = dwiConvert.read();
+      if (EXIT_SUCCESS == result)
+      {
+        dwiConvert.write(targetVolume);
+      }
+      else
+      {
+        std::cout << "Error: read inputVolume failed." << std::endl;
+        return false;
+      }
     }
   }
   return true;

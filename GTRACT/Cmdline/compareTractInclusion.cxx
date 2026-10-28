@@ -98,11 +98,13 @@ PairOffFibers(vtkPolyData * resampledTestFibers, vtkPolyData * resampledStandard
             sumDist += std::sqrt(sumSquares);
           }
 
-          double dist = (sumDist / numberOfPoints);
-          if (dist < minDist)
           {
-            minDist = dist;
-            closestK = k;
+            double dist = (sumDist / numberOfPoints);
+            if (dist < minDist)
+            {
+              minDist = dist;
+              closestK = k;
+            }
           }
         }
       }
@@ -125,16 +127,18 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  const bool debug = true;
-  if (debug)
   {
-    std::cout << "Test Fiber Tract: " << testFiber << std::endl;
-    std::cout << "Standard Fiber Tract: " << standardFiber << std::endl;
-    std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
-    std::cout << "Single Fiber Tract Closeness: " << closeness << std::endl;
-    std::cout << "Test For Tract Bijection: " << testForBijection << std::endl;
-    std::cout << "Test For Tract Cardinality Agreement: " << testForFiberCardinality << std::endl;
-    std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
+    const bool debug = true;
+    if (debug)
+    {
+      std::cout << "Test Fiber Tract: " << testFiber << std::endl;
+      std::cout << "Standard Fiber Tract: " << standardFiber << std::endl;
+      std::cout << "Use XML PolyData Files: " << writeXMLPolyDataFile << std::endl;
+      std::cout << "Single Fiber Tract Closeness: " << closeness << std::endl;
+      std::cout << "Test For Tract Bijection: " << testForBijection << std::endl;
+      std::cout << "Test For Tract Cardinality Agreement: " << testForFiberCardinality << std::endl;
+      std::cout << "Number Of Guide Fiber Points: " << numberOfPoints << std::endl;
+    }
   }
 
   vtkPolyData * testFiberTract;

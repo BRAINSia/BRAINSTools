@@ -138,17 +138,19 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
   MSP->Update();
   SImageType::Pointer           MSPImage = MSP->GetOutput();
   const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
-  SImageType::PointType         CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
 
   {
+    SImageType::PointType                         CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
     itk::ImageRegionIteratorWithIndex<SImageType> mspIt(MSPImage, MSPImage->GetLargestPossibleRegion());
     for (; !mspIt.IsAtEnd(); ++mspIt)
     {
       const SImageType::IndexType Index = mspIt.GetIndex();
-      const auto                  Location = MSPImage->template TransformIndexToPhysicalPoint<double>(Index);
-      if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
       {
-        mspIt.Set(high);
+        const auto Location = MSPImage->template TransformIndexToPhysicalPoint<double>(Index);
+        if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
+        {
+          mspIt.Set(high);
+        }
       }
     }
   }
@@ -177,14 +179,16 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
     for (; !mspIt.IsAtEnd(); ++mspIt)
     {
       const SImageType::IndexType Index = mspIt.GetIndex();
-      const auto                  Location = MSPImage->template TransformIndexToPhysicalPoint<double>(Index);
-      if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
       {
-        mspIt.Set(high);
-      }
-      else
-      {
-        mspIt.Set(0);
+        const auto Location = MSPImage->template TransformIndexToPhysicalPoint<double>(Index);
+        if (std::abs(Location[0] - CenterOfImage[0]) < imSpacing[0] * 1.00000001)
+        {
+          mspIt.Set(high);
+        }
+        else
+        {
+          mspIt.Set(0);
+        }
       }
     }
   }
@@ -206,10 +210,12 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
           CrossHairsPoint[1] = j;
           CrossHairsPoint[2] = k;
           SImageType::IndexType closestIndex;
-          const bool            isInside = MSPImage->TransformPhysicalPointToIndex(CrossHairsPoint, closestIndex);
-          if (isInside)
           {
-            MSPImage->SetPixel(closestIndex, high);
+            const bool isInside = MSPImage->TransformPhysicalPointToIndex(CrossHairsPoint, closestIndex);
+            if (isInside)
+            {
+              MSPImage->SetPixel(closestIndex, high);
+            }
           }
         }
       }

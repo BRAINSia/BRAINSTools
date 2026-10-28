@@ -31,9 +31,8 @@ template <typename TProbabilityImage>
 void
 ZeroNegativeValuesInPlace(std::vector<typename TProbabilityImage::Pointer> & priors)
 {
-  const unsigned int numPriors = priors.size();
-
   {
+    const unsigned int numPriors = priors.size();
     tbb::parallel_for(tbb::blocked_range<LOOPITERTYPE>(0, numPriors, 1), [=](tbb::blocked_range<LOOPITERTYPE> & r) {
       // First copy value, and set negative values to zero.
       for (LOOPITERTYPE iprior = r.begin(); iprior < r.end(); ++iprior)
@@ -148,9 +147,9 @@ ComputeForegroundProbMask(const std::vector<typename TProbabilityImage::Pointer>
   currForegroundMask->SetRegions(probList[0]->GetLargestPossibleRegion());
   currForegroundMask->Allocate();
 
-  const typename TProbabilityImage::SizeType  size = probList[0]->GetLargestPossibleRegion().GetSize();
-  constexpr typename ByteImageType::PixelType insideMaskValue = 1;
+  const typename TProbabilityImage::SizeType size = probList[0]->GetLargestPossibleRegion().GetSize();
   {
+    constexpr typename ByteImageType::PixelType insideMaskValue = 1;
     tbb::parallel_for(tbb::blocked_range3d<LOOPITERTYPE>(0, size[2], 1, 0, size[1], size[1] / 2, 0, size[0], 512),
                       [=](tbb::blocked_range3d<LOOPITERTYPE> & r) {
                         for (LOOPITERTYPE kk = r.pages().begin(); kk < r.pages().end(); ++kk)
@@ -163,10 +162,12 @@ ComputeForegroundProbMask(const std::vector<typename TProbabilityImage::Pointer>
                               FloatingPrecision                           tmp = 0.0;
                               for (unsigned int iprior = 0; iprior < numPriors; ++iprior)
                               {
-                                const bool fgflag = IsForegroundPriorVector[iprior];
-                                if (fgflag == true)
                                 {
-                                  tmp += probList[iprior]->GetPixel(currIndex);
+                                  const bool fgflag = IsForegroundPriorVector[iprior];
+                                  if (fgflag == true)
+                                  {
+                                    tmp += probList[iprior]->GetPixel(currIndex);
+                                  }
                                 }
                               }
                               if (tmp > 0.5) // Only include if the sum of the non-background

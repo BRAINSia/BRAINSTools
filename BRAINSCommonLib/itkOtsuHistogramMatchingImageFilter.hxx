@@ -195,41 +195,47 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   m_Gradients.set_size(m_NumberOfMatchPoints + 1);
   for (unsigned int j = 0; j < m_NumberOfMatchPoints + 1; ++j)
   {
-    const double denominator = m_QuantileTable[0][j + 1] - m_QuantileTable[0][j];
-    if (denominator != 0)
     {
-      m_Gradients[j] = m_QuantileTable[1][j + 1] - m_QuantileTable[1][j];
-      m_Gradients[j] /= denominator;
-    }
-    else
-    {
-      m_Gradients[j] = 0.0;
-    }
-  }
-
-  {
-    const double denominator = m_QuantileTable[0][0] - m_SourceMinValue;
-    if (denominator != 0)
-    {
-      m_LowerGradient = m_QuantileTable[1][0] - m_ReferenceMinValue;
-      m_LowerGradient /= denominator;
-    }
-    else
-    {
-      m_LowerGradient = 0.0;
+      const double denominator = m_QuantileTable[0][j + 1] - m_QuantileTable[0][j];
+      if (denominator != 0)
+      {
+        m_Gradients[j] = m_QuantileTable[1][j + 1] - m_QuantileTable[1][j];
+        m_Gradients[j] /= denominator;
+      }
+      else
+      {
+        m_Gradients[j] = 0.0;
+      }
     }
   }
 
   {
-    const double denominator = m_QuantileTable[0][m_NumberOfMatchPoints + 1] - m_SourceMaxValue;
-    if (denominator != 0)
     {
-      m_UpperGradient = m_QuantileTable[1][m_NumberOfMatchPoints + 1] - m_ReferenceMaxValue;
-      m_UpperGradient /= denominator;
+      const double denominator = m_QuantileTable[0][0] - m_SourceMinValue;
+      if (denominator != 0)
+      {
+        m_LowerGradient = m_QuantileTable[1][0] - m_ReferenceMinValue;
+        m_LowerGradient /= denominator;
+      }
+      else
+      {
+        m_LowerGradient = 0.0;
+      }
     }
-    else
+  }
+
+  {
     {
-      m_UpperGradient = 0.0;
+      const double denominator = m_QuantileTable[0][m_NumberOfMatchPoints + 1] - m_SourceMaxValue;
+      if (denominator != 0)
+      {
+        m_UpperGradient = m_QuantileTable[1][m_NumberOfMatchPoints + 1] - m_ReferenceMaxValue;
+        m_UpperGradient /= denominator;
+      }
+      else
+      {
+        m_UpperGradient = 0.0;
+      }
     }
   }
 }
@@ -304,9 +310,8 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
       this->UpdateProgress(static_cast<float>(i) / static_cast<float>(totalPixels));
     }
 
-    const auto srcValue = static_cast<double>(inIter.Get());
-
     {
+      const auto   srcValue = static_cast<double>(inIter.Get());
       unsigned int j = 0;
       for (; j < m_NumberOfMatchPoints + 2; ++j)
       {

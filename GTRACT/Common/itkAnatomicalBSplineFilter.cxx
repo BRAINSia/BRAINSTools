@@ -76,18 +76,6 @@ AnatomicalBSplineFilter::Update()
 
   registration->SetFixedImageRegion(fixedImageRegion);
 
-  /*** Setup the B-SPline Parameters ***/
-  TransformRegionType bsplineRegion;
-  TransformSizeType   gridSizeOnImage;
-  auto                gridBorderSize = itk::MakeFilled<TransformSizeType>(m_GridBorderSize);
-  TransformSizeType   totalGridSize;
-
-  gridSizeOnImage.SetSize(m_GridSize.GetSize());
-  // lower, 2 upper )
-  totalGridSize = gridSizeOnImage + gridBorderSize;
-
-  // bsplineRegion.SetSize( totalGridSize );
-
   if (m_BulkTransform.IsNotNull())
   {
     std::cout << "Using Bulk Transform" << std::endl;

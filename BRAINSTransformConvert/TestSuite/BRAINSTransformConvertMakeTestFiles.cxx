@@ -198,12 +198,10 @@ main(int argc, char ** argv)
   bsplineTransform->SetBulkTransform(affineTransform.GetPointer());
 
   BSplineDeformableTransformType::PhysicalDimensionsType fixedPhysicalDimensions;
-  BSplineDeformableTransformType::MeshSizeType           meshSize;
   for (unsigned int i = 0; i < 3; ++i)
   {
     fixedPhysicalDimensions[i] = spacing[i] * static_cast<double>(region.GetSize()[i] - 1);
   }
-  meshSize.Fill(5 - BSplineDeformableTransformType::SplineOrder);
   bsplineTransform->SetGridOrigin(origin);
   bsplineTransform->SetGridRegion(region);
   bsplineTransform->SetGridSpacing(spacing);

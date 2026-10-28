@@ -237,7 +237,7 @@ BRAINSHoughEyeDetector<TInputImage, TOutputImage>::MakeROICandiadteRegion(InputI
   OutputImagePointer localROIImage = OutputImageType::New();
   localROIImage->CopyInformation(image);
   localROIImage->SetRegions(region);
-  localROIImage->Allocate(true);
+  localROIImage->AllocateInitialized();
   {
     {
       constexpr size_t        LR_INDEX = 0;

@@ -113,7 +113,7 @@ main(int argc, char * argv[])
 
       mask_labels->SetSpacing(spacing);
       mask_labels->SetOrigin(origin);
-      mask_labels->Allocate(true);
+      mask_labels->AllocateInitialized();
     }
 
     // ROIAuto declaration

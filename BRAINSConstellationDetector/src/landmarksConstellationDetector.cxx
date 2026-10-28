@@ -384,14 +384,14 @@ landmarksConstellationDetector::FindCandidatePoints(
     // roiImage->SetSpacing(volumeMSP->GetSpacing());  // spacing
     // roiImage->SetDirection(volumeMSP->GetDirection());  // direction
   }
-  roiImage->Allocate(true); // true implies roiImage->FillBuffer(0);
+  roiImage->AllocateInitialized(); // true implies roiImage->FillBuffer(0);
 
   // Since the actual bounding box is a rounded area, a Roi mask is also needed.
   //
   const auto roiMask = SImageType::New();
   roiMask->CopyInformation(roiImage);
   roiMask->SetRegions(roiImage->GetLargestPossibleRegion());
-  roiMask->Allocate(true); // true implies roiMask->FillBuffer(0);
+  roiMask->AllocateInitialized(); // true implies roiMask->FillBuffer(0);
 
   // roiImage is filled with values from volumeMSP
   //

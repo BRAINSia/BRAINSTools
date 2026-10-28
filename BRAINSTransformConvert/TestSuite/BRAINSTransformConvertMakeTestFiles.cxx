@@ -63,17 +63,10 @@ main(int argc, char ** argv)
   using ScaleVersor3DTransformType = itk::ScaleVersor3DTransform<double>;
   using ScaleSkewVersor3DTransformType = itk::ScaleSkewVersor3DTransform<double>;
   const VersorRigid3DTransformType::Pointer  versorRigidTransform = CreateTransform<VersorRigid3DTransformType>();
-  VersorRigid3DTransformType::InputPointType center;
-  VersorRigid3DTransformType::AxisType       axis;
-
-  center[0] = 0.25;
-  center[1] = -0.25;
-  center[2] = 0.333;
+  VersorRigid3DTransformType::InputPointType center{ { 0.25, -0.25, 0.333 } };
   versorRigidTransform->SetCenter(center);
 
-  axis[0] = 0.0;
-  axis[1] = 1.0;
-  axis[2] = 0.0;
+  VersorRigid3DTransformType::AxisType axis{ { 0.0, 1.0, 0.0 } };
   versorRigidTransform->SetRotation(axis, 1.5);
 
   std::string versorRigidName(argv[1]);
@@ -81,11 +74,7 @@ main(int argc, char ** argv)
   itk::WriteTransformToDisk<double>(versorRigidTransform.GetPointer(), versorRigidName);
 
   const ScaleVersor3DTransformType::Pointer    scaleVersorTransform = CreateTransform<ScaleVersor3DTransformType>();
-  ScaleVersor3DTransformType::OutputVectorType translation;
-
-  translation[0] = 0.5;
-  translation[1] = -0.6;
-  translation[2] = 0.73;
+  ScaleVersor3DTransformType::OutputVectorType translation{ { 0.5, -0.6, 0.73 } };
   scaleVersorTransform->SetTranslation(translation);
 
   center[0] = -0.5;
@@ -97,11 +86,7 @@ main(int argc, char ** argv)
   axis[1] = 0.0;
   axis[2] = 0.0;
   scaleVersorTransform->SetRotation(axis, 0.5723);
-  ScaleVersor3DTransformType::ScaleVectorType scale;
-
-  scale[0] = .75;
-  scale[1] = 1.1;
-  scale[2] = 0.3333;
+  ScaleVersor3DTransformType::ScaleVectorType scale{ { .75, 1.1, 0.3333 } };
   scaleVersorTransform->SetScale(scale);
 
   std::string scaleVersorName(argv[1]);
@@ -166,26 +151,15 @@ main(int argc, char ** argv)
   itk::WriteTransformToDisk<double>(affineTransform, affineName);
 
   using ImageType = itk::Image<signed short, 3>;
-  ImageType::RegionType            region;
-  ImageType::RegionType::SizeType  size;
-  ImageType::RegionType::IndexType index;
-  ImageType::SpacingType           spacing;
-  ImageType::PointType             origin;
-
-  size[0] = size[1] = size[2] = 10;
-  region.SetSize(size);
-  index[0] = index[1] = index[2] = 0;
-  region.SetSize(size);
-  region.SetIndex(index);
-  spacing[0] = spacing[1] = spacing[2] = 2.0;
-  origin[0] = -10;
-  origin[1] = -10;
-  origin[2] = 10;
+  ImageType::RegionType::SizeType  size{ { 10, 10, 10 } };
+  ImageType::RegionType::IndexType index{};
+  ImageType::RegionType            region{ index, size };
+  auto                             spacing = itk::MakeFilled<ImageType::SpacingType>(2.0);
+  ImageType::PointType             origin{ { -10.0, -10.0, 10.0 } };
 
   const ImageType::Pointer testImage = itkUtil::AllocateImageFromRegionAndSpacing<ImageType>(region, spacing);
 
-  vnl_random randgen;
-  randgen.reseed(getpid());
+  vnl_random randgen(getpid());
   for (itk::ImageRegionIterator<ImageType> it(testImage, testImage->GetLargestPossibleRegion()); !it.IsAtEnd(); ++it)
   {
     it.Set(static_cast<ImageType::PixelType>(randgen.lrand32(32767)));

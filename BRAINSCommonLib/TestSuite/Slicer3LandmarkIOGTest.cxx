@@ -71,16 +71,10 @@ TEST(Slicer3LandmarkIO, V4FcsvWriteReadRoundtrip)
   const std::string path = UniqueTempPath("v4_roundtrip.fcsv");
 
   LandmarksMapType  landmarks;
-  LandmarkPointType ac;
-  ac[0] = -127.456;
-  ac[1] = 42.5;
-  ac[2] = -0.001;
+  LandmarkPointType ac{ { -127.456, 42.5, -0.001 } };
   landmarks["AC"] = ac;
 
-  LandmarkPointType pc;
-  pc[0] = 88.123;
-  pc[1] = -33.7;
-  pc[2] = 255.0;
+  LandmarkPointType pc{ { 88.123, -33.7, 255.0 } };
   landmarks["PC"] = pc;
 
   WriteITKtoSlicer3Lmk(path, landmarks, SLICER_V4_FCSV);
@@ -108,16 +102,10 @@ TEST(Slicer3LandmarkIO, V3FcsvWriteReadRoundtrip)
   const std::string path = UniqueTempPath("v3_roundtrip.fcsv");
 
   LandmarksMapType  landmarks;
-  LandmarkPointType ac;
-  ac[0] = -127.456;
-  ac[1] = 42.5;
-  ac[2] = -0.001;
+  LandmarkPointType ac{ { -127.456, 42.5, -0.001 } };
   landmarks["AC"] = ac;
 
-  LandmarkPointType pc;
-  pc[0] = 88.123;
-  pc[1] = -33.7;
-  pc[2] = 255.0;
+  LandmarkPointType pc{ { 88.123, -33.7, 255.0 } };
   landmarks["PC"] = pc;
 
   WriteITKtoSlicer3Lmk(path, landmarks, SLICER_V3_FCSV);
@@ -145,10 +133,7 @@ TEST(Slicer3LandmarkIO, NegativeCoordinatesPreservedThroughDoubleConversion)
   const std::string path = UniqueTempPath("neg_coords.fcsv");
 
   LandmarksMapType  landmarks;
-  LandmarkPointType pt;
-  pt[0] = -42.5;
-  pt[1] = -17.3;
-  pt[2] = -0.001;
+  LandmarkPointType pt{ { -42.5, -17.3, -0.001 } };
   landmarks["NEG"] = pt;
 
   // Write as V4 (LPS -> RAS negation of first two components)

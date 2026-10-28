@@ -535,10 +535,9 @@ DWIConverter::ThreeDToFourDImage(const Volume3DUnwrappedType::Pointer & img) con
                                << " left-over slices = " << size3D[2] % nVolumes << std::endl);
     }
   }
-  Volume4DType::DirectionType direction4D;
-  direction4D.SetIdentity();
-  auto                    spacing4D = itk::MakeFilled<Volume4DType::SpacingType>(1.0);
-  Volume4DType::PointType origin4D{};
+  Volume4DType::DirectionType direction4D = Volume4DType::DirectionType::GetIdentity();
+  auto                        spacing4D = itk::MakeFilled<Volume4DType::SpacingType>(1.0);
+  Volume4DType::PointType     origin4D{};
   for (unsigned i = 0; i < 3; ++i)
   {
     for (unsigned j = 0; j < 3; ++j)
@@ -582,11 +581,8 @@ DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
 
   Volume3DUnwrappedType::RegionType region3D;
   {
-    Volume3DUnwrappedType::SizeType size3D;
-    size3D[0] = size4D[0];
-    size3D[1] = size4D[1];
-    const int nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
-    size3D[2] = size4D[2] * nVolumes;
+    const int                       nVolumes = img4D->GetLargestPossibleRegion().GetSize()[3];
+    Volume3DUnwrappedType::SizeType size3D{ { size4D[0], size4D[1], size4D[2] * nVolumes } };
 
     Volume3DUnwrappedType::IndexType index3D{};
     region3D.SetIndex(index3D);
@@ -599,10 +595,9 @@ DWIConverter::FourDToThreeDImage(const Volume4DType::Pointer & img4D) const
                                << " left-over slices = " << size3D[2] % nVolumes << std::endl);
     }
   }
-  Volume3DUnwrappedType::DirectionType direction3D;
-  direction3D.SetIdentity();
-  auto                             spacing3D = itk::MakeFilled<Volume3DUnwrappedType::SpacingType>(1.0);
-  Volume3DUnwrappedType::PointType origin3D{};
+  Volume3DUnwrappedType::DirectionType direction3D = Volume3DUnwrappedType::DirectionType::GetIdentity();
+  auto                                 spacing3D = itk::MakeFilled<Volume3DUnwrappedType::SpacingType>(1.0);
+  Volume3DUnwrappedType::PointType     origin3D{};
   for (unsigned i = 0; i < 3; ++i)
   {
     for (unsigned j = 0; j < 3; ++j)

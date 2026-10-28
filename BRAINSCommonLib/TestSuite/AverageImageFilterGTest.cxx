@@ -50,8 +50,7 @@ TEST(AverageImageFilter, AverageMatchesManualComputation)
   using FloatImageIterator = itk::ImageRegionIterator<FloatImage2DType>;
   using FloatImageConstIteratorVector = std::vector<FloatImageConstIterator>;
 
-  FloatImage2DType::SizeType randomSize;
-  randomSize[1] = randomSize[0] = testImageDim;
+  auto randomSize = itk::MakeFilled<FloatImage2DType::SizeType>(testImageDim);
 
   FloatImageVector              inputImages;
   FloatImageConstIteratorVector inputIterators;

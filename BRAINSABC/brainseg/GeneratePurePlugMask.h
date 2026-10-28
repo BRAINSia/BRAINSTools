@@ -63,11 +63,9 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   InputImageVector             normalizedInputModalImagesList(numberOfImageModalities);
   InputImageInterpolatorVector inputImageNNInterpolatorsVector(numberOfImageModalities);
 
-  typename ByteImageType::SpacingType maskSpacing;
-  maskSpacing.Fill(0);
+  typename ByteImageType::SpacingType maskSpacing{};
 
-  typename ByteImageType::SpacingType minimumSpacing;
-  minimumSpacing.Fill(std::numeric_limits<double>::max());
+  auto minimumSpacing = itk::MakeFilled<typename ByteImageType::SpacingType>(std::numeric_limits<double>::max());
 
   size_t index = 0;
   for (size_t i = 0; i < numberOfImageModalities; ++i)
@@ -176,8 +174,7 @@ GeneratePurePlugMask(const std::vector<typename InputImageType::Pointer> & input
   maskSize[1] = itk::Math::Ceil<itk::SizeValueType>(inputSize[1] * inputSpacing[1] / maskSpacing[1]);
   maskSize[2] = itk::Math::Ceil<itk::SizeValueType>(inputSize[2] * inputSpacing[2] / maskSpacing[2]);
   // mask start index
-  typename ByteImageType::IndexType maskStart;
-  maskStart.Fill(0);
+  typename ByteImageType::IndexType maskStart{};
   // Set mask region
   typename ByteImageType::RegionType maskRegion(maskStart, maskSize);
   mask->SetRegions(maskRegion);

@@ -240,8 +240,7 @@ ComputeSVector(const MatrixType & X_i)
     itkGenericExceptionMacro(<< "Error: Bad X_i!");
   }
   const unsigned int numLmks(X_i.rows() / PointDim);
-  VectorType         s_i;
-  s_i.fill(0);
+  VectorType         s_i(0.0);
   for (unsigned int dim = 0; dim < PointDim; ++dim)
   {
     for (unsigned int j = 0; j < numDataset; ++j)

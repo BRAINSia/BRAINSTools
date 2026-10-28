@@ -146,8 +146,7 @@ ExtractSliceImageFilter<TInputImage, TOutputImage>::GenerateOutputInformation()
 
     typename OutputImageType::SpacingType   outputSpacing;
     typename OutputImageType::DirectionType outputDirection;
-    typename OutputImageType::PointType     outputOrigin;
-    outputOrigin.Fill(0.0);
+    typename OutputImageType::PointType     outputOrigin{};
 
     if (static_cast<unsigned int>(OutputImageDimension) > static_cast<unsigned int>(InputImageDimension))
     {

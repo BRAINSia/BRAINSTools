@@ -351,10 +351,7 @@ RegressionTestImage(const char *         testImageFilename,
       size[i] = 0;
     }
 
-    RegionType region;
-    region.SetIndex(index);
-
-    region.SetSize(size);
+    RegionType region(index, size);
 
     auto extract = ExtractType::New();
     extract->SetDirectionCollapseToSubmatrix();

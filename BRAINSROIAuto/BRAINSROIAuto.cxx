@@ -93,13 +93,10 @@ BRAINSROIAUTOWriteOutputVolume(const VolumeImageType::Pointer & image,
   }
   if (CropImage)
   {
-    typename VolumeMaskType::IndexType minIndex;
-    typename VolumeMaskType::IndexType maxIndex;
-    for (VolumeMaskType::IndexType::IndexValueType i = 0; i < VolumeMaskType::ImageDimension; ++i)
-    {
-      minIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max();
-      maxIndex[i] = std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min();
-    }
+    auto minIndex =
+      itk::MakeFilled<VolumeMaskType::IndexType>(std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::max());
+    auto maxIndex =
+      itk::MakeFilled<VolumeMaskType::IndexType>(std::numeric_limits<VolumeMaskType::IndexType::IndexValueType>::min());
     itk::ImageRegionConstIteratorWithIndex<VolumeMaskType> maskIt(mask, mask->GetLargestPossibleRegion());
     while (!maskIt.IsAtEnd())
     {

@@ -40,19 +40,13 @@ namespace itk
  */
 template <typename TOutputImage>
 RandomImageSource<TOutputImage>::RandomImageSource()
+  : m_Size(MakeFilled<SizeType>(64))
+  , m_Spacing(MakeFilled<SpacingType>(1.0))
+  , m_Min(NumericTraits<OutputImagePixelType>::NonpositiveMin())
+  , m_Max(NumericTraits<OutputImagePixelType>::max())
 {
 
   this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
-  // Initial image is 64 wide in each direction.
-  for (unsigned int i = 0; i < TOutputImage::GetImageDimension(); ++i)
-  {
-    m_Size[i] = 64;
-    m_Spacing[i] = 1.0;
-    m_Origin[i] = 0.0;
-  }
-
-  m_Min = NumericTraits<OutputImagePixelType>::NonpositiveMin();
-  m_Max = NumericTraits<OutputImagePixelType>::max();
 }
 
 template <typename TOutputImage>

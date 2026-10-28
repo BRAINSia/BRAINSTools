@@ -537,14 +537,12 @@ public:
       using FloatImageType = itk::Image<float, 3>;
       using FloatImageRegion = FloatImageType::RegionType;
       using FloatImageSpacing = FloatImageType::SpacingType;
-      FloatImageSpacing spacing;
-      spacing[0] = spacing[1] = spacing[2] = 1.0;
+      auto             spacing = itk::MakeFilled<FloatImageSpacing>(1.0);
       FloatImageRegion region;
       region.SetSize(0, static_cast<FloatImageRegion::SizeValueType>(DID.h + 1));
       region.SetSize(1, static_cast<FloatImageRegion::SizeValueType>(2.0 * DID.r) + 1);
       region.SetSize(2, static_cast<FloatImageRegion::SizeValueType>(2.0 * DID.r) + 1);
-      FloatImageRegion::IndexType _index;
-      _index[0] = _index[1] = _index[2] = 0;
+      FloatImageRegion::IndexType _index{};
       region.SetIndex(_index);
       auto debugImage = FloatImageType::New();
       debugImage->SetSpacing(spacing);

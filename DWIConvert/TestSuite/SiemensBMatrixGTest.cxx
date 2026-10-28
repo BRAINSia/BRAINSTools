@@ -59,8 +59,7 @@ TEST(SiemensDWIConverter, ExtractBMatrixFromPrivateTag)
   DWIConverter::FileNamesContainer     names{ path };
   SiemensDWIConverter                  converter(headers, names, true, 0.2);
 
-  vnl_matrix_fixed<double, 3, 3> bMatrix;
-  bMatrix.fill(0.0);
+  vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
   ASSERT_TRUE(converter.ExtractBMatrix(nullptr, 0, bMatrix));
   EXPECT_DOUBLE_EQ(bMatrix[0][0], 1.0);
   EXPECT_DOUBLE_EQ(bMatrix[0][1], 2.0);

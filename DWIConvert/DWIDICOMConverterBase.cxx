@@ -176,8 +176,7 @@ DWIDICOMConverterBase::LoadDicomDirectory()
   }
 
   {
-    Volume3DUnwrappedType::DirectionType LPSDirCos;
-    LPSDirCos.SetIdentity();
+    Volume3DUnwrappedType::DirectionType LPSDirCos = Volume3DUnwrappedType::DirectionType::GetIdentity();
 
     // check ImageOrientationPatient and figure out slice direction in
     // L-P-I (right-handed) system.

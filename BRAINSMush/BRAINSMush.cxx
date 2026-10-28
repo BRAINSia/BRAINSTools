@@ -259,21 +259,19 @@ GenerateBrainVolume(ImageType::Pointer &     firstImage,
     int    voxelCount = 0;
     double signalTotal = 0.0;
 
-    MaskImageType::RegionType            regionOfInterest;
-    MaskImageType::RegionType::SizeType  regionOfInterestSize;
-    MaskImageType::RegionType::IndexType regionOfInterestStart;
+    MaskImageType::RegionType::SizeType regionOfInterestSize;
 
     regionOfInterestSize[0] = boundingBoxSize[0];
     regionOfInterestSize[1] = boundingBoxSize[1];
     regionOfInterestSize[2] = boundingBoxSize[2];
 
-    regionOfInterest.SetSize(regionOfInterestSize);
+    MaskImageType::RegionType::IndexType regionOfInterestStart;
 
     regionOfInterestStart[0] = boundingBoxStart[0];
     regionOfInterestStart[1] = boundingBoxStart[1];
     regionOfInterestStart[2] = boundingBoxStart[2];
 
-    regionOfInterest.SetIndex(regionOfInterestStart);
+    MaskImageType::RegionType regionOfInterest{ regionOfInterestStart, regionOfInterestSize };
 
     ConstIteratorType     volumeIt(mixtureImage, regionOfInterest);
     ConstMaskIteratorType labelIt(maskImage, regionOfInterest);
@@ -656,7 +654,6 @@ GenerateInitializerRegion(ImageType::Pointer & referenceImage,
   initializeMask->CopyInformation(referenceImage);
   initializeMask->Allocate();
 
-  MaskImageType::RegionType            regionOfInterest;
   MaskImageType::RegionType::IndexType regionStart;
   MaskImageType::RegionType::SizeType  regionSize;
 
@@ -668,8 +665,7 @@ GenerateInitializerRegion(ImageType::Pointer & referenceImage,
   regionSize[1] = boundingBoxSize[1];
   regionSize[2] = boundingBoxSize[2];
 
-  regionOfInterest.SetSize(regionSize);
-  regionOfInterest.SetIndex(regionStart);
+  MaskImageType::RegionType regionOfInterest{ regionStart, regionSize };
 
   MaskIteratorType initializeIt(initializeMask, regionOfInterest);
   // sets a binary cuboid mask

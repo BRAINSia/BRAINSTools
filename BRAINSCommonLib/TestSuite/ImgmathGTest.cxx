@@ -46,13 +46,9 @@ protected:
   void
   SetUp() override
   {
-    SizeType size;
-    size[0] = kDim;
-    size[1] = kDim;
-    size[2] = kDim;
+    auto size = itk::MakeFilled<SizeType>(kDim);
 
-    RegionType region;
-    region.SetSize(size);
+    RegionType region(size);
 
     imageA = ImageType::New();
     imageA->SetRegions(region);

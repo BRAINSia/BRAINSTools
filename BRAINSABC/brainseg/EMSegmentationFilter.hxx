@@ -2265,10 +2265,9 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMLoop()
 
   if (m_UsePurePlugs)
   {
-    ByteImageType::SizeType numberOfContinuousIndexSubSamples;
-    numberOfContinuousIndexSubSamples[0] = m_NumberOfSubSamplesInEachPlugArea[0];
-    numberOfContinuousIndexSubSamples[1] = m_NumberOfSubSamplesInEachPlugArea[1];
-    numberOfContinuousIndexSubSamples[2] = m_NumberOfSubSamplesInEachPlugArea[2];
+    ByteImageType::SizeType numberOfContinuousIndexSubSamples{ { m_NumberOfSubSamplesInEachPlugArea[0],
+                                                                 m_NumberOfSubSamplesInEachPlugArea[1],
+                                                                 m_NumberOfSubSamplesInEachPlugArea[2] } };
 
     // set all multi modal input images to an image vector type
     InputImageVector inputImagesVector;

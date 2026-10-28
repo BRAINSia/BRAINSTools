@@ -145,11 +145,8 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
   rotation2[1] = 1;
   rotation2[2] = 0;
 
-  typename TOutputImage::PointType RotAngle;
   // Note: algorithm doesn't treat rotations about +L-axis
-  RotAngle[0] = 0.0;
-  RotAngle[1] = 0.0;
-  RotAngle[2] = 0.0;
+  typename TOutputImage::PointType RotAngle{};
 
 
   // about +P-axis

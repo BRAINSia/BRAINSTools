@@ -28,8 +28,6 @@ main(int argc, char * argv[])
   }
   std::string bvecfile1(argv[1]);
   std::string bvecfile2(argv[2]);
-  std::string bvalfile1(argv[3]);
-  std::string bvalfile2(argv[4]);
 
   unsigned int                                      bVecCount1;
   DWIMetaDataDictionaryValidator::GradientTableType bvecs1;
@@ -51,6 +49,9 @@ main(int argc, char * argv[])
               << std::endl;
     return EXIT_FAILURE;
   }
+
+  std::string bvalfile1(argv[3]);
+  std::string bvalfile2(argv[4]);
 
   unsigned int        bValCount1;
   std::vector<double> bvals1;

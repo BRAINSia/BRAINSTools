@@ -129,7 +129,6 @@ int
 DWIConvert::write(const std::string & outputVolume)
 {
   SetOutputFileName(outputVolume);
-  const std::string version = "5.0.0";
   if ("FSL" == getOutputFileType())
   {
     m_useIdentityMeasurementFrame = true; // Only true is valid for writing FSL
@@ -164,6 +163,7 @@ DWIConvert::write(const std::string & outputVolume)
   {
     // NRRD requires scaledDiffusionVectors, so find max BValue
     m_converter->ConvertToSingleBValueScaledDiffusionVectors();
+    const std::string version = "5.0.0";
     //////////////////////////////////////////////
     // write header file
     // This part follows a DWI NRRD file in NRRD format 5.

@@ -57,10 +57,9 @@ main(int argc, char ** argv)
   const auto filter = FindCenterFilterType::New();
   filter->SetInput(inputImage);
 
-  MaskImageType::Pointer imageMask;
   if (!ImageMask.empty())
   {
-    imageMask = itkUtil::ReadImage<MaskImageType>(ImageMask);
+    MaskImageType::Pointer imageMask = itkUtil::ReadImage<MaskImageType>(ImageMask);
     if (imageMask.IsNull())
     {
       std::cerr << "FindCenterOfBrain: Can't read mask " << ImageMask << std::endl;

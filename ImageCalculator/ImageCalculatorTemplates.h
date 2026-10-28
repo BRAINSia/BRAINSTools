@@ -842,8 +842,6 @@ ImageCalculatorReadWrite(MetaCommand & command)
     AccImage = ImageDivideConstant<ImageType>(AccImage, static_cast<PixelType>(NumImages * NumImages - NumImages));
   }
 
-  const std::string OutType(command.GetValueAsString("OutputPixelType", "PixelType"));
-
   // The resultant Image is written.
   if (!command.GetValueAsString("OutputFilename", "filename").empty())
   {
@@ -852,6 +850,7 @@ ImageCalculatorReadWrite(MetaCommand & command)
     // Type cast image according to the output type specified. Default is float.
     if (!command.GetValueAsString("OutputPixelType", "PixelType").empty())
     {
+      const std::string OutType(command.GetValueAsString("OutputPixelType", "PixelType"));
       // process the string for the data type
       if (CompareNoCase(OutType, std::string("UCHAR")) == 0)
       {

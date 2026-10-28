@@ -290,8 +290,9 @@ public:
 
       output << BCDVersionString << std::endl;
 
-      std::map<std::string, bool>::const_iterator it2;
-      for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+      for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+           it2 != this->m_TemplateMeansComputed.end();
+           ++it2)
       {
         output << it2->first.c_str() << std::endl;
         output << doubleToString(this->GetRadius(it2->first)) << std::endl;
@@ -307,7 +308,9 @@ public:
 #ifdef __USE_OFFSET_DEBUGGING_CODE__
       this->debugOffset(&output, "before vectors", -1);
 #endif
-      for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+      for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+           it2 != this->m_TemplateMeansComputed.end();
+           ++it2)
       {
         ComputeAllMeans(this->m_TemplateMeans[it2->first], this->m_Templates[it2->first]);
         this->Write(output, this->m_TemplateMeans[it2->first]);
@@ -364,9 +367,9 @@ public:
     std::cout << "NumRotationSteps"
               << ": " << this->GetNumRotationSteps() << std::endl;
 
-    std::map<std::string, bool>::const_iterator it2;
-
-    for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+    for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+         it2 != this->m_TemplateMeansComputed.end();
+         ++it2)
     {
       std::cout << it2->first << "Radius: " << this->GetRadius(it2->first) << std::endl;
       std::cout << it2->first << "Height: " << this->GetHeight(it2->first) << std::endl;
@@ -461,8 +464,9 @@ public:
 #endif
 
       {
-        std::map<std::string, bool>::const_iterator it2;
-        for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+        for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+             it2 != this->m_TemplateMeansComputed.end();
+             ++it2)
         {
           this->Read(input, this->m_TemplateMeans[it2->first]);
           this->m_TemplateMeansComputed[it2->first] = true;
@@ -582,9 +586,9 @@ public:
     // had reduced
     //       the resolution in the IS/RP direction to gain some speed
     // efficiency.
-    std::map<std::string, bool>::const_iterator it2;
-
-    for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+    for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+         it2 != this->m_TemplateMeansComputed.end();
+         ++it2)
     {
       defineTemplateIndexLocations(
         this->GetRadius(it2->first), this->GetHeight(it2->first), this->m_VectorIndexLocations[it2->first]);
@@ -626,8 +630,7 @@ public:
     this->SetNumRotationSteps(mDef.GetNumRotationSteps());
 
     {
-      ValMapConstIterator it2;
-      for (it2 = mDef.GetRadii().begin(); it2 != mDef.GetRadii().end(); ++it2)
+      for (ValMapConstIterator it2 = mDef.GetRadii().begin(); it2 != mDef.GetRadii().end(); ++it2)
       {
         this->SetRadius(it2->first, it2->second);
         this->SetHeight(it2->first, mDef.GetHeight(it2->first));
@@ -647,12 +650,10 @@ public:
 
     double absb(fabs(b));
     double absdiff(fabs(absa - absb));
+    double avg((absa + absb) / 2.0);
+    if (absdiff > (avg / 1000.0))
     {
-      double avg((absa + absb) / 2.0);
-      if (absdiff > (avg / 1000.0))
-      {
-        return true;
-      }
+      return true;
     }
     return false;
   }
@@ -690,8 +691,9 @@ public:
       return false;
     }
 
-    std::map<std::string, bool>::const_iterator it2;
-    for (it2 = this->m_TemplateMeansComputed.begin(); it2 != this->m_TemplateMeansComputed.end(); ++it2)
+    for (std::map<std::string, bool>::const_iterator it2 = this->m_TemplateMeansComputed.begin();
+         it2 != this->m_TemplateMeansComputed.end();
+         ++it2)
     {
       if ((NE(this->GetRadius(it2->first), other.GetRadius(it2->first))) ||
           (NE(this->GetHeight(it2->first), other.GetHeight(it2->first))) ||

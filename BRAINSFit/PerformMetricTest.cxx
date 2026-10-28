@@ -149,10 +149,10 @@ main(int argc, char * argv[])
 
   const auto samplePointSet = MetricSamplePointSetType::New();
   samplePointSet->Initialize();
-  unsigned long index = 0;
 
   const auto sampleCount = static_cast<unsigned long>(std::ceil(1.0 / samplingPercentage));
   // std::cout << "sample count: " << sampleCount << std::endl;
+  unsigned long                                          index = 0;
   unsigned long                                          count = sampleCount;
   itk::ImageRegionConstIteratorWithIndex<FixedImageType> It(fixedImage, fixedImage->GetBufferedRegion());
   for (It.GoToBegin(); !It.IsAtEnd(); ++It)

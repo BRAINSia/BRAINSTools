@@ -109,9 +109,6 @@ ComparisonImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const Out
   using RadiusType = typename FacesCalculator::RadiusType;
   using FaceListType = typename FacesCalculator::FaceListType;
 
-  // Prepare standard boundary condition.
-  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
-
   // Get a pointer to each image.
   const InputImageType * validImage = this->GetInput(0);
   const InputImageType * testImage = this->GetInput(1);
@@ -144,6 +141,9 @@ ComparisonImageFilter<TInputImage, TOutputImage>::ThreadedGenerateData(const Out
 
   // Support progress methods/callbacks.
   ProgressReporter progress(this, threadId, threadRegion.GetNumberOfPixels());
+
+  // Prepare standard boundary condition.
+  ZeroFluxNeumannBoundaryCondition<InputImageType> nbc;
 
   // Process the internal face and each of the boundary faces.
   for (auto face = faceList.begin(); face != faceList.end(); ++face)

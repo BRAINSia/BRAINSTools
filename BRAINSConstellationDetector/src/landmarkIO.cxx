@@ -567,9 +567,10 @@ WriteMRMLFile(const std::string &                                        outputM
               "textScale=\"4.5\" visibility=\"1\" color=\"0.4 1 1\" selectedcolor=\"1 0.5 0.5\" ambient=\"0\" "
               "diffuse=\"1\" specular=\"0\" power=\"1\" locked=\"0\" opacity=\"1\" fiducials=\"\n";
 
-    LandmarksMapType::const_iterator it;
-    unsigned int                     index = 0;
-    for (it = outputLandmarksInOutputSpaceMap.begin(); it != outputLandmarksInOutputSpaceMap.end(); ++it)
+    unsigned int index = 0;
+    for (LandmarksMapType::const_iterator it = outputLandmarksInOutputSpaceMap.begin();
+         it != outputLandmarksInOutputSpaceMap.end();
+         ++it)
     {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString((it->second)[0]) << " "
              << doubleToString((it->second)[1]) << " " << doubleToString((it->second)[2]);
@@ -599,9 +600,10 @@ WriteMRMLFile(const std::string &                                        outputM
               "textScale=\"4.5\" visibility=\"1\" color=\"0.4 1 1\" selectedcolor=\"1 0.5 0.5\" ambient=\"0\" "
               "diffuse=\"1\" specular=\"0\" power=\"1\" locked=\"0\" opacity=\"1\" fiducials=\"\n";
 
-    LandmarksMapType::const_iterator it;
-    unsigned int                     index = 0;
-    for (it = outputLandmarksInInputSpaceMap.begin(); it != outputLandmarksInInputSpaceMap.end(); ++it)
+    unsigned int index = 0;
+    for (LandmarksMapType::const_iterator it = outputLandmarksInInputSpaceMap.begin();
+         it != outputLandmarksInInputSpaceMap.end();
+         ++it)
     {
       myfile << "id " << it->first << " labeltext " << it->first << " xyz " << doubleToString((it->second)[0]) << " "
              << doubleToString((it->second)[1]) << " " << doubleToString((it->second)[2]);

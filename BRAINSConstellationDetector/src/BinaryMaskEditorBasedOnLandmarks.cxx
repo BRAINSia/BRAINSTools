@@ -316,16 +316,12 @@ main(int argc, char * argv[])
   //     3: ....
   using PlaneLandmarkSetType = std::vector<ThreeLandmarksForPlane>;
 
-  PlaneLandmarkSetType myLandmarkSetForPlanes;
-
   if (inputLandmarkNamesForObliquePlane.size() % 3 != 0)
   {
     std::cerr << "ERROR: Landmarks set for plane has to given as a multiple of three: "
               << inputLandmarkNamesForObliquePlane.size() << std::endl;
     std::exit(EXIT_FAILURE);
   }
-  auto planeDir = setCutDirectionForObliquePlane.begin();
-
   if (!inputLandmarkNamesForObliquePlane.empty())
   {
     if (inputLandmarkNamesForObliquePlane.size() != 3 * setCutDirectionForObliquePlane.size())
@@ -336,6 +332,8 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
   }
+  PlaneLandmarkSetType myLandmarkSetForPlanes;
+  auto                 planeDir = setCutDirectionForObliquePlane.begin();
   for (auto inputLdmrIt = inputLandmarkNamesForObliquePlane.begin();
        inputLdmrIt < inputLandmarkNamesForObliquePlane.end();
        ++inputLdmrIt)

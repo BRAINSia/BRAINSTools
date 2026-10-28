@@ -59,7 +59,6 @@ main(int argc, char * argv[])
 
 
   LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksFile);
-  LandmarksMapType transformedLandmarks;
 
   itk::Transform<double, 3, 3>::Pointer lmk_transform = nullptr;
   {
@@ -101,8 +100,8 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  auto it = origLandmarks.begin();
-  for (; it != origLandmarks.end(); ++it)
+  LandmarksMapType transformedLandmarks;
+  for (auto it = origLandmarks.begin(); it != origLandmarks.end(); ++it)
   {
     transformedLandmarks[it->first] = lmk_transform->TransformPoint(it->second);
   }

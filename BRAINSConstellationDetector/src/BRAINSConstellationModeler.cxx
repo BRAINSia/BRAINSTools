@@ -150,10 +150,9 @@ main(int argc, char * argv[])
   std::vector<SImageType::PointType> cm_InMSPAlignedSpace(myModel.GetNumDataSets());
 
   std::ofstream MSPOptFile;
-  std::string   newOptimizedLandmarksTrainingFile;
   if (saveOptimizedLandmarks)
   {
-    newOptimizedLandmarksTrainingFile = inputTrainingList + optimizedLandmarksFilenameExtender;
+    std::string newOptimizedLandmarksTrainingFile = inputTrainingList + optimizedLandmarksFilenameExtender;
 
     // Write out the optimized points to a file so that training can be more
     // accurate.
@@ -255,8 +254,6 @@ main(int argc, char * argv[])
       image = volOrig;
     }
 
-    SImageType::PointType origin{};
-
     // This section assumes that the landmarks are defined as
     // ITK compliant physical space
     // That are consistent with ITK images that they were collected from Dicom
@@ -310,6 +307,7 @@ main(int argc, char * argv[])
 
     // Instead of RC method, now we compute all the ac-pc aligned transforms by estimating the plane passing through RP,
     // AC and PC points
+    SImageType::PointType                   origin{};
     const VersorRigidTransformType::Pointer ACPC_AlignedTransform =
       computeTmspFromPoints_Versor(origRP, origAC, origPC, origin);
 

@@ -157,22 +157,16 @@ public:
             output << " ";
           }
         }
-        unsigned int k(0);
-        for (k = 0; k < i[j].size(); ++k)
+        unsigned int k = 0;
+        for (; k < i[j].size(); ++k)
         {
           output << i[j][k];
         }
-        unsigned int limit = 0;
         // if right justify, just output pad
+        unsigned int limit = m_rightJustify ? this->m_Pad : colWidths[j] + this->m_Pad;
         if (m_rightJustify)
         {
-          limit = this->m_Pad;
           k = 0;
-        }
-        else
-        {
-          // print column fill + pad
-          limit = colWidths[j] + this->m_Pad;
         }
         for (; k < limit; ++k)
         {

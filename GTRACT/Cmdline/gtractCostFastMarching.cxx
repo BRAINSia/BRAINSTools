@@ -207,12 +207,12 @@ main(int argc, char * argv[])
   }
 
   // setup seed points
-  auto     seedPoints = NodeContainer::New();
-  NodeType node;
+  auto seedPoints = NodeContainer::New();
   for (unsigned int j = 0; j < numSeeds; ++j)
   {
     seedIndexType seedIndex = seedList.back();
     seedList.pop_back();
+    NodeType node;
     node.SetIndex(seedIndex);
     node.SetValue(0.0);
     seedPoints->InsertElement(j, node);

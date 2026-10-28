@@ -464,11 +464,6 @@ public:
       internalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetSize();
     const SImageType::SizeType::SizeValueType xMaxIndexResampleSize = rasterResampleSize[0] - 1;
     rasterResampleSize[0] /= 2; // Only need to do 1/2 in the x direction;
-    double               sumVoxelValues = 0.0F;
-    double               sumSquaredVoxelValues = 0.0F;
-    double               sumVoxelValuesQR = 0.0F;
-    double               sumVoxelValuesReflected = 0.0F;
-    double               sumSquaredVoxelValuesReflected = 0.0F;
     SImageType::RegionType rasterRegion(
       internalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetIndex(), rasterResampleSize);
     itk::ImageRegionConstIteratorWithIndex<SImageType> halfIt(internalResampledForReflectiveComputationImage,
@@ -503,11 +498,11 @@ public:
       CS_sumVoxelValues += _f;
       ++N;
     }
-    sumVoxelValuesQR = CS_sumVoxelValuesQR.GetSum();
-    sumSquaredVoxelValuesReflected = CS_sumSquaredVoxelValuesReflected.GetSum();
-    sumVoxelValuesReflected = CS_sumVoxelValuesReflected.GetSum();
-    sumSquaredVoxelValues = CS_sumSquaredVoxelValues.GetSum();
-    sumVoxelValues = CS_sumVoxelValues.GetSum();
+    double sumVoxelValuesQR = CS_sumVoxelValuesQR.GetSum();
+    double sumSquaredVoxelValuesReflected = CS_sumSquaredVoxelValuesReflected.GetSum();
+    double sumVoxelValuesReflected = CS_sumVoxelValuesReflected.GetSum();
+    double sumSquaredVoxelValues = CS_sumSquaredVoxelValues.GetSum();
+    double sumVoxelValues = CS_sumVoxelValues.GetSum();
 
     // ///////////////////////////////////////////////
     if (N == 0 || ((sumSquaredVoxelValues - sumVoxelValues * sumVoxelValues / N) *
@@ -531,8 +526,6 @@ public:
   void
   Update()
   {
-    itk::NumberToString<double> doubleToString;
-
     if (this->m_DoPowell)
     {
       try
@@ -551,6 +544,7 @@ public:
     }
     this->m_cc = this->GetValue();
 
+    itk::NumberToString<double> doubleToString;
     std::cout << doubleToString(this->m_params[0] * 180.0 / itk::Math::pi) << " "
               << doubleToString(this->m_params[1] * 180.0 / itk::Math::pi) << " " << this->m_params[2]
               << " cc= " << doubleToString(this->m_cc) << " iters= " << this->m_Optimizer->GetCurrentIteration()

@@ -227,11 +227,10 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::IOPixelEnum                  pixelType;
-  itk::ImageIOBase::IOComponentEnum componentType;
-
   try
   {
+    itk::IOPixelEnum                  pixelType;
+    itk::ImageIOBase::IOComponentEnum componentType;
     // itk::GetImageType (inputVolume1, pixelType, componentType);
     GetImageType(inputVolume1, pixelType, componentType);
 

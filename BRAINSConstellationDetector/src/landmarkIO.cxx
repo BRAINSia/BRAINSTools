@@ -87,12 +87,9 @@ GenerateRGB2DImage(const RGBImageType::Pointer & orientedImage)
   RGB2DImageType::IndexType TwoDIndex{};
 
   TwoDIndex[1] = 0;
-  RGB2DImageType::SizeType TwoDSize;
-  TwoDSize[0] = orientedImage->GetLargestPossibleRegion().GetSize()[1];
-  TwoDSize[1] = orientedImage->GetLargestPossibleRegion().GetSize()[2];
-  RGB2DImageType::RegionType TwoDImageRegion;
-  TwoDImageRegion.SetIndex(TwoDIndex);
-  TwoDImageRegion.SetSize(TwoDSize);
+  RGB2DImageType::SizeType   TwoDSize{ { orientedImage->GetLargestPossibleRegion().GetSize()[1],
+                                         orientedImage->GetLargestPossibleRegion().GetSize()[2] } };
+  RGB2DImageType::RegionType TwoDImageRegion(TwoDIndex, TwoDSize);
   TwoDImage->SetRegions(TwoDImageRegion);
   TwoDImage->Allocate();
 

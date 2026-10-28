@@ -420,13 +420,10 @@ public:
     SImageType::IndexType outputImageStartIndex{};
 
     // Define the output image direction identical
-    SImageType::DirectionType outputImageDirection;
-    outputImageDirection.SetIdentity();
+    SImageType::DirectionType outputImageDirection = SImageType::DirectionType::GetIdentity();
 
     // Define image region
-    SImageType::RegionType outputImageRegion;
-    outputImageRegion.SetSize(outputImageSize);
-    outputImageRegion.SetIndex(outputImageStartIndex);
+    SImageType::RegionType outputImageRegion(outputImageStartIndex, outputImageSize);
 
     this->m_ResamplerReferenceImage = SImageType::New();
     this->m_ResamplerReferenceImage->SetOrigin(outputImageOrigin);
@@ -462,19 +459,18 @@ public:
     /*
      * Compute the reflective correlation
      */
-    double               sumVoxelValues = 0.0F;
-    double               sumSquaredVoxelValues = 0.0F;
-    double               sumVoxelValuesQR = 0.0F;
-    double               sumVoxelValuesReflected = 0.0F;
-    double               sumSquaredVoxelValuesReflected = 0.0F;
     int                  N = 0;
     SImageType::SizeType rasterResampleSize =
       internalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetSize();
     const SImageType::SizeType::SizeValueType xMaxIndexResampleSize = rasterResampleSize[0] - 1;
     rasterResampleSize[0] /= 2; // Only need to do 1/2 in the x direction;
-    SImageType::RegionType rasterRegion;
-    rasterRegion.SetSize(rasterResampleSize);
-    rasterRegion.SetIndex(internalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetIndex());
+    double               sumVoxelValues = 0.0F;
+    double               sumSquaredVoxelValues = 0.0F;
+    double               sumVoxelValuesQR = 0.0F;
+    double               sumVoxelValuesReflected = 0.0F;
+    double               sumSquaredVoxelValuesReflected = 0.0F;
+    SImageType::RegionType rasterRegion(
+      internalResampledForReflectiveComputationImage->GetLargestPossibleRegion().GetIndex(), rasterResampleSize);
     itk::ImageRegionConstIteratorWithIndex<SImageType> halfIt(internalResampledForReflectiveComputationImage,
                                                               rasterRegion);
 

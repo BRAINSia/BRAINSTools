@@ -67,10 +67,9 @@ main(int, char **)
     ellipse->SetRadiusInObjectSpace(ePar);
   }
 
-  TransformType::OutputVectorType transVector;
-  ImageType::Pointer              eImage;
+  auto               transVector = itk::MakeFilled<TransformType::OutputVectorType>(50);
+  ImageType::Pointer eImage;
   {
-    transVector.Fill(50);
     tfm->Translate(transVector);
     ellipse->SetObjectToWorldTransform(tfm);
     ellipse->Initialize();

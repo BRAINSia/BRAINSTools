@@ -73,14 +73,8 @@ GetSliceIndexToExtract(const typename TImageType::Pointer & referenceImage,
   {
     for (unsigned int i = 0; i < inputSliceToExtractInPhysicalPoint.size(); ++i)
     {
-      typename TImageType::PointType physicalPoints;
-      typename TImageType::IndexType dummyIndex;
-      for (unsigned int p = 0; p < physicalPoints.Size(); ++p)
-      {
-        // fill the same value
-        physicalPoints[p] = inputSliceToExtractInPhysicalPoint[i];
-      }
-      dummyIndex = referenceImage->TransformPhysicalPointToIndex(physicalPoints);
+      auto physicalPoints = itk::MakeFilled<typename TImageType::PointType>(inputSliceToExtractInPhysicalPoint[i]);
+      typename TImageType::IndexType dummyIndex = referenceImage->TransformPhysicalPointToIndex(physicalPoints);
 
       std::cout << inputSliceToExtractInPhysicalPoint[i] << "-->" << dummyIndex[planes[i]] << std::endl;
       sliceIndexToExtract.push_back(dummyIndex[planes[i]]);
@@ -174,10 +168,7 @@ ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
 
     const OutputImagePointerType image = reader->GetOutput();
 
-    itk::FixedArray<bool, 3> flipAxes;
-    flipAxes[0] = false;
-    flipAxes[1] = false;
-    flipAxes[2] = true;
+    itk::FixedArray<bool, 3>     flipAxes{ { false, false, true } };
     const OutputImagePointerType orientedImage = ChangeOrientOfImage<OutImageType>(image, flipAxes);
     if (i > 0)
     {

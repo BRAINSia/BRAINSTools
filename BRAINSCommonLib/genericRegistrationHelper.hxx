@@ -316,8 +316,7 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   std::vector<ShrinkFactorsPerDimensionContainerType> shrinkFactorsPerDimensionForAllLevels;
   for (unsigned int n = 0; n < numberOfLevels; ++n)
   {
-    ShrinkFactorsPerDimensionContainerType shrinkFactorsPerDimension(3);
-    shrinkFactorsPerDimension.Fill(0);
+    ShrinkFactorsPerDimensionContainerType shrinkFactorsPerDimension{};
     for (unsigned int d = 0; d < 3; ++d) // here we set all dimensions have the same shrink factor
     {
       shrinkFactorsPerDimension[d] = factors[n];

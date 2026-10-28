@@ -71,10 +71,7 @@ TEST(ConvertToRigidAffine, Rotation90DegZVersorToAffine)
   // 90 degrees about Z: versor = (0, 0, sin(pi/4)) with w = cos(pi/4)
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
-  VectorType axis;
-  axis[0] = 0.0;
-  axis[1] = 0.0;
-  axis[2] = 1.0;
+  VectorType axis{ { 0.0, 0.0, 1.0 } };
   v.Set(axis, M_PI / 2.0);
   versor->SetRotation(v);
 
@@ -107,10 +104,7 @@ TEST(ConvertToRigidAffine, TranslationOnlyVersorToAffine)
   versor->SetIdentity();
 
   // Non-trivial translation values
-  AssignRigid::VersorRigid3DTransformType::OutputVectorType translation;
-  translation[0] = 42.5;
-  translation[1] = -17.3;
-  translation[2] = 0.001;
+  AssignRigid::VersorRigid3DTransformType::OutputVectorType translation{ { 42.5, -17.3, 0.001 } };
   versor->SetTranslation(translation);
 
   auto affine = AssignRigid::AffineTransformType::New();
@@ -148,17 +142,11 @@ TEST(ConvertToRigidAffine, AffineToVnl44Roundtrip)
   versor->SetIdentity();
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
-  VectorType axis;
-  axis[0] = 1.0;
-  axis[1] = 0.0;
-  axis[2] = 0.0;
+  VectorType axis{ { 1.0, 0.0, 0.0 } };
   v.Set(axis, M_PI / 3.0); // 60 degrees about X
   versor->SetRotation(v);
 
-  AssignRigid::VersorRigid3DTransformType::OutputVectorType translation;
-  translation[0] = 42.5;
-  translation[1] = -17.3;
-  translation[2] = 255.0;
+  AssignRigid::VersorRigid3DTransformType::OutputVectorType translation{ { 42.5, -17.3, 255.0 } };
   versor->SetTranslation(translation);
 
   AssignRigid::AssignConvertedTransform(affineOrig, AssignRigid::VersorRigid3DTransformType::ConstPointer(versor));
@@ -204,25 +192,16 @@ TEST(ConvertToRigidAffine, ExtractVersorFromScaleVersor)
   // Set a rotation: 45 degrees about Y
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
-  VectorType axis;
-  axis[0] = 0.0;
-  axis[1] = 1.0;
-  axis[2] = 0.0;
+  VectorType axis{ { 0.0, 1.0, 0.0 } };
   v.Set(axis, M_PI / 4.0);
   scaleVersor->SetRotation(v);
 
   // Set non-uniform scale
-  AssignRigid::ScaleVersor3DTransformType::ScaleVectorType scale;
-  scale[0] = 1.5;
-  scale[1] = 2.0;
-  scale[2] = 0.75;
+  AssignRigid::ScaleVersor3DTransformType::ScaleVectorType scale{ { 1.5, 2.0, 0.75 } };
   scaleVersor->SetScale(scale);
 
   // Set non-trivial translation
-  AssignRigid::ScaleVersor3DTransformType::OutputVectorType translation;
-  translation[0] = -17.3;
-  translation[1] = 42.5;
-  translation[2] = 0.001;
+  AssignRigid::ScaleVersor3DTransformType::OutputVectorType translation{ { -17.3, 42.5, 0.001 } };
   scaleVersor->SetTranslation(translation);
 
   auto rigid = AssignRigid::VersorRigid3DTransformType::New();
@@ -265,10 +244,7 @@ TEST(ConvertToRigidAffine, ExtractVersorFromNonOrthogonalAffine)
   nonOrthog(2, 2) = 0.75;
   affine->SetMatrix(nonOrthog);
 
-  AssignRigid::AffineTransformType::OutputVectorType translation;
-  translation[0] = 42.5;
-  translation[1] = -17.3;
-  translation[2] = 255.0;
+  AssignRigid::AffineTransformType::OutputVectorType translation{ { 42.5, -17.3, 255.0 } };
   affine->SetTranslation(translation);
 
   auto rigid = AssignRigid::VersorRigid3DTransformType::New();

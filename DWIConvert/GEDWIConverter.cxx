@@ -54,8 +54,7 @@ GEDWIConverter::ExtractDWIData()
   for (unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
   {
     // parsing bvalue and gradient directions
-    DWIMetaDataDictionaryValidator::GradientDirectionType vect3d;
-    vect3d.fill(0);
+    DWIMetaDataDictionaryValidator::GradientDirectionType vect3d(0.0);
     // for some weird reason this item in the GE dicom
     // header is stored as an IS (Integer String) element.
     ::itk::int32_t intb;

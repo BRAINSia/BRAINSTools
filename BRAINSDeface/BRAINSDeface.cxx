@@ -100,9 +100,7 @@ main(int argc, char * argv[])
       // -132 + 80  = 52 removing 80mm inferior
       // -114 - 40 = -154 adding 40mm anterior
 
-      MaskImageType::RegionType region;
-      region.SetSize(img_size);
-      region.SetIndex(starting_index);
+      MaskImageType::RegionType region{ starting_index, img_size };
       mask_labels->SetRegions(region);
 
       MaskImageType::DirectionType id;

@@ -40,24 +40,13 @@ MakeTestImage(std::function<TPixel(unsigned int, unsigned int, unsigned int)> pi
   using ImageType = itk::Image<TPixel, 3>;
   auto image = ImageType::New();
 
-  const typename ImageType::IndexType start{};
-  typename ImageType::SizeType        size;
-  size[0] = 5;
-  size[1] = 6;
-  size[2] = 7;
-  typename ImageType::RegionType region;
-  region.SetIndex(start);
-  region.SetSize(size);
+  typename ImageType::IndexType  start{};
+  typename ImageType::SizeType   size{ { 5, 6, 7 } };
+  typename ImageType::RegionType region(start, size);
 
-  typename ImageType::PointType origin;
-  origin[0] = -12.5;
-  origin[1] = 33.7;
-  origin[2] = 8.1;
+  typename ImageType::PointType origin{ { -12.5, 33.7, 8.1 } };
 
-  typename ImageType::SpacingType spacing;
-  spacing[0] = 0.75;
-  spacing[1] = 1.25;
-  spacing[2] = 2.0;
+  typename ImageType::SpacingType spacing{ { 0.75, 1.25, 2.0 } };
 
   image->SetRegions(region);
   image->SetOrigin(origin);

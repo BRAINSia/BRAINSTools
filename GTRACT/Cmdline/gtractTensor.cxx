@@ -245,8 +245,7 @@ main(int argc, char * argv[])
       resampler->SetInterpolator(interpolator);
       resampler->SetDefaultPixelValue(0);
 
-      IndexImageType::SpacingType spacing;
-      spacing.Fill(voxelSize);
+      auto spacing = itk::MakeFilled<IndexImageType::SpacingType>(voxelSize);
       resampler->SetOutputSpacing(spacing);
 
       // Use the same origin
@@ -255,10 +254,9 @@ main(int argc, char * argv[])
       IndexImageType::SizeType    inputSize = baseImage->GetLargestPossibleRegion().GetSize();
       IndexImageType::SpacingType inputSpacing = baseImage->GetSpacing();
       using SizeValueType = IndexImageType::SizeType::SizeValueType;
-      IndexImageType::SizeType size;
-      size[0] = static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / voxelSize);
-      size[1] = static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / voxelSize);
-      size[2] = static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / voxelSize);
+      IndexImageType::SizeType size{ { static_cast<SizeValueType>(inputSize[0] * inputSpacing[0] / voxelSize),
+                                       static_cast<SizeValueType>(inputSize[1] * inputSpacing[1] / voxelSize),
+                                       static_cast<SizeValueType>(inputSize[2] * inputSpacing[2] / voxelSize) } };
       resampler->SetSize(size);
 
       using TransformType = itk::IdentityTransform<double, 3>;

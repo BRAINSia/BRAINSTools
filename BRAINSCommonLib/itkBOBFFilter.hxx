@@ -36,10 +36,9 @@ BOBFFilter<TInputImage, TOutputImage>::BOBFFilter()
   : m_Lower(NumericTraits<InputPixelType>::NonpositiveMin())
   , m_Upper(NumericTraits<InputPixelType>::max())
   , m_ReplaceValue(NumericTraits<OutputPixelType>::OneValue())
+  , m_Radius(MakeFilled<InputSizeType>(1))
 {
   this->SetNumberOfRequiredInputs(2);
-  m_Seed.Fill(0);
-  m_Radius.Fill(1);
 }
 
 /*

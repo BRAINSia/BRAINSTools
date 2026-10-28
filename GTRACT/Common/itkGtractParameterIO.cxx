@@ -63,8 +63,7 @@ GtractParameterIO::Update()
     // Read in the direction profile
     fin >> m_NumberOfDirections;
     {
-      TMatrix temp(m_NumberOfDirections, 6);
-      temp.fill(0.0);
+      TMatrix temp(m_NumberOfDirections, 6, 0.0F);
       m_Directions = temp;
     }
     for (int i = 0; i < m_NumberOfDirections; ++i)

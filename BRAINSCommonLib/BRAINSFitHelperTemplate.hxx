@@ -1179,7 +1179,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
         }
         roiMask->Update();
 
-        typename FixedImageType::IndexType roiOriginIdx;
+        typename FixedImageType::IndexType roiOriginIdx{};
         auto                               roiImage = FixedImageType::New();
 #undef USE_OLD_SPATIAL_OBJECTS_PRE20190321
 #if defined(USE_OLD_SPATIAL_OBJECTS_PRE20190321)
@@ -1230,7 +1230,6 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
 #endif
         typename FixedImageType::SpacingType roiSpacing = m_FixedVolume->GetSpacing();
 
-        roiOriginIdx.Fill(0);
         const auto roiOriginPt = m_FixedVolume->template TransformIndexToPhysicalPoint<double>(roiRegion.GetIndex());
         roiRegion.SetIndex(roiOriginIdx);
         roiImage->SetRegions(roiRegion);

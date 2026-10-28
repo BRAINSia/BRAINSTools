@@ -659,15 +659,13 @@ GetImageCenterPhysicalPoint(SImageType::Pointer & image)
 SImageType::Pointer
 MakeIsoTropicReferenceImage()
 {
-  SImageType::DirectionType Ident;
+  SImageType::DirectionType Ident = SImageType::DirectionType::GetIdentity();
 
-  Ident.SetIdentity();
   auto Origin = itk::MakeFilled<SImageType::PointType>(-127.5);
   auto Spacing = itk::MakeFilled<SImageType::SpacingType>(1.0);
 
   auto                   Size = itk::MakeFilled<SImageType::SizeType>(256);
-  SImageType::RegionType Region;
-  Region.SetSize(Size);
+  SImageType::RegionType Region(Size);
 
   auto isotropicReferenceVolume = SImageType::New();
   isotropicReferenceVolume->SetDirection(Ident);

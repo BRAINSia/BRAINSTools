@@ -410,9 +410,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ComputeSpheres
 
     //** Now modify the accumulator image and zero out invalid regions
     { // Zero out sphere around current found eye in accumulator image so that it is not double counted
-      InternalRegionType region;
-      region.SetSize(sizeOfROI);
-      region.SetIndex(start);
+      InternalRegionType region(start, sizeOfROI);
 
       ImageRegionIterator<InternalImageType> It(accumulatorSearchSpace, region);
       It.GoToBegin();

@@ -342,33 +342,28 @@ landmarksConstellationDetector::FindCandidatePoints(
   // To compute the correlation for the border points, the bounding box needs
   // to be expanded by the template size.
   //
-  SImageType::PointType LPS_BEGIN;
-  LPS_BEGIN[0] = CenterOfSearchArea[0] - LR_restrictions - height / 2;
-  LPS_BEGIN[1] = CenterOfSearchArea[1] - PA_restrictions - radii;
-  LPS_BEGIN[2] = CenterOfSearchArea[2] - SI_restrictions - radii;
+  SImageType::PointType LPS_BEGIN{ { CenterOfSearchArea[0] - LR_restrictions - height / 2,
+                                     CenterOfSearchArea[1] - PA_restrictions - radii,
+                                     CenterOfSearchArea[2] - SI_restrictions - radii } };
 
-  SImageType::PointType LPS_END;
-  LPS_END[0] = CenterOfSearchArea[0] + LR_restrictions + height / 2;
-  LPS_END[1] = CenterOfSearchArea[1] + PA_restrictions + radii;
-  LPS_END[2] = CenterOfSearchArea[2] + SI_restrictions + radii;
+  SImageType::PointType LPS_END{ { CenterOfSearchArea[0] + LR_restrictions + height / 2,
+                                   CenterOfSearchArea[1] + PA_restrictions + radii,
+                                   CenterOfSearchArea[2] + SI_restrictions + radii } };
 
   // Now bounding area will be converted to an image
   //
   const auto roiImage = SImageType::New();
   {
     // origin
-    SImageType::PointType roiOrigin;
-    roiOrigin[0] = LPS_BEGIN[0];
-    roiOrigin[1] = LPS_BEGIN[1];
-    roiOrigin[2] = LPS_BEGIN[2];
+    SImageType::PointType roiOrigin{ { LPS_BEGIN[0], LPS_BEGIN[1], LPS_BEGIN[2] } };
     roiImage->SetOrigin(roiOrigin);
   }
   {
     // size
-    SImageType::SizeType roiSize;
-    roiSize[0] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[0] - LPS_BEGIN[0]);
-    roiSize[1] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[1] - LPS_BEGIN[1]);
-    roiSize[2] = static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[2] - LPS_BEGIN[2]);
+    SImageType::SizeType roiSize{ { static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[0] - LPS_BEGIN[0]),
+                                    static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[1] - LPS_BEGIN[1]),
+                                    static_cast<SImageType::SizeType::SizeValueType>(1.0 + LPS_END[2] -
+                                                                                     LPS_BEGIN[2]) } };
     // start index
     SImageType::IndexType roiStart{};
     // region

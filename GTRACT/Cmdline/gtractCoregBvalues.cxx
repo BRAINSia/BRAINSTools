@@ -165,14 +165,11 @@ main(int argc, char * argv[])
   using RegisterFilterType = itk::BRAINSFitHelper;
   auto registerImageFilter = RegisterFilterType::New();
 
-  std::vector<double> minStepLength;
-  minStepLength.push_back(static_cast<double>(minimumStepSize));
+  const std::vector<double> minStepLength{ static_cast<double>(minimumStepSize) };
 
-  std::vector<std::string> rigidTransformTypes;
-  rigidTransformTypes.emplace_back("ScaleVersor3D");
+  const std::vector<std::string> rigidTransformTypes{ "ScaleVersor3D" };
 
-  std::vector<std::string> affineTransformTypes;
-  affineTransformTypes.emplace_back("Affine");
+  const std::vector<std::string> affineTransformTypes{ "Affine" };
 
   std::vector<int> iterations;
   iterations.push_back(numberOfIterations);

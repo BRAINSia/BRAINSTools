@@ -108,9 +108,9 @@ TensorToAnisotropyImageFilter ::computVoxelIsotropy()
 
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
-    OutputImageIndexType index = it.GetIndex();
-    InputPixelType       currentVoxel = m_Input->GetPixel(index);
-    float                adc = 0;
+    const OutputImageIndexType index = it.GetIndex();
+    InputPixelType             currentVoxel = m_Input->GetPixel(index);
+    float                      adc = 0;
 
     if (currentVoxel.GetNorm() != 0)
     {
@@ -128,9 +128,9 @@ TensorToAnisotropyImageFilter ::computSimpleVoxelAnisotropy()
 
   for (it.GoToBegin(); !it.IsAtEnd(); ++it)
   {
-    OutputImageIndexType index = it.GetIndex();
-    InputPixelType       currentVoxel = m_Input->GetPixel(index);
-    float                fa = 0;
+    const OutputImageIndexType index = it.GetIndex();
+    const InputPixelType       currentVoxel = m_Input->GetPixel(index);
+    float                      fa = 0;
 
     if (currentVoxel.GetNorm() != 0)
     {

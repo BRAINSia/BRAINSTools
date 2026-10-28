@@ -769,10 +769,9 @@ ImageCalculatorReadWrite(MetaCommand & command)
 
     typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);
 
-    vnl_vector_fixed<double, 3> spacingDifference;
-    spacingDifference[0] = AccImage->GetSpacing()[0] - image->GetSpacing()[0];
-    spacingDifference[1] = AccImage->GetSpacing()[1] - image->GetSpacing()[1];
-    spacingDifference[2] = AccImage->GetSpacing()[2] - image->GetSpacing()[2];
+    vnl_vector_fixed<double, 3> spacingDifference{ AccImage->GetSpacing()[0] - image->GetSpacing()[0],
+                                                   AccImage->GetSpacing()[1] - image->GetSpacing()[1],
+                                                   AccImage->GetSpacing()[2] - image->GetSpacing()[2] };
 
     if (spacingDifference.two_norm() > 0.0001) // HACK:  Should be a percentage of the actual spacing size.
     {

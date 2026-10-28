@@ -266,8 +266,7 @@ LoadLandmarks(const std::string & filename)
       ImageType::PointType labelPos;
       for (i = 0; i < 3; ++i)
       {
-        int pos2 = 0;
-        pos2 = line.find(',', pos1 + 1);
+        int pos2 = line.find(',', pos1 + 1);
         labelPos[i] = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
         if (i < 2)
         {

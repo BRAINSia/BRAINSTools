@@ -311,8 +311,7 @@ void DtiFastMarchingCostFilter<TLevelSet, TTensorImage>
       bool pass = false;
       for (unsigned int i = 0; i < dimension; ++i)
       {
-        float checkEigValue = 0.0;
-        checkEigValue = eigPixel[i];
+        float checkEigValue = eigPixel[i];
         if ((checkEigValue > 0.0) || (checkEigValue < 0.0))
         {
           pass = true;
@@ -624,8 +623,7 @@ DtiFastMarchingCostFilter<TLevelSet, TTensorImage>::UpdateNeighbors(
     EigenvectorPixelType eigPixel = m_EigenvectorImage->GetPixel(eigIndex);
     for (unsigned int j = 0; j < dimension; ++j)
     {
-      float checkEigValue = 0.0;
-      checkEigValue = eigPixel[j];
+      const float checkEigValue = eigPixel[j];
       if ((checkEigValue > 0.0) || (checkEigValue < 0.0))
       {
         pass = true;

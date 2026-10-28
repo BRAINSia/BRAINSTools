@@ -48,7 +48,6 @@ main(int argc, char * argv[])
   const unsigned int numberOfImageModalities = inputFileNames.size(); // number of modality images
 
   // Read the input modalities and set them in a vector of images
-  using LocalReaderPointer = LocalReaderType::Pointer;
 
   InputImageList inputImageModalitiesList;
   for (unsigned int i = 0; i < numberOfImageModalities; ++i)

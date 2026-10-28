@@ -112,7 +112,6 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
       muLogMacro(<< "Resampling input image " << inputImageMapIter->first << " #" << i
                  << " to the physical space of the first image." << std::endl);
       using ResampleIPFilterType = itk::ResampleInPlaceImageFilter<FloatImageType, FloatImageType>;
-      using ResampleIPFilterPointer = ResampleIPFilterType::Pointer;
 
       using VersorRigid3DTransformType = itk::VersorRigid3DTransform<double>;
       const VersorRigid3DTransformType::ConstPointer tempRigidTransform =

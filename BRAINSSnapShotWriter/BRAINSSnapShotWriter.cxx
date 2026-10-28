@@ -143,7 +143,6 @@ template <typename TStringVectorType, // input parameter type
 TImageVectorType
 ReadImageVolumes(TStringVectorType filenameVector, const size_t interpType)
 {
-  using ReaderPointer = typename TReaderType::Pointer;
   using OutputImagePointerType = typename TReaderType::OutputImageType::Pointer;
   using OutImageType = typename TReaderType::OutputImageType;
   using ResampleType = itk::ResampleImageFilter<OutImageType, OutImageType>;

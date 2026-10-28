@@ -227,7 +227,6 @@ main(int argc, char ** argv)
   itk::OutputWindow::SetInstance(itk::TextOutput::New());
 
   using ReaderType = itk::ImageFileReader<ByteImageType>;
-  using ReaderPointer = ReaderType::Pointer;
 
 
   // Check the parameters for valid values
@@ -571,7 +570,6 @@ main(int argc, char ** argv)
           }
 
           using LocalReaderType = itk::ImageFileReader<FloatImageType>;
-          using LocalReaderPointer = LocalReaderType::Pointer;
           FloatImageType::Pointer KeyImageFirstRead = nullptr;
 
           AtlasRegType::MapOfStringVectors intraSubjectTransformFileNames;
@@ -676,7 +674,6 @@ main(int argc, char ** argv)
           }
 
           using LocalReaderType = itk::ImageFileReader<FloatImageType>;
-          using LocalReaderPointer = LocalReaderType::Pointer;
 
 
           for (auto mapIt = templateVolumes.begin(); mapIt != templateVolumes.end(); ++mapIt)
@@ -954,7 +951,6 @@ main(int argc, char ** argv)
           muLogMacro(<< "Writing registered template...\n");
 
           using ResampleType = itk::ResampleImageFilter<FloatImageType, FloatImageType>;
-          using ResamplePointer = ResampleType::Pointer;
           const auto resampler = ResampleType::New();
 
           resampler->SetInput(GetMapVectorFirstElement(atlasOriginalImageList));
@@ -1069,7 +1065,6 @@ main(int argc, char ** argv)
     for (unsigned int i = 0; i < PriorNames.size(); ++i)
     {
       using LocalReaderType = itk::ImageFileReader<FloatImageType>;
-      using LocalReaderPointer = LocalReaderType::Pointer;
       const auto        priorReader = LocalReaderType::New();
       const std::string curPriorAtlasName =
         FindPathFromAtlasXML(atlasDefinitionParser.GetPriorFilename(PriorNames[i]), atlasDefinitionPath);

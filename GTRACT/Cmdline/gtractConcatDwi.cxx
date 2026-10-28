@@ -180,10 +180,9 @@ main(int argc, char * argv[])
       indexImageToVectorImageFilter->SetInput(vectorIndex, selectIndexImageFilter->GetOutput());
 
       // Scale the current gradient and put in the result gradient table
-      DWIMetaDataDictionaryValidator::Double3x1ArrayType scaledGradient;
-      scaledGradient[0] = currGradTable[j][0] * bValueScale;
-      scaledGradient[1] = currGradTable[j][1] * bValueScale;
-      scaledGradient[2] = currGradTable[j][2] * bValueScale;
+      const DWIMetaDataDictionaryValidator::Double3x1ArrayType scaledGradient{ currGradTable[j][0] * bValueScale,
+                                                                               currGradTable[j][1] * bValueScale,
+                                                                               currGradTable[j][2] * bValueScale };
       resultGradTable.push_back(scaledGradient);
 
       ++vectorIndex;

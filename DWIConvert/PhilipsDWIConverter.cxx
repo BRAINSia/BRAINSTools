@@ -265,10 +265,7 @@ PhilipsDWIConverter::ExtractDWIData()
 
         if (nOld != nNew)
         {
-          vnl_vector_fixed<double, 3> vect3d;
-          vect3d[0] = v[0];
-          vect3d[1] = v[1];
-          vect3d[2] = v[2];
+          const vnl_vector_fixed<double, 3> vect3d{ v[0], v[1], v[2] };
           // vect3d.normalize();
           this->m_DiffusionVectors.push_back(vect3d);
 

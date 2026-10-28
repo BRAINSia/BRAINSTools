@@ -124,9 +124,8 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::PrepareKer
   using InputRegionType = typename InputImageType::RegionType;
   using InputSizeType = typename InputImageType::SizeType;
 
-  InputRegionType region;
+  const InputRegionType region = inputImage->GetLargestPossibleRegion();
 
-  region = inputImage->GetLargestPossibleRegion();
 
   InputSizeType size = region.GetSize();
   for (unsigned int i = 0; i < ImageDimension; ++i)
@@ -276,8 +275,7 @@ GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GenerateIn
   InputImagePointer inputPtr = const_cast<InputImageType *>(this->GetInput());
 
   // Request the entire input image
-  InputImageRegionType inputRegion;
-  inputRegion = inputPtr->GetLargestPossibleRegion();
+  const InputImageRegionType inputRegion = inputPtr->GetLargestPossibleRegion();
   inputPtr->SetRequestedRegion(inputRegion);
 }
 

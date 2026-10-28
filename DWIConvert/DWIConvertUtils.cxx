@@ -100,10 +100,9 @@ normalize(const DWIMetaDataDictionaryValidator::GradientDirectionType & vec, dou
 int
 WriteBVectors(const DWIMetaDataDictionaryValidator::GradientTableType & bVectors, const std::string & filename)
 {
-  itk::NumberToString<double> DoubleConvert;
-  std::ofstream               bVecFile;
+  const itk::NumberToString<double> DoubleConvert;
+  std::ofstream                     bVecFile(filename.c_str(), std::ios::out | std::ios::binary);
 
-  bVecFile.open(filename.c_str(), std::ios::out | std::ios::binary);
   bVecFile.precision(17); // Max double precision
   if (!bVecFile.is_open() || !bVecFile.good())
   {
@@ -242,11 +241,8 @@ ReadBVecs(DWIMetaDataDictionaryValidator::GradientTableType & bVecs,
     // Needed to convert to/from FSL to Dicom internal conventions
     for (unsigned int i = 0; i < bVecCount; ++i)
     {
-      double                                                list[] = { bVecst[0][i], bVecst[1][i], bVecst[2][i] };
-      DWIMetaDataDictionaryValidator::GradientDirectionType x;
-      x[0] = list[0];
-      x[1] = list[1];
-      x[2] = list[2];
+      const double                                                list[] = { bVecst[0][i], bVecst[1][i], bVecst[2][i] };
+      const DWIMetaDataDictionaryValidator::GradientDirectionType x{ list[0], list[1], list[2] };
       bVecs.push_back(x);
     }
   }

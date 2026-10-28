@@ -574,10 +574,7 @@ public:
         }
         debugImage->SetPixel(ind, (*floatIt));
       }
-      char buf[512];
-      sprintf(buf, "%d%s", j, name.c_str());
-      std::string fname(buf);
-      fname += "Mean.nii.gz";
+      const std::string fname = std::to_string(j) + name + "Mean.nii.gz";
       itkUtil::WriteImage<FloatImageType>(debugImage, fname);
     }
   }

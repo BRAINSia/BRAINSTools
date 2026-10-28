@@ -33,21 +33,11 @@ namespace itk
  */
 template <typename TInputImage, typename TOutputImage>
 GtractInverseDisplacementFieldImageFilter<TInputImage, TOutputImage>::GtractInverseDisplacementFieldImageFilter()
+  : m_KernelTransform(ThinPlateSplineKernelTransform<double, Self::ImageDimension>::New())
+  , m_OutputSpacing(MakeFilled<SpacingType>(1.0))
+  , m_SubsamplingFactor(16)
 {
-  m_OutputSpacing.Fill(1.0);
-  m_OutputOrigin.Fill(0.0);
-  for (unsigned int i = 0; i < ImageDimension; ++i)
-  {
-    m_Size[i] = 0;
-  }
-
   m_OutputDirection.SetIdentity();
-
-  using DefaultTransformType = ThinPlateSplineKernelTransform<double, Self::ImageDimension>;
-
-  m_KernelTransform = DefaultTransformType::New();
-
-  m_SubsamplingFactor = 16;
 }
 
 /**

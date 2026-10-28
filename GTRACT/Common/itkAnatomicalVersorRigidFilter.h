@@ -148,14 +148,14 @@ private:
   TransformTypePointer m_Output{};
 
   // Registration Parameters
-  float  m_TranslationScale{};
-  float  m_MaximumStepLength{};
-  float  m_MinimumStepLength{};
-  float  m_RelaxationFactor{};
-  int    m_NumberOfSpatialSamples{};
-  int    m_NumberOfIterations{};
-  int    m_InitialRotationAxis{};
-  double m_InitialRotationAngle{};
+  float  m_TranslationScale{ 1000.0 };
+  float  m_MaximumStepLength{ 0.2 };
+  float  m_MinimumStepLength{ 0.0001 };
+  float  m_RelaxationFactor{ 0.5 };
+  int    m_NumberOfSpatialSamples{ 100000 };
+  int    m_NumberOfIterations{ 1000 };
+  int    m_InitialRotationAxis{ 0 };
+  double m_InitialRotationAngle{ 0.0 };
 }; // end of class
 } // end namespace itk
 

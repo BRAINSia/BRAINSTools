@@ -36,9 +36,8 @@ class QFileDialogs : public QWidget
 public:
   QFileDialogs(QString landmarks = "", QWidget * myParent = nullptr)
     : QWidget(myParent)
-  {
-    m_landmarks = landmarks;
-  }
+    , m_landmarks(landmarks)
+  {}
 
   QString
   openLandmarksFile();

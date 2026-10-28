@@ -32,16 +32,14 @@ namespace Statistics
 {
 template <typename TSample>
 IntegrityMetricMembershipFunction<TSample>::IntegrityMetricMembershipFunction()
+  : m_MeasurementVectorSize(NumericTraits<MeasurementVectorType>::GetLength(MeasurementVectorType()))
+  , m_Threshold(0.0)
 {
-  m_MeasurementVectorSize = NumericTraits<MeasurementVectorType>::GetLength(MeasurementVectorType());
-
   NumericTraits<MeanVectorType>::SetLength(m_Mean, this->GetMeasurementVectorSize());
   m_Mean.Fill(0.0f);
 
   m_Covariance.SetSize(this->GetMeasurementVectorSize(), this->GetMeasurementVectorSize());
   m_Covariance.SetIdentity();
-
-  m_Threshold = 0.0;
 
   m_WeightedDistanceVector.set_size(0);
 }

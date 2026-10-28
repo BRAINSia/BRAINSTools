@@ -103,11 +103,7 @@ public:
   using ConstFloat3DVectorIterator = Float3DVectorType::const_iterator;
 
 public:
-  landmarksConstellationModelIO()
-    : m_Swapped(false)
-    , m_RPPC_to_RPAC_angleMean(0)
-    , m_RPAC_over_RPPCMean(0)
-  {}
+  landmarksConstellationModelIO() = default;
 
   ~landmarksConstellationModelIO() override = default;
 

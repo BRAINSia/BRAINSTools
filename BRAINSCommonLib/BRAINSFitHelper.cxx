@@ -106,7 +106,7 @@ BRAINSFitHelper::BRAINSFitHelper()
   , m_MinimumStepLength(1, 0.005)
   , m_TransformType(1, "Rigid")
   , m_InitializeTransformMode("Off")
-  , m_SplineGridSize(3, 10)
+  , m_SplineGridSize{ 14, 10, 12 }
   , m_CurrentGenericTransform(nullptr)
   , m_RestoreState(nullptr)
   , m_CostMetricName("MMI")
@@ -117,9 +117,6 @@ BRAINSFitHelper::BRAINSFitHelper()
 
 {
   vnl_sample_reseed(20181112); // Trying to get random number generation consistent
-  m_SplineGridSize[0] = 14;
-  m_SplineGridSize[1] = 10;
-  m_SplineGridSize[2] = 12;
 }
 
 /*

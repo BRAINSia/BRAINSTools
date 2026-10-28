@@ -51,15 +51,14 @@ class QSliceViewer : public QVTKOpenGLNativeWidget
 public:
   QSliceViewer(int type, QWidget * myParent = nullptr)
     : QVTKOpenGLNativeWidget(myParent)
+    , m_actors(vtkActor2DCollection::New())
+    , m_actor(nullptr)
+    , m_type(type)
     , m_bound(nullptr)
-  {
-    m_actors = vtkActor2DCollection::New();
-    m_actor = nullptr;
-    m_type = type;
-    m_cPos = -1.0;
-    m_color = 0;
-    m_r = 0;
-  }
+    , m_cPos(-1.0)
+    , m_color(0)
+    , m_r(0)
+  {}
 
   void
   SetBound(double * bound)

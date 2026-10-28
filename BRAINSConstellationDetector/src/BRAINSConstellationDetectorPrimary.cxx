@@ -37,6 +37,8 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   , m_forceHoughEyeDetectorReportFailure(false)
   , m_debug(false)
   , m_verbose(false)
+  , m_inputTemplateModel(itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "T1.mdl")
+  , m_llsModel(itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "LLSModel.h5")
   , m_inputVolume("")
   , m_outputVolume("")
   , m_outputResampledVolume("")
@@ -53,16 +55,9 @@ BRAINSConstellationDetectorPrimary::BRAINSConstellationDetectorPrimary()
   , m_atlasVolume("")
   , m_atlasLandmarks("")
   , m_atlasLandmarkWeights("")
+  , m_rescaleIntensitiesOutputRange{ 40, 4000 }
   , m_resultsDir("./")
 {
-
-
-  this->m_inputTemplateModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "T1.mdl";
-  this->m_llsModel = itksys::SystemTools::GetProgramPath(pathOut.c_str()) + "/" + "LLSModel.h5";
-
-
-  this->m_rescaleIntensitiesOutputRange.push_back(40);
-  this->m_rescaleIntensitiesOutputRange.push_back(4000);
   this->m_force_orig_lmk_ACPointLPS.clear();
   this->m_force_orig_lmk_PCPointLPS.clear();
   this->m_force_orig_lmk_VN4PointLPS.clear();

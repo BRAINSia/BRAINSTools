@@ -33,22 +33,16 @@ using namespace itk;
 //----------------------------------------------------------------------------
 template <typename TInputImage, typename TOutputImage>
 ComparisonImageFilter<TInputImage, TOutputImage>::ComparisonImageFilter()
+  : m_DifferenceThreshold(NumericTraits<OutputPixelType>::ZeroValue())
+  , m_MeanDifference(NumericTraits<RealType>::ZeroValue())
+  , m_MinimumDifference(NumericTraits<OutputPixelType>::max())
+  , m_MaximumDifference(NumericTraits<OutputPixelType>::NonpositiveMin())
+  , m_VerifyInputInformation(true)
+  , m_TotalDifference(NumericTraits<AccumulateType>::ZeroValue())
+  , m_NumberOfPixelsWithDifferences(0)
+  , m_ToleranceRadius(0)
+  , m_IgnoreBoundaryPixels(false)
 {
-  // Set the default DifferenceThreshold.
-  m_DifferenceThreshold = NumericTraits<OutputPixelType>::ZeroValue();
-
-  // Set the default ToleranceRadius.
-  m_ToleranceRadius = 0;
-
-  // Initialize statistics about difference image.
-  m_MinimumDifference = NumericTraits<OutputPixelType>::max();
-  m_MaximumDifference = NumericTraits<OutputPixelType>::NonpositiveMin();
-  m_MeanDifference = NumericTraits<RealType>::ZeroValue();
-  m_TotalDifference = NumericTraits<AccumulateType>::ZeroValue();
-  m_NumberOfPixelsWithDifferences = 0;
-  m_IgnoreBoundaryPixels = false;
-  m_VerifyInputInformation = true;
-
   this->DynamicMultiThreadingOff();
 
   // #0 "Valid" required

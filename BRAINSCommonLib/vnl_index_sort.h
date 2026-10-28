@@ -107,8 +107,7 @@ private:
   void
   sortIndices(const SortVectorType & v, SortVectorIndexType & s)
   {
-    sort_index_compare_functor<TValue, TIndex> c;
-    c.data = v.data_block();
+    sort_index_compare_functor<TValue, TIndex> c{ v.data_block() };
     s.set_size(v.size());
 
     for (TIndex ix = 0; ix < (TIndex)v.size(); ++ix)

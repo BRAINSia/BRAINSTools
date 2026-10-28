@@ -53,12 +53,7 @@
 namespace itk
 {
 template <typename TInputImage, typename TTransformType, typename TSpatialObject>
-CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::CreateSpatialObjectFilter()
-{
-  m_Input = NULL;
-  m_Output = NULL;
-  m_Transform = NULL;
-}
+CreateSpatialObjectFilter<TInputImage, TTransformType, TSpatialObject>::CreateSpatialObjectFilter() = default;
 
 template <typename TInputImage, typename TTransformType, typename TSpatialObject>
 void

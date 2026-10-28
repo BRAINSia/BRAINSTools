@@ -29,8 +29,6 @@ template <typename TInputImage, typename TOutputImage>
 ApplyMaskImageFilter<TInputImage, TOutputImage>::ApplyMaskImageFilter()
 {
   this->SetNumberOfRequiredInputs(2);
-
-  m_InvertMask = false;
 }
 
 template <typename TInputImage, typename TOutputImage>

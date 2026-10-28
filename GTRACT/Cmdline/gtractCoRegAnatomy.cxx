@@ -59,10 +59,7 @@ main(int argc, char * argv[])
   BRAINSRegisterAlternateIO();
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
 
-  std::vector<int> GridSize;
-  GridSize.push_back(gridSize[0]);
-  GridSize.push_back(gridSize[1]);
-  GridSize.push_back(gridSize[2]);
+  const std::vector<int> GridSize{ gridSize[0], gridSize[1], gridSize[2] };
 
   bool debug = true;
   if (debug)
@@ -292,8 +289,7 @@ main(int argc, char * argv[])
   if (transformType == "Rigid")
   {
     transformTypes.emplace_back("ScaleVersor3D");
-    std::vector<double> minStepLength;
-    minStepLength.push_back(static_cast<double>(minimumStepSize));
+    const std::vector<double> minStepLength{ static_cast<double>(minimumStepSize) };
     registerImageFilter->SetTranslationScale(translationScale);
     registerImageFilter->SetMaximumStepLength(maximumStepSize);
     registerImageFilter->SetMinimumStepLength(minStepLength);

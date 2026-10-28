@@ -173,30 +173,29 @@ main(int argc, char ** argv)
     float         maxWm = fmax(wmItr.Value(), crblWmItr.Value());
     float         maxCsf = csfItr.Value();
     float         maxVb = vbItr.Value();
-    float         total;
     unsigned char voxelValue;
 
     if ((maxWm > maxGm) && (maxWm > maxCsf) && (maxWm > maxVb) && (maxWm > minThreshold))
     {
-      total = maxWm + maxGm;
+      float total = maxWm + maxGm;
       voxelValue = itk::Math::rnd(130.0 + 120.0 * maxWm / total);
     }
     else if ((maxGm >= maxWm) && (maxGm >= maxCsf) && (maxGm > maxVb) && (maxGm > minThreshold))
     {
       if (maxWm >= maxCsf)
       {
-        total = maxWm + maxGm;
+        float total = maxWm + maxGm;
         voxelValue = itk::Math::rnd(130.0 + 120.0 * maxWm / total);
       }
       else
       {
-        total = maxCsf + maxGm;
+        float total = maxCsf + maxGm;
         voxelValue = itk::Math::rnd(130.0 - 120.0 * maxCsf / total);
       }
     }
     else if ((maxCsf > maxGm) && (maxCsf >= maxWm) && (maxCsf > maxVb) && (maxCsf > minThreshold))
     {
-      total = maxCsf + maxGm;
+      float total = maxCsf + maxGm;
       voxelValue = itk::Math::rnd(10.0 + 120.0 * maxGm / total);
     }
     else if (maxVb > minThreshold)

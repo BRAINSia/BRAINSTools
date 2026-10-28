@@ -102,7 +102,6 @@ DoIt(const std::string & inputVolume,
   }
   else
   {
-    SImagePointType orig_lmk_CenterOfHeadMass;
     // Estimate the center of head mass
     std::cout << "\nFinding center of head mass..." << std::endl;
     using FindCenterFilter = itk::FindCenterOfBrainFilter<LOCALImageType>;
@@ -114,8 +113,8 @@ DoIt(const std::string & inputVolume,
     findCenterFilter->SetHeadSizeLimit(700);
     findCenterFilter->SetBackgroundValue(0);
     findCenterFilter->Update();
-    orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
-    double cc = -123.456;
+    SImagePointType orig_lmk_CenterOfHeadMass = findCenterFilter->GetCenterOfBrain();
+    double          cc = -123.456;
     orig2msp_img_tfm = ComputeMSP(internal_image, orig_lmk_CenterOfHeadMass, mspQualityLevel, cc);
   }
 

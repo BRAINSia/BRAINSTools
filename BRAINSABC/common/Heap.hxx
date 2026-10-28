@@ -107,20 +107,15 @@ Heap<T>::PreserveHeapOrder()
 {
   unsigned int numElements = m_Elements.size();
 
-  unsigned int current;
-  unsigned int left;
-  unsigned int right;
-  unsigned int smallest;
-
   // Start at root node
-  current = 1;
+  unsigned int current = 1;
 
   do
   {
-    left = HEAP_LEFT(current);
-    right = HEAP_RIGHT(current);
+    unsigned int left = HEAP_LEFT(current);
+    unsigned int right = HEAP_RIGHT(current);
 
-    smallest = current;
+    unsigned int smallest = current;
 
     if ((left <= numElements) && (m_Elements[left - 1] < m_Elements[smallest - 1]))
     {

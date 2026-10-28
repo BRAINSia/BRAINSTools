@@ -408,13 +408,12 @@ main(int argc, char ** argv)
         Rescale<Image2DVolumeType, OutputGreyImageType>(imageSlice, 0, 255);
 
       /** binaries */
-      OutputGreyImageType::Pointer labelSlice;
       if (!image3DBinaries.empty())
       {
         /** rgb creator */
         const auto rgbComposer = LabelOverlayFilter::New();
 
-        labelSlice = ExtractSlice<Image3DVolumeType, OutputGreyImageType>(
+        OutputGreyImageType::Pointer labelSlice = ExtractSlice<Image3DVolumeType, OutputGreyImageType>(
           labelMap, inputPlaneDirection[plane], extractingSlices[plane]);
         rgbComposer->SetLabelImage(labelSlice);
         rgbComposer->SetInput(greyScaleSlice);

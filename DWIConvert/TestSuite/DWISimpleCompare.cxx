@@ -193,14 +193,13 @@ DoIt(const std::string & inputVolume1, const std::string & inputVolume2, PixelTy
     return rval;
   }
   double bVal1;
-
-  double bVal2;
   if (RecoverBValue<ImageType>(firstImage, bVal1) != EXIT_SUCCESS)
   {
     std::cerr << "Missing BValue in " << inputVolume1 << std::endl;
     return EXIT_FAILURE;
   }
 
+  double bVal2;
   if (RecoverBValue<ImageType>(secondImage, bVal2) != EXIT_SUCCESS)
   {
     std::cerr << "Missing BValue in " << inputVolume2 << std::endl;
@@ -258,11 +257,10 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  itk::IOPixelEnum                  pixelType;
-  itk::ImageIOBase::IOComponentEnum componentType;
-
   try
   {
+    itk::IOPixelEnum                  pixelType;
+    itk::ImageIOBase::IOComponentEnum componentType;
     // itk::GetImageType (inputVolume1, pixelType, componentType);
     GetImageType(inputVolume1, pixelType, componentType);
     GetImageType(inputVolume2, pixelType, componentType);

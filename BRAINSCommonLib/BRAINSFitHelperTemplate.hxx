@@ -616,8 +616,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::FitCommonCode(
   //
   this->m_CurrentGenericTransform->ClearTransformQueue();
 
-  typename CompositeTransformType::Pointer compToAdd;
-  std::string                              transformFileType;
+  std::string transformFileType;
   if (finalTransform.IsNotNull())
   {
     transformFileType = finalTransform->GetNameOfClass();

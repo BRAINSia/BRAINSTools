@@ -120,7 +120,6 @@ main(int argc, char * argv[])
   {
     const PointSetType::PointsContainer::Pointer sourceLandmarkContainer = sourceLandmarks->GetPoints();
     const PointSetType::PointsContainer::Pointer targetLandmarkContainer = targetLandmarks->GetPoints();
-    PointIdType                                  id = itk::NumericTraits<PointIdType>::ZeroValue();
     LandmarksVectorType                          targetLandmarksVec = LoadLandmarks(inputMovingLandmarks);
     LandmarksVectorType                          sourceLandmarksVec = LoadLandmarks(inputFixedLandmarks);
 
@@ -131,8 +130,8 @@ main(int argc, char * argv[])
       return EXIT_FAILURE;
     }
 
-    unsigned int idx = 0;
-    for (idx = 0; idx < sourceLandmarksVec.size(); ++idx)
+    PointIdType id = itk::NumericTraits<PointIdType>::ZeroValue();
+    for (unsigned int idx = 0; idx < sourceLandmarksVec.size(); ++idx)
     {
       sourceLandmarkContainer->InsertElement(id, sourceLandmarksVec[idx]);
       targetLandmarkContainer->InsertElement(id++, targetLandmarksVec[idx]);
@@ -256,7 +255,6 @@ LoadLandmarks(const std::string & filename)
   {
     if (line.compare(0, 1, "#") != 0)
     {
-      unsigned int      i = 0;
       int               pos1 = line.find(',', 0);
       const std::string name = line.substr(0, pos1);
       if (name.compare("CM") == 0) // exclude CM
@@ -264,9 +262,9 @@ LoadLandmarks(const std::string & filename)
         continue;
       }
       ImageType::PointType labelPos;
-      for (i = 0; i < 3; ++i)
+      for (unsigned int i = 0; i < 3; ++i)
       {
-        const int pos2 = line.find(',', pos1 + 1);
+        int pos2 = line.find(',', pos1 + 1);
         labelPos[i] = BRAINSTools::safe_stod(line.substr(pos1 + 1, pos2 - pos1 - 1));
         if (i < 2)
         {

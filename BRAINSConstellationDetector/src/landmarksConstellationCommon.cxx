@@ -193,7 +193,6 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
     }
   }
   {
-    SImageType::PointType                       CrossHairsPoint;
     const SImageType::PointType::CoordinateType radius0 = std::abs(3 * imSpacing[0]);
     const SImageType::PointType::CoordinateType radius1 = std::abs(3 * imSpacing[1]);
     const SImageType::PointType::CoordinateType radius2 = std::abs(3 * imSpacing[2]);
@@ -206,6 +205,7 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
         for (SImageType::PointType::CoordinateType i = CenterOfImage[0] - radius0; i < CenterOfImage[0] + radius0;
              i += imSpacing[0])
         {
+          SImageType::PointType CrossHairsPoint;
           CrossHairsPoint[0] = i;
           CrossHairsPoint[1] = j;
           CrossHairsPoint[2] = k;

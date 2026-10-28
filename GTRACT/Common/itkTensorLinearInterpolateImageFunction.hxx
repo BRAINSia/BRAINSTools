@@ -73,8 +73,6 @@ typename TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::OutputTyp
 TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuousIndex(
   const ContinuousIndexType & index) const
 {
-  unsigned int dim; // index over dimension
-
   /**
    * Compute base index = closet index below point
    * Compute distance from point to base index
@@ -82,7 +80,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
   signed long baseIndex[ImageDimension];
   double      distance[ImageDimension];
 
-  for (dim = 0; dim < ImageDimension; ++dim)
+  for (unsigned int dim = 0; dim < ImageDimension; ++dim)
   {
     baseIndex[dim] = static_cast<long>(floor(index[dim]));
     distance[dim] = index[dim] - static_cast<double>(baseIndex[dim]);
@@ -102,7 +100,7 @@ TensorLinearInterpolateImageFunction<TInputImage, TCoordRep>::EvaluateAtContinuo
     unsigned int upper = counter; // each bit indicates upper/lower neighbour
     IndexType    neighIndex;
     // get neighbor index and overlap fraction
-    for (dim = 0; dim < ImageDimension; ++dim)
+    for (unsigned int dim = 0; dim < ImageDimension; ++dim)
     {
       if (upper & 1)
       {

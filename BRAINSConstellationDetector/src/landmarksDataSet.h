@@ -79,8 +79,7 @@ public:
     {
       itkGenericExceptionMacro(<< "Input model file cannot open! :" << LandmarksFilename);
     }
-    landmarksDataSet::PointType tempPoint;
-    char                        linebuf[300];
+    char linebuf[300];
 
     // Read in RP, AC, PC, VN4, and LE, RE, and other "new" landmarks
     while (singleLandmarkFile.getline(linebuf, 300))
@@ -97,10 +96,11 @@ public:
       {
         throw landmarksDataSet::shortLine;
       }
-      std::string PointName(CSVs.substr(0, posA - 0));
+      std::string                 PointName(CSVs.substr(0, posA - 0));
+      landmarksDataSet::PointType tempPoint;
       for (unsigned int j = 0; j < 3; ++j) // Image Dimension = 3
       {
-        const std::string::size_type posB = CSVs.find(',', posA + 1);
+        std::string::size_type posB = CSVs.find(',', posA + 1);
         if (posB == std::string::npos)
         {
           throw landmarksDataSet::shortLine;

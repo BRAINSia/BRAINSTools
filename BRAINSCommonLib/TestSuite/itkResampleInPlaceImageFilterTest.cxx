@@ -48,9 +48,6 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  bool         result = false; // test result default = no failure
-  const double tol = 1.e-3;    // tolerance
-
   // Image, filter, transform typedef
   constexpr unsigned int LocalImageDimension = 3;
   using PixelType = short;
@@ -124,6 +121,8 @@ main(int argc, char * argv[])
   ImagePointType     origin_d = baselineImage->GetOrigin();
   ImageDirectionType direction_d = baselineImage->GetDirection();
   ImageSpacingType   spacing_d = baselineImage->GetSpacing();
+  bool               result = false; // test result default = no failure
+  const double       tol = 1.e-3;    // tolerance
   // Image info validation
   for (unsigned int i = 0; i < LocalImageDimension; ++i)
   {

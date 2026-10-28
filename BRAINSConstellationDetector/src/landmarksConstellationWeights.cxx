@@ -80,14 +80,6 @@ main(int argc, char * argv[])
   PARSE_ARGS;
   BRAINSRegisterAlternateIO();
 
-  unsigned int numNamedLandmarks = 0;
-
-  LandmarksDistanceMapType LandmarksDistanceMap;
-  LandmarksValueMapType    LandmarksAverageMap; // for average
-  LandmarksValueMapType    LandmarksSTDMap;     // for standard deviation
-  LandmarksValueMapType    LandmarksWeightMap;  // for weights
-  LandmarksMapTypeVec      LandmarksMapVector;
-
   if ((inputTrainingList.compare("") == 0) || (outputWeightsList.compare("") == 0) ||
       (inputTemplateModel.compare("") == 0) || (llsModel.compare("") == 0))
   {
@@ -100,6 +92,7 @@ main(int argc, char * argv[])
   }
 
   landmarksConstellationTrainingDefinitionIO mDef(inputTrainingList);
+  LandmarksMapTypeVec                        LandmarksMapVector;
   LandmarksMapVector.clear();
   // For each training case, it loads the landmarks file into the LandmarksMapVector
   for (unsigned int currentDataset = 0; currentDataset < mDef.GetNumDataSets(); ++currentDataset)
@@ -130,6 +123,7 @@ main(int argc, char * argv[])
   }
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
+  unsigned int             numNamedLandmarks = 0;
   std::vector<std::string> LandmarksNames;
   for (auto & it : LandmarksMapVector[0])
   {
@@ -160,21 +154,21 @@ main(int argc, char * argv[])
       std::cout << "==============================================================" << std::endl;
   }
   */
+  LandmarksDistanceMapType LandmarksDistanceMap;
+  LandmarksValueMapType    LandmarksAverageMap; // for average
+  LandmarksValueMapType    LandmarksSTDMap;     // for standard deviation
+  LandmarksValueMapType    LandmarksWeightMap;  // for weights
   // Computing the average coordinate for each landmark
   for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {
     const std::string & name = LandmarksNames[j];
     for (unsigned int i = 0; i < k; ++i)
     {
-      double d0 = NAN;
-      double d1 = NAN;
-      double d2 = NAN;
-      double dist = NAN;
-      d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
-      d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
-      d2 = pow(LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);
+      double d0 = pow(LandmarksMapVector[i][name][0] - LandmarksMapVector[i + k][name][0], 2);
+      double d1 = pow(LandmarksMapVector[i][name][1] - LandmarksMapVector[i + k][name][1], 2);
+      double d2 = pow(LandmarksMapVector[i][name][2] - LandmarksMapVector[i + k][name][2], 2);
 
-      dist = sqrt(d0 + d1 + d2);
+      double dist = sqrt(d0 + d1 + d2);
 
       LandmarksDistanceMap[name].push_back(dist);
     }

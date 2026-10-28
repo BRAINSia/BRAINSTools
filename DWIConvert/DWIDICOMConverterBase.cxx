@@ -112,20 +112,19 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     }
   }
 
-  // a map of ints keyed by the slice location string
-  // reported in the dicom file.  The number of slices per
-  // volume is the same as the number of unique slice locations
-  std::map<std::string, int> sliceLocations;
   //
   // check for interleave
   if (!this->m_MultiSliceVolume)
   {
+    // a map of ints keyed by the slice location string
+    // reported in the dicom file.  The number of slices per
+    // volume is the same as the number of unique slice locations
+    std::map<std::string, int> sliceLocations;
     // Make a hash of the sliceLocations in order to get the correct
     // count.  This is more reliable since SliceLocation may not be available.
-    std::vector<int>         sliceLocationIndicator;
+    std::vector<int>         sliceLocationIndicator(this->m_NSlice);
     std::vector<std::string> sliceLocationStrings;
 
-    sliceLocationIndicator.resize(this->m_NSlice);
     for (unsigned int k = 0; k < this->m_NSlice; ++k)
     {
       std::string originString;

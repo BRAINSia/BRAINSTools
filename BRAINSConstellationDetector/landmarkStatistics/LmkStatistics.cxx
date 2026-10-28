@@ -76,8 +76,6 @@ main(int argc, char * argv[])
     return EXIT_FAILURE;
   }
 
-  unsigned int numNamedLandmarks = 0;
-
   using LandmarksDistanceMapType = std::map<std::string, std::vector<double>>;
   LandmarksDistanceMapType      LandmarksDistanceMap;
   std::map<std::string, double> LandmarksAverageMap;  // for average
@@ -100,6 +98,7 @@ main(int argc, char * argv[])
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
   std::vector<std::string> LandmarksNames;
+  unsigned int             numNamedLandmarks = 0;
   for (auto & it : LandmarksMapVector[0])
   {
     if ((it.first).compare("") != 0)

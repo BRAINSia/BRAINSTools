@@ -86,18 +86,9 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
   using EigenValuesArrayType = typename Self::TensorImageType::PixelType::EigenValuesArrayType;
   using EigenVectorsMatrixType = typename Self::TensorImageType::PixelType::EigenVectorsMatrixType;
 
-  float anisotropy(0);
-
-  float anisotropySum(0);
-
   TVector vin(3);
 
   TVector vout(3);
-
-  typename Self::ContinuousIndexType index;
-
-  typename Self::ContinuousIndexType tmpIndex;
-  bool                               stop;
 
   const float inRadians = this->pi / 180.0;
   float       curvatureThreshold = std::cos(this->m_CurvatureThreshold * inRadians);
@@ -117,12 +108,12 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
 
   while (!this->m_Seeds.empty())
   {
-    index = this->m_Seeds.back();
+    typename Self::ContinuousIndexType index = this->m_Seeds.back();
     this->m_Seeds.pop_back();
     vin = vout = this->m_TrackingDirections.back();
     this->m_TrackingDirections.pop_back();
     // std::cerr << "Next seed: " << index << " ";
-    stop = false;
+    bool            stop = false;
     vtkPoints *     fiber = vtkPoints::New();
     vtkFloatArray * fiberTensors = vtkFloatArray::New();
     fiberTensors->SetName("Tensors");
@@ -133,19 +124,13 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
     fiberAnisotropySum->SetName("Anisotropy-Sum");
     int   currentPointId = 0;
     float pathLength = 0.0;
+    float anisotropySum(0);
 
     // ////////////////////////////////////////////////////////////////////////
     // Tracking start from given 'index' and 'vout'
     while (!stop)
     {
-      if (ImageRegion.IsInside(index))
-      {
-        anisotropy = this->m_ScalarIP->EvaluateAtContinuousIndex(index);
-      }
-      else
-      {
-        anisotropy = -1;
-      }
+      float anisotropy = ImageRegion.IsInside(index) ? this->m_ScalarIP->EvaluateAtContinuousIndex(index) : -1;
 
       //
       // ////////////////////////////////////////////////////////////////////////
@@ -219,6 +204,7 @@ DtiFreeTrackingFilter<TTensorImageType, TAnisotropyImageType, TMaskImageType>::U
           }
 
           // Calculate the new index
+          typename Self::ContinuousIndexType tmpIndex;
           this->StepIndex(tmpIndex, index, vout);
           pathLength += this->m_StepSize;
 

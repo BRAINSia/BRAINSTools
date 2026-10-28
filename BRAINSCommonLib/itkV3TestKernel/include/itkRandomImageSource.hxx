@@ -225,16 +225,14 @@ RandomImageSource<TOutputImage>::ThreadedGenerateData(const OutputImageRegionTyp
 
   // Random number seed
   unsigned int sample_seed = 12345 + threadId;
-  double       u;
-  double       rnd;
 
   double dMin = static_cast<double>(m_Min);
   double dMax = static_cast<double>(m_Max);
   for (; !it.IsAtEnd(); ++it)
   {
     sample_seed = (sample_seed * 16807) % 2147483647L;
-    u = static_cast<double>(sample_seed) / 2147483711UL;
-    rnd = (1.0 - u) * dMin + u * dMax;
+    double u = static_cast<double>(sample_seed) / 2147483711UL;
+    double rnd = (1.0 - u) * dMin + u * dMax;
 
     it.Set((scalarType)rnd);
     progress.CompletedPixel();

@@ -207,8 +207,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
   using ErodeFilterType = BinaryErodeImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
   auto ErodeFilter = ErodeFilterType::New();
   {
-    myKernelType                    dilateBall;
-    myKernelType                    erodeBall;
     typename myKernelType::SizeType dilateBallSize;
     typename myKernelType::SizeType erodeBallSize;
     for (unsigned int d = 0; d < 3; ++d)
@@ -224,8 +222,10 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
       dilateBallSize[d] = ClosingVoxels;
       erodeBallSize[d] = ClosingVoxels;
     }
+    myKernelType dilateBall;
     dilateBall.SetRadius(dilateBallSize);
     dilateBall.CreateStructuringElement();
+    myKernelType erodeBall;
     erodeBall.SetRadius(erodeBallSize);
     erodeBall.CreateStructuringElement();
 
@@ -317,7 +317,6 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
       // Dilate to get some background to better drive BSplineRegistration
       using DilateType = itk::BinaryDilateImageFilter<IntegerImageType, IntegerImageType, myKernelType>;
 
-      myKernelType                    dilateBall;
       typename myKernelType::SizeType dilateBallSize;
       for (unsigned int d = 0; d < 3; ++d)
       {
@@ -325,6 +324,7 @@ LargestForegroundFilledMaskImageFilter<TInputImage, TOutputImage>::GenerateData(
           itk::Math::ceil(m_DilateSize / (FinalThreshold->GetOutput()->GetSpacing()[d]));
         dilateBallSize[d] = DilateVoxels;
       }
+      myKernelType dilateBall;
       dilateBall.SetRadius(dilateBallSize);
       dilateBall.CreateStructuringElement();
 

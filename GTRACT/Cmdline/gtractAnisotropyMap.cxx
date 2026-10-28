@@ -120,9 +120,9 @@ main(int argc, char * argv[])
   using ConstIteratorType = itk::ImageRegionConstIterator<TensorImageType>;
   ConstIteratorType tensorIt(tensorImage, tensorImage->GetRequestedRegion());
 
-  float anisotropy = 0.0;
   for (anisoIt.GoToBegin(), tensorIt.GoToBegin(); !anisoIt.IsAtEnd(); ++anisoIt, ++tensorIt)
   {
+    float           anisotropy = 0.0;
     TensorPixelType tensorPixel = tensorIt.Get();
     if (anisotropyType == "ADC" || anisotropyType == "adc")
     {

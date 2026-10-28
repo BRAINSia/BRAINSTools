@@ -193,7 +193,6 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
   const auto   sampling = static_cast<unsigned int>(1. / m_SamplingRatio);
   unsigned int counter = 1;
 
-  InternalRegionType region;
   while (!image_it.IsAtEnd())
   {
     if (image_it.Get() > m_Threshold)
@@ -217,6 +216,7 @@ HoughTransformRadialVotingImageFilter<TInputImage, TOutputImage>::ThreadedGenera
               grad[i] *= inv_norm;
             }
           }
+          InternalRegionType    region;
           Index<ImageDimension> center;
           {
             InternalIndexType start;

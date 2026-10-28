@@ -65,16 +65,15 @@ main(int argc, char * argv[])
   if ((!outputLandmarksPaired.empty()) && (!inputLandmarksPaired.empty()))
   {
     const LandmarksMapType origLandmarks = ReadSlicer3toITKLmk(inputLandmarksPaired);
-    LandmarksMapType       alignedLandmarks;
 
     // computing the forward and inverse transform
     const VersorRigidTransformType::Pointer ZeroCenteredTransform = GetACPCAlignedZeroCenteredTransform(origLandmarks);
 
     const auto finalTransform = VersorRigidTransformType::New();
     finalTransform->SetFixedParameters(ZeroCenteredTransform->GetFixedParameters());
-    itk::Versor<double>               versorRotation;
     const itk::Matrix<double, 3, 3> & CleanedOrthogonalized =
       itk::Orthogonalize3DRotationMatrix(ZeroCenteredTransform->GetMatrix());
+    itk::Versor<double> versorRotation;
     versorRotation.Set(CleanedOrthogonalized);
     finalTransform->SetRotation(versorRotation);
     finalTransform->SetTranslation(ZeroCenteredTransform->GetTranslation());
@@ -87,6 +86,7 @@ main(int argc, char * argv[])
 
     // converting the original landmark file to the aligned landmark file
 
+    LandmarksMapType alignedLandmarks;
     for (auto & origLandmark : origLandmarks)
     {
       alignedLandmarks[origLandmark.first] = invFinalTransform->TransformPoint(origLandmark.second);

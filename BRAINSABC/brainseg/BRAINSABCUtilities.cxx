@@ -97,7 +97,6 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
    * using resamplerInterpolatorType and Identity transform.
    */
   MapOfFloatImageVectors resampledInPlaceMap;
-  MapOfFloatImageVectors resampledToFirstImageMap;
   PrintMapOfImageVectors(inputImageMap);
 
   // ResampleInPlace all images to the physical space of the first image
@@ -154,6 +153,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
   intraSubjectFOVIntersectionMask->FillBuffer(1); // Initialize so that entire FOV is included.
 
 
+  MapOfFloatImageVectors resampledToFirstImageMap;
   for (auto & modalityMapEntry : resampledInPlaceMap)
   {
     auto currModalIter = modalityMapEntry.second.begin();

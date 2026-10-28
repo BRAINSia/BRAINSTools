@@ -476,38 +476,37 @@ MultiModal3DMutualRegistrationHelper<TTransformType, TOptimizer, TFixedImage, TM
   const
 {
   unsigned long mtime = Superclass::GetMTime();
-  unsigned long m = 0;
 
   // Some of the following should be removed once ivars are put in the
   // input and output lists
 
   if (m_Transform)
   {
-    m = m_Transform->GetMTime();
+    unsigned long m = m_Transform->GetMTime();
     mtime = (m > mtime ? m : mtime);
   }
 
   if (m_Registration)
   {
-    m = m_Registration->GetMTime();
+    unsigned long m = m_Registration->GetMTime();
     mtime = (m > mtime ? m : mtime);
   }
 
   if (m_CompositeTransform)
   {
-    m = m_CompositeTransform->GetMTime();
+    unsigned long m = m_CompositeTransform->GetMTime();
     mtime = (m > mtime ? m : mtime);
   }
 
   if (m_FixedImage)
   {
-    m = m_FixedImage->GetMTime();
+    unsigned long m = m_FixedImage->GetMTime();
     mtime = (m > mtime ? m : mtime);
   }
 
   if (m_MovingImage)
   {
-    m = m_MovingImage->GetMTime();
+    unsigned long m = m_MovingImage->GetMTime();
     mtime = (m > mtime ? m : mtime);
   }
 

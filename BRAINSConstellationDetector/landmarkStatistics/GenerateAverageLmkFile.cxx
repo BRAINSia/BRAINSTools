@@ -75,10 +75,6 @@ main(int argc, char * argv[])
   }
   std::cout << "Computing the average file for " << k << " input landmark files..." << std::endl;
 
-  unsigned int numNamedLandmarks = 0;
-
-  std::map<std::string, LandmarkPointType> LandmarksAverageMap;
-
   using LandmarksMapTypeVec = std::vector<std::map<std::string, LandmarkPointType>>;
   LandmarksMapTypeVec LandmarksMapVector;
 
@@ -95,6 +91,7 @@ main(int argc, char * argv[])
 
   // Putting all the landmark names in a vector of strings and computing the number of landmarks
   std::vector<std::string> LandmarksNames;
+  unsigned int             numNamedLandmarks = 0;
   for (auto & it : LandmarksMapVector[0])
   {
     if ((it.first).compare("") != 0)
@@ -103,6 +100,7 @@ main(int argc, char * argv[])
       ++numNamedLandmarks;
     }
   }
+  std::map<std::string, LandmarkPointType> LandmarksAverageMap;
   // Computing the average coordinate for each landmark
   for (unsigned int j = 0; j < numNamedLandmarks; ++j)
   {

@@ -318,13 +318,11 @@ DoConversion(int argc, char * argv[])
       using ComposerType =
         typename itk::ComposeDisplacementFieldsImageFilter<DisplacementFieldType, DisplacementFieldType>;
 
-      typename CompositeTransformType::Pointer compToWrite;
-
       const typename CompositeTransformType::ConstPointer compXfrm =
         dynamic_cast<const CompositeTransformType *>(inputXfrm.GetPointer());
       if (compXfrm.IsNotNull())
       {
-        compToWrite = compXfrm->Clone();
+        typename CompositeTransformType::Pointer compToWrite = compXfrm->Clone();
 
         {
           // If the last four transforms are displacementFieldType, we assume that they are

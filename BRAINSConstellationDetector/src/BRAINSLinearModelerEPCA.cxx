@@ -120,9 +120,7 @@ InitializeXi(LmkDBType & baseLmkDB)
   const unsigned int numBaseLmks(baseLmkDB.size());
   const unsigned int numDatasets(baseLmkDB.begin()->second.size());
 
-  MatrixType X_i;
-
-  X_i.set_size((numBaseLmks - 1) * PointDim, numDatasets);
+  MatrixType X_i((numBaseLmks - 1) * PointDim, numDatasets);
 
   // Assert RP (MPJ) exists
   if (baseLmkDB.find("RP") == baseLmkDB.end())
@@ -270,8 +268,7 @@ ComputeIsiMatrix(const unsigned int rows, const unsigned int columns, const Vect
   }
   const unsigned int numLmks(rows / PointDim);
 
-  MatrixType I_si;
-  I_si.set_size(rows, columns);
+  MatrixType I_si(rows, columns);
   for (unsigned int j = 0; j < numDataset; ++j)
   {
     for (unsigned int k = 0; k < numLmks; ++k)

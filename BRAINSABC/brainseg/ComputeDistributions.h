@@ -61,9 +61,7 @@ CombinedComputeDistributions(const std::vector<typename ByteImageType::Pointer> 
   const LOOPITERTYPE numModalities = InputImageMap.size();
 
   // ListOfClassStatistics is an output!
-  std::vector<RegionStats> ListOfClassStatistics;
-  ListOfClassStatistics.clear();
-  ListOfClassStatistics.resize(numClasses);
+  std::vector<RegionStats> ListOfClassStatistics(numClasses);
 
   // not sure this is needed -- this sets the size of the
   // covariance matrix, but that is overwritten by assignment below

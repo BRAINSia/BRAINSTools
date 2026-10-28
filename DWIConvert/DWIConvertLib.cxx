@@ -76,9 +76,7 @@ DWIConvert::read()
   // for gradients and b values plus a NIfTI file for the gradient volumes.
   if ("FSL" == getInputFileType())
   {
-    DWIConverter::FileNamesContainer filesList;
-    filesList.clear();
-    filesList.push_back(m_inputVolume);
+    DWIConverter::FileNamesContainer filesList{ m_inputVolume };
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
     auto FSLconverter = std::make_unique<FSLDWIConverter>(filesList, m_inputBValues, m_inputBVectors);
@@ -98,9 +96,7 @@ DWIConvert::read()
   // make FSL file set from a NRRD file.
   else if ("Nrrd" == getInputFileType())
   {
-    DWIConverter::FileNamesContainer filesList;
-    filesList.clear();
-    filesList.push_back(m_inputVolume);
+    DWIConverter::FileNamesContainer filesList{ m_inputVolume };
 
     std::cout << "INPUT VOLUME: " << filesList[0] << std::endl;
     auto NRRDconverter = std::make_unique<NRRDDWIConverter>(filesList);

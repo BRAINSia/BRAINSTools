@@ -77,14 +77,11 @@ brains_intensity_normalize_quantiles(typename InputImageType::Pointer input_imag
   const auto             binsPerDimension = static_cast<unsigned int>(1000);
 
   using ImageToHistogramFilterType = itk::Statistics::ImageToHistogramFilter<InputImageType>;
-  typename ImageToHistogramFilterType::HistogramType::MeasurementVectorType lowerBound(binsPerDimension);
-  lowerBound.Fill(minPixel);
+  typename ImageToHistogramFilterType::HistogramType::MeasurementVectorType lowerBound(binsPerDimension, minPixel);
 
-  typename ImageToHistogramFilterType::HistogramType::MeasurementVectorType upperBound(binsPerDimension);
-  upperBound.Fill(maxPixel);
+  typename ImageToHistogramFilterType::HistogramType::MeasurementVectorType upperBound(binsPerDimension, maxPixel);
 
-  typename ImageToHistogramFilterType::HistogramType::SizeType size(MeasurementVectorSize);
-  size.Fill(binsPerDimension);
+  typename ImageToHistogramFilterType::HistogramType::SizeType size(MeasurementVectorSize, binsPerDimension);
 
   auto imageToHistogramFilter = ImageToHistogramFilterType::New();
   imageToHistogramFilter->SetInput(input_image);

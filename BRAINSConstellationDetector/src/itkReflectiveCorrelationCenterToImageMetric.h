@@ -82,8 +82,7 @@ public:
   void
   Initialize() override
   {
-    ParametersType params;
-    params.set_size(SpaceDimension);
+    ParametersType params(SpaceDimension);
 
     params[0] = 0;
     params[1] = 0;
@@ -94,25 +93,13 @@ public:
 
     // Run a multi-level exhaustive search to find the approximate parameters.
     // The Powell optimizer will then tune the exhaustive search parameters.
-    std::vector<double> Angle_Range(3);
-    Angle_Range[0] = 45.0;
-    Angle_Range[1] = 2.5;
-    Angle_Range[2] = 0.5;
+    std::vector<double> Angle_Range{ 45.0, 2.5, 0.5 };
 
-    std::vector<double> Angle_Stepsizes(3);
-    Angle_Stepsizes[0] = 5.0;
-    Angle_Stepsizes[1] = 0.5;
-    Angle_Stepsizes[2] = 0.25;
+    std::vector<double> Angle_Stepsizes{ 5.0, 0.5, 0.25 };
 
-    std::vector<double> Offset_Range(3);
-    Offset_Range[0] = 15.0;
-    Offset_Range[1] = 1.5;
-    Offset_Range[2] = 0.5;
+    std::vector<double> Offset_Range{ 15.0, 1.5, 0.5 };
 
-    std::vector<double> Offset_Stepsizes(3);
-    Offset_Stepsizes[0] = 3.0;
-    Offset_Stepsizes[1] = 0.5;
-    Offset_Stepsizes[2] = 0.25;
+    std::vector<double> Offset_Stepsizes{ 3.0, 0.5, 0.25 };
 
     for (unsigned int resolutionIter = 0; resolutionIter <= 2; ++resolutionIter)
     {
@@ -228,8 +215,7 @@ public:
     // starting parameters are optimal parameters from previous level
     const ParametersType starting_params(opt_params);
     // new search parameters
-    ParametersType current_params;
-    current_params.set_size(SpaceDimension);
+    ParametersType current_params(SpaceDimension);
 #ifdef WRITE_CSV_FILE
     std::stringstream csvFileOfMetricValues;
 #endif

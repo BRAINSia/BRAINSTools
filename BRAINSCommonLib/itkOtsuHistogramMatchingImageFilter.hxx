@@ -52,16 +52,13 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
   , m_SourceHistogram(HistogramType::New())
   , m_ReferenceHistogram(HistogramType::New())
   , m_OutputHistogram(HistogramType::New())
+  , m_QuantileTable(3, m_NumberOfMatchPoints + 2, 0)
+  , m_Gradients(m_NumberOfMatchPoints + 1, 0)
   , m_SourceMask(nullptr)
   , m_ReferenceMask(nullptr)
 {
   this->DynamicMultiThreadingOff(); // NEEDED FOR ITKv5 backwards compatibility
   this->SetNumberOfRequiredInputs(2);
-
-  m_QuantileTable.set_size(3, m_NumberOfMatchPoints + 2);
-  m_QuantileTable.fill(0);
-  m_Gradients.set_size(m_NumberOfMatchPoints + 1);
-  m_Gradients.fill(0);
 }
 
 /*
@@ -361,28 +358,19 @@ OtsuHistogramMatchingImageFilter<TInputImage, TOutputImage, THistogramMeasuremen
 {
   {
     // allocate memory for the histogram
-    typename HistogramType::SizeType              size;
-    typename HistogramType::MeasurementVectorType lowerBound;
-    typename HistogramType::MeasurementVectorType upperBound;
+    typename HistogramType::SizeType              size(1, m_NumberOfHistogramLevels);
+    typename HistogramType::MeasurementVectorType lowerBound(1, minValue);
+    typename HistogramType::MeasurementVectorType upperBound(1, maxValue);
 
-    size.SetSize(1);
-    lowerBound.SetSize(1);
-    upperBound.SetSize(1);
     histogram->SetMeasurementVectorSize(1);
-    size[0] = m_NumberOfHistogramLevels;
-    lowerBound.Fill(minValue);
-    upperBound.Fill(maxValue);
 
     // Initialize with equally spaced bins.
     histogram->Initialize(size, lowerBound, upperBound);
     histogram->SetToZero();
   }
 
-  typename HistogramType::MeasurementVectorType measurement;
-  measurement.SetSize(1);
-
   using MeasurementType = typename HistogramType::MeasurementType;
-  measurement[0] = NumericTraits<MeasurementType>::ZeroValue();
+  typename HistogramType::MeasurementVectorType measurement(1, NumericTraits<MeasurementType>::ZeroValue());
 
   {
     // put each image pixel into the histogram

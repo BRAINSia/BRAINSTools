@@ -326,9 +326,7 @@ BRAINSConstellationDetector2<TInputImage, TOutputImage>::GenerateData()
 
   // Following is a mechanism to force BCD report failure if
   // transformed LE and RE are not in expected ranges with respect to AC point (0,0,0).
-  std::vector<double> eyes_LR_range(2);
-  eyes_LR_range[0] = 15.0;
-  eyes_LR_range[1] = 45.0;
+  std::vector<double> eyes_LR_range{ 15.0, 45.0 };
 
   if (this->m_AlignedPoints["LE"][0] < eyes_LR_range[0] || this->m_AlignedPoints["LE"][0] > eyes_LR_range[1] ||
       this->m_AlignedPoints["RE"][0] > -eyes_LR_range[0] || this->m_AlignedPoints["RE"][0] < -eyes_LR_range[1] ||

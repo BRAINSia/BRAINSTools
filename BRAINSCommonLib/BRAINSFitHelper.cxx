@@ -131,8 +131,7 @@ NormalizeImage(const typename ImageType::Pointer & inputImage)
   using InputBooleanObjectType = typename HistogramFilterType::InputBooleanObjectType;
   using HistogramSizeType = typename HistogramFilterType::HistogramSizeType;
 
-  HistogramSizeType histogramSize(1);
-  histogramSize[0] = 256;
+  HistogramSizeType histogramSize(1, 256);
 
   const auto autoMinMaxInputObject = InputBooleanObjectType::New();
   autoMinMaxInputObject->Set(true);

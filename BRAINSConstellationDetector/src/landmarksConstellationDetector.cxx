@@ -195,8 +195,7 @@ landmarksConstellationDetector::ComputeFinalRefinedACPCAlignedTransform(
 
     const std::vector<double> minimumStepSize(1, 0.0005);
     brainsFitHelper->SetMinimumStepLength(minimumStepSize);
-    std::vector<std::string> transformType(1);
-    transformType[0] = "Affine";
+    std::vector<std::string> transformType(1, "Affine");
     brainsFitHelper->SetTransformType(transformType);
 
     using CompositeTransformType = itk::CompositeTransform<double, 3>;

@@ -1097,10 +1097,10 @@ DCMTKFileReader::GetImageDataType() const
 {
   unsigned short  IsSigned;
   unsigned short  BitsAllocated;
-  unsigned short  HighBit;
   IOComponentEnum type = IOComponentEnum::UNKNOWNCOMPONENTTYPE;
 
   {
+    unsigned short HighBit;
     unsigned short BitsStored;
     if (this->GetElementUS(0x0028, 0x0100, BitsAllocated, false) != EXIT_SUCCESS ||
         this->GetElementUS(0x0028, 0x0101, BitsStored, false) != EXIT_SUCCESS ||

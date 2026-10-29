@@ -104,12 +104,11 @@ main(int, char *[])
   FillWithIndexValue(inEven2Large);
   // DumpImage(inEvenLarge);
 
-  const bool evenLargeFirstIsOdd = true;
-  const bool evenLarge2FirstIsOdd = true;
-  const bool evenSmallFirstIsOdd = true;
-
   {
-    size_t test_num = 1;
+    const bool evenLargeFirstIsOdd = true;
+    const bool evenLarge2FirstIsOdd = true;
+    const bool evenSmallFirstIsOdd = true;
+    size_t     test_num = 1;
     switch (test_num)
     {
       case 1:

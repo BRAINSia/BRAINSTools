@@ -305,14 +305,16 @@ RegressionTestImage(const char *         testImageFilename,
 
   // The sizes of the baseline and test image must match
   ImageType::SizeType baselineSize = baselineReader->GetOutput()->GetLargestPossibleRegion().GetSize();
-  ImageType::SizeType testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
 
-  if (baselineSize != testSize)
   {
-    std::cerr << "The size of the Baseline image and Test image do not match!" << std::endl;
-    std::cerr << "Baseline image: " << baselineImageFilename << " has size " << baselineSize << std::endl;
-    std::cerr << "Test image:     " << testImageFilename << " has size " << testSize << std::endl;
-    return 1;
+    ImageType::SizeType testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
+    if (baselineSize != testSize)
+    {
+      std::cerr << "The size of the Baseline image and Test image do not match!" << std::endl;
+      std::cerr << "Baseline image: " << baselineImageFilename << " has size " << baselineSize << std::endl;
+      std::cerr << "Test image:     " << testImageFilename << " has size " << testSize << std::endl;
+      return 1;
+    }
   }
 
   // Now compare the two images

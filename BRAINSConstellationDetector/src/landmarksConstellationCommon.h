@@ -246,9 +246,8 @@ normalizeVector(std::vector<ValuesType> & x)
 
  {
  float y[3]={1.0, 5.0, 3.0}
- double mean;
+ double mean = removeVectorMean(y,3);
 
- mean = removeVectorMean(y,3);
 
  printf("mean = %lf\n", mean);
  printf("y = {%f, %f, %f}\n", y[0],y[1],y[2]);

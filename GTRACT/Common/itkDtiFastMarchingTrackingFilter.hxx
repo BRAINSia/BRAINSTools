@@ -262,7 +262,6 @@ DtiFastMarchingTrackingFilter<TTensorImageType, TAnisotropyImageType, TCostImage
   for (unsigned int j = 0; j < (m_NumberOfIterations - 1); ++j)
   {
     bool pass = false;
-    pass = false;
     currentPosition = m_GradientOP->GetCurrentPosition();
     for (unsigned int k = 0; k < spaceDimension; ++k) //
     {

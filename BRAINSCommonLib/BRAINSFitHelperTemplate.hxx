@@ -1404,7 +1404,7 @@ BRAINSFitHelperTemplate<FixedImageType, MovingImageType>::Update()
               ExtractConstPointerToImageMaskFromImageSpatialObject(movingMask).GetPointer(),
               this->m_FixedVolume,
               this->m_CurrentGenericTransform.GetPointer(),
-              m_BackgroundFillValue,
+              0,
               "Linear",
               false);
 

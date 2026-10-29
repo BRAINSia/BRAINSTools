@@ -530,6 +530,45 @@ jobs:
             "${GITHUB_WORKSPACE}"
 
       # ── Artifact upload ────────────────────────────────────────────────────────
+      # ── Weekly sanitizer pass (scheduled or manual runs, Ubuntu only) ────────
+      # Rebuilds only the inner BRAINSTools project with ASan and UBSan and
+      # reruns its tests; ITK, VTK, and ANTs stay uninstrumented.  Runs after
+      # the compiler cache is saved, so sanitized objects never enter it.
+      - name: "Sanitizers: Rebuild inner BRAINSTools with ASan and UBSan"
+        id: sanitizer_build
+        if: ${{ !cancelled() && matrix.config.os == 'ubuntu-latest' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        # GoogleTest discovery runs each test binary during the build.
+        env:
+          ASAN_OPTIONS: detect_leaks=0:detect_container_overflow=0:halt_on_error=1:abort_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: |
+          # pointer-overflow is off: ITK 5.4 iterators built on unallocated images
+          # (ScanlineFilterCommon, the v4 registration virtual domain) offset a null
+          # buffer pointer inside ITK templates instantiated in BRAINSTools objects.
+          SAN="-fsanitize=address,undefined -fno-sanitize=pointer-overflow -fno-sanitize-recover=undefined -fno-omit-frame-pointer"
+          cmake . \
+            -DCMAKE_C_FLAGS="${{ matrix.config.arch_flags }} ${SAN}" \
+            -DCMAKE_CXX_FLAGS="${{ matrix.config.arch_flags }} ${SAN}" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined" \
+            -DCMAKE_MODULE_LINKER_FLAGS="-fsanitize=address,undefined"
+          cmake --build . --parallel ${{ matrix.config.parallel }}
+
+      - name: "Sanitizers: Run tests"
+        if: ${{ !cancelled() && steps.sanitizer_build.outcome == 'success' }}
+        working-directory: build/BRAINSTools-Release-EPRelease-build
+        shell: bash
+        env:
+          # Leaks at exit are not triaged yet, and container-overflow misfires
+          # inside GoogleTest's own test registration.
+          ASAN_OPTIONS: detect_leaks=0:detect_container_overflow=0:halt_on_error=1:abort_on_error=1
+          UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+        run: |
+          ctest --output-on-failure --timeout 1800 -j ${{ matrix.config.parallel }} \
+            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
+
       - name: Upload Build Logs
         uses: actions/upload-artifact@v7
         if: always()

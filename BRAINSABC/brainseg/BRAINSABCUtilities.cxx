@@ -212,7 +212,7 @@ ResampleToFirstImageList(const std::string &            resamplerInterpolatorTyp
       while (!maskIt.IsAtEnd())
       {
         using PT = MaskType::PointType;
-        const PT thisPoint = resampledToFirstImage->TransformIndexToPhysicalPoint<float>(maskIt.GetIndex());
+        const PT thisPoint = resampledToFirstImage->TransformIndexToPhysicalPoint<double>(maskIt.GetIndex());
         if (resampledToFirstIt.Value() <= background_threshold_value ||
             (!bb->IsInside(thisPoint))) // Voxel came from outside
         // the original FOV during registration, so invalidate it.

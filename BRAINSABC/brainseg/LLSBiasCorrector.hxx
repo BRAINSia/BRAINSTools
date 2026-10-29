@@ -79,8 +79,6 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::LLSBiasCorrector()
   , m_OutputDebugDir("")
   , m_MaxDegree(4)
   , m_SampleSpacing(4.0)
-  , m_XMu{ 0.0, 0.0, 0.0 }
-  , m_XStd{ 1.0, 1.0, 1.0 }
 {}
 
 template <typename TInputImage, typename TProbabilityImage>

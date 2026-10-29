@@ -501,14 +501,14 @@ private:
 
   bool             m_UsePurePlugs{};
   float            m_PurePlugsThreshold{};
-  unsigned int     m_NumberOfSubSamplesInEachPlugArea[3];
+  unsigned int     m_NumberOfSubSamplesInEachPlugArea[3]{ 0, 0, 0 };
   ByteImagePointer m_PurePlugsMask{};
 
   bool         m_UpdateTransformation{};
   unsigned int m_DebugLevel{};
 
   GenericTransformType::Pointer m_TemplateGenericTransform{};
-  unsigned int                  m_WarpGrid[3];
+  unsigned int                  m_WarpGrid[3]{ 5, 5, 5 };
 
   FloatingPrecision m_WarpLikelihoodTolerance{};
   bool              m_UpdateRequired{};

@@ -216,7 +216,6 @@ main(int argc, char * argv[])
   // TODO:
   // TODO:  Everything below this line should be wrapped in a "DoIt" template function similar to BRAINSAlignMSP.cxx.
 
-  const bool debug = true;
   bool       useTransform = (!warpTransform.empty());
   const bool useDisplacementField = (!deformationVolume.empty());
 
@@ -247,24 +246,27 @@ main(int argc, char * argv[])
     warpTransform = "Identity";
   }
 
-  if (debug)
   {
-    std::cout << "=====================================================" << std::endl;
-    std::cout << "Input Volume:     " << inputVolume << std::endl;
-    std::cout << "Reference Volume: " << referenceVolume << std::endl;
-    std::cout << "Output Volume:    " << outputVolume << std::endl;
-    std::cout << "Pixel Type:       " << pixelDataStorageType << std::endl;
-    std::cout << "Interpolation:    " << interpolationMode << std::endl;
-    std::cout << "Background Value: " << defaultValue << std::endl;
-    if (useDisplacementField)
+    const bool debug = true;
+    if (debug)
     {
-      std::cout << "Warp by Displacement Volume: " << deformationVolume << std::endl;
+      std::cout << "=====================================================" << std::endl;
+      std::cout << "Input Volume:     " << inputVolume << std::endl;
+      std::cout << "Reference Volume: " << referenceVolume << std::endl;
+      std::cout << "Output Volume:    " << outputVolume << std::endl;
+      std::cout << "Pixel Type:       " << pixelDataStorageType << std::endl;
+      std::cout << "Interpolation:    " << interpolationMode << std::endl;
+      std::cout << "Background Value: " << defaultValue << std::endl;
+      if (useDisplacementField)
+      {
+        std::cout << "Warp by Displacement Volume: " << deformationVolume << std::endl;
+      }
+      if (useTransform)
+      {
+        std::cout << "Warp By Transform: " << warpTransform << std::endl;
+      }
+      std::cout << "=====================================================" << std::endl;
     }
-    if (useTransform)
-    {
-      std::cout << "Warp By Transform: " << warpTransform << std::endl;
-    }
-    std::cout << "=====================================================" << std::endl;
   }
   try
   {

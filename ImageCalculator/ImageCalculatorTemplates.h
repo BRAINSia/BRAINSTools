@@ -767,17 +767,18 @@ ImageCalculatorReadWrite(MetaCommand & command)
 
     typename ImageType::Pointer image = Ifilters<ImageType>(SubSequentImage, command);
 
-    const vnl_vector_fixed<double, 3> spacingDifference{ AccImage->GetSpacing()[0] - image->GetSpacing()[0],
-                                                         AccImage->GetSpacing()[1] - image->GetSpacing()[1],
-                                                         AccImage->GetSpacing()[2] - image->GetSpacing()[2] };
-
-    if (spacingDifference.two_norm() > 0.0001) // HACK:  Should be a percentage of the actual spacing size.
     {
-      itkGenericExceptionMacro(<< "ERROR:: The pixel spacing of the images are not close enough.");
-    }
-    else if (AccImage->GetSpacing() != image->GetSpacing())
-    {
-      std::cout << "WARNING: ::The pixel spacing of the images don't match exactly. \n";
+      const vnl_vector_fixed<double, 3> spacingDifference{ AccImage->GetSpacing()[0] - image->GetSpacing()[0],
+                                                           AccImage->GetSpacing()[1] - image->GetSpacing()[1],
+                                                           AccImage->GetSpacing()[2] - image->GetSpacing()[2] };
+      if (spacingDifference.two_norm() > 0.0001) // HACK:  Should be a percentage of the actual spacing size.
+      {
+        itkGenericExceptionMacro(<< "ERROR:: The pixel spacing of the images are not close enough.");
+      }
+      else if (AccImage->GetSpacing() != image->GetSpacing())
+      {
+        std::cout << "WARNING: ::The pixel spacing of the images don't match exactly. \n";
+      }
     }
     if (AccImage->GetDirection() != image->GetDirection())
     {

@@ -136,10 +136,10 @@ CreatedebugPlaneImage(SImageType::Pointer referenceImage, const std::string & de
   const auto MSP = itk::ImageDuplicator<SImageType>::New();
   MSP->SetInputImage(referenceImage);
   MSP->Update();
-  SImageType::Pointer           MSPImage = MSP->GetOutput();
-  const SImageType::SpacingType imSpacing = MSPImage->GetSpacing();
+  SImageType::Pointer MSPImage = MSP->GetOutput();
 
   {
+    const SImageType::SpacingType                 imSpacing = MSPImage->GetSpacing();
     SImageType::PointType                         CenterOfImage = GetImageCenterPhysicalPoint(MSPImage);
     itk::ImageRegionIteratorWithIndex<SImageType> mspIt(MSPImage, MSPImage->GetLargestPossibleRegion());
     for (; !mspIt.IsAtEnd(); ++mspIt)

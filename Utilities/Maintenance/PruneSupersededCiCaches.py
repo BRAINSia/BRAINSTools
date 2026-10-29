@@ -2,7 +2,7 @@
 """Prune superseded GitHub Actions caches for the BRAINSTools repository.
 
 The CI workflow seeds ccache via cache keys of the form
-``ccache-v1-<OS>-<compiler>-<sha>``. Each new push produces a new cache
+``ccache-v2-<OS>-<image>-<compiler><major>-<sha>``. Each new push produces a new cache
 with a fresh SHA suffix, while ``actions/cache`` ``restore-keys`` falls
 back to the most recent prefix match. Older SHA-suffixed entries are
 therefore dead weight: they consume the per-repository 10 GB cache

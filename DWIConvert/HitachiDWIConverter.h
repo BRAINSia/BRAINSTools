@@ -26,7 +26,7 @@
 class HitachiDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  HitachiDWIConverter(DCMTKFileVector &                  allHeaders,
+  HitachiDWIConverter(DCMTKFileVector                    allHeaders,
                       DWIConverter::FileNamesContainer & inputFileNames,
                       const bool                         useBMatrixGradientDirections);
 

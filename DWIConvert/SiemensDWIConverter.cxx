@@ -4,11 +4,11 @@
 #include "SiemensDWIConverter.h"
 #include "LocaleSafeConversions.h"
 
-SiemensDWIConverter::SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                                         DWIConverter::FileNamesContainer &       inputFileNames,
-                                         const bool                               useBMatrixGradientDirections,
-                                         const double                             smallGradientThreshold)
-  : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
+SiemensDWIConverter::SiemensDWIConverter(DWIDICOMConverterBase::DCMTKFileVector allHeaders,
+                                         DWIConverter::FileNamesContainer &     inputFileNames,
+                                         const bool                             useBMatrixGradientDirections,
+                                         const double                           smallGradientThreshold)
+  : DWIDICOMConverterBase(std::move(allHeaders), inputFileNames, useBMatrixGradientDirections)
   , m_SmallGradientThreshold(smallGradientThreshold)
   , m_MMosaic(0)
   , m_NMosaic(0)

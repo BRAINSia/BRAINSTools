@@ -3,10 +3,10 @@
 //
 #include "PhilipsDWIConverter.h"
 
-PhilipsDWIConverter::PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                                         DWIConverter::FileNamesContainer &       inputFileNames,
-                                         const bool                               useBMatrixGradientDirections)
-  : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
+PhilipsDWIConverter::PhilipsDWIConverter(DWIDICOMConverterBase::DCMTKFileVector allHeaders,
+                                         DWIConverter::FileNamesContainer &     inputFileNames,
+                                         const bool                             useBMatrixGradientDirections)
+  : DWIDICOMConverterBase(std::move(allHeaders), inputFileNames, useBMatrixGradientDirections)
 {}
 
 PhilipsDWIConverter::~PhilipsDWIConverter() = default;
@@ -115,7 +115,7 @@ PhilipsDWIConverter::ExtractDWIData()
         {
           float tmp[3];
           {
-            brains::DCMTKFileReader * hdr = this->m_Headers[k];
+            brains::DCMTKFileReader * hdr = this->m_Headers[k].get();
             if (hdr->GetElementFLorOB(0x2005, 0x10b0, tmp[0], false) == EXIT_FAILURE ||
                 hdr->GetElementFLorOB(0x2005, 0x10b1, tmp[1], false) == EXIT_FAILURE ||
                 hdr->GetElementFLorOB(0x2005, 0x10b2, tmp[2], false) == EXIT_FAILURE)

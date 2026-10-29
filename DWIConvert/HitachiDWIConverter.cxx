@@ -5,10 +5,10 @@
 #include "HitachiDWIConverter.h"
 #include "DWIDICOMConverterBase.h"
 
-HitachiDWIConverter::HitachiDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                                         DWIConverter::FileNamesContainer &       inputFileNames,
-                                         const bool                               useBMatrixGradientDirections)
-  : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
+HitachiDWIConverter::HitachiDWIConverter(DWIDICOMConverterBase::DCMTKFileVector allHeaders,
+                                         DWIConverter::FileNamesContainer &     inputFileNames,
+                                         const bool                             useBMatrixGradientDirections)
+  : DWIDICOMConverterBase(std::move(allHeaders), inputFileNames, useBMatrixGradientDirections)
 {}
 
 HitachiDWIConverter::~HitachiDWIConverter() = default;

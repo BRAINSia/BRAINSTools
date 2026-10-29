@@ -4,10 +4,10 @@
 
 #include "GEDWIConverter.h"
 
-GEDWIConverter::GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector & allHeaders,
-                               DWIConverter::FileNamesContainer &       inputFileNames,
-                               const bool                               useBMatrixGradientDirections)
-  : DWIDICOMConverterBase(allHeaders, inputFileNames, useBMatrixGradientDirections)
+GEDWIConverter::GEDWIConverter(DWIDICOMConverterBase::DCMTKFileVector allHeaders,
+                               DWIConverter::FileNamesContainer &     inputFileNames,
+                               const bool                             useBMatrixGradientDirections)
+  : DWIDICOMConverterBase(std::move(allHeaders), inputFileNames, useBMatrixGradientDirections)
 {}
 GEDWIConverter::~GEDWIConverter() = default;
 void

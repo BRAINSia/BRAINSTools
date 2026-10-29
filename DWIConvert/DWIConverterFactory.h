@@ -56,9 +56,8 @@ private:
   bool        m_UseBMatrixGradientDirections{};
   double      m_SmallGradientThreshold{};
 
-  std::vector<std::unique_ptr<brains::DCMTKFileReader>> m_OwnedHeaders{};
-  DWIDICOMConverterBase::DCMTKFileVector                m_Headers{};
-  DWIConverter::FileNamesContainer                      m_InputFileNames{};
+  DWIDICOMConverterBase::DCMTKFileVector m_Headers{};
+  DWIConverter::FileNamesContainer       m_InputFileNames{};
 };
 
 #endif // __DWIConverterFactory_h

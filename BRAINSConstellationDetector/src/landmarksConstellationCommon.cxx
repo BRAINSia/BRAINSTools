@@ -457,15 +457,9 @@ computeTmspFromPoints_Versor(SImageType::PointType RP,
                                  DesiredCenter[0] + a1_projection.magnitude(),
                                  DesiredCenter[0] + -a2_rejection.magnitude() } };
 
-  PointList orig;
-  orig.emplace_back(AC);
-  orig.emplace_back(PC);
-  orig.emplace_back(RP);
+  const PointList orig{ AC, PC, RP };
 
-  PointList final;
-  final.emplace_back(NEWAC);
-  final.emplace_back(NEWPC);
-  final.emplace_back(NEWRP);
+  const PointList final{ NEWAC, NEWPC, NEWRP };
 
   // Now convert the result to a Euler Transform.
   auto versorBaseTransform = ComputeRigidTransformFromLandmarkLists(final, orig);

@@ -249,8 +249,7 @@ public:
     if (CSVFileName != "")
     {
       std::cout << "\nWriting out metric values in a csv file..." << std::endl;
-      std::ofstream csvFile;
-      csvFile.open(CSVFileName.c_str());
+      std::ofstream csvFile(CSVFileName.c_str());
       if (!csvFile.is_open())
       {
         itkGenericExceptionMacro(<< "Error: Can't write oputput csv file: " << CSVFileName << "!" << std::endl);

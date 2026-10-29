@@ -167,9 +167,8 @@ main(int argc, char * argv[])
 
     // We are copying the first 6 lines rather than quoting them in this program
     // to give the user some control over what they are.
-    std::ifstream prevMSPOptFile;
-    prevMSPOptFile.open(inputTrainingList.c_str()); // open previous setup
-                                                    // file for
+    std::ifstream prevMSPOptFile(inputTrainingList.c_str()); // open previous setup
+                                                             // file for
     // reading
     char linebuf[300];
     for (int lineNum = 0; lineNum < 6; ++lineNum)

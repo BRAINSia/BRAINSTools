@@ -55,9 +55,10 @@ TEST(SiemensDWIConverter, ExtractBMatrixFromPrivateTag)
   auto header = std::make_unique<brains::DCMTKFileReader>();
   header->SetFileName(path);
   header->LoadFile();
-  SiemensDWIConverter::DCMTKFileVector headers{ header.get() };
-  DWIConverter::FileNamesContainer     names{ path };
-  SiemensDWIConverter                  converter(headers, names, true, 0.2);
+  SiemensDWIConverter::DCMTKFileVector headers;
+  headers.push_back(std::move(header));
+  DWIConverter::FileNamesContainer names{ path };
+  SiemensDWIConverter              converter(std::move(headers), names, true, 0.2);
 
   vnl_matrix_fixed<double, 3, 3> bMatrix(0.0);
   ASSERT_TRUE(converter.ExtractBMatrix(nullptr, 0, bMatrix));

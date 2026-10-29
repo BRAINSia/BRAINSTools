@@ -26,7 +26,7 @@
 class SiemensDWIConverter : public DWIDICOMConverterBase
 {
 public:
-  SiemensDWIConverter(DCMTKFileVector &                  allHeaders,
+  SiemensDWIConverter(DCMTKFileVector                    allHeaders,
                       DWIConverter::FileNamesContainer & inputFileNames,
                       const bool                         useBMatrixGradientDirections,
                       const double                       smallGradientThreshold);

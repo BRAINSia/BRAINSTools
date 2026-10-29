@@ -102,7 +102,6 @@ DWIConverterFactory::New()
 
     // modified by HuiXie
     m_Headers.clear();
-    m_OwnedHeaders.clear();
     int headerCount = 0;
     for (auto & m_InputFileName : m_InputFileNames)
     {
@@ -119,8 +118,7 @@ DWIConverterFactory::New()
       }
       if (curReader->HasPixelData())
       {
-        m_Headers.push_back(curReader.get());
-        m_OwnedHeaders.push_back(std::move(curReader));
+        m_Headers.push_back(std::move(curReader));
         ++headerCount;
       }
     }
@@ -153,20 +151,23 @@ DWIConverterFactory::New()
 
     if (StringContains(this->m_Vendor, "PHILIPS"))
     {
-      converter = std::make_unique<PhilipsDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter =
+        std::make_unique<PhilipsDWIConverter>(std::move(m_Headers), m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else if (StringContains(this->m_Vendor, "SIEMENS"))
     {
       converter = std::make_unique<SiemensDWIConverter>(
-        m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections, m_SmallGradientThreshold);
+        std::move(m_Headers), m_InputFileNames, m_UseBMatrixGradientDirections, m_SmallGradientThreshold);
     }
     else if (StringContains(this->m_Vendor, "GE"))
     {
-      converter = std::make_unique<GEDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter =
+        std::make_unique<GEDWIConverter>(std::move(m_Headers), m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else if (StringContains(this->m_Vendor, "HITACHI"))
     {
-      converter = std::make_unique<HitachiDWIConverter>(m_Headers, m_InputFileNames, m_UseBMatrixGradientDirections);
+      converter =
+        std::make_unique<HitachiDWIConverter>(std::move(m_Headers), m_InputFileNames, m_UseBMatrixGradientDirections);
     }
     else
     {

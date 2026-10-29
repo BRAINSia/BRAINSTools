@@ -34,11 +34,9 @@ template <typename TImage>
 typename TImage::Pointer
 MakeImage(const typename TImage::PixelType & value, unsigned int side = 4)
 {
-  auto                      image = TImage::New();
-  typename TImage::SizeType size;
-  size.Fill(side);
-  typename TImage::IndexType start;
-  start.Fill(0);
+  auto                             image = TImage::New();
+  const auto                       size = TImage::SizeType::Filled(side);
+  const typename TImage::IndexType start{};
   image->SetRegions(typename TImage::RegionType(start, size));
   image->Allocate();
   image->FillBuffer(value);
@@ -97,8 +95,7 @@ TEST(SRElementwiseOps, AddAllElementsCoversAllCovariantComponents)
   xv[0] = 1.0F;
   xv[1] = 2.0F;
   xv[2] = 3.0F;
-  CVType yv;
-  yv.Fill(10.0F);
+  constexpr auto       yv = itk::MakeFilled<CVType>(10.0F);
   auto                 x = MakeImage<CVImageType>(xv);
   auto                 y = MakeImage<CVImageType>(yv);
   CVImageType::Pointer out = y;
@@ -146,16 +143,13 @@ TEST(SRElementwiseOps, DuplicateCopiesBuffer)
 
 TEST(OpWeightedL2, SyntheticBlobReproducesReference)
 {
-  auto makeBlob = [](unsigned int side, double sigma) {
-    auto                     source = itk::GaussianImageSource<FloatImageType>::New();
-    FloatImageType::SizeType size;
-    size.Fill(side);
+  const auto makeBlob = [](unsigned int side, double sigma) {
+    const auto source = itk::GaussianImageSource<FloatImageType>::New();
+    const auto size = FloatImageType::SizeType::Filled(side);
     source->SetSize(size);
-    itk::FixedArray<double, 3> sig;
-    sig.Fill(sigma);
+    const auto sig = itk::FixedArray<double, 3>::Filled(sigma);
     source->SetSigma(sig);
-    itk::FixedArray<double, 3> mean;
-    mean.Fill(side / 2.0);
+    const auto mean = itk::FixedArray<double, 3>::Filled(side / 2.0);
     source->SetMean(mean);
     source->SetScale(1.0);
     source->SetNormalized(false);

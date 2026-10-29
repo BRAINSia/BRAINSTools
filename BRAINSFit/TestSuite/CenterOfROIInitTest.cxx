@@ -127,8 +127,7 @@ main(int, char **)
   movingMask->SetImage(movingImageCast->GetOutput());
   movingMask->Update(); // Replaced old ComputeObjectToWorldTransform with new Update()
 
-  std::vector<std::string> transformTypeVector;
-  transformTypeVector.emplace_back("Rigid");
+  const std::vector<std::string> transformTypeVector{ "Rigid" };
 
   // initialize the helper and run
   const auto myHelper = HelperType::New();

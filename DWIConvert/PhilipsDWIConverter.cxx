@@ -208,11 +208,8 @@ PhilipsDWIConverter::ExtractDWIData()
       }
       else if (StringContains(dirValue, "NONE"))
       {
-        std::vector<double> v(3);
-        v[0] = 0;
-        v[1] = 0;
-        v[2] = 0;
-        unsigned int nOld = gradientDirectionAndBValue.size();
+        const std::vector<double> v{ 0, 0, 0 };
+        const unsigned int        nOld = gradientDirectionAndBValue.size();
         gradientDirectionAndBValue[v] = 0;
 
         {
@@ -263,11 +260,8 @@ PhilipsDWIConverter::ExtractDWIData()
             volSeq.GetElementFD(0x0018, 0x9089, 3, dwgVal);
           }
         }
-        std::vector<double> v(3);
-        v[0] = dwgVal[0];
-        v[1] = dwgVal[1];
-        v[2] = dwgVal[2];
-        unsigned int nOld = gradientDirectionAndBValue.size();
+        std::vector<double> v{ dwgVal[0], dwgVal[1], dwgVal[2] };
+        const unsigned int  nOld = gradientDirectionAndBValue.size();
         gradientDirectionAndBValue[v] = dwbValue;
 
         {

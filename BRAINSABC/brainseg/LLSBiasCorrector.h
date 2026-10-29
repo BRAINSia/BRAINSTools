@@ -197,8 +197,8 @@ private:
 
   // Coordinate scaling and offset, computed from input probabilities
   // for preconditioning the polynomial basis equations
-  double m_XMu[3];
-  double m_XStd[3];
+  double m_XMu[3]{ 0.0, 0.0, 0.0 };
+  double m_XStd[3]{ 1.0, 1.0, 1.0 };
 };
 
 #ifndef MU_MANUAL_INSTANTIATION

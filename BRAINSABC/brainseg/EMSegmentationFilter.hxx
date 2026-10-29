@@ -621,8 +621,6 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::EMSegmentationFilter()
   , m_LikelihoodTolerance(1e-5)
   , m_MaximumIterations(40)
   , m_PurePlugsThreshold(0.2)
-  , m_NumberOfSubSamplesInEachPlugArea{ 0, 0, 0 }
-  , m_WarpGrid{ 5, 5, 5 }
   , m_WarpLikelihoodTolerance(1e-3)
   , m_UpdateRequired(true)
   , m_AirIndex(1)

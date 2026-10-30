@@ -2,6 +2,7 @@
 // Created by Johnson, Hans J on 12/3/16.
 //
 
+#include <cstring>
 #include <utility>
 
 
@@ -407,7 +408,7 @@ DWIConverter::ManualWriteNRRDFile(const std::string & outputVolumeHeaderName, co
   {
     header << "content: exists(" << itksys::SystemTools::GetFilenameName(outputVolumeDataName) << ",0)" << std::endl;
   }
-  header << "type: short" << std::endl;
+  header << "type: " << (this->m_UnsignedPixelData ? "unsigned short" : "short") << std::endl;
   header << "dimension: 4" << std::endl;
   header << "space: " << this->GetNRRDSpaceDefinition() << "" << std::endl;
 
@@ -652,12 +653,32 @@ DWIConverter::WriteFSLFormattedFileSet(const std::string &           outputVolum
     itk::EncapsulateMetaData<std::string>(thisDic, "qform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
     itk::EncapsulateMetaData<std::string>(thisDic, "sform_code_name", "NIFTI_XFORM_SCANNER_ANAT");
   }
-  auto imgWriter = itk::ImageFileWriter<Volume4DType>::New();
-  imgWriter->SetInput(img4D);
-  imgWriter->SetFileName(outputVolumeHeaderName.c_str());
   try
   {
-    imgWriter->Update();
+    if (this->m_UnsignedPixelData)
+    {
+      // Same 16-bit buffer, written as unsigned short.
+      using UnsignedVolume4DType = itk::Image<unsigned short, 4>;
+      auto unsignedImg4D = UnsignedVolume4DType::New();
+      unsignedImg4D->CopyInformation(img4D);
+      unsignedImg4D->SetRegions(img4D->GetLargestPossibleRegion());
+      unsignedImg4D->SetMetaDataDictionary(img4D->GetMetaDataDictionary());
+      unsignedImg4D->Allocate();
+      std::memcpy(unsignedImg4D->GetBufferPointer(),
+                  img4D->GetBufferPointer(),
+                  img4D->GetLargestPossibleRegion().GetNumberOfPixels() * sizeof(PixelValueType));
+      auto imgWriter = itk::ImageFileWriter<UnsignedVolume4DType>::New();
+      imgWriter->SetInput(unsignedImg4D);
+      imgWriter->SetFileName(outputVolumeHeaderName.c_str());
+      imgWriter->Update();
+    }
+    else
+    {
+      auto imgWriter = itk::ImageFileWriter<Volume4DType>::New();
+      imgWriter->SetInput(img4D);
+      imgWriter->SetFileName(outputVolumeHeaderName.c_str());
+      imgWriter->Update();
+    }
   }
   catch (const itk::ExceptionObject & excp)
   {

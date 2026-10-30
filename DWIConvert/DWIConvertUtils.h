@@ -64,11 +64,17 @@ struct itk::ImageIOBase::MapPixelType<itk::VariableLengthVector<TPixel>>
 } // namespace itk
 template <typename TImage>
 int
-ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion);
+ReadScalarVolume(typename TImage::Pointer & img,
+                 const std::string &        fname,
+                 bool                       allowLossyConversion,
+                 bool *                     unsigned16Bit = nullptr);
 
 template <typename TImage>
 int
-ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion);
+ReadVectorVolume(typename TImage::Pointer & img,
+                 const std::string &        fname,
+                 bool                       allowLossyConversion,
+                 bool *                     unsigned16Bit = nullptr);
 
 template <typename TImage>
 int

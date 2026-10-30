@@ -37,7 +37,10 @@ WriteVolume(const TImage * img, const std::string & fname)
 
 template <typename TImage>
 int
-ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion)
+ReadScalarVolume(typename TImage::Pointer & img,
+                 const std::string &        fname,
+                 bool                       allowLossyConversion,
+                 bool *                     unsigned16Bit)
 {
   auto imgReader = itk::ImageFileReader<TImage>::New();
 
@@ -57,6 +60,17 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
   {
     itk::ImageIOBase *                imageIO = imgReader->GetModifiableImageIO();
     itk::ImageIOBase::IOComponentEnum ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
+    // A 16-bit unsigned file read into short keeps its bits; the caller writes it back as unsigned.
+    const bool unsignedIntoShort =
+      ioType == itk::IOComponentEnum::SHORT && imageIO->GetComponentType() == itk::IOComponentEnum::USHORT;
+    if (unsigned16Bit != nullptr)
+    {
+      *unsigned16Bit = unsignedIntoShort;
+    }
+    if (unsignedIntoShort)
+    {
+      return EXIT_SUCCESS;
+    }
     if (!allowLossyConversion)
     {
       if (imageIO->GetComponentType() != ioType)
@@ -104,7 +118,10 @@ ReadScalarVolume(typename TImage::Pointer & img, const std::string & fname, bool
 
 template <typename TImage>
 int
-ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool allowLossyConversion)
+ReadVectorVolume(typename TImage::Pointer & img,
+                 const std::string &        fname,
+                 bool                       allowLossyConversion,
+                 bool *                     unsigned16Bit)
 {
   auto imgReader = itk::ImageFileReader<TImage>::New();
 
@@ -124,6 +141,17 @@ ReadVectorVolume(typename TImage::Pointer & img, const std::string & fname, bool
   {
     itk::ImageIOBase *                imageIO = imgReader->GetModifiableImageIO();
     itk::ImageIOBase::IOComponentEnum ioType = itk::ImageIOBase::MapPixelType<typename TImage::PixelType>::CType;
+    // A 16-bit unsigned file read into short keeps its bits; the caller writes it back as unsigned.
+    const bool unsignedIntoShort =
+      ioType == itk::IOComponentEnum::SHORT && imageIO->GetComponentType() == itk::IOComponentEnum::USHORT;
+    if (unsigned16Bit != nullptr)
+    {
+      *unsigned16Bit = unsignedIntoShort;
+    }
+    if (unsignedIntoShort)
+    {
+      return EXIT_SUCCESS;
+    }
     if (!allowLossyConversion)
     {
       if (imageIO->GetComponentType() != ioType)

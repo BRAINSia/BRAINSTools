@@ -32,7 +32,8 @@ FSLDWIConverter::LoadFromDisk()
   Volume4DType::Pointer inputVol;
 
   // string to use as template if no bval or bvec filename is given.
-  if (ReadScalarVolume<Volume4DType>(inputVol, fslNIFTIFile, this->m_allowLossyConversion) != EXIT_SUCCESS)
+  if (ReadScalarVolume<Volume4DType>(
+        inputVol, fslNIFTIFile, this->m_allowLossyConversion, &this->m_UnsignedPixelData) != EXIT_SUCCESS)
     itkGenericExceptionMacro("Failed to read " << fslNIFTIFile);
   // Reorient from FSL standard format to ITK/Dicom standard format
   this->m_SlicesPerVolume = inputVol->GetLargestPossibleRegion().GetSize()[2];

@@ -389,6 +389,26 @@ ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME D
   )
 AddDataDependency(DWIConvertSiemensTrioTimTest)
 
+# Unsigned DICOM (PixelRepresentation 0) is written as unsigned short; signed stays short.
+add_test(NAME DWIConvertSiemensTrioTimPixelTypeTest
+  COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/SiemensTrioTim1
+  -D TEST_TEMP_OUTPUT=${TstOutput}/SiemensTrioTim1PixelType.nrrd
+  -D "EXPECTED_TYPE=unsigned short"
+  -D TEST_PROGRAM_ARGS=--useBMatrixGradientDirections
+  -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdPixelTypeTest.cmake
+  )
+AddDataDependency(DWIConvertSiemensTrioTimPixelTypeTest)
+
+add_test(NAME DWIConvertGeSignaHdxPixelTypeTest
+  COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
+  -D TEST_INPUT=${DWIConvert_BINARY_DIR}/GeSignaHDx
+  -D TEST_TEMP_OUTPUT=${TstOutput}/GeSignaHDxPixelType.nrrd
+  -D EXPECTED_TYPE=short
+  -P ${CMAKE_CURRENT_LIST_DIR}/DicomToNrrdPixelTypeTest.cmake
+  )
+AddDataDependency(DWIConvertGeSignaHdxPixelTypeTest)
+
 ExternalData_Add_Test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME DWIConvertSiemensTrioTimBigEndian1Test
   COMMAND ${CMAKE_COMMAND} -D TEST_PROGRAM=$<TARGET_FILE:DWIConvert>
   -D TEST_COMPARE_PROGRAM=$<TARGET_FILE:DWICompare>

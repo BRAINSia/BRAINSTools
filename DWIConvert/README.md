@@ -33,13 +33,12 @@ BRAINSTools release and will no longer receive bug fixes or updates.
   cannot be confirmed. Use dcm2niix for robust conversion.
 
 - [#457](https://github.com/BRAINSia/BRAINSTools/issues/457) --
-  **UINT16 pixel data incorrectly read as INT16** (diagnostic fix only).
-  `PixelValueType = short` (signed 16-bit) is hardcoded throughout the
-  DWIConvert pipeline. Refactoring it to be dynamic based on the DICOM
-  `PixelRepresentation` tag (0028,0103) is not viable for a deprecated tool.
-  A **warning message** is now emitted when `PixelRepresentation=0` (unsigned)
-  is detected so users are informed rather than silently receiving incorrect
-  data.
+  **UINT16 pixel data written as INT16**. The output pixel type is now
+  chosen at run time: DICOM data with `PixelRepresentation` (0028,0103) 0 and
+  a non-negative rescale intercept, and NRRD or NIfTI input stored as
+  unsigned 16-bit, are written as `unsigned short`; everything else stays
+  `short`. The 16-bit values pass through the pipeline unchanged, so voxels
+  above 32767 are no longer negative in the output.
 
 ### Root cause documented — not fixed
 

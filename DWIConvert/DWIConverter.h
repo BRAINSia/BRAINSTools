@@ -141,6 +141,13 @@ public:
   Volume3DUnwrappedType::Pointer
   GetDiffusionVolume() const;
 
+  /** True when the 16-bit pixel data is unsigned; it is stored as short and written as unsigned short. */
+  bool
+  GetUnsignedPixelData() const
+  {
+    return m_UnsignedPixelData;
+  }
+
   SpacingType
   GetSpacing() const;
   double
@@ -247,6 +254,7 @@ protected:
    */
   const FileNamesContainer m_InputFileNames{};
   bool                     m_allowLossyConversion{}; // Allow type-cast conversion from float to short storage format
+  bool                     m_UnsignedPixelData{};
 
 
   /** double conversion instance, for optimal printing of numbers as  text */

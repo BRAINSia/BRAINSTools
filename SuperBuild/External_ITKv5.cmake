@@ -1,6 +1,7 @@
 
 set(proj ITKv5)
-set(${proj}_REQUIRED_VERSION 5.4)
+set(BRAINSTools_ITK_VERSION 5.4 CACHE STRING "Major.minor version of the ITK that BRAINSTools_ITKv5_GIT_TAG provides")
+set(${proj}_REQUIRED_VERSION ${BRAINSTools_ITK_VERSION})
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "zlib")
@@ -107,6 +108,13 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       )
   endif()
 
+  # ITK 6 turns UseITK.cmake into a fatal error when legacy removal is on; enable it for ITK 6 after the migration.
+  if(${proj}_REQUIRED_VERSION VERSION_LESS 6)
+    set(_itk_legacy_remove ON)
+  else()
+    set(_itk_legacy_remove OFF)
+  endif()
+
   set(EP_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
   set(EP_BINARY_DIR ${CMAKE_BINARY_DIR}/${proj}-${EXTERNAL_PROJECT_BUILD_TYPE}-build)
 
@@ -125,8 +133,8 @@ if(NOT DEFINED ITK_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     CMAKE_CACHE_ARGS
       ${EXTERNAL_PROJECT_DEFAULTS}
       -DITK_LEGACY_SILENT:BOOL=OFF
-      -DITK_LEGACY_REMOVE:BOOL=ON
-      -DITK_FUTURE_LEGACY_REMOVE:BOOL=ON
+      -DITK_LEGACY_REMOVE:BOOL=${_itk_legacy_remove}
+      -DITK_FUTURE_LEGACY_REMOVE:BOOL=${_itk_legacy_remove}
       -DITKV3_COMPATIBILITY:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DITK_CXX_OPTIMIZATION_FLAGS:STRING=${BRAINSToools_CXX_OPTIMIZATION_FLAGS}

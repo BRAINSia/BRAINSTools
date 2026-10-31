@@ -25,7 +25,7 @@ egrep-q() {
 commit_msg="$1"
 
 # Check for our extra instructions (idempotent).
-egrep-q "^# Start BRAINSTools commit messages" -- "$commit_msg" && return 0
+egrep-q "^# Start BRAINSTools commit messages" -- "$commit_msg" && exit 0
 
 # Insert our extra instructions after the "# On branch ..." line so the
 # branch name is still visible in the editor.

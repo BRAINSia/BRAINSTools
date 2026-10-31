@@ -32,57 +32,142 @@ on:
   # Weekly build of main keeps the ccache inside GitHub's 7-day eviction
   # window and surfaces runner-image or compiler upgrades on main instead
   # of on an unrelated PR.  Runs after the 06:00 UTC cache sweep.
+  # The nightly run builds only the ITK main legs, which keeps main's ccache warm for
+  # pull requests; the weekly run builds only the release-pinned legs.
   schedule:
     - cron: '0 8 * * 1'
+    - cron: '0 9 * * *'
   workflow_dispatch:
+    inputs:
+      itk_ref:
+        description: 'ITK branch, tag, or SHA for the ITK legs'
+        required: false
+        default: 'main'
+        type: string
+      itk_repo:
+        description: 'ITK git repository for the ITK legs (empty = InsightSoftwareConsortium/ITK)'
+        required: false
+        default: ''
+        type: string
 
 concurrency:
   group: '${{ github.workflow }}@${{ github.head_ref || github.ref }}'
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  setup:
+    name: Select build legs
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.legs.outputs.matrix }}
+    steps:
+      - name: Choose legs for this event
+        id: legs
+        shell: bash
+        env:
+          SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          schedule = os.environ["SCHEDULE"]
+          nightly = schedule == "0 9 * * *"
+          weekly = schedule == "0 8 * * 1"
+          # x86-64-v3 (AVX2, FMA, BMI) is supported by every GitHub-hosted ubuntu-latest
+          # runner, and a fixed string keeps ccache keys stable across hosts.
+          # -mcpu=apple-m1 runs unchanged on later Apple Silicon.
+          platforms = [
+              {
+                  "name": "Ubuntu Latest GCC",
+                  "os": "ubuntu-latest",
+                  "cc": "gcc",
+                  "cxx": "g++",
+                  "parallel": "$(nproc)",
+                  "arch_flags": "-march=x86-64-v3 -mtune=generic",
+              },
+              {
+                  "name": "macOS Latest Clang",
+                  "os": "macos-latest",
+                  "cc": "clang",
+                  "cxx": "clang++",
+                  "parallel": "$(sysctl -n hw.ncpu)",
+                  "arch_flags": "-mcpu=apple-m1",
+              },
+          ]
+          legs = []
+          if not nightly:
+              legs += [dict(p, itk_ref="") for p in platforms]
+          if not weekly:
+              legs += [dict(p, name=p["name"] + " (ITK main)", itk_ref="main") for p in platforms]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as out:
+              out.write("matrix=" + json.dumps(legs) + "\n")
+          PY
+
   build:
     name: ${{ matrix.config.name }}
+    needs: setup
     runs-on: ${{ matrix.config.os }}
     timeout-minutes: 360
     strategy:
       fail-fast: false
       matrix:
-        config:
-          - {
-            name: "Ubuntu Latest GCC",
-            os: ubuntu-latest,
-            cc: "gcc",
-            cxx: "g++",
-            parallel: "$(nproc)",
-            # x86-64-v3: AVX2 + FMA + BMI + BMI2 (Intel Haswell 2013+, AMD Zen1 2017+).
-            # All GitHub-hosted ubuntu-latest runners (Azure Xeon Platinum 8370C / Ice Lake)
-            # support this level.  Fixed string keeps ccache keys stable across runner hosts.
-            arch_flags: "-march=x86-64-v3 -mtune=generic"
-          }
-          - {
-            name: "macOS Latest Clang",
-            os: macos-latest,
-            cc: "clang",
-            cxx: "clang++",
-            parallel: "$(sysctl -n hw.ncpu)",
-            # GitHub macos-15 runners use Apple M1 (arm64).  -mcpu=apple-m1 enables
-            # all M1 ISA extensions (NEON, SVE, SHA3, AES) without runtime probing.
-            # M1-compiled code runs unchanged on M2/M3 (AArch64 is backward-compatible),
-            # so this flag remains correct if GitHub upgrades to newer Apple Silicon.
-            arch_flags: "-mcpu=apple-m1"
-          }
-#          - {
-#            name: "Windows Latest MSVC",
-#            os: windows-latest,
-#            cc: "cl",
-#            cxx: "cl",
-#            parallel: "$env:NUMBER_OF_PROCESSORS"
-#          }
+        config: ${{ fromJSON(needs.setup.outputs.matrix) }}
 
     steps:
       # ── Checkout & version extraction ─────────────────────────────────────────
       - uses: actions/checkout@v5
+
+      - name: Resolve ITK ref
+        id: itk
+        shell: bash
+        env:
+          ITK_REPO: ${{ matrix.config.itk_ref && inputs.itk_repo || '' }}
+          ITK_REF: ${{ matrix.config.itk_ref && (inputs.itk_ref || matrix.config.itk_ref) || '' }}
+        run: |
+          # Empty ITK_REF keeps the SuperBuild's pinned ITK; otherwise build the commit
+          # the ref points at now, so ccache keys and the log name an exact SHA.
+          if [ -z "${ITK_REF}" ]; then
+            { echo "sha="; echo "repo="; echo "version="; echo "keytag="; echo "cdash="; } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          DEFAULT_ITK_REPO=https://github.com/InsightSoftwareConsortium/ITK.git
+          ITK_REPO="${ITK_REPO:-${DEFAULT_ITK_REPO}}"
+          if ! echo "${ITK_REPO}" | grep -qE '^https://github\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+(\.git)?$'; then
+            echo "::error::ITK repository '${ITK_REPO}' is not an https://github.com/<owner>/<name> URL"
+            exit 1
+          fi
+          if echo "${ITK_REF}" | grep -qE '^[0-9a-f]{40}$'; then
+            SHA="${ITK_REF}"
+          else
+            SHA=$(git ls-remote -- "${ITK_REPO}" "refs/heads/${ITK_REF}" "refs/tags/${ITK_REF}" | head -1 | cut -f1)
+          fi
+          if [ -z "${SHA}" ]; then
+            echo "::error::ITK ref '${ITK_REF}' not found in ${ITK_REPO}"
+            exit 1
+          fi
+          # The SuperBuild needs the major.minor version to find ITK and to pick the legacy-removal flags.
+          OWNER=$(echo "${ITK_REPO}" | sed -E 's#https://github.com/([^/]+)/.*#\1#')
+          VERSION_FILE=$(curl -fsSL "https://raw.githubusercontent.com/${OWNER}/ITK/${SHA}/CMake/itkVersion.cmake")
+          MAJOR=$(echo "${VERSION_FILE}" | grep -E 'ITK_VERSION_MAJOR' | head -1 | sed -E 's/.*"([0-9]+)".*/\1/')
+          MINOR=$(echo "${VERSION_FILE}" | grep -E 'ITK_VERSION_MINOR' | head -1 | sed -E 's/.*"([0-9]+)".*/\1/')
+          if [ -z "${MAJOR}" ] || [ -z "${MINOR}" ]; then
+            echo "::error::could not read the ITK version at ${SHA}"
+            exit 1
+          fi
+          TAG="itk-$(echo "${ITK_REF}" | tr -cs 'a-zA-Z0-9' '-' | sed -E 's/^-//; s/-$//' | cut -c1-30)"
+          # A ref name alone must not share cache keys across repositories.
+          if [ "${ITK_REPO}" != "${DEFAULT_ITK_REPO}" ]; then
+            TAG="${TAG}-$(printf '%s' "${ITK_REPO}" | shasum -a 256 | cut -c1-8)"
+          fi
+          {
+            echo "sha=${SHA}"
+            echo "repo=${ITK_REPO}"
+            echo "version=${MAJOR}.${MINOR}"
+            echo "keytag=${TAG}-"
+            echo "cdash=:${TAG}"
+          } >> "$GITHUB_OUTPUT"
+          echo "### Built against ITK ${MAJOR}.${MINOR}, ${ITK_REF} @ ${SHA} (${ITK_REPO})" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Extract BRAINSTools version
         id: btversion
@@ -98,6 +183,8 @@ jobs:
       - name: Compute CDash build-name suffix
         id: cdash_suffix
         shell: bash
+        env:
+          ITK_CDASH: ${{ steps.itk.outputs.cdash }}
         run: |
           # PR number: set for pull_request events, empty for push events.
           PR_NUM="${{ github.event.number }}"
@@ -106,7 +193,7 @@ jobs:
           # Slugify: lowercase, collapse non-alphanumeric runs to '-', strip edges.
           SLUG=$(echo "${BRANCH}" | tr '[:upper:]' '[:lower:]' \
                    | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')
-          SUFFIX=":${PR_NUM:-0}:${SLUG}"
+          SUFFIX=":${PR_NUM:-0}:${SLUG}${ITK_CDASH}"
           echo "suffix=${SUFFIX}" >> "$GITHUB_OUTPUT"
           echo "CDash BuildName suffix: ${SUFFIX}"
 
@@ -204,9 +291,9 @@ jobs:
         uses: actions/cache/restore@v5
         with:
           path: ${{ runner.temp }}/ccache
-          key: ccache-v2-${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
+          key: ccache-v2-${{ steps.itk.outputs.keytag }}${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
           restore-keys: |
-            ccache-v2-${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-
+            ccache-v2-${{ steps.itk.outputs.keytag }}${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-
 
       - name: Show ccache config and stats
         shell: bash
@@ -245,7 +332,15 @@ jobs:
       # ──────────────────────────────────────────────────────────────────────────
       - name: "SuperBuild: Configure CMake"
         shell: bash
+        env:
+          ITK_REPO: ${{ steps.itk.outputs.repo }}
+          ITK_SHA: ${{ steps.itk.outputs.sha }}
+          ITK_VERSION_ARG: ${{ steps.itk.outputs.version }}
         run: |
+          ITK_ARGS=()
+          [ -n "${ITK_REPO}" ] && ITK_ARGS+=("-DBRAINSTools_ITKv5_GIT_REPOSITORY:STRING=${ITK_REPO}")
+          [ -n "${ITK_SHA}" ] && ITK_ARGS+=("-DBRAINSTools_ITKv5_GIT_TAG:STRING=${ITK_SHA}")
+          [ -n "${ITK_VERSION_ARG}" ] && ITK_ARGS+=("-DBRAINSTools_ITK_VERSION:STRING=${ITK_VERSION_ARG}")
           cmake -B build -G Ninja \
             -DCMAKE_C_COMPILER=${{ matrix.config.cc }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} \
@@ -261,6 +356,7 @@ jobs:
             -DEXTERNAL_PROJECT_BUILD_TYPE:STRING=Release \
             -DBUILD_TESTING=ON \
             -DBUILD_SHARED_LIBS=ON \
+            "${ITK_ARGS[@]}" \
             -DBRAINSTools_REQUIRES_VTK=ON \
             -DBRAINSTools_USE_GIT_PROTOCOL:BOOL=OFF \
             -DBRAINSTools_BUILD_DICOM_SUPPORT:BOOL=ON \
@@ -324,7 +420,7 @@ jobs:
         uses: actions/cache/save@v5
         with:
           path: ${{ runner.temp }}/ccache
-          key: ccache-v2-${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
+          key: ccache-v2-${{ steps.itk.outputs.keytag }}${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
 
       - name: Show ccache statistics
         if: always()
@@ -493,7 +589,7 @@ jobs:
       # the compiler cache is saved, so sanitized objects never enter it.
       - name: "Sanitizers: Rebuild inner BRAINSTools with ASan and UBSan"
         id: sanitizer_build
-        if: ${{ !cancelled() && matrix.config.os == 'ubuntu-latest' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
+        if: ${{ !cancelled() && matrix.config.os == 'ubuntu-latest' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && matrix.config.itk_ref == '' }}
         working-directory: build/BRAINSTools-Release-EPRelease-build
         shell: bash
         # GoogleTest discovery runs each test binary during the build.

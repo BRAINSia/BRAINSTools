@@ -1,0 +1,53 @@
+name: Populate ExternalData cache
+
+# Sole writer of the shared test-data cache.  CI restores it and never saves,
+# so every CI run sees a complete object store for the current content links.
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.sha512'
+      - '.github/workflows/populate-externaldata-cache.yml'
+      - 'Utilities/Maintenance/PrefetchSha512ContentLinks.py'
+  # Runs after the 06:00 UTC cache sweep and before the 08:00 CI build.
+  schedule:
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: populate-externaldata-cache
+  cancel-in-progress: false
+
+jobs:
+  populate:
+    name: Populate shared ExternalData cache
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Restore ExternalData object store
+        id: restore
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ runner.temp }}/ExternalData
+          key: externaldata-v2-${{ hashFiles('**/*.sha512') }}
+
+      - name: Prefetch every content link
+        if: steps.restore.outputs.cache-hit != 'true'
+        env:
+          STORE: ${{ runner.temp }}/ExternalData
+        run: |
+          # ReferenceAtlas is only used with USE_ReferenceAtlas=ON, which CI leaves off.
+          python3 Utilities/Maintenance/PrefetchSha512ContentLinks.py \
+            --repo-root . --store "${STORE}" --exclude ReferenceAtlas
+
+      - name: Save ExternalData object store
+        if: steps.restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: ${{ runner.temp }}/ExternalData
+          key: externaldata-v2-${{ hashFiles('**/*.sha512') }}

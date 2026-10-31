@@ -157,6 +157,42 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
     -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:BOOL=NO
     )
 
+  if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK_RENDERING)
+    set(_vtk_module_args
+      # ITK Bridge/VtkGlue/CMakeLists.txt requires these VTK targets:
+      #   IOImage, ImagingSources, RenderingOpenGL2, RenderingFreeType,
+      #   InteractionStyle, InteractionWidgets
+      # Explicitly enable each to guarantee they are present in VTKConfig.cmake
+      # regardless of VTK's default enablement policy on headless CI runners.
+      -DVTK_GROUP_ENABLE_Rendering:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_RenderingOpenGL2:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_RenderingFreeType:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=DONT_WANT
+      -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=DONT_WANT
+      -DVTK_MODULE_ENABLE_VTK_RenderingQt:STRING=DONT_WANT
+      -DVTK_GROUP_ENABLE_Interaction:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_InteractionStyle:STRING=YES
+      -DVTK_MODULE_ENABLE_VTK_InteractionWidgets:STRING=YES
+      -DVTK_GROUP_ENABLE_IO:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_IOImage:STRING=YES
+      -DVTK_GROUP_ENABLE_Imaging:STRING=DEFAULT
+      -DVTK_MODULE_ENABLE_VTK_ImagingSources:STRING=YES
+      )
+  else()
+    # Exactly what GTRACT links; everything else stays off.
+    set(_vtk_module_args
+      -DVTK_BUILD_ALL_MODULES:BOOL=OFF
+      -DVTK_GROUP_ENABLE_StandAlone:STRING=DONT_WANT
+      -DVTK_GROUP_ENABLE_Rendering:STRING=DONT_WANT
+      -DVTK_GROUP_ENABLE_Imaging:STRING=DONT_WANT
+      )
+    foreach(_vtk_module
+        CommonCore CommonDataModel CommonMath CommonMisc CommonSystem CommonTransforms
+        FiltersCore FiltersGeneral IOXML IOLegacy)
+      list(APPEND _vtk_module_args -DVTK_MODULE_ENABLE_VTK_${_vtk_module}:STRING=YES)
+    endforeach()
+  endif()
+
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
     "${EP_GIT_PROTOCOL}://github.com/slicer/VTK.git"
@@ -222,24 +258,7 @@ if((NOT DEFINED VTK_DIR OR NOT DEFINED VTK_SOURCE_DIR) AND NOT ${CMAKE_PROJECT_N
       -DVTK_ENABLE_WRAPPING:BOOL=OFF
       -DVTK_GROUP_ENABLE_Views:STRING=DONT_WANT
       -DVTK_GROUP_ENABLE_Web:STRING=DONT_WANT
-      # ITK Bridge/VtkGlue/CMakeLists.txt requires these VTK targets:
-      #   IOImage, ImagingSources, RenderingOpenGL2, RenderingFreeType,
-      #   InteractionStyle, InteractionWidgets
-      # Explicitly enable each to guarantee they are present in VTKConfig.cmake
-      # regardless of VTK's default enablement policy on headless CI runners.
-      -DVTK_GROUP_ENABLE_Rendering:STRING=DEFAULT
-      -DVTK_MODULE_ENABLE_VTK_RenderingOpenGL2:STRING=YES
-      -DVTK_MODULE_ENABLE_VTK_RenderingFreeType:STRING=YES
-      -DVTK_MODULE_ENABLE_VTK_RenderingContext2D:STRING=DONT_WANT
-      -DVTK_MODULE_ENABLE_VTK_RenderingContextOpenGL2:STRING=DONT_WANT
-      -DVTK_MODULE_ENABLE_VTK_RenderingQt:STRING=DONT_WANT
-      -DVTK_GROUP_ENABLE_Interaction:STRING=DEFAULT
-      -DVTK_MODULE_ENABLE_VTK_InteractionStyle:STRING=YES
-      -DVTK_MODULE_ENABLE_VTK_InteractionWidgets:STRING=YES
-      -DVTK_GROUP_ENABLE_IO:STRING=DEFAULT
-      -DVTK_MODULE_ENABLE_VTK_IOImage:STRING=YES
-      -DVTK_GROUP_ENABLE_Imaging:STRING=DEFAULT
-      -DVTK_MODULE_ENABLE_VTK_ImagingSources:STRING=YES
+      ${_vtk_module_args}
       ##
       ${VTK_QT_ARGS}
       ${VTK_MAC_ARGS}

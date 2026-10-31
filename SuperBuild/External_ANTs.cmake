@@ -36,9 +36,20 @@ endif()
 
 
 ### --- Project specific additions here
+# ITK 6 exports zlib as ZLIB::ZLIB, so consumers must find the zlib that ITK was built with.
+set(_ants_zlib_args)
+if(BRAINSTools_ITK_VERSION VERSION_GREATER_EQUAL 6)
+  set(_ants_zlib_args
+    -DZLIB_ROOT:PATH=${ZLIB_ROOT}
+    -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
+    -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
+    )
+endif()
+
 set(${proj}_CMAKE_OPTIONS
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DITK_DIR:PATH=${ITK_DIR}
+  ${_ants_zlib_args}
   -DUSE_VTK:BOOL=OFF
   -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
   -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}

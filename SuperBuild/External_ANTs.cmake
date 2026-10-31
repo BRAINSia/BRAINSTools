@@ -5,9 +5,6 @@ set(${proj}_DEPENDENCIES ITKv5 SlicerExecutionModel )
 #if(${SUPERBUILD_TOPLEVEL_PROJECT}_BUILD_DICOM_SUPPORT)
 #  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 #endif()
-if(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
-  list(APPEND ${proj}_DEPENDENCIES VTK)
-endif()
 
 
 # Set dependency list

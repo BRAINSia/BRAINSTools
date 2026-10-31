@@ -191,6 +191,13 @@ bt_option(BRAINS_DEBUG_IMAGE_WRITE "Enable writing out intermediate image result
 cmake_dependent_option(USE_BRAINSTalairach "Build BRAINSTalairach is under development" ${BUILD_FOR_DASHBOARD} "${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK;BUILD_ARCHIVE" OFF)
 mark_as_superbuild(VARS USE_BRAINSTalairach:BOOL PROJECTS ${LOCAL_PROJECT_NAME} )
 
+# Only the GUI and archived tools need VTK rendering and ITK's VtkGlue; GTRACT needs just VTK data, filters, and XML/legacy IO.
+if(${LOCAL_PROJECT_NAME}_USE_QT OR USE_BRAINSConstellationDetectorGUI OR USE_DebugImageViewer OR USE_ITKMatlabIO OR USE_BRAINSTalairach)
+  set(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK_RENDERING ON)
+else()
+  set(${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK_RENDERING OFF)
+endif()
+
 #if(NOT ${SUPERBUILD_TOPLEVEL_PROJECT}_REQUIRES_VTK)
 #  message("NOTE: Following toolkits are dependent to VTK:
 #      -GTRACT

@@ -33,6 +33,8 @@ endif()
 
 
 ### --- Project specific additions here
+# ANTs refuses to configure unless ITK_VERSION_MAJOR (default 6) matches the ITK it finds.
+string(REGEX MATCH "^[0-9]+" _ants_itk_major "${ITKv5_REQUIRED_VERSION}")
 # ITK 6 exports zlib as ZLIB::ZLIB, so consumers must find the zlib that ITK was built with.
 set(_ants_zlib_args)
 if(BRAINSTools_ITK_VERSION VERSION_GREATER_EQUAL 6)
@@ -46,6 +48,7 @@ endif()
 set(${proj}_CMAKE_OPTIONS
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DITK_DIR:PATH=${ITK_DIR}
+  -DITK_VERSION_MAJOR:STRING=${_ants_itk_major}
   ${_ants_zlib_args}
   -DUSE_VTK:BOOL=OFF
   -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
@@ -169,7 +172,7 @@ ExternalProject_SetIfNotDefined(
 
 ExternalProject_SetIfNotDefined(
   ${CMAKE_PROJECT_NAME}_${proj}_GIT_TAG
-  d2fbf8bd525f0b9f907b9c6ebd35ab26a4d8927a # 20260618 - ANTsX/ANTs main
+  dcdaf4212df415b089b09b8b6b0a2560c57af546 # ANTsX/ANTs main 2026-10-30
   QUIET
   )
 

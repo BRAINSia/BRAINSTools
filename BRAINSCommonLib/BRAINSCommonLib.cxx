@@ -59,8 +59,7 @@ FFTWInit(const std::string & path_for_wisdom)
   itk::FFTWGlobalConfiguration::SetWriteWisdomCache(true);
   itk::FFTWGlobalConfiguration::ImportDefaultWisdomFileDouble();
   itk::FFTWGlobalConfiguration::ImportDefaultWisdomFileFloat();
-  itk::FFTWGlobalConfiguration::SetPlanRigor(FFTW_EXHAUSTIVE);
-  // itk::FFTWGlobalConfiguration::SetPlanRigor(FFTW_MEASURE);
+  itk::FFTWGlobalConfiguration::SetPlanRigor(FFTW_MEASURE);
   // std::string temp = itk::FFTWGlobalConfiguration::GetWisdomFileDefaultBaseName();
   // FFTW_MEASURE, FFTW_PATIENT, or FFTW_EXHAUSTIVE
   // We need to ensure that we read in the default wisdom files from the default locations

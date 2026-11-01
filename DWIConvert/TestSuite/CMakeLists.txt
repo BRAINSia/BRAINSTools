@@ -527,7 +527,7 @@ add_test(NAME DWIConvertSiemensSmallGradientRejectedTest
     --smallGradientThreshold 1e9
   )
 set_tests_properties(DWIConvertSiemensSmallGradientRejectedTest PROPERTIES
-  PASS_REGULAR_EXPRESSION "ITK ERROR: Gradient #[0-9]+ has magnitude .* below the small-gradient threshold")
+  PASS_REGULAR_EXPRESSION "Gradient #[0-9]+ has magnitude .* below the small-gradient threshold")
 AddDataDependency(DWIConvertSiemensSmallGradientRejectedTest)
 
 include(BRAINSToolsGTest)

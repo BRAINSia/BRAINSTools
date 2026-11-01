@@ -548,6 +548,19 @@ jobs:
             -j ${{ matrix.config.parallel }} \
             -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
 
+      - name: "Inner Build: Check for CDash token"
+        id: cdash_token
+        if: always()
+        shell: bash
+        env:
+          TOKEN: ${{ secrets.CDASH_TOKEN }}
+        run: |
+          if [ -n "${TOKEN}" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::CDASH_TOKEN is not available (pull request from a fork); skipping CDash submission"
+          fi
+
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build
         shell: bash
@@ -556,7 +569,7 @@ jobs:
         # valid token (error: {"status":1,"description":"Invalid Token"}).
         # Generate a token at: https://my.cdash.org/user.php (Authentication
         # Tokens section) then store it as a repo secret named CDASH_TOKEN.
-        if: always()
+        if: ${{ always() && steps.cdash_token.outputs.present == 'true' }}
         env:
           CTEST_AUTHTOKEN: ${{ secrets.CDASH_TOKEN }}
         run: ctest -D ExperimentalSubmit --verbose

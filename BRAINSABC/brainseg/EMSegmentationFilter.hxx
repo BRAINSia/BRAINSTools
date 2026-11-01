@@ -1764,8 +1764,8 @@ EMSegmentationFilter<TInputImage, TProbabilityImage>::UpdateIntensityBasedClippi
       });
 
     { // Ensure that every candidate region has some value
-      const unsigned int                               candiateVectorSize = subjectCandidateRegions.size();
-      itk::ImageRegionIteratorWithIndex<ByteImageType> firstCandidateIter(
+      const unsigned int                                    candiateVectorSize = subjectCandidateRegions.size();
+      itk::ImageRegionConstIteratorWithIndex<ByteImageType> firstCandidateIter(
         subjectCandidateRegions[0], subjectCandidateRegions[0]->GetLargestPossibleRegion());
       size_t AllZeroCounts = 0;
       while (!firstCandidateIter.IsAtEnd())

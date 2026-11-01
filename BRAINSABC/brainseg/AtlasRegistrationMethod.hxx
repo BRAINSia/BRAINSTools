@@ -744,7 +744,7 @@ AtlasRegistrationMethod<TOutputPixel, TProbabilityPixel>::CopyProbabilityImage(
   outimg->SetRegions(img->GetLargestPossibleRegion());
   outimg->Allocate();
 
-  using InternalIteratorType = itk::ImageRegionIterator<InternalImageType>;
+  using InternalIteratorType = itk::ImageRegionConstIterator<InternalImageType>;
   InternalIteratorType inputIter(img, img->GetLargestPossibleRegion());
 
   using ProbabilityIteratorType = itk::ImageRegionIterator<ProbabilityImageType>;

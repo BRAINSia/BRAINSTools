@@ -91,9 +91,9 @@ main(int argc, char * argv[])
 
   std::cout << "start iteration " << std::endl;
   // Iterate Images
-  using IteratorType = itk::ImageRegionIterator<ProbabilityMapImageType>;
+  using ConstIteratorType = itk::ImageRegionConstIterator<ProbabilityMapImageType>;
 
-  IteratorType probabilityIterator(probabilityImages[0], probabilityImages[0]->GetLargestPossibleRegion());
+  ConstIteratorType probabilityIterator(probabilityImages[0], probabilityImages[0]->GetLargestPossibleRegion());
 
   using LabelIteratorType = itk::ImageRegionIterator<LabelMapImageType>;
   LabelIteratorType labelIterator(labelImage, labelImage->GetLargestPossibleRegion());

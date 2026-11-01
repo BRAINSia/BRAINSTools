@@ -4,6 +4,7 @@
 #ifndef BRAINSTOOLS_DWIDICOMCONVERTERBASE_H
 #define BRAINSTOOLS_DWIDICOMCONVERTERBASE_H
 
+#include <functional>
 #include <vector>
 #include <iostream>
 #include "DWIConverter.h"
@@ -39,6 +40,11 @@ public:
   LoadDicomDirectory();
   double
   readThicknessFromDicom() const;
+
+  /** Reorder classic single-frame images volume by volume, ranking the repeats
+   *  of each slice position by InstanceNumber; throws if positions repeat unevenly. */
+  static void
+  OrderSlicesVolumeMajor(DCMTKFileVector & headers);
   int
   getDicomSpacing(double * const spacing) const;
 
@@ -80,6 +86,11 @@ protected:
    */
   void
   DeInterleaveVolume();
+
+  /** throw unless every slice of each volume matches the encoding read from its first slice */
+  void
+  ValidateVolumeEncodings(
+    const std::function<void(unsigned int, double &, vnl_vector_fixed<double, 3> &)> & readSliceEncoding) const;
   /* determine if slice order is inferior to superior */
   void
   DetermineSliceOrderIS();
@@ -97,9 +108,6 @@ protected:
   /** slice order is inferior/superior? */
   bool m_SliceOrderIS{};
 
-
-  /** track if images is interleaved */
-  bool m_IsInterleaved{};
 
   /**
    * @brief Try to extract DWI gradient data using the DICOM Supplement 49

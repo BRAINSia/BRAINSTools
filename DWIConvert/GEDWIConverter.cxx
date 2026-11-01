@@ -47,14 +47,13 @@ GEDWIConverter::ExtractDWIData()
   bool        isSignaHDxt(this->m_Headers[0]->GetElementLO(0x0008, 0x001090, ModelName, false) == EXIT_SUCCESS &&
                    (ModelName == "Signa HDxt" || ModelName == "SIGNA HDx" || ModelName == "GENESIS_SIGNA"));
 
-  // assume volume interleaving
+  using GradientType = vnl_vector_fixed<double, 3>;
   std::cout << "Number of Slices: " << this->m_NSlice << std::endl;
   std::cout << "Number of Volume: " << this->m_NVolume << std::endl;
   std::cout << "Number of Slices in each volume: " << this->m_SlicesPerVolume << std::endl;
-  for (unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
-  {
+  const auto readSliceEncoding = [this, isSignaHDxt](unsigned int k, double & bValue, GradientType & vect3d) {
     // parsing bvalue and gradient directions
-    DWIMetaDataDictionaryValidator::GradientDirectionType vect3d(0.0);
+    vect3d.fill(0.0);
     // for some weird reason this item in the GE dicom
     // header is stored as an IS (Integer String) element.
     ::itk::int32_t intb;
@@ -85,7 +84,7 @@ GEDWIConverter::ExtractDWIData()
         }
       }
     }
-    auto b = static_cast<float>(intb);
+    bValue = intb;
     for (unsigned elementNum = 0x10bb; elementNum <= 0x10bd; ++elementNum)
     {
       int vecI(elementNum - 0x10bb);
@@ -106,7 +105,14 @@ GEDWIConverter::ExtractDWIData()
         }
       }
     }
-
+  };
+  this->ValidateVolumeEncodings(readSliceEncoding);
+  for (unsigned int k = 0; k < this->m_NSlice; k += this->m_SlicesPerVolume)
+  {
+    double       bValue = 0.0;
+    GradientType vect3d;
+    readSliceEncoding(k, bValue, vect3d);
+    const auto b = static_cast<float>(bValue);
     vect3d[0] = -vect3d[0];
     vect3d[1] = -vect3d[1];
 

@@ -2,6 +2,9 @@
 // Created by Johnson, Hans J on 11/24/16.
 //
 
+#include <algorithm>
+#include <cmath>
+#include <numeric>
 #include <utility>
 
 
@@ -25,8 +28,136 @@ DWIDICOMConverterBase::DWIDICOMConverterBase(DCMTKFileVector            allHeade
   , m_Headers(std::move(allHeaders))
   , m_MultiSliceVolume(false)
   , m_SliceOrderIS(true)
-  , m_IsInterleaved(false)
 {}
+
+namespace
+{
+constexpr double samePositionTolerance = 0.01; // mm along the slice normal
+
+std::vector<double>
+SliceDistances(const DWIDICOMConverterBase::DCMTKFileVector & headers)
+{
+  double dircos[6] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 };
+  headers[0]->GetDirCosArray(dircos);
+  const double        normal[3] = { dircos[1] * dircos[5] - dircos[2] * dircos[4],
+                                    dircos[2] * dircos[3] - dircos[0] * dircos[5],
+                                    dircos[0] * dircos[4] - dircos[1] * dircos[3] };
+  std::vector<double> distances;
+  distances.reserve(headers.size());
+  for (const auto & header : headers)
+  {
+    double origin[3] = { 0.0, 0.0, 0.0 };
+    header->GetOrigin(origin);
+    distances.push_back(normal[0] * origin[0] + normal[1] * origin[1] + normal[2] * origin[2]);
+  }
+  return distances;
+}
+} // namespace
+
+void
+DWIDICOMConverterBase::OrderSlicesVolumeMajor(DCMTKFileVector & headers)
+{
+  const size_t nFiles = headers.size();
+  if (nFiles < 2)
+  {
+    return;
+  }
+  const std::vector<double> distances = SliceDistances(headers);
+  std::vector<itk::int32_t> instanceNumbers(nFiles, 0);
+  for (size_t i = 0; i < nFiles; ++i)
+  {
+    headers[i]->GetElementIS(0x0020, 0x0013, instanceNumbers[i], false);
+  }
+  const auto acquiredBefore = [&](size_t a, size_t b) {
+    if (instanceNumbers[a] != instanceNumbers[b])
+    {
+      return instanceNumbers[a] < instanceNumbers[b];
+    }
+    return headers[a]->GetFileName() < headers[b]->GetFileName();
+  };
+
+  std::vector<size_t> byDistance(nFiles);
+  std::iota(byDistance.begin(), byDistance.end(), 0);
+  std::stable_sort(
+    byDistance.begin(), byDistance.end(), [&](size_t a, size_t b) { return distances[a] < distances[b]; });
+  std::vector<std::vector<size_t>> positions;
+  for (size_t k = 0; k < nFiles; ++k)
+  {
+    const size_t i = byDistance[k];
+    if (positions.empty() || distances[i] - distances[positions.back().front()] > samePositionTolerance)
+    {
+      positions.emplace_back();
+    }
+    positions.back().push_back(i);
+  }
+  const size_t nVolumes = nFiles / positions.size();
+  for (auto & position : positions)
+  {
+    if (position.size() != nVolumes || nVolumes * positions.size() != nFiles)
+    {
+      itkGenericExceptionMacro(<< "Missing DICOM slice files: " << nFiles << " files at " << positions.size()
+                               << " slice positions do not repeat the same number of times");
+    }
+    std::sort(position.begin(), position.end(), acquiredBefore);
+  }
+
+  std::stable_sort(
+    positions.begin(), positions.end(), [&](const std::vector<size_t> & a, const std::vector<size_t> & b) {
+      return acquiredBefore(a.front(), b.front());
+    });
+  bool monotonic = true;
+  for (size_t s = 2; s < positions.size(); ++s)
+  {
+    const double previousStep = distances[positions[s - 1].front()] - distances[positions[s - 2].front()];
+    const double step = distances[positions[s].front()] - distances[positions[s - 1].front()];
+    monotonic = monotonic && (previousStep * step > 0.0);
+  }
+  if (!monotonic)
+  {
+    std::sort(positions.begin(), positions.end(), [&](const std::vector<size_t> & a, const std::vector<size_t> & b) {
+      return distances[a.front()] < distances[b.front()];
+    });
+  }
+
+  DCMTKFileVector ordered;
+  ordered.reserve(nFiles);
+  for (size_t v = 0; v < nVolumes; ++v)
+  {
+    for (const auto & position : positions)
+    {
+      ordered.push_back(std::move(headers[position[v]]));
+    }
+  }
+  headers = std::move(ordered);
+}
+
+void
+DWIDICOMConverterBase::ValidateVolumeEncodings(
+  const std::function<void(unsigned int, double &, vnl_vector_fixed<double, 3> &)> & readSliceEncoding) const
+{
+  constexpr double bTolerance = 1.0;
+  constexpr double gradientTolerance = 1e-4;
+  for (unsigned int first = 0; first + this->m_SlicesPerVolume <= this->m_NSlice; first += this->m_SlicesPerVolume)
+  {
+    double                      firstB = 0.0;
+    vnl_vector_fixed<double, 3> firstGradient(0.0);
+    readSliceEncoding(first, firstB, firstGradient);
+    for (unsigned int k = first + 1; k < first + this->m_SlicesPerVolume; ++k)
+    {
+      double                      b = 0.0;
+      vnl_vector_fixed<double, 3> gradient(0.0);
+      readSliceEncoding(k, b, gradient);
+      const bool bothB0 = b < bTolerance && firstB < bTolerance;
+      if (std::abs(b - firstB) > bTolerance || (!bothB0 && (gradient - firstGradient).inf_norm() > gradientTolerance))
+      {
+        itkGenericExceptionMacro(<< "Volume " << first / this->m_SlicesPerVolume
+                                 << " mixes diffusion encodings: " << this->m_Headers[first]->GetFileName()
+                                 << " has b=" << firstB << " gradient " << firstGradient << " but "
+                                 << this->m_Headers[k]->GetFileName() << " has b=" << b << " gradient " << gradient);
+      }
+    }
+  }
+}
 
 void
 DWIDICOMConverterBase::LoadDicomDirectory()
@@ -102,66 +233,24 @@ DWIDICOMConverterBase::LoadDicomDirectory()
     this->m_UnsignedPixelData = pixelRep == 0 && rescaleIntercept >= 0.0;
   }
 
-  //
-  // check for interleave
   if (!this->m_MultiSliceVolume)
   {
-    // a map of ints keyed by the slice location string
-    // reported in the dicom file.  The number of slices per
-    // volume is the same as the number of unique slice locations
-    std::map<std::string, int> sliceLocations;
-    // Make a hash of the sliceLocations in order to get the correct
-    // count.  This is more reliable since SliceLocation may not be available.
-    std::vector<int>         sliceLocationIndicator(this->m_NSlice);
-    std::vector<std::string> sliceLocationStrings;
-
-    for (unsigned int k = 0; k < this->m_NSlice; ++k)
+    // Headers arrive volume by volume (OrderSlicesVolumeMajor); a volume ends where the first position repeats.
+    const std::vector<double> distances = SliceDistances(this->m_Headers);
+    unsigned int              slicesPerVolume = 1;
+    while (slicesPerVolume < this->m_NSlice &&
+           std::abs(distances[slicesPerVolume] - distances[0]) > samePositionTolerance)
     {
-      std::string originString;
-      this->m_Headers[k]->GetElementDS(0x0020, 0x0032, originString);
-      sliceLocationStrings.push_back(originString);
-      sliceLocations[originString]++;
+      ++slicesPerVolume;
     }
-
-    // this seems like a crazy way to figure out if slices are
-    // interleaved, but it works. Perhaps replace with comparing
-    // the reported location between the first two slices?
-    // Would be less clever-looking and devious, but would require
-    // less computation.
-    for (unsigned int k = 0; k < this->m_NSlice; ++k)
+    if (this->m_NSlice % slicesPerVolume != 0)
     {
-      auto it = sliceLocations.find(sliceLocationStrings[k]);
-      sliceLocationIndicator[k] = distance(sliceLocations.begin(), it);
+      itkGenericExceptionMacro(<< "Missing DICOM Slice files: Number of slice files (" << this->m_NSlice
+                               << ") not evenly divisible by the number of slice locations (" << slicesPerVolume
+                               << ")");
     }
-
-    // sanity check on # of volumes versus # of dicom files
-    if (this->m_Headers.size() % sliceLocations.size() != 0)
-    {
-      itkGenericExceptionMacro(<< "Missing DICOM Slice files: Number of slice files (" << this->m_Headers.size()
-                               << ") not evenly divisible by"
-                               << " the number of slice locations ");
-    }
-
-    this->m_SlicesPerVolume = sliceLocations.size();
+    this->m_SlicesPerVolume = slicesPerVolume;
     std::cout << "=================== this->m_SlicesPerVolume:" << this->m_SlicesPerVolume << std::endl;
-
-
-    // if the this->m_SlicesPerVolume == 1, de-interleaving won't do
-    // anything so there's no point in doing it.
-    if (this->m_NSlice >= 2 && this->m_SlicesPerVolume > 1)
-    {
-      if (sliceLocationIndicator[0] != sliceLocationIndicator[1])
-      {
-        std::cout << "Dicom images are ordered in a volume interleaving way." << std::endl;
-      }
-      else
-      {
-        std::cout << "Dicom images are ordered in a slice interleaving way." << std::endl;
-        this->m_IsInterleaved = true;
-        // reorder slices into a volume interleaving manner
-        DeInterleaveVolume();
-      }
-    }
   }
 
   {
@@ -371,7 +460,7 @@ DWIDICOMConverterBase::DetermineSliceOrderIS()
   if (this->m_Headers.size() > 1)
   {
     // assuming multiple files is invalid for single-file volume: http://www.na-mic.org/Bug/view.php?id=4105
-    nextSlice = this->m_IsInterleaved ? this->m_NVolume : 1;
+    nextSlice = 1;
   }
 
   this->m_Headers[nextSlice]->GetOrigin(image1Origin);

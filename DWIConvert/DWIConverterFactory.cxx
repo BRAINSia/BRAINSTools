@@ -5,6 +5,7 @@
 #include <utility>
 
 #include "DWIConverterFactory.h"
+#include <set>
 
 DWIConverterFactory::DWIConverterFactory(std::string  DicomDirectory,
                                          const bool   UseBMatrixGradientDirections,
@@ -42,7 +43,18 @@ DWIConverterFactory::New()
     inputNames->SetLoadSequences(true);
     inputNames->SetLoadPrivateTags(true);
     inputNames->SetInputDirectory(m_DicomDirectory);
-    m_InputFileNames = inputNames->GetInputFileNames();
+    // Series details split a DWI by Sequence Name; keep every group of the first Series Instance UID.
+    const auto            seriesUID = [](const std::string & id) { return id.substr(0, id.find('_')); };
+    const auto            seriesIdentifiers = inputNames->GetSeriesUIDs();
+    std::set<std::string> merged;
+    for (const auto & id : seriesIdentifiers)
+    {
+      if (seriesUID(id) == seriesUID(seriesIdentifiers.front()) && merged.insert(id).second)
+      {
+        const auto & files = inputNames->GetFileNames(id);
+        m_InputFileNames.insert(m_InputFileNames.end(), files.begin(), files.end());
+      }
+    }
   }
   // single file multiSlice Volume?
   else if (itksys::SystemTools::FileExists(m_DicomDirectory.c_str()))
@@ -131,6 +143,7 @@ DWIConverterFactory::New()
       std::cerr << "No pixel data in series " << m_DicomDirectory << std::endl;
       return nullptr;
     }
+    DWIDICOMConverterBase::OrderSlicesVolumeMajor(m_Headers);
     m_InputFileNames.resize(0);
     //
     // clean the filename by traversing the header vector

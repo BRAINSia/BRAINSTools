@@ -174,9 +174,9 @@ main(int argc, char * argv[])
   std::cout << "coefficientImage\n" << coefficientImage << std::endl;
   std::cout << "initialBSplineTransform\n" << initialBSplineTransform << std::endl;
 
-  using IteratorType = itk::ImageRegionIterator<BSplineTransformType::ImageType>;
+  using ConstIteratorType = itk::ImageRegionConstIterator<BSplineTransformType::ImageType>;
 
-  IteratorType coefItr(coefficientImage, coefficientImage->GetLargestPossibleRegion());
+  ConstIteratorType coefItr(coefficientImage, coefficientImage->GetLargestPossibleRegion());
   coefItr.GoToBegin();
 
   LandmarksMapType outputLandmarks;

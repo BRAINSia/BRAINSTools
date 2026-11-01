@@ -388,8 +388,8 @@ main(int argc, char * argv[])
   paddedImage->Allocate();
 
   NrrdImageType::Pointer finalImage;
-  using IteratorType = itk::ImageRegionIterator<NrrdImageType>;
-  IteratorType InIt(resampleImage, resampleImage->GetRequestedRegion());
+  using ConstIteratorType = itk::ImageRegionConstIterator<NrrdImageType>;
+  ConstIteratorType InIt(resampleImage, resampleImage->GetRequestedRegion());
   for (InIt.GoToBegin(); !InIt.IsAtEnd(); ++InIt)
   {
     NrrdImageType::IndexType InIndex = InIt.GetIndex();

@@ -98,7 +98,7 @@ GridForwardWarpImageFilterNew<TDisplacementField, TOutputImage>::GenerateData()
   // fieldPtr->GetRequestedRegion().GetSize();
 
   // iterator for the output image
-  using OutputImageIteratorWithIndex = ImageRegionIteratorWithIndex<OutputImageType>;
+  using OutputImageIteratorWithIndex = ImageRegionConstIteratorWithIndex<OutputImageType>;
   OutputImageIteratorWithIndex iter(outputPtr, outputPtr->GetRequestedRegion());
 
   // iterator for the deformation field

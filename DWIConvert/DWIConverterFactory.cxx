@@ -30,6 +30,21 @@ DWIConverterFactory::isNIIorNrrd(const std::string & filename)
   return false;
 }
 
+namespace
+{
+// DWIConvert orders repeated slice positions itself; opt out of the exception where ITK provides one.
+template <typename TSeriesFileNames>
+auto
+AllowRepeatedSlicePositions(TSeriesFileNames & names, int) -> decltype(names.SetFailOnAmbiguousOrdering(false))
+{
+  names.SetFailOnAmbiguousOrdering(false);
+}
+template <typename TSeriesFileNames>
+void
+AllowRepeatedSlicePositions(TSeriesFileNames &, long)
+{}
+} // namespace
+
 std::unique_ptr<DWIConverter>
 DWIConverterFactory::New()
 {
@@ -42,6 +57,7 @@ DWIConverterFactory::New()
     inputNames->SetUseSeriesDetails(true);
     inputNames->SetLoadSequences(true);
     inputNames->SetLoadPrivateTags(true);
+    AllowRepeatedSlicePositions(*inputNames, 0);
     inputNames->SetInputDirectory(m_DicomDirectory);
     // Series details split a DWI by Sequence Name; keep every group of the first Series Instance UID.
     const auto            seriesUID = [](const std::string & id) { return id.substr(0, id.find('_')); };

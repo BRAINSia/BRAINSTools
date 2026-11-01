@@ -109,7 +109,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   //  This will find maximum Superior physical location of all image voxels.
   double maxSIDirection = NAN;
   {
-    using MaskIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
+    using MaskIteratorType = itk::ImageRegionConstIteratorWithIndex<MaskImageType>;
     MaskIteratorType ItPixel(LFFimage, LFFimage->GetLargestPossibleRegion());
 
     ItPixel.GoToBegin();
@@ -137,7 +137,7 @@ FindCenterOfBrainFilter<TInputImage, TMaskImage>::GenerateData()
   distanceMap->Allocate();
   distanceMap->FillBuffer(0.0);
   {
-    using TInputIteratorType = itk::ImageRegionIteratorWithIndex<MaskImageType>;
+    using TInputIteratorType = itk::ImageRegionConstIteratorWithIndex<MaskImageType>;
     TInputIteratorType ItPixel(LFFimage, LFFimage->GetLargestPossibleRegion());
 
     //    typedef itk::ImageRegionIterator< DistanceImageType >

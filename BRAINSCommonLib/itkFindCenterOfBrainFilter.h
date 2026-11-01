@@ -20,6 +20,7 @@
 #define __itkFindeCenterOfBrainFilter_h
 #include <itkImageToImageFilter.h>
 #include <itkImageRegionConstIterator.h>
+#include <itkImageRegionConstIteratorWithIndex.h>
 #include <itkImageRegionIterator.h>
 #include "itkLargestForegroundFilledMaskImageFilter.h"
 

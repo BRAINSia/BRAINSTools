@@ -24,6 +24,7 @@
  * filters. */
 
 #include "itkImage.h"
+#include "itkImageRegionConstIterator.h"
 #include "itkImageRegionIterator.h"
 #include "itkAddImageFilter.h"
 #include "itkSubtractImageFilter.h"
@@ -165,10 +166,11 @@ IMask(typename ImageType::Pointer input1, typename ImageType::Pointer mask)
   image->SetRegions(input1->GetLargestPossibleRegion());
   image->CopyInformation(input1);
   image->Allocate();
+  using ConstRegionIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
   using RegionIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  RegionIteratorType in1(input1, input1->GetLargestPossibleRegion());
-  RegionIteratorType in2(mask, mask->GetLargestPossibleRegion());
-  RegionIteratorType out(image, image->GetLargestPossibleRegion());
+  ConstRegionIteratorType in1(input1, input1->GetLargestPossibleRegion());
+  ConstRegionIteratorType in2(mask, mask->GetLargestPossibleRegion());
+  RegionIteratorType      out(image, image->GetLargestPossibleRegion());
   for (in1.GoToBegin(), out.GoToBegin(), in2.GoToBegin(); !in1.IsAtEnd(); ++in1, ++in2, ++out)
   {
     const typename ImageType::PixelType temp = in1.Get();
@@ -187,9 +189,10 @@ ImageAddConstant(const typename ImageType::Pointer input, const double shiftvalu
   outImage->SetRegions(input->GetLargestPossibleRegion());
   outImage->CopyInformation(input);
   outImage->Allocate();
+  using ConstRegionIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
   using RegionIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  RegionIteratorType in(input, input->GetLargestPossibleRegion());
-  RegionIteratorType out(outImage, outImage->GetLargestPossibleRegion());
+  ConstRegionIteratorType in(input, input->GetLargestPossibleRegion());
+  RegionIteratorType      out(outImage, outImage->GetLargestPossibleRegion());
   out.GoToBegin();
   for (in.GoToBegin(); !in.IsAtEnd(); ++in)
   {
@@ -226,9 +229,10 @@ ImageComplementConstant(const typename ImageType::Pointer input, const double re
   outImage->SetRegions(input->GetLargestPossibleRegion());
   outImage->CopyInformation(input);
   outImage->Allocate();
+  using ConstRegionIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
   using RegionIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  RegionIteratorType in(input, input->GetLargestPossibleRegion());
-  RegionIteratorType out(outImage, outImage->GetLargestPossibleRegion());
+  ConstRegionIteratorType in(input, input->GetLargestPossibleRegion());
+  RegionIteratorType      out(outImage, outImage->GetLargestPossibleRegion());
   out.GoToBegin();
   for (in.GoToBegin(); !in.IsAtEnd(); ++in)
   {
@@ -254,9 +258,10 @@ ImageSqrtValue(typename ImageType::Pointer Output, const typename ImageType::Poi
   image->SetRegions(Input->GetLargestPossibleRegion());
   image->CopyInformation(Input);
   image->Allocate();
+  using ConstRegionIteratorType = typename itk::ImageRegionConstIterator<ImageType>;
   using RegionIteratorType = typename itk::ImageRegionIterator<ImageType>;
-  RegionIteratorType in(Input, Input->GetLargestPossibleRegion());
-  RegionIteratorType out(image, image->GetLargestPossibleRegion());
+  ConstRegionIteratorType in(Input, Input->GetLargestPossibleRegion());
+  RegionIteratorType      out(image, image->GetLargestPossibleRegion());
   for (in.GoToBegin(), out.GoToBegin(); !in.IsAtEnd(); ++in, ++out)
   {
     out.Set(static_cast<typename ImageType::PixelType>(in.Get()));

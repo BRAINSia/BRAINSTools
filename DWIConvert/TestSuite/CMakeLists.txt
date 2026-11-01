@@ -540,6 +540,13 @@ set_target_properties(DWIConverterErrorsGTest PROPERTIES
 include(GoogleTest)
 gtest_discover_tests(DWIConverterErrorsGTest DISCOVERY_TIMEOUT 120)
 
+add_executable(ReadVectorVolumeGTest ReadVectorVolumeGTest.cxx)
+target_link_libraries(ReadVectorVolumeGTest PRIVATE DWIConvertSupportLib GTest::gtest_main)
+set_target_properties(ReadVectorVolumeGTest PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+gtest_discover_tests(ReadVectorVolumeGTest DISCOVERY_TIMEOUT 120)
+
 # SiemensDWIConverter.cxx is compiled into this test with hardened standard-library
 # checks so that out-of-bounds std::vector access aborts instead of reading reserved memory.
 add_executable(SiemensBMatrixGTest SiemensBMatrixGTest.cxx ../SiemensDWIConverter.cxx)

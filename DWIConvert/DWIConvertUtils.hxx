@@ -187,11 +187,11 @@ ReadVectorVolume(typename TImage::Pointer & img,
       }
       typename DoubleImageType::Pointer dimg = doubleReader->GetOutput();
       double                            dmin = itk::NumericTraits<double>::max();
-      double                            dmax = itk::NumericTraits<double>::min();
+      double                            dmax = itk::NumericTraits<double>::NonpositiveMin();
       const size_t                      vectorSize = dimg->GetVectorLength();
       {
         itk::ImageRegionConstIterator<DoubleImageType> it(dimg, dimg->GetLargestPossibleRegion());
-        for (it.GoToBegin(); it.IsAtEnd(); ++it)
+        for (it.GoToBegin(); !it.IsAtEnd(); ++it)
         {
           const typename DoubleImageType::PixelType & tmp = it.Get();
           for (size_t i = 0; i < vectorSize; ++i)
@@ -202,11 +202,20 @@ ReadVectorVolume(typename TImage::Pointer & img,
           }
         }
       }
-      const double scale = (itk::NumericTraits<typename TImage::PixelType::ValueType>::max() - 1) / (dmax - dmin);
+      // A constant image has no range to stretch; avoid dividing by zero.
+      const double scale =
+        (dmax > dmin) ? (itk::NumericTraits<typename TImage::PixelType::ValueType>::max() - 1) / (dmax - dmin) : 0.0;
 
-      itk::ImageRegionIterator<DoubleImageType> it(dimg, dimg->GetLargestPossibleRegion());
-      itk::ImageRegionIterator<TImage>          outit(img, img->GetLargestPossibleRegion());
-      for (it.GoToBegin(), outit.GoToBegin(); it.IsAtEnd(); ++it, ++outit)
+      img = TImage::New();
+      img->CopyInformation(dimg);
+      img->SetMetaDataDictionary(dimg->GetMetaDataDictionary());
+      img->SetVectorLength(vectorSize);
+      img->SetRegions(dimg->GetLargestPossibleRegion());
+      img->Allocate();
+
+      itk::ImageRegionConstIterator<DoubleImageType> it(dimg, dimg->GetLargestPossibleRegion());
+      itk::ImageRegionIterator<TImage>               outit(img, img->GetLargestPossibleRegion());
+      for (it.GoToBegin(), outit.GoToBegin(); !it.IsAtEnd(); ++it, ++outit)
       {
         typename DoubleImageType::PixelType tmp = it.Get();
         typename TImage::PixelType          outtmp = outit.Get();

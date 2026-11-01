@@ -38,9 +38,9 @@ BlendImageFilter<TInputImage, TOutputImage>::DynamicThreadedGenerateData(
   InputImagePointer  inputPtr2 = dynamic_cast<TInputImage *>(this->ProcessObject::GetInput(1));
   OutputImagePointer outputPtr = dynamic_cast<TOutputImage *>(this->GetOutput(0));
 
-  ImageRegionIterator<TInputImage>  inputIt1(inputPtr1, outputRegionForThread);
-  ImageRegionIterator<TInputImage>  inputIt2(inputPtr2, outputRegionForThread);
-  ImageRegionIterator<TOutputImage> outputIt(outputPtr, outputRegionForThread);
+  ImageRegionConstIterator<TInputImage> inputIt1(inputPtr1, outputRegionForThread);
+  ImageRegionConstIterator<TInputImage> inputIt2(inputPtr2, outputRegionForThread);
+  ImageRegionIterator<TOutputImage>     outputIt(outputPtr, outputRegionForThread);
 
   for (inputIt1.GoToBegin(), inputIt2.GoToBegin(), outputIt.GoToBegin(); !inputIt1.IsAtEnd();
        ++inputIt1, ++inputIt2, ++outputIt)

@@ -163,12 +163,12 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
   {
     using HistogramType = itk::Statistics::Histogram<double, 1>;
 
-    using Iterator = itk::ImageRegionIteratorWithIndex<SImageType>;
+    using ConstIterator = itk::ImageRegionConstIteratorWithIndex<SImageType>;
 
     double maxval = 0;
     double minval = std::numeric_limits<double>::max();
-    using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
-    SImageIteratorType imIter(foreground, foreground->GetLargestPossibleRegion());
+    using SImageConstIteratorType = itk::ImageRegionConstIteratorWithIndex<SImageType>;
+    SImageConstIteratorType imIter(foreground, foreground->GetLargestPossibleRegion());
     while (!imIter.IsAtEnd())
     {
       const double curr_val = imIter.Value();
@@ -208,7 +208,7 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
 
     // put each image pixel into the histogram
     HistogramType::MeasurementVectorType measurement;
-    Iterator                             iter(foreground, foreground->GetLargestPossibleRegion());
+    ConstIterator                        iter(foreground, foreground->GetLargestPossibleRegion());
     iter.Begin();
     while (!iter.IsAtEnd())
     {
@@ -410,7 +410,8 @@ FindCenterOfBrainBasedOnTopOfHead(SImageType::Pointer & foreground,
   {
     using SImageIteratorType = itk::ImageRegionIteratorWithIndex<SImageType>;
     SImageIteratorType ClippedImagePixel(foreground, foreground->GetLargestPossibleRegion());
-    SImageIteratorType OriginalImagePixel(volOrig, volOrig->GetLargestPossibleRegion());
+    using SImageConstIteratorType = itk::ImageRegionConstIteratorWithIndex<SImageType>;
+    SImageConstIteratorType OriginalImagePixel(volOrig, volOrig->GetLargestPossibleRegion());
 
     ClippedImagePixel.Begin();
     for (; !ClippedImagePixel.IsAtEnd(); ++ClippedImagePixel)

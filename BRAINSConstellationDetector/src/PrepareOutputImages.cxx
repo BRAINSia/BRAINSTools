@@ -79,6 +79,7 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
     //  This is ugly code that could be re-written much simpler.
     //
     using IteratorType = itk::ImageRegionIterator<SImageType>;
+    using ConstIteratorType = itk::ImageRegionConstIterator<SImageType>;
     // FLOAT constant, for exact switch
     // comparisons.
     {
@@ -115,7 +116,7 @@ PrepareOutputImages(SImageType::Pointer &                          lOutputResamp
           ItZeroOneImage.GoToBegin();
           IteratorType ItOutputResampledImage(lOutputResampledImage, lOutputResampledImage->GetRequestedRegion());
           ItOutputResampledImage.GoToBegin();
-          IteratorType ItHead(HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion());
+          ConstIteratorType ItHead(HeadOutlineMaskImage, HeadOutlineMaskImage->GetLargestPossibleRegion());
           ItHead.GoToBegin();
           while (!ItHead.IsAtEnd())
           {

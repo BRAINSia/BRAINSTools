@@ -116,7 +116,7 @@ jobs:
 
     steps:
       # ── Checkout & version extraction ─────────────────────────────────────────
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Resolve ITK ref
         id: itk
@@ -198,14 +198,14 @@ jobs:
           echo "CDash BuildName suffix: ${SUFFIX}"
 
       - name: Setup Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
 
       # ── Runner preparation ─────────────────────────────────────────────────────
       - name: Free Disk Space (Ubuntu)
         if: matrix.config.os == 'ubuntu-latest'
-        uses: BRAINSia/free-disk-space@v2
+        uses: BRAINSia/free-disk-space@f9f59b0ef974ff4b873aa243ce5278ab644eedc6 # v2
         with:
           removalmode: "rmz"
           # BRAINSTools SuperBuild builds ITK, ANTs, SEM, TBB, and the inner
@@ -288,7 +288,7 @@ jobs:
 
       - name: Restore compiler cache
         id: restore-ccache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ runner.temp }}/ccache
           key: ccache-v2-${{ steps.itk.outputs.keytag }}${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
@@ -307,7 +307,7 @@ jobs:
       # The path is workspace-relative because actions/cache hashes the literal path into the
       # entry's version, so an absolute runner path would never restore across Linux and macOS.
       - name: Restore ExternalData object store
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: .ExternalData
           key: externaldata-v2-${{ hashFiles('**/*.sha512') }}
@@ -417,7 +417,7 @@ jobs:
       # ── Compiler & test-data cache save ───────────────────────────────────────
       - name: Save compiler cache
         if: ${{ !cancelled() }}
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5
         with:
           path: ${{ runner.temp }}/ccache
           key: ccache-v2-${{ steps.itk.outputs.keytag }}${{ runner.os }}-${{ steps.toolchain.outputs.image }}-${{ matrix.config.cxx }}${{ steps.toolchain.outputs.compiler_major }}-${{ github.sha }}
@@ -623,7 +623,7 @@ jobs:
             -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
 
       - name: Upload Build Logs
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: build-logs-${{ matrix.config.name }}
@@ -650,7 +650,7 @@ jobs:
       actions: write
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Prune superseded caches
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

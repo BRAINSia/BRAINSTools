@@ -34,13 +34,16 @@ PhilipsDWIConverter::ExtractDWIData()
     std::cout << "Number of Slices: " << this->m_NSlice << std::endl;
     std::cout << "Number of Volumes: " << this->m_NVolume << std::endl;
     std::cout << "Number of Slices in each volume: " << this->m_SlicesPerVolume << std::endl;
-    // NOTE:  Philips interleaves the directions, so the all gradient directions can be
-    // determined in the first "nVolume" slices which represents the first slice from each
-    // of the gradient volumes.
-    for (unsigned int k = 0; k < this->m_NVolume; ++k)
-    {
-      std::string DiffusionDirectionality;
-      bool        useSupplement49Definitions(false);
+    constexpr double zeroBValueTolerance = 0.1; // Implausibly small value assumed to be b0 images
+    const auto       readSliceEncoding = [this](unsigned int                  k,
+                                          double &                      b,
+                                          vnl_vector_fixed<double, 3> & vect3d,
+                                          std::string &                 DiffusionDirectionality,
+                                          bool &                        B0FieldFound) {
+      DiffusionDirectionality.clear();
+      B0FieldFound = false;
+      b = 0.0;
+      bool useSupplement49Definitions(false);
       {
         double tmpFD;
         if ((this->m_Headers[k]->GetElementCSorOB(0x0018, 0x9075, DiffusionDirectionality, false) == EXIT_SUCCESS ||
@@ -51,10 +54,7 @@ PhilipsDWIConverter::ExtractDWIData()
         }
       }
 
-      bool             B0FieldFound = false;
-      double           b = 0.0;
-      constexpr double zeroBValueTolerance = 0.1; // Implausibly small value assumed to be b0 images
-      {                                           // Fill out the B-Values
+      { // Fill out the B-Values
         if (useSupplement49Definitions == true)
         {
           B0FieldFound = this->m_Headers[k]->GetElementFD(0x0018, 0x9087, b, false) == EXIT_SUCCESS;
@@ -79,7 +79,6 @@ PhilipsDWIConverter::ExtractDWIData()
         }
       }
 
-      vnl_vector_fixed<double, 3> vect3d;
       vect3d.fill(0.0);
       { // Try to fill in the vect3d gradient directions
         if (useSupplement49Definitions == true)
@@ -139,7 +138,19 @@ PhilipsDWIConverter::ExtractDWIData()
           vect3d[2] = static_cast<double>(tmp[2]);
         }
       }
-
+    };
+    this->ValidateVolumeEncodings([&readSliceEncoding](unsigned int k, double & b, vnl_vector_fixed<double, 3> & g) {
+      std::string directionality;
+      bool        found = false;
+      readSliceEncoding(k, b, g, directionality, found);
+    });
+    for (unsigned int volume = 0; volume < this->m_NVolume; ++volume)
+    {
+      std::string                 DiffusionDirectionality;
+      bool                        B0FieldFound = false;
+      double                      b = 0.0;
+      vnl_vector_fixed<double, 3> vect3d;
+      readSliceEncoding(volume * this->m_SlicesPerVolume, b, vect3d, DiffusionDirectionality, B0FieldFound);
       if (StringContains(DiffusionDirectionality, "ISOTROPIC"))
       {
         continue;

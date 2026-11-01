@@ -236,8 +236,8 @@ CreatedebugPlaneImage(SImageType::Pointer                       referenceImage,
   duplicator->Update();
   SImageType::Pointer RasterImage = duplicator->GetOutput();
 
-  itk::ImageRegionIteratorWithIndex<SImageType> rasterIt(RasterImage, RasterImage->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<SImageType> rplaneIt(RotatedPlane, RotatedPlane->GetLargestPossibleRegion());
+  itk::ImageRegionIteratorWithIndex<SImageType>      rasterIt(RasterImage, RasterImage->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<SImageType> rplaneIt(RotatedPlane, RotatedPlane->GetLargestPossibleRegion());
   for (rplaneIt.GoToBegin(); !rplaneIt.IsAtEnd() && !rasterIt.IsAtEnd(); ++rplaneIt, ++rasterIt)
   {
     if (rasterIt.Get() > high)

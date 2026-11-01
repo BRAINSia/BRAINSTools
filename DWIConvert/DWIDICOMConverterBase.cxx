@@ -414,7 +414,7 @@ DWIDICOMConverterBase::DeInterleaveVolume()
   std::vector<Volume3DUnwrappedType::PixelType> v(this->m_NSlice);
   std::vector<Volume3DUnwrappedType::PixelType> w(this->m_NSlice);
 
-  itk::ImageRegionIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R);
+  itk::ImageRegionConstIteratorWithIndex<Volume3DUnwrappedType> I(this->m_Volume, R);
   // permute the slices by extracting the 1D array of voxels for
   // a particular {x,y} position, then re-ordering the voxels such
   // that all the voxels for a particular volume are adjacent

@@ -184,12 +184,12 @@ jobs:
         id: cdash_suffix
         shell: bash
         env:
+          # PR number: set for pull_request events, empty for push events.
+          PR_NUM: ${{ github.event.number }}
+          # Branch name: head_ref (PRs) or ref_name (direct pushes); attacker-controlled, so never inline it.
+          BRANCH: ${{ github.head_ref || github.ref_name }}
           ITK_CDASH: ${{ steps.itk.outputs.cdash }}
         run: |
-          # PR number: set for pull_request events, empty for push events.
-          PR_NUM="${{ github.event.number }}"
-          # Branch name: head_ref (PRs) or ref_name (direct pushes).
-          BRANCH="${{ github.head_ref || github.ref_name }}"
           # Slugify: lowercase, collapse non-alphanumeric runs to '-', strip edges.
           SLUG=$(echo "${BRANCH}" | tr '[:upper:]' '[:lower:]' \
                    | tr -cs 'a-z0-9' '-' | sed 's/^-//;s/-$//')

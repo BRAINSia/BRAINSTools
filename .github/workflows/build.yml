@@ -54,6 +54,11 @@ concurrency:
   group: '${{ github.workflow }}@${{ github.head_ref || github.ref }}'
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+env:
+  # Tests that exceed CI time limits or diverge between compilers; shared by the
+  # normal and sanitizer test steps.  CMake/CTestCustom.cmake.in also ignores the BCD tests.
+  CTEST_EXCLUDE_REGEX: '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
+
 jobs:
   setup:
     name: Select build legs
@@ -546,7 +551,7 @@ jobs:
           #   BCD tests + checkers:       already excluded (75-4531 s on CI)
           ctest -D ExperimentalTest --schedule-random --output-on-failure \
             -j ${{ matrix.config.parallel }} \
-            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
+            -E "${CTEST_EXCLUDE_REGEX}"
 
       - name: "Inner Build: Submit results to CDash"
         working-directory: build/BRAINSTools-Release-EPRelease-build
@@ -620,7 +625,7 @@ jobs:
           UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
         run: |
           ctest --output-on-failure --timeout 1800 -j ${{ matrix.config.parallel }} \
-            -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
+            -E "${CTEST_EXCLUDE_REGEX}"
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v7

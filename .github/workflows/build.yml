@@ -639,15 +639,51 @@ jobs:
           ctest --output-on-failure --timeout 1800 -j ${{ matrix.config.parallel }} \
             -E '^(BCD|chk_.*BCD|BRAINSABCSmallTest|BRAINSFitTest_RigidRotationNoMasks|BRAINSPosteriorToContinuousClassTest|BRAINSCreateLabelMapFromProbabilityMapsTest|BRAINSFitTest_ScaleTranslationRescaleHeadMasksNoInit)'
 
+      - name: Summarize failure
+        if: failure()
+        shell: bash
+        run: |
+          INNER=build/BRAINSTools-Release-EPRelease-build
+          {
+            echo "### Failure diagnostics: ${{ matrix.config.name }}"
+            echo '```'
+            df -h . "${RUNNER_TEMP}"
+            uptime
+            if command -v free > /dev/null; then free -m; fi
+            echo '```'
+            for list in "${INNER}"/Testing/Temporary/LastTestsFailed*.log; do
+              [ -s "${list}" ] || continue
+              echo "Failed tests:"
+              echo '```'
+              head -50 "${list}"
+              echo '```'
+            done
+            # ExternalProject steps with LOG_* ON write here instead of the job log.
+            find build -path '*-stamp/*' -name '*-err.log' -size +0c 2> /dev/null | head -5 | while read -r log; do
+              echo "Tail of ${log}:"
+              echo '```'
+              tail -n 40 "${log}"
+              echo '```'
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Upload Build Logs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         if: always()
         with:
           name: build-logs-${{ matrix.config.name }}
+          retention-days: 14
+          if-no-files-found: ignore
           path: |
             build/CMakeFiles/CMakeOutput.log
             build/CMakeFiles/CMakeError.log
-            build/BRAINSTools-Release-EPRelease-build/Testing/Temporary/LastTest.log
+            build/**/*-stamp/*-err.log
+            build/**/*-stamp/*-out.log
+            build/BRAINSTools-Release-EPRelease-build/CMakeFiles/CMakeOutput.log
+            build/BRAINSTools-Release-EPRelease-build/CMakeFiles/CMakeError.log
+            build/BRAINSTools-Release-EPRelease-build/Testing/Temporary/LastConfigure*.log
+            build/BRAINSTools-Release-EPRelease-build/Testing/Temporary/LastBuild*.log
+            build/BRAINSTools-Release-EPRelease-build/Testing/Temporary/LastTest*.log
             build/BRAINSTools-Release-EPRelease-build/Testing/Temporary/CTestCostData.txt
             build/BRAINSTools-Release-EPRelease-build/Testing/**/*.xml
 

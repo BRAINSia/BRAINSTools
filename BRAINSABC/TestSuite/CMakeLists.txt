@@ -50,6 +50,61 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME B
 )
 set_tests_properties(BRAINSABCSmallTest PROPERTIES PROCESSORS ${_brainstools_test_nproc})
 
+# Smoke variant on inputs shrunk by 2 (128^3); 64^3 is below BRAINSABC's minimum samples per label.
+add_executable(BRAINSABCSmokeTestHelper BRAINSABCSmokeTestHelper.cxx)
+target_link_libraries(BRAINSABCSmokeTestHelper PRIVATE ${BRAINSABC_ITK_LIBRARIES})
+set_target_properties(BRAINSABCSmokeTestHelper PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/testbin
+  FOLDER ${MODULE_FOLDER})
+
+foreach(_modality T1 T2)
+  string(TOLOWER ${_modality} _modality_lower)
+  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCSmokeShrink${_modality}Test
+    COMMAND $<TARGET_FILE:BRAINSABCSmokeTestHelper> shrink 2
+      DATA{${TestData_DIR}/affine_${_modality_lower}.nrrd}
+      ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmoke${_modality}.nrrd
+  )
+  set_tests_properties(BRAINSABCSmokeShrink${_modality}Test PROPERTIES FIXTURES_SETUP BRAINSABCSmokeInputs)
+endforeach()
+
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCSmokeTest
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>
+  BRAINSABCTest
+   --atlasDefinition ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmallExtendedAtlasDefinition.xml
+   --atlasToSubjectInitialTransform DATA{${TestData_DIR}/BRAINSABCSmall_atlas_to_subject_transform.h5}
+   --atlasToSubjectTransform BRAINSABCSmoke_atlas_to_subject_transform.h5
+   --atlasToSubjectTransformType Affine
+   --debuglevel 0
+   --filterIteration 0
+   --filterMethod GradientAnisotropicDiffusion
+   --gridSize 10,10,10
+   --inputVolumeTypes T1,T2
+   --inputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeT1.nrrd
+   --inputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeT2.nrrd
+   --interpolationMode Linear
+   --maxBiasDegree 4
+   --maxIterations 1
+   --outputDir ./
+   --outputDirtyLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeDirtyLabels.nii.gz
+   --outputFormat NIFTI
+   --outputLabels ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeLabels.nii.gz
+   --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeT1_1.nii.gz
+   --outputVolumes ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeT2_1.nii.gz
+   --posteriorTemplate ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokePOST_%s.nii.gz
+   --purePlugsThreshold 0.2
+)
+set_tests_properties(BRAINSABCSmokeTest PROPERTIES
+  PROCESSORS ${_brainstools_test_nproc}
+  FIXTURES_REQUIRED BRAINSABCSmokeInputs
+  FIXTURES_SETUP BRAINSABCSmokeOutputs)
+
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCSmokeLabelsTest
+  COMMAND $<TARGET_FILE:BRAINSABCSmokeTestHelper> check
+    DATA{${TestData_DIR}/BRAINSABCSmallLabels.nii.gz}
+    ${CMAKE_CURRENT_BINARY_DIR}/BRAINSABCSmokeLabels.nii.gz 2 2
+)
+set_tests_properties(BRAINSABCSmokeLabelsTest PROPERTIES FIXTURES_REQUIRED BRAINSABCSmokeOutputs)
+
 #if( ${BRAINSTools_MAX_TEST_LEVEL} GREATER 5) #These test takes way to long to run all the time
 #ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME BRAINSABCLongTest
 #  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSABCTestDriver>

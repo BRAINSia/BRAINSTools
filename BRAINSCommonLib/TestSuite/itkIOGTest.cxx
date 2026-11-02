@@ -93,8 +93,8 @@ TEST(itkIO, FloatWriteReadRoundtrip)
   }
 
   // Verify ALL pixels
-  itk::ImageRegionIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
   for (itOrig.GoToBegin(), itLoad.GoToBegin(); !itOrig.IsAtEnd(); ++itOrig, ++itLoad)
   {
     EXPECT_FLOAT_EQ(itLoad.Get(), itOrig.Get()) << "pixel mismatch at " << itOrig.GetIndex();
@@ -124,8 +124,8 @@ TEST(itkIO, DoubleWriteReadRoundtrip)
     EXPECT_NEAR(loaded->GetSpacing()[d], image->GetSpacing()[d], 1e-4);
   }
 
-  itk::ImageRegionIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
   for (itOrig.GoToBegin(), itLoad.GoToBegin(); !itOrig.IsAtEnd(); ++itOrig, ++itLoad)
   {
     EXPECT_DOUBLE_EQ(itLoad.Get(), itOrig.Get()) << "pixel mismatch at " << itOrig.GetIndex();
@@ -149,8 +149,8 @@ TEST(itkIO, ShortWriteReadRoundtrip)
   itkUtil::WriteImage<ImageType>(image, path);
   auto loaded = itkUtil::ReadImage<ImageType>(path);
 
-  itk::ImageRegionIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
   for (itOrig.GoToBegin(), itLoad.GoToBegin(); !itOrig.IsAtEnd(); ++itOrig, ++itLoad)
   {
     EXPECT_EQ(itLoad.Get(), itOrig.Get()) << "pixel mismatch at " << itOrig.GetIndex();
@@ -174,8 +174,8 @@ TEST(itkIO, UCharWriteReadRoundtrip)
   itkUtil::WriteImage<ImageType>(image, path);
   auto loaded = itkUtil::ReadImage<ImageType>(path);
 
-  itk::ImageRegionIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itOrig(image, image->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itLoad(loaded, loaded->GetLargestPossibleRegion());
   for (itOrig.GoToBegin(), itLoad.GoToBegin(); !itOrig.IsAtEnd(); ++itOrig, ++itLoad)
   {
     EXPECT_EQ(itLoad.Get(), itOrig.Get()) << "pixel mismatch at " << itOrig.GetIndex();
@@ -211,8 +211,8 @@ TEST(itkIO, CopyImagePixelsMatchAndDistinctPointers)
   EXPECT_NE(original->GetBufferPointer(), copy->GetBufferPointer());
 
   // Same pixel values
-  itk::ImageRegionIteratorWithIndex<ImageType> itOrig(original, original->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<ImageType> itCopy(copy, copy->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itOrig(original, original->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<ImageType> itCopy(copy, copy->GetLargestPossibleRegion());
   for (itOrig.GoToBegin(), itCopy.GoToBegin(); !itOrig.IsAtEnd(); ++itOrig, ++itCopy)
   {
     EXPECT_FLOAT_EQ(itCopy.Get(), itOrig.Get());
@@ -259,8 +259,8 @@ TEST(itkIO, TypeCastFloatToDouble)
 
   auto doubleImage = itkUtil::TypeCast<FloatImageType, DoubleImageType>(floatImage);
 
-  itk::ImageRegionIteratorWithIndex<FloatImageType>  itF(floatImage, floatImage->GetLargestPossibleRegion());
-  itk::ImageRegionIteratorWithIndex<DoubleImageType> itD(doubleImage, doubleImage->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<FloatImageType>  itF(floatImage, floatImage->GetLargestPossibleRegion());
+  itk::ImageRegionConstIteratorWithIndex<DoubleImageType> itD(doubleImage, doubleImage->GetLargestPossibleRegion());
   for (itF.GoToBegin(), itD.GoToBegin(); !itF.IsAtEnd(); ++itF, ++itD)
   {
     EXPECT_NEAR(itD.Get(), static_cast<double>(itF.Get()), 1e-6) << "pixel mismatch at " << itF.GetIndex();

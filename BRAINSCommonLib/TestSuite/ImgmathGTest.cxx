@@ -98,9 +98,9 @@ protected:
   void
   VerifyAllVoxels(const ImageType::Pointer & output, Functor func, float tolerance = 1.0e-4f)
   {
-    using IteratorType = itk::ImageRegionIteratorWithIndex<ImageType>;
-    IteratorType it(output, output->GetLargestPossibleRegion());
-    int          count = 0;
+    using ConstIteratorType = itk::ImageRegionConstIteratorWithIndex<ImageType>;
+    ConstIteratorType it(output, output->GetLargestPossibleRegion());
+    int               count = 0;
     for (it.GoToBegin(); !it.IsAtEnd(); ++it)
     {
       const IndexType & idx = it.GetIndex();

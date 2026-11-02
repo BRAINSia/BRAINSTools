@@ -101,7 +101,6 @@ set(CTEST_CUSTOM_TESTS_IGNORE
   BCDTest_rmpj
   BCDTest_interpolationMode
   BCDTest_backgroundValue
-  BCDTest_T1_outputResampledVolume
   BCDTest_trimRescaledIntensities
   BCDTest_rpc
   BCDTest_rac

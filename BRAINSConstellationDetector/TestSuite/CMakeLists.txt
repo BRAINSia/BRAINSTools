@@ -565,21 +565,6 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     --rpc 10)
   set_tests_properties(BCDTest_rVN4-rpc-rac-rmpj PROPERTIES PROCESSORS ${_brainstools_test_nproc})
 
-  set(BCDTestName BCDTest_T1_outputResampledVolume)
-  ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
-    COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
-    ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
-    --compareIntensityTolerance 50
-    --compareRadiusTolerance 5
-    --compareNumberOfPixelsTolerance 20
-
-    BRAINSConstellationDetectorTest
-    --inputVolume DATA{${TestData_DIR}/T1.nii.gz}
-    --outputResampledVolume ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
-    --inputTemplateModel DATA{${TestData_DIR}/T1_50Lmks.mdl}
-    --LLSModel DATA{${TestData_DIR}/Transforms_h5/LLSModel_50Lmks.${XFRM_EXT}})
-
   set(BCDTestName BCDTest_T1_outputVolume)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
@@ -619,6 +604,8 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
     --compare DATA{${TestData_DIR}/${BCDTestName}_standard.png}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.png
+    --compare DATA{${TestData_DIR}/BCDTest_T1_outputResampledVolume_standard.nrrd}
+    ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
     --compareNumberOfPixelsTolerance 20

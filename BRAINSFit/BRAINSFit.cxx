@@ -123,6 +123,7 @@ main(int argc, char * argv[])
   using GenericTransformType = itk::Transform<double, 3, 3>;
 
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultThreader        TempDefaultThreaderHolder;
   if (debugLevel > 1)
   {
     std::cout << "Number Of Threads used: " << numberOfThreads << std::endl;

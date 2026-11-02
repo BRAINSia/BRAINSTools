@@ -68,4 +68,20 @@ StackPushITKDefaultNumberOfThreads::~StackPushITKDefaultNumberOfThreads()
 {
   itk::MultiThreaderBase::SetGlobalDefaultNumberOfThreads(this->m_originalThreadValue);
 }
+
+StackPushITKDefaultThreader::StackPushITKDefaultThreader()
+  : m_originalThreader(itk::MultiThreaderBase::GetGlobalDefaultThreader())
+{
+  std::string requested;
+  if (m_originalThreader == itk::MultiThreaderBase::ThreaderEnum::TBB &&
+      !itksys::SystemTools::GetEnv("ITK_GLOBAL_DEFAULT_THREADER", requested))
+  {
+    itk::MultiThreaderBase::SetGlobalDefaultThreader(itk::MultiThreaderBase::ThreaderEnum::Pool);
+  }
+}
+
+StackPushITKDefaultThreader::~StackPushITKDefaultThreader()
+{
+  itk::MultiThreaderBase::SetGlobalDefaultThreader(m_originalThreader);
+}
 } // namespace BRAINSUtils

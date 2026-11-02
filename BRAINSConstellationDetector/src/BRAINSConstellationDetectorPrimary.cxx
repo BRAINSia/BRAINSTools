@@ -113,6 +113,7 @@ bool
 BRAINSConstellationDetectorPrimary::Compute()
 {
   const BRAINSUtils::StackPushITKDefaultNumberOfThreads TempDefaultNumberOfThreadsHolder(this->m_numberOfThreads);
+  const BRAINSUtils::StackPushITKDefaultThreader        TempDefaultThreaderHolder;
 
   // ------------------------------------
   // Read external files

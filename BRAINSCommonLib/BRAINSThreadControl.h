@@ -56,6 +56,21 @@ protected:
 private:
   int m_originalThreadValue{};
 };
+
+// Selects the Pool threader in place of TBB unless ITK_GLOBAL_DEFAULT_THREADER is set.
+// TBB is several times slower for BCD and BRAINSFit; remove once fixed in ITK.
+class StackPushITKDefaultThreader
+{
+public:
+  StackPushITKDefaultThreader();
+  ~StackPushITKDefaultThreader();
+  StackPushITKDefaultThreader(const StackPushITKDefaultThreader &) = delete;
+  StackPushITKDefaultThreader &
+  operator=(const StackPushITKDefaultThreader &) = delete;
+
+private:
+  itk::MultiThreaderBase::ThreaderEnum m_originalThreader;
+};
 } // namespace BRAINSUtils
 
 #endif // BRAINSThreadControl_h

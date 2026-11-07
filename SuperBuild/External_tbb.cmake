@@ -20,9 +20,9 @@ endif()
 if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(NOT DEFINED git_protocol)
-      set(git_protocol "https")
-  set(tbb_ver "v2022.3.0")
+    set(git_protocol "https")
   endif()
+  set(tbb_ver "v2023.2.0")
 
   ExternalProject_SetIfNotDefined(
      ${CMAKE_PROJECT_NAME}_${proj}_GIT_REPOSITORY
@@ -36,7 +36,8 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     #e6104c9599f7f10473caf545199f7468c0a8e52f # 20221221
     #v2021.5.0 # 20211223
     #v2022.2.0-rc1
-    v2022.3.0
+    #v2022.3.0
+    ${tbb_ver}
     QUIET
     )
 
@@ -75,6 +76,7 @@ if(NOT DEFINED TBB_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
       -DTBB_TEST_SPEC:BOOL=OFF
       -DTBB_VALGRIND_MEMCHECK:BOOL=OFF
       -DTBB_WINDOWS_DRIVER:BOOL=OFF
+      -DTCM_BUILD:BOOL=OFF # TCM links with GNU --version-script on macOS (oneTBB#2241)
       #INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}

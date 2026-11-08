@@ -25,6 +25,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
+#include "itkMath.h"
 
 #include "ConvertToRigidAffine.h"
 
@@ -72,7 +73,7 @@ TEST(ConvertToRigidAffine, Rotation90DegZVersorToAffine)
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
   VectorType axis{ { 0.0, 0.0, 1.0 } };
-  v.Set(axis, M_PI / 2.0);
+  v.Set(axis, itk::Math::pi / 2.0);
   versor->SetRotation(v);
 
   auto affine = AssignRigid::AffineTransformType::New();
@@ -143,7 +144,7 @@ TEST(ConvertToRigidAffine, AffineToVnl44Roundtrip)
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
   VectorType axis{ { 1.0, 0.0, 0.0 } };
-  v.Set(axis, M_PI / 3.0); // 60 degrees about X
+  v.Set(axis, itk::Math::pi / 3.0); // 60 degrees about X
   versor->SetRotation(v);
 
   AssignRigid::VersorRigid3DTransformType::OutputVectorType translation{ { 42.5, -17.3, 255.0 } };
@@ -193,7 +194,7 @@ TEST(ConvertToRigidAffine, ExtractVersorFromScaleVersor)
   AssignRigid::VersorType v;
   using VectorType = itk::Vector<double, 3>;
   VectorType axis{ { 0.0, 1.0, 0.0 } };
-  v.Set(axis, M_PI / 4.0);
+  v.Set(axis, itk::Math::pi / 4.0);
   scaleVersor->SetRotation(v);
 
   // Set non-uniform scale

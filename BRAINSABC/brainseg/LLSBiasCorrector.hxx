@@ -637,7 +637,7 @@ LLSBiasCorrector<TInputImage, TProbabilityImage>::CorrectImages(const unsigned i
 #ifndef WIN32
   if (!std::isfinite(static_cast<double>(coeffs[0][0])))
 #else
-  if (coeffs[0][0] != std::numeric_limits::infinity())
+  if (coeffs[0][0] != std::numeric_limits<double>::infinity())
 #endif
   {
     itkExceptionMacro(<< "\ncoeffs: \n"

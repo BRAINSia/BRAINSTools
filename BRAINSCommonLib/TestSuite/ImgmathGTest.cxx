@@ -171,8 +171,8 @@ TEST_F(ImgmathTest, Imin)
 // -----------------------------------------------------------------------
 TEST_F(ImgmathTest, Iavg)
 {
-  const int          nimgs = 3;
-  ImageType::Pointer result = Iavg<ImageType>(imageA, nimgs);
+  static constexpr int nimgs = 3;
+  ImageType::Pointer   result = Iavg<ImageType>(imageA, nimgs);
   VerifyAllVoxels(result, [](const IndexType & idx) { return ExpectedA(idx) / nimgs; });
 }
 

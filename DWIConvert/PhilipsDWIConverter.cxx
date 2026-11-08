@@ -34,8 +34,8 @@ PhilipsDWIConverter::ExtractDWIData()
     std::cout << "Number of Slices: " << this->m_NSlice << std::endl;
     std::cout << "Number of Volumes: " << this->m_NVolume << std::endl;
     std::cout << "Number of Slices in each volume: " << this->m_SlicesPerVolume << std::endl;
-    constexpr double zeroBValueTolerance = 0.1; // Implausibly small value assumed to be b0 images
-    const auto       readSliceEncoding = [this](unsigned int                  k,
+    static constexpr double zeroBValueTolerance = 0.1; // Implausibly small value assumed to be b0 images
+    const auto              readSliceEncoding = [this](unsigned int                  k,
                                           double &                      b,
                                           vnl_vector_fixed<double, 3> & vect3d,
                                           std::string &                 DiffusionDirectionality,

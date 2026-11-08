@@ -83,8 +83,7 @@ benefits more from readability than speed.
 #include <sstream>
 #include <algorithm>
 
-#include <glob.h>
-#include <wordexp.h>
+#include "itksys/Glob.hxx"
 
 #include "Slicer3LandmarkIO.h"
 #include "vnl/vnl_matrix.h"
@@ -251,16 +250,18 @@ print_arguments_for_user(const std::string & file_glob_string,
 SubjectFilenameVector
 get_subject_filename_tuples(const std::string & file_glob_string)
 {
-  wordexp_t p;
-
-  wordexp(file_glob_string.c_str(), &p, 0);
-  char * const * const     w = p.we_wordv;
+  // Each whitespace-separated pattern is globbed and the matches appended, as
+  // wordexp did; itksys::Glob also builds on Windows, which has no wordexp.
   std::vector<std::string> files;
-  files.reserve(p.we_wordc);
-  for (unsigned int i = 0; i < p.we_wordc; ++i)
+  std::istringstream       patterns(file_glob_string);
+  std::string              pattern;
+  while (patterns >> pattern)
   {
-    files.emplace_back(w[i]);
-    // std::cout << "Adding file to processing list: " << w[i] << std::endl;
+    itksys::Glob glob;
+    glob.FindFiles(pattern);
+    std::vector<std::string> matches = glob.GetFiles();
+    std::sort(matches.begin(), matches.end());
+    files.insert(files.end(), matches.begin(), matches.end());
   }
 
   std::vector<std::pair<std::string, std::string>> subjects;

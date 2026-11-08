@@ -17,12 +17,33 @@
  *
  *=========================================================================*/
 #include "itkOrthogonalize3DRotationMatrix.h"
+// ITK 6 deprecates vnl_svd in favor of the Eigen-backed itk::bridge::Math::SVD.
+#if __has_include("itkBridgeMathSVD.h")
+#  include "itkBridgeMathSVD.h"
+#else
+#  include "vnl/algo/vnl_svd.h"
+#  include "vnl/vnl_diag_matrix.h"
+#endif
 
 namespace itk
 {
 itk::Matrix<double, 3, 3>
 Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
 {
+#if __has_include("itkBridgeMathSVD.h")
+  // Unit singular values, keeping only those above 1e-6 of the largest, as
+  // vnl_svd's negative zero_out_tol did.
+  const auto                  decomposition = itk::bridge::Math::SVD(rotator);
+  vnl_vector_fixed<double, 3> unitW(0.0);
+  for (unsigned int i = 0; i < 3; ++i)
+  {
+    if (decomposition.W[i] > 1e-6 * decomposition.W[0])
+    {
+      unitW[i] = 1.0;
+    }
+  }
+  return itk::Matrix<double, 3, 3>(decomposition.RecomposeWith(unitW));
+#else
   vnl_svd<double>                                   decomposition(rotator.GetVnlMatrix().as_matrix(), -1e-6);
   const vnl_diag_matrix<vnl_svd<double>::singval_t> Winverse(decomposition.Winverse());
 
@@ -42,5 +63,6 @@ Orthogonalize3DRotationMatrix(const itk::Matrix<double, 3, 3> & rotator)
   itk::Matrix<double, 3, 3> Orthog(result);
 
   return Orthog;
+#endif
 }
 } // namespace itk

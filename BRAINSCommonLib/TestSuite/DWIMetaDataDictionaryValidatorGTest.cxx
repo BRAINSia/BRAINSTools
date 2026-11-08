@@ -23,6 +23,7 @@
 
 #include <gtest/gtest.h>
 #include <cmath>
+#include "itkMath.h"
 #include "DWIMetaDataDictionaryValidator.h"
 
 static constexpr double kTol = 1e-4;
@@ -79,7 +80,7 @@ TEST(DWIMetaDataDictionaryValidator, MeasurementFrameRoundtripRotation)
   DWIMetaDataDictionaryValidator                     validator;
   DWIMetaDataDictionaryValidator::RotationMatrixType mf;
 
-  const double angle = 30.0 * M_PI / 180.0;
+  const double angle = 30.0 * itk::Math::pi / 180.0;
   mf(0, 0) = std::cos(angle);
   mf(0, 1) = -std::sin(angle);
   mf(0, 2) = 0.0;

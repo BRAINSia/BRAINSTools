@@ -37,12 +37,6 @@ set_property(TEST BRAINSTransformConvertMakeTestFilesTest
   APPEND PROPERTY DEPENDS BRAINSTransformConvertMakeTestFiles)
 
 #
-# need to run BRAINSTransformConvert where they were dumped
-set(BRAINSTransformConvert "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSTransformConvert")
-set(BRAINSResample "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/BRAINSResample")
-set(ImageCompare "${CMAKE_CURRENT_BINARY_DIR}/ImageCompare")
-
-#
 # use BRAINSTransformConvert to make conversions
 set(VersorRigidTargets VersorRigid ScaleVersor ScaleSkewVersor Affine DisplacementField)
 set(ScaleVersorTargets ScaleVersor ScaleSkewVersor Affine DisplacementField)
@@ -140,7 +134,7 @@ foreach(SourceTransform VersorRigid ScaleVersor ScaleSkewVersor Affine) # BSplin
       set_property(TEST ${ResampleWTargetTestName} APPEND PROPERTY DEPENDS ${TransformConvertTestName} BRAINSResample)
 
       set(ImageCompareTestName ImageCompare${SourceTransform}${TargetTransform}${TargetPrecisionType})
-      add_test(NAME ${ImageCompareTestName} COMMAND ${LAUNCH_EXE} ${ImageCompare}
+      add_test(NAME ${ImageCompareTestName} COMMAND ${LAUNCH_EXE} $<TARGET_FILE:ImageCompare>
         ${ResampleWSourceOutputImage} ${ResampleWTargetOutputImage})
 
       set_property(TEST ${ImageCompareTestName} APPEND PROPERTY

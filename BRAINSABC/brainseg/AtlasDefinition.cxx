@@ -233,7 +233,7 @@ AtlasDefinition::XMLChar(const char * buf)
 void
 AtlasDefinition::InitFromXML(const std::string & XMLFilename)
 {
-  std::ifstream xmlFile(XMLFilename.c_str(), std::ifstream::in);
+  std::ifstream xmlFile(XMLFilename.c_str(), std::ifstream::in | std::ifstream::binary);
 
   if (!xmlFile.good())
   {

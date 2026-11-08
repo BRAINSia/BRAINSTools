@@ -268,7 +268,7 @@ public:
     //
     // //////////////////////////////////////////////////////////////////////////
     itk::NumberToString<double> doubleToString;
-    std::ofstream               output(filename.c_str()); // open setup file for reading
+    std::ofstream               output(filename.c_str(), std::ios::binary);
 
     if (!output.is_open())
     {
@@ -391,7 +391,7 @@ public:
     //
     // //////////////////////////////////////////////////////////////////////////
 
-    std::ifstream input(filename.c_str()); // open setup file for reading
+    std::ifstream input(filename.c_str(), std::ios::binary);
 
     if (!input.is_open())
     {

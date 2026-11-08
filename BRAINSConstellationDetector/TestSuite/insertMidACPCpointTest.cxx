@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-insertMidACPCpointTest(int argc, char ** argv)
+insertMidACPCpointTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

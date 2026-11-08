@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-landmarksConstellationWeightsTest(int argc, char ** argv)
+landmarksConstellationWeightsTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

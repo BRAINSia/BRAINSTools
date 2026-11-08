@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-BRAINSEyeDetectorTest(int argc, char ** argv)
+BRAINSEyeDetectorTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

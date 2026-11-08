@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-BRAINSClipInferiorTest(int argc, char ** argv)
+BRAINSClipInferiorTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

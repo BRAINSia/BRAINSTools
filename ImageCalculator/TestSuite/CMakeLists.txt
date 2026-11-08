@@ -23,6 +23,7 @@ set_target_properties(ImageCalculatorTests PROPERTIES FOLDER ${MODULE_FOLDER})
 
 set(IC_STATCMDS --statNPX --statMIN --statAVG --statMAX --statVAR --statSUM)
 set(IC_BIN "${CMAKE_CURRENT_BINARY_DIR}/testbin")
+file(MAKE_DIRECTORY "${IC_BIN}")
 set(IC_OUT --out "${IC_BIN}/Test.png")
 #Test to show arithmetic operation and printing the statistics.
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ImageCalculator2DTest1 COMMAND $<TARGET_FILE:ImageCalculatorTests>

@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-BRAINSTrimForegroundInDirectionTest(int argc, char ** argv)
+BRAINSTrimForegroundInDirectionTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

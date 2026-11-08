@@ -33,7 +33,7 @@ extern "C" MODULE_IMPORT int
 ModuleEntryPoint(int, char *[]);
 
 int
-BRAINSConstellationModelerTest(int argc, char ** argv)
+BRAINSConstellationModelerTest(int argc, char * argv[])
 {
   return ModuleEntryPoint(argc, argv);
 }

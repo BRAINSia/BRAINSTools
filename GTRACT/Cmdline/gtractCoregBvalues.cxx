@@ -116,8 +116,6 @@ main(int argc, char * argv[])
   using OutputImageType = itk::VectorImage<OutputPixelType, 3>;
   using InputIndexImageType = itk::Image<PixelType, 3>;
   using OutputIndexImageType = itk::Image<OutputPixelType, 3>;
-  using LocalAffineTransformType = itk::AffineTransform<double, 3>;
-  using RigidTransformType = itk::VersorRigid3DTransform<double>;
 
   using FileReaderType = itk::ImageFileReader<NrrdImageType, itk::DefaultConvertPixelTraits<PixelType>>;
   auto movingImageReader = FileReaderType::New();
@@ -273,24 +271,17 @@ main(int argc, char * argv[])
     resampler->SetDefaultPixelValue(0);
     resampler->Update();
 
-    if (eddyCurrentCorrection == 0)
+    // BRAINSFitHelper returns a composite holding the single collapsed linear transform.
+    using LinearTransformType = itk::MatrixOffsetTransformBase<double, 3, 3>;
+    const auto * const linearTransform = dynamic_cast<const LinearTransformType *>(
+      registerImageFilter->GetCurrentGenericTransform()->GetNthTransform(0).GetPointer());
+    if (linearTransform == nullptr)
     {
-      RigidTransformType::Pointer rigidTransform;
-      rigidTransform =
-        dynamic_cast<RigidTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer());
-      curGradientDirection = rigidTransform->GetMatrix().GetVnlMatrix() * curGradientDirection;
+      itkGenericExceptionMacro("Registration of gradient " << i << " did not produce a linear transform.");
     }
-    else
-    {
-      LocalAffineTransformType::Pointer affineTransform;
-      affineTransform =
-        dynamic_cast<LocalAffineTransformType *>(registerImageFilter->GetCurrentGenericTransform().GetPointer());
-      itk::Matrix<double, 3, 3> NonOrthog = affineTransform->GetMatrix();
-      itk::Matrix<double, 3, 3> Orthog(itk::Orthogonalize3DRotationMatrix(NonOrthog));
-      curGradientDirection = Orthog.GetVnlMatrix() * curGradientDirection;
-      // std::cout<<"i = "<<i<<std::endl;
-      // std::cout<<curGradientDirection<<std::endl;
-    }
+    // Rotate only: scale and shear in the fit must not change the gradient length.
+    const itk::Matrix<double, 3, 3> Orthog(itk::Orthogonalize3DRotationMatrix(linearTransform->GetMatrix()));
+    curGradientDirection = Orthog.GetVnlMatrix() * curGradientDirection;
 
     // Write RegisteredImage
     ConstIteratorType it(resampler->GetOutput(), resampler->GetOutput()->GetRequestedRegion());

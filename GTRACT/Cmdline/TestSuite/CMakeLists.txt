@@ -49,28 +49,21 @@ set_target_properties(gtractCoregBvaluesTests PROPERTIES FOLDER ${MODULE_FOLDER}
 add_dependencies(gtractCoregBvaluesTests gtractCoregBvalues)
 
 
-## INFO: gtractCoregBvalues returns segfault after the registration step.
-##       This test is commented out until the bug is fixed.
-##       The use of this program seems to be deprecated, since DTIPrep is
-##       used for coregistration and eddy current correction.
-#set(GTRACTTestName gtractCoregBvalues_Test)
-#ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
-#  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractCoregBvaluesTests>
-#    --compare DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
-#              ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
-#    --compareNumberOfPixelsTolerance 1000
-#    --compareIntensityTolerance 20
-# gtractCoregBvaluesTest
-#  --fixedVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
-#  --movingVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
-#  --fixedVolumeIndex 0
-#  --debugLevel 0
-#  --eddyCurrentCorrection
-#  --relaxationFactor 0.25
-#  --maximumStepSize 0.1
-#  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
-#  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.${XFRM_EXT}
-#)
+# Runs to completion only: no baseline exists for the coregistered output.
+set(GTRACTTestName gtractCoregBvalues_Test)
+ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${GTRACTTestName}
+  COMMAND ${LAUNCH_EXE} $<TARGET_FILE:gtractCoregBvaluesTests>
+ gtractCoregBvaluesTest
+  --fixedVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+  --movingVolume DATA{${DWIBASELINE_DIR}/SiemensTrio-Syngo2004A-1.nrrd}
+  --fixedVolumeIndex 0
+  --debugLevel 0
+  --eddyCurrentCorrection
+  --relaxationFactor 0.25
+  --maximumStepSize 0.1
+  --outputVolume ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.nrrd
+  --outputTransform ${CMAKE_CURRENT_BINARY_DIR}/${GTRACTTestName}.test.${XFRM_EXT}
+)
 
 ## Test for gtractAverageBvalues
 add_executable( gtractAverageBvaluesTests gtractAverageBvaluesTests.cxx )

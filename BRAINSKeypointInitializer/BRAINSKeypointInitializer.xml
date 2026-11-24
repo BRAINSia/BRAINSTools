@@ -44,6 +44,13 @@
       <element>Similarity</element>
       <element>Rigid</element>
     </string-enumeration>
+    <boolean>
+      <name>invertMovingIntensity</name>
+      <longflag>invertMovingIntensity</longflag>
+      <label>Invert moving intensity</label>
+      <description>Invert the moving volume's contrast inside the head (99th percentile minus intensity, background set to 0) before detecting keypoints, so that a T1-weighted volume matches the edge polarity of a T2-weighted one.</description>
+      <default>false</default>
+    </boolean>
     <file fileExtensions=".csv">
       <name>outputMatches</name>
       <longflag>outputMatches</longflag>

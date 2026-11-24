@@ -109,6 +109,7 @@ main(int argc, char * argv[])
     const double             readSeconds = Seconds(t0);
     t0 = std::chrono::steady_clock::now();
     const brains::SIFT3DFeatures fixedFeatures = detector->Compute(fixed);
+    detector->SetInvertIntensity(invertMovingIntensity);
     const brains::SIFT3DFeatures movingFeatures = detector->Compute(moving);
     const double                 detectSeconds = Seconds(t0);
     t0 = std::chrono::steady_clock::now();

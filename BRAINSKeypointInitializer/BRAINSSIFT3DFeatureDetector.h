@@ -118,6 +118,11 @@ public:
   itkGetConstMacro(Sigma0, double);
   itkSetMacro(SigmaN, double);
   itkGetConstMacro(SigmaN, double);
+  /** Invert contrast inside the head (p99 - I) and zero the background, so a
+   *  T1-weighted image matches T2-weighted edge polarity. */
+  itkSetMacro(InvertIntensity, bool);
+  itkGetConstMacro(InvertIntensity, bool);
+  itkBooleanMacro(InvertIntensity);
   /** Keep only the strongest keypoints; 0 keeps all. */
   itkSetMacro(MaximumNumberOfKeypoints, unsigned int);
   itkGetConstMacro(MaximumNumberOfKeypoints, unsigned int);
@@ -139,6 +144,7 @@ private:
   double       m_Sigma0{ 1.6 };
   double       m_SigmaN{ 1.15 };
   unsigned int m_MaximumNumberOfKeypoints{ 0 };
+  bool         m_InvertIntensity{ false };
 };
 
 } // namespace brains

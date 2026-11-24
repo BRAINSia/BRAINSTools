@@ -9,12 +9,17 @@
 #
 
 FindITKUtil(BRAINSKeypointInitializer_ITK
+  ITKBinaryMathematicalMorphology
   ITKCommon
   ITKEigen3
   ITKImageFunction
   ITKImageGrid
   ITKIOImageBase
   ITKIOTransformBase
+  ITKLabelMap
+  ITKMathematicalMorphology
+  ITKSmoothing
+  ITKThresholding
   ITKTransform
   ITKTransformFactory
 )

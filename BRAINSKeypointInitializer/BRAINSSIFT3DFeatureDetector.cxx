@@ -23,11 +23,16 @@
  */
 #include "BRAINSSIFT3DFeatureDetector.h"
 
+#include "itkBinaryBallStructuringElement.h"
+#include "itkBinaryFillholeImageFilter.h"
+#include "itkBinaryMorphologicalClosingImageFilter.h"
 #include "itkIdentityTransform.h"
 #include "itkImageRegionConstIterator.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkMultiThreaderBase.h"
+#include "itkOtsuThresholdImageFilter.h"
 #include "itkResampleImageFilter.h"
+#include "itkSmoothingRecursiveGaussianImageFilter.h"
 #include "itk_eigen.h"
 #include ITK_EIGEN(Dense)
 
@@ -378,6 +383,54 @@ ExtractDescriptor(const Volume & im, const Candidate & key, float unit, const Ic
   }
   normalize();
 }
+/** p99 - I inside an Otsu head mask, 0 outside, so tissue contrast flips
+ *  while the head stays brighter than the background. */
+void
+InvertInsideHead(const itk::Image<float, 3> * grid, Volume & base)
+{
+  using ImageType = itk::Image<float, 3>;
+  using MaskType = itk::Image<unsigned char, 3>;
+  auto smooth = itk::SmoothingRecursiveGaussianImageFilter<ImageType, ImageType>::New();
+  smooth->SetInput(grid);
+  smooth->SetSigma(2.0);
+  auto otsu = itk::OtsuThresholdImageFilter<ImageType, MaskType>::New();
+  otsu->SetInput(smooth->GetOutput());
+  otsu->SetInsideValue(0);
+  otsu->SetOutsideValue(1);
+  using BallType = itk::BinaryBallStructuringElement<unsigned char, 3>;
+  BallType ball;
+  ball.SetRadius(3);
+  ball.CreateStructuringElement();
+  auto close = itk::BinaryMorphologicalClosingImageFilter<MaskType, MaskType, BallType>::New();
+  close->SetInput(otsu->GetOutput());
+  close->SetKernel(ball);
+  close->SetForegroundValue(1);
+  auto fill = itk::BinaryFillholeImageFilter<MaskType>::New();
+  fill->SetInput(close->GetOutput());
+  fill->SetForegroundValue(1);
+  fill->Update();
+  const unsigned char * mask = fill->GetOutput()->GetBufferPointer();
+
+  std::vector<float> inside;
+  for (size_t i = 0; i < base.v.size(); ++i)
+  {
+    if (mask[i])
+    {
+      inside.push_back(base.v[i]);
+    }
+  }
+  if (inside.empty())
+  {
+    return;
+  }
+  auto nth = inside.begin() + static_cast<std::ptrdiff_t>(0.99 * (inside.size() - 1));
+  std::nth_element(inside.begin(), nth, inside.end());
+  const float p99 = *nth;
+  for (size_t i = 0; i < base.v.size(); ++i)
+  {
+    base.v[i] = mask[i] ? p99 - std::min(base.v[i], p99) : 0.0f;
+  }
+}
 } // namespace
 
 SIFT3DFeatures
@@ -428,6 +481,10 @@ SIFT3DFeatureDetector::Compute(const ImageType * image) const
   Volume base;
   base.Resize(size[0], size[1], size[2]);
   std::copy(grid->GetBufferPointer(), grid->GetBufferPointer() + base.v.size(), base.v.begin());
+  if (m_InvertIntensity)
+  {
+    InvertInsideHead(grid, base);
+  }
   float maxAbs = 0.0f;
   for (const float x : base.v)
   {
@@ -598,7 +655,8 @@ SIFT3DFeatureDetector::PrintSelf(std::ostream & os, itk::Indent indent) const
      << indent << "NumberOfKeypointLevels: " << m_NumberOfKeypointLevels << '\n'
      << indent << "Sigma0: " << m_Sigma0 << '\n'
      << indent << "SigmaN: " << m_SigmaN << '\n'
-     << indent << "MaximumNumberOfKeypoints: " << m_MaximumNumberOfKeypoints << '\n';
+     << indent << "MaximumNumberOfKeypoints: " << m_MaximumNumberOfKeypoints << '\n'
+     << indent << "InvertIntensity: " << m_InvertIntensity << '\n';
 }
 
 } // namespace brains

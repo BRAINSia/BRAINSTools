@@ -378,6 +378,7 @@ jobs:
             -DUSE_BRAINSIntensityNormalize:BOOL=ON \
             -DUSE_BRAINSLabelStats:BOOL=ON \
             -DUSE_BRAINSLandmarkInitializer:BOOL=ON \
+            -DUSE_BRAINSKeypointInitializer:BOOL=ON \
             -DUSE_BRAINSMultiModeSegment:BOOL=OFF \
             -DUSE_BRAINSMultiSTAPLE:BOOL=OFF \
             -DUSE_BRAINSMush:BOOL=OFF \

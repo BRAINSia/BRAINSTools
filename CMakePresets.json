@@ -35,6 +35,7 @@
         "USE_BRAINSIntensityNormalize": { "type": "BOOL", "value" : "ON" },
         "USE_BRAINSLabelStats": { "type": "BOOL", "value" : "ON" },
         "USE_BRAINSLandmarkInitializer": { "type": "BOOL", "value" : "ON" },
+        "USE_BRAINSKeypointInitializer": { "type": "BOOL", "value" : "ON" },
         "USE_BRAINSMultiModeSegment": { "type": "BOOL", "value" : "ON" },
         "USE_BRAINSMultiSTAPLE": { "type": "BOOL", "value" : "ON" },
         "USE_BRAINSMush": { "type": "BOOL", "value" : "ON" },

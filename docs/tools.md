@@ -202,6 +202,12 @@ Register a three-dimensional volume to a reference volume (Mattes Mutual Informa
 
 `BRAINSFit` &middot; version 5.8.0 &middot; [documentation](https://slicer.readthedocs.io/en/latest/user_guide/modules/brainsfit.html) &middot; [source](https://github.com/BRAINSia/BRAINSTools/blob/main/BRAINSFit/BRAINSFit.xml)
 
+### Keypoint Transform Initializer (BRAINS)
+
+Estimate a rigid, similarity, or affine transform between two volumes from matched 3D scale-invariant keypoints. Keypoints and 768-element rotation-invariant descriptors follow SIFT3D (Rister, Horowitz, and Rubin, IEEE Trans. Image Process. 2017); descriptors are matched with a nearest-neighbor ratio test and the transform is estimated robustly. Works for any pair of volumes of the same contrast, within or across subjects, at any starting orientation. The output maps fixed physical points to moving physical points and can initialize BRAINSFit or antsRegistration.
+
+`BRAINSKeypointInitializer` &middot; version 5.8.0 &middot; [source](https://github.com/BRAINSia/BRAINSTools/blob/main/BRAINSKeypointInitializer/BRAINSKeypointInitializer.xml)
+
 ### Registration Metric Test (BRAINS)
 
 Compare Mattes/MSQ metric value for two input images and a possible input BSpline transform.

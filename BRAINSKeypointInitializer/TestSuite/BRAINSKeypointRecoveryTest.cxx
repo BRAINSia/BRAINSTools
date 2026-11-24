@@ -18,14 +18,18 @@
  *=========================================================================*/
 // Recover a known rigid motion between two samplings of one synthetic volume.
 // The moving sampling is mirrored, oblique, and anisotropic, so the test also
-// covers the detector's canonical grid.
+// covers the detector's canonical grid. With "Model", the motion is recovered
+// through a keypoint model of two landmarked references written to disk.
 #include "BRAINSKeypointMatcher.h"
+#include "BRAINSKeypointModel.h"
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkVersor.h"
 
 #include <cmath>
+#include <cstdio>
 #include <iostream>
 #include <random>
+#include <string>
 
 namespace
 {
@@ -138,7 +142,8 @@ int
 main(int argc, char * argv[])
 {
   brains::RobustFitOptions options;
-  if (argc > 1 && !brains::ParseRobustEstimator(argv[1], options.estimator))
+  const bool               useModel = argc > 1 && std::string(argv[1]) == "Model";
+  if (argc > 1 && !useModel && !brains::ParseRobustEstimator(argv[1], options.estimator))
   {
     std::cerr << "unknown estimator " << argv[1] << std::endl;
     return EXIT_FAILURE;
@@ -186,14 +191,64 @@ main(int argc, char * argv[])
   ImageType::DirectionType movingDirection = tilt.GetMatrix() * flip;
   const ImageType::Pointer moving = Sample(blobs, movingSize, movingSpacing, movingDirection, R, t);
 
-  auto                          detector = brains::SIFT3DFeatureDetector::New();
-  const brains::SIFT3DFeatures  ff = detector->Compute(fixed);
-  const brains::SIFT3DFeatures  mf = detector->Compute(moving);
-  const brains::KeypointMatches matches = brains::MatchFeatures(ff, mf, 0.9);
-  brains::RobustFitResult       fit;
+  auto                         detector = brains::SIFT3DFeatureDetector::New();
+  const brains::SIFT3DFeatures ff = detector->Compute(fixed);
+  const brains::SIFT3DFeatures mf = detector->Compute(moving);
+  brains::RobustFitResult      fit;
+  size_t                       numberOfMatches = 0;
   try
   {
-    fit = brains::FitTransform(matches, options);
+    if (useModel)
+    {
+      // Second reference: the same volume under another rigid motion, its landmarks moved with it.
+      itk::Versor<double>    q2;
+      itk::Vector<double, 3> axis2;
+      axis2[0] = -0.2;
+      axis2[1] = 1.0;
+      axis2[2] = 0.4;
+      q2.Set(axis2, -15.0 * M_PI / 180.0);
+      const MatrixType       R2 = q2.GetMatrix();
+      itk::Vector<double, 3> t2;
+      t2[0] = -4.0;
+      t2[1] = 6.0;
+      t2[2] = 2.0;
+      brains::KeypointModel model;
+      model.references.resize(2);
+      model.references[0].features = ff;
+      model.references[1].features = detector->Compute(Sample(blobs, fixedSize, fixedSpacing, fixedDirection, R2, t2));
+      for (int i = 0; i < 12; ++i)
+      {
+        const std::string name = "L" + std::to_string(i);
+        PointType         p;
+        p[0] = 30.0 * std::cos(i * 0.9);
+        p[1] = 30.0 * std::sin(i * 1.3);
+        p[2] = -30.0 + 5.0 * i;
+        model.atlasLandmarks[name] = p;
+        model.references[0].landmarks[name] = p;
+        model.references[1].landmarks[name] = R2 * p + t2;
+      }
+      const std::string path = "BRAINSKeypointRecoveryTest_model.bkpm";
+      brains::WriteKeypointModel(model, path);
+      const brains::KeypointModel loaded = brains::ReadKeypointModel(path);
+      std::remove(path.c_str());
+      const brains::ModelAlignment al =
+        brains::AlignToModel(loaded, mf, 0.9, options, brains::TransformModel::Rigid, 20);
+      if (al.referencesUsed != 2 || al.fitLabels.size() != 12)
+      {
+        std::cerr << "model alignment used " << al.referencesUsed << " references and " << al.fitLabels.size()
+                  << " landmarks" << std::endl;
+        return EXIT_FAILURE;
+      }
+      fit.matrix = al.matrix;
+      fit.translation = al.translation;
+      fit.numberOfInliers = std::min(al.inliersPerReference[0], al.inliersPerReference[1]);
+    }
+    else
+    {
+      const brains::KeypointMatches matches = brains::MatchFeatures(ff, mf, 0.9);
+      numberOfMatches = matches.size();
+      fit = brains::FitTransform(matches, options);
+    }
   }
   catch (const itk::ExceptionObject & err)
   {
@@ -226,7 +281,7 @@ main(int argc, char * argv[])
     }
   }
   const double mean = sum / n;
-  std::cout << "keypoints " << ff.size() << " / " << mf.size() << ", matches " << matches.size() << ", inliers "
+  std::cout << "keypoints " << ff.size() << " / " << mf.size() << ", matches " << numberOfMatches << ", inliers "
             << fit.numberOfInliers << ", error mean " << mean << " max " << worst << " mm" << std::endl;
   if (fit.numberOfInliers < 20 || mean > 0.5 || worst > 1.5)
   {

@@ -8,3 +8,9 @@ foreach(estimator RANSAC MSAC PROSAC)
     PROCESSORS 3
     LABELS "BRAINSKeypointInitializer")
 endforeach()
+
+add_test(NAME BRAINSKeypointRecoveryTest_Model
+  COMMAND $<TARGET_FILE:BRAINSKeypointRecoveryTest> Model)
+set_tests_properties(BRAINSKeypointRecoveryTest_Model PROPERTIES
+  PROCESSORS 3
+  LABELS "BRAINSKeypointInitializer")

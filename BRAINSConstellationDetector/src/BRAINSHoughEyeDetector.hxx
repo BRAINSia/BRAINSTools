@@ -105,8 +105,8 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
     if (IPD < (mindistance_IPD - two_stddev_distance_IPD))
     {
 
-      std::cerr << "ERROR:  'Left Eye' physical location must be at least 40mm to the left of the 'Right Eye': " << IPD
-                << std::endl;
+      std::cerr << "ERROR:  'Left Eye' physical location must be at least " << mindistance_IPD - two_stddev_distance_IPD
+                << "mm to the left of the 'Right Eye': " << IPD << std::endl;
 
       std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
       std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
@@ -121,8 +121,8 @@ ResampleFromEyePoints(const typename TInputImage::PointType &    LE_Point,
     constexpr double maxdistance_IPD = 77.0;
     if (IPD > (maxdistance_IPD + two_stddev_distance_IPD))
     {
-      std::cerr << "ERROR:  'Left Eye' physical location must be at less than 86mm to the left of the 'Right Eye': "
-                << IPD << std::endl;
+      std::cerr << "ERROR:  'Left Eye' physical location must be at most " << maxdistance_IPD + two_stddev_distance_IPD
+                << "mm to the left of the 'Right Eye': " << IPD << std::endl;
       std::cerr << "Right Eye: " << RE_Point << std::endl; //-27
       std::cerr << "Left Eye: " << LE_Point << std::endl;  //+31
 

@@ -256,6 +256,7 @@ BRAINSConstellationDetectorPrimary::Compute()
     if (eyeFixed_lmks.find("CM") == eyeFixed_lmks.end())
     {
       eyeFixed_lmks["CM"] = localFindCenterHeadFunc(eyeFixed_img);
+      orig_lmks["CM"] = orig2eyeFixed_img_tfm->TransformPoint(eyeFixed_lmks.at("CM"));
     }
   }
   else

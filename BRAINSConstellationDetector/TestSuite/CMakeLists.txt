@@ -4,6 +4,13 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 # _brainstools_test_nproc is set once in BRAINSTools.cmake for all modules.
 
+# ITK 6 places the mid-sagittal plane about 0.05 degrees from ITK 5, so resampled outputs have their own baselines.
+if(ITK_VERSION_MAJOR VERSION_GREATER_EQUAL 6)
+  set(BCD_ITK_BASELINE_SUFFIX _itkv6)
+else()
+  set(BCD_ITK_BASELINE_SUFFIX "")
+endif()
+
 ## Test landmarksConstellationTrainingDefinitionIO
 ##
 add_executable(TestlandmarksConstellationTrainingDefinitionIO TestlandmarksConstellationTrainingDefinitionIO.cxx)
@@ -93,7 +100,7 @@ ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME $
 set(BRAINSAlignMSPTestName BRAINSAlignMSPTest_T1)
 ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BRAINSAlignMSPTestName}
   COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSAlignMSPTestDriver>
-  --compare DATA{${TestData_DIR}/${BRAINSAlignMSPTestName}_standard.nrrd}
+  --compare DATA{${TestData_DIR}/${BRAINSAlignMSPTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
   ${CMAKE_CURRENT_BINARY_DIR}/${BRAINSAlignMSPTestName}_aligned.nrrd
   --compareIntensityTolerance 50
   --compareRadiusTolerance 5
@@ -315,7 +322,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_acLowerBound)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -331,7 +338,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_backgroundValue)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -347,7 +354,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_cutOutHeadInOutputResampledVolume)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -383,7 +390,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_interpolationMode)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -399,7 +406,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_mspLevel)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -415,7 +422,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_otsuThreshold)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -431,7 +438,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_outputUntransformedClippedVolume)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -447,7 +454,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rac)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -464,7 +471,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rescaleIntensity)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 75
     --compareRadiusTolerance 10
@@ -480,7 +487,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rescaleIntensityRange)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -496,7 +503,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rmpj)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -513,7 +520,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rpc)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -530,7 +537,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rVN4)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -547,7 +554,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_rVN4-rpc-rac-rmpj)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -586,7 +593,7 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_trimRescaledIntensities)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.nrrd}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5
@@ -602,9 +609,9 @@ set_tests_properties(${PARENT_TEST} PROPERTIES FIXTURES_SETUP BCD_${BCDTestName}
   set(BCDTestName BCDTest_writeBranded2DImage)
   ExternalData_add_test( ${BRAINSTools_ExternalData_DATA_MANAGEMENT_TARGET} NAME ${BCDTestName}
     COMMAND ${LAUNCH_EXE} $<TARGET_FILE:BRAINSConstellationDetectorTestDriver>
-    --compare DATA{${TestData_DIR}/${BCDTestName}_standard.png}
+    --compare DATA{${TestData_DIR}/${BCDTestName}_standard${BCD_ITK_BASELINE_SUFFIX}.png}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.png
-    --compare DATA{${TestData_DIR}/BCDTest_T1_outputResampledVolume_standard.nrrd}
+    --compare DATA{${TestData_DIR}/BCDTest_T1_outputResampledVolume_standard${BCD_ITK_BASELINE_SUFFIX}.nrrd}
     ${CMAKE_CURRENT_BINARY_DIR}/${BCDTestName}_aligned.nrrd
     --compareIntensityTolerance 50
     --compareRadiusTolerance 5

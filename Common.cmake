@@ -134,6 +134,7 @@ bt_option(USE_BRAINSTransformConvert         "Build BRAINSTransformConvert"     
 bt_option(USE_BRAINSConstellationDetector    "Build BRAINSConstellationDetector"    ON)
 bt_option(USE_BRAINSInitializedControlPoints "Build BRAINSInitializedControlPoints" ON)
 bt_option(USE_BRAINSLandmarkInitializer      "Build BRAINSLandmarkInitializer"      ON)
+bt_option(USE_BRAINSKeypointInitializer      "Build BRAINSKeypointInitializer"      ON)
 bt_option(USE_ImageCalculator                "Build ImageCalculator"                ON)
 bt_option(USE_ConvertBetweenFileFormats      "Build ConvertBetweenFileFormats"      ON)
 bt_option(USE_BRAINSDWICleanup               "Build BRAINSDWICleanup"               ON)

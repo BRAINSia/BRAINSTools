@@ -177,6 +177,7 @@ set(brains_modulenames
   GTRACT
   BRAINSLabelStats
   BRAINSLandmarkInitializer
+  BRAINSKeypointInitializer
   BRAINSSnapShotWriter
   BRAINSDWICleanup
   BRAINSPosteriorToContinuousClass

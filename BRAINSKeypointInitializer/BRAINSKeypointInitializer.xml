@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+  <category>Registration</category>
+  <title>Keypoint Transform Initializer (BRAINS)</title>
+  <description>Estimate a rigid, similarity, or affine transform between two volumes from matched 3D scale-invariant keypoints. Keypoints and 768-element rotation-invariant descriptors follow SIFT3D (Rister, Horowitz, and Rubin, IEEE Trans. Image Process. 2017); descriptors are matched with a nearest-neighbor ratio test and the transform is estimated robustly. Works for any pair of volumes of the same contrast, within or across subjects, at any starting orientation. The output maps fixed physical points to moving physical points and can initialize BRAINSFit or antsRegistration.</description>
+  <version>5.8.0</version>
+  <documentation-url></documentation-url>
+  <license>https://www.nitrc.org/svn/brains/BuildScripts/trunk/License.txt</license>
+  <contributor>Hans J. Johnson</contributor>
+  <acknowledgements>Keypoint detection and description adapted from SIFT3D (https://github.com/bbrister/SIFT3D), Copyright (c) 2015-2016 Blaine Rister et al., MIT License.</acknowledgements>
+
+  <parameters>
+    <label>Input and output</label>
+    <description>Volumes and the estimated transform</description>
+    <image>
+      <name>fixedVolume</name>
+      <longflag>fixedVolume</longflag>
+      <label>Fixed volume</label>
+      <channel>input</channel>
+      <description>Fixed (reference) volume.</description>
+    </image>
+    <image>
+      <name>movingVolume</name>
+      <longflag>movingVolume</longflag>
+      <label>Moving volume</label>
+      <channel>input</channel>
+      <description>Moving volume.</description>
+    </image>
+    <image type="label">
+      <name>fixedMask</name>
+      <longflag>fixedMask</longflag>
+      <label>Fixed mask</label>
+      <channel>input</channel>
+      <description>Keep only fixed-volume keypoints where this mask is nonzero.</description>
+    </image>
+    <image type="label">
+      <name>movingMask</name>
+      <longflag>movingMask</longflag>
+      <label>Moving mask</label>
+      <channel>input</channel>
+      <description>Keep only moving-volume keypoints where this mask is nonzero.</description>
+    </image>
+    <boolean>
+      <name>headMaskKeypoints</name>
+      <longflag>headMaskKeypoints</longflag>
+      <label>Head-mask keypoints</label>
+      <description>Keep only keypoints inside an Otsu head mask of each volume, in addition to any explicit mask.</description>
+      <default>false</default>
+    </boolean>
+    <transform fileExtensions=".h5,.hdf5,.mat,.txt">
+      <name>outputTransform</name>
+      <longflag>outputTransform</longflag>
+      <label>Output transform</label>
+      <channel>output</channel>
+      <description>Transform mapping fixed physical points to moving physical points (ITK convention), suitable as an initial transform for BRAINSFit or antsRegistration.</description>
+    </transform>
+    <string-enumeration>
+      <name>transformType</name>
+      <longflag>transformType</longflag>
+      <label>Transform type</label>
+      <channel>input</channel>
+      <description>Model fit to the inlier matches.</description>
+      <default>Affine</default>
+      <element>Affine</element>
+      <element>Similarity</element>
+      <element>Rigid</element>
+    </string-enumeration>
+    <boolean>
+      <name>invertMovingIntensity</name>
+      <longflag>invertMovingIntensity</longflag>
+      <label>Invert moving intensity</label>
+      <description>Invert the moving volume's contrast inside the head (99th percentile minus intensity, background set to 0) before detecting keypoints, so that a T1-weighted volume matches the edge polarity of a T2-weighted one.</description>
+      <default>false</default>
+    </boolean>
+    <file fileExtensions=".csv">
+      <name>outputMatches</name>
+      <longflag>outputMatches</longflag>
+      <label>Output matches</label>
+      <channel>output</channel>
+      <description>Optional CSV of putative matches: fixed x,y,z, moving x,y,z (LPS mm), descriptor ratio, and inlier flag.</description>
+    </file>
+  </parameters>
+
+  <parameters>
+    <label>Alignment space through landmarked references</label>
+    <description>Align a volume to an alignment space (for example the BCD template) through landmarked individual reference scans instead of a fixed volume</description>
+    <file fileExtensions=".fcsv">
+      <name>fixedLandmarks</name>
+      <longflag>fixedLandmarks</longflag>
+      <label>Alignment-space landmarks</label>
+      <channel>input</channel>
+      <description>Named landmarks defining the alignment space. Used with --referenceVolumes to build a keypoint model.</description>
+    </file>
+    <string-vector>
+      <name>referenceVolumes</name>
+      <longflag>referenceVolumes</longflag>
+      <label>Reference volumes</label>
+      <description>Comma-separated individual scans, each with landmarks in --referenceLandmarks, in the same order.</description>
+    </string-vector>
+    <string-vector>
+      <name>referenceLandmarks</name>
+      <longflag>referenceLandmarks</longflag>
+      <label>Reference landmarks</label>
+      <description>Comma-separated landmark files (.fcsv), one per reference volume.</description>
+    </string-vector>
+    <string-vector>
+      <name>referenceMasks</name>
+      <longflag>referenceMasks</longflag>
+      <label>Reference masks</label>
+      <description>Comma-separated masks, one per reference volume; keypoints are kept only where the mask is nonzero.</description>
+    </string-vector>
+    <file fileExtensions=".bkpm">
+      <name>outputKeypointModel</name>
+      <longflag>outputKeypointModel</longflag>
+      <label>Output keypoint model</label>
+      <channel>output</channel>
+      <description>Save the references' keypoints and landmarks with the alignment-space landmarks, so later runs need no reference volumes.</description>
+    </file>
+    <file fileExtensions=".bkpm">
+      <name>keypointModel</name>
+      <longflag>keypointModel</longflag>
+      <label>Keypoint model</label>
+      <channel>input</channel>
+      <description>Keypoint model from --outputKeypointModel. Replaces --fixedVolume; the output transform maps alignment-space points to moving points.</description>
+    </file>
+    <file fileExtensions=".fcsv">
+      <name>outputLandmarks</name>
+      <longflag>outputLandmarks</longflag>
+      <label>Output landmarks</label>
+      <channel>output</channel>
+      <description>Reference landmarks carried into the moving volume (per-landmark median over references), for example CM, LE, and RE to seed BRAINSConstellationDetector --inputLandmarksEMSP.</description>
+    </file>
+    <string-vector>
+      <name>outputLandmarkNames</name>
+      <longflag>outputLandmarkNames</longflag>
+      <label>Output landmark names</label>
+      <description>Write only these landmarks to --outputLandmarks; empty writes all.</description>
+    </string-vector>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Keypoints</label>
+    <description>Keypoint detection</description>
+    <double>
+      <name>samplingSpacing</name>
+      <longflag>samplingSpacing</longflag>
+      <label>Sampling spacing (mm)</label>
+      <description>Isotropic spacing of the grid keypoints are detected on. 2.0 is about 8 times faster and less precise.</description>
+      <default>1.0</default>
+    </double>
+    <double>
+      <name>peakThreshold</name>
+      <longflag>peakThreshold</longflag>
+      <label>Peak threshold</label>
+      <description>Difference-of-Gaussian extrema below this fraction of the level's largest value are dropped.</description>
+      <default>0.1</default>
+    </double>
+    <double>
+      <name>cornerThreshold</name>
+      <longflag>cornerThreshold</longflag>
+      <label>Corner threshold</label>
+      <description>Minimum corner score, in [0, 1], for a keypoint to keep a stable orientation.</description>
+      <default>0.4</default>
+    </double>
+    <integer>
+      <name>maximumNumberOfKeypoints</name>
+      <longflag>maximumNumberOfKeypoints</longflag>
+      <label>Maximum number of keypoints</label>
+      <description>Keep only the strongest keypoints per volume; 0 keeps all.</description>
+      <default>0</default>
+    </integer>
+  </parameters>
+
+  <parameters advanced="true">
+    <label>Matching and robust fit</label>
+    <description>Descriptor matching and transform estimation</description>
+    <double>
+      <name>maximumRatio</name>
+      <longflag>maximumRatio</longflag>
+      <label>Maximum descriptor ratio</label>
+      <description>A match is kept when its nearest descriptor distance is below this fraction of the second nearest.</description>
+      <default>0.9</default>
+    </double>
+    <string-enumeration>
+      <name>robustEstimator</name>
+      <longflag>robustEstimator</longflag>
+      <label>Robust estimator</label>
+      <channel>input</channel>
+      <description>RANSAC scores hypotheses by inlier count; MSAC by truncated squared residual; PROSAC samples the best-ratio matches first and scores as MSAC.</description>
+      <default>RANSAC</default>
+      <element>RANSAC</element>
+      <element>MSAC</element>
+      <element>PROSAC</element>
+    </string-enumeration>
+    <boolean>
+      <name>localOptimization</name>
+      <longflag>localOptimization</longflag>
+      <label>Local optimization</label>
+      <description>Refit each new best hypothesis on its inliers during sampling (LO-RANSAC).</description>
+      <default>false</default>
+    </boolean>
+    <double>
+      <name>inlierTolerance</name>
+      <longflag>inlierTolerance</longflag>
+      <label>Inlier tolerance (mm)</label>
+      <description>A match is an inlier when the transform places it within this distance.</description>
+      <default>8.0</default>
+    </double>
+    <integer>
+      <name>numberOfIterations</name>
+      <longflag>numberOfIterations</longflag>
+      <label>Number of iterations</label>
+      <description>Number of 3-point hypotheses sampled.</description>
+      <default>4000</default>
+    </integer>
+    <integer>
+      <name>minimumInliers</name>
+      <longflag>minimumInliers</longflag>
+      <label>Minimum inliers</label>
+      <description>Fail when fewer inliers support the transform; with references, a reference with fewer inliers is not used.</description>
+      <default>8</default>
+    </integer>
+    <integer>
+      <name>randomSeed</name>
+      <longflag>randomSeed</longflag>
+      <label>Random seed</label>
+      <description>Seed for hypothesis sampling; results are deterministic for a given seed.</description>
+      <default>0</default>
+    </integer>
+    <integer>
+      <name>numberOfThreads</name>
+      <longflag>numberOfThreads</longflag>
+      <label>Number of threads</label>
+      <description>Maximum number of threads. (default is auto-detected)</description>
+      <default>-1</default>
+    </integer>
+  </parameters>
+</executable>

@@ -37,6 +37,13 @@
 namespace
 {
 using ImageType = brains::SIFT3DFeatureDetector::ImageType;
+using MaskImageType = brains::SIFT3DFeatureDetector::MaskImageType;
+
+MaskImageType::Pointer
+ReadMask(const std::string & filename)
+{
+  return filename.empty() ? nullptr : itkUtil::ReadImage<MaskImageType>(filename);
+}
 
 /** Transform with its center at c: x' = A (x - c) + c + translation. */
 itk::Transform<double, 3, 3>::Pointer
@@ -88,6 +95,11 @@ main(int argc, char * argv[])
     std::cerr << "--referenceVolumes needs --fixedLandmarks and one --referenceLandmarks file per volume" << std::endl;
     return EXIT_FAILURE;
   }
+  if (!referenceMasks.empty() && referenceMasks.size() != referenceVolumes.size())
+  {
+    std::cerr << "--referenceMasks needs one mask per --referenceVolumes entry" << std::endl;
+    return EXIT_FAILURE;
+  }
   if (useModel ? (movingVolume.empty() && outputKeypointModel.empty())
                : (fixedVolume.empty() || movingVolume.empty() || outputTransform.empty()))
   {
@@ -116,6 +128,7 @@ main(int argc, char * argv[])
     detector->SetPeakThreshold(peakThreshold);
     detector->SetCornerThreshold(cornerThreshold);
     detector->SetMaximumNumberOfKeypoints(static_cast<unsigned int>(std::max(maximumNumberOfKeypoints, 0)));
+    detector->SetUseHeadMask(headMaskKeypoints);
 
     if (useModel)
     {
@@ -130,7 +143,8 @@ main(int argc, char * argv[])
         for (size_t r = 0; r < referenceVolumes.size(); ++r)
         {
           brains::KeypointReference ref;
-          ref.features = detector->Compute(itkUtil::ReadImage<ImageType>(referenceVolumes[r]));
+          ref.features = detector->Compute(itkUtil::ReadImage<ImageType>(referenceVolumes[r]),
+                                           referenceMasks.empty() ? nullptr : ReadMask(referenceMasks[r]).GetPointer());
           for (const auto & [name, p] : ReadSlicer3toITKLmk(referenceLandmarks[r]))
           {
             ref.landmarks[name] = p;
@@ -160,8 +174,9 @@ main(int argc, char * argv[])
 
       t0 = std::chrono::steady_clock::now();
       detector->SetInvertIntensity(invertMovingIntensity);
-      const brains::SIFT3DFeatures movingFeatures = detector->Compute(itkUtil::ReadImage<ImageType>(movingVolume));
-      const double                 detectSeconds = Seconds(t0);
+      const brains::SIFT3DFeatures movingFeatures =
+        detector->Compute(itkUtil::ReadImage<ImageType>(movingVolume), ReadMask(movingMask));
+      const double detectSeconds = Seconds(t0);
       t0 = std::chrono::steady_clock::now();
       const brains::ModelAlignment al =
         brains::AlignToModel(model, movingFeatures, maximumRatio, options, options.model, minInliers);
@@ -213,9 +228,9 @@ main(int argc, char * argv[])
     const ImageType::Pointer moving = itkUtil::ReadImage<ImageType>(movingVolume);
     const double             readSeconds = Seconds(t0);
     t0 = std::chrono::steady_clock::now();
-    const brains::SIFT3DFeatures fixedFeatures = detector->Compute(fixed);
+    const brains::SIFT3DFeatures fixedFeatures = detector->Compute(fixed, ReadMask(fixedMask));
     detector->SetInvertIntensity(invertMovingIntensity);
-    const brains::SIFT3DFeatures movingFeatures = detector->Compute(moving);
+    const brains::SIFT3DFeatures movingFeatures = detector->Compute(moving, ReadMask(movingMask));
     const double                 detectSeconds = Seconds(t0);
     t0 = std::chrono::steady_clock::now();
     const brains::KeypointMatches matches = brains::MatchFeatures(fixedFeatures, movingFeatures, maximumRatio);

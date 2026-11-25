@@ -99,6 +99,7 @@ public:
   using Pointer = itk::SmartPointer<Self>;
   using ConstPointer = itk::SmartPointer<const Self>;
   using ImageType = itk::Image<float, 3>;
+  using MaskImageType = itk::Image<unsigned char, 3>;
 
   itkNewMacro(Self);
   itkOverrideGetNameOfClassMacro(SIFT3DFeatureDetector);
@@ -123,12 +124,18 @@ public:
   itkSetMacro(InvertIntensity, bool);
   itkGetConstMacro(InvertIntensity, bool);
   itkBooleanMacro(InvertIntensity);
+  /** Keep only keypoints inside an Otsu head mask of the image. */
+  itkSetMacro(UseHeadMask, bool);
+  itkGetConstMacro(UseHeadMask, bool);
+  itkBooleanMacro(UseHeadMask);
   /** Keep only the strongest keypoints; 0 keeps all. */
   itkSetMacro(MaximumNumberOfKeypoints, unsigned int);
   itkGetConstMacro(MaximumNumberOfKeypoints, unsigned int);
 
+  /** Keypoints are kept only where mask is nonzero (nearest voxel), applied
+   *  before the MaximumNumberOfKeypoints cap; descriptors still see the whole image. */
   SIFT3DFeatures
-  Compute(const ImageType * image) const;
+  Compute(const ImageType * image, const MaskImageType * mask = nullptr) const;
 
 protected:
   SIFT3DFeatureDetector() = default;
@@ -145,6 +152,7 @@ private:
   double       m_SigmaN{ 1.15 };
   unsigned int m_MaximumNumberOfKeypoints{ 0 };
   bool         m_InvertIntensity{ false };
+  bool         m_UseHeadMask{ false };
 };
 
 } // namespace brains

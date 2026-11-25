@@ -30,6 +30,7 @@
 #include "itkImageRegionConstIterator.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkMultiThreaderBase.h"
+#include "itkNearestNeighborInterpolateImageFunction.h"
 #include "itkOtsuThresholdImageFilter.h"
 #include "itkResampleImageFilter.h"
 #include "itkSmoothingRecursiveGaussianImageFilter.h"
@@ -383,10 +384,9 @@ ExtractDescriptor(const Volume & im, const Candidate & key, float unit, const Ic
   }
   normalize();
 }
-/** p99 - I inside an Otsu head mask, 0 outside, so tissue contrast flips
- *  while the head stays brighter than the background. */
-void
-InvertInsideHead(const itk::Image<float, 3> * grid, Volume & base)
+/** Otsu head mask on the canonical grid: smoothed, closed, and hole-filled. */
+itk::Image<unsigned char, 3>::Pointer
+HeadMask(const itk::Image<float, 3> * grid)
 {
   using ImageType = itk::Image<float, 3>;
   using MaskType = itk::Image<unsigned char, 3>;
@@ -409,7 +409,16 @@ InvertInsideHead(const itk::Image<float, 3> * grid, Volume & base)
   fill->SetInput(close->GetOutput());
   fill->SetForegroundValue(1);
   fill->Update();
-  const unsigned char * mask = fill->GetOutput()->GetBufferPointer();
+  MaskType::Pointer out = fill->GetOutput();
+  out->DisconnectPipeline();
+  return out;
+}
+
+/** p99 - I inside the head mask, 0 outside, so tissue contrast flips
+ *  while the head stays brighter than the background. */
+void
+InvertInsideHead(const unsigned char * mask, Volume & base)
+{
 
   std::vector<float> inside;
   for (size_t i = 0; i < base.v.size(); ++i)
@@ -434,7 +443,7 @@ InvertInsideHead(const itk::Image<float, 3> * grid, Volume & base)
 } // namespace
 
 SIFT3DFeatures
-SIFT3DFeatureDetector::Compute(const ImageType * image) const
+SIFT3DFeatureDetector::Compute(const ImageType * image, const MaskImageType * mask) const
 {
   // Canonical grid: identity direction, isotropic spacing, covering the input.
   const auto &         region = image->GetLargestPossibleRegion();
@@ -481,9 +490,44 @@ SIFT3DFeatureDetector::Compute(const ImageType * image) const
   Volume base;
   base.Resize(size[0], size[1], size[2]);
   std::copy(grid->GetBufferPointer(), grid->GetBufferPointer() + base.v.size(), base.v.begin());
+  MaskImageType::Pointer headMask;
+  if (m_InvertIntensity || m_UseHeadMask)
+  {
+    headMask = HeadMask(grid);
+  }
   if (m_InvertIntensity)
   {
-    InvertInsideHead(grid, base);
+    InvertInsideHead(headMask->GetBufferPointer(), base);
+  }
+  std::vector<unsigned char> keepVoxel;
+  if (m_UseHeadMask)
+  {
+    keepVoxel.assign(headMask->GetBufferPointer(), headMask->GetBufferPointer() + base.v.size());
+  }
+  if (mask != nullptr)
+  {
+    using MaskResampleType = itk::ResampleImageFilter<MaskImageType, MaskImageType>;
+    auto maskResample = MaskResampleType::New();
+    maskResample->SetInput(mask);
+    maskResample->SetTransform(itk::IdentityTransform<double, 3>::New());
+    maskResample->SetInterpolator(itk::NearestNeighborInterpolateImageFunction<MaskImageType, double>::New());
+    maskResample->SetOutputOrigin(origin);
+    maskResample->SetOutputSpacing(spacing);
+    maskResample->SetSize(size);
+    maskResample->SetDefaultPixelValue(0);
+    maskResample->Update();
+    const unsigned char * m = maskResample->GetOutput()->GetBufferPointer();
+    if (keepVoxel.empty())
+    {
+      keepVoxel.assign(m, m + base.v.size());
+    }
+    else
+    {
+      for (size_t i = 0; i < keepVoxel.size(); ++i)
+      {
+        keepVoxel[i] = keepVoxel[i] && m[i];
+      }
+    }
   }
   float maxAbs = 0.0f;
   for (const float x : base.v)
@@ -588,6 +632,17 @@ SIFT3DFeatureDetector::Compute(const ImageType * image) const
       });
     }
   }
+  if (!keepVoxel.empty())
+  {
+    auto outside = [&](const Candidate & c) {
+      const int unit = 1 << c.o;
+      const int x = std::min(c.x * unit, base.nx - 1);
+      const int y = std::min(c.y * unit, base.ny - 1);
+      const int z = std::min(c.z * unit, base.nz - 1);
+      return keepVoxel[(static_cast<size_t>(z) * base.ny + y) * base.nx + x] == 0;
+    };
+    cand.erase(std::remove_if(cand.begin(), cand.end(), outside), cand.end());
+  }
   std::sort(cand.begin(), cand.end(), [](const Candidate & a, const Candidate & b) {
     return std::tie(a.o, a.s, a.z, a.y, a.x) < std::tie(b.o, b.s, b.z, b.y, b.x);
   });
@@ -656,7 +711,8 @@ SIFT3DFeatureDetector::PrintSelf(std::ostream & os, itk::Indent indent) const
      << indent << "Sigma0: " << m_Sigma0 << '\n'
      << indent << "SigmaN: " << m_SigmaN << '\n'
      << indent << "MaximumNumberOfKeypoints: " << m_MaximumNumberOfKeypoints << '\n'
-     << indent << "InvertIntensity: " << m_InvertIntensity << '\n';
+     << indent << "InvertIntensity: " << m_InvertIntensity << '\n'
+     << indent << "UseHeadMask: " << m_UseHeadMask << '\n';
 }
 
 } // namespace brains

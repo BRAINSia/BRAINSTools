@@ -26,6 +26,27 @@
       <channel>input</channel>
       <description>Moving volume.</description>
     </image>
+    <image type="label">
+      <name>fixedMask</name>
+      <longflag>fixedMask</longflag>
+      <label>Fixed mask</label>
+      <channel>input</channel>
+      <description>Keep only fixed-volume keypoints where this mask is nonzero.</description>
+    </image>
+    <image type="label">
+      <name>movingMask</name>
+      <longflag>movingMask</longflag>
+      <label>Moving mask</label>
+      <channel>input</channel>
+      <description>Keep only moving-volume keypoints where this mask is nonzero.</description>
+    </image>
+    <boolean>
+      <name>headMaskKeypoints</name>
+      <longflag>headMaskKeypoints</longflag>
+      <label>Head-mask keypoints</label>
+      <description>Keep only keypoints inside an Otsu head mask of each volume, in addition to any explicit mask.</description>
+      <default>false</default>
+    </boolean>
     <transform fileExtensions=".h5,.hdf5,.mat,.txt">
       <name>outputTransform</name>
       <longflag>outputTransform</longflag>
@@ -81,6 +102,12 @@
       <longflag>referenceLandmarks</longflag>
       <label>Reference landmarks</label>
       <description>Comma-separated landmark files (.fcsv), one per reference volume.</description>
+    </string-vector>
+    <string-vector>
+      <name>referenceMasks</name>
+      <longflag>referenceMasks</longflag>
+      <label>Reference masks</label>
+      <description>Comma-separated masks, one per reference volume; keypoints are kept only where the mask is nonzero.</description>
     </string-vector>
     <file fileExtensions=".bkpm">
       <name>outputKeypointModel</name>

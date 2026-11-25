@@ -25,6 +25,7 @@
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkVersor.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
@@ -194,8 +195,34 @@ main(int argc, char * argv[])
   auto                         detector = brains::SIFT3DFeatureDetector::New();
   const brains::SIFT3DFeatures ff = detector->Compute(fixed);
   const brains::SIFT3DFeatures mf = detector->Compute(moving);
-  brains::RobustFitResult      fit;
-  size_t                       numberOfMatches = 0;
+
+  using MaskImageType = brains::SIFT3DFeatureDetector::MaskImageType;
+  auto half = MaskImageType::New();
+  half->CopyInformation(fixed);
+  half->SetRegions(fixed->GetLargestPossibleRegion());
+  half->Allocate();
+  for (itk::ImageRegionIteratorWithIndex<MaskImageType> it(half, half->GetLargestPossibleRegion()); !it.IsAtEnd(); ++it)
+  {
+    PointType p;
+    half->TransformIndexToPhysicalPoint(it.GetIndex(), p);
+    it.Set(p[0] < 0.0 ? 1 : 0);
+  }
+  const brains::SIFT3DFeatures hf = detector->Compute(fixed, half);
+  for (const auto & p : hf.locations)
+  {
+    if (p[0] >= 1.0 || std::find(ff.locations.begin(), ff.locations.end(), p) == ff.locations.end())
+    {
+      std::cerr << "masked keypoint at " << p << " is outside the mask or not an unmasked keypoint" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  if (hf.size() == 0 || hf.size() >= ff.size())
+  {
+    std::cerr << "mask kept " << hf.size() << " of " << ff.size() << " keypoints" << std::endl;
+    return EXIT_FAILURE;
+  }
+  brains::RobustFitResult fit;
+  size_t                  numberOfMatches = 0;
   try
   {
     if (useModel)
